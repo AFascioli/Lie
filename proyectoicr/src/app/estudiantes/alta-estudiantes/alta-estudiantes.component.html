@@ -1,0 +1,149 @@
+<select matNativeControl required>
+    <option value="nivelInicial" selected>Nivel Inicial</option>
+    <option value="nivelPrimario">Nivel Primario</option>
+    <option value="nivelSecundario">Nivel Secundario</option>
+</select>
+  <mat-card>
+    <div class="principal">
+      <form #form="ngForm" submit="onGuardar(form)">
+        <mat-form-field>
+          <input name = "apellido" ngModel #apellido="ngModel" matInput placeholder="Ingrese apellido/s" type="text" required/>
+        </mat-form-field>
+        <br>
+        <mat-form-field>
+          <input name = "nombre" ngModel #nombre="ngModel" matInput placeholder="Ingrese nombre/s" type="text" required />
+        </mat-form-field>
+        <br>
+        <mat-form-field>
+          <select name = "tipoDocumento" ngModel #tipoDocumento="ngModel" matNativeControl required>
+            <option value="dni">DNI</option>
+            <option value="libretaEnrolamiento">Libreta de Enrolamiento</option>
+            <option value="pasaporte">Pasaporte</option>
+          </select>
+        </mat-form-field>
+        <br>
+        <mat-form-field>
+          <input
+            name = "nroDocumento" ngModel #nroDocumento="ngModel"
+            matInput
+            placeholder="Ingrese el número de documento"
+            type="number"
+            required
+          />
+        </mat-form-field>
+        <br>
+        <mat-form-field>
+          <input
+            name = "cuil" ngModel #cuil="ngModel"
+            matInput
+            placeholder="Ingrese el número de CUIL"
+            type="number"
+            required
+          />
+        </mat-form-field>
+        <br>
+        <mat-form-field>
+          <select name = "sexo" ngModel #sexo="ngModel" matNativeControl required>
+            <option value="femenino">Femenino</option>
+            <option value="masculino">Masculino</option>
+          </select>
+        </mat-form-field>
+        <br>
+        <div class="domicilio">
+          <mat-form-field>
+            <input name = "calle" ngModel #calle="ngModel" matInput placeholder="Ingrese calle" type="text" required />
+          </mat-form-field>
+          <br>
+          <mat-form-field>
+            <input name = "nroCalle" ngModel #nroCalle="ngModel" matInput placeholder="Ingrese número" type="number" required />
+          </mat-form-field>
+          <br>
+          <mat-form-field>
+            <input name = "piso" ngModel #piso="ngModel" matInput placeholder="Ingrese piso" type="text" required />
+          </mat-form-field>
+          <br>
+          <mat-form-field>
+            <input
+              name = "departamento" ngModel #departamento="ngModel"
+              matInput
+              placeholder="Ingrese departamento"
+              type="text"
+              required
+            />
+          </mat-form-field>
+          <br>
+          <mat-form-field>
+            <select name = "provincia" ngModel #provincia="ngModel" matNativeControl required>
+              <option value="prov1">Prov1</option>
+              <option value="prov2">Prov2</option>
+            </select>
+          </mat-form-field>
+          <br>
+          <mat-form-field>
+            <select name = "localidad" ngModel #localidad="ngModel" matNativeControl required>
+              <option value="localidad1">Localidad1</option>
+              <option value="localidad2">Localidad2</option>
+            </select>
+          </mat-form-field>
+          <br>
+          <mat-form-field>
+            <input
+              name = "codigoPostal" ngModel #codigoPostal="ngModel"
+              matInput
+              placeholder="Ingrese código postal"
+              type="text"
+              required
+            />
+          </mat-form-field>
+          <br>
+        </div>
+        <div class="nacionalidad">
+          <mat-form-field>
+            <input
+              name = "fechaNac" ngModel #fechaNac="ngModel"
+              matInput
+              placeholder="Ingrese fecha de nacimiento"
+              type="datetime"
+            />
+          </mat-form-field>
+          <br>
+          <mat-form-field>
+            <select name = "nacionalidad" ngModel #nacionalidad="ngModel" matNativeControl required>
+              <option value="nacionalidad1">Nacionalidad1</option>
+              <option value="nacionalidad2">Nacionalidad2</option>
+            </select>
+          </mat-form-field>
+          <br>
+          <mat-form-field>
+            <select name = "provinciaNac" ngModel #provinciaNac="ngModel" matNativeControl required>
+              <option value="provNac1">Prov1</option>
+              <option value="provNac2">Prov2</option>
+            </select>
+          </mat-form-field>
+          <br>
+          <mat-form-field>
+            <select name = "localidadNac" ngModel #localidadNac="ngModel" matNativeControl required>
+              <option value="localidadNac1">Localidad1</option>
+              <option value="localidadNac2">Localidad2</option>
+            </select>
+          </mat-form-field>
+          <br>
+        </div>
+        <mat-form-field>
+          <select name = "estadoCivil" ngModel #estadoCivil="ngModel" matNativeControl required>
+            <option value="soltero">Soltero/a</option>
+            <option value="casado">Casado/a</option>
+            <option value="viudo">Viudo/a</option>
+          </select>
+        </mat-form-field>
+        <br>
+        <mat-form-field>
+          <input matInput name = "telefono" ngModel #telefono="ngModel" placeholder="Ingrese número de teléfono" type="number" />
+        </mat-form-field>
+        <br>
+        <button mat-raised-button>Registrar Adulto responsable</button>
+        <button type="submit" color="primary" mat-raised-button>Guardar</button>
+        <button mat-raised-button color="warn">Cancelar</button>
+      </form>
+    </div>
+  </mat-card>
