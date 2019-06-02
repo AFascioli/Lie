@@ -56,4 +56,12 @@ export class EstudiantesService {
         console.log(response);
       });
   }
+
+  obtenerProvincias() {
+    this.http.get<{provincias: string[]}>('http://localhost:3000/provincia')
+      .subscribe((response) => {
+        return response;
+      });
+    return ['1'];
+  }
 }

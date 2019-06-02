@@ -9,9 +9,12 @@ import { NgForm } from '@angular/forms';
 })
 export class AltaEstudiantesComponent implements OnInit {
 
+  provincias: string[];
+
   constructor(public servicio: EstudiantesService) { }
 
   ngOnInit() {
+    this.provincias = this.servicio.obtenerProvincias();
   }
 
  onGuardar(form: NgForm) {

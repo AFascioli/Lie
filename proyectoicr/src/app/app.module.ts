@@ -1,6 +1,13 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
-import { MatInputModule, MatSelectModule, MatButtonModule, MatCardModule, MatFormFieldModule, MatNativeDateModule} from '@angular/material';
+import { MatInputModule,
+          MatSelectModule,
+          MatButtonModule,
+          MatCardModule,
+          MatFormFieldModule,
+          MatNativeDateModule,
+          MatAutocompleteModule
+        } from '@angular/material';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import {MatDatepickerModule} from '@angular/material/datepicker';
 
@@ -26,7 +33,8 @@ import { EstudiantesService } from './estudiantes/estudiante.service';
     MatFormFieldModule,
     HttpClientModule,
     MatDatepickerModule,
-    MatNativeDateModule
+    MatNativeDateModule,
+    MatAutocompleteModule
   ],
   providers: [EstudiantesService],
   bootstrap: [AppComponent]
