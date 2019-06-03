@@ -1,21 +1,32 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { EstudiantesService } from '../estudiante.service';
 import { NgForm } from '@angular/forms';
 import { Provincia } from '../provincias.model';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-alta-estudiantes',
   templateUrl: './alta-estudiantes.component.html',
   styleUrls: ['./alta-estudiantes.component.css']
 })
-export class AltaEstudiantesComponent implements OnInit {
+export class AltaEstudiantesComponent implements OnInit, OnDestroy {
 
-  provincias: Provincia[];
+  provincias: Provincia[] = [];
+  suscripcion: Subscription;
 
   constructor(public servicio: EstudiantesService) { }
 
+  // Cuando se inicializa el componente se cargar las provincias.
   ngOnInit() {
-    // this.provincias = this.servicio.obtenerProvincias();
+    this.servicio.getProvincias();
+    this.suscripcion = this.servicio.getProvinciasListener().subscribe(provinciasActualizadas => {
+      this.provincias = provinciasActualizadas;
+    });
+  }
+
+  // Cuando se destruye el componente se eliminan las suscripciones.
+  ngOnDestroy() {
+    this.suscripcion.unsubscribe();
   }
 
  onGuardar(form: NgForm) {

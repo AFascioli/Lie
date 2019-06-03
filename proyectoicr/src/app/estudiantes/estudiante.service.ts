@@ -2,11 +2,14 @@ import { Injectable } from '@angular/core';
 import { Estudiante } from './estudiante.model';
 import { HttpClient } from '@angular/common/http';
 import { Provincia } from './provincias.model';
+import { Subject } from 'rxjs';
+
 @Injectable ({
   providedIn: 'root'
 })
 export class EstudiantesService {
   provincias: Provincia[] = [];
+  private provinciasActualizadas = new Subject<Provincia[]>();
 
   constructor(public http: HttpClient) {}
 
@@ -60,10 +63,17 @@ export class EstudiantesService {
       });
   }
 
-  obtenerProvincias() {
+  // Metodo para obtener un listener, cosa que de los componentes puedan obtener info actualizada
+  getProvinciasListener() {
+    return this.provinciasActualizadas.asObservable();
+  }
+
+  // Obtenemos las provincias de la bd y actualizamos a los componentes con el observador
+  getProvincias() {
     this.http.get<{provincias: Provincia[]}>('http://localhost:3000/provincia')
       .subscribe((response) => {
         this.provincias = response.provincias;
+        this.provinciasActualizadas.next([...this.provincias]);
       });
   }
 }
