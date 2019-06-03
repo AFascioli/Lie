@@ -20,6 +20,6 @@ const estudianteSchema = mongoose.Schema({
     fechaNacimiento: {type: Date, required: true},
     estadoCivil: String,
     telefonoFijo:Number,
-    adultoResponsable:null
+    adultoResponsable: String
 });
 module.exports= mongoose.model('Estudiantes', estudianteSchema);

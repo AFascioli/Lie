@@ -1,8 +1,7 @@
 const express = require("express");
 const bodyParser = require("body-parser");
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 const estudiantesRoutes = require("./routes/estudiante");
-const Estudiante = require('./models/estudiante');
 const provinciasRoutes = require("./routes/provincia");
 
 const app = express(); // Creo la app express
@@ -36,12 +35,8 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use("/estudiante", estudianteRoutes);
+app.use("/estudiante", estudiantesRoutes);
 
 app.use("/provincia", provinciasRoutes);
-
-app.get("", (req, res, next) );
-
-app.delete("", (req, res, next) );
 
 module.exports = app;

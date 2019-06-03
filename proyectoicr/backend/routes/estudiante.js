@@ -1,6 +1,6 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const Estudiante = require('../models/estudiante');
+const Estudiante = require("../models/estudiante");
 
 router.post("", (req, res, next) => {
   const estudiante = new Estudiante({
@@ -32,4 +32,4 @@ router.post("", (req, res, next) => {
   })
 })
 
-
+module.exports = router;
