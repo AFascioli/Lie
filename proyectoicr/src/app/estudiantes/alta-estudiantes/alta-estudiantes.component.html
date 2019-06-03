@@ -153,7 +153,7 @@
         <input type="text" placeholder="Provincia" matInput [matAutocomplete]="auto">
         <mat-autocomplete #auto="matAutocomplete">
           <mat-option  *ngFor="let provincia of provincias">
-            {{provincia}}
+            {{provincia.nombre}}
           </mat-option>
         </mat-autocomplete>
       </mat-form-field>

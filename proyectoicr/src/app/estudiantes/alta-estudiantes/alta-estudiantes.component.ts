@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { EstudiantesService } from '../estudiante.service';
 import { NgForm } from '@angular/forms';
+import { Provincia } from '../provincias.model';
 
 @Component({
   selector: 'app-alta-estudiantes',
@@ -9,12 +10,12 @@ import { NgForm } from '@angular/forms';
 })
 export class AltaEstudiantesComponent implements OnInit {
 
-  provincias: string[];
+  provincias: Provincia[];
 
   constructor(public servicio: EstudiantesService) { }
 
   ngOnInit() {
-    this.provincias = this.servicio.obtenerProvincias();
+    // this.provincias = this.servicio.obtenerProvincias();
   }
 
  onGuardar(form: NgForm) {

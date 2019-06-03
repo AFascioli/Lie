@@ -1,10 +1,13 @@
 import { Injectable } from '@angular/core';
 import { Estudiante } from './estudiante.model';
 import { HttpClient } from '@angular/common/http';
+import { Provincia } from './provincias.model';
 @Injectable ({
   providedIn: 'root'
 })
 export class EstudiantesService {
+  provincias: Provincia[] = [];
+
   constructor(public http: HttpClient) {}
 
   altaEstudiante(
@@ -27,7 +30,7 @@ export class EstudiantesService {
   fechaNacimiento: Date,
   estadoCivil: string,
   telefonoFijo: number,
-  adultoResponsable: []
+  adultoResponsable: string
   ) {
     const estudiante: Estudiante = {
     id: null,
@@ -58,10 +61,9 @@ export class EstudiantesService {
   }
 
   obtenerProvincias() {
-    this.http.get<{provincias: any}>('http://localhost:3000/provincia')
+    this.http.get<{provincias: Provincia[]}>('http://localhost:3000/provincia')
       .subscribe((response) => {
-        return response;
+        this.provincias = response.provincias;
       });
-    return ['1'];
   }
 }
