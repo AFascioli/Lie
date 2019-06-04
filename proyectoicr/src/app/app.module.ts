@@ -7,7 +7,9 @@ import { MatInputModule,
           MatFormFieldModule,
           MatNativeDateModule,
           MatAutocompleteModule,
-          MatRadioModule
+          MatRadioModule,
+          MatTableModule,
+          MatSidenavModule
         } from '@angular/material';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import {MatDatepickerModule} from '@angular/material/datepicker';
@@ -18,12 +20,14 @@ import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { EstudiantesService } from './estudiantes/estudiante.service';
 import { BuscarEstudiantesComponent } from './estudiantes/buscar-estudiantes/buscar-estudiantes.component';
+import { ListaEstudiantesComponent } from './estudiantes/lista-estudiantes/lista-estudiantes.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     AltaEstudiantesComponent,
-    BuscarEstudiantesComponent
+    BuscarEstudiantesComponent,
+    ListaEstudiantesComponent
   ],
   imports: [
     BrowserModule,
@@ -34,11 +38,13 @@ import { BuscarEstudiantesComponent } from './estudiantes/buscar-estudiantes/bus
     FormsModule,
     MatCardModule,
     MatFormFieldModule,
+    MatTableModule,
     HttpClientModule,
     MatDatepickerModule,
     MatNativeDateModule,
     MatAutocompleteModule,
-    MatRadioModule
+    MatRadioModule,
+    MatSidenavModule
   ],
   providers: [EstudiantesService],
   bootstrap: [AppComponent]
