@@ -21,13 +21,15 @@ import { HttpClientModule } from '@angular/common/http';
 import { EstudiantesService } from './estudiantes/estudiante.service';
 import { BuscarEstudiantesComponent } from './estudiantes/buscar-estudiantes/buscar-estudiantes.component';
 import { ListaEstudiantesComponent } from './estudiantes/lista-estudiantes/lista-estudiantes.component';
+import { MostrarEstudiantesComponent } from './estudiantes/mostrar-estudiantes/mostrar-estudiantes.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     AltaEstudiantesComponent,
     BuscarEstudiantesComponent,
-    ListaEstudiantesComponent
+    ListaEstudiantesComponent,
+    MostrarEstudiantesComponent
   ],
   imports: [
     BrowserModule,
