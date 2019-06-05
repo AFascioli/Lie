@@ -22,6 +22,7 @@ import { EstudiantesService } from './estudiantes/estudiante.service';
 import { BuscarEstudiantesComponent } from './estudiantes/buscar-estudiantes/buscar-estudiantes.component';
 import { ListaEstudiantesComponent } from './estudiantes/lista-estudiantes/lista-estudiantes.component';
 import { MostrarEstudiantesComponent } from './estudiantes/mostrar-estudiantes/mostrar-estudiantes.component';
+import { AppRoutingModule } from './app-routing.module';
 
 @NgModule({
   declarations: [
@@ -46,7 +47,8 @@ import { MostrarEstudiantesComponent } from './estudiantes/mostrar-estudiantes/m
     MatNativeDateModule,
     MatAutocompleteModule,
     MatRadioModule,
-    MatSidenavModule
+    MatSidenavModule,
+    AppRoutingModule
   ],
   providers: [EstudiantesService],
   bootstrap: [AppComponent]

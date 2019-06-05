@@ -1,4 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import { NgForm } from '@angular/forms';
+import { EstudiantesService } from '../estudiante.service';
+import { Estudiante } from '../estudiante.model';
 
 @Component({
   selector: 'app-buscar-estudiantes',
@@ -7,9 +10,15 @@ import { Component, OnInit } from '@angular/core';
 })
 export class BuscarEstudiantesComponent implements OnInit {
 
-  constructor() { }
+  estudiantes: Estudiante[] = [];
+
+  constructor(public servicio: EstudiantesService) { }
 
   ngOnInit() {
+
   }
 
+  OnBuscar(form: NgForm){
+    this.servicio.buscarEstudiantesDni(form.value.dni);
+  }
 }

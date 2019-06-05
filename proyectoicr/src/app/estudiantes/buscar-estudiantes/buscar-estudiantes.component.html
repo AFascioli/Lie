@@ -1,37 +1,41 @@
 <mat-card>
+<form #form="ngForm"  (submit)="OnBuscar(form)">
     <mat-radio-group aria-label="Select an option">
       <mat-radio-button value="1">Buscar por nombre y apellido</mat-radio-button>
       <mat-radio-button value="2">Buscar por DNI</mat-radio-button>
     </mat-radio-group>
-  <br/>
+    <br/>
+    <mat-form-field>
+      <input
+      matInput
+      name="apellido"
+      pattern="[A-Za-z- ]+"
+      minlength="2"
+      maxlength="30"
+      placeholder="Ingrese apellido"
+      type="text" />
+    </mat-form-field>
+    <br/>
+    <mat-form-field>
+      <input
+      matInput
+      name="nombre"
+      pattern="[A-Za-z- ]+"
+      minlength="2"
+      maxlength="30"
+      placeholder="Ingrese nombre"
+      type="text" />
+    </mat-form-field>
+    <br/>
   <mat-form-field>
     <input
     matInput
-    name="apellido"
-    pattern="[A-Za-z- ]+"
-    minlength="2"
-    maxlength="30"
-    placeholder="Ingrese apellido"
-    type="text" />
-  </mat-form-field>
-  <br/>
-  <mat-form-field>
-    <input
-    matInput
-    pattern="[A-Za-z- ]+"
-    minlength="2"
-    maxlength="30"
-    placeholder="Ingrese nombre"
-    type="text" />
-  </mat-form-field>
-  <br/>
-  <mat-form-field>
-    <input
-    matInput
+    name="dni"
     pattern="[0-9]+"
     maxlength="8"
     placeholder="Ingrese DNI" />
   </mat-form-field>
   <br/>
-  <button color="primary" mat-raised-button>Buscar</button>
+  <button color="primary" type="submit" mat-raised-button>Buscar</button>
+</form>
 </mat-card>

@@ -29,7 +29,15 @@ router.post("", (req, res, next) => {
     res.status(201).json({
       message: "Estudiante registrado correctamente!"
     });
-  })
-})
+  });
+});
+
+router.get("/dni/:dni", (req, res, next) => {
+  Estudiante.find({dni: req.params.dni}).then(documents => {
+    res.status(200).json({
+      estudiantes: documents
+    });
+  });
+});
 
 module.exports = router;

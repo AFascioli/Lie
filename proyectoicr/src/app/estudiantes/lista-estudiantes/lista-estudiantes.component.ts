@@ -1,15 +1,6 @@
 import { Component, OnInit } from "@angular/core";
-
-const estudiantes: any[] = [
-  { apellido: "Ponce", nombre: "Diego", dni: 39065840 },
-  { apellido: "Bargiano", nombre: "Florencia", dni: 3545840 },
-  { apellido: "Fascioli", nombre: "Agustin", dni: 39065842 },
-  { apellido: "a1", nombre: "n1", dni: 97023120 },
-  { apellido: "a2", nombre: "n2", dni: 34065840 },
-  { apellido: "a3", nombre: "n3", dni: 439065840 },
-  { apellido: "a4", nombre: "n4", dni: 12065840 },
-  { apellido: "a5", nombre: "n5", dni: 312065840 }
-];
+import { EstudiantesService } from '../estudiante.service';
+import { Estudiante } from '../estudiante.model';
 
 @Component({
   selector: "app-lista-estudiantes",
@@ -18,12 +9,18 @@ const estudiantes: any[] = [
 })
 export class ListaEstudiantesComponent implements OnInit {
   dniSeleccionado: number;
-  constructor() {}
+  estudiantes: Estudiante[] = [];
 
-  ngOnInit() {}
+  constructor(public servicio: EstudiantesService) {}
+
+  ngOnInit() {
+    this.servicio.getEstudiantesListener().subscribe(estudiantesBuscados =>{
+      this.estudiantes = estudiantesBuscados;
+    })
+  }
 
   displayedColumns: string[] = ["apellido", "nombre", "dni", "accion"];
-  dataSource = estudiantes;
+  dataSource = this.estudiantes;
 
   OnSelection(row) {
     this.dniSeleccionado = row.dni;
