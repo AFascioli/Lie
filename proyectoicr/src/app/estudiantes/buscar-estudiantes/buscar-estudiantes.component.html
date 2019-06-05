@@ -5,15 +5,32 @@
     </mat-radio-group>
   <br/>
   <mat-form-field>
-    <input matInput placeholder="Ingrese apellido" />
+    <input
+    matInput
+    name="apellido"
+    pattern="[A-Za-z- ]+"
+    minlength="2"
+    maxlength="30"
+    placeholder="Ingrese apellido"
+    type="text" />
   </mat-form-field>
   <br/>
   <mat-form-field>
-    <input matInput placeholder="Ingrese nombre" />
+    <input
+    matInput
+    pattern="[A-Za-z- ]+"
+    minlength="2"
+    maxlength="30"
+    placeholder="Ingrese nombre"
+    type="text" />
   </mat-form-field>
   <br/>
   <mat-form-field>
-    <input matInput placeholder="Ingrese DNI" />
+    <input
+    matInput
+    pattern="[0-9]+"
+    maxlength="8"
+    placeholder="Ingrese DNI" />
   </mat-form-field>
   <br/>
   <button color="primary" mat-raised-button>Buscar</button>
