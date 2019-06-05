@@ -19,8 +19,7 @@ export class ListaEstudiantesComponent implements OnInit {
     })
   }
 
-  displayedColumns: string[] = ["apellido", "nombre", "dni", "accion"];
-  dataSource = this.estudiantes;
+  displayedColumns: string[] = ["apellido", "nombre", "tipo", "numero", "accion"];
 
   OnSelection(row) {
     this.dniSeleccionado = row.dni;

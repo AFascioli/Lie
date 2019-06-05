@@ -32,8 +32,11 @@ router.post("", (req, res, next) => {
   });
 });
 
-router.get("/dni/:dni", (req, res, next) => {
-  Estudiante.find({dni: req.params.dni}).then(documents => {
+router.get("/documento", (req, res, next) => {
+  const tipo = req.query.tipo;
+  const numero = req.query.numero;
+  Estudiante.find({tipoDocumento: tipo, numeroDocumento: numero}).then(documents => {
+    console.log("Backend path "+req.headers+req.body);
     res.status(200).json({
       estudiantes: documents
     });

@@ -83,10 +83,11 @@ export class EstudiantesService {
       });
   }
 
-  buscarEstudiantesDni(dni: number){
-    let params = new HttpParams().set("dni", dni.toString());
-    this.http.get<{estudiantes: Estudiante[]}>('http://localhost:3000/estudiante', {params: params})
-      .subscribe((response)=>{
+  buscarEstudiantesDocumento(tipo: string, numero: number){
+    let params = new HttpParams().set("tipo", tipo).set("numero", numero.toString());
+    console.log("estudiante.service.ts-->buscarEstudiantesDocumento");
+    this.http.get<{estudiantes: Estudiante[]}>('http://localhost:3000/estudiante/documento/', {params: params})
+    .subscribe((response)=>{
         this.estudiantes = response.estudiantes;
         this.estudiantesBuscados.next([...this.estudiantes]);
       })

@@ -1,8 +1,8 @@
 <mat-card>
-<form #form="ngForm"  (submit)="OnBuscar(form)">
+<form #form="ngForm" (submit)="OnBuscar(form)">
     <mat-radio-group aria-label="Select an option">
       <mat-radio-button value="1">Buscar por nombre y apellido</mat-radio-button>
-      <mat-radio-button value="2">Buscar por DNI</mat-radio-button>
+      <mat-radio-button value="2">Buscar por documento</mat-radio-button>
     </mat-radio-group>
     <br/>
     <mat-form-field>
@@ -27,15 +27,34 @@
       type="text" />
     </mat-form-field>
     <br/>
+    <mat-form-field>
+      <mat-select
+        placeholder="Seleccione tipo de documento"
+        name="tipoDocumento"
+        ngModel
+        #tipoDocumento="ngModel"
+        matNativeControl
+      >
+        <mat-option value="DNI">DNI</mat-option>
+        <mat-option value="Libreta de Enrolamiento">Libreta de Enrolamiento</mat-option>
+        <mat-option value="Pasaporte">Pasaporte</mat-option>
+      </mat-select>
+    </mat-form-field>
+    <br />
   <mat-form-field>
     <input
     matInput
-    name="dni"
+    name="numeroDocumento"
+    ngModel
+    #numeroDocumento="ngModel"
     pattern="[0-9]+"
     maxlength="8"
-    placeholder="Ingrese DNI" />
+    placeholder="Ingrese número de documento" />
   </mat-form-field>
   <br/>
-  <button color="primary" type="submit" mat-raised-button>Buscar</button>
+  <button color="primary" routerLink="/buscar/lista" type="submit" mat-raised-button>Buscar</button>
 </form>
 </mat-card>
+<router-outlet></router-outlet>
+
+

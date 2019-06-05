@@ -9,8 +9,9 @@ import { MostrarEstudiantesComponent } from './estudiantes/mostrar-estudiantes/m
 const routes: Routes = [
   // { path: '', component:  },
   { path: 'alta', component: AltaEstudiantesComponent  },
-  { path: 'buscar', component: BuscarEstudiantesComponent  },
-  { path: 'listar', component: ListaEstudiantesComponent  },
+  { path: 'buscar', component: BuscarEstudiantesComponent, children: [
+    { path: 'lista', component: ListaEstudiantesComponent  }
+  ] },
   { path: 'mostrar', component: MostrarEstudiantesComponent  }
 ];
 

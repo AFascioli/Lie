@@ -1,12 +1,4 @@
 <mat-card>
-  <mat-select placeholder="Seleccione un nivel" required>
-    <mat-option value="nivelInicial" selected>Nivel Inicial</mat-option>
-    <mat-option value="nivelPrimario">Nivel Primario</mat-option>
-    <mat-option value="nivelSecundario">Nivel Secundario</mat-option>
-  </mat-select>
-</mat-card>
-
-<mat-card>
   <form #form="ngForm" submit="onGuardar(form)">
     <mat-form-field>
       <input
@@ -75,7 +67,6 @@
         #cuil="ngModel"
         matInput
         placeholder="Ingrese el número de CUIL"
-        required
       />
     </mat-form-field>
     <br />
@@ -129,7 +120,6 @@
           matInput
           placeholder="Ingrese piso"
           type="text"
-          required
         />
       </mat-form-field>
       <br />
@@ -141,7 +131,6 @@
           matInput
           placeholder="Ingrese departamento"
           type="text"
-          required
         />
       </mat-form-field>
       <br />
@@ -190,7 +179,6 @@
           matInput
           placeholder="Ingrese código postal"
           type="text"
-          required
         />
       </mat-form-field>
       <br />
@@ -209,7 +197,6 @@
           ngModel
           #nacionalidad="ngModel"
           matNativeControl
-          required
         >
           <mat-option value="nacionalidad1">Nacionalidad1</mat-option>
           <mat-option value="nacionalidad2">Nacionalidad2</mat-option>
@@ -223,7 +210,6 @@
           ngModel
           #provinciaNac="ngModel"
           matNativeControl
-          required
         >
           <mat-option value="provNac1">Prov1</mat-option>
           <mat-option value="provNac2">Prov2</mat-option>
@@ -237,7 +223,6 @@
           ngModel
           #localidadNac="ngModel"
           matNativeControl
-          required
         >
           <mat-option value="localidadNac1">Localidad1</mat-option>
           <mat-option value="localidadNac2">Localidad2</mat-option>
@@ -252,7 +237,6 @@
         ngModel
         #estadoCivil="ngModel"
         matNativeControl
-        required
       >
         <mat-option value="soltero">Soltero/a</mat-option>
         <mat-option value="casado">Casado/a</mat-option>

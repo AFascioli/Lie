@@ -19,6 +19,7 @@ export class BuscarEstudiantesComponent implements OnInit {
   }
 
   OnBuscar(form: NgForm){
-    this.servicio.buscarEstudiantesDni(form.value.dni);
+    console.log("buscar-estudiantes.component.ts-->OnBuscar() "+ form.value.tipoDocumento+ " " + form.value.numeroDocumento);
+    this.servicio.buscarEstudiantesDocumento(form.value.tipoDocumento, form.value.numeroDocumento);
   }
 }
