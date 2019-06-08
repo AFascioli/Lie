@@ -3,9 +3,9 @@
     <mat-form-field>
       <input
         name="apellido"
-        pattern="[A-Za-z- ]+"
+        pattern="[A-Za-z-á-Á-é-É-í-Í-ó-Ó-ú-Ú ]+"
         minlength="2"
-        maxlength="30"
+        maxlength="40"
         ngModel
         #apellido="ngModel"
         matInput
@@ -18,9 +18,9 @@
     <mat-form-field>
       <input
         name="nombre"
-        pattern="[A-Za-z- ]+"
+        pattern="[A-Za-z-á-Á-é-É-í-Í-ó-Ó-ú-Ú ]+"
         minlength="2"
-        maxlength="30"
+        maxlength="40"
         ngModel
         #nombre="ngModel"
         matInput
@@ -45,6 +45,7 @@
       </mat-select>
     </mat-form-field>
     <br />
+    <!-- Ver de hacer el maxlength según los tipos de documento que pongamos -->
     <mat-form-field>
       <input
         name="nroDocumento"
@@ -88,7 +89,7 @@
       <mat-form-field>
         <input
           name="calle"
-          pattern="[A-Za-z- ]+"
+          pattern="[A-Za-z-0-9 ]+"
           minlength="2"
           maxlength="30"
           ngModel
@@ -103,6 +104,7 @@
       <mat-form-field>
         <input
           name="nroCalle"
+          pattern="[0-9]+"
           maxlength="5"
           ngModel
           #nroCalle="ngModel"
@@ -148,14 +150,14 @@
         </mat-select>
       </mat-form-field>
       <br />
-      <mat-form-field>
+      <!-- <mat-form-field>
         <input type="text" placeholder="Provincia" matInput [matAutocomplete]="auto">
         <mat-autocomplete #auto="matAutocomplete">
           <mat-option  *ngFor="let provincia of provincias" [value]="provincia.nombre">
             {{provincia.nombre}}
           </mat-option>
         </mat-autocomplete>
-      </mat-form-field>
+      </mat-form-field> -->
       <br/>
       <mat-form-field>
         <mat-select
@@ -185,7 +187,7 @@
     </div>
     <div class="nacionalidad">
       <mat-form-field>
-        <input matInput [matDatepicker]="picker" placeholder="Seleccione fecha de nacimiento" disabled>
+        <input matInput [max]="maxDate" [matDatepicker]="picker" placeholder="Seleccione fecha de nacimiento" disabled>
         <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
         <mat-datepicker #picker startView="year" disabled="false"></mat-datepicker>
       </mat-form-field>

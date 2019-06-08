@@ -3,6 +3,8 @@ import { EstudiantesService } from '../estudiante.service';
 import { NgForm } from '@angular/forms';
 import { Provincia } from '../provincias.model';
 import { Subscription } from 'rxjs';
+import {DateAdapter} from '@angular/material';
+
 
 @Component({
   selector: 'app-alta-estudiantes',
@@ -10,11 +12,14 @@ import { Subscription } from 'rxjs';
   styleUrls: ['./alta-estudiantes.component.css']
 })
 export class AltaEstudiantesComponent implements OnInit, OnDestroy {
+  maxDate = new Date();
 
   provincias: Provincia[] = [];
   suscripcion: Subscription;
 
-  constructor(public servicio: EstudiantesService) { }
+  constructor(public servicio: EstudiantesService, private dateAdapter: DateAdapter<Date>) {
+    this.dateAdapter.setLocale('es');
+   }
 
   // Cuando se inicializa el componente se cargar las provincias.
   ngOnInit() {
