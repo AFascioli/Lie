@@ -3,6 +3,7 @@ const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 const estudiantesRoutes = require("./routes/estudiante");
 const provinciasRoutes = require("./routes/provincia");
+const localidadesRoutes = require("./routes/localidad");
 
 const app = express(); // Creo la app express
 
@@ -39,4 +40,5 @@ app.use("/estudiante", estudiantesRoutes);
 
 app.use("/provincia", provinciasRoutes);
 
+app.use("/localidad", localidadesRoutes);
 module.exports = app;

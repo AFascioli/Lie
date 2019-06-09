@@ -1,4 +1,4 @@
-<mat-card>
+<mat-card *ngIf="estudiantes.length > 0">
 <table mat-table [dataSource]="estudiantes" class="mat-elevation-z8">
 
   <ng-container matColumnDef="apellido">
@@ -32,4 +32,7 @@
   <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
 
 </table>
+</mat-card>
+<mat-card *ngIf="estudiantes.length <=0 ">
+<p>No se encontraron estudiantes</p>
 </mat-card>

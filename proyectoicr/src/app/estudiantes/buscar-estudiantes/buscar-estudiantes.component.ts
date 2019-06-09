@@ -3,6 +3,7 @@ import { NgForm } from '@angular/forms';
 import { EstudiantesService } from '../estudiante.service';
 import { Estudiante } from '../estudiante.model';
 
+
 @Component({
   selector: 'app-buscar-estudiantes',
   templateUrl: './buscar-estudiantes.component.html',
@@ -11,6 +12,7 @@ import { Estudiante } from '../estudiante.model';
 export class BuscarEstudiantesComponent implements OnInit {
 
   estudiantes: Estudiante[] = [];
+  buscarPorNomYAp= true;
 
   constructor(public servicio: EstudiantesService) { }
 
@@ -18,8 +20,21 @@ export class BuscarEstudiantesComponent implements OnInit {
 
   }
 
+  // Si el formulario no es valido no hace nada, luego controla que tipo de busqueda es
   OnBuscar(form: NgForm){
-    console.log("buscar-estudiantes.component.ts-->OnBuscar() "+ form.value.tipoDocumento+ " " + form.value.numeroDocumento);
-    this.servicio.buscarEstudiantesDocumento(form.value.tipoDocumento, form.value.numeroDocumento);
+    if(!form.invalid){
+      if(this.buscarPorNomYAp){
+        this.servicio.buscarEstudiantesNombreApellido(form.value.nombre, form.value.apellido);
+      }else{
+        this.servicio.buscarEstudiantesDocumento(form.value.tipoDocumento, form.value.numeroDocumento);
+      }
+    }
+
+  }
+
+  // Cuando el usuario cambia de opcion de busqueda, deshabilita los inputs segun corresponda
+  DeshabilitarInputs(form: NgForm){
+    this.buscarPorNomYAp= !this.buscarPorNomYAp;
+    form.resetForm();
   }
 }

@@ -39,9 +39,11 @@
         matNativeControl
         required
       >
-        <mat-option value="dni">DNI</mat-option>
-        <mat-option value="libretaEnrolamiento">Libreta de Enrolamiento</mat-option>
-        <mat-option value="pasaporte">Pasaporte</mat-option>
+        <mat-option value="DNI">DNI</mat-option>
+        <mat-option value="Cedula de Identidad">Cédula de Identidad</mat-option>
+        <mat-option value="Libreta de Enrolamiento">Libreta de Enrolamiento</mat-option>
+        <mat-option value="Libreta Civica">Libreta Cívica</mat-option>
+        <mat-option value="Pasaporte">Pasaporte</mat-option>
       </mat-select>
     </mat-form-field>
     <br />
@@ -145,15 +147,16 @@
           matNativeControl
           required
         >
-          <mat-option value="prov1">Prov1</mat-option>
-          <mat-option value="prov2">Prov2</mat-option>
+        <mat-option (onSelectionChange)="FiltrarLocalidades(provincia.id)" *ngFor="let provincia of provincias" [value]="provincia.nombre">
+          {{provincia.nombre}}
+        </mat-option>
         </mat-select>
       </mat-form-field>
-      <br />
-      <!-- <mat-form-field>
-        <input type="text" placeholder="Provincia" matInput [matAutocomplete]="auto">
+      <!-- <br />
+      <mat-form-field>
+        <input ngModel #provinciaSel="ngModel" (onselects)="FiltrarLocalidades(form)" type="text" placeholder="Provincia" matInput [matAutocomplete]="auto">
         <mat-autocomplete #auto="matAutocomplete">
-          <mat-option  *ngFor="let provincia of provincias" [value]="provincia.nombre">
+          <mat-option *ngFor="let provincia of provincias" [value]="provincia.nombre">
             {{provincia.nombre}}
           </mat-option>
         </mat-autocomplete>
@@ -168,9 +171,11 @@
           matNativeControl
           required
         >
-          <mat-option value="localidad1">Localidad1</mat-option>
-          <mat-option value="localidad2">Localidad2</mat-option>
+        <mat-option *ngFor="let localidad of localidadesFiltradas" [value]="localidad.nombre">
+          {{localidad.nombre}}
+        </mat-option>
         </mat-select>
+
       </mat-form-field>
       <br />
       <mat-form-field>

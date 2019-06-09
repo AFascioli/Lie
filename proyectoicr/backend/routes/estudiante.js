@@ -35,12 +35,21 @@ router.post("", (req, res, next) => {
 router.get("/documento", (req, res, next) => {
   const tipo = req.query.tipo;
   const numero = req.query.numero;
+  console.log(tipo, numero);
   Estudiante.find({tipoDocumento: tipo, numeroDocumento: numero}).then(documents => {
-    console.log("Backend path "+req.headers+req.body);
     res.status(200).json({
       estudiantes: documents
     });
   });
 });
 
+router.get("/nombreyapellido", (req, res, next) => {
+  const nombre = req.query.nombre;
+  const apellido = req.query.apellido;
+  Estudiante.find({nombre: nombre, apellido: apellido}).then(documents => {
+    res.status(200).json({
+      estudiantes: documents
+    });
+  });
+});
 module.exports = router;

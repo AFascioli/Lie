@@ -1,11 +1,11 @@
 const express = require("express");
 const router = express.Router();
-const Provincia = require("../models/provincia");
+const Localidad = require("../models/localidad");
 
 router.get("", (req, res, next) => {
-  Provincia.find().then(documents => {
+  Localidad.find().then(documents => {
     res.status(200).json({
-      provincias: documents
+      localidades: documents
     });
   });
 });

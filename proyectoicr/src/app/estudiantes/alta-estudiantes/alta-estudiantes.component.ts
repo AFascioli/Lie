@@ -2,6 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { EstudiantesService } from '../estudiante.service';
 import { NgForm } from '@angular/forms';
 import { Provincia } from '../provincias.model';
+import { Localidad } from '../localidades.model';
 import { Subscription } from 'rxjs';
 import {DateAdapter} from '@angular/material';
 
@@ -12,9 +13,11 @@ import {DateAdapter} from '@angular/material';
   styleUrls: ['./alta-estudiantes.component.css']
 })
 export class AltaEstudiantesComponent implements OnInit, OnDestroy {
-  maxDate = new Date();
 
+  maxDate = new Date();
   provincias: Provincia[] = [];
+  localidades:Localidad[] = [];
+  localidadesFiltradas: Localidad[] = [];
   suscripcion: Subscription;
 
   constructor(public servicio: EstudiantesService, private dateAdapter: DateAdapter<Date>) {
@@ -26,6 +29,10 @@ export class AltaEstudiantesComponent implements OnInit, OnDestroy {
     this.servicio.getProvincias();
     this.suscripcion = this.servicio.getProvinciasListener().subscribe(provinciasActualizadas => {
       this.provincias = provinciasActualizadas;
+    });
+    this.servicio.getLocalidades();
+    this.suscripcion = this.servicio.getLocalidadesListener().subscribe(localidadesActualizadas => {
+      this.localidades = localidadesActualizadas;
     });
   }
 
@@ -58,5 +65,11 @@ export class AltaEstudiantesComponent implements OnInit, OnDestroy {
     null
   );
   form.resetForm();
+ }
+
+ FiltrarLocalidades(idProvincia: number){
+  this.localidadesFiltradas= [...this.localidades];
+  this.localidadesFiltradas= this.localidadesFiltradas.filter(localidad => localidad.id_provincia===idProvincia);
+  console.log("Localidades filtradas: "+this.localidadesFiltradas);
  }
 }

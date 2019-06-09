@@ -3,14 +3,17 @@ import { Estudiante } from './estudiante.model';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Provincia } from './provincias.model';
 import { Subject } from 'rxjs';
+import { Localidad } from './localidades.model';
 
 @Injectable ({
   providedIn: 'root'
 })
 export class EstudiantesService {
   provincias: Provincia[] = [];
+  localidades: Localidad[] = [];
   estudiantes: Estudiante[] = [];
   private provinciasActualizadas = new Subject<Provincia[]>();
+  private localidadesActualizadas= new Subject<Localidad[]>();
   private estudiantesBuscados = new Subject<Estudiante[]>();
 
   constructor(public http: HttpClient) {}
@@ -65,23 +68,36 @@ export class EstudiantesService {
       });
   }
 
-  // Metodo para obtener un listener, cosa que de los componentes puedan obtener info actualizada
-  getProvinciasListener() {
-    return this.provinciasActualizadas.asObservable();
-  }
 
   getEstudiantesListener(){
     return this.estudiantesBuscados.asObservable();
   }
 
+  // Metodo para obtener un listener, cosa que de los componentes puedan obtener info actualizada
+  getProvinciasListener() {
+    return this.provinciasActualizadas.asObservable();
+  }
+
   // Obtenemos las provincias de la bd y actualizamos a los componentes con el observador
   getProvincias() {
     this.http.get<{provincias: Provincia[]}>('http://localhost:3000/provincia')
-      .subscribe((response) => {
-        this.provincias = response.provincias;
-        this.provinciasActualizadas.next([...this.provincias]);
-      });
+    .subscribe((response) => {
+      this.provincias = response.provincias;
+      this.provinciasActualizadas.next([...this.provincias]);
+    });
   }
+
+  getLocalidadesListener(){
+    return this.localidadesActualizadas.asObservable();
+    }
+
+  getLocalidades() {
+    this.http.get<{localidades: Localidad[]}>('http://localhost:3000/localidad')
+      .subscribe((response) => {
+        this.localidades = response.localidades;
+        this.localidadesActualizadas.next([...this.localidades]);
+      });
+   }
 
   buscarEstudiantesDocumento(tipo: string, numero: number){
     let params = new HttpParams().set("tipo", tipo).set("numero", numero.toString());
@@ -94,7 +110,8 @@ export class EstudiantesService {
   }
 
   buscarEstudiantesNombreApellido(nombre: string, apellido: string){
-    this.http.get<{estudiantes: Estudiante[]}>('http://localhost:3000/estudiante/?apellido='+apellido+'&nombre='+nombre)
+    let params = new HttpParams().set("nombre", nombre).set("apellido", apellido);
+    this.http.get<{estudiantes: Estudiante[]}>('http://localhost:3000/estudiante/nombreyapellido', {params: params})
       .subscribe((response)=>{
         this.estudiantes = response.estudiantes;
         this.estudiantesBuscados.next([...this.estudiantes]);
