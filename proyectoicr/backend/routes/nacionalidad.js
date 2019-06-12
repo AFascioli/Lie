@@ -1,12 +1,13 @@
 const express = require("express");
 const router = express.Router();
-const Provincia = require("../models/provincia");
+const Nacionalidad = require("../models/nacionalidad");
 
 router.get("", (req, res, next) => {
-  Provincia.find().sort({nombre: 'asc'}).then(documents => {
+  Nacionalidad.find().then(documents => {
     res.status(200).json({
-      provincias: documents
+      nacionalidades: documents
     });
+    console.log("Documentos: "+documents)
   });
 });
 

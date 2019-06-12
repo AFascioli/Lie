@@ -147,20 +147,14 @@
           matNativeControl
           required
         >
-        <mat-option (onSelectionChange)="FiltrarLocalidades(provincia.id)" *ngFor="let provincia of provincias" [value]="provincia.nombre">
+        <mat-option
+          (onSelectionChange)="FiltrarLocalidades(provincia.id)"
+          *ngFor="let provincia of provincias"
+          [value]="provincia.nombre">
           {{provincia.nombre}}
         </mat-option>
         </mat-select>
       </mat-form-field>
-      <!-- <br />
-      <mat-form-field>
-        <input ngModel #provinciaSel="ngModel" (onselects)="FiltrarLocalidades(form)" type="text" placeholder="Provincia" matInput [matAutocomplete]="auto">
-        <mat-autocomplete #auto="matAutocomplete">
-          <mat-option *ngFor="let provincia of provincias" [value]="provincia.nombre">
-            {{provincia.nombre}}
-          </mat-option>
-        </mat-autocomplete>
-      </mat-form-field> -->
       <br/>
       <mat-form-field>
         <mat-select
@@ -171,7 +165,9 @@
           matNativeControl
           required
         >
-        <mat-option *ngFor="let localidad of localidadesFiltradas" [value]="localidad.nombre">
+        <mat-option
+          *ngFor="let localidad of localidadesFiltradas"
+          [value]="localidad.nombre">
           {{localidad.nombre}}
         </mat-option>
         </mat-select>
@@ -205,8 +201,11 @@
           #nacionalidad="ngModel"
           matNativeControl
         >
-          <mat-option value="nacionalidad1">Nacionalidad1</mat-option>
-          <mat-option value="nacionalidad2">Nacionalidad2</mat-option>
+          <mat-option
+            *ngFor="let nacionalidad of nacionalidades"
+            [value]="nacionalidad.name">
+            {{nacionalidad.name}}
+          </mat-option>
         </mat-select>
       </mat-form-field>
       <br />
@@ -218,8 +217,12 @@
           #provinciaNac="ngModel"
           matNativeControl
         >
-          <mat-option value="provNac1">Prov1</mat-option>
-          <mat-option value="provNac2">Prov2</mat-option>
+          <mat-option
+          (onSelectionChange)="FiltrarLocalidadesNac(provincia.id)"
+          *ngFor="let provincia of provincias"
+          [value]="provincia.nombre">
+          {{provincia.nombre}}
+          </mat-option>
         </mat-select>
       </mat-form-field>
       <br />
@@ -229,10 +232,12 @@
           name="localidadNac"
           ngModel
           #localidadNac="ngModel"
-          matNativeControl
-        >
-          <mat-option value="localidadNac1">Localidad1</mat-option>
-          <mat-option value="localidadNac2">Localidad2</mat-option>
+          matNativeControl>
+          <mat-option
+          *ngFor="let localidad of localidadesFiltradasNac"
+          [value]="localidad.nombre">
+          {{localidad.nombre}}
+        </mat-option>
         </mat-select>
       </mat-form-field>
       <br />

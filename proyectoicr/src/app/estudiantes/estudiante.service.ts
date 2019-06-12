@@ -4,6 +4,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Provincia } from './provincias.model';
 import { Subject } from 'rxjs';
 import { Localidad } from './localidades.model';
+import { Nacionalidad } from './nacionalidades.model';
 
 @Injectable ({
   providedIn: 'root'
@@ -12,8 +13,10 @@ export class EstudiantesService {
   provincias: Provincia[] = [];
   localidades: Localidad[] = [];
   estudiantes: Estudiante[] = [];
+  nacionalidades: Nacionalidad[] = [];
   private provinciasActualizadas = new Subject<Provincia[]>();
   private localidadesActualizadas= new Subject<Localidad[]>();
+  private nacionalidadesActualizadas= new Subject<Nacionalidad[]>();
   private estudiantesBuscados = new Subject<Estudiante[]>();
 
   constructor(public http: HttpClient) {}
@@ -92,10 +95,23 @@ export class EstudiantesService {
     }
 
   getLocalidades() {
-    this.http.get<{localidades: Localidad[]}>('http://localhost:3000/localidad')
+      this.http.get<{localidades: Localidad[]}>('http://localhost:3000/localidad')
+        .subscribe((response) => {
+          this.localidades = response.localidades;
+          this.localidadesActualizadas.next([...this.localidades]);
+        });
+    }
+
+    getNacionalidadesListener(){
+     return this.nacionalidadesActualizadas.asObservable();
+   }
+
+  getNacionalidades() {
+    this.http.get<{nacionalidades: Nacionalidad[]}>('http://localhost:3000/nacionalidad')
       .subscribe((response) => {
-        this.localidades = response.localidades;
-        this.localidadesActualizadas.next([...this.localidades]);
+        this.nacionalidades = response.nacionalidades;
+        this.nacionalidadesActualizadas.next([...this.nacionalidades]);
+        console.log("Nacionalidades: "+this.nacionalidades);
       });
    }
 

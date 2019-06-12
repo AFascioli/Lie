@@ -4,6 +4,7 @@ const mongoose = require("mongoose");
 const estudiantesRoutes = require("./routes/estudiante");
 const provinciasRoutes = require("./routes/provincia");
 const localidadesRoutes = require("./routes/localidad");
+const nacionalidadesRoutes = require("./routes/nacionalidad");
 
 const app = express(); // Creo la app express
 
@@ -41,4 +42,7 @@ app.use("/estudiante", estudiantesRoutes);
 app.use("/provincia", provinciasRoutes);
 
 app.use("/localidad", localidadesRoutes);
+
+app.use("/nacionalidad", nacionalidadesRoutes);
+
 module.exports = app;
