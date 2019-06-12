@@ -1,9 +1,10 @@
 <mat-card>
+    <meta charset="utf-8" />
   <form #form="ngForm" (submit)="onGuardar(form)">
     <mat-form-field>
-      <!--pattern="[A-Za-z-á-Á-é-É-í-Í-ó-Ó-ú-Ú ]+"-->
       <input
         name="apellido"
+        pattern="[A-Za-záéíóúÁÉÍÓÚ]+"
         minlength="2"
         maxlength="40"
         ngModel
@@ -16,8 +17,8 @@
     </mat-form-field>
     <br />
     <mat-form-field>
-      <!-- pattern="[A-Za-z-á-Á-é-É-í-Í-ó-Ó-ú-Ú ]+" -->
       <input
+        pattern="[A-Za-záéíóúÁÉÍÓÚ]+"
         name="nombre"
         minlength="2"
         maxlength="40"
@@ -53,13 +54,14 @@
     -->
     <mat-form-field>
       <input
-      name="nroDocumento"
-      maxlength="8"
-      pattern="[0-9]+"
-      ngModel
+        name="nroDocumento"
+        maxlength="8"
+        pattern="[0-9]+"
+        ngModel
         #nroDocumento="ngModel"
         matInput
         placeholder="Ingrese el número de documento"
+        type="number"
         required
       />
     </mat-form-field>
@@ -72,6 +74,7 @@
         ngModel
         #cuil="ngModel"
         matInput
+        type="number"
         placeholder="Ingrese el número de CUIL"
       />
     </mat-form-field>
@@ -92,9 +95,9 @@
     <br />
     <div class="domicilio">
       <mat-form-field>
-        <!-- pattern="[A-Za-z-0-9 ]+" -->
         <input
           name="calle"
+          pattern="[\w]+"
           minlength="2"
           maxlength="30"
           ngModel
@@ -114,6 +117,7 @@
           ngModel
           #nroCalle="ngModel"
           matInput
+          type="number"
           placeholder="Ingrese número"
           required
         />
@@ -122,6 +126,7 @@
       <mat-form-field>
         <input
           name="piso"
+          pattern="[\w]+"
           ngModel
           #piso="ngModel"
           matInput
@@ -136,6 +141,7 @@
           ngModel
           #departamento="ngModel"
           matInput
+          pattern="[A-Za-záéíóúÁÉÍÓÚ]+"
           placeholder="Ingrese departamento"
           type="text"
         />
@@ -185,7 +191,7 @@
           #codigoPostal="ngModel"
           matInput
           placeholder="Ingrese código postal"
-          type="text"
+          type="number"
         />
       </mat-form-field>
       <br />
@@ -277,15 +283,15 @@
     </mat-form-field>
     <br />
     <mat-form-field>
-      <!-- pattern="[0-9]{3}-[0-9]{2}-[0-9]{3}" -->
       <input
         matInput
         name="telefono"
+        pattern="[0-9]{10}"
         ngModel
         #telefono="ngModel"
         placeholder="Ingrese número de teléfono"
-        type="tel"
-      />
+        type="number"
+        />
     </mat-form-field>
     <br />
     <button mat-raised-button>Registrar Adulto responsable</button>

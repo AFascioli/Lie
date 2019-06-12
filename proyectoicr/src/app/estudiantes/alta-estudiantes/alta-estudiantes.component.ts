@@ -7,7 +7,6 @@ import { Subscription } from 'rxjs';
 import { DateAdapter } from '@angular/material';
 import { Nacionalidad } from '../nacionalidades.model';
 
-
 @Component({
   selector: 'app-alta-estudiantes',
   templateUrl: './alta-estudiantes.component.html',
@@ -39,7 +38,7 @@ export class AltaEstudiantesComponent implements OnInit, OnDestroy {
     });
     // this.servicio.getNacionalidades();
     // this.suscripcion = this.servicio.getNacionalidadesListener().subscribe(nacionalidadesActualizadas => {
-    //   this.nacionalidades = nacionalidadesActualizadas;
+    // this.nacionalidades = nacionalidadesActualizadas;
     // });
   }
 
@@ -50,9 +49,8 @@ export class AltaEstudiantesComponent implements OnInit, OnDestroy {
 
  onGuardar(form: NgForm) {
    if(form.invalid){
-    console.log("Form invalid");
+    console.log("Invalid Form");
    }else{
-     console.log("fechaNac: " + form.value.fechaNac + " ; prov: " + form.value.provincia);
      this.servicio.altaEstudiante(
        form.value.apellido,
        form.value.nombre,
@@ -68,7 +66,7 @@ export class AltaEstudiantesComponent implements OnInit, OnDestroy {
        form.value.localidad,
        form.value.codigoPostal,
        "NacionalidaTest",
-      //  form.value.nacionalidad,
+      //form.value.nacionalidad,
        form.value.localidadNac,
        form.value.provinciaNac,
        form.value.fechaNac,
@@ -76,7 +74,7 @@ export class AltaEstudiantesComponent implements OnInit, OnDestroy {
        form.value.telefono,
        "AdultoTest"
        );
-      //  form.resetForm();
+      //form.resetForm();
       }
  }
 

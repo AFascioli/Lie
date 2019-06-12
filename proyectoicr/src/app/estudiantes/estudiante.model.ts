@@ -1,6 +1,5 @@
 // id esta definido por mongo
 export interface Estudiante {
-  id: string;
   apellido: string;
   nombre: string;
   tipoDocumento: string;

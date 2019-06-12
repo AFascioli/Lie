@@ -44,7 +44,6 @@ export class EstudiantesService {
   adultoResponsable: string
   ) {
     const estudiante: Estudiante = {
-    id: null,
     apellido,
     nombre,
     tipoDocumento,
