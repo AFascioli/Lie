@@ -38,7 +38,7 @@ export class EstudiantesService {
   nacionalidad: string,
   provinciaNacimiento: string,
   localidadNacimiento: string,
-  fechaNacimiento: Date,
+  fechaNacimiento: string,
   estadoCivil: string,
   telefonoFijo: number,
   adultoResponsable: string
@@ -65,12 +65,12 @@ export class EstudiantesService {
     estadoCivil,
     telefonoFijo,
     adultoResponsable };
+    console.log(estudiante);
     this.http.post<{message: string}>('http://localhost:3000/estudiante', estudiante)
       .subscribe((response) => {
         console.log(response);
       });
   }
-
 
   getEstudiantesListener(){
     return this.estudiantesBuscados.asObservable();

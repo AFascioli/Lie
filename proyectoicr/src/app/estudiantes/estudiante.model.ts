@@ -17,7 +17,7 @@ export interface Estudiante {
   nacionalidad: string;
   provinciaNacimiento: string;
   localidadNacimiento: string;
-  fechaNacimiento: Date;
+  fechaNacimiento: string;
   estadoCivil: string;
   telefonoFijo: number;
   adultoResponsable: string;

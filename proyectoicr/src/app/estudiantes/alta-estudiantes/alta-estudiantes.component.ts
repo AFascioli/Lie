@@ -4,7 +4,7 @@ import { NgForm } from '@angular/forms';
 import { Provincia } from '../provincias.model';
 import { Localidad } from '../localidades.model';
 import { Subscription } from 'rxjs';
-import {DateAdapter} from '@angular/material';
+import { DateAdapter } from '@angular/material';
 import { Nacionalidad } from '../nacionalidades.model';
 
 
@@ -37,10 +37,10 @@ export class AltaEstudiantesComponent implements OnInit, OnDestroy {
     this.suscripcion = this.servicio.getLocalidadesListener().subscribe(localidadesActualizadas => {
       this.localidades = localidadesActualizadas;
     });
-    this.servicio.getNacionalidades();
-    this.suscripcion = this.servicio.getNacionalidadesListener().subscribe(nacionalidadesActualizadas => {
-      this.nacionalidades = nacionalidadesActualizadas;
-    });
+    // this.servicio.getNacionalidades();
+    // this.suscripcion = this.servicio.getNacionalidadesListener().subscribe(nacionalidadesActualizadas => {
+    //   this.nacionalidades = nacionalidadesActualizadas;
+    // });
   }
 
   // Cuando se destruye el componente se eliminan las suscripciones.
@@ -50,13 +50,14 @@ export class AltaEstudiantesComponent implements OnInit, OnDestroy {
 
  onGuardar(form: NgForm) {
    if(form.invalid){
-
+    console.log("Form invalid");
    }else{
+     console.log("fechaNac: " + form.value.fechaNac + " ; prov: " + form.value.provincia);
      this.servicio.altaEstudiante(
        form.value.apellido,
        form.value.nombre,
-       form.value.tipoDoc,
-       form.value.nroDoc,
+       form.value.tipoDocumento,
+       form.value.nroDocumento,
        form.value.cuil,
        form.value.sexo,
        form.value.calle,
@@ -66,15 +67,16 @@ export class AltaEstudiantesComponent implements OnInit, OnDestroy {
        form.value.provincia,
        form.value.localidad,
        form.value.codigoPostal,
-       form.value.nacionalidad,
+       "NacionalidaTest",
+      //  form.value.nacionalidad,
        form.value.localidadNac,
        form.value.provinciaNac,
        form.value.fechaNac,
        form.value.estadoCivil,
        form.value.telefono,
-       null
+       "AdultoTest"
        );
-       form.resetForm();
+      //  form.resetForm();
       }
  }
 

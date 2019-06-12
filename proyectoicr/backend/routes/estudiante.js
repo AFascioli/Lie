@@ -25,11 +25,13 @@ router.post("", (req, res, next) => {
     telefonoFijo:req.body.telefonoFijo,
     adultoResponsable:"null",
   });
+  console.log(estudiante.json);
   estudiante.save().then(()=> {
     res.status(201).json({
       message: "Estudiante registrado correctamente!"
     });
-  });
+  })
+  .catch(err => console.error());
 });
 
 router.get("/documento", (req, res, next) => {
