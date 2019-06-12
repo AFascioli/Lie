@@ -15,12 +15,12 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import {MatDatepickerModule} from '@angular/material/datepicker';
 
 import { AppComponent } from './app.component';
-import { AltaEstudiantesComponent } from './estudiantes/alta-estudiantes/alta-estudiantes.component';
+import { AltaEstudiantesComponent, DialogoPopupComponent } from './estudiantes/alta-estudiantes/alta-estudiantes.component';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { EstudiantesService } from './estudiantes/estudiante.service';
 import { BuscarEstudiantesComponent } from './estudiantes/buscar-estudiantes/buscar-estudiantes.component';
-import { ListaEstudiantesComponent } from './estudiantes/lista-estudiantes/lista-estudiantes.component';
+import { ListaEstudiantesComponent, MostrarPopupComponent } from './estudiantes/lista-estudiantes/lista-estudiantes.component';
 import { MostrarEstudiantesComponent } from './estudiantes/mostrar-estudiantes/mostrar-estudiantes.component';
 import { AppRoutingModule } from './app-routing.module';
 
@@ -30,8 +30,12 @@ import { AppRoutingModule } from './app-routing.module';
     AltaEstudiantesComponent,
     BuscarEstudiantesComponent,
     ListaEstudiantesComponent,
-    MostrarEstudiantesComponent
+    MostrarEstudiantesComponent,
+    DialogoPopupComponent,
+    MostrarPopupComponent
   ],
+  //entryComponents declara los componentes que se generan dinamicamente dentro de otros.
+  entryComponents: [DialogoPopupComponent, MostrarPopupComponent],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,

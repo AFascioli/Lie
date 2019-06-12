@@ -8,7 +8,7 @@ import { MostrarEstudiantesComponent } from './estudiantes/mostrar-estudiantes/m
 
 const routes: Routes = [
   // { path: '', component:  },
-  { path: 'alta', component: AltaEstudiantesComponent  },
+  { path: 'alta', component: AltaEstudiantesComponent },
   { path: 'buscar', component: BuscarEstudiantesComponent, children: [
     { path: 'lista', component: ListaEstudiantesComponent  }
   ] },
