@@ -24,7 +24,7 @@
   <ng-container matColumnDef="accion">
     <th mat-header-cell *matHeaderCellDef> Visualizar </th>
     <td mat-cell *matCellDef="let row">
-      <button mat-raised-button color="primary" (click)="OnSelection(row)" > Visualizar </button>
+      <button mat-raised-button color="primary" (click)="openDialog(row)" > Visualizar </button>
     </td>
   </ng-container>
 

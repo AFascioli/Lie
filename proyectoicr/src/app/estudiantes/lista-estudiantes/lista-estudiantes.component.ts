@@ -1,7 +1,7 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, Inject } from "@angular/core";
 import { EstudiantesService } from '../estudiante.service';
 import { Estudiante } from '../estudiante.model';
-import { MatDialogRef, MatDialog } from '@angular/material';
+import { MatDialogRef, MatDialog, MAT_DIALOG_DATA, MatDialogConfig } from '@angular/material';
 
 @Component({
   selector: "app-lista-estudiantes",
@@ -22,15 +22,17 @@ export class ListaEstudiantesComponent implements OnInit {
 
   displayedColumns: string[] = ["apellido", "nombre", "tipo", "numero", "accion"];
 
-  OnSelection(row) {
-    this.dniSeleccionado = row.dni;
-    console.log(this.dniSeleccionado);
-  }
+  //OnSelection(row) {
+    //this.dniSeleccionado = row.dni;
+    //console.log(this.dniSeleccionado);
+  //}
 
-  openDialog(): void {
+  openDialog(row): void {
     this.dialog.open(MostrarPopupComponent, {
-      width: "250px"
-    });
+
+      data: this.estudiantes.find(estudiante => estudiante.numeroDocumento===row.dni)
+    }
+    );
   }
 }
 
@@ -40,8 +42,8 @@ export class ListaEstudiantesComponent implements OnInit {
 })
 export class MostrarPopupComponent {
   constructor(
-        public dialogRef: MatDialogRef<MostrarPopupComponent>
-        // Ver para pasar información entre componentes ,@Inject(MAT_DIALOG_DATA) public data: DialogData
+        public dialogRef: MatDialogRef<MostrarPopupComponent>,
+        public dialogConfig:MatDialogConfig
       ) {}
 
       onNoClick(): void {
