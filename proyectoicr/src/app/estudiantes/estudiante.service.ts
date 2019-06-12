@@ -36,8 +36,6 @@ export class EstudiantesService {
   localidad: string,
   codigoPostal: number,
   nacionalidad: string,
-  provinciaNacimiento: string,
-  localidadNacimiento: string,
   fechaNacimiento: string,
   estadoCivil: string,
   telefonoFijo: number,
@@ -58,8 +56,6 @@ export class EstudiantesService {
     localidad,
     codigoPostal,
     nacionalidad,
-    provinciaNacimiento,
-    localidadNacimiento,
     fechaNacimiento,
     estadoCivil,
     telefonoFijo,
@@ -110,7 +106,7 @@ export class EstudiantesService {
       .subscribe((response) => {
         this.nacionalidades = response.nacionalidades;
         this.nacionalidadesActualizadas.next([...this.nacionalidades]);
-        console.log("Nacionalidades: "+this.nacionalidades);
+        console.log("estudiante.service.ts --> Nacionalidades: "+this.nacionalidades);
       });
    }
 

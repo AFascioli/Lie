@@ -3,11 +3,12 @@ const router = express.Router();
 const Nacionalidad = require("../models/nacionalidad");
 
 router.get("", (req, res, next) => {
-  Nacionalidad.findById('5d00639342e30b60bb51e128').then(documents => {
+  Nacionalidad.find().then(documents => {
+  // Nacionalidad.find().sort({name: 'asc'}).then(documents => {
     res.status(200).json({
       nacionalidades: documents
     });
-    console.log("Documentos: "+ documents)
+    console.log("nacionalidad --> Documentos: "+ documents)
   });
 });
 

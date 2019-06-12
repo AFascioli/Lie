@@ -232,41 +232,6 @@
         </mat-select>
       </mat-form-field>
       <br />
-      <mat-form-field>
-        <mat-select
-          placeholder="Seleccione provincia de nacimiento"
-          name="provinciaNac"
-          ngModel
-          #provinciaNac="ngModel"
-          matNativeControl
-        >
-          <mat-option
-            (onSelectionChange)="FiltrarLocalidadesNac(provincia.id)"
-            *ngFor="let provincia of provincias"
-            [value]="provincia.nombre"
-          >
-            {{ provincia.nombre }}
-          </mat-option>
-        </mat-select>
-      </mat-form-field>
-      <br />
-      <mat-form-field>
-        <mat-select
-          placeholder="Seleccione localidad de nacimiento"
-          name="localidadNac"
-          ngModel
-          #localidadNac="ngModel"
-          matNativeControl
-        >
-          <mat-option
-            *ngFor="let localidad of localidadesFiltradasNac"
-            [value]="localidad.nombre"
-          >
-            {{ localidad.nombre }}
-          </mat-option>
-        </mat-select>
-      </mat-form-field>
-      <br />
     </div>
     <mat-form-field>
       <mat-select

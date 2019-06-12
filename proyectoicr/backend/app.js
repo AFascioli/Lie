@@ -13,10 +13,10 @@ const app = express(); // Creo la app express
    lo que corresponda*/
 mongoose.connect('mongodb+srv://ComandanteJr:SNcjNuPBMG42lOh1@cluster0-qvosw.mongodb.net/icrdev?retryWrites=true')
 .then(() => {
-  console.log('Conexion a la BD exitosa');
+  console.log('Conexión a base de datos exitosa');
 })
 .catch(() => {
-  console.log('Conexion a la bd faliida');
+  console.log('Fallo conexión a la base de datos');
 });
 
 // Usamos el body parser para poder extraer datos del request body

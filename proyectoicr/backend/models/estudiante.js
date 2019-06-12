@@ -15,8 +15,6 @@ const estudianteSchema = mongoose.Schema({
     localidad: {type: String, required: true},
     codigoPostal: Number,
     nacionalidad: String,
-    provinciaNacimiento: String,
-    localidadNacimiento:String,
     fechaNacimiento: {type: Date, required: true},
     estadoCivil: String,
     telefonoFijo: Number,

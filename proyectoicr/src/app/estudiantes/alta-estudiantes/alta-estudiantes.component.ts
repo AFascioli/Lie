@@ -19,7 +19,6 @@ export class AltaEstudiantesComponent implements OnInit, OnDestroy {
   provincias: Provincia[] = [];
   localidades: Localidad[] = [];
   localidadesFiltradas: Localidad[] = [];
-  localidadesFiltradasNac: Localidad[] = [];
   suscripcion: Subscription;
 
   constructor(public servicio: EstudiantesService, private dateAdapter: DateAdapter<Date>) {
@@ -36,10 +35,11 @@ export class AltaEstudiantesComponent implements OnInit, OnDestroy {
     this.suscripcion = this.servicio.getLocalidadesListener().subscribe(localidadesActualizadas => {
       this.localidades = localidadesActualizadas;
     });
-    // this.servicio.getNacionalidades();
-    // this.suscripcion = this.servicio.getNacionalidadesListener().subscribe(nacionalidadesActualizadas => {
-    // this.nacionalidades = nacionalidadesActualizadas;
-    // });
+    this.servicio.getNacionalidades();
+    this.suscripcion = this.servicio.getNacionalidadesListener().subscribe(nacionalidadesActualizadas => {
+    this.nacionalidades = nacionalidadesActualizadas;
+    console.log("estudiantes.ts -> Nacionalidades "+ this.nacionalidades);
+    });
   }
 
   // Cuando se destruye el componente se eliminan las suscripciones.
@@ -50,6 +50,7 @@ export class AltaEstudiantesComponent implements OnInit, OnDestroy {
  onGuardar(form: NgForm) {
    if(form.invalid){
     console.log("Invalid Form");
+    console.log(form.value.fechaNac);
    }else{
      this.servicio.altaEstudiante(
        form.value.apellido,
@@ -67,9 +68,8 @@ export class AltaEstudiantesComponent implements OnInit, OnDestroy {
        form.value.codigoPostal,
        "NacionalidaTest",
       //form.value.nacionalidad,
-       form.value.localidadNac,
-       form.value.provinciaNac,
        form.value.fechaNac,
+
        form.value.estadoCivil,
        form.value.telefono,
        "AdultoTest"
@@ -81,10 +81,5 @@ export class AltaEstudiantesComponent implements OnInit, OnDestroy {
  FiltrarLocalidades(idProvincia: number){
   this.localidadesFiltradas= [...this.localidades];
   this.localidadesFiltradas= this.localidadesFiltradas.filter(localidad => localidad.id_provincia===idProvincia);
- }
-
- FiltrarLocalidadesNac(idProvincia: number){
-  this.localidadesFiltradasNac= [...this.localidades];
-  this.localidadesFiltradasNac= this.localidadesFiltradasNac.filter(localidad => localidad.id_provincia===idProvincia);
  }
 }

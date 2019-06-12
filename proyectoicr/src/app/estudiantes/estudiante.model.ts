@@ -14,8 +14,6 @@ export interface Estudiante {
   localidad: string;
   codigoPostal: number;
   nacionalidad: string;
-  provinciaNacimiento: string;
-  localidadNacimiento: string;
   fechaNacimiento: string;
   estadoCivil: string;
   telefonoFijo: number;
