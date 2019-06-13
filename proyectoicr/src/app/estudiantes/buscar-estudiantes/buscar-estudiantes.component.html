@@ -1,0 +1,74 @@
+<mat-card>
+<form #form="ngForm" (submit)="OnBuscar(form)">
+    <mat-radio-group aria-label="Select an option">
+      <mat-radio-button [checked]="'true'" (change)="DeshabilitarInputs(form)" value="1">Buscar por nombre y apellido</mat-radio-button>
+      <mat-radio-button (change)="DeshabilitarInputs(form)" value="2">Buscar por documento</mat-radio-button>
+    </mat-radio-group>
+    <br/>
+    <mat-form-field>
+      <input
+      [disabled]="!buscarPorNomYAp"
+      ngModel
+      #apellido="ngModel"
+      matInput
+      name="apellido"
+      pattern="[A-Za-z- ]+"
+      minlength="2"
+      maxlength="30"
+      placeholder="Ingrese apellido"
+      type="text"
+      required />
+    </mat-form-field>
+    <br/>
+    <mat-form-field>
+      <input
+      [disabled]="!buscarPorNomYAp"
+      ngModel
+      #nombre="ngModel"
+      matInput
+      name="nombre"
+      pattern="[A-Za-z- ]+"
+      minlength="2"
+      maxlength="30"
+      placeholder="Ingrese nombre"
+      type="text"
+      required />
+    </mat-form-field>
+    <br/>
+    <mat-form-field>
+      <mat-select
+      [disabled]="buscarPorNomYAp"
+        placeholder="Seleccione tipo de documento"
+        name="tipoDocumento"
+        ngModel
+        #tipoDocumento="ngModel"
+        matNativeControl
+        required
+      >
+      <mat-option value="DNI">DNI</mat-option>
+      <mat-option value="Cedula de Identidad">Cédula de Identidad</mat-option>
+      <mat-option value="Libreta de Enrolamiento">Libreta de Enrolamiento</mat-option>
+      <mat-option value="Libreta Civica">Libreta Cívica</mat-option>
+      <mat-option value="Pasaporte">Pasaporte</mat-option>
+      </mat-select>
+    </mat-form-field>
+    <br />
+  <mat-form-field>
+    <input
+    [disabled]="buscarPorNomYAp"
+    matInput
+    name="numeroDocumento"
+    ngModel
+    #numeroDocumento="ngModel"
+    pattern="[0-9]+"
+    maxlength="8"
+    placeholder="Ingrese número de documento"
+    required />
+  </mat-form-field>
+  <br/>
+  <button color="primary" routerLink="/buscar/lista" type="submit" mat-raised-button>Buscar</button>
+</form>
+</mat-card>
+<router-outlet></router-outlet>
+
+

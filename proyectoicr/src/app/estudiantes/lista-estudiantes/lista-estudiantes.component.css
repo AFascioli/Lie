@@ -1,0 +1,21 @@
+table {
+  width: 100%;
+}
+
+.mat-card {
+  margin: 3rem;
+}
+
+@keyframes example {
+  0% {background-color: transparent;}
+  50% {background-color: #753636;}
+  100% {background-color: transparent;}
+}
+
+p {
+  background-color: transparent;
+  animation-name: example;
+  animation-duration: 5s;
+  animation-iteration-count: infinite;
+  text-align: center;
+}
