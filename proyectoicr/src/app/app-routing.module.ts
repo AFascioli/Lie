@@ -4,15 +4,20 @@ import { AltaEstudiantesComponent } from './estudiantes/alta-estudiantes/alta-es
 import { BuscarEstudiantesComponent } from './estudiantes/buscar-estudiantes/buscar-estudiantes.component';
 import { ListaEstudiantesComponent } from './estudiantes/lista-estudiantes/lista-estudiantes.component';
 import { MostrarEstudiantesComponent } from './estudiantes/mostrar-estudiantes/mostrar-estudiantes.component';
-
+import { MenuLateralComponent } from './menu-lateral/menu-lateral.component';
+import { MenuPrincipalComponent } from './menu-principal/menu-principal.component';
 
 const routes: Routes = [
-  // { path: '', component:  },
-  { path: 'alta', component: AltaEstudiantesComponent },
-  { path: 'buscar', component: BuscarEstudiantesComponent, children: [
-    { path: 'lista', component: ListaEstudiantesComponent  }
-  ] },
-  { path: 'mostrar', component: MostrarEstudiantesComponent  }
+  { path: '', component: MenuPrincipalComponent },
+   { path: 'menuLateral', component: MenuLateralComponent, children:
+  [
+    { path: 'alta', component: AltaEstudiantesComponent },
+    { path: 'buscar', component: BuscarEstudiantesComponent, children: [
+      { path: 'lista', component: ListaEstudiantesComponent  }
+    ] },
+    { path: 'mostrar', component: MostrarEstudiantesComponent  }
+  ]
+    }
 ];
 
 @NgModule({
