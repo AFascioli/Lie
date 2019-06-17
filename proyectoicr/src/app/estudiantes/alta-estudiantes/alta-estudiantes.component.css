@@ -1,6 +1,9 @@
 .mat-card {
   margin: 3rem;
 }
+.mat-h1{
+  color: #C2185B;
+}
 
 .mat-form-field {
   width: 35%;

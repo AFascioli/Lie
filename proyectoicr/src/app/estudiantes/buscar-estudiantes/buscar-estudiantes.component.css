@@ -9,3 +9,7 @@
 .mat-radio-button ~ .mat-radio-button {
   margin-left: 20px;
 }
+
+.mat-h1{
+  color: #C2185B;
+}

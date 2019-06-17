@@ -17,7 +17,9 @@ export class EstudiantesService {
   private provinciasActualizadas = new Subject<Provincia[]>();
   private localidadesActualizadas= new Subject<Localidad[]>();
   private nacionalidadesActualizadas= new Subject<Nacionalidad[]>();
-  private estudiantesBuscados = new Subject<Estudiante[]>();
+ estudiantesBuscados = new Subject<Estudiante[]>();
+ formInvalidoEstudiante : Boolean;
+ estudianteSeleccionado: Estudiante;
 
   constructor(public http: HttpClient) {}
 

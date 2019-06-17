@@ -1,6 +1,5 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
-//import {CustomMaterialModule} from './core/material.module';
 import { MatInputModule,
           MatSelectModule,
           MatButtonModule,
@@ -16,20 +15,20 @@ import { MatInputModule,
           MatListModule
         } from '@angular/material';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import {MatDatepickerModule} from '@angular/material/datepicker';
-import {MatMenuModule, MatMenu} from '@angular/material/menu';
-
+import { MatDatepickerModule} from '@angular/material/datepicker';
+import { MatMenuModule} from '@angular/material/menu';
 import { AppComponent } from './app.component';
-import { AltaEstudiantesComponent, DialogoPopupComponent } from './estudiantes/alta-estudiantes/alta-estudiantes.component';
+import { AltaEstudiantesComponent, DialogoPopupComponent, DialogoDosPopupComponent} from './estudiantes/alta-estudiantes/alta-estudiantes.component';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { EstudiantesService } from './estudiantes/estudiante.service';
 import { BuscarEstudiantesComponent } from './estudiantes/buscar-estudiantes/buscar-estudiantes.component';
-import { ListaEstudiantesComponent, MostrarPopupComponent } from './estudiantes/lista-estudiantes/lista-estudiantes.component';
+import { ListaEstudiantesComponent } from './estudiantes/lista-estudiantes/lista-estudiantes.component';
 import { MostrarEstudiantesComponent } from './estudiantes/mostrar-estudiantes/mostrar-estudiantes.component';
 import { AppRoutingModule } from './app-routing.module';
 import { MenuPrincipalComponent } from './menu-principal/menu-principal.component';
 import { MenuLateralComponent } from './menu-lateral/menu-lateral.component';
+import { HomeComponent } from './home/home.component';
 
 @NgModule({
   declarations: [
@@ -39,12 +38,14 @@ import { MenuLateralComponent } from './menu-lateral/menu-lateral.component';
     ListaEstudiantesComponent,
     MostrarEstudiantesComponent,
     DialogoPopupComponent,
-    MostrarPopupComponent,
+    DialogoDosPopupComponent,
+   // MostrarPopupComponent,
     MenuPrincipalComponent,
-    MenuLateralComponent
+    MenuLateralComponent,
+    HomeComponent
   ],
   //entryComponents declara los componentes que se generan dinamicamente dentro de otros.
-  entryComponents: [DialogoPopupComponent, MostrarPopupComponent],
+  entryComponents: [DialogoPopupComponent, DialogoDosPopupComponent ],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
@@ -66,7 +67,7 @@ import { MenuLateralComponent } from './menu-lateral/menu-lateral.component';
     MatToolbarModule,
     MatIconModule,
     MatListModule,
- //   CustomMaterialModule
+   // DialogoDosPopupComponent
   ],
   providers: [EstudiantesService],
   bootstrap: [AppComponent]

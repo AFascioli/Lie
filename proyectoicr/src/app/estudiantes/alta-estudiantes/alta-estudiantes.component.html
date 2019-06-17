@@ -1,5 +1,6 @@
 <mat-card>
     <meta charset="utf-8" />
+    <h1 class="mat-h1" color="accent">Registrar estudiante</h1>
   <form #form="ngForm" (submit)="onGuardar(form)">
     <mat-form-field>
       <input
@@ -30,7 +31,7 @@
         required
       />
     </mat-form-field>
-    <br />
+     <br />
     <mat-form-field>
       <mat-select
         placeholder="Seleccione tipo de documento"
@@ -260,7 +261,7 @@
     </mat-form-field>
     <br />
     <button mat-raised-button>Registrar Adulto responsable</button>
-    <button type="submit" color="primary" mat-raised-button>Guardar</button>
+    <button type="submit" (click)="openDialogo()"color="primary" mat-raised-button>Guardar</button>
     <button mat-raised-button (click)="openDialog()" color="warn">Cancelar</button>
   </form>
 </mat-card>

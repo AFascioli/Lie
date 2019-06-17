@@ -1,4 +1,5 @@
 <mat-card>
+<h1 class="mat-h1" color="accent">Buscar estudiante</h1>
 <form #form="ngForm" (submit)="OnBuscar(form)">
     <mat-radio-group aria-label="Select an option">
       <mat-radio-button [checked]="'true'" (change)="DeshabilitarInputs(form)" value="1">Buscar por nombre y apellido</mat-radio-button>

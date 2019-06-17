@@ -1,3 +1,4 @@
+import { HomeComponent } from './home/home.component';
 import { NgModule } from "@angular/core";
 import { RouterModule, Routes } from "@angular/router";
 import { AltaEstudiantesComponent } from './estudiantes/alta-estudiantes/alta-estudiantes.component';
@@ -9,15 +10,16 @@ import { MenuPrincipalComponent } from './menu-principal/menu-principal.componen
 
 const routes: Routes = [
   { path: '', component: MenuPrincipalComponent },
-   { path: 'menuLateral', component: MenuLateralComponent, children:
-  [
+  { path: 'menuLateral', component: MenuLateralComponent, children:
+      [
+    {path: 'home', component: HomeComponent},
     { path: 'alta', component: AltaEstudiantesComponent },
     { path: 'buscar', component: BuscarEstudiantesComponent, children: [
       { path: 'lista', component: ListaEstudiantesComponent  }
     ] },
     { path: 'mostrar', component: MostrarEstudiantesComponent  }
-  ]
-    }
+     ]
+  }
 ];
 
 @NgModule({

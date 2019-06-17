@@ -10,6 +10,7 @@ import {
   MatDialog,
   MatDialogRef
 } from "@angular/material/dialog";
+import { Router } from '@angular/router';
 
 @Component({
   selector: "app-alta-estudiantes",
@@ -24,6 +25,7 @@ export class AltaEstudiantesComponent implements OnInit, OnDestroy {
   localidadesFiltradas: Localidad[] = [];
   suscripcion: Subscription;
 
+
   constructor(
     public servicio: EstudiantesService,
     private dateAdapter: DateAdapter<Date>,
@@ -34,6 +36,7 @@ export class AltaEstudiantesComponent implements OnInit, OnDestroy {
 
   // Cuando se inicializa el componente se cargar las provincias.
   ngOnInit() {
+    this.servicio.formInvalidoEstudiante = false;
     this.servicio.getProvincias();
     this.suscripcion = this.servicio
       .getProvinciasListener()
@@ -62,6 +65,7 @@ export class AltaEstudiantesComponent implements OnInit, OnDestroy {
 
   onGuardar(form: NgForm) {
     if (form.invalid) {
+      this.servicio.formInvalidoEstudiante=true;
       console.log("Invalid Form");
       console.log(form.value.fechaNac);
     } else {
@@ -102,6 +106,13 @@ export class AltaEstudiantesComponent implements OnInit, OnDestroy {
       width: "250px"
     });
   }
+
+  openDialogo(): void {
+    console.log("Entró a openDialog2");
+    this.dialog.open(DialogoDosPopupComponent, {
+      width: "250px"
+    });
+  }
 }
 
 @Component({
@@ -110,11 +121,33 @@ export class AltaEstudiantesComponent implements OnInit, OnDestroy {
 })
 export class DialogoPopupComponent {
   constructor(
-        public dialogRef: MatDialogRef<DialogoPopupComponent>,
+        public dialogRef: MatDialogRef<DialogoPopupComponent>, public router: Router
         // Ver para pasar información entre componentes @Inject(MAT_DIALOG_DATA) public data: DialogData
       ) {}
 
+      onYesClick():void{
+        this.router.navigate(['menuLateral/home']);
+        this.dialogRef.close();
+      }
       onNoClick(): void {
         this.dialogRef.close();
+      }
+ }
+ @Component({
+  selector: "app-dialogoDos-popup",
+  templateUrl: "./dialogoDos-popup.component.html"
+})
+export class DialogoDosPopupComponent {
+formInvalido : Boolean;
+  constructor
+  (
+        public dialogRef: MatDialogRef<DialogoPopupComponent>,  public servicio: EstudiantesService
+        ) {
+          this.formInvalido = servicio.formInvalidoEstudiante;
+        }
+
+      onOkClick(): void {
+        this.dialogRef.close();
+        this.servicio.formInvalidoEstudiante = false;
       }
 }
