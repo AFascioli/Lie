@@ -22,6 +22,8 @@ export class MostrarEstudiantesComponent implements OnInit {
   localidadesFiltradas: Localidad[] = [];
   suscripcion: Subscription;
   estudiante: Estudiante;
+  maxDate = new Date();
+  primeraVez= true;
 
   //Atributos Estudiantes del HTML
   apellidoEstudiante: string;
@@ -58,8 +60,8 @@ export class MostrarEstudiantesComponent implements OnInit {
     this.provinciaEstudiante= this.servicio.estudianteSeleccionado.provincia;
     this.localidadEstudiante= this.servicio.estudianteSeleccionado.localidad;
     this.CPEstudiante= this.servicio.estudianteSeleccionado.codigoPostal;
-    this.fechaNacEstudiante= this.servicio.estudianteSeleccionado.nacionalidad;
-    this.nacionalidadEstudiante= this.servicio.estudianteSeleccionado.fechaNacimiento;
+    this.fechaNacEstudiante= this.servicio.estudianteSeleccionado.fechaNacimiento;
+    this.nacionalidadEstudiante= this.servicio.estudianteSeleccionado.nacionalidad;
     this.estadoCivilEstudiante= this.servicio.estudianteSeleccionado.estadoCivil;
     this.telefonoEstudiante= this.servicio.estudianteSeleccionado.telefonoFijo;
 
@@ -67,7 +69,6 @@ export class MostrarEstudiantesComponent implements OnInit {
 
 
   ngOnInit() {
-
    this.servicio.getProvincias();
    this.suscripcion = this.servicio
      .getProvinciasListener()
@@ -79,6 +80,8 @@ export class MostrarEstudiantesComponent implements OnInit {
      .getLocalidadesListener()
      .subscribe(localidadesActualizadas => {
        this.localidades = localidadesActualizadas;
+       const idProvinciaEstudiante = this.localidades.find(localidad => localidad.nombre===this.localidadEstudiante).id_provincia;
+       this.FiltrarLocalidades(idProvinciaEstudiante);
      });
    this.servicio.getNacionalidades();
    this.suscripcion = this.servicio
@@ -93,10 +96,15 @@ export class MostrarEstudiantesComponent implements OnInit {
     this.localidadesFiltradas = this.localidadesFiltradas.filter(
       localidad => localidad.id_provincia === idProvincia
     );
+    this.primeraVez=false;
   }
 
   // Cuando se destruye el componente se eliminan las suscripciones.
   ngOnDestroy() {
     this.suscripcion.unsubscribe();
+  }
+
+  onEditar(form: NgForm){
+
   }
 }
