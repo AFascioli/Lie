@@ -2,6 +2,7 @@ import { Component, OnInit, Inject } from "@angular/core";
 import { EstudiantesService } from '../estudiante.service';
 import { Estudiante } from '../estudiante.model';
 import { MatDialogRef, MatDialog, MAT_DIALOG_DATA, MatDialogConfig } from '@angular/material';
+import { Router } from '@angular/router';
 
 @Component({
   selector: "app-lista-estudiantes",
@@ -12,7 +13,7 @@ export class ListaEstudiantesComponent implements OnInit {
   dniSeleccionado: number;
   estudiantes: Estudiante[] = [];
 
-  constructor(public servicio: EstudiantesService, public dialog: MatDialog) {}
+  constructor(public servicio: EstudiantesService, public dialog: MatDialog, public router: Router) {}
 
   ngOnInit() {
     this.servicio.getEstudiantesListener().subscribe(estudiantesBuscados =>{
@@ -27,26 +28,15 @@ export class ListaEstudiantesComponent implements OnInit {
     //console.log(this.dniSeleccionado);
   //}
 
-  openDialog(row): void {
-    this.dialog.open(MostrarPopupComponent, {
-
-      data: this.estudiantes.find(estudiante => estudiante.numeroDocumento===row.dni)
-    }
-    );
+  OnSelection(row): void {
+    console.log('entro modificar');
+    console.log('dni row' + row.numeroDocumento);
+   this.servicio.estudianteSeleccionado = (this.estudiantes.find(estudiante => estudiante.numeroDocumento===row.numeroDocumento));
+    //console.log( this.servicio.estudianteSeleccionado);
+    this.router.navigate(['menuLateral/mostrar']);
   }
+
 }
 
-@Component({
-  selector: "app-mostrar-popup",
-  templateUrl: "./mostrar-popup.component.html"
-})
-export class MostrarPopupComponent {
-  constructor(
-        public dialogRef: MatDialogRef<MostrarPopupComponent>,
-        public dialogConfig:MatDialogConfig
-      ) {}
 
-      onNoClick(): void {
-        this.dialogRef.close();
-      }
-}
+
