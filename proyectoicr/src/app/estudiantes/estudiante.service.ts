@@ -131,4 +131,49 @@ export class EstudiantesService {
       })
   }
 
+  modificarEstudiante(
+    apellido: string,
+    nombre: string,
+    tipoDocumento: string,
+    numeroDocumento: number,
+    cuil: number,
+    sexo: string,
+    calle: string,
+    numeroCalle: number,
+    piso: string,
+    departamento: string,
+    provincia: string,
+    localidad: string,
+    codigoPostal: number,
+    nacionalidad: string,
+    fechaNacimiento: string,
+    estadoCivil: string,
+    telefonoFijo: number,
+    adultoResponsable: string
+    ) {
+      const estudianteModificado: Estudiante = {
+      apellido,
+      nombre,
+      tipoDocumento,
+      numeroDocumento,
+      cuil,
+      sexo,
+      calle,
+      numeroCalle,
+      piso,
+      departamento,
+      provincia,
+      localidad,
+      codigoPostal,
+      nacionalidad,
+      fechaNacimiento,
+      estadoCivil,
+      telefonoFijo,
+      adultoResponsable };
+      this.http.patch<{message: string}>('http://localhost:3000/estudiante/modificar',estudianteModificado)
+      .subscribe(response => {
+        console.log(response.message);
+        //TERMINAR
+      })
+    }
 }
