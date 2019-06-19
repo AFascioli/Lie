@@ -44,6 +44,7 @@ export class EstudiantesService {
   adultoResponsable: string
   ) {
     const estudiante: Estudiante = {
+      _id: null,
     apellido,
     nombre,
     tipoDocumento,
@@ -132,6 +133,7 @@ export class EstudiantesService {
   }
 
   modificarEstudiante(
+    _id: string,
     apellido: string,
     nombre: string,
     tipoDocumento: string,
@@ -152,6 +154,7 @@ export class EstudiantesService {
     adultoResponsable: string
     ) {
       const estudianteModificado: Estudiante = {
+        _id,
       apellido,
       nombre,
       tipoDocumento,
@@ -172,8 +175,7 @@ export class EstudiantesService {
       adultoResponsable };
       this.http.patch<{message: string}>('http://localhost:3000/estudiante/modificar',estudianteModificado)
       .subscribe(response => {
-        console.log(response.message);
-        //TERMINAR
+        console.log("mensaje backend modificar"+response.message);
       })
     }
 }

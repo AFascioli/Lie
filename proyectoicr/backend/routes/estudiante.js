@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const Estudiante = require("../models/estudiante");
+const mongoose= require('mongoose');
 
 router.post("", (req, res, next) => {
   const estudiante = new Estudiante({
@@ -18,15 +19,14 @@ router.post("", (req, res, next) => {
     localidad:req.body.localidad,
     codigoPostal:req.body.codigoPostal,
     nacionalidad:req.body.nacionalidad,
-    // provinciaNacimiento:req.body.provinciaNacimiento,
-    // localidadNacimiento:req.body.localidadNacimiento,
     fechaNacimiento:req.body.fechaNacimiento,
     estadoCivil:req.body.estadoCivil,
     telefonoFijo:req.body.telefonoFijo,
     adultoResponsable:"null",
   });
-  console.log(estudiante.json);
+
   estudiante.save().then(()=> {
+    console.dir(estudiante);
     res.status(201).json({
       message: "Estudiante registrado correctamente!"
     });
@@ -56,7 +56,8 @@ router.get("/nombreyapellido", (req, res, next) => {
 });
 
 router.patch("/modificar",(req, res, next) =>{
-  const estudiante = new Estudiante({
+
+  Estudiante.findByIdAndUpdate(req.body._id,{
     apellido: req.body.apellido,
     nombre:req.body.nombre,
     tipoDocumento:req.body.tipoDocumento,
@@ -71,13 +72,15 @@ router.patch("/modificar",(req, res, next) =>{
     localidad:req.body.localidad,
     codigoPostal:req.body.codigoPostal,
     nacionalidad:req.body.nacionalidad,
-    // provinciaNacimiento:req.body.provinciaNacimiento,
-    // localidadNacimiento:req.body.localidadNacimiento,
     fechaNacimiento:req.body.fechaNacimiento,
     estadoCivil:req.body.estadoCivil,
     telefonoFijo:req.body.telefonoFijo,
     adultoResponsable:"null",
-  });
-//TERMINAR
+  }).then(() => {
+      res.status(200).json({
+        message: "Estudiante exitosamente modificado"
+      });
+    });
+
 });
 module.exports = router;

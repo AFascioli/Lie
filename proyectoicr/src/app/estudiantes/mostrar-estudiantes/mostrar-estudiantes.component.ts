@@ -107,6 +107,7 @@ export class MostrarEstudiantesComponent implements OnInit {
 
   onGuardar() {
     this.servicio.modificarEstudiante(
+      this.servicio.estudianteSeleccionado._id,
       this.apellidoEstudiante,
       this.nombreEstudiante,
       this.tipoDocEstudiante,
@@ -120,8 +121,8 @@ export class MostrarEstudiantesComponent implements OnInit {
       this.provinciaEstudiante,
       this.localidadEstudiante,
       this.CPEstudiante,
-      this.fechaNacEstudiante,
       this.nacionalidadEstudiante,
+      this.fechaNacEstudiante,
       this.estadoCivilEstudiante,
       this.telefonoEstudiante,
       "adultoResponsable"

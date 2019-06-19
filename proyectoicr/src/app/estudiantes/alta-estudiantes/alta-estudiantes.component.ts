@@ -132,7 +132,7 @@ export class DialogoPopupComponent {
       onNoClick(): void {
         this.dialogRef.close();
       }
- }
+}
  @Component({
   selector: "app-dialogoDos-popup",
   templateUrl: "./dialogoDos-popup.component.html"
