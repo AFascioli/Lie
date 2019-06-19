@@ -29,8 +29,10 @@ export class ListaEstudiantesComponent implements OnInit {
   //}
 
   OnSelection(row): void {
-    console.log('entro modificar')
-    this.servicio.estudianteSeleccionado = this.estudiantes.find(estudiante => estudiante.numeroDocumento===row.dni);
+    console.log('entro modificar');
+    console.log('dni row' + row.numeroDocumento);
+   this.servicio.estudianteSeleccionado = (this.estudiantes.find(estudiante => estudiante.numeroDocumento===row.numeroDocumento));
+    //console.log( this.servicio.estudianteSeleccionado);
     this.router.navigate(['menuLateral/mostrar']);
   }
 
