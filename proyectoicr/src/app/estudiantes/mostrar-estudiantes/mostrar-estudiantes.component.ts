@@ -22,6 +22,7 @@ export class MostrarEstudiantesComponent implements OnInit {
   estudiante: Estudiante;
   maxDate = new Date();
   primeraVez = true;
+  camposDeshabilitados = false;
 
   //Atributos Estudiantes del HTML
   apellidoEstudiante: string;
@@ -100,7 +101,9 @@ export class MostrarEstudiantesComponent implements OnInit {
     this.suscripcion.unsubscribe();
   }
 
-  onEditar(form: NgForm) {}
+  onEditar() {
+    this.camposDeshabilitados = true;
+  }
 
   onGuardar() {
     this.servicio.modificarEstudiante(
