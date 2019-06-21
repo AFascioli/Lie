@@ -36,7 +36,7 @@ export class AltaEstudiantesComponent implements OnInit, OnDestroy {
 
   // Cuando se inicializa el componente se cargar las provincias.
   ngOnInit() {
-    this.servicio.formInvalidoEstudiante = false;
+    this.servicio.formInvalidoEstudiante = true;
     this.servicio.getProvincias();
     this.suscripcion = this.servicio
       .getProvinciasListener()
@@ -64,7 +64,7 @@ export class AltaEstudiantesComponent implements OnInit, OnDestroy {
 
   onGuardar(form: NgForm) {
     if (form.invalid) {
-      this.servicio.formInvalidoEstudiante=true;
+      // this.servicio.formInvalidoEstudiante=true;
     } else {
       this.servicio.altaEstudiante(
         form.value.apellido,
@@ -103,7 +103,13 @@ export class AltaEstudiantesComponent implements OnInit, OnDestroy {
     });
   }
 
-  openDialogo(): void {
+  // Se valida el estado del formulario y se abre el pop up
+  openDialogo(form: NgForm): void {
+    if(form.invalid){
+      this.servicio.formInvalidoEstudiante=true;
+    }else{
+      this.servicio.formInvalidoEstudiante=false;
+    }
     this.dialog.open(DialogoDosPopupComponent, {
       width: "250px"
     });
@@ -141,8 +147,9 @@ formInvalido : Boolean;
           this.formInvalido = servicio.formInvalidoEstudiante;
         }
 
+      // Se resetea la variable formInvalidoEstudiante y se cierra el popup
       onOkClick(): void {
+        this.servicio.formInvalidoEstudiante = true;
         this.dialogRef.close();
-        this.servicio.formInvalidoEstudiante = false;
       }
 }
