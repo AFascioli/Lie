@@ -63,10 +63,9 @@ export class EstudiantesService {
     estadoCivil,
     telefonoFijo,
     adultoResponsable };
-    console.log(estudiante);
     this.http.post<{message: string}>('http://localhost:3000/estudiante', estudiante)
       .subscribe((response) => {
-        console.log(response);
+        console.log(response.message);
       });
   }
 
@@ -109,13 +108,11 @@ export class EstudiantesService {
       .subscribe((response) => {
         this.nacionalidades = response.nacionalidades;
         this.nacionalidadesActualizadas.next([...this.nacionalidades]);
-        console.log("estudiante.service.ts --> Nacionalidades: "+this.nacionalidades);
       });
    }
 
   buscarEstudiantesDocumento(tipo: string, numero: number){
     let params = new HttpParams().set("tipo", tipo).set("numero", numero.toString());
-    console.log("estudiante.service.ts-->buscarEstudiantesDocumento");
     this.http.get<{estudiantes: Estudiante[]}>('http://localhost:3000/estudiante/documento/', {params: params})
     .subscribe((response)=>{
         this.estudiantes = response.estudiantes;
@@ -175,7 +172,7 @@ export class EstudiantesService {
       adultoResponsable };
       this.http.patch<{message: string}>('http://localhost:3000/estudiante/modificar',estudianteModificado)
       .subscribe(response => {
-        console.log("mensaje backend modificar"+response.message);
+        console.log(response.message);
       })
     }
 }

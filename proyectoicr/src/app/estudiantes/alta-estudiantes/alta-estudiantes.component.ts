@@ -1,3 +1,4 @@
+import { Nacionalidad } from './../nacionalidades.model';
 import { Component, OnInit, OnDestroy } from "@angular/core";
 import { EstudiantesService } from "../estudiante.service";
 import { NgForm } from "@angular/forms";
@@ -5,7 +6,6 @@ import { Provincia } from "../provincias.model";
 import { Localidad } from "../localidades.model";
 import { Subscription } from "rxjs";
 import { DateAdapter } from "@angular/material";
-import { Nacionalidad } from "../nacionalidades.model";
 import {
   MatDialog,
   MatDialogRef
@@ -54,7 +54,6 @@ export class AltaEstudiantesComponent implements OnInit, OnDestroy {
       .getNacionalidadesListener()
       .subscribe(nacionalidadesActualizadas => {
         this.nacionalidades = nacionalidadesActualizadas;
-        console.log("estudiantes.ts -> Nacionalidades " + this.nacionalidades);
       });
   }
 
@@ -66,8 +65,6 @@ export class AltaEstudiantesComponent implements OnInit, OnDestroy {
   onGuardar(form: NgForm) {
     if (form.invalid) {
       this.servicio.formInvalidoEstudiante=true;
-      console.log("Invalid Form");
-      console.log(form.value.fechaNac);
     } else {
       this.servicio.altaEstudiante(
         form.value.apellido,
@@ -83,8 +80,7 @@ export class AltaEstudiantesComponent implements OnInit, OnDestroy {
         form.value.provincia,
         form.value.localidad,
         form.value.codigoPostal,
-        "NacionalidaTest",
-        //form.value.nacionalidad,
+        form.value.nacionalidad,
         form.value.fechaNac,
         form.value.estadoCivil,
         form.value.telefono,
@@ -108,7 +104,6 @@ export class AltaEstudiantesComponent implements OnInit, OnDestroy {
   }
 
   openDialogo(): void {
-    console.log("Entró a openDialog2");
     this.dialog.open(DialogoDosPopupComponent, {
       width: "250px"
     });

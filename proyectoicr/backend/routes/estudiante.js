@@ -1,7 +1,6 @@
 const express = require("express");
 const router = express.Router();
 const Estudiante = require("../models/estudiante");
-const mongoose= require('mongoose');
 
 router.post("", (req, res, next) => {
   const estudiante = new Estudiante({
@@ -26,12 +25,11 @@ router.post("", (req, res, next) => {
   });
 
   estudiante.save().then(()=> {
-    console.dir(estudiante);
     res.status(201).json({
       message: "Estudiante registrado correctamente!"
     });
   })
-  .catch(err => console.error());
+  .catch(err => console.log("Error al meter en la bd estudiante"+err));
 });
 
 router.get("/documento", (req, res, next) => {

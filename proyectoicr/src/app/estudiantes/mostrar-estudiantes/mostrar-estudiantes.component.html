@@ -7,7 +7,7 @@
        [disabled]="!camposDeshabilitados"
         name="apellido"
         [(ngModel)]="apellidoEstudiante"
-        pattern="[A-Za-záéíóúÁÉÍÓÚ]+"
+        pattern="[A-Za-záéíóúÁÉÍÓÚ ]+"
         minlength="2"
         maxlength="40"
         ngModel
@@ -114,7 +114,7 @@
         [disabled]="!camposDeshabilitados"
         [(ngModel)]="calleEstudiante"
           name="calle"
-          pattern="[\w]+"
+          pattern="[\w ]+"
           minlength="2"
           maxlength="30"
           ngModel
