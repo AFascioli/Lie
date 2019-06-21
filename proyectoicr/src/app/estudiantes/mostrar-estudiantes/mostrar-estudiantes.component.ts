@@ -7,6 +7,8 @@ import { Estudiante } from "../estudiante.model";
 import { FormsModule } from "@angular/forms";
 import { Nacionalidad } from "../nacionalidades.model";
 import { Localidad } from "../localidades.model";
+import { MatDialog, MatDialogRef } from '@angular/material';
+import { Router } from '@angular/router';
 
 @Component({
   selector: "app-mostrar-estudiantes",
@@ -43,7 +45,7 @@ export class MostrarEstudiantesComponent implements OnInit {
   estadoCivilEstudiante: string;
   telefonoEstudiante: number;
 
-  constructor(public servicio: EstudiantesService) {
+  constructor(public servicio: EstudiantesService, public dialog: MatDialog) {
     this.apellidoEstudiante = this.servicio.estudianteSeleccionado.apellido;
     this.nombreEstudiante = this.servicio.estudianteSeleccionado.nombre;
     this.tipoDocEstudiante = this.servicio.estudianteSeleccionado.tipoDocumento;
@@ -64,6 +66,7 @@ export class MostrarEstudiantesComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.servicio.formInvalidoEstudiante = true;
     this.servicio.getProvincias();
     this.suscripcion = this.servicio
       .getProvinciasListener()
@@ -105,7 +108,13 @@ export class MostrarEstudiantesComponent implements OnInit {
     this.camposDeshabilitados = true;
   }
 
-  onGuardar() {
+
+
+  onGuardar(form: NgForm) {
+    if (form.invalid) {
+      this.servicio.formInvalidoEstudiante=true;
+      // this.servicio.formInvalidoEstudiante=true;
+    } else {
     this.servicio.modificarEstudiante(
       this.servicio.estudianteSeleccionado._id,
       this.apellidoEstudiante,
@@ -129,4 +138,65 @@ export class MostrarEstudiantesComponent implements OnInit {
     );
     //TERMINAR
   }
+}
+
+
+openDialogo(tipo: string, form: NgForm): void {
+  this.servicio.tipoPopUp = tipo;
+  if(form.invalid){
+    this.servicio.formInvalidoEstudiante=true;
+  }else{
+    this.servicio.formInvalidoEstudiante=false;
+  }
+  this.dialog.open(MostrarPopupComponent, {
+    width: "250px"
+  });
+}
+}
+
+@Component({
+selector: "app-mostrar-popup",
+templateUrl: "./mostrar-popup.component.html"
+})
+export class MostrarPopupComponent {
+tipoPopup: string;
+formInvalido : Boolean;
+borrar : string;
+
+
+
+constructor(
+      public dialogRef: MatDialogRef<MostrarPopupComponent>,
+      public router: Router,
+      public servicio: EstudiantesService
+
+    ) {this.tipoPopup = this.servicio.tipoPopUp;
+      this.formInvalido = servicio.formInvalidoEstudiante;
+      this.borrar = "¿Está seguro que desea borrar el estudiante?";}
+
+    onYesClick():void{
+      this.router.navigate(['menuLateral/home']);
+      this.dialogRef.close();
+    }
+
+    onNoClick(): void {
+      this.dialogRef.close();
+    }
+
+    onOkClick(): void {
+      this.dialogRef.close();
+      this.servicio.formInvalidoEstudiante = true;
+    }
+
+    onYesDeleteClick(){
+      this.borrar = "El estudiante fue borrado exitosamente";
+
+      //this.dialogRef.close();
+
+    }
+
+
+
+
+
 }

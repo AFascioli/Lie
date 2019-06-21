@@ -20,6 +20,7 @@ export class EstudiantesService {
  estudiantesBuscados = new Subject<Estudiante[]>();
  formInvalidoEstudiante : Boolean;
  estudianteSeleccionado: Estudiante;
+ tipoPopUp: string; 
 
   constructor(public http: HttpClient) {}
 

@@ -300,9 +300,9 @@
     </mat-form-field>
     <br />
     <button (click)="onEditar()" mat-raised-button color="primary">Editar</button>
-    <button (click)="onGuardar()" mat-raised-button color="warn">Guardar</button>
-    <button mat-raised-button color="warn">Borrar</button>
-    <button mat-raised-button color="warn">Cancelar</button>
+    <button (click)="onGuardar(form)" (click)="openDialogo('guardar', form)" mat-raised-button color="warn">Guardar</button>
+    <button mat-raised-button (click)="openDialogo('borrar', form)" color="warn">Borrar</button>
+    <button mat-raised-button (click)="openDialogo('cancelar', form)" color="warn">Cancelar</button>
  </form>
 </mat-card>
 

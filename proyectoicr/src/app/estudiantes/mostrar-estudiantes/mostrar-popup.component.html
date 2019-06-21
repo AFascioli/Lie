@@ -1,0 +1,42 @@
+<div *ngIf="tipoPopup === 'cancelar'" class="cancelar">
+<h3 mat-dialog-title>Cancelar</h3>
+<div mat-dialog-content>
+  <p>¿Está seguro que desea cancelar?</p>
+</div>
+<div mat-dialog-actions>
+  <button mat-button (click)="onYesClick()" cdkFocusInitial>Si, volver al menú principal </button>
+  <button mat-button (click)="onNoClick()">No, volver</button>
+</div>
+</div>
+<div *ngIf="tipoPopup === 'guardar'"class="guardar">
+<h3 mat-dialog-title>Guardar</h3>
+<div mat-dialog-content *ngIf="!formInvalido">
+  <p>Faltan ingresar campos</p>
+</div>
+<div mat-dialog-content *ngIf="formInvalido">
+  <p>Se han registrado los cambios correctamente</p>
+</div>
+<div mat-dialog-actions>
+  <button mat-button (click)="onOkClick()">OK</button>
+</div>
+</div>
+<div *ngIf="tipoPopup === 'borrar'" class="borrar">
+  <h3 mat-dialog-title>Borrar</h3>
+  <div mat-dialog-content>
+    <p >{{borrar}}</p>
+  </div>
+  <div *ngIf="borrar != 'El estudiante fue borrado exitosamente'" mat-dialog-actions>
+    <button mat-button (click)="onYesDeleteClick()" cdkFocusInitial>Si, borrar
+    </button>
+    <button mat-button (click)="onNoClick()">No, volver</button>
+</div>
+<div *ngIf="borrar === 'El estudiante fue borrado exitosamente'" mat-dialog-actions>
+  <div mat-dialog-actions>
+    <button mat-button (click)="onOkClick()">OK</button>
+  </div>
+</div>
+</div>
+
+
+
+
