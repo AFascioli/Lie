@@ -35,7 +35,6 @@ router.post("", (req, res, next) => {
 router.get("/documento", (req, res, next) => {
   const tipo = req.query.tipo;
   const numero = req.query.numero;
-  console.log(tipo, numero);
   Estudiante.find({tipoDocumento: tipo, numeroDocumento: numero}).then(documents => {
     res.status(200).json({
       estudiantes: documents
@@ -43,10 +42,14 @@ router.get("/documento", (req, res, next) => {
   });
 });
 
+//Busqueda de un estudiante por nombre y apellido ignorando mayusculas
 router.get("/nombreyapellido", (req, res, next) => {
   const nombre = req.query.nombre;
   const apellido = req.query.apellido;
-  Estudiante.find({nombre: nombre, apellido: apellido}).then(documents => {
+  Estudiante.find({nombre: { $regex : new RegExp(nombre, "i") },
+   apellido: { $regex : new RegExp(apellido, "i") }}).
+   then(documents => {
+  // Estudiante.find({nombre: nombre, apellido: apellido}).then(documents => {
     res.status(200).json({
       estudiantes: documents
     });
@@ -54,7 +57,6 @@ router.get("/nombreyapellido", (req, res, next) => {
 });
 
 router.patch("/modificar",(req, res, next) =>{
-
   Estudiante.findByIdAndUpdate(req.body._id,{
     apellido: req.body.apellido,
     nombre:req.body.nombre,
@@ -81,4 +83,13 @@ router.patch("/modificar",(req, res, next) =>{
     });
 
 });
+
+router.delete("/borrar", (req, res, next)=>{
+  Estudiante.findByIdAndDelete(req.query._id).then(() =>{
+    res.status(202).json({
+      message: "Estudiante exitosamente borrado"
+    });
+  });
+});
+
 module.exports = router;

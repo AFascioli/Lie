@@ -1,13 +1,13 @@
-import { Injectable } from '@angular/core';
-import { Estudiante } from './estudiante.model';
-import { HttpClient, HttpParams } from '@angular/common/http';
-import { Provincia } from './provincias.model';
-import { Subject } from 'rxjs';
-import { Localidad } from './localidades.model';
-import { Nacionalidad } from './nacionalidades.model';
+import { Injectable } from "@angular/core";
+import { Estudiante } from "./estudiante.model";
+import { HttpClient, HttpParams } from "@angular/common/http";
+import { Provincia } from "./provincias.model";
+import { Subject } from "rxjs";
+import { Localidad } from "./localidades.model";
+import { Nacionalidad } from "./nacionalidades.model";
 
-@Injectable ({
-  providedIn: 'root'
+@Injectable({
+  providedIn: "root"
 })
 export class EstudiantesService {
   provincias: Provincia[] = [];
@@ -15,62 +15,73 @@ export class EstudiantesService {
   estudiantes: Estudiante[] = [];
   nacionalidades: Nacionalidad[] = [];
   private provinciasActualizadas = new Subject<Provincia[]>();
-  private localidadesActualizadas= new Subject<Localidad[]>();
-  private nacionalidadesActualizadas= new Subject<Nacionalidad[]>();
- estudiantesBuscados = new Subject<Estudiante[]>();
- formInvalidoEstudiante : Boolean;
- estudianteSeleccionado: Estudiante;
- tipoPopUp: string; 
+  private localidadesActualizadas = new Subject<Localidad[]>();
+  private nacionalidadesActualizadas = new Subject<Nacionalidad[]>();
+  estudiantesBuscados = new Subject<Estudiante[]>();
+  formInvalidoEstudiante: Boolean;
+  estudianteSeleccionado: Estudiante;
+  tipoPopUp: string;
+  formEstudianteModificada: boolean;
 
   constructor(public http: HttpClient) {}
 
   altaEstudiante(
-  apellido: string,
-  nombre: string,
-  tipoDocumento: string,
-  numeroDocumento: number,
-  cuil: number,
-  sexo: string,
-  calle: string,
-  numeroCalle: number,
-  piso: string,
-  departamento: string,
-  provincia: string,
-  localidad: string,
-  codigoPostal: number,
-  nacionalidad: string,
-  fechaNacimiento: string,
-  estadoCivil: string,
-  telefonoFijo: number,
-  adultoResponsable: string
+    apellido: string,
+    nombre: string,
+    tipoDocumento: string,
+    numeroDocumento: number,
+    cuil: number,
+    sexo: string,
+    calle: string,
+    numeroCalle: number,
+    piso: string,
+    departamento: string,
+    provincia: string,
+    localidad: string,
+    codigoPostal: number,
+    nacionalidad: string,
+    fechaNacimiento: string,
+    estadoCivil: string,
+    telefonoFijo: number,
+    adultoResponsable: string
   ) {
     const estudiante: Estudiante = {
       _id: null,
-    apellido,
-    nombre,
-    tipoDocumento,
-    numeroDocumento,
-    cuil,
-    sexo,
-    calle,
-    numeroCalle,
-    piso,
-    departamento,
-    provincia,
-    localidad,
-    codigoPostal,
-    nacionalidad,
-    fechaNacimiento,
-    estadoCivil,
-    telefonoFijo,
-    adultoResponsable };
-    this.http.post<{message: string}>('http://localhost:3000/estudiante', estudiante)
-      .subscribe((response) => {
+      apellido,
+      nombre,
+      tipoDocumento,
+      numeroDocumento,
+      cuil,
+      sexo,
+      calle,
+      numeroCalle,
+      piso,
+      departamento,
+      provincia,
+      localidad,
+      codigoPostal,
+      nacionalidad,
+      fechaNacimiento,
+      estadoCivil,
+      telefonoFijo,
+      adultoResponsable
+    };
+    this.http
+      .post<{ message: string }>("http://localhost:3000/estudiante", estudiante)
+      .subscribe(response => {
         console.log(response.message);
       });
   }
 
-  getEstudiantesListener(){
+  borrarEstudiante(_id){
+    let params = new HttpParams().set("_id", _id);
+    this.http.delete<{message: string}>("http://localhost:3000/estudiante/borrar",{params: params})
+    .subscribe(response=>{
+      console.log(response.message);
+    })
+  }
+
+  getEstudiantesListener() {
     return this.estudiantesBuscados.asObservable();
   }
 
@@ -81,53 +92,70 @@ export class EstudiantesService {
 
   // Obtenemos las provincias de la bd y actualizamos a los componentes con el observador
   getProvincias() {
-    this.http.get<{provincias: Provincia[]}>('http://localhost:3000/provincia')
-    .subscribe((response) => {
-      this.provincias = response.provincias;
-      this.provinciasActualizadas.next([...this.provincias]);
-    });
+    this.http
+      .get<{ provincias: Provincia[] }>("http://localhost:3000/provincia")
+      .subscribe(response => {
+        this.provincias = response.provincias;
+        this.provinciasActualizadas.next([...this.provincias]);
+      });
   }
 
-  getLocalidadesListener(){
+  getLocalidadesListener() {
     return this.localidadesActualizadas.asObservable();
-    }
+  }
 
   getLocalidades() {
-      this.http.get<{localidades: Localidad[]}>('http://localhost:3000/localidad')
-        .subscribe((response) => {
-          this.localidades = response.localidades;
-          this.localidadesActualizadas.next([...this.localidades]);
-        });
-    }
+    this.http
+      .get<{ localidades: Localidad[] }>("http://localhost:3000/localidad")
+      .subscribe(response => {
+        this.localidades = response.localidades;
+        this.localidadesActualizadas.next([...this.localidades]);
+      });
+  }
 
-    getNacionalidadesListener(){
-     return this.nacionalidadesActualizadas.asObservable();
-   }
+  getNacionalidadesListener() {
+    return this.nacionalidadesActualizadas.asObservable();
+  }
 
   getNacionalidades() {
-    this.http.get<{nacionalidades: Nacionalidad[]}>('http://localhost:3000/nacionalidad')
-      .subscribe((response) => {
+    this.http
+      .get<{ nacionalidades: Nacionalidad[] }>(
+        "http://localhost:3000/nacionalidad"
+      )
+      .subscribe(response => {
         this.nacionalidades = response.nacionalidades;
         this.nacionalidadesActualizadas.next([...this.nacionalidades]);
       });
-   }
-
-  buscarEstudiantesDocumento(tipo: string, numero: number){
-    let params = new HttpParams().set("tipo", tipo).set("numero", numero.toString());
-    this.http.get<{estudiantes: Estudiante[]}>('http://localhost:3000/estudiante/documento/', {params: params})
-    .subscribe((response)=>{
-        this.estudiantes = response.estudiantes;
-        this.estudiantesBuscados.next([...this.estudiantes]);
-      })
   }
 
-  buscarEstudiantesNombreApellido(nombre: string, apellido: string){
-    let params = new HttpParams().set("nombre", nombre).set("apellido", apellido);
-    this.http.get<{estudiantes: Estudiante[]}>('http://localhost:3000/estudiante/nombreyapellido', {params: params})
-      .subscribe((response)=>{
+  buscarEstudiantesDocumento(tipo: string, numero: number) {
+    let params = new HttpParams()
+      .set("tipo", tipo)
+      .set("numero", numero.toString());
+    this.http
+      .get<{ estudiantes: Estudiante[] }>(
+        "http://localhost:3000/estudiante/documento/",
+        { params: params }
+      )
+      .subscribe(response => {
         this.estudiantes = response.estudiantes;
         this.estudiantesBuscados.next([...this.estudiantes]);
-      })
+      });
+  }
+
+  buscarEstudiantesNombreApellido(nombre: string, apellido: string) {
+    let params = new HttpParams()
+      .set("nombre", nombre)
+      .set("apellido", apellido);
+    this.http
+      .get<{ estudiantes: Estudiante[] }>(
+        "http://localhost:3000/estudiante/nombreyapellido",
+        { params: params }
+      )
+      .subscribe(response => {
+        this.estudiantes = response.estudiantes;
+        this.estudiantesBuscados.next([...this.estudiantes]);
+      });
   }
 
   modificarEstudiante(
@@ -150,9 +178,9 @@ export class EstudiantesService {
     estadoCivil: string,
     telefonoFijo: number,
     adultoResponsable: string
-    ) {
-      const estudianteModificado: Estudiante = {
-        _id,
+  ) {
+    const estudianteModificado: Estudiante = {
+      _id,
       apellido,
       nombre,
       tipoDocumento,
@@ -170,10 +198,15 @@ export class EstudiantesService {
       fechaNacimiento,
       estadoCivil,
       telefonoFijo,
-      adultoResponsable };
-      this.http.patch<{message: string}>('http://localhost:3000/estudiante/modificar',estudianteModificado)
+      adultoResponsable
+    };
+    this.http
+      .patch<{ message: string }>(
+        "http://localhost:3000/estudiante/modificar",
+        estudianteModificado
+      )
       .subscribe(response => {
         console.log(response.message);
-      })
-    }
+      });
+  }
 }

@@ -64,7 +64,6 @@ export class AltaEstudiantesComponent implements OnInit, OnDestroy {
 
   onGuardar(form: NgForm) {
     if (form.invalid) {
-      // this.servicio.formInvalidoEstudiante=true;
     } else {
       this.servicio.altaEstudiante(
         form.value.apellido,
