@@ -11,7 +11,7 @@ const app = express(); // Creo la app express
 // Mongodb password: SNcjNuPBMG42lOh1
 /* Conectamos a la bd y segun lo que responda ese metodo (la promesa) imprimimos en consola
    lo que corresponda*/
-mongoose.connect('mongodb+srv://ComandanteJr:SNcjNuPBMG42lOh1@cluster0-qvosw.mongodb.net/icrdev?retryWrites=true')
+mongoose.connect('mongodb+srv://ComandanteJr:SNcjNuPBMG42lOh1@cluster0-qvosw.mongodb.net/icrdev?retryWrites=true',{useNewUrlParser: true })
 .then(() => {
   console.log('Conexión a base de datos exitosa');
 })

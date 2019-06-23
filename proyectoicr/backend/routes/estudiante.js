@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const Estudiante = require("../models/estudiante");
 
+//Registra un nuevo estudiante en la base de datos
 router.post("", (req, res, next) => {
   const estudiante = new Estudiante({
     apellido: req.body.apellido,
@@ -23,7 +24,6 @@ router.post("", (req, res, next) => {
     telefonoFijo:req.body.telefonoFijo,
     adultoResponsable:"null",
   });
-
   estudiante.save().then(()=> {
     res.status(201).json({
       message: "Estudiante registrado correctamente!"
@@ -49,13 +49,13 @@ router.get("/nombreyapellido", (req, res, next) => {
   Estudiante.find({nombre: { $regex : new RegExp(nombre, "i") },
    apellido: { $regex : new RegExp(apellido, "i") }}).
    then(documents => {
-  // Estudiante.find({nombre: nombre, apellido: apellido}).then(documents => {
     res.status(200).json({
       estudiantes: documents
     });
   });
 });
 
+//Modifica un estudiante
 router.patch("/modificar",(req, res, next) =>{
   Estudiante.findByIdAndUpdate(req.body._id,{
     apellido: req.body.apellido,
