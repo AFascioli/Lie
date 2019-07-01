@@ -209,4 +209,12 @@ export class EstudiantesService {
         console.log(response.message);
       });
   }
+
+  buscarEstudiantesPorCurso(curso: string){
+    let params = new HttpParams().set("curso", curso);
+    this.http.get("http://localhost:3000/estudiante/curso",{params: params})
+    .subscribe(response =>{
+      console.log(response);
+    })
+  }
 }
