@@ -7,6 +7,8 @@ import { Estudiante } from "../estudiante.model";
 import { FormsModule } from "@angular/forms";
 import { Nacionalidad } from "../nacionalidades.model";
 import { Localidad } from "../localidades.model";
+import { MatDialog, MatDialogRef } from "@angular/material";
+import { Router } from "@angular/router";
 
 @Component({
   selector: "app-mostrar-estudiantes",
@@ -22,7 +24,7 @@ export class MostrarEstudiantesComponent implements OnInit {
   estudiante: Estudiante;
   maxDate = new Date();
   primeraVez = true;
-  camposDeshabilitados = false;
+  modoEditar = false;
 
   //Atributos Estudiantes del HTML
   apellidoEstudiante: string;
@@ -43,7 +45,7 @@ export class MostrarEstudiantesComponent implements OnInit {
   estadoCivilEstudiante: string;
   telefonoEstudiante: number;
 
-  constructor(public servicio: EstudiantesService) {
+  constructor(public servicio: EstudiantesService, public dialog: MatDialog) {
     this.apellidoEstudiante = this.servicio.estudianteSeleccionado.apellido;
     this.nombreEstudiante = this.servicio.estudianteSeleccionado.nombre;
     this.tipoDocEstudiante = this.servicio.estudianteSeleccionado.tipoDocumento;
@@ -64,6 +66,8 @@ export class MostrarEstudiantesComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.servicio.formInvalidoEstudiante = true;
+    this.servicio.formEstudianteModificada= false;
     this.servicio.getProvincias();
     this.suscripcion = this.servicio
       .getProvinciasListener()
@@ -102,30 +106,92 @@ export class MostrarEstudiantesComponent implements OnInit {
   }
 
   onEditar() {
-    this.camposDeshabilitados = true;
+    this.modoEditar = true;
   }
 
-  onGuardar() {
-    this.servicio.modificarEstudiante(
-      this.apellidoEstudiante,
-      this.nombreEstudiante,
-      this.tipoDocEstudiante,
-      this.nroDocEstudiante,
-      this.cuilEstudiante,
-      this.sexoEstudiante,
-      this.calleEstudiante,
-      this.nroCalleEstudiante,
-      this.pisoEstudiante,
-      this.departamentoEstudiante,
-      this.provinciaEstudiante,
-      this.localidadEstudiante,
-      this.CPEstudiante,
-      this.fechaNacEstudiante,
-      this.nacionalidadEstudiante,
-      this.estadoCivilEstudiante,
-      this.telefonoEstudiante,
-      "adultoResponsable"
-    );
-    //TERMINAR
+  onGuardar(form: NgForm) {
+    if (!form.invalid && form.dirty) {
+      this.servicio.modificarEstudiante(
+        this.servicio.estudianteSeleccionado._id,
+        this.apellidoEstudiante,
+        this.nombreEstudiante,
+        this.tipoDocEstudiante,
+        this.nroDocEstudiante,
+        this.cuilEstudiante,
+        this.sexoEstudiante,
+        this.calleEstudiante,
+        this.nroCalleEstudiante,
+        this.pisoEstudiante,
+        this.departamentoEstudiante,
+        this.provinciaEstudiante,
+        this.localidadEstudiante,
+        this.CPEstudiante,
+        this.nacionalidadEstudiante,
+        this.fechaNacEstudiante,
+        this.estadoCivilEstudiante,
+        this.telefonoEstudiante,
+        "adultoResponsable"
+      );
+      this.modoEditar=false;
+    }
+  }
+
+  openDialogo(tipo: string, form: NgForm): void {
+    this.servicio.tipoPopUp = tipo;
+    if (form.invalid) {
+      this.servicio.formInvalidoEstudiante = true;
+    } else {
+      this.servicio.formInvalidoEstudiante = false;
+      this.servicio.formEstudianteModificada = form.dirty;
+    }
+    this.dialog.open(MostrarPopupComponent, {
+      width: "250px"
+    });
+  }
+}
+
+@Component({
+  selector: "app-mostrar-popup",
+  templateUrl: "./mostrar-popup.component.html"
+})
+export class MostrarPopupComponent {
+  tipoPopup: string;
+  formInvalido: Boolean;
+  borrar: string;
+  formModificada: boolean;
+
+  constructor(
+    public dialogRef: MatDialogRef<MostrarPopupComponent>,
+    public router: Router,
+    public servicio: EstudiantesService
+  ) {
+    this.tipoPopup = this.servicio.tipoPopUp;
+    this.formInvalido = servicio.formInvalidoEstudiante;
+    this.borrar = "¿Está seguro que desea borrar el estudiante?";
+    this.formModificada= this.servicio.formEstudianteModificada;
+  }
+
+  onYesClick(): void {
+    this.router.navigate(["menuLateral/home"]);
+    this.dialogRef.close();
+  }
+
+  onNoClick(): void {
+    this.dialogRef.close();
+  }
+
+  onOkClick(): void {
+    this.dialogRef.close();
+    this.servicio.formInvalidoEstudiante = true;
+  }
+
+  onOkClickBorrar(): void {
+    this.dialogRef.close();
+    this.router.navigate(["menuLateral/buscar"]);
+  }
+
+  onYesDeleteClick() {
+    this.borrar = "El estudiante fue borrado exitosamente";
+    this.servicio.borrarEstudiante(this.servicio.estudianteSeleccionado._id);
   }
 }

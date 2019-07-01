@@ -1,13 +1,11 @@
 <mat-card>
-
-  <form #form="ngForm"    >
-
+  <form #form="ngForm">
     <mat-form-field>
       <input
-       [disabled]="!camposDeshabilitados"
+        [disabled]="!modoEditar"
         name="apellido"
         [(ngModel)]="apellidoEstudiante"
-        pattern="[A-Za-záéíóúÁÉÍÓÚ]+"
+        pattern="[A-Za-záéíóúÁÉÍÓÚ ]+"
         minlength="2"
         maxlength="40"
         ngModel
@@ -16,16 +14,15 @@
         placeholder="Ingrese apellido/s"
         type="text"
         required
-
       />
     </mat-form-field>
     <br />
     <mat-form-field>
       <input
-      [disabled]="!camposDeshabilitados"
+        [disabled]="!modoEditar"
         [(ngModel)]="nombreEstudiante"
         name="nombre"
-        pattern="[A-Za-záéíóúÁÉÍÓÚ]+"
+        pattern="[A-Za-záéíóúÁÉÍÓÚ ]+"
         minlength="2"
         maxlength="40"
         ngModel
@@ -33,14 +30,13 @@
         matInput
         placeholder="Ingrese nombre/s"
         type="text"
-
         required
       />
     </mat-form-field>
     <br />
     <mat-form-field>
       <mat-select
-      [disabled]="!camposDeshabilitados"
+        [disabled]="!modoEditar"
         [(ngModel)]="tipoDocEstudiante"
         placeholder="Seleccione tipo de documento"
         name="tipoDocumento"
@@ -48,22 +44,21 @@
         #tipoDocumento="ngModel"
         matNativeControl
         required
-
       >
-      <mat-option value="DNI">DNI</mat-option>
-      <mat-option value="Cedula de Identidad">Cédula de Identidad</mat-option>
-      <mat-option value="Libreta de Enrolamiento"
-        >Libreta de Enrolamiento</mat-option
-      >
-      <mat-option value="Libreta Civica">Libreta Cívica</mat-option>
-      <mat-option value="Pasaporte">Pasaporte</mat-option>
+        <mat-option value="DNI">DNI</mat-option>
+        <mat-option value="Cedula de Identidad">Cédula de Identidad</mat-option>
+        <mat-option value="Libreta de Enrolamiento"
+          >Libreta de Enrolamiento</mat-option
+        >
+        <mat-option value="Libreta Civica">Libreta Cívica</mat-option>
+        <mat-option value="Pasaporte">Pasaporte</mat-option>
       </mat-select>
     </mat-form-field>
     <br />
     <mat-form-field>
       <input
-      [disabled]="!camposDeshabilitados"
-       [(ngModel)]="nroDocEstudiante"
+        [disabled]="!modoEditar"
+        [(ngModel)]="nroDocEstudiante"
         name="nroDocumento"
         pattern="[0-9]+"
         maxlength="8"
@@ -78,8 +73,8 @@
     <br />
     <mat-form-field>
       <input
-      [disabled]="!camposDeshabilitados"
-      [(ngModel)]="cuilEstudiante"
+        [disabled]="!modoEditar"
+        [(ngModel)]="cuilEstudiante"
         name="cuil"
         pattern="[0-9]+"
         maxlength="11"
@@ -88,14 +83,13 @@
         matInput
         placeholder="Ingrese el número de CUIL"
         type="number"
-        required
       />
     </mat-form-field>
     <br />
     <mat-form-field>
       <mat-select
-      [disabled]="!camposDeshabilitados"
-      [(ngModel)]="sexoEstudiante"
+        [disabled]="!modoEditar"
+        [(ngModel)]="sexoEstudiante"
         placeholder="Seleccione sexo"
         name="sexo"
         ngModel
@@ -111,10 +105,10 @@
     <div class="domicilio">
       <mat-form-field>
         <input
-        [disabled]="!camposDeshabilitados"
-        [(ngModel)]="calleEstudiante"
+          [disabled]="!modoEditar"
+          [(ngModel)]="calleEstudiante"
           name="calle"
-          pattern="[\w]+"
+          pattern="[\w ]+"
           minlength="2"
           maxlength="30"
           ngModel
@@ -128,8 +122,8 @@
       <br />
       <mat-form-field>
         <input
-        [disabled]="!camposDeshabilitados"
-        [(ngModel)]="nroCalleEstudiante"
+          [disabled]="!modoEditar"
+          [(ngModel)]="nroCalleEstudiante"
           name="nroCalle"
           pattern="[0-9]+"
           maxlength="5"
@@ -143,36 +137,34 @@
       <br />
       <mat-form-field>
         <input
-        [disabled]="!camposDeshabilitados"
-        [(ngModel)]="pisoEstudiante"
+          [disabled]="!modoEditar"
+          [(ngModel)]="pisoEstudiante"
           name="piso"
           ngModel
           #piso="ngModel"
           matInput
           placeholder="Ingrese piso"
           type="text"
-          required
         />
       </mat-form-field>
       <br />
       <mat-form-field>
         <input
-        [disabled]="!camposDeshabilitados"
-        [(ngModel)]="departamentoEstudiante"
+          [disabled]="!modoEditar"
+          [(ngModel)]="departamentoEstudiante"
           name="departamento"
           ngModel
           #departamento="ngModel"
           matInput
           placeholder="Ingrese departamento"
           type="text"
-          required
         />
       </mat-form-field>
       <br />
       <mat-form-field>
         <mat-select
-        [disabled]="!camposDeshabilitados"
-        [(ngModel)]="provinciaEstudiante"
+          [disabled]="!modoEditar"
+          [(ngModel)]="provinciaEstudiante"
           placeholder="Seleccione provincia"
           name="provincia"
           ngModel
@@ -180,22 +172,20 @@
           matNativeControl
           required
         >
-        <mat-option
-        (onSelectionChange)="FiltrarLocalidades(provincia.id)"
-        *ngFor="let provincia of provincias"
-        [value]="provincia.nombre"
-      >
-        {{ provincia.nombre }}
-        </mat-option>
+          <mat-option
+            (onSelectionChange)="FiltrarLocalidades(provincia.id)"
+            *ngFor="let provincia of provincias"
+            [value]="provincia.nombre"
+          >
+            {{ provincia.nombre }}
+          </mat-option>
         </mat-select>
       </mat-form-field>
       <br />
-
-      <br/>
       <mat-form-field>
         <mat-select
-        [disabled]="!camposDeshabilitados"
-        [(ngModel)]="localidadEstudiante"
+          [disabled]="!modoEditar"
+          [(ngModel)]="localidadEstudiante"
           placeholder="Seleccione localidad"
           name="localidad"
           ngModel
@@ -203,7 +193,7 @@
           matNativeControl
           required
         >
-        <mat-option
+          <mat-option
             *ngFor="let localidad of localidadesFiltradas"
             [value]="localidad.nombre"
           >
@@ -214,15 +204,14 @@
       <br />
       <mat-form-field>
         <input
-        [disabled]="!camposDeshabilitados"
-        [(ngModel)]="CPEstudiante"
+          [disabled]="!modoEditar"
+          [(ngModel)]="CPEstudiante"
           name="codigoPostal"
           ngModel
           #codigoPostal="ngModel"
           matInput
           placeholder="Ingrese código postal"
           type="number"
-          required
         />
       </mat-form-field>
       <br />
@@ -230,12 +219,13 @@
     <div class="nacionalidad">
       <mat-form-field>
         <input
-        [disabled]="!camposDeshabilitados"
-        [(ngModel)]="fechaNacEstudiante"
+          [disabled]="!modoEditar"
+          [(ngModel)]="fechaNacEstudiante"
           matInput
           name="fechaNac"
           ngModel
           #fechaNac="ngModel"
+          required
           [max]="maxDate"
           [matDatepicker]="picker"
           placeholder="Seleccione fecha de nacimiento"
@@ -250,8 +240,8 @@
       <br />
       <mat-form-field>
         <mat-select
-        [disabled]="!camposDeshabilitados"
-        [(ngModel)]="nacionalidadEstudiante"
+          [disabled]="!modoEditar"
+          [(ngModel)]="nacionalidadEstudiante"
           placeholder="Seleccione nacionalidad"
           name="nacionalidad"
           ngModel
@@ -270,14 +260,13 @@
     </div>
     <mat-form-field>
       <mat-select
-      [disabled]="!camposDeshabilitados"
-      [(ngModel)]="estadoCivilEstudiante"
+        [disabled]="!modoEditar"
+        [(ngModel)]="estadoCivilEstudiante"
         placeholder="Seleccione estado civil"
         name="estadoCivil"
         ngModel
         #estadoCivil="ngModel"
         matNativeControl
-        required
       >
         <mat-option value="soltero">Soltero/a</mat-option>
         <mat-option value="casado">Casado/a</mat-option>
@@ -287,8 +276,8 @@
     <br />
     <mat-form-field>
       <input
-      [disabled]="!camposDeshabilitados"
-      [(ngModel)]="telefonoEstudiante"
+        [disabled]="!modoEditar"
+        [(ngModel)]="telefonoEstudiante"
         matInput
         name="telefono"
         pattern="[0-9]{10}"
@@ -299,11 +288,31 @@
       />
     </mat-form-field>
     <br />
-    <button (click)="onEditar()" mat-raised-button color="primary">Editar</button>
-    <button (click)="onGuardar()" mat-raised-button color="warn">Guardar</button>
-    <button mat-raised-button color="warn">Borrar</button>
-    <button mat-raised-button color="warn">Cancelar</button>
- </form>
+    <button
+      *ngIf="modoEditar"
+      (click)="onGuardar(form)"
+      (click)="openDialogo('guardar', form)"
+      mat-raised-button
+      color="warn"
+    >
+      Guardar
+    </button>
+    <button (click)="onEditar()" mat-raised-button color="primary">
+      Editar
+    </button>
+    <button
+      mat-raised-button
+      (click)="openDialogo('borrar', form)"
+      color="warn"
+    >
+      Borrar
+    </button>
+    <button
+      mat-raised-button
+      (click)="openDialogo('cancelar', form)"
+      color="warn"
+    >
+      Cancelar
+    </button>
+  </form>
 </mat-card>
-
-

@@ -5,7 +5,7 @@
     <mat-form-field>
       <input
         name="apellido"
-        pattern="[A-Za-záéíóúÁÉÍÓÚ]+"
+        pattern="[A-Za-záéíóúÁÉÍÓÚ ]+"
         minlength="2"
         maxlength="40"
         ngModel
@@ -19,7 +19,7 @@
     <br />
     <mat-form-field>
       <input
-        pattern="[A-Za-záéíóúÁÉÍÓÚ]+"
+        pattern="[A-Za-záéíóúÁÉÍÓÚ ]+"
         name="nombre"
         minlength="2"
         maxlength="40"
@@ -98,7 +98,7 @@
       <mat-form-field>
         <input
           name="calle"
-          pattern="[\w]+"
+          pattern="[\w ]+"
           minlength="2"
           maxlength="30"
           ngModel
@@ -207,6 +207,7 @@
           [max]="maxDate"
           [matDatepicker]="picker"
           placeholder="Seleccione fecha de nacimiento"
+          required
         />
         <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
         <mat-datepicker
@@ -261,7 +262,7 @@
     </mat-form-field>
     <br />
     <button mat-raised-button>Registrar Adulto responsable</button>
-    <button type="submit" (click)="openDialogo()"color="primary" mat-raised-button>Guardar</button>
+    <button type="submit" (click)="openDialogo(form)"color="primary" mat-raised-button>Guardar</button>
     <button mat-raised-button (click)="openDialog()" color="warn">Cancelar</button>
   </form>
 </mat-card>

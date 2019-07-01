@@ -24,7 +24,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { EstudiantesService } from './estudiantes/estudiante.service';
 import { BuscarEstudiantesComponent } from './estudiantes/buscar-estudiantes/buscar-estudiantes.component';
 import { ListaEstudiantesComponent } from './estudiantes/lista-estudiantes/lista-estudiantes.component';
-import { MostrarEstudiantesComponent } from './estudiantes/mostrar-estudiantes/mostrar-estudiantes.component';
+import { MostrarEstudiantesComponent, MostrarPopupComponent } from './estudiantes/mostrar-estudiantes/mostrar-estudiantes.component';
 import { AppRoutingModule } from './app-routing.module';
 import { MenuPrincipalComponent } from './menu-principal/menu-principal.component';
 import { MenuLateralComponent } from './menu-lateral/menu-lateral.component';
@@ -39,13 +39,13 @@ import { HomeComponent } from './home/home.component';
     MostrarEstudiantesComponent,
     DialogoPopupComponent,
     DialogoDosPopupComponent,
-   // MostrarPopupComponent,
+    MostrarPopupComponent,
     MenuPrincipalComponent,
     MenuLateralComponent,
     HomeComponent
   ],
   //entryComponents declara los componentes que se generan dinamicamente dentro de otros.
-  entryComponents: [DialogoPopupComponent, DialogoDosPopupComponent ],
+  entryComponents: [DialogoPopupComponent, DialogoDosPopupComponent, MostrarPopupComponent ],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
