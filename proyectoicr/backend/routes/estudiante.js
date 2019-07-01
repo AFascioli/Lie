@@ -22,7 +22,7 @@ router.post("", (req, res, next) => {
     fechaNacimiento:req.body.fechaNacimiento,
     estadoCivil:req.body.estadoCivil,
     telefonoFijo:req.body.telefonoFijo,
-    adultoResponsable:"null",
+    adultoResponsable:"adulto",
   });
   estudiante.save().then(()=> {
     res.status(201).json({
