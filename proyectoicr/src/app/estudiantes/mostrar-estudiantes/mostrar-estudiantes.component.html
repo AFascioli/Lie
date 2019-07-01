@@ -5,7 +5,7 @@
         [disabled]="!modoEditar"
         name="apellido"
         [(ngModel)]="apellidoEstudiante"
-        pattern="[A-Za-záéíóúÁÉÍÓÚ ]+"
+        pattern="[A-Za-záéíóúÁÉÍÓÚñÑ ]+"
         minlength="2"
         maxlength="40"
         ngModel
@@ -22,7 +22,7 @@
         [disabled]="!modoEditar"
         [(ngModel)]="nombreEstudiante"
         name="nombre"
-        pattern="[A-Za-záéíóúÁÉÍÓÚ ]+"
+        pattern="[A-Za-záéíóúÁÉÍÓÚñÑ ]+"
         minlength="2"
         maxlength="40"
         ngModel
@@ -108,7 +108,7 @@
           [disabled]="!modoEditar"
           [(ngModel)]="calleEstudiante"
           name="calle"
-          pattern="[\w ]+"
+          pattern="[A-Za-záéíóúÁÉÍÓÚñÑ ]+"
           minlength="2"
           maxlength="30"
           ngModel

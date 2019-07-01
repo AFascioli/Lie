@@ -23,6 +23,7 @@ router.post("", (req, res, next) => {
     estadoCivil:req.body.estadoCivil,
     telefonoFijo:req.body.telefonoFijo,
     adultoResponsable:"null",
+    activo: true
   });
   estudiante.save().then(()=> {
     res.status(201).json({
@@ -35,7 +36,7 @@ router.post("", (req, res, next) => {
 router.get("/documento", (req, res, next) => {
   const tipo = req.query.tipo;
   const numero = req.query.numero;
-  Estudiante.find({tipoDocumento: tipo, numeroDocumento: numero}).then(documents => {
+  Estudiante.find({tipoDocumento: tipo, numeroDocumento: numero, activo: true}).then(documents => {
     res.status(200).json({
       estudiantes: documents
     });
@@ -47,7 +48,7 @@ router.get("/nombreyapellido", (req, res, next) => {
   const nombre = req.query.nombre;
   const apellido = req.query.apellido;
   Estudiante.find({nombre: { $regex : new RegExp(nombre, "i") },
-   apellido: { $regex : new RegExp(apellido, "i") }}).
+   apellido: { $regex : new RegExp(apellido, "i") }, activo: true}).
    then(documents => {
     res.status(200).json({
       estudiantes: documents
@@ -85,7 +86,7 @@ router.patch("/modificar",(req, res, next) =>{
 });
 
 router.delete("/borrar", (req, res, next)=>{
-  Estudiante.findByIdAndDelete(req.query._id).then(() =>{
+  Estudiante.findOneAndUpdate({_id: req.query._id},{activo: false}).then(() =>{
     res.status(202).json({
       message: "Estudiante exitosamente borrado"
     });
