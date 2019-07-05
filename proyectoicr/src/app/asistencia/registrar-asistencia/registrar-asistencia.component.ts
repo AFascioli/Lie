@@ -13,7 +13,7 @@ export class RegistrarAsistenciaComponent implements OnInit {
   ngOnInit() {
   }
 
-  buscarEstudiantesPorCurso(curso: string){
-    this.servicio.buscarEstudiantesPorCurso(curso);
+  buscarEstudiantesPorDivision(curso: string){
+    this.servicio.buscarEstudiantesPorDivision(curso);
   }
 }

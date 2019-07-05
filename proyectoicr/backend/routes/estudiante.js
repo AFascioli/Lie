@@ -1,6 +1,8 @@
 const express = require("express");
-const router = express.Router();
 const Estudiante = require("../models/estudiante");
+const Inscripcion = require("../models/inscripcion");
+const Division = require("../models/division");
+const router = express.Router();
 
 //Registra un nuevo estudiante en la base de datos
 router.post("", (req, res, next) => {
@@ -43,7 +45,7 @@ router.get("/documento", (req, res, next) => {
   });
 });
 
-//Busqueda de un estudiante por nombre y apellido ignorando mayusculas
+//Busqueda de un estudisante por nombre y apellido ignorando mayusculas
 router.get("/nombreyapellido", (req, res, next) => {
   const nombre = req.query.nombre;
   const apellido = req.query.apellido;
@@ -93,9 +95,16 @@ router.delete("/borrar", (req, res, next)=>{
   });
 });
 
-router.get("/curso", (req, resp, next)=>{
-  Estudiante.find({curso: req.params.curso}).then(documents => {
-    res.status(200).json({estudiantes: documents});
+//Retorna un vector que tiene objetos que a su vez tienen _id, nombre, apellido de un estudiante
+router.get("/division", (req, resp, next)=>{
+  Inscripcion.find({}).select({IdDivision: 0, _id: 0, asistenciaDiaria: 0})
+  .populate('IdEstudiante','nombre apellido').populate({
+    path: 'IdDivision',
+    match: {curso: "5A"}
+  }).then(documents =>{
+    res.status(200).json({
+      estudiantesXDivision: documents
+    })
   });
 });
 

@@ -6,9 +6,6 @@ const provinciasRoutes = require("./routes/provincia");
 const localidadesRoutes = require("./routes/localidad");
 const nacionalidadesRoutes = require("./routes/nacionalidad");
 
-const inscripcion= require("./models/inscripcion");
-const division= require("./models/division");
-
 const app = express(); // Creo la app express
 
 // Mongodb password: SNcjNuPBMG42lOh1
@@ -39,7 +36,6 @@ app.use((req, res, next) => {
   );
   next();
 });
-
 app.use("/estudiante", estudiantesRoutes);
 
 app.use("/provincia", provinciasRoutes);
@@ -48,12 +44,4 @@ app.use("/localidad", localidadesRoutes);
 
 app.use("/nacionalidad", nacionalidadesRoutes);
 
-app.get("/test", (req, res) => {
-  // division.findOne({curso: "5A"}).then( document =>{
-  //   console.log("division "+ document);
-  // });
-  inscripcion.findById("5d1f6fe4f63ccad39bc2cb98").populate('IdEstudiante, IdDivision').then( document =>{
-    console.log("inscricion "+ document);
-  }).catch(err=>{ console.log(err);});
-});
 module.exports = app;

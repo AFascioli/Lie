@@ -210,7 +210,7 @@ export class EstudiantesService {
       });
   }
 
-  buscarEstudiantesPorCurso(curso: string){
+  buscarEstudiantesPorDivision(curso: string){
     let params = new HttpParams().set("curso", curso);
     this.http.get("http://localhost:3000/estudiante/curso",{params: params})
     .subscribe(response =>{
