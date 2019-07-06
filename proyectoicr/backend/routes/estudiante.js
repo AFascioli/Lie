@@ -96,15 +96,29 @@ router.delete("/borrar", (req, res, next)=>{
 });
 
 //Retorna un vector que tiene objetos que a su vez tienen _id, nombre, apellido de un estudiante
-router.get("/division", (req, resp, next)=>{
+//Retorna un vector que tiene objetos que tienen _id, nombre, apellido, presente y fecha.
+router.get("/division", (req, res, next)=>{
   Inscripcion.find({}).select({IdDivision: 0, _id: 0, asistenciaDiaria: 0})
   .populate('IdEstudiante','nombre apellido').populate({
     path: 'IdDivision',
     match: {curso: "5A"}
   }).then(documents =>{
+    const fechaActual= new Date();
+    var estudiantesRedux= [];
+    documents.forEach(objConIdEstudiante => {
+      let estudianteRedux={
+        _id: objConIdEstudiante.IdEstudiante._id,
+        nombre: objConIdEstudiante.IdEstudiante.nombre,
+        apellido: objConIdEstudiante.IdEstudiante.apellido,
+        presente: false,
+        fecha: fechaActual.toDateString()
+      };
+      estudiantesRedux.push(estudianteRedux);
+    });
+    console.dir(estudiantesRedux);
     res.status(200).json({
-      estudiantesXDivision: documents
-    })
+      estudiantesXDivision: estudiantesRedux
+    });
   });
 });
 
