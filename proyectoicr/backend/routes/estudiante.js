@@ -95,15 +95,18 @@ router.delete("/borrar", (req, res, next)=>{
   });
 });
 
-//Retorna un vector que tiene objetos que a su vez tienen _id, nombre, apellido de un estudiante
 //Retorna un vector que tiene objetos que tienen _id, nombre, apellido, presente y fecha.
+//Se tiene que crear el vector estudiantesRedux para que devuelva los datos bien al frontend
+//Se tiene que convertir la fecha porque Date esta en UTC y en argentina estamos en UTC-3
 router.get("/division", (req, res, next)=>{
   Inscripcion.find({}).select({IdDivision: 0, _id: 0, asistenciaDiaria: 0})
   .populate('IdEstudiante','nombre apellido').populate({
     path: 'IdDivision',
     match: {curso: "5A"}
   }).then(documents =>{
+
     const fechaActual= new Date();
+    fechaActual.setHours(fechaActual.getHours() - 3);
     var estudiantesRedux= [];
     documents.forEach(objConIdEstudiante => {
       let estudianteRedux={
@@ -111,14 +114,15 @@ router.get("/division", (req, res, next)=>{
         nombre: objConIdEstudiante.IdEstudiante.nombre,
         apellido: objConIdEstudiante.IdEstudiante.apellido,
         presente: false,
-        fecha: fechaActual.toDateString()
+        fecha: fechaActual.toISOString().split('T')[0]
       };
       estudiantesRedux.push(estudianteRedux);
     });
-    console.dir(estudiantesRedux);
+
     res.status(200).json({
       estudiantesXDivision: estudiantesRedux
     });
+
   });
 });
 

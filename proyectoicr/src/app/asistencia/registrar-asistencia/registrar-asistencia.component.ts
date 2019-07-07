@@ -18,9 +18,7 @@ export class RegistrarAsistenciaComponent implements OnInit {
   buscarEstudiantesPorDivision(curso: string){
     this.servicio.buscarEstudiantesPorDivision(curso);
     this.servicio.getEstudiantesXDivisionListener().subscribe(estudiantesXDivision =>{
-      estudiantesXDivision.forEach(objConIDEstudiante => {
-        objConIDEstudiante.IdEstudiante.presente= false;
-      });
+      console.log("En ts estudiante por division: ");
       console.dir(estudiantesXDivision);
       this.estudiantesXDivision= estudiantesXDivision;
     });
@@ -29,8 +27,8 @@ export class RegistrarAsistenciaComponent implements OnInit {
   //Cambia el atributo presente del estudiante cuando se cambia de valor el toggle
   onCambioPresentismo(row){
     const indexEstudiante=this.estudiantesXDivision.
-    findIndex(objConIDEstudiante=>objConIDEstudiante.IdEstudiante._id==row.IdEstudiante._id);
-    this.estudiantesXDivision[indexEstudiante].IdEstudiante.presente=!this.estudiantesXDivision[indexEstudiante].IdEstudiante.presente;
+    findIndex(objConIDEstudiante=>objConIDEstudiante._id==row._id);
+    this.estudiantesXDivision[indexEstudiante].presente=!this.estudiantesXDivision[indexEstudiante].presente;
     console.dir(this.estudiantesXDivision);
   }
 }
