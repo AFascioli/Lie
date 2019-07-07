@@ -16,6 +16,7 @@ export class RegistrarAsistenciaComponent implements OnInit {
 
   ngOnInit() {}
 
+  //Busca los estudiantes segun el curso que se selecciono en pantalla. Los orden alfabeticamente
   buscarEstudiantesPorDivision(curso) {
     this.servicio.buscarEstudiantesPorDivision(curso.value);
     this.servicio
@@ -36,6 +37,7 @@ export class RegistrarAsistenciaComponent implements OnInit {
       .estudiantesXDivision[indexEstudiante].presente;
   }
 
+  //Envia al servicio el vector con los datos de los estudiantes y el presentismo
   onFinalizar() {
     this.servicio.registrarAsistencia(this.estudiantesXDivision);
     this.popup.open(AsistenciaPopupComponent, {

@@ -1,9 +1,9 @@
-table {
-  width: 100%;
-}
-
 .mat-card {
   margin: 3rem;
+}
+
+table {
+  width: 100%;
 }
 
 @keyframes example {

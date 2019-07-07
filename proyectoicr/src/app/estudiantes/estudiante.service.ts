@@ -226,10 +226,10 @@ export class EstudiantesService {
     })
   }
 
+  //Recibe un vector con datos de estudiantes (_id, nombre y apellido) y presentismo (fecha y presente) y lo envia al backend para registrarlo
   registrarAsistencia(estudiantesXDivision: any[]){
     this.http.post<{message: string}>("http://localhost:3000/estudiante/asistencia",estudiantesXDivision)
     .subscribe(response =>{
-
     });
   }
 }

@@ -37,6 +37,7 @@ router.post("", (req, res, next) => {
     .catch(err => console.log("Error al meter en la bd estudiante" + err));
 });
 
+//Obtiene un estudiante dado un numero y tipo de documento
 router.get("/documento", (req, res, next) => {
   const tipo = req.query.tipo;
   const numero = req.query.numero;
@@ -94,6 +95,7 @@ router.patch("/modificar", (req, res, next) => {
   });
 });
 
+//Borrado logico de un estudiante
 router.delete("/borrar", (req, res, next) => {
   Estudiante.findOneAndUpdate({ _id: req.query._id }, { activo: false }).then(
     () => {
@@ -104,7 +106,7 @@ router.delete("/borrar", (req, res, next) => {
   );
 });
 
-//Retorna un vector que tiene objetos que tienen _id, nombre, apellido, presente y fecha.
+//Retorna un vector que tiene objetos (estudianteRedux) que tienen _id, nombre, apellido, presente y fecha.
 //Se tiene que crear el vector estudiantesRedux para que devuelva los datos bien al frontend
 //Se tiene que convertir la fecha porque Date esta en UTC y en argentina estamos en UTC-3
 router.get("/division", (req, res, next) => {
@@ -156,7 +158,7 @@ router.get("/division", (req, res, next) => {
   });
 });
 
-
+//Busca cada inscripcion segun el _id del estudiante y le registra el presentismo de esa fecha
 router.post("/asistencia", (req, res)=>{
   try {
     req.body.forEach(estudiante => {
