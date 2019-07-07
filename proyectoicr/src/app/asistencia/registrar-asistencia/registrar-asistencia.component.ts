@@ -18,9 +18,7 @@ export class RegistrarAsistenciaComponent implements OnInit {
   buscarEstudiantesPorDivision(curso: string){
     this.servicio.buscarEstudiantesPorDivision(curso);
     this.servicio.getEstudiantesXDivisionListener().subscribe(estudiantesXDivision =>{
-      console.log("En ts estudiante por division: ");
-      console.dir(estudiantesXDivision);
-      this.estudiantesXDivision= estudiantesXDivision;
+      this.estudiantesXDivision= estudiantesXDivision.sort( (a,b) => (a.apellido > b.apellido) ? 1 : ((b.apellido > a.apellido) ? -1 : 0) );
     });
   }
 
@@ -29,6 +27,5 @@ export class RegistrarAsistenciaComponent implements OnInit {
     const indexEstudiante=this.estudiantesXDivision.
     findIndex(objConIDEstudiante=>objConIDEstudiante._id==row._id);
     this.estudiantesXDivision[indexEstudiante].presente=!this.estudiantesXDivision[indexEstudiante].presente;
-    console.dir(this.estudiantesXDivision);
   }
 }
