@@ -108,36 +108,6 @@ router.delete("/borrar", (req, res, next) => {
 //Se tiene que crear el vector estudiantesRedux para que devuelva los datos bien al frontend
 //Se tiene que convertir la fecha porque Date esta en UTC y en argentina estamos en UTC-3
 router.get("/division", (req, res, next) => {
-  Inscripcion.find({})
-    .select({ IdDivision: 0, _id: 0, asistenciaDiaria: 0 })
-    .populate("IdEstudiante", "nombre apellido")
-    .populate({
-      path: "IdDivision",
-      match: { curso: req.query.division }
-    })
-    .then(documents => {
-      const fechaActual = new Date();
-      fechaActual.setHours(fechaActual.getHours() - 3);
-      var estudiantesRedux = [];
-      documents.forEach(objConIdEstudiante => {
-        let estudianteRedux = {
-          _id: objConIdEstudiante.IdEstudiante._id,
-          nombre: objConIdEstudiante.IdEstudiante.nombre,
-          apellido: objConIdEstudiante.IdEstudiante.apellido,
-          presente: false,
-          fecha: fechaActual.toISOString().split("T")[0]
-        };
-        estudiantesRedux.push(estudianteRedux);
-      });
-
-      res.status(200).json({
-        estudiantesXDivision: estudiantesRedux
-      });
-    });
-});
-
-//Con esta ruta se hace bien el filtrado de curso en inscripcion
-router.get("/test", (req, res, next) => {
   Inscripcion.aggregate([
     {
       $lookup: {
@@ -156,7 +126,7 @@ router.get("/test", (req, res, next) => {
       }
     },
     {
-      $match: { "division.curso": req.query.division }
+      $match: { "division.curso": req.query.division, "activa": true }
     },
     {
       $project: {
@@ -180,11 +150,25 @@ router.get("/test", (req, res, next) => {
       };
       estudiantesRedux.push(estudianteRedux);
     });
-
     res.status(200).json({
       estudiantesXDivision: estudiantesRedux
     });
   });
 });
 
+
+router.post("/asistencia", (req, res)=>{
+  try {
+    req.body.forEach(estudiante => {
+      Inscripcion.findOneAndUpdate({IdEstudiante: estudiante._id, activa: true},
+        {$push: {asistenciaDiaria: {fecha: estudiante.fecha, presente: estudiante.presente}}
+      }).then(document =>{
+      });
+    });
+    res.status(201).json({message: "Asistencia registrada exitósamente"});
+
+  } catch (error) {
+    console.log(error);
+  }
+});
 module.exports = router;

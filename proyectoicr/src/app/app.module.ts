@@ -30,7 +30,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { MenuPrincipalComponent } from './menu-principal/menu-principal.component';
 import { MenuLateralComponent } from './menu-lateral/menu-lateral.component';
 import { HomeComponent } from './home/home.component';
-import { RegistrarAsistenciaComponent } from './asistencia/registrar-asistencia/registrar-asistencia.component';
+import { RegistrarAsistenciaComponent, AsistenciaPopupComponent } from './asistencia/registrar-asistencia/registrar-asistencia.component';
 
 @NgModule({
   declarations: [
@@ -45,10 +45,11 @@ import { RegistrarAsistenciaComponent } from './asistencia/registrar-asistencia/
     MenuPrincipalComponent,
     MenuLateralComponent,
     HomeComponent,
-    RegistrarAsistenciaComponent
+    RegistrarAsistenciaComponent,
+    AsistenciaPopupComponent
   ],
   //entryComponents declara los componentes que se generan dinamicamente dentro de otros.
-  entryComponents: [DialogoPopupComponent, DialogoDosPopupComponent, MostrarPopupComponent ],
+  entryComponents: [DialogoPopupComponent, DialogoDosPopupComponent, MostrarPopupComponent,AsistenciaPopupComponent ],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,

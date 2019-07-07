@@ -18,6 +18,8 @@ mongoose.connect('mongodb+srv://ComandanteJr:SNcjNuPBMG42lOh1@cluster0-qvosw.mon
 .catch(() => {
   console.log('Fallo conexión a la base de datos');
 });
+//Para sacar el deprecation warning de la consola
+mongoose.set('useFindAndModify', false);
 
 // Usamos el body parser para poder extraer datos del request body
 app.use(bodyParser.json());
