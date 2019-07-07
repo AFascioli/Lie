@@ -219,7 +219,7 @@ export class EstudiantesService {
   //Toma los datos que le da el beckend y retorna un vector (ordenado por apellido) de objetos que tienen _id, nombre, apellido, presente y fecha
   buscarEstudiantesPorDivision(division: string){
     let params = new HttpParams().set("division", division);
-    this.http.get<{estudiantesXDivision: any}>("http://localhost:3000/estudiante/division",{params: params})
+    this.http.get<{estudiantesXDivision: any}>("http://localhost:3000/estudiante/test",{params: params})
     .subscribe(response =>{
       this.estudiantesXDivision=response.estudiantesXDivision;
       this.estudiantesXDivisionActualizados.next([...this.estudiantesXDivision]);

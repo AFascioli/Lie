@@ -15,8 +15,8 @@ export class RegistrarAsistenciaComponent implements OnInit {
   ngOnInit() {
   }
 
-  buscarEstudiantesPorDivision(curso: string){
-    this.servicio.buscarEstudiantesPorDivision(curso);
+  buscarEstudiantesPorDivision(curso){
+    this.servicio.buscarEstudiantesPorDivision(curso.value);
     this.servicio.getEstudiantesXDivisionListener().subscribe(estudiantesXDivision =>{
       this.estudiantesXDivision= estudiantesXDivision.sort( (a,b) => (a.apellido > b.apellido) ? 1 : ((b.apellido > a.apellido) ? -1 : 0) );
     });
