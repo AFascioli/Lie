@@ -2,6 +2,7 @@ import { Component, OnInit } from "@angular/core";
 import { EstudiantesService } from "src/app/estudiantes/estudiante.service";
 import { MatDialogRef, MatDialog } from '@angular/material';
 import { DialogoPopupComponent } from 'src/app/estudiantes/alta-estudiantes/alta-estudiantes.component';
+import { Router } from '@angular/router';
 
 @Component({
   selector: "app-registrar-asistencia",
@@ -9,15 +10,19 @@ import { DialogoPopupComponent } from 'src/app/estudiantes/alta-estudiantes/alta
   styleUrls: ["./registrar-asistencia.component.css"]
 })
 export class RegistrarAsistenciaComponent implements OnInit {
+  cursoNotSelected: boolean;
   estudiantesXDivision: any[];
   displayedColumns: string[] = ["apellido", "nombre", "accion"];
 
   constructor(private servicio: EstudiantesService,public popup: MatDialog) {}
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.cursoNotSelected = true;
+  }
 
   //Busca los estudiantes segun el curso que se selecciono en pantalla. Los orden alfabeticamente
   buscarEstudiantesPorDivision(curso) {
+    this.cursoNotSelected = false;
     this.servicio.buscarEstudiantesPorDivision(curso.value);
     this.servicio
       .getEstudiantesXDivisionListener()
@@ -38,12 +43,22 @@ export class RegistrarAsistenciaComponent implements OnInit {
   }
 
   //Envia al servicio el vector con los datos de los estudiantes y el presentismo
-  onFinalizar() {
+  onGuardar() {
     this.servicio.registrarAsistencia(this.estudiantesXDivision);
+    this.servicio.tipoPopUp= 'guardar';
     this.popup.open(AsistenciaPopupComponent, {
       width: "250px"
     });
   }
+
+onCancelar()
+{
+  this.servicio.tipoPopUp= 'cancelar';
+  this.popup.open(AsistenciaPopupComponent, {
+    width: "250px"
+  });
+}
+
 }
 
 @Component({
@@ -51,12 +66,27 @@ export class RegistrarAsistenciaComponent implements OnInit {
   templateUrl: "./asistencia-popup.component.html"
 })
 export class AsistenciaPopupComponent {
+  tipoPopup: string;
+
   constructor(
-    public dialogRef: MatDialogRef<DialogoPopupComponent>
-  ) {}
+    public dialogRef: MatDialogRef<DialogoPopupComponent>,
+    public router: Router,
+    public servicio: EstudiantesService,
+  ) {this.tipoPopup = this.servicio.tipoPopUp; }
+
 
   // Se cierra el popup
   onOkClick(): void {
     this.dialogRef.close();
   }
+
+  onYesClick(): void {
+    this.router.navigate(["menuLateral/home"]);
+    this.dialogRef.close();
+  }
+
+  onNoClick(): void {
+    this.dialogRef.close();
+  }
+
 }

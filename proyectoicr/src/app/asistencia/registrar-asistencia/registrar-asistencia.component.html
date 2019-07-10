@@ -33,7 +33,7 @@
       <th mat-header-cell *matHeaderCellDef>Presentismo</th>
       <td mat-cell *matCellDef="let row">
         <mat-slide-toggle (change)="onCambioPresentismo(row)"
-          >Presente caca!</mat-slide-toggle
+          >Presente</mat-slide-toggle
         >
       </td>
     </ng-container>
@@ -41,7 +41,14 @@
     <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
   </table>
 
-  <button color="primary" (click)="onFinalizar()" mat-raised-button>
-    Finalizar
+  <button color="primary" (click)="onGuardar()" mat-raised-button [disabled]="cursoNotSelected">
+    Guardar
   </button>
+  <button
+  mat-raised-button
+  (click)="onCancelar()"
+    color="warn"
+   >
+  Cancelar
+</button>
 </mat-card>
