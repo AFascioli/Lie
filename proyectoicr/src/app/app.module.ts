@@ -12,7 +12,8 @@ import { MatInputModule,
           MatSidenavModule,
           MatToolbarModule,
           MatIconModule,
-          MatListModule
+          MatListModule,
+          MatSlideToggleModule
         } from '@angular/material';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatDatepickerModule} from '@angular/material/datepicker';
@@ -29,6 +30,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { MenuPrincipalComponent } from './menu-principal/menu-principal.component';
 import { MenuLateralComponent } from './menu-lateral/menu-lateral.component';
 import { HomeComponent } from './home/home.component';
+import { RegistrarAsistenciaComponent, AsistenciaPopupComponent } from './asistencia/registrar-asistencia/registrar-asistencia.component';
 
 @NgModule({
   declarations: [
@@ -42,10 +44,12 @@ import { HomeComponent } from './home/home.component';
     MostrarPopupComponent,
     MenuPrincipalComponent,
     MenuLateralComponent,
-    HomeComponent
+    HomeComponent,
+    RegistrarAsistenciaComponent,
+    AsistenciaPopupComponent
   ],
   //entryComponents declara los componentes que se generan dinamicamente dentro de otros.
-  entryComponents: [DialogoPopupComponent, DialogoDosPopupComponent, MostrarPopupComponent ],
+  entryComponents: [DialogoPopupComponent, DialogoDosPopupComponent, MostrarPopupComponent,AsistenciaPopupComponent ],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
@@ -67,7 +71,7 @@ import { HomeComponent } from './home/home.component';
     MatToolbarModule,
     MatIconModule,
     MatListModule,
-   // DialogoDosPopupComponent
+    MatSlideToggleModule
   ],
   providers: [EstudiantesService],
   bootstrap: [AppComponent]

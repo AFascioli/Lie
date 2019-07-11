@@ -17,6 +17,8 @@ export class EstudiantesService {
   private provinciasActualizadas = new Subject<Provincia[]>();
   private localidadesActualizadas = new Subject<Localidad[]>();
   private nacionalidadesActualizadas = new Subject<Nacionalidad[]>();
+  private estudiantesXDivisionActualizados = new Subject<any[]>();
+  estudiantesXDivision: any[];
   estudiantesBuscados = new Subject<Estudiante[]>();
   formInvalidoEstudiante: Boolean;
   estudianteSeleccionado: Estudiante;
@@ -88,6 +90,10 @@ export class EstudiantesService {
   // Metodo para obtener un listener, cosa que de los componentes puedan obtener info actualizada
   getProvinciasListener() {
     return this.provinciasActualizadas.asObservable();
+  }
+
+  getEstudiantesXDivisionListener() {
+    return this.estudiantesXDivisionActualizados.asObservable();
   }
 
   // Obtenemos las provincias de la bd y actualizamos a los componentes con el observador
@@ -208,5 +214,22 @@ export class EstudiantesService {
       .subscribe(response => {
         console.log(response.message);
       });
+  }
+
+  //Toma los datos que le da el beckend y retorna un vector (ordenado por apellido) de objetos que tienen _id, nombre, apellido, presente y fecha
+  buscarEstudiantesPorDivision(division: string){
+    let params = new HttpParams().set("division", division);
+    this.http.get<{estudiantesXDivision: any}>("http://localhost:3000/estudiante/division",{params: params})
+    .subscribe(response =>{
+      this.estudiantesXDivision=response.estudiantesXDivision;
+      this.estudiantesXDivisionActualizados.next([...this.estudiantesXDivision]);
+    })
+  }
+
+  //Recibe un vector con datos de estudiantes (_id, nombre y apellido) y presentismo (fecha y presente) y lo envia al backend para registrarlo
+  registrarAsistencia(estudiantesXDivision: any[]){
+    this.http.post<{message: string}>("http://localhost:3000/estudiante/asistencia",estudiantesXDivision)
+    .subscribe(response =>{
+    });
   }
 }
