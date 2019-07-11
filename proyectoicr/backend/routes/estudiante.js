@@ -41,6 +41,7 @@ router.post("", (req, res, next) => {
 router.get("/documento", (req, res, next) => {
   const tipo = req.query.tipo;
   const numero = req.query.numero;
+
   Estudiante.find({
     tipoDocumento: tipo,
     numeroDocumento: numero,
