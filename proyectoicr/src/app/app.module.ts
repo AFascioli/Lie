@@ -42,6 +42,7 @@ import {
   RegistrarAsistenciaComponent,
   AsistenciaPopupComponent
 } from "./asistencia/registrar-asistencia/registrar-asistencia.component";
+import { InscripcionEstudianteComponent } from './estudiantes/inscripcion-estudiantes/inscripcion-estudiantes.component';
 
 @NgModule({
   declarations: [
@@ -57,7 +58,8 @@ import {
     MenuLateralComponent,
     HomeComponent,
     RegistrarAsistenciaComponent,
-    AsistenciaPopupComponent
+    AsistenciaPopupComponent,
+    InscripcionEstudianteComponent
   ],
   //entryComponents declara los componentes que se generan dinamicamente dentro de otros.
   entryComponents: [

@@ -171,9 +171,9 @@
           #provincia="ngModel"
           matNativeControl
           required
+          (selectionChange)="FiltrarLocalidades()"
         >
           <mat-option
-            (onSelectionChange)="FiltrarLocalidades(provincia.id)"
             *ngFor="let provincia of provincias"
             [value]="provincia.nombre"
           >

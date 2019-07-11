@@ -79,10 +79,7 @@ export class MostrarEstudiantesComponent implements OnInit {
       .getLocalidadesListener()
       .subscribe(localidadesActualizadas => {
         this.localidades = localidadesActualizadas;
-        const idProvinciaEstudiante = this.localidades.find(
-          localidad => localidad.nombre === this.localidadEstudiante
-        ).id_provincia;
-        this.FiltrarLocalidades(idProvinciaEstudiante);
+        this.FiltrarLocalidades();
       });
     this.servicio.getNacionalidades();
     this.suscripcion = this.servicio
@@ -92,12 +89,12 @@ export class MostrarEstudiantesComponent implements OnInit {
       });
   }
 
-  FiltrarLocalidades(idProvincia: number) {
+  FiltrarLocalidades() {
+    const idProvinciaSeleccionada = this.provincias.find(provincia => provincia.nombre===this.provinciaEstudiante).id;
     this.localidadesFiltradas = [...this.localidades];
     this.localidadesFiltradas = this.localidadesFiltradas.filter(
-      localidad => localidad.id_provincia === idProvincia
+      localidad => localidad.id_provincia == idProvinciaSeleccionada
     );
-    this.primeraVez = false;
   }
 
   // Cuando se destruye el componente se eliminan las suscripciones.

@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 const divisionSchema= mongoose.Schema({
-  nombre: String,
+  curso: String,
   IdMateriasXCurso: {type: mongoose.Schema.Types.ObjectId, ref: 'materiasXCurso'}
 });
 

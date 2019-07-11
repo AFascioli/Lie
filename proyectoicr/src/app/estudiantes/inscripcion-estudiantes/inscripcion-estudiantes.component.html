@@ -1,0 +1,41 @@
+<h1 class="mat-h1" color="accent">Inscribir estudiante a un curso</h1>
+<h3>Datos del estudiante</h3>
+
+<h5>Apellido/s: {{ apellidoEstudiante }}</h5>
+
+<h5>Nombre/s: {{ nombreEstudiante }}</h5>
+
+<mat-form-field>
+  <mat-select
+    placeholder="Seleccione año"
+    name="año"
+    ngModel
+    #año="ngModel"
+    matNativeControl
+    [(ngModel)]="anoSeleccionado"
+    required
+    (selectionChange)="FiltrarDivisiones()"
+  >
+    <mat-option
+      *ngFor="let divisionXAno of divisionesXAno"
+      [value]="divisionXAno.ano"
+    >
+      {{ divisionXAno.ano }}
+    </mat-option>
+  </mat-select>
+</mat-form-field>
+<mat-form-field>
+  <mat-select
+    placeholder="Seleccione division"
+    name="division"
+    ngModel
+    #division="ngModel"
+    matNativeControl
+    required
+  >
+    <mat-option *ngFor="let division of divisionesFiltradas" [value]="division">
+      {{ division }}
+    </mat-option>
+  </mat-select>
+</mat-form-field>
+<button color="primary" (click)="onInscribir(division)" mat-raised-button>Inscribir</button>
