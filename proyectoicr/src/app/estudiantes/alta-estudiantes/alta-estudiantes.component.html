@@ -262,7 +262,7 @@
     </mat-form-field>
     <br />
     <button mat-raised-button>Registrar Adulto Responsable</button>
-    <button type="submit" (click)="openDialogo(form)"color="primary" mat-raised-button>Guardar</button>
-    <button mat-raised-button (click)="openDialog()" color="warn">Cancelar</button>
+    <button type="submit" (click)="openDialogo('guardar', form)"color="primary" mat-raised-button>Guardar</button>
+    <button mat-raised-button (click)="openDialogo('cancelar', form)" color="warn">Cancelar</button>
   </form>
 </mat-card>

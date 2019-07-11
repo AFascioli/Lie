@@ -96,34 +96,32 @@ export class AltaEstudiantesComponent implements OnInit, OnDestroy {
     );
   }
 
-  openDialog(): void {
-    this.dialog.open(DialogoPopupComponent, {
-      width: "250px"
-    });
-  }
 
   // Se valida el estado del formulario y se abre el pop up
-  openDialogo(form: NgForm): void {
+  openDialogo(tipoPopup:string, form: NgForm): void {
+    this.servicio.tipoPopUp = tipoPopup;
     if(form.invalid){
       this.servicio.formInvalidoEstudiante=true;
     }else{
       this.servicio.formInvalidoEstudiante=false;
     }
-    this.dialog.open(DialogoDosPopupComponent, {
+    this.dialog.open(AltaPopupComponent, {
       width: "250px"
     });
   }
 }
 
 @Component({
-  selector: "app-dialogo-popup",
-  templateUrl: "./dialogo-popup.component.html"
+  selector: "app-alta-popup",
+  templateUrl: "./alta-popup.component.html"
 })
-export class DialogoPopupComponent {
+export class AltaPopupComponent {
+  formInvalido : Boolean;
+      tipoPopup :  string;
   constructor(
-        public dialogRef: MatDialogRef<DialogoPopupComponent>, public router: Router
-        // Ver para pasar información entre componentes @Inject(MAT_DIALOG_DATA) public data: DialogData
-      ) {}
+        public dialogRef: MatDialogRef<AltaPopupComponent>, public router: Router,  public servicio: EstudiantesService
+      ) {this.tipoPopup = this.servicio.tipoPopUp;
+        this.formInvalido = this.servicio.formInvalidoEstudiante;}
 
       onYesClick():void{
         this.router.navigate(['menuLateral/home']);
@@ -132,23 +130,10 @@ export class DialogoPopupComponent {
       onNoClick(): void {
         this.dialogRef.close();
       }
-}
- @Component({
-  selector: "app-dialogoDos-popup",
-  templateUrl: "./dialogoDos-popup.component.html"
-})
-export class DialogoDosPopupComponent {
-formInvalido : Boolean;
-  constructor
-  (
-        public dialogRef: MatDialogRef<DialogoPopupComponent>,  public servicio: EstudiantesService
-        ) {
-          this.formInvalido = servicio.formInvalidoEstudiante;
-        }
 
-      // Se resetea la variable formInvalidoEstudiante y se cierra el popup
-      onOkClick(): void {
+       onOkClick(): void {
         this.servicio.formInvalidoEstudiante = true;
         this.dialogRef.close();
       }
 }
+

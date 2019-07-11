@@ -2,6 +2,10 @@
   margin: 3rem;
 }
 
+.mat-h1{
+  color: #C2185B;
+}
+
 table,
 button {
   margin: 1rem;
@@ -15,4 +19,12 @@ button {
 
 table {
   width: 100%;
+}
+
+.fecha {
+  width: 60%;
+}
+
+.right{
+  float: right;
 }

@@ -1,7 +1,6 @@
 import { Component, OnInit } from "@angular/core";
 import { EstudiantesService } from "src/app/estudiantes/estudiante.service";
 import { MatDialogRef, MatDialog } from "@angular/material";
-import { DialogoPopupComponent } from "src/app/estudiantes/alta-estudiantes/alta-estudiantes.component";
 import { Router } from "@angular/router";
 
 @Component({
@@ -13,11 +12,14 @@ export class RegistrarAsistenciaComponent implements OnInit {
   cursoNotSelected: boolean;
   estudiantesXDivision: any[];
   displayedColumns: string[] = ["apellido", "nombre", "accion"];
-
-  constructor(private servicio: EstudiantesService, public popup: MatDialog) {}
+  fechaActual: Date;
+  constructor(private servicio: EstudiantesService, public popup: MatDialog) {
+    }
 
   ngOnInit() {
     this.cursoNotSelected = true;
+    this.fechaActual = new Date();
+
   }
 
   //Busca los estudiantes segun el curso que se selecciono en pantalla. Los orden alfabeticamente
@@ -67,7 +69,7 @@ export class AsistenciaPopupComponent {
   tipoPopup: string;
 
   constructor(
-    public dialogRef: MatDialogRef<DialogoPopupComponent>,
+    public dialogRef: MatDialogRef<AsistenciaPopupComponent>,
     public router: Router,
     public servicio: EstudiantesService
   ) {

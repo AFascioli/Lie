@@ -22,13 +22,12 @@ import { MatMenuModule } from "@angular/material/menu";
 import { AppComponent } from "./app.component";
 import {
   AltaEstudiantesComponent,
-  DialogoPopupComponent,
-  DialogoDosPopupComponent
+  AltaPopupComponent,
 } from "./estudiantes/alta-estudiantes/alta-estudiantes.component";
 import { FormsModule } from "@angular/forms";
 import { HttpClientModule } from "@angular/common/http";
 import { EstudiantesService } from "./estudiantes/estudiante.service";
-import { BuscarEstudiantesComponent } from "./estudiantes/buscar-estudiantes/buscar-estudiantes.component";
+import { BuscarEstudiantesComponent, BuscarPopupComponent } from "./estudiantes/buscar-estudiantes/buscar-estudiantes.component";
 import { ListaEstudiantesComponent } from "./estudiantes/lista-estudiantes/lista-estudiantes.component";
 import {
   MostrarEstudiantesComponent,
@@ -50,21 +49,21 @@ import {
     BuscarEstudiantesComponent,
     ListaEstudiantesComponent,
     MostrarEstudiantesComponent,
-    DialogoPopupComponent,
-    DialogoDosPopupComponent,
+    AltaPopupComponent,
     MostrarPopupComponent,
     MenuPrincipalComponent,
     MenuLateralComponent,
     HomeComponent,
     RegistrarAsistenciaComponent,
-    AsistenciaPopupComponent
+    AsistenciaPopupComponent,
+    BuscarPopupComponent
   ],
   //entryComponents declara los componentes que se generan dinamicamente dentro de otros.
   entryComponents: [
-    DialogoPopupComponent,
-    DialogoDosPopupComponent,
+    AltaPopupComponent,
     MostrarPopupComponent,
-    AsistenciaPopupComponent
+    AsistenciaPopupComponent,
+    BuscarPopupComponent
   ],
   imports: [
     BrowserModule,
