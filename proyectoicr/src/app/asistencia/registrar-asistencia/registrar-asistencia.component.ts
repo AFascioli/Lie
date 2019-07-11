@@ -1,8 +1,8 @@
 import { Component, OnInit } from "@angular/core";
 import { EstudiantesService } from "src/app/estudiantes/estudiante.service";
-import { MatDialogRef, MatDialog } from '@angular/material';
-import { DialogoPopupComponent } from 'src/app/estudiantes/alta-estudiantes/alta-estudiantes.component';
-import { Router } from '@angular/router';
+import { MatDialogRef, MatDialog } from "@angular/material";
+import { DialogoPopupComponent } from "src/app/estudiantes/alta-estudiantes/alta-estudiantes.component";
+import { Router } from "@angular/router";
 
 @Component({
   selector: "app-registrar-asistencia",
@@ -14,7 +14,7 @@ export class RegistrarAsistenciaComponent implements OnInit {
   estudiantesXDivision: any[];
   displayedColumns: string[] = ["apellido", "nombre", "accion"];
 
-  constructor(private servicio: EstudiantesService,public popup: MatDialog) {}
+  constructor(private servicio: EstudiantesService, public popup: MatDialog) {}
 
   ngOnInit() {
     this.cursoNotSelected = true;
@@ -45,20 +45,18 @@ export class RegistrarAsistenciaComponent implements OnInit {
   //Envia al servicio el vector con los datos de los estudiantes y el presentismo
   onGuardar() {
     this.servicio.registrarAsistencia(this.estudiantesXDivision);
-    this.servicio.tipoPopUp= 'guardar';
+    this.servicio.tipoPopUp = "guardar";
     this.popup.open(AsistenciaPopupComponent, {
       width: "250px"
     });
   }
 
-onCancelar()
-{
-  this.servicio.tipoPopUp= 'cancelar';
-  this.popup.open(AsistenciaPopupComponent, {
-    width: "250px"
-  });
-}
-
+  onCancelar() {
+    this.servicio.tipoPopUp = "cancelar";
+    this.popup.open(AsistenciaPopupComponent, {
+      width: "250px"
+    });
+  }
 }
 
 @Component({
@@ -71,9 +69,10 @@ export class AsistenciaPopupComponent {
   constructor(
     public dialogRef: MatDialogRef<DialogoPopupComponent>,
     public router: Router,
-    public servicio: EstudiantesService,
-  ) {this.tipoPopup = this.servicio.tipoPopUp; }
-
+    public servicio: EstudiantesService
+  ) {
+    this.tipoPopup = this.servicio.tipoPopUp;
+  }
 
   // Se cierra el popup
   onOkClick(): void {
@@ -88,5 +87,4 @@ export class AsistenciaPopupComponent {
   onNoClick(): void {
     this.dialogRef.close();
   }
-
 }

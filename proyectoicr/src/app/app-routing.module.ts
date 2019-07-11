@@ -7,7 +7,7 @@ import { ListaEstudiantesComponent } from "./estudiantes/lista-estudiantes/lista
 import { MostrarEstudiantesComponent } from "./estudiantes/mostrar-estudiantes/mostrar-estudiantes.component";
 import { MenuLateralComponent } from "./menu-lateral/menu-lateral.component";
 import { MenuPrincipalComponent } from "./menu-principal/menu-principal.component";
-import { RegistrarAsistenciaComponent } from './asistencia/registrar-asistencia/registrar-asistencia.component';
+import { RegistrarAsistenciaComponent } from "./asistencia/registrar-asistencia/registrar-asistencia.component";
 
 const routes: Routes = [
   { path: "", component: MenuPrincipalComponent },

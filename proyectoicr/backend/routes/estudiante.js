@@ -129,7 +129,7 @@ router.get("/division", (req, res, next) => {
       }
     },
     {
-      $match: { "division.curso": req.query.division, "activa": true }
+      $match: { "division.curso": req.query.division, activa: true }
     },
     {
       $project: {
@@ -160,16 +160,22 @@ router.get("/division", (req, res, next) => {
 });
 
 //Busca cada inscripcion segun el _id del estudiante y le registra el presentismo de esa fecha
-router.post("/asistencia", (req, res)=>{
+router.post("/asistencia", (req, res) => {
   try {
     req.body.forEach(estudiante => {
-      Inscripcion.findOneAndUpdate({IdEstudiante: estudiante._id, activa: true},
-        {$push: {asistenciaDiaria: {fecha: estudiante.fecha, presente: estudiante.presente}}
-      }).then(document =>{
-      });
+      Inscripcion.findOneAndUpdate(
+        { IdEstudiante: estudiante._id, activa: true },
+        {
+          $push: {
+            asistenciaDiaria: {
+              fecha: estudiante.fecha,
+              presente: estudiante.presente
+            }
+          }
+        }
+      ).then(document => {});
     });
-    res.status(201).json({message: "Asistencia registrada exitósamente"});
-
+    res.status(201).json({ message: "Asistencia registrada exitósamente" });
   } catch (error) {
     console.log(error);
   }

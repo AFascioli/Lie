@@ -1,16 +1,15 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { async, ComponentFixture, TestBed } from "@angular/core/testing";
 
-import { MenuPrincipalComponent } from './menu-principal.component';
+import { MenuPrincipalComponent } from "./menu-principal.component";
 
-describe('MenuPrincipalComponent', () => {
+describe("MenuPrincipalComponent", () => {
   let component: MenuPrincipalComponent;
   let fixture: ComponentFixture<MenuPrincipalComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ MenuPrincipalComponent ]
-    })
-    .compileComponents();
+      declarations: [MenuPrincipalComponent]
+    }).compileComponents();
   }));
 
   beforeEach(() => {
@@ -19,7 +18,7 @@ describe('MenuPrincipalComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should create', () => {
+  it("should create", () => {
     expect(component).toBeTruthy();
   });
 });

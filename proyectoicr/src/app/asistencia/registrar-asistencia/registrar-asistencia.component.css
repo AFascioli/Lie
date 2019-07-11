@@ -1,8 +1,9 @@
-.mat-card{
+.mat-card {
   margin: 3rem;
 }
 
- table, button{
+table,
+button {
   margin: 1rem;
 }
 
@@ -12,6 +13,6 @@
   margin-top: 1rem;
 }
 
-table{
+table {
   width: 100%;
 }
