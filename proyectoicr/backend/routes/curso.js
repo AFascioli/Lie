@@ -38,8 +38,8 @@ router.post("/inscripcion", (req, res) =>{
     if(document!=null){
       res.status(400).json({message: "El estudiante ya esta inscripto", exito: false});
     }
-  });
-  Division.findOne({curso: req.body.division}).then(document => {
+    else{
+      Division.findOne({curso: req.body.division}).then(document => {
     const nuevaInscripcion = new Inscripcion({
       IdEstudiante: req.body.IdEstudiante,
       IdDivision: document._id,
@@ -49,6 +49,9 @@ router.post("/inscripcion", (req, res) =>{
       res.status(201).json({message: "Estudiante inscripto exitósamente", exito: true});
     });
   });
+    }
+  });
+
 })
 
 module.exports = router;
