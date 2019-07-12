@@ -1,0 +1,44 @@
+<div *ngIf="tipoPopup === 'cancelar'">
+  <h3 mat-dialog-title>Cancelar</h3>
+  <div mat-dialog-content>
+    <p>¿Está seguro que desea cancelar la inscripcion del estudiante?</p>
+  </div>
+  <div mat-dialog-actions>
+    <button mat-button (click)="onYesCancelarClick()" cdkFocusInitial>Si, volver al menú principal </button>
+    <button mat-button (click)="onNoCancelarConfirmarClick()">No, volver</button>
+  </div>
+</div>
+
+<div *ngIf="formValido && tipoPopup==='confirmar'">
+        <h3 mat-dialog-title>Confirmar</h3>
+        <div mat-dialog-content>
+          <p>¿Está seguro que desea inscribir a este estudiante?</p>
+        </div>
+        <div mat-dialog-actions>
+          <button mat-button (click)="onYesConfirmarClick()" cdkFocusInitial>Si, inscribir</button>
+          <button mat-button (click)="onNoCancelarConfirmarClick()">No, volver</button>
+        </div>
+  </div>
+
+<div *ngIf="!formValido && tipoPopup==='confirmar'">
+    <h3 mat-dialog-title>Atención</h3>
+  <div mat-dialog-content >
+      <p>Faltan campos de seleccionar</p>
+    </div>
+  <div mat-dialog-actions>
+    <button mat-button (click)="onOkConfirmarClick()">OK</button>
+  </div>
+</div>
+
+<div *ngIf="tipoPopup === 'inscribir'">
+    <h3 mat-dialog-title>Inscripción</h3>
+    <div mat-dialog-content *ngIf="exito">
+        <p>Estudiante inscripto correctamente</p>
+      </div>
+      <div mat-dialog-content *ngIf="!exito">
+          <p>El estudiante ya esta inscripto (cambiar)</p>
+        </div>
+    <div mat-dialog-actions>
+      <button mat-button (click)="onOkConfirmarClick()">OK</button>
+    </div>
+  </div>

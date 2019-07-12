@@ -34,6 +34,11 @@ router.get("/", (req, res, next) => {
 });
 
 router.post("/inscripcion", (req, res) =>{
+  Inscripcion.findOne({IdEstudiante: req.body.IdEstudiante, activa: true }).then(document=>{
+    if(document!=null){
+      res.status(400).json({message: "El estudiante ya esta inscripto", exito: false});
+    }
+  });
   Division.findOne({curso: req.body.division}).then(document => {
     const nuevaInscripcion = new Inscripcion({
       IdEstudiante: req.body.IdEstudiante,
@@ -41,7 +46,7 @@ router.post("/inscripcion", (req, res) =>{
       activa: true
     });
     nuevaInscripcion.save().then(()=>{
-      res.status(201).json({message: "Estudiante inscripto exitósamente"});
+      res.status(201).json({message: "Estudiante inscripto exitósamente", exito: true});
     });
   });
 })

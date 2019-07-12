@@ -4,9 +4,10 @@
 <h5>Apellido/s: {{ apellidoEstudiante }}</h5>
 
 <h5>Nombre/s: {{ nombreEstudiante }}</h5>
+<form #form="ngForm">
 
-<mat-form-field>
-  <mat-select
+  <mat-form-field>
+    <mat-select
     placeholder="Seleccione año"
     name="año"
     ngModel
@@ -17,11 +18,11 @@
     (selectionChange)="FiltrarDivisiones()"
   >
     <mat-option
-      *ngFor="let divisionXAno of divisionesXAno"
-      [value]="divisionXAno.ano"
+    *ngFor="let anio of anios "
+    [value]="anio"
     >
-      {{ divisionXAno.ano }}
-    </mat-option>
+    {{ anio }}
+  </mat-option>
   </mat-select>
 </mat-form-field>
 <mat-form-field>
@@ -32,10 +33,17 @@
     #division="ngModel"
     matNativeControl
     required
-  >
+    [disabled]= "!seleccionDeAnio"
+    >
     <mat-option *ngFor="let division of divisionesFiltradas" [value]="division">
       {{ division }}
     </mat-option>
   </mat-select>
 </mat-form-field>
-<button color="primary" (click)="onInscribir(division)" mat-raised-button>Inscribir</button>
+<button color="primary"  (click)="openDialogo('confirmar', form, division)" mat-raised-button>
+  Inscribir
+</button>
+<button mat-raised-button (click)="openDialogo('cancelar', form, division)" color="warn">
+  Cancelar
+</button>
+</form>

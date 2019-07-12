@@ -247,9 +247,6 @@ export class EstudiantesService {
   }
 
   inscribirEstudiante(IdEstudiante: string, division: string){
-    this.http.post("http://localhost:3000/curso/inscripcion", {IdEstudiante: IdEstudiante, division: division})
-    .subscribe(response =>{
-      console.log("Estudiante inscripto!");
-    });
+     return this.http.post<{message: string, exito: boolean}>("http://localhost:3000/curso/inscripcion", {IdEstudiante: IdEstudiante, division: division});
   }
 }
