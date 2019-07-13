@@ -19,16 +19,100 @@
     fixedTopGap="64"
   >
     <mat-nav-list>
-      <a mat-list-item (click)="drawer.toggle()" routerLink="./alta"
-        >Registar estudiante</a
-      >
-      <a mat-list-item (click)="drawer.toggle()" routerLink="./buscar"
-        >Buscar estudiante</a
-      >
-      <a mat-list-item (click)="drawer.toggle()" routerLink="./asistencia"
-        >Tomar asistencia</a
-      >
+        <mat-accordion>
+            <mat-expansion-panel>
+              <mat-expansion-panel-header>
+                <mat-panel-title>
+                  <a mat-list-item>
+                    <mat-icon>wc</mat-icon>
+                    &nbsp; &nbsp; Curso &nbsp;
+                  </a>
+                </mat-panel-title>
+              </mat-expansion-panel-header>
+                <a mat-list-item (click)="drawer.toggle()" routerLink="#">
+                  &nbsp; &nbsp; &nbsp;&nbsp;Registrar agenda de curso &nbsp;
+                </a>
+                <a mat-list-item (click)="drawer.toggle()" routerLink="./asistencia">
+                  &nbsp; &nbsp; &nbsp; &nbsp;Tomar asistencia  &nbsp;
+                </a>
+                <a mat-list-item (click)="drawer.toggle()" routerLink="#">
+                  &nbsp; &nbsp; &nbsp;&nbsp; Registar pago de cuotas  &nbsp;
+                </a>
+                <mat-accordion>
+                    <mat-expansion-panel>
+                      <mat-expansion-panel-header>
+                        <mat-panel-title>
+                          <a mat-list-item>
+                           Calificaciones &nbsp;
+                          </a>
+                        </mat-panel-title>
+                      </mat-expansion-panel-header>
+                        <a mat-list-item (click)="drawer.toggle()" routerLink="#">
+                          &nbsp; &nbsp; Registrar  &nbsp;
+                        </a>
+                        <a mat-list-item (click)="drawer.toggle()" routerLink="#">
+                          &nbsp; &nbsp; Buscar  &nbsp;
+                        </a>
+                        <a mat-list-item (click)="drawer.toggle()" routerLink="#">
+                          &nbsp; &nbsp; Modificar  &nbsp;
+                        </a>
+                        <a mat-list-item (click)="drawer.toggle()" routerLink="#">
+                          &nbsp; &nbsp; Borrar  &nbsp;
+                        </a>
+                    </mat-expansion-panel>
+                  </mat-accordion>
+            </mat-expansion-panel>
+          </mat-accordion>
+      <mat-accordion>
+        <mat-expansion-panel>
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              <a mat-list-item>
+                <mat-icon>school</mat-icon>
+                &nbsp; &nbsp; Estudiante &nbsp;
+              </a>
+            </mat-panel-title>
+          </mat-expansion-panel-header>
+            <a mat-list-item (click)="drawer.toggle()" routerLink="./alta">
+              &nbsp; &nbsp; Registrar  &nbsp;
+            </a>
+            <a mat-list-item (click)="drawer.toggle()" routerLink="./buscar">
+              &nbsp; &nbsp; Buscar  &nbsp;
+            </a>
+        </mat-expansion-panel>
+      </mat-accordion>
+      <mat-accordion>
+          <mat-expansion-panel>
+            <mat-expansion-panel-header>
+              <mat-panel-title>
+                <a mat-list-item>
+                  <mat-icon>event</mat-icon>
+                  &nbsp; &nbsp; Evento &nbsp;
+                </a>
+              </mat-panel-title>
+            </mat-expansion-panel-header>
+              <a mat-list-item (click)="drawer.toggle()" routerLink="">
+                &nbsp; &nbsp; Registrar  &nbsp;
+              </a>
+              <a mat-list-item (click)="drawer.toggle()" routerLink="">
+                &nbsp; &nbsp; Buscar  &nbsp;
+              </a>
+              <a mat-list-item (click)="drawer.toggle()" routerLink="">
+                &nbsp; &nbsp; Modificar  &nbsp;
+              </a>
+              <a mat-list-item (click)="drawer.toggle()" routerLink="">
+                &nbsp; &nbsp; Eliminar  &nbsp;
+              </a>
+          </mat-expansion-panel>
+        </mat-accordion>
     </mat-nav-list>
+
+  <mat-nav-list class="ubicacion_inferior">
+    <a  mat-list-item (click)="drawer.toggle()" routerLink="#" title="Configuración">
+      <mat-icon>settings</mat-icon>
+
+    </a>
+  </mat-nav-list>
   </mat-sidenav>
   <mat-sidenav-content>
     <router-outlet></router-outlet>

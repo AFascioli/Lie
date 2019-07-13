@@ -41,6 +41,7 @@ import {
   RegistrarAsistenciaComponent,
   AsistenciaPopupComponent
 } from "./asistencia/registrar-asistencia/registrar-asistencia.component";
+import { MatExpansionModule } from "@angular/material/expansion";
 
 @NgModule({
   declarations: [
@@ -86,7 +87,8 @@ import {
     MatToolbarModule,
     MatIconModule,
     MatListModule,
-    MatSlideToggleModule
+    MatSlideToggleModule,
+    MatExpansionModule
   ],
   providers: [EstudiantesService],
   bootstrap: [AppComponent]
