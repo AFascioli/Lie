@@ -28,12 +28,9 @@ export class InscripcionEstudianteComponent implements OnInit {
   constructor(public servicio: EstudiantesService, public dialog: MatDialog) {}
 
   ngOnInit() {
-    // this.apellidoEstudiante= this.servicio.estudianteSeleccionado.apellido;
-    // this.nombreEstudiante= this.servicio.estudianteSeleccionado.nombre;
-    // this._idEstudiante= this.servicio.estudianteSeleccionado._id;
-    this.apellidoEstudiante = "Toneta";
-    this.nombreEstudiante = "Guillermo";
-    this._idEstudiante = "5d27acb4c86bb526180afafa";
+    this.apellidoEstudiante= this.servicio.estudianteSeleccionado.apellido;
+    this.nombreEstudiante= this.servicio.estudianteSeleccionado.nombre;
+    this._idEstudiante= this.servicio.estudianteSeleccionado._id;
     this.servicio.obtenerDivisionesXAño();
     this.servicio.getDivisionXAñoListener().subscribe(divisionesXAño => {
       this.divisionesXAno = divisionesXAño;
@@ -99,8 +96,8 @@ export class InscripcionPopupComponent {
   onYesConfirmarClick(): void {
     this.servicio.inscribirEstudiante(this.IdEstudiante, this.division).subscribe(response =>{
       this.exito= response.exito;
+      this.tipoPopup = "inscribir";
     });
-    this.tipoPopup = "inscribir";
   }
 
   onOkConfirmarClick() {

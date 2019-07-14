@@ -29,7 +29,7 @@ import { FormsModule } from "@angular/forms";
 import { HttpClientModule } from "@angular/common/http";
 import { EstudiantesService } from "./estudiantes/estudiante.service";
 import { BuscarEstudiantesComponent } from "./estudiantes/buscar-estudiantes/buscar-estudiantes.component";
-import { ListaEstudiantesComponent } from "./estudiantes/lista-estudiantes/lista-estudiantes.component";
+import { ListaEstudiantesComponent, AccionesEstudiantePopupComponent } from "./estudiantes/lista-estudiantes/lista-estudiantes.component";
 import {
   MostrarEstudiantesComponent,
   MostrarPopupComponent
@@ -60,7 +60,8 @@ import { InscripcionEstudianteComponent, InscripcionPopupComponent } from './est
     RegistrarAsistenciaComponent,
     AsistenciaPopupComponent,
     InscripcionEstudianteComponent,
-    InscripcionPopupComponent
+    InscripcionPopupComponent,
+    AccionesEstudiantePopupComponent
   ],
   //entryComponents declara los componentes que se generan dinamicamente dentro de otros.
   entryComponents: [
@@ -68,7 +69,8 @@ import { InscripcionEstudianteComponent, InscripcionPopupComponent } from './est
     DialogoDosPopupComponent,
     MostrarPopupComponent,
     AsistenciaPopupComponent,
-    InscripcionPopupComponent
+    InscripcionPopupComponent,
+    AccionesEstudiantePopupComponent
   ],
   imports: [
     BrowserModule,

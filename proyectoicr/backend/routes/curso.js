@@ -8,24 +8,28 @@ const Inscripcion = require("../models/inscripcion");
 router.get("/", (req, res, next) => {
   Division.aggregate([
     {
-      '$lookup': {
-        'from': 'materiasXCurso',
-        'localField': 'IdMateriasXCurso',
-        'foreignField': '_id',
-        'as': 'MXC'
+      $lookup: {
+        from: "materiasXCurso",
+        localField: "IdMateriasXCurso",
+        foreignField: "_id",
+        as: "MXC"
       }
-    }, {
-      '$group': {
-        '_id': '$MXC.curso',
-        'divisiones': {
-          '$addToSet': '$curso'
+    },
+    {
+      $group: {
+        _id: "$MXC.curso",
+        divisiones: {
+          $addToSet: "$curso"
         }
       }
     }
-  ]).then(documents =>{
+  ]).then(documents => {
     var divisionesXAño = [];
     documents.forEach(elemento => {
-      divisionesXAño.push({ano: elemento._id[0], divisiones: elemento.divisiones})
+      divisionesXAño.push({
+        ano: elemento._id[0],
+        divisiones: elemento.divisiones
+      });
     });
     res.status(200).json({
       divisionesXAño: divisionesXAño
@@ -33,25 +37,33 @@ router.get("/", (req, res, next) => {
   });
 });
 
-router.post("/inscripcion", (req, res) =>{
-  Inscripcion.findOne({IdEstudiante: req.body.IdEstudiante, activa: true }).then(document=>{
-    if(document!=null){
-      res.status(400).json({message: "El estudiante ya esta inscripto", exito: false});
+router.post("/inscripcion", (req, res) => {
+  Inscripcion.findOne({
+    IdEstudiante: req.body.IdEstudiante,
+    activa: true
+  }).then(document => {
+    if (document != null) {
+      res
+        .status(400)
+        .json({ message: "El estudiante ya esta inscripto", exito: false });
+    } else {
+      Division.findOne({ curso: req.body.division }).then(document => {
+        const nuevaInscripcion = new Inscripcion({
+          IdEstudiante: req.body.IdEstudiante,
+          IdDivision: document._id,
+          activa: true
+        });
+        nuevaInscripcion.save().then(() => {
+          res
+            .status(201)
+            .json({
+              message: "Estudiante inscripto exitósamente",
+              exito: true
+            });
+        });
+      });
     }
-    else{
-      Division.findOne({curso: req.body.division}).then(document => {
-    const nuevaInscripcion = new Inscripcion({
-      IdEstudiante: req.body.IdEstudiante,
-      IdDivision: document._id,
-      activa: true
-    });
-    nuevaInscripcion.save().then(()=>{
-      res.status(201).json({message: "Estudiante inscripto exitósamente", exito: true});
-    });
   });
-    }
-  });
-
-})
+});
 
 module.exports = router;
