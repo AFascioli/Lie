@@ -4,8 +4,15 @@
 <h5>Apellido/s: {{ apellidoEstudiante }}</h5>
 
 <h5>Nombre/s: {{ nombreEstudiante }}</h5>
-<form #form="ngForm">
 
+<div class="right" >
+  <mat-form-field class="fecha">
+    <input matInput placeholder="Fecha" [disabled]="true">
+    {{fechaActual | date:'dd/MM/yyyy'}}
+  </mat-form-field>
+</div>
+
+<form #form="ngForm">
   <mat-form-field>
     <mat-select
     placeholder="Seleccione año"

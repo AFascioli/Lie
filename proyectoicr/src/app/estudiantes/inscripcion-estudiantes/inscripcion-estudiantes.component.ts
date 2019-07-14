@@ -24,10 +24,12 @@ export class InscripcionEstudianteComponent implements OnInit {
   matConfig = new MatDialogConfig();
   anios: number[]= [];
   seleccionDeAnio: boolean = false;
+  fechaActual: Date;
 
   constructor(public servicio: EstudiantesService, public dialog: MatDialog) {}
 
   ngOnInit() {
+    this.fechaActual = new Date();
     this.apellidoEstudiante= this.servicio.estudianteSeleccionado.apellido;
     this.nombreEstudiante= this.servicio.estudianteSeleccionado.nombre;
     this._idEstudiante= this.servicio.estudianteSeleccionado._id;
