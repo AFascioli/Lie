@@ -98,7 +98,7 @@
       <mat-form-field>
         <input
           name="calle"
-          pattern="[A-Za-záéíóúÁÉÍÓÚñÑ ]+"
+          pattern="[A-Za-záéíóúÁÉÍÓÚñÑ. ]+"
           minlength="2"
           maxlength="30"
           ngModel
@@ -156,9 +156,10 @@
           #provincia="ngModel"
           matNativeControl
           required
+          [(ngModel)]="nombreProvinciaSeleccionada"
+          (selectionChange)="FiltrarLocalidades()"
         >
           <mat-option
-            (onSelectionChange)="FiltrarLocalidades(provincia.id)"
             *ngFor="let provincia of provincias"
             [value]="provincia.nombre"
           >

@@ -14,12 +14,14 @@ export class EstudiantesService {
   localidades: Localidad[] = [];
   estudiantes: Estudiante[] = [];
   nacionalidades: Nacionalidad[] = [];
+  divisionesXAño: any[];
+  estudiantesXDivision: any[];
   private provinciasActualizadas = new Subject<Provincia[]>();
   private localidadesActualizadas = new Subject<Localidad[]>();
   private nacionalidadesActualizadas = new Subject<Nacionalidad[]>();
   private estudiantesXDivisionActualizados = new Subject<any[]>();
-  estudiantesXDivision: any[];
   estudiantesBuscados = new Subject<Estudiante[]>();
+  private divisionXCursoActualizada = new Subject<any[]>();
   formInvalidoEstudiante: Boolean;
   estudianteSeleccionado: Estudiante;
   tipoPopUp: string;
@@ -231,5 +233,20 @@ export class EstudiantesService {
     this.http.post<{message: string}>("http://localhost:3000/estudiante/asistencia",estudiantesXDivision)
     .subscribe(response =>{
     });
+  }
+
+  getDivisionXAñoListener() {
+    return this.divisionXCursoActualizada.asObservable();
+  }
+
+  obtenerDivisionesXAño(){
+    this.http.get<{divisionesXAño: any[]}>("http://localhost:3000/curso").subscribe(response =>{
+      this.divisionesXAño= response.divisionesXAño;
+      this.divisionXCursoActualizada.next([...this.divisionesXAño]);
+    });
+  }
+
+  inscribirEstudiante(IdEstudiante: string, division: string){
+     return this.http.post<{message: string, exito: boolean}>("http://localhost:3000/curso/inscripcion", {IdEstudiante: IdEstudiante, division: division});
   }
 }

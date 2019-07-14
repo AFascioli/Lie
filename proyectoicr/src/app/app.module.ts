@@ -29,7 +29,7 @@ import { FormsModule } from "@angular/forms";
 import { HttpClientModule } from "@angular/common/http";
 import { EstudiantesService } from "./estudiantes/estudiante.service";
 import { BuscarEstudiantesComponent } from "./estudiantes/buscar-estudiantes/buscar-estudiantes.component";
-import { ListaEstudiantesComponent } from "./estudiantes/lista-estudiantes/lista-estudiantes.component";
+import { ListaEstudiantesComponent, AccionesEstudiantePopupComponent } from "./estudiantes/lista-estudiantes/lista-estudiantes.component";
 import {
   MostrarEstudiantesComponent,
   MostrarPopupComponent
@@ -42,6 +42,7 @@ import {
   RegistrarAsistenciaComponent,
   AsistenciaPopupComponent
 } from "./asistencia/registrar-asistencia/registrar-asistencia.component";
+import { InscripcionEstudianteComponent, InscripcionPopupComponent } from './estudiantes/inscripcion-estudiantes/inscripcion-estudiantes.component';
 
 @NgModule({
   declarations: [
@@ -57,14 +58,19 @@ import {
     MenuLateralComponent,
     HomeComponent,
     RegistrarAsistenciaComponent,
-    AsistenciaPopupComponent
+    AsistenciaPopupComponent,
+    InscripcionEstudianteComponent,
+    InscripcionPopupComponent,
+    AccionesEstudiantePopupComponent
   ],
   //entryComponents declara los componentes que se generan dinamicamente dentro de otros.
   entryComponents: [
     DialogoPopupComponent,
     DialogoDosPopupComponent,
     MostrarPopupComponent,
-    AsistenciaPopupComponent
+    AsistenciaPopupComponent,
+    InscripcionPopupComponent,
+    AccionesEstudiantePopupComponent
   ],
   imports: [
     BrowserModule,
