@@ -2,7 +2,9 @@ const mongoose = require('mongoose');
 
 const asistenciaSchema= mongoose.Schema({
   fecha: Date,
-  presente: Boolean
+  presente: Boolean,
+  retiroAnticipado: Boolean,
+  valorInasistencia: Number
 });
 
 const inscripcionSchema = mongoose.Schema({

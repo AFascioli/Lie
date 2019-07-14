@@ -163,13 +163,18 @@ router.get("/division", (req, res, next) => {
 router.post("/asistencia", (req, res) => {
   try {
     req.body.forEach(estudiante => {
+      const valorInasistencia=0;
+      if(!estudiante.presente){
+        valorInasistencia=1;
+      }
       Inscripcion.findOneAndUpdate(
         { IdEstudiante: estudiante._id, activa: true },
         {
           $push: {
             asistenciaDiaria: {
               fecha: estudiante.fecha,
-              presente: estudiante.presente
+              presente: estudiante.presente,
+              valorInasistencia: valorInasistencia
             }
           }
         }

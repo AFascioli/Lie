@@ -43,6 +43,7 @@ import {
   AsistenciaPopupComponent
 } from "./asistencia/registrar-asistencia/registrar-asistencia.component";
 import { InscripcionEstudianteComponent, InscripcionPopupComponent } from './estudiantes/inscripcion-estudiantes/inscripcion-estudiantes.component';
+import { RetiroAnticipadoComponent, RetiroPopupComponent } from './asistencia/retiro-anticipado/retiro-anticipado.component';
 
 @NgModule({
   declarations: [
@@ -61,7 +62,9 @@ import { InscripcionEstudianteComponent, InscripcionPopupComponent } from './est
     AsistenciaPopupComponent,
     InscripcionEstudianteComponent,
     InscripcionPopupComponent,
-    AccionesEstudiantePopupComponent
+    AccionesEstudiantePopupComponent,
+    RetiroAnticipadoComponent,
+    RetiroPopupComponent
   ],
   //entryComponents declara los componentes que se generan dinamicamente dentro de otros.
   entryComponents: [
@@ -70,7 +73,8 @@ import { InscripcionEstudianteComponent, InscripcionPopupComponent } from './est
     MostrarPopupComponent,
     AsistenciaPopupComponent,
     InscripcionPopupComponent,
-    AccionesEstudiantePopupComponent
+    AccionesEstudiantePopupComponent,
+    RetiroPopupComponent
   ],
   imports: [
     BrowserModule,

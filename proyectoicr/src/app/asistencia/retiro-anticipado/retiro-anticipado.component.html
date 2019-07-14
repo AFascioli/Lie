@@ -1,0 +1,27 @@
+<h1 class="mat-h1" color="accent">Registrar retiro anticipado
+</h1>
+<h3>Datos del estudiante</h3>
+
+<h5>Apellido/s: {{ apellidoEstudiante }}</h5>
+
+<h5>Nombre/s: {{ nombreEstudiante }}</h5>
+
+<div class="right" >
+  <mat-form-field class="fecha">
+    <input matInput placeholder="Fecha actual" [disabled]="true">
+    {{fechaActual | date:'dd/MM/yyyy'}}
+  </mat-form-field>
+</div>
+
+<mat-radio-group aria-label="Select an option">
+  <mat-radio-button (change)="CambiarTipoRetiro()" [checked]="antes10am" value="1">Antes de las 10:00 de la mañana</mat-radio-button>
+  <mat-radio-button (change)="CambiarTipoRetiro()" [checked]="!antes10am" value="2">Después de las 10:00 de la mañana</mat-radio-button>
+</mat-radio-group>
+
+<button color="primary"  (click)="openPopup('confirmar')" mat-raised-button>
+  Guardar
+</button>
+
+<button mat-raised-button (click)="openPopup('cancelar')" color="warn">
+  Cancelar
+</button>

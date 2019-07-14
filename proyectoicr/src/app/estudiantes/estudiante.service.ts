@@ -249,4 +249,8 @@ export class EstudiantesService {
   inscribirEstudiante(IdEstudiante: string, division: string){
      return this.http.post<{message: string, exito: boolean}>("http://localhost:3000/curso/inscripcion", {IdEstudiante: IdEstudiante, division: division});
   }
+
+  registrarRetiroAnticipado(IdEstudiante: string, antes10am: Boolean){
+    return this.http.post<{message: string, exito: boolean}>("http://localhost:3000/estudiante/retiro", {IdEstudiante: IdEstudiante, antes10am: antes10am});
+  }
 }
