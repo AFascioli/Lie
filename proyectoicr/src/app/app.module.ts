@@ -42,7 +42,6 @@ import {
   AsistenciaPopupComponent
 } from "./asistencia/registrar-asistencia/registrar-asistencia.component";
 import { MatExpansionModule } from "@angular/material/expansion";
-
 @NgModule({
   declarations: [
     AppComponent,
