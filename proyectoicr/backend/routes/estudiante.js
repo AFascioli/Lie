@@ -2,6 +2,7 @@ const express = require("express");
 const Estudiante = require("../models/estudiante");
 const Inscripcion = require("../models/inscripcion");
 const Division = require("../models/division");
+const AsistenciaDiaria = require("../models/asistenciaDiaria");
 const router = express.Router();
 
 //Registra un nuevo estudiante en la base de datos
@@ -160,30 +161,60 @@ router.get("/division", (req, res, next) => {
 });
 
 //Busca cada inscripcion segun el _id del estudiante y le registra el presentismo de esa fecha
+// router.post("/asistencia", (req, res) => {
+//   try {
+//     req.body.forEach(estudiante => {
+//       const valorInasistencia = 0;
+//       if (!estudiante.presente) {
+//         valorInasistencia = 1;
+//       }
+//       Inscripcion.findOneAndUpdate(
+//         { IdEstudiante: estudiante._id, activa: true },
+//         {
+//           $push: {
+//             asistenciaDiaria: {
+//               fecha: estudiante.fecha,
+//               presente: estudiante.presente,
+//               valorInasistencia: valorInasistencia
+//             }
+//           }
+//         }
+//       ).then(document => {});
+//     });
+//     res.status(201).json({ message: "Asistencia registrada exitósamente" });
+//   } catch (error) {
+//     console.log(error);
+//   }
+// });
+
+//Registrar asistencia 2.0, recibe un vector de estudiantes y para cada uno, encuentra la inscripcion que le corresponde
+// luego crea la asistencia diaria usando la _id de la inscripcion, luego guarda la asistenciaDiaria y
+// guarda la _id de esta asistenciaDiaria en el vector de asistenciasDiarias de la inscripcion.
 router.post("/asistencia", (req, res) => {
-  try {
-    req.body.forEach(estudiante => {
-      const valorInasistencia=0;
-      if(!estudiante.presente){
-        valorInasistencia=1;
-      }
-      Inscripcion.findOneAndUpdate(
-        { IdEstudiante: estudiante._id, activa: true },
-        {
-          $push: {
-            asistenciaDiaria: {
-              fecha: estudiante.fecha,
-              presente: estudiante.presente,
-              valorInasistencia: valorInasistencia
-            }
-          }
-        }
-      ).then(document => {});
+  req.body.forEach(estudiante => {
+    var valorInasistencia = 0;
+    if (!estudiante.presente) {
+      valorInasistencia = 1;
+    }
+    Inscripcion.findOne({
+      IdEstudiante: estudiante._id,
+      activa: true
+    }).then(async inscripcion => {
+      var asistenciaEstudiante = new AsistenciaDiaria({
+        IdInscripcion: inscripcion._id,
+        fecha: estudiante.fecha,
+        presente: estudiante.presente,
+        valorInasistencia: valorInasistencia
+      });
+
+      await asistenciaEstudiante.save().then(async asistenciaDiaria => {
+        await inscripcion.asistenciaDiaria.push(asistenciaDiaria._id);
+        inscripcion.save();
+      });
     });
-    res.status(201).json({ message: "Asistencia registrada exitósamente" });
-  } catch (error) {
-    console.log(error);
-  }
+  });
+
+  res.status(201).json({ message: "Asistencia registrada exitósamente" });
 });
 
 //Aca va el codigo de retiro anticipado
