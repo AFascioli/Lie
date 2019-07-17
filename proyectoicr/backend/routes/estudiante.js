@@ -160,33 +160,6 @@ router.get("/division", (req, res, next) => {
   });
 });
 
-//Busca cada inscripcion segun el _id del estudiante y le registra el presentismo de esa fecha
-// router.post("/asistencia", (req, res) => {
-//   try {
-//     req.body.forEach(estudiante => {
-//       const valorInasistencia = 0;
-//       if (!estudiante.presente) {
-//         valorInasistencia = 1;
-//       }
-//       Inscripcion.findOneAndUpdate(
-//         { IdEstudiante: estudiante._id, activa: true },
-//         {
-//           $push: {
-//             asistenciaDiaria: {
-//               fecha: estudiante.fecha,
-//               presente: estudiante.presente,
-//               valorInasistencia: valorInasistencia
-//             }
-//           }
-//         }
-//       ).then(document => {});
-//     });
-//     res.status(201).json({ message: "Asistencia registrada exitósamente" });
-//   } catch (error) {
-//     console.log(error);
-//   }
-// });
-
 //Registrar asistencia 2.0, recibe un vector de estudiantes y para cada uno, encuentra la inscripcion que le corresponde
 // luego crea la asistencia diaria usando la _id de la inscripcion, luego guarda la asistenciaDiaria y
 // guarda la _id de esta asistenciaDiaria en el vector de asistenciasDiarias de la inscripcion.
@@ -218,4 +191,57 @@ router.post("/asistencia", (req, res) => {
 });
 
 //Aca va el codigo de retiro anticipado
+router.post("/retiro", (req, res) => {
+  Inscripcion.findOne(
+    { IdEstudiante: req.body.IdEstudiante, activa: true },
+    { _id: 1 }
+  ).then(inscripcion => {
+    if(!inscripcion){
+      res.status(404).json({message: "El estudiante no está inscripto en ningún curso", exito: false});
+    }else{
+      var actualizacionInasistencia = 0.5;
+      if (req.body.antes10am) {
+        actualizacionInasistencia = 1;
+      }
+      AsistenciaDiaria.findOneAndUpdate(
+        { IdInscripcion: inscripcion._id, presente: true },
+        { retiroAnticipado: true, $inc: { valorInasistencia: actualizacionInasistencia } }
+      ).then((asistenciaDiaria)=> {
+        if(!asistenciaDiaria.presente){
+          res.status(404).json({message: "El estudiante no tiene registrada asistencia para el día de hoy", exito: false});
+        }else{
+          res.status(200).json({message: "Retiro anticipado exitósamente registrado", exito: true});
+        }
+      });
+    }
+  });
+});
+
+//Obtiene la id de la asistencia diaria del dia de hoy, y cambia los valores correspondientes en la coleccion de asistencia diaria
+router.get("/retirot", (req, res) => {
+  Inscripcion.findOne(
+    { IdEstudiante: "5d23d1cbf63ccad39b296032", activa: true },
+    { asistenciaDiaria: {$slice: -1} }
+  ).then(inscripcion => {
+    if(!inscripcion){
+      res.status(404).json({message: "El estudiante no está inscripto en ningún curso", exito: false});
+    }else{
+      var actualizacionInasistencia = 0.5;
+      if (req.body.antes10am) {
+        actualizacionInasistencia = 1;
+      }
+      AsistenciaDiaria.findByIdAndUpdate(
+        inscripcion.asistenciaDiaria[0],
+        { retiroAnticipado: true, $inc: { valorInasistencia: actualizacionInasistencia } }
+      ).then((asistenciaDiaria)=> {
+        if(!asistenciaDiaria.presente){
+          res.status(404).json({message: "El estudiante no tiene registrada asistencia para el día de hoy", exito: false});
+        }else{
+          res.status(200).json({message: "Retiro anticipado exitósamente registrado", exito: true});
+        }
+      });
+    }
+  });
+});
+
 module.exports = router;
