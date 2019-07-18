@@ -173,7 +173,6 @@ router.post("/asistencia", (req, res) => {
       IdEstudiante: estudiante._id,
       activa: true
     }).then(async inscripcion => {
-      console.log(estudiante.fecha);
       var asistenciaEstudiante = new AsistenciaDiaria({
         IdInscripcion: inscripcion._id,
         fecha: estudiante.fecha,
