@@ -20,12 +20,9 @@ export class RetiroAnticipadoComponent implements OnInit {
 
   ngOnInit() {
     this.fechaActual = new Date();
-    // this.apellidoEstudiante= this.servicio.estudianteSeleccionado.apellido;
-    // this.nombreEstudiante= this.servicio.estudianteSeleccionado.nombre;
-    // this._idEstudiante= this.servicio.estudianteSeleccionado._id;
-    this.apellidoEstudiante= "";
-    this.nombreEstudiante= "";
-    this._idEstudiante= "";
+    this.apellidoEstudiante= this.servicio.estudianteSeleccionado.apellido;
+    this.nombreEstudiante= this.servicio.estudianteSeleccionado.nombre;
+    this._idEstudiante= this.servicio.estudianteSeleccionado._id;
     this.validarHora();
   }
 
