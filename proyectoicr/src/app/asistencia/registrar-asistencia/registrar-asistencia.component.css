@@ -9,6 +9,8 @@
 table,
 button {
   margin: 1rem;
+  
+
 }
 
 .mat-form-field {
@@ -19,12 +21,21 @@ button {
 
 table {
   width: 100%;
+  margin: 0 auto;
 }
 
 .fecha {
   width: 60%;
 }
 
+.nombreApellido{
+  width:40%;
+}
+
+.presentismo{
+  width:20%;
+}
 .right{
   float: right;
 }
+
