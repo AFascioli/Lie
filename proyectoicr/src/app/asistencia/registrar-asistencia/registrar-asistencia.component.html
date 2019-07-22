@@ -40,7 +40,7 @@
     </ng-container>
 
     <ng-container matColumnDef="accion">
-      <th  class="presentismo"  mat-header-cell *matHeaderCellDef>Presentismo</th>
+      <th  class="presentismo" mat-header-cell *matHeaderCellDef>Presentismo</th>
       <td  class="presentismo" mat-cell *matCellDef="let row">
         <mat-slide-toggle (change)="onCambioPresentismo(row)"
           >Presente</mat-slide-toggle
@@ -53,7 +53,7 @@
 </div>
 <br/>
 <div align="center">
-  <button 
+  <button
     color="primary"
     (click)="onGuardar()"
     mat-raised-button
