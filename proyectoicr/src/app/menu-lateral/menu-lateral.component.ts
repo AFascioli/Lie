@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, ViewChild, ElementRef } from "@angular/core";
 
 @Component({
   selector: "app-menu-lateral",
@@ -6,7 +6,11 @@ import { Component, OnInit } from "@angular/core";
   styleUrls: ["./menu-lateral.component.css"]
 })
 export class MenuLateralComponent implements OnInit {
-  constructor() {}
+ 
+
+  constructor() { }
 
   ngOnInit() {}
-}
+
+  }
+

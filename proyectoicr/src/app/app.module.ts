@@ -22,13 +22,12 @@ import { MatMenuModule } from "@angular/material/menu";
 import { AppComponent } from "./app.component";
 import {
   AltaEstudiantesComponent,
-  DialogoPopupComponent,
-  DialogoDosPopupComponent
+  AltaPopupComponent,
 } from "./estudiantes/alta-estudiantes/alta-estudiantes.component";
 import { FormsModule } from "@angular/forms";
 import { HttpClientModule } from "@angular/common/http";
 import { EstudiantesService } from "./estudiantes/estudiante.service";
-import { BuscarEstudiantesComponent } from "./estudiantes/buscar-estudiantes/buscar-estudiantes.component";
+import { BuscarEstudiantesComponent, BuscarPopupComponent } from "./estudiantes/buscar-estudiantes/buscar-estudiantes.component";
 import { ListaEstudiantesComponent, AccionesEstudiantePopupComponent } from "./estudiantes/lista-estudiantes/lista-estudiantes.component";
 import {
   MostrarEstudiantesComponent,
@@ -42,6 +41,7 @@ import {
   RegistrarAsistenciaComponent,
   AsistenciaPopupComponent
 } from "./asistencia/registrar-asistencia/registrar-asistencia.component";
+import { MatExpansionModule } from "@angular/material/expansion";
 import { InscripcionEstudianteComponent, InscripcionPopupComponent } from './estudiantes/inscripcion-estudiantes/inscripcion-estudiantes.component';
 import { RetiroAnticipadoComponent, RetiroPopupComponent } from './asistencia/retiro-anticipado/retiro-anticipado.component';
 
@@ -52,14 +52,14 @@ import { RetiroAnticipadoComponent, RetiroPopupComponent } from './asistencia/re
     BuscarEstudiantesComponent,
     ListaEstudiantesComponent,
     MostrarEstudiantesComponent,
-    DialogoPopupComponent,
-    DialogoDosPopupComponent,
+    AltaPopupComponent,
     MostrarPopupComponent,
     MenuPrincipalComponent,
     MenuLateralComponent,
     HomeComponent,
     RegistrarAsistenciaComponent,
     AsistenciaPopupComponent,
+    BuscarPopupComponent,
     InscripcionEstudianteComponent,
     InscripcionPopupComponent,
     AccionesEstudiantePopupComponent,
@@ -68,10 +68,10 @@ import { RetiroAnticipadoComponent, RetiroPopupComponent } from './asistencia/re
   ],
   //entryComponents declara los componentes que se generan dinamicamente dentro de otros.
   entryComponents: [
-    DialogoPopupComponent,
-    DialogoDosPopupComponent,
+    AltaPopupComponent,
     MostrarPopupComponent,
     AsistenciaPopupComponent,
+    BuscarPopupComponent,
     InscripcionPopupComponent,
     AccionesEstudiantePopupComponent,
     RetiroPopupComponent
@@ -97,9 +97,11 @@ import { RetiroAnticipadoComponent, RetiroPopupComponent } from './asistencia/re
     MatToolbarModule,
     MatIconModule,
     MatListModule,
-    MatSlideToggleModule
+    MatSlideToggleModule,
+    MatExpansionModule
   ],
   providers: [EstudiantesService],
   bootstrap: [AppComponent]
 })
+
 export class AppModule {}

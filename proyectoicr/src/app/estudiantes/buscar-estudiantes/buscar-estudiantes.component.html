@@ -67,7 +67,10 @@
     required />
   </mat-form-field>
   <br/>
+  <div align="center">
   <button color="primary" routerLink="./lista" type="submit" mat-raised-button>Buscar</button>
+  <button mat-raised-button (click)="onCancelar()" color="warn">Cancelar</button>
+</div>
 </form>
 </mat-card>
 <router-outlet></router-outlet>

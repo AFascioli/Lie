@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { EstudiantesService } from '../estudiante.service';
 import { Estudiante } from '../estudiante.model';
+import { MatDialog, MatDialogRef } from '@angular/material';
+import { Router } from '@angular/router';
 
 
 @Component({
@@ -14,7 +16,7 @@ export class BuscarEstudiantesComponent implements OnInit {
   estudiantes: Estudiante[] = [];
   buscarPorNomYAp= true;
 
-  constructor(public servicio: EstudiantesService) { }
+  constructor(public servicio: EstudiantesService, public dialog: MatDialog) {   }
 
   ngOnInit() {
 
@@ -37,4 +39,36 @@ export class BuscarEstudiantesComponent implements OnInit {
     this.buscarPorNomYAp= !this.buscarPorNomYAp;
     form.resetForm();
   }
+
+  onCancelar(){
+  this.dialog.open(BuscarPopupComponent, {
+      width: "250px"
+    });
+  }
 }
+
+@Component({
+  selector: "app-buscar-popup",
+  templateUrl: "./buscar-popup.component.html"
+})
+export class BuscarPopupComponent {
+  formInvalido : Boolean;
+      tipoPopup :  string;
+  constructor(
+        public dialogRef: MatDialogRef<BuscarPopupComponent>, public router: Router,  public servicio: EstudiantesService
+      ) {this.tipoPopup = this.servicio.tipoPopUp;
+        this.formInvalido = this.servicio.formInvalidoEstudiante;}
+
+      onYesClick():void{
+        this.router.navigate(['menuLateral/home']);
+        this.dialogRef.close();
+      }
+      onNoClick(): void {
+        this.dialogRef.close();
+      }
+
+       onOkClick(): void {
+        this.servicio.formInvalidoEstudiante = true;
+        this.dialogRef.close();
+      }
+    }

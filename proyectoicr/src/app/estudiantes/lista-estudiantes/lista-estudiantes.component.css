@@ -4,6 +4,7 @@
 
 table {
   width: 100%;
+  margin: 0 auto;
 }
 
 @keyframes example {
@@ -19,3 +20,12 @@ p {
   animation-iteration-count: infinite;
   text-align: center;
 }
+
+.columnasTabla{
+  width:22%;
+}
+.visualizar{
+  width:12%;
+}
+
+
