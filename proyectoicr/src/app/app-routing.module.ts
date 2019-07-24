@@ -8,6 +8,8 @@ import { MostrarEstudiantesComponent } from "./estudiantes/mostrar-estudiantes/m
 import { MenuLateralComponent } from "./menu-lateral/menu-lateral.component";
 import { MenuPrincipalComponent } from "./menu-principal/menu-principal.component";
 import { RegistrarAsistenciaComponent } from "./asistencia/registrar-asistencia/registrar-asistencia.component";
+import { InscripcionEstudianteComponent } from './estudiantes/inscripcion-estudiantes/inscripcion-estudiantes.component';
+import { RetiroAnticipadoComponent } from './asistencia/retiro-anticipado/retiro-anticipado.component';
 
 const routes: Routes = [
   { path: "", component: MenuPrincipalComponent },
@@ -23,7 +25,9 @@ const routes: Routes = [
         children: [{ path: "lista", component: ListaEstudiantesComponent }]
       },
       { path: "mostrar", component: MostrarEstudiantesComponent },
-      { path: "asistencia", component: RegistrarAsistenciaComponent }
+      { path: "asistencia", component: RegistrarAsistenciaComponent },
+      { path: "curso", component: InscripcionEstudianteComponent },
+      { path: "retiroAnticipado", component: RetiroAnticipadoComponent }
     ]
   }
 ];

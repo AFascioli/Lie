@@ -1,0 +1,56 @@
+<h1 class="mat-h1" color="accent">Inscribir estudiante a un curso</h1>
+<h3>Datos del estudiante</h3>
+
+<h5>Apellido/s: {{ apellidoEstudiante }}</h5>
+
+<h5>Nombre/s: {{ nombreEstudiante }}</h5>
+
+<div class="right" >
+  <mat-form-field class="fecha">
+    <input matInput placeholder="Fecha" [disabled]="true">
+    {{fechaActual | date:'dd/MM/yyyy'}}
+  </mat-form-field>
+</div>
+
+<form #form="ngForm">
+  <mat-form-field>
+    <mat-select
+    placeholder="Seleccione año"
+    name="año"
+    ngModel
+    #año="ngModel"
+    matNativeControl
+    [(ngModel)]="anoSeleccionado"
+    required
+    (selectionChange)="FiltrarDivisiones()"
+  >
+    <mat-option
+    *ngFor="let anio of anios "
+    [value]="anio"
+    >
+    {{ anio }}
+  </mat-option>
+  </mat-select>
+</mat-form-field>
+<mat-form-field>
+  <mat-select
+    placeholder="Seleccione division"
+    name="division"
+    ngModel
+    #division="ngModel"
+    matNativeControl
+    required
+    [disabled]= "!seleccionDeAnio"
+    >
+    <mat-option *ngFor="let division of divisionesFiltradas" [value]="division">
+      {{ division }}
+    </mat-option>
+  </mat-select>
+</mat-form-field>
+<button color="primary"  (click)="openDialogo('confirmar', form, division)" mat-raised-button>
+  Inscribir
+</button>
+<button mat-raised-button (click)="openDialogo('cancelar', form, division)" color="warn">
+  Cancelar
+</button>
+</form>

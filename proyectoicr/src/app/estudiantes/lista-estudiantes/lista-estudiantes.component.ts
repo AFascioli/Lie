@@ -1,8 +1,9 @@
 import { Component, OnInit, Inject } from "@angular/core";
 import { EstudiantesService } from '../estudiante.service';
 import { Estudiante } from '../estudiante.model';
-import { MatDialog } from '@angular/material';
+import { MatDialog, MatDialogRef } from '@angular/material';
 import { Router } from '@angular/router';
+import { DialogoPopupComponent } from '../alta-estudiantes/alta-estudiantes.component';
 
 @Component({
   selector: "app-lista-estudiantes",
@@ -24,10 +25,38 @@ export class ListaEstudiantesComponent implements OnInit {
 
   OnSelection(row): void {
    this.servicio.estudianteSeleccionado = (this.estudiantes.find(estudiante => estudiante.numeroDocumento===row.numeroDocumento));
-    this.router.navigate(['menuLateral/mostrar']);
+   this.dialog.open(AccionesEstudiantePopupComponent,{ width: "250px"});
   }
 
 }
 
+
+@Component({
+  selector: "app-acciones-estudiante-popup",
+  templateUrl: "./acciones-estudiante-popup.component.html"
+})
+export class AccionesEstudiantePopupComponent {
+
+  constructor(
+    public dialogRef: MatDialogRef<AccionesEstudiantePopupComponent>,
+    public router: Router
+  ) {
+  }
+
+  onInscribir(){
+    this.router.navigate(["menuLateral/curso"]);
+    this.dialogRef.close();
+  }
+
+  onMostrar(){
+    this.router.navigate(["menuLateral/mostrar"]);
+    this.dialogRef.close();
+  }
+
+  onRetiro(){
+    this.router.navigate(["menuLateral/retiroAnticipado"]);
+    this.dialogRef.close();
+  }
+}
 
 

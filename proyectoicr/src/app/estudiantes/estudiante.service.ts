@@ -14,12 +14,14 @@ export class EstudiantesService {
   localidades: Localidad[] = [];
   estudiantes: Estudiante[] = [];
   nacionalidades: Nacionalidad[] = [];
+  divisionesXAño: any[];
+  estudiantesXDivision: any[];
   private provinciasActualizadas = new Subject<Provincia[]>();
   private localidadesActualizadas = new Subject<Localidad[]>();
   private nacionalidadesActualizadas = new Subject<Nacionalidad[]>();
   private estudiantesXDivisionActualizados = new Subject<any[]>();
-  estudiantesXDivision: any[];
   estudiantesBuscados = new Subject<Estudiante[]>();
+  private divisionXCursoActualizada = new Subject<any[]>();
   formInvalidoEstudiante: Boolean;
   estudianteSeleccionado: Estudiante;
   tipoPopUp: string;
@@ -228,8 +230,27 @@ export class EstudiantesService {
 
   //Recibe un vector con datos de estudiantes (_id, nombre y apellido) y presentismo (fecha y presente) y lo envia al backend para registrarlo
   registrarAsistencia(estudiantesXDivision: any[]){
-    this.http.post<{message: string}>("http://localhost:3000/estudiante/asistencia",estudiantesXDivision)
+    this.http.post<{message: string}>("http://localhost:3000/estudiante/asistencia", estudiantesXDivision)
     .subscribe(response =>{
     });
+  }
+
+  getDivisionXAñoListener() {
+    return this.divisionXCursoActualizada.asObservable();
+  }
+
+  obtenerDivisionesXAño(){
+    this.http.get<{divisionesXAño: any[]}>("http://localhost:3000/curso").subscribe(response =>{
+      this.divisionesXAño= response.divisionesXAño;
+      this.divisionXCursoActualizada.next([...this.divisionesXAño]);
+    });
+  }
+
+  inscribirEstudiante(IdEstudiante: string, division: string){
+     return this.http.post<{message: string, exito: boolean}>("http://localhost:3000/curso/inscripcion", {IdEstudiante: IdEstudiante, division: division});
+  }
+
+  registrarRetiroAnticipado(IdEstudiante: string, antes10am: Boolean){
+    return this.http.post<{message: string, exito: boolean}>("http://localhost:3000/estudiante/retiro", {IdEstudiante: IdEstudiante, antes10am: antes10am});
   }
 }

@@ -24,7 +24,7 @@ export class AltaEstudiantesComponent implements OnInit, OnDestroy {
   localidades: Localidad[] = [];
   localidadesFiltradas: Localidad[] = [];
   suscripcion: Subscription;
-
+  nombreProvinciaSeleccionada: string;
 
   constructor(
     public servicio: EstudiantesService,
@@ -89,10 +89,11 @@ export class AltaEstudiantesComponent implements OnInit, OnDestroy {
     }
   }
 
-  FiltrarLocalidades(idProvincia: number) {
+  FiltrarLocalidades() {
+    const idProvinciaSeleccionada = this.provincias.find(provincia => provincia.nombre===this.nombreProvinciaSeleccionada).id;
     this.localidadesFiltradas = [...this.localidades];
     this.localidadesFiltradas = this.localidadesFiltradas.filter(
-      localidad => localidad.id_provincia === idProvincia
+      localidad => localidad.id_provincia == idProvinciaSeleccionada
     );
   }
 
