@@ -52,6 +52,11 @@ export class AccionesEstudiantePopupComponent {
     this.router.navigate(["menuLateral/mostrar"]);
     this.dialogRef.close();
   }
+
+  onRetiro(){
+    this.router.navigate(["menuLateral/retiroAnticipado"]);
+    this.dialogRef.close();
+  }
 }
 
 

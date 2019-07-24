@@ -1,16 +1,9 @@
 const mongoose = require('mongoose');
 
-const asistenciaSchema= mongoose.Schema({
-  fecha: Date,
-  presente: Boolean,
-  retiroAnticipado: Boolean,
-  valorInasistencia: Number
-});
-
 const inscripcionSchema = mongoose.Schema({
   IdEstudiante: {type: mongoose.Schema.Types.ObjectId, ref: 'estudiantes'},
   IdDivision: {type: mongoose.Schema.Types.ObjectId, ref: 'divisiones'},
-  asistenciaDiaria: {type: [asistenciaSchema]},
+  asistenciaDiaria: [{type: mongoose.Schema.Types.ObjectId, ref: 'asistenciaDiaria'}],
   activa: {type: Boolean, require: true}
 });
 
