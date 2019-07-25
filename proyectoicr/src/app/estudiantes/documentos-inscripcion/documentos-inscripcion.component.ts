@@ -43,6 +43,7 @@ export class DocumentosInscripcionComponent implements OnInit {
   onCursoSeleccionado(curso){
     this.servicio.obtenerEstudiantesXCurso(curso.value).subscribe(estudiantes =>{
       this.estudiantesConDocumentos= estudiantes;
+      console.log(this.estudiantesConDocumentos);
     });
   }
 }

@@ -52,23 +52,23 @@
   </ng-container>
 
   <ng-container matColumnDef="fotocopiaDoc">
-    <th  class="documento" mat-header-cell *matHeaderCellDef>Fotocopia del documento</th>
-    <td  class="documento" mat-cell *matCellDef="let row">
-      <mat-checkbox></mat-checkbox>
+    <th class="documento" mat-header-cell *matHeaderCellDef>Fotocopia del documento</th>
+    <td class="documento" mat-cell *matCellDef="let estudiante">
+      <mat-checkbox [checked]="estudiante.documentosEntregados[0].entregado"></mat-checkbox>
     </td>
   </ng-container>
 
   <ng-container matColumnDef="fichaMed">
-    <th  class="documento" mat-header-cell *matHeaderCellDef>Ficha médica</th>
-    <td  class="documento" mat-cell *matCellDef="let row">
-      <mat-checkbox></mat-checkbox>
+    <th class="documento" mat-header-cell *matHeaderCellDef>Ficha médica</th>
+    <td class="documento" mat-cell *matCellDef="let estudiante">
+      <mat-checkbox [checked]="estudiante.documentosEntregados[1].entregado" ></mat-checkbox>
     </td>
   </ng-container>
 
   <ng-container matColumnDef="informeAnt">
-    <th  class="documento" mat-header-cell *matHeaderCellDef>Informe año anterior</th>
-    <td  class="documento" mat-cell *matCellDef="let row">
-      <mat-checkbox></mat-checkbox>
+    <th class="documento" mat-header-cell *matHeaderCellDef>Informe año anterior</th>
+    <td class="documento" mat-cell *matCellDef="let estudiante">
+      <mat-checkbox [checked]="estudiante.documentosEntregados[2].entregado"></mat-checkbox>
     </td>
   </ng-container>
 
