@@ -1,6 +1,4 @@
-.mat-card {
-  margin: 1rem;
-}
+
 
 .mat-form-field {
   width: 35%;
@@ -13,6 +11,15 @@
 .mat-h1{
   color: #C2185B;
 }
+
 button{
-  margin: 0.3rem;
+  margin: 0.4rem;
 }
+
+.mat-card {
+  margin: 1rem;
+  padding-left: 30%;
+  }
+
+
+

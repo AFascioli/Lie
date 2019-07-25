@@ -1,3 +1,21 @@
+.mat-card {
+  margin: 1rem;
+  padding-left: 20%;
+  }
+
+.mat-expansion-panel{
+  width: 70%;
+
+}
+
+.mat-form-field{
+   width: 45%;
+}
+
 button{
-  margin-left: 5%;
+  margin: 0.5rem;
+}
+
+.mat-h1{
+  color: #C2185B;
 }
