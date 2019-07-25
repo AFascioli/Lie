@@ -3,7 +3,7 @@ import { EstudiantesService } from '../estudiante.service';
 import { Estudiante } from '../estudiante.model';
 import { MatDialog, MatDialogRef } from '@angular/material';
 import { Router } from '@angular/router';
-import { DialogoPopupComponent } from '../alta-estudiantes/alta-estudiantes.component';
+
 
 @Component({
   selector: "app-lista-estudiantes",
@@ -25,7 +25,7 @@ export class ListaEstudiantesComponent implements OnInit {
 
   OnSelection(row): void {
    this.servicio.estudianteSeleccionado = (this.estudiantes.find(estudiante => estudiante.numeroDocumento===row.numeroDocumento));
-   this.dialog.open(AccionesEstudiantePopupComponent,{ width: "250px"});
+   this.dialog.open(AccionesEstudiantePopupComponent,{ width: "335px"});
   }
 
 }
