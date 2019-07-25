@@ -9,8 +9,6 @@
 table,
 button {
   margin: 1rem;
-
-
 }
 
 .mat-form-field {
@@ -35,6 +33,7 @@ table {
 .presentismo{
   width:20%;
 }
+
 .right{
   float: right;
 }

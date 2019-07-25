@@ -54,15 +54,47 @@ router.post("/inscripcion", (req, res) => {
           activa: true
         });
         nuevaInscripcion.save().then(() => {
-          res
-            .status(201)
-            .json({
-              message: "Estudiante inscripto exitósamente",
-              exito: true
-            });
+          res.status(201).json({
+            message: "Estudiante inscripto exitósamente",
+            exito: true
+          });
         });
       });
     }
+  });
+});
+
+router.get("/documentos", (req, res) => {
+  Inscripcion.aggregate([
+    {
+      '$lookup': {
+        'from': 'divisiones',
+        'localField': 'IdDivision',
+        'foreignField': '_id',
+        'as': 'divisiones'
+      }
+    }, {
+      '$lookup': {
+        'from': 'estudiantes',
+        'localField': 'IdEstudiante',
+        'foreignField': '_id',
+        'as': 'datosEstudiante'
+      }
+    }, {
+      '$match': {
+        'divisiones.curso': req.query.curso
+      }
+    }, {
+      '$project': {
+        '_id': 0,
+        'IdEstudiante': 1,
+        'documentosEntregados': 1,
+        'datosEstudiante.apellido': 1,
+        'datosEstudiante.nombre': 1
+      }
+    }
+  ]).then(estudiantes => {
+    res.status(200).json(estudiantes);
   });
 });
 

@@ -253,4 +253,9 @@ export class EstudiantesService {
   registrarRetiroAnticipado(IdEstudiante: string, antes10am: Boolean){
     return this.http.post<{message: string, exito: boolean}>("http://localhost:3000/estudiante/retiro", {IdEstudiante: IdEstudiante, antes10am: antes10am});
   }
+
+  obtenerEstudiantesXCurso(curso: string){
+    let params = new HttpParams().set("curso", curso);
+    return this.http.get<any[]>("http://localhost:3000/curso/documentos",{params: params});
+  }
 }
