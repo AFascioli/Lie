@@ -9,6 +9,7 @@
     >
       <mat-icon aria-label="Side nav toggle icon">menu</mat-icon>
     </button>
+    <p style="color:#3f51b5"> Menú </p>
   </mat-toolbar-row>
 </mat-toolbar>
 <mat-sidenav-container class="example-container">
@@ -108,7 +109,10 @@
   <mat-nav-list class="ubicacion_inferior">
     <a  mat-list-item (click)="drawer.toggle()" routerLink="#" title="Configuración">
       <mat-icon>settings</mat-icon>
+      &nbsp;
+      <p> Configuración </p>
    </a>
+
   </mat-nav-list>
   </mat-sidenav>
   <mat-sidenav-content>

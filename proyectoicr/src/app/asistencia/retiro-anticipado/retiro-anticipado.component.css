@@ -1,11 +1,10 @@
 .mat-card {
-  margin: 3rem;
-  padding-left: 20%;
+  margin: 1rem;
+  padding-left: 30%;
   }
 
 .mat-h1{
   color: #C2185B;
-  padding-left: 13%;
 }
 
 .mat-expansion-panel
@@ -26,6 +25,6 @@ button{
 }
 
 .fecha {
-  width: 50%;
+  width: 30%;
   padding-left: 45%;
 }

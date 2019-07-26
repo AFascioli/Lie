@@ -1,10 +1,9 @@
 
-    <h1 class="mat-h1" color="accent" style="text-align:center">Registrar retiro anticipado </h1>
-
+<h1 class="mat-h1" color="accent" style="text-align:center">Registrar retiro anticipado </h1>
 <mat-card>
 <div class="fecha">
   <mat-form-field >
-    <input matInput placeholder="Fecha actual" [disabled]="true">
+    <input matInput placeholder="Fecha:" [disabled]="true">
     {{fechaActual | date:'dd/MM/yyyy'}}
   </mat-form-field>
 </div>
