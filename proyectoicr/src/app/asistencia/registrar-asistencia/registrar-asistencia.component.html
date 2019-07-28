@@ -1,13 +1,13 @@
+<h1 class="mat-h1" color="accent" style="text-align:center">Registrar asistencia</h1>
 <mat-card>
-    <meta charset="utf-8" />
-    <h1 class="mat-h1" color="accent">Registrar asistencia</h1>
-    <div class="right" >
-        <mat-form-field class="fecha">
-          <input matInput placeholder="Fecha" [disabled]="true">
+  <div class="fecha">
+        <mat-form-field >
+          <input matInput placeholder="Fecha:" [disabled]="true">
           {{fechaActual | date:'dd/MM/yyyy'}}
         </mat-form-field>
-     </div>
-    <mat-form-field>
+      </div>
+        <br>
+    <mat-form-field class="curso">
     <mat-select
       placeholder="Seleccione curso"
       name="curso"
@@ -15,6 +15,7 @@
       #curso="ngModel"
       required
       (selectionChange)="buscarEstudiantesPorDivision(curso)"
+
     >
       <mat-option value="5A">5A</mat-option>
       <mat-option value="4A">4A</mat-option>
@@ -22,6 +23,7 @@
       <mat-option value="2A">2A</mat-option>
     </mat-select>
   </mat-form-field>
+ <br>
   <div *ngIf="!cursoNotSelected">
   <table  mat-table [dataSource]="estudiantesXDivision" class="mat-elevation-z8" >
 

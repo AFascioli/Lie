@@ -33,7 +33,8 @@ export class ListaEstudiantesComponent implements OnInit {
 
 @Component({
   selector: "app-acciones-estudiante-popup",
-  templateUrl: "./acciones-estudiante-popup.component.html"
+  templateUrl: "./acciones-estudiante-popup.component.html",
+  styleUrls: ["./lista-estudiantes.component.css"]
 })
 export class AccionesEstudiantePopupComponent {
 

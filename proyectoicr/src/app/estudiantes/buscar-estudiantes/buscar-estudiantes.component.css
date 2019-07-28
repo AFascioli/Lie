@@ -14,12 +14,20 @@
 
 button{
   margin: 0.4rem;
-}
+  }
 
 .mat-card {
   margin: 1rem;
   padding-left: 30%;
   }
 
+  .parrafo{
+    text-align: center;
+  }
+
+  .titulo{
+    text-align: center;
+    color: #C2185B;
+  }
 
 

@@ -50,7 +50,8 @@ export class RetiroAnticipadoComponent implements OnInit {
 
 @Component({
   selector: "app-retiro-popup",
-  templateUrl: "./retiro-popup.component.html"
+  templateUrl: "./retiro-popup.component.html",
+  styleUrls: ['./retiro-anticipado.component.css']
 })
 export class RetiroPopupComponent {
   tipoPopup: string;

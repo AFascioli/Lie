@@ -149,7 +149,8 @@ export class MostrarEstudiantesComponent implements OnInit {
 
 @Component({
   selector: "app-mostrar-popup",
-  templateUrl: "./mostrar-popup.component.html"
+  templateUrl: "./mostrar-popup.component.html",
+  styleUrls: ["./mostrar-estudiantes.component.css"]
 })
 export class MostrarPopupComponent {
   tipoPopup: string;

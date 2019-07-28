@@ -7,6 +7,8 @@ table {
   margin: 0 auto;
 }
 
+
+
 /* @keyframes example {
   0% {background-color: transparent;}
   50% {background-color: #753636;}
@@ -35,5 +37,13 @@ table {
 
 .btnVisualizar{
   margin: 2%;
+}
 
+.titulo{
+  text-align: center;
+  color: #C2185B;
+}
+
+button{
+  margin: 0.4rem;
 }
