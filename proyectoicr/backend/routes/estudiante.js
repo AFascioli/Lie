@@ -227,30 +227,20 @@ router.post("/retiro", (req, res) => {
   });
 });
 
-//Para pedirlos
-// router.get("/documentos", (req, res) => {
-
-// });
-
 //Vamos a recibir, un vector de los estudiantes a los que se le modificaron los documentos entregados.
 router.post("/documentos", (req, res) => {
-  req.body.forEach(estudiante => {
-    Inscripcion.findOneAndUpdate(
-      { IdEstudiante: estudiante.IdEstudiante, activa: true },
-      { documentosEntregados: estudiante.documentosEntregados }
-    ).exec().catch(e => res.json(e));
-  });
+  try {
+    req.body.forEach(estudiante => {
+      Inscripcion.findOneAndUpdate(
+        { IdEstudiante: estudiante.IdEstudiante, activa: true },
+        {$set: { documentosEntregados: estudiante.documentosEntregados }}
+      ).exec();
+      console.dir(estudiante);
+    });
+    res.status(201).json({message: "Documentos guardados correctamente", exito: true});
+  } catch{
+    res.status(201).json({message: e, exito: false});
+  }
 });
-
-// router.get("/documentos", (req, res) => {
-//   var documentos = [{ nombre: "actualizte", entregado: false }, { nombre: "esta", entregado: false }, { nombre: "Doc3", entregado: true }];
-
-//   Inscripcion.findOneAndUpdate(
-//     { IdEstudiante: "5d0ee05d489bdd0830bd1d0", activa: false },
-//     { documentosEntregados: documentos }
-//   ).then( res.status(200).json({ messsage: "Documentos actualizados." })).catch(e => res.json(e));
-
-//   // res.status(200).json({ messsage: "Documentos actualizados." });
-// });
 
 module.exports = router;

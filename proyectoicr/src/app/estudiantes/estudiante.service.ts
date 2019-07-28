@@ -258,4 +258,8 @@ export class EstudiantesService {
     let params = new HttpParams().set("curso", curso);
     return this.http.get<any[]>("http://localhost:3000/curso/documentos",{params: params});
   }
+
+  registrarDocumentosInscripcion(estudiantes: any[]){
+    return this.http.post<{message: string, exito: boolean}>("http://localhost:3000/estudiante/documentos", estudiantes);
+  }
 }

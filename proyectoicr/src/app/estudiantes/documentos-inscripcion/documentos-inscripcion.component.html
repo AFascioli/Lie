@@ -2,9 +2,9 @@
 <mat-form-field>
   <mat-select
   placeholder="Seleccione año"
-  name="año"
+  name="anio"
   ngModel
-  #año="ngModel"
+  #anio="ngModel"
   matNativeControl
   [(ngModel)]="anoSeleccionado"
   required
@@ -35,7 +35,8 @@
 </mat-select>
 </mat-form-field>
 
-<table  mat-table [dataSource]="estudiantesConDocumentos" class="mat-elevation-z8" >
+<div *ngIf="estudiantesConDocumentos.length !=0">
+  <table mat-table [dataSource]="estudiantesConDocumentos" class="mat-elevation-z8" >
 
   <ng-container matColumnDef="apellido">
     <th class="nombreApellido"  mat-header-cell *matHeaderCellDef>Apellido/s</th>
@@ -54,24 +55,37 @@
   <ng-container matColumnDef="fotocopiaDoc">
     <th class="documento" mat-header-cell *matHeaderCellDef>Fotocopia del documento</th>
     <td class="documento" mat-cell *matCellDef="let estudiante">
-      <mat-checkbox [checked]="estudiante.documentosEntregados[0].entregado"></mat-checkbox>
+      <mat-checkbox [checked]="estudiante.documentosEntregados[0].entregado" (change)="registrarCambioDocumento(estudiante,0)"></mat-checkbox>
     </td>
   </ng-container>
 
   <ng-container matColumnDef="fichaMed">
     <th class="documento" mat-header-cell *matHeaderCellDef>Ficha médica</th>
     <td class="documento" mat-cell *matCellDef="let estudiante">
-      <mat-checkbox [checked]="estudiante.documentosEntregados[1].entregado" ></mat-checkbox>
+      <mat-checkbox [checked]="estudiante.documentosEntregados[1].entregado" (change)="registrarCambioDocumento(estudiante,1)"></mat-checkbox>
     </td>
   </ng-container>
 
   <ng-container matColumnDef="informeAnt">
     <th class="documento" mat-header-cell *matHeaderCellDef>Informe año anterior</th>
     <td class="documento" mat-cell *matCellDef="let estudiante">
-      <mat-checkbox [checked]="estudiante.documentosEntregados[2].entregado"></mat-checkbox>
+      <mat-checkbox [checked]="estudiante.documentosEntregados[2].entregado" (change)="registrarCambioDocumento(estudiante,2)"></mat-checkbox>
     </td>
   </ng-container>
 
   <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
   <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
 </table>
+<div align="center">
+  <button
+  color="primary"
+  (click)="onGuardar(division, anio)"
+  mat-raised-button
+  >
+  Guardar
+</button>
+<button mat-raised-button (click)="onCancelar()" color="warn" >
+  Cancelar
+</button>
+</div>
+</div>
