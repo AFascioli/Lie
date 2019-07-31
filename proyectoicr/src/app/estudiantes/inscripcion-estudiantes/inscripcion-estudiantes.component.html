@@ -20,6 +20,21 @@
 </mat-expansion-panel>
 </mat-accordion>
 <br>
+<mat-accordion>
+<mat-expansion-panel>
+  <mat-expansion-panel-header>
+  <mat-panel-title>
+   Registrar documentos entregados
+  </mat-panel-title>
+</mat-expansion-panel-header>
+<mat-checkbox (change)="registrarDocumento(0)"> Fotocopia del documento</mat-checkbox>
+<br>
+<mat-checkbox (change)="registrarDocumento(1)"> Ficha médica</mat-checkbox>
+<br>
+<mat-checkbox (change)="registrarDocumento(2)"> Informe año anterior</mat-checkbox>
+</mat-expansion-panel>
+</mat-accordion>
+<br>
 <form #form="ngForm">
   <mat-form-field>
     <mat-select

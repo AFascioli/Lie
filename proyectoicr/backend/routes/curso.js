@@ -47,10 +47,12 @@ router.post("/inscripcion", (req, res) => {
         .status(400)
         .json({ message: "El estudiante ya esta inscripto", exito: false });
     } else {
+
       Division.findOne({ curso: req.body.division }).then(document => {
         const nuevaInscripcion = new Inscripcion({
           IdEstudiante: req.body.IdEstudiante,
           IdDivision: document._id,
+          documentosEntregados: req.body.documentosEntregados,
           activa: true
         });
         nuevaInscripcion.save().then(() => {
