@@ -63,7 +63,8 @@ export class RegistrarAsistenciaComponent implements OnInit {
 
 @Component({
   selector: "app-asistencia-popup",
-  templateUrl: "./asistencia-popup.component.html"
+  templateUrl: "./asistencia-popup.component.html",
+  styleUrls: ["./registrar-asistencia.component.css"]
 })
 export class AsistenciaPopupComponent {
   tipoPopup: string;

@@ -1,23 +1,37 @@
-<h1 class="mat-h1" color="accent">Registrar retiro anticipado
-</h1>
-<h3>Datos del estudiante</h3>
 
-<h5>Apellido/s: {{ apellidoEstudiante }}</h5>
-
-<h5>Nombre/s: {{ nombreEstudiante }}</h5>
-
-<div class="right" >
-  <mat-form-field class="fecha">
-    <input matInput placeholder="Fecha actual" [disabled]="true">
+<h1 class="mat-h1" color="accent" style="text-align:center">Registrar retiro anticipado </h1>
+<mat-card>
+<div class="fecha">
+  <mat-form-field >
+    <input matInput placeholder="Fecha:" [disabled]="true">
     {{fechaActual | date:'dd/MM/yyyy'}}
   </mat-form-field>
 </div>
+
+<br>
+<mat-accordion>
+<mat-expansion-panel>
+  <mat-expansion-panel-header>
+  <mat-panel-title>
+   Datos del estudiante seleccionado
+  </mat-panel-title>
+</mat-expansion-panel-header>
+<p> <b>Apellido/s: </b> {{ apellidoEstudiante }}</p>
+<p> <b>Nombre/s: </b> {{ nombreEstudiante }} </p>
+</mat-expansion-panel>
+</mat-accordion>
+
+<br>
 
 <mat-radio-group aria-label="Select an option">
   <mat-radio-button (change)="CambiarTipoRetiro()" [checked]="antes10am" value="1">Antes de las 10:00 de la mañana</mat-radio-button>
   <mat-radio-button (change)="CambiarTipoRetiro()" [checked]="!antes10am" value="2">Después de las 10:00 de la mañana</mat-radio-button>
 </mat-radio-group>
 
+<br>
+<br>
+
+<div align="center" >
 <button color="primary"  (click)="openPopup('confirmar')" mat-raised-button>
   Guardar
 </button>
@@ -25,3 +39,5 @@
 <button mat-raised-button (click)="openPopup('cancelar')" color="warn">
   Cancelar
 </button>
+</div>
+</mat-card>

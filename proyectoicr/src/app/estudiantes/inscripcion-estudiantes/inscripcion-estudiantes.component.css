@@ -1,3 +1,41 @@
-.right{
-  float: right;
+.mat-card {
+  margin: 1rem;
+  padding-left: 30%;
+  }
+
+.mat-h1{
+  color: #C2185B;
 }
+
+.mat-expansion-panel
+{
+  width: 60%;
+}
+
+.mat-radio-button{
+  margin: 1rem;
+}
+
+.mat-form-field {
+  width: 20%;
+}
+
+button{
+  margin: 0.4rem;
+}
+
+.fecha {
+  width: 30%;
+  padding-left: 39%;
+}
+
+.parrafo{
+  text-align: center;
+}
+
+.titulo{
+  text-align: center;
+  color: #C2185B;
+}
+
+

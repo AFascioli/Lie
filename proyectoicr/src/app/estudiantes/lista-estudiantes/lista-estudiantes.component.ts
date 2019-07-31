@@ -24,15 +24,15 @@ export class ListaEstudiantesComponent implements OnInit {
 
   OnSelection(row): void {
    this.servicio.estudianteSeleccionado = (this.estudiantes.find(estudiante => estudiante.numeroDocumento===row.numeroDocumento));
-   this.dialog.open(AccionesEstudiantePopupComponent,{ width: "250px"});
+   this.dialog.open(AccionesEstudiantePopupComponent,{ width: "335px"});
   }
 
 }
 
-
 @Component({
   selector: "app-acciones-estudiante-popup",
-  templateUrl: "./acciones-estudiante-popup.component.html"
+  templateUrl: "./acciones-estudiante-popup.component.html",
+  styleUrls: ["./lista-estudiantes.component.css"]
 })
 export class AccionesEstudiantePopupComponent {
 
