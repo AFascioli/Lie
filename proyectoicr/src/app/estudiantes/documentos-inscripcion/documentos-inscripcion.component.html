@@ -1,91 +1,122 @@
 <h1 class="mat-h1" color="accent">Registrar documentación para inscripción</h1>
 <mat-form-field>
   <mat-select
-  placeholder="Seleccione año"
-  name="anio"
-  ngModel
-  #anio="ngModel"
-  matNativeControl
-  [(ngModel)]="anoSeleccionado"
-  required
-  (selectionChange)="FiltrarDivisiones()"
->
-  <mat-option
-  *ngFor="let anio of anios "
-  [value]="anio"
+    placeholder="Seleccione año"
+    name="anio"
+    ngModel
+    #anio="ngModel"
+    matNativeControl
+    [(ngModel)]="anoSeleccionado"
+    required
+    (selectionChange)="FiltrarDivisiones()"
   >
-  {{ anio }}
-</mat-option>
-</mat-select>
+    <mat-option *ngFor="let anio of anios" [value]="anio">
+      {{ anio }}
+    </mat-option>
+  </mat-select>
 </mat-form-field>
 <mat-form-field>
-<mat-select
-  placeholder="Seleccione division"
-  name="division"
-  ngModel
-  #division="ngModel"
-  matNativeControl
-  required
-  [disabled]= "!seleccionDeAnio"
-  (selectionChange)="onCursoSeleccionado(division)"
+  <mat-select
+    placeholder="Seleccione division"
+    name="division"
+    ngModel
+    #division="ngModel"
+    matNativeControl
+    required
+    [disabled]="!seleccionDeAnio"
+    (selectionChange)="onCursoSeleccionado(division)"
   >
-  <mat-option *ngFor="let division of divisionesFiltradas" [value]="division">
-    {{ division }}
-  </mat-option>
-</mat-select>
+    <mat-option *ngFor="let division of divisionesFiltradas" [value]="division">
+      {{ division }}
+    </mat-option>
+  </mat-select>
 </mat-form-field>
 
-<div *ngIf="estudiantesConDocumentos.length !=0">
-  <table mat-table [dataSource]="estudiantesConDocumentos" class="mat-elevation-z8" >
-
-  <ng-container matColumnDef="apellido">
-    <th class="nombreApellido"  mat-header-cell *matHeaderCellDef>Apellido/s</th>
-    <td class="nombreApellido" mat-cell *matCellDef="let estudiante">
-      {{ estudiante.datosEstudiante[0].apellido }}
-    </td>
-  </ng-container>
-
-  <ng-container matColumnDef="nombre">
-    <th class="nombreApellido"  mat-header-cell *matHeaderCellDef>  Nombre/s  </th>
-    <td class="nombreApellido"  mat-cell *matCellDef="let estudiante">
-      {{ estudiante.datosEstudiante[0].nombre }}
-    </td>
-  </ng-container>
-
-  <ng-container matColumnDef="fotocopiaDoc">
-    <th class="documento" mat-header-cell *matHeaderCellDef>Fotocopia del documento</th>
-    <td class="documento" mat-cell *matCellDef="let estudiante">
-      <mat-checkbox [checked]="estudiante.documentosEntregados[0].entregado" (change)="registrarCambioDocumento(estudiante,0)"></mat-checkbox>
-    </td>
-  </ng-container>
-
-  <ng-container matColumnDef="fichaMed">
-    <th class="documento" mat-header-cell *matHeaderCellDef>Ficha médica</th>
-    <td class="documento" mat-cell *matCellDef="let estudiante">
-      <mat-checkbox [checked]="estudiante.documentosEntregados[1].entregado" (change)="registrarCambioDocumento(estudiante,1)"></mat-checkbox>
-    </td>
-  </ng-container>
-
-  <ng-container matColumnDef="informeAnt">
-    <th class="documento" mat-header-cell *matHeaderCellDef>Informe año anterior</th>
-    <td class="documento" mat-cell *matCellDef="let estudiante">
-      <mat-checkbox [checked]="estudiante.documentosEntregados[2].entregado" (change)="registrarCambioDocumento(estudiante,2)"></mat-checkbox>
-    </td>
-  </ng-container>
-
-  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-  <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
-</table>
-<div align="center">
-  <button
-  color="primary"
-  (click)="onGuardar(division, anio)"
-  mat-raised-button
+<div *ngIf="estudiantesConDocumentos.length != 0">
+  <table
+    mat-table
+    [dataSource]="estudiantesConDocumentos"
+    class="mat-elevation-z8"
   >
-  Guardar
-</button>
-<button mat-raised-button (click)="onCancelar()" color="warn" >
-  Cancelar
-</button>
-</div>
+    <ng-container matColumnDef="apellido">
+      <th class="nombreApellido" mat-header-cell *matHeaderCellDef>
+        Apellido/s
+      </th>
+      <td class="nombreApellido" mat-cell *matCellDef="let estudiante">
+        {{ estudiante.datosEstudiante[0].apellido }}
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="nombre">
+      <th class="nombreApellido" mat-header-cell *matHeaderCellDef>Nombre/s</th>
+      <td class="nombreApellido" mat-cell *matCellDef="let estudiante">
+        {{ estudiante.datosEstudiante[0].nombre }}
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="fotocopiaDoc">
+      <th class="documento" mat-header-cell *matHeaderCellDef>
+        Fotocopia del documento
+      </th>
+      <td class="documento" mat-cell *matCellDef="let estudiante">
+        <mat-checkbox
+          [checked]="estudiante.documentosEntregados[0].entregado"
+          (change)="registrarCambioDocumento(estudiante, 0)"
+        ></mat-checkbox>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="fichaMed">
+      <th class="documento" mat-header-cell *matHeaderCellDef>Ficha médica</th>
+      <td class="documento" mat-cell *matCellDef="let estudiante">
+        <mat-checkbox
+          [checked]="estudiante.documentosEntregados[1].entregado"
+          (change)="registrarCambioDocumento(estudiante, 1)"
+        ></mat-checkbox>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="informeAnt">
+      <th class="documento" mat-header-cell *matHeaderCellDef>
+        Informe año anterior
+      </th>
+      <td class="documento" mat-cell *matCellDef="let estudiante">
+        <mat-checkbox
+          [checked]="estudiante.documentosEntregados[2].entregado"
+          (change)="registrarCambioDocumento(estudiante, 2)"
+        ></mat-checkbox>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="seleccionarTodos">
+      <th class="documento" mat-header-cell *matHeaderCellDef>Todos</th>
+      <td class="documento" mat-cell *matCellDef="let estudiante">
+        <mat-checkbox
+          [checked]="
+            estudiante.documentosEntregados[0].entregado &&
+            estudiante.documentosEntregados[1].entregado &&
+            estudiante.documentosEntregados[2].entregado
+          "
+          (change)="registrarTodosDocumentos(estudiante)
+          "
+        ></mat-checkbox>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+  </table>
+
+  <div align="center">
+    <button
+      color="primary"
+      (click)="onGuardar(division, anio)"
+      mat-raised-button
+    >
+      Guardar
+    </button>
+    <button mat-raised-button (click)="onCancelar()" color="warn">
+      Cancelar
+    </button>
+  </div>
 </div>
