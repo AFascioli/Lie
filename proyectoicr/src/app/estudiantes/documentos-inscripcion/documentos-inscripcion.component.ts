@@ -15,7 +15,7 @@ export class DocumentosInscripcionComponent implements OnInit {
   seleccionDeAnio: boolean = false;
   anoSeleccionado: string;
   estudiantesConDocumentos: any[]=[];
-  displayedColumns: string[] = ["apellido", "nombre", "fotocopiaDoc", "fichaMed", "informeAnt", "seleccionarTodos"];
+  displayedColumns: string[] = ["apellido", "nombre", "fotocopiaDoc", "fichaMed", "informeAnt"];
   matConfig= new MatDialogConfig();
 
   constructor(public servicio: EstudiantesService, public popup: MatDialog, private snackBar: MatSnackBar) { }
@@ -54,12 +54,6 @@ export class DocumentosInscripcionComponent implements OnInit {
     estudiante.documentosEntregados[indiceDoc].entregado=!estudiante.documentosEntregados[indiceDoc].entregado;
   }
 
-  //Registra que todos los documentos fueron entregados cuando se selecciona la columna "todos"
-  registrarTodosDocumentos(estudiante: any ){
-    estudiante.documentosEntregados[0].entregado=true;
-    estudiante.documentosEntregados[1].entregado=true;
-    estudiante.documentosEntregados[2].entregado=true;
-  }
 
   //Guardar los estudiantes con los cambios, resetea los selects y abre snackBar
   onGuardar(division, anio){

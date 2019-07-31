@@ -88,20 +88,6 @@
       </td>
     </ng-container>
 
-    <ng-container matColumnDef="seleccionarTodos">
-      <th class="documento" mat-header-cell *matHeaderCellDef>Todos</th>
-      <td class="documento" mat-cell *matCellDef="let estudiante">
-        <mat-checkbox
-          [checked]="
-            estudiante.documentosEntregados[0].entregado &&
-            estudiante.documentosEntregados[1].entregado &&
-            estudiante.documentosEntregados[2].entregado
-          "
-          (change)="registrarTodosDocumentos(estudiante)
-          "
-        ></mat-checkbox>
-      </td>
-    </ng-container>
 
     <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
     <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
