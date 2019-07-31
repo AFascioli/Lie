@@ -4,7 +4,6 @@ import { Estudiante } from '../estudiante.model';
 import { MatDialog, MatDialogRef } from '@angular/material';
 import { Router } from '@angular/router';
 
-
 @Component({
   selector: "app-lista-estudiantes",
   templateUrl: "./lista-estudiantes.component.html",
@@ -29,7 +28,6 @@ export class ListaEstudiantesComponent implements OnInit {
   }
 
 }
-
 
 @Component({
   selector: "app-acciones-estudiante-popup",

@@ -14,7 +14,9 @@ import {
   MatToolbarModule,
   MatIconModule,
   MatListModule,
-  MatSlideToggleModule
+  MatSlideToggleModule,
+  MatCheckboxModule,
+  MatSnackBarModule
 } from "@angular/material";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { MatDatepickerModule } from "@angular/material/datepicker";
@@ -44,6 +46,7 @@ import {
 import { MatExpansionModule } from "@angular/material/expansion";
 import { InscripcionEstudianteComponent, InscripcionPopupComponent } from './estudiantes/inscripcion-estudiantes/inscripcion-estudiantes.component';
 import { RetiroAnticipadoComponent, RetiroPopupComponent } from './asistencia/retiro-anticipado/retiro-anticipado.component';
+import { DocumentosInscripcionComponent, DocumentosInscripcionPopupComponent } from './estudiantes/documentos-inscripcion/documentos-inscripcion.component';
 
 @NgModule({
   declarations: [
@@ -64,7 +67,9 @@ import { RetiroAnticipadoComponent, RetiroPopupComponent } from './asistencia/re
     InscripcionPopupComponent,
     AccionesEstudiantePopupComponent,
     RetiroAnticipadoComponent,
-    RetiroPopupComponent
+    RetiroPopupComponent,
+    DocumentosInscripcionComponent,
+    DocumentosInscripcionPopupComponent
   ],
   //entryComponents declara los componentes que se generan dinamicamente dentro de otros.
   entryComponents: [
@@ -74,7 +79,8 @@ import { RetiroAnticipadoComponent, RetiroPopupComponent } from './asistencia/re
     BuscarPopupComponent,
     InscripcionPopupComponent,
     AccionesEstudiantePopupComponent,
-    RetiroPopupComponent
+    RetiroPopupComponent,
+    DocumentosInscripcionPopupComponent
   ],
   imports: [
     BrowserModule,
@@ -98,7 +104,9 @@ import { RetiroAnticipadoComponent, RetiroPopupComponent } from './asistencia/re
     MatIconModule,
     MatListModule,
     MatSlideToggleModule,
-    MatExpansionModule
+    MatExpansionModule,
+    MatCheckboxModule,
+    MatSnackBarModule
   ],
   providers: [EstudiantesService],
   bootstrap: [AppComponent]
