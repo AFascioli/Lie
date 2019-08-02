@@ -1,4 +1,3 @@
-
 .columnasTabla{
   width: 18%;
 }
@@ -10,15 +9,6 @@
 table {
   width: 95%;
   margin: 2rem;
-}
-
-.mat-h1{
-  color: #C2185B;
-}
-
-.titulo{
-  text-align: center;
-  color: #C2185B;
 }
 
 button{

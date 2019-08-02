@@ -3,10 +3,6 @@
   padding-left: 30%;
   }
 
-.mat-h1{
-  color: #C2185B;
-}
-
 .mat-expansion-panel
 {
   width: 60%;
@@ -32,10 +28,3 @@ button{
 .parrafo{
   text-align: center;
 }
-
-.titulo{
-  text-align: center;
-  color: #C2185B;
-}
-
-

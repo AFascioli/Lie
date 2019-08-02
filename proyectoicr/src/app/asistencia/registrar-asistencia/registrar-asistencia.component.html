@@ -1,13 +1,15 @@
-<h1 class="mat-h1" color="accent" style="text-align:center">Registrar asistencia</h1>
-<mat-card>
+<h1 class="componente-titulo">
+  Registrar asistencia
+</h1>
+<mat-card class="card-body-componente">
   <div class="fecha">
-        <mat-form-field >
-          <input matInput placeholder="Fecha:" [disabled]="true">
-          {{fechaActual | date:'dd/MM/yyyy'}}
-        </mat-form-field>
-      </div>
-        <br>
-    <mat-form-field class="curso">
+    <mat-form-field>
+      <input matInput placeholder="Fecha:" [disabled]="true" />
+      {{ fechaActual | date: "dd/MM/yyyy" }}
+    </mat-form-field>
+  </div>
+  <br />
+  <mat-form-field class="curso">
     <mat-select
       placeholder="Seleccione curso"
       name="curso"
@@ -15,7 +17,6 @@
       #curso="ngModel"
       required
       (selectionChange)="buscarEstudiantesPorDivision(curso)"
-
     >
       <mat-option value="5A">5A</mat-option>
       <mat-option value="4A">4A</mat-option>
@@ -23,48 +24,65 @@
       <mat-option value="2A">2A</mat-option>
     </mat-select>
   </mat-form-field>
- <br>
+  <br />
   <div *ngIf="!cursoNotSelected">
-  <table  mat-table [dataSource]="estudiantesXDivision" class="mat-elevation-z8" >
-
-    <ng-container matColumnDef="apellido">
-      <th class="nombreApellido"  mat-header-cell *matHeaderCellDef>Apellido/s</th>
-      <td class="nombreApellido" mat-cell *matCellDef="let estudiantesXDivision">
-        {{ estudiantesXDivision.apellido }}
-      </td>
-    </ng-container>
-
-    <ng-container matColumnDef="nombre">
-      <th class="nombreApellido"  mat-header-cell *matHeaderCellDef>  Nombre/s  </th>
-      <td class="nombreApellido"  mat-cell *matCellDef="let estudiantesXDivision">
-        {{ estudiantesXDivision.nombre }}
-      </td>
-    </ng-container>
-
-    <ng-container matColumnDef="accion">
-      <th  class="presentismo" mat-header-cell *matHeaderCellDef>Presentismo</th>
-      <td  class="presentismo" mat-cell *matCellDef="let row">
-        <mat-slide-toggle (change)="onCambioPresentismo(row)"
-          >Presente</mat-slide-toggle
+    <table
+      mat-table
+      [dataSource]="estudiantesXDivision"
+      class="mat-elevation-z8"
+    >
+      <ng-container matColumnDef="apellido">
+        <th class="nombreApellido" mat-header-cell *matHeaderCellDef>
+          Apellido/s
+        </th>
+        <td
+          class="nombreApellido"
+          mat-cell
+          *matCellDef="let estudiantesXDivision"
         >
-      </td>
-    </ng-container>
-    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-    <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
-  </table>
-</div>
-<br/>
-<div align="center">
-  <button
-    color="primary"
-    (click)="onGuardar()"
-    mat-raised-button
-    [disabled]="cursoNotSelected"
-  >
-    Guardar
-  </button>
-  <button mat-raised-button (click)="onCancelar()" color="warn" >
-    Cancelar
-  </button>
-</div>
+          {{ estudiantesXDivision.apellido }}
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="nombre">
+        <th class="nombreApellido" mat-header-cell *matHeaderCellDef>
+          Nombre/s
+        </th>
+        <td
+          class="nombreApellido"
+          mat-cell
+          *matCellDef="let estudiantesXDivision"
+        >
+          {{ estudiantesXDivision.nombre }}
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="accion">
+        <th class="presentismo" mat-header-cell *matHeaderCellDef>
+          Presentismo
+        </th>
+        <td class="presentismo" mat-cell *matCellDef="let row">
+          <mat-slide-toggle (change)="onCambioPresentismo(row)"
+            >Presente</mat-slide-toggle
+          >
+        </td>
+      </ng-container>
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+    </table>
+  </div>
+  <br />
+  <div align="center">
+    <button
+      color="primary"
+      (click)="onGuardar()"
+      mat-raised-button
+      [disabled]="cursoNotSelected"
+    >
+      Guardar
+    </button>
+    <button mat-raised-button (click)="onCancelar()" color="warn">
+      Cancelar
+    </button>
+  </div>
 </mat-card>

@@ -1,18 +1,19 @@
-<mat-toolbar color="#7d1b1e">
+<mat-toolbar class="fixed-header">
   <mat-toolbar-row>
     <button
       type="button"
       aria-label="Toggle sidenav"
       mat-icon-button
       (click)="drawer.toggle()"
-      color="primary"
     >
       <mat-icon aria-label="Side nav toggle icon">menu</mat-icon>
     </button>
     <h3>Menú</h3>
   </mat-toolbar-row>
 </mat-toolbar>
-<mat-sidenav-container class="example-container">
+
+<!-- Menu lateral de la aplicación -->
+<mat-sidenav-container hasBackdrop="false">
   <mat-sidenav
     #drawer
     mode="mobileQuery.matches ? 'over' : 'side'"
@@ -133,6 +134,8 @@
     </mat-nav-list>
   </mat-sidenav>
   <mat-sidenav-content>
-    <router-outlet></router-outlet>
+    <div class="body-contenido">
+      <router-outlet></router-outlet>
+    </div>
   </mat-sidenav-content>
 </mat-sidenav-container>

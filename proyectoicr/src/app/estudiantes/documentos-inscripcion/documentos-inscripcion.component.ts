@@ -1,6 +1,6 @@
 import { EstudiantesService } from 'src/app/estudiantes/estudiante.service';
-import { Component, OnInit, Inject } from '@angular/core';
-import { MatDialogRef, MatDialog, MatDialogConfig, MAT_DIALOG_DATA, MatSnackBar } from '@angular/material';
+import { Component, OnInit } from '@angular/core';
+import { MatDialogRef, MatDialog, MatDialogConfig, MatSnackBar } from '@angular/material';
 import { Router } from '@angular/router';
 
 @Component({

@@ -80,7 +80,7 @@ export class InscripcionEstudianteComponent implements OnInit {
 @Component({
   selector: "app-inscripcion-popup",
   templateUrl: "./inscripcion-popup.component.html",
-  styleUrls: ["./inscripcion-estudiantes.component.css"]
+  styleUrls: ["./inscripcion-estudiantes.component.css", "../../app.component.css"]
 })
 export class InscripcionPopupComponent {
   tipoPopup: string;

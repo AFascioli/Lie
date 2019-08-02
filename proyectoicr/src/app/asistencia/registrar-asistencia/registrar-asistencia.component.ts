@@ -13,13 +13,11 @@ export class RegistrarAsistenciaComponent implements OnInit {
   estudiantesXDivision: any[];
   displayedColumns: string[] = ["apellido", "nombre", "accion"];
   fechaActual: Date;
-  constructor(private servicio: EstudiantesService, public popup: MatDialog) {
-    }
+  constructor(private servicio: EstudiantesService, public popup: MatDialog) {}
 
   ngOnInit() {
     this.cursoNotSelected = true;
     this.fechaActual = new Date();
-
   }
 
   //Busca los estudiantes segun el curso que se selecciono en pantalla. Los orden alfabeticamente

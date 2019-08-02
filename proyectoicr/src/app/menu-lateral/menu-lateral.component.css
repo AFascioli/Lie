@@ -7,6 +7,19 @@
   margin: 1rem;
 }
 
-.h3{
-  color:#3f51b5;
+h3, .mat-icon-button{
+  color: #ffff;
+}
+.fixed-header {
+  position: sticky;
+  top: 0;
+  left: 0;
+  z-index: 2;
+  width: 100%  !important;
+  background-color: #c12d2a;
+}
+
+.body-contenido{
+  padding: 2rem;
+  padding-top: 0rem;
 }
