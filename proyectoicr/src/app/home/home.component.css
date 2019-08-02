@@ -1,15 +1,21 @@
-img
-{
-  width: 40%;
-}
-
 .mat-card{
-  margin: 1rem;
+  margin: auto;
+  max-width: 500px;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
 }
 
-
-.parrafo{
-  margin: 18rem;
+.titulo{
+  text-align: center;
+  color: #ffadbd;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  font-size-adjust:
 }
 
+.mat-card-title, .mat-card-subtitle{
+  text-align:center;
+}
 
+button:hover {
+  background-color: #ffadbd;
+}
