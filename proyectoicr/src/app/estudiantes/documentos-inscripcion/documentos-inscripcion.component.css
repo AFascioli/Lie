@@ -1,12 +1,28 @@
-table{
-  margin: 1rem;
+
+.columnasTabla{
+  width: 18%;
 }
+
+.mat-card {
+  margin: 1rem;
+  }
 
 table {
-  width: 100%;
-  margin: 0 auto;
+  width: 95%;
+  margin: 2rem;
 }
 
-.documento{
-  width:20%;
+.mat-h1{
+  color: #C2185B;
 }
+
+.titulo{
+  text-align: center;
+  color: #C2185B;
+}
+
+button{
+  margin: 0.4rem;
+}
+
+

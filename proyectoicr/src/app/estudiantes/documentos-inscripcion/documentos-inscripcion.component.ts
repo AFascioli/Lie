@@ -12,8 +12,9 @@ export class DocumentosInscripcionComponent implements OnInit {
   anios: number[]= [];
   divisionesXAno: any[];
   divisionesFiltradas: any[];
+  divisionSeleccionada: boolean = false;
   seleccionDeAnio: boolean = false;
-  anoSeleccionado: string;
+  anioSeleccionado: string;
   estudiantesConDocumentos: any[]=[];
   displayedColumns: string[] = ["apellido", "nombre", "fotocopiaDoc", "fichaMed", "informeAnt"];
   matConfig= new MatDialogConfig();
@@ -36,7 +37,7 @@ export class DocumentosInscripcionComponent implements OnInit {
   FiltrarDivisiones() {
     this.seleccionDeAnio= true;
     this.divisionesFiltradas = this.divisionesXAno.find(
-      divisionXAño => divisionXAño.ano === this.anoSeleccionado
+      divisionXAño => divisionXAño.ano === this.anioSeleccionado
     ).divisiones;
     this.divisionesFiltradas.sort((a, b) =>
     a > b ? 1 : b > a ? -1 : 0);
@@ -44,8 +45,9 @@ export class DocumentosInscripcionComponent implements OnInit {
 
   //Cuando el usuario selecciona una division, se obtienen los datos del estudiantes necesarios
   onCursoSeleccionado(curso){
+    this.divisionSeleccionada=true;
     this.servicio.obtenerEstudiantesXCurso(curso.value).subscribe(estudiantes =>{
-      this.estudiantesConDocumentos= [estudiantes[1]]; //#resolve
+      this.estudiantesConDocumentos= estudiantes;
     });
   }
 
@@ -53,6 +55,7 @@ export class DocumentosInscripcionComponent implements OnInit {
   registrarCambioDocumento(estudiante: any, indiceDoc: number){
     estudiante.documentosEntregados[indiceDoc].entregado=!estudiante.documentosEntregados[indiceDoc].entregado;
   }
+
 
   //Guardar los estudiantes con los cambios, resetea los selects y abre snackBar
   onGuardar(division, anio){
@@ -80,7 +83,8 @@ export class DocumentosInscripcionComponent implements OnInit {
 
 @Component({
   selector: "app-documentos-inscripcion-popup",
-  templateUrl: "./documentos-inscripcion-popup.component.html"
+  templateUrl: "./documentos-inscripcion-popup.component.html",
+  styleUrls: ['./documentos-inscripcion.component.css']
 })
 export class DocumentosInscripcionPopupComponent {
 
