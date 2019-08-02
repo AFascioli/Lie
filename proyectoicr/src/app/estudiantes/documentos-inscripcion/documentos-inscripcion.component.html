@@ -5,46 +5,54 @@
 <div align="center">
 <mat-form-field >
   <mat-select
-
-  placeholder="Seleccione año"
-  name="anio"
-  ngModel
-  #anio="ngModel"
-  matNativeControl
-  [(ngModel)]="anioSeleccionado"
-  required
-  (selectionChange)="FiltrarDivisiones()"
->
-  <mat-option
-  *ngFor="let anio of anios "
-  [value]="anio"
+    placeholder="Seleccione año"
+    name="anio"
+    ngModel
+    #anio="ngModel"
+    matNativeControl
+    [(ngModel)]="anoSeleccionado"
+    required
+    (selectionChange)="FiltrarDivisiones()"
   >
-  {{ anio }}
-</mat-option>
-</mat-select>
+    <mat-option *ngFor="let anio of anios" [value]="anio">
+      {{ anio }}
+    </mat-option>
+  </mat-select>
 </mat-form-field>
 
 &nbsp; &nbsp;
 <mat-form-field>
-<mat-select
-  placeholder="Seleccione division"
-  name="division"
-  ngModel
-  #division="ngModel"
-  matNativeControl
-  required
-  [disabled]= "!seleccionDeAnio"
-  (selectionChange)="onCursoSeleccionado(division)"
+  <mat-select
+    placeholder="Seleccione division"
+    name="division"
+    ngModel
+    #division="ngModel"
+    matNativeControl
+    required
+    [disabled]="!seleccionDeAnio"
+    (selectionChange)="onCursoSeleccionado(division)"
   >
-  <mat-option *ngFor="let division of divisionesFiltradas" [value]="division"  >
-    {{ division }}
-  </mat-option>
-</mat-select>
+    <mat-option *ngFor="let division of divisionesFiltradas" [value]="division">
+      {{ division }}
+    </mat-option>
+  </mat-select>
 </mat-form-field>
 </div>
 
-<div *ngIf="estudiantesConDocumentos.length !=0">
-  <table mat-table [dataSource]="estudiantesConDocumentos" class="mat-elevation-z8" >
+<div *ngIf="estudiantesConDocumentos.length != 0">
+  <table
+    mat-table
+    [dataSource]="estudiantesConDocumentos"
+    class="mat-elevation-z8"
+  >
+    <ng-container matColumnDef="apellido">
+      <th class="nombreApellido" mat-header-cell *matHeaderCellDef>
+        Apellido/s
+      </th>
+      <td class="nombreApellido" mat-cell *matCellDef="let estudiante">
+        {{ estudiante.datosEstudiante[0].apellido }}
+      </td>
+    </ng-container>
 
   <ng-container matColumnDef="apellido">
     <th  class="columnasTabla"  mat-header-cell style="text-align: center" *matHeaderCellDef> <b style="font-size:15px"> Apellido/s </b> </th>

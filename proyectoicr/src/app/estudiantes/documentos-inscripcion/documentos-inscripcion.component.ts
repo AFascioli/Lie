@@ -47,7 +47,7 @@ export class DocumentosInscripcionComponent implements OnInit {
   onCursoSeleccionado(curso){
     this.divisionSeleccionada=true;
     this.servicio.obtenerEstudiantesXCurso(curso.value).subscribe(estudiantes =>{
-      this.estudiantesConDocumentos= [estudiantes[1]]; //#resolve
+      this.estudiantesConDocumentos= estudiantes;
     });
   }
 
@@ -55,6 +55,7 @@ export class DocumentosInscripcionComponent implements OnInit {
   registrarCambioDocumento(estudiante: any, indiceDoc: number){
     estudiante.documentosEntregados[indiceDoc].entregado=!estudiante.documentosEntregados[indiceDoc].entregado;
   }
+
 
   //Guardar los estudiantes con los cambios, resetea los selects y abre snackBar
   onGuardar(division, anio){
