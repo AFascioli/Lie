@@ -1,20 +1,17 @@
-.mat-card {
-  margin: 1rem;
+.curso {
+  margin-left: 1rem;
+  width: 20%;
 }
 
-.curso {
+.fecha {
+  margin-right: 1rem;
   width: 20%;
-  margin-left: 3rem;
-}
+  float: right;
+  }
 
 table {
   width: 100%;
   margin: 0 auto;
-}
-
-.fecha {
-  width: 15%;
-  padding-left: 45%;
 }
 
 .nombreApellido {
@@ -25,10 +22,10 @@ table {
   width: 20%;
 }
 
-button {
-  margin: 0.4rem;
+button{
+  margin: 0.3rem;
 }
 
-.parrafo {
-  text-align: center;
+.div-button{
+  text-align: right;
 }

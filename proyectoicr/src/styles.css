@@ -20,6 +20,10 @@ body {
 }
 
 .card-body-componente {
+  /* Para que no se comprima al pasar a vistas mobile, y la segunda linea para que aparezca el scroll.*/
+  white-space: nowrap;
+  overflow-x: auto;
+
   margin: auto;
   margin-top: 1rem;
   margin-bottom: 1.5rem;

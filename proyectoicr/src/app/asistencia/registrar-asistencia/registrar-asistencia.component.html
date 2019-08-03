@@ -1,14 +1,7 @@
 <h1 class="componente-titulo">
-  Registrar asistencia
+  Tomar asistencia
 </h1>
 <mat-card class="card-body-componente">
-  <div class="fecha">
-    <mat-form-field>
-      <input matInput placeholder="Fecha:" [disabled]="true" />
-      {{ fechaActual | date: "dd/MM/yyyy" }}
-    </mat-form-field>
-  </div>
-  <br />
   <mat-form-field class="curso">
     <mat-select
       placeholder="Seleccione curso"
@@ -24,6 +17,9 @@
       <mat-option value="2A">2A</mat-option>
     </mat-select>
   </mat-form-field>
+
+  <p class="fecha">Fecha: {{ fechaActual | date: 'dd/MM/yyyy' }}</p>
+
   <br />
   <div *ngIf="!cursoNotSelected">
     <table
@@ -72,7 +68,7 @@
     </table>
   </div>
   <br />
-  <div align="center">
+  <div class="div-button">
     <button
       color="primary"
       (click)="onGuardar()"
