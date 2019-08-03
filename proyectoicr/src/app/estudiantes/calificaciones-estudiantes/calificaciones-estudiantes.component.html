@@ -31,8 +31,32 @@
     >
     </mat-select>
 </mat-form-field>
-
 </div>
+
+<div>
+  <table mat-table class="mat-elevation-z8">
+
+
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+  </table>
+</div>
+
+<div align="center">
+  <button  mat-raised-button
+    color="primary"
+    class="button"
+    >
+    Guardar
+  </button>
+
+  <button  mat-raised-button
+  color="warn"
+  >
+    Cancelar
+  </button>
+</div>
+
 </mat-card>
-
-
