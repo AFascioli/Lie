@@ -7,7 +7,7 @@
   margin-right: 1rem;
   width: 20%;
   float: right;
-  }
+}
 
 table {
   width: 100%;
@@ -22,10 +22,10 @@ table {
   width: 20%;
 }
 
-button{
+button {
   margin: 0.3rem;
 }
 
-.div-button{
+.div-button {
   text-align: right;
 }
