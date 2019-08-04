@@ -2,17 +2,25 @@
   width: 18%;
 }
 
-.mat-card {
-  margin: 1rem;
-  }
-
 table {
   width: 95%;
-  margin: 2rem;
+  margin: 1.5rem;
+  margin-top: 0rem;
 }
 
-button{
-  margin: 0.4rem;
+.div-selects, th, td{
+  text-align: center !important;
 }
+
+th{
+  font-weight: bold;
+  font-size: 15px;
+}
+
+.div-button {
+  text-align: right;
+}
+
+
 
 

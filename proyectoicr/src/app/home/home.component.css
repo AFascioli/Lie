@@ -5,3 +5,8 @@
 button:hover {
   background-color: #ffadbd;
 }
+
+.parrafo{
+  text-align: center;
+  white-space: normal !important;
+}

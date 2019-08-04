@@ -1,9 +1,10 @@
 .curso {
   margin-left: 1rem;
-  width: 20%;
+  width: 22%;
 }
 
 .fecha {
+  margin-top: 0.5rem;
   margin-right: 1rem;
   width: 20%;
   float: right;
@@ -20,10 +21,6 @@ table {
 
 .presentismo {
   width: 20%;
-}
-
-button {
-  margin: 0.3rem;
 }
 
 .div-button {

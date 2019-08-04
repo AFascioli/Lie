@@ -1,7 +1,7 @@
-import { Component, OnInit, Inject } from "@angular/core";
+import { Component, OnInit } from "@angular/core";
 import { EstudiantesService } from '../estudiante.service';
 import { Estudiante } from '../estudiante.model';
-import { MatDialog, MatDialogRef } from '@angular/material';
+import { MatDialog, MatDialogRef, MatTabLabel } from '@angular/material';
 import { Router } from '@angular/router';
 
 @Component({
@@ -19,7 +19,8 @@ export class ListaEstudiantesComponent implements OnInit {
   ngOnInit() {
     this.servicio.getEstudiantesListener().subscribe(estudiantesBuscados =>{
       this.estudiantes = estudiantesBuscados;
-    })
+    });
+
   }
 
   OnSelection(row): void {
@@ -57,5 +58,3 @@ export class AccionesEstudiantePopupComponent {
     this.dialogRef.close();
   }
 }
-
-
