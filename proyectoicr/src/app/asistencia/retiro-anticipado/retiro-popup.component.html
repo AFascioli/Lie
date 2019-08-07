@@ -1,34 +1,34 @@
 <div *ngIf="tipoPopup === 'cancelar'">
-  <h3 mat-dialog-title class="titulo" >Cancelar</h3>
+  <h3 mat-dialog-title class="tituloPopup" >Cancelar</h3>
   <div mat-dialog-content class="parrafo">
     <p>¿Está seguro que desea cancelar?</p>
   </div>
-  <div mat-dialog-actions align="center" >
+  <div mat-dialog-actions class="buttonPopup" >
     <button mat-raised-button color="primary" (click)="onYesCancelarClick()" cdkFocusInitial>Sí </button>
     <button mat-raised-button color="warn" (click)="onNoCancelarConfirmarClick()">No</button>
   </div>
 </div>
 
 <div *ngIf="tipoPopup==='confirmar'">
-        <h3 mat-dialog-title class="titulo">Confirmar</h3>
+        <h3 mat-dialog-title class="tituloPopup">Confirmar</h3>
         <div mat-dialog-content class="parrafo">
           <p>¿Está seguro que desea confirmar la acción?</p>
         </div>
-        <div mat-dialog-actions align="center">
+        <div mat-dialog-actions class="buttonPopup">
           <button mat-raised-button color="primary"  (click)="onYesConfirmarClick()" cdkFocusInitial>Sí</button>
           <button mat-raised-button color="warn" (click)="onNoCancelarConfirmarClick()">No </button>
         </div>
   </div>
 
 <div *ngIf="tipoPopup === 'retirar'">
-    <h3 mat-dialog-title class="titulo">Retiro Anticipado</h3>
+    <h3 mat-dialog-title class="tituloPopup">Retiro Anticipado</h3>
     <div mat-dialog-content *ngIf="exito">
         <p class="parrafo">Se registró correctamente el retiro anticipado para el estudiante seleccionado</p>
       </div>
       <div mat-dialog-content *ngIf="!exito">
           <p class="parrafo">Ya se ha registrado un retiro anticipado para el estudiante seleccionado</p>
         </div>
-    <div mat-dialog-actions align="center">
+    <div mat-dialog-actions class="buttonPopup">
       <button mat-raised-button color="primary"  (click)="onOkConfirmarClick()">Ok</button>
     </div>
   </div>
