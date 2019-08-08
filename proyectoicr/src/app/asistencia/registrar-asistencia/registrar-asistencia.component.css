@@ -1,22 +1,10 @@
 .mat-card {
-  margin: 3rem;
-}
-
-.mat-h1{
-  color: #C2185B;
-}
-
-table,
-button {
   margin: 1rem;
-
-
 }
 
-.mat-form-field {
-  width: 15%;
-  margin-left: 1rem;
-  margin-top: 1rem;
+.curso {
+  width: 20%;
+  margin-left: 3rem;
 }
 
 table {
@@ -25,17 +13,22 @@ table {
 }
 
 .fecha {
-  width: 60%;
+  width: 15%;
+  padding-left: 45%;
 }
 
-.nombreApellido{
-  width:40%;
+.nombreApellido {
+  width: 40%;
 }
 
-.presentismo{
-  width:20%;
-}
-.right{
-  float: right;
+.presentismo {
+  width: 20%;
 }
 
+button {
+  margin: 0.4rem;
+}
+
+.parrafo {
+  text-align: center;
+}

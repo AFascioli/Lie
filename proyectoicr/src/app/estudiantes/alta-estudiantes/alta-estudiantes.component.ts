@@ -114,7 +114,8 @@ export class AltaEstudiantesComponent implements OnInit, OnDestroy {
 
 @Component({
   selector: "app-alta-popup",
-  templateUrl: "./alta-popup.component.html"
+  templateUrl: "./alta-popup.component.html",
+  styleUrls: ["./alta-estudiantes.component.css"]
 })
 export class AltaPopupComponent {
   formInvalido : Boolean;

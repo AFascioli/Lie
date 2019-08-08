@@ -2,3 +2,24 @@
   position:absolute;
   bottom:5px;
 }
+
+.opcion{
+  margin: 1rem;
+}
+
+h3, .mat-icon-button{
+  color: #ffff;
+}
+.fixed-header {
+  position: sticky;
+  top: 0;
+  left: 0;
+  z-index: 2;
+  width: 100%  !important;
+  background-color: #c12d2a;
+}
+
+.body-contenido{
+  padding: 2rem;
+  padding-top: 0rem;
+}

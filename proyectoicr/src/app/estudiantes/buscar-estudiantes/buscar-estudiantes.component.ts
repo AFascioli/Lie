@@ -49,7 +49,8 @@ export class BuscarEstudiantesComponent implements OnInit {
 
 @Component({
   selector: "app-buscar-popup",
-  templateUrl: "./buscar-popup.component.html"
+  templateUrl: "./buscar-popup.component.html",
+  styleUrls: ['./buscar-estudiantes.component.css']
 })
 export class BuscarPopupComponent {
   formInvalido : Boolean;

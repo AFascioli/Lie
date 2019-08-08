@@ -1,0 +1,30 @@
+.mat-card {
+  margin: 1rem;
+  padding-left: 30%;
+  }
+
+.mat-expansion-panel
+{
+  width: 60%;
+}
+
+.mat-radio-button{
+  margin: 1rem;
+}
+
+.mat-form-field {
+  width: 35%;
+}
+
+button{
+  margin: 0.4rem;
+}
+
+.fecha {
+  width: 30%;
+  padding-left: 50%;
+}
+
+.parrafo{
+  text-align: center;
+}

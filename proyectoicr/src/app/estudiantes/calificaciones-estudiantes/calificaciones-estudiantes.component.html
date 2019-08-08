@@ -1,0 +1,66 @@
+<h1 class="componente-titulo">
+  Registrar calificaciones
+</h1>
+
+<mat-card class="card-body-componente">
+  <br>
+  <div align="center">
+    <mat-form-field>
+      <mat-select
+      placeholder="Seleccione trimestre"
+      name="trimestre"
+      >
+      </mat-select>
+  </mat-form-field>
+
+&nbsp; &nbsp;
+
+    <mat-form-field>
+        <mat-select
+        placeholder="Seleccione curso"
+        name="curso"
+        >
+        </mat-select>
+    </mat-form-field>
+
+&nbsp; &nbsp;
+<mat-form-field>
+    <mat-select
+    placeholder="Seleccione materia"
+    name="materia"
+    >
+    </mat-select>
+</mat-form-field>
+</div>
+
+<div>
+  <table mat-table class="mat-elevation-z8">
+
+
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+  </table>
+</div>
+
+<div align="center">
+  <button  mat-raised-button
+    color="primary"
+    class="button"
+    >
+    Guardar
+  </button>
+
+  <button  mat-raised-button
+  color="warn"
+  >
+    Cancelar
+  </button>
+</div>
+
+<div>
+
+</div>
+
+</mat-card>

@@ -1,31 +1,45 @@
 .mat-card {
-  margin: 3rem;
+  margin: 1rem;
 }
 
 table {
-  width: 100%;
+  width: 95%;
   margin: 0 auto;
 }
 
-@keyframes example {
+
+
+/* @keyframes example {
   0% {background-color: transparent;}
   50% {background-color: #753636;}
   100% {background-color: transparent;}
-}
+} */
 
-p {
+/* p {
   background-color: transparent;
   animation-name: example;
   animation-duration: 5s;
   animation-iteration-count: infinite;
   text-align: center;
-}
+} */
 
 .columnasTabla{
   width:22%;
 }
+
 .visualizar{
   width:12%;
 }
 
+.btnVisualizar{
+  margin: 2%;
+}
 
+.titulo{
+  text-align: center;
+  color: #C2185B;
+}
+
+button{
+  margin: 0.4rem;
+}

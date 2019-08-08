@@ -1,8 +1,8 @@
-<h3 mat-dialog-title>Cancelar</h3>
+<h3 mat-dialog-title class="titulo">Cancelar</h3>
 <div mat-dialog-content>
-  <p>¿Está seguro que desea cancelar el alta del estudiante?</p>
+  <p class="parrafo">¿Está seguro que desea cancelar el alta del estudiante?</p>
 </div>
-<div mat-dialog-actions>
-  <button mat-button (click)="onYesClick()" cdkFocusInitial>Si, volver al menú principal </button>
-  <button mat-button (click)="onNoClick()">No, volver</button>
+<div mat-dialog-actions align="center">
+  <button mat-raised-button color="primary" class="button" (click)="onYesClick()" cdkFocusInitial> Sí </button>
+  <button mat-raised-button color="warn" (click)="onNoClick()"> No </button>
 </div>

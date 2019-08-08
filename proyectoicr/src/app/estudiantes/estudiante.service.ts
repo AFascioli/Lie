@@ -77,12 +77,15 @@ export class EstudiantesService {
       });
   }
 
-  borrarEstudiante(_id){
+  borrarEstudiante(_id) {
     let params = new HttpParams().set("_id", _id);
-    this.http.delete<{message: string}>("http://localhost:3000/estudiante/borrar",{params: params})
-    .subscribe(response=>{
-      console.log(response.message);
-    })
+    this.http
+      .delete<{ message: string }>("http://localhost:3000/estudiante/borrar", {
+        params: params
+      })
+      .subscribe(response => {
+        console.log(response.message);
+      });
   }
 
   getEstudiantesListener() {
@@ -219,38 +222,73 @@ export class EstudiantesService {
   }
 
   //Toma los datos que le da el beckend y retorna un vector (ordenado por apellido) de objetos que tienen _id, nombre, apellido, presente y fecha
-  buscarEstudiantesPorDivision(division: string){
+  buscarEstudiantesPorDivision(division: string) {
     let params = new HttpParams().set("division", division);
-    this.http.get<{estudiantesXDivision: any}>("http://localhost:3000/estudiante/division",{params: params})
-    .subscribe(response =>{
-      this.estudiantesXDivision=response.estudiantesXDivision;
-      this.estudiantesXDivisionActualizados.next([...this.estudiantesXDivision]);
-    })
+    this.http
+      .get<{ estudiantesXDivision: any }>(
+        "http://localhost:3000/estudiante/division",
+        { params: params }
+      )
+      .subscribe(response => {
+        this.estudiantesXDivision = response.estudiantesXDivision;
+        this.estudiantesXDivisionActualizados.next([
+          ...this.estudiantesXDivision
+        ]);
+      });
   }
 
   //Recibe un vector con datos de estudiantes (_id, nombre y apellido) y presentismo (fecha y presente) y lo envia al backend para registrarlo
-  registrarAsistencia(estudiantesXDivision: any[]){
-    this.http.post<{message: string}>("http://localhost:3000/estudiante/asistencia", estudiantesXDivision)
-    .subscribe(response =>{
-    });
+  registrarAsistencia(estudiantesXDivision: any[]) {
+    this.http
+      .post<{ message: string }>(
+        "http://localhost:3000/estudiante/asistencia",
+        estudiantesXDivision
+      )
+      .subscribe(response => {});
   }
 
   getDivisionXAñoListener() {
     return this.divisionXCursoActualizada.asObservable();
   }
 
-  obtenerDivisionesXAño(){
-    this.http.get<{divisionesXAño: any[]}>("http://localhost:3000/curso").subscribe(response =>{
-      this.divisionesXAño= response.divisionesXAño;
-      this.divisionXCursoActualizada.next([...this.divisionesXAño]);
+  obtenerDivisionesXAño() {
+    this.http
+      .get<{ divisionesXAño: any[] }>("http://localhost:3000/curso")
+      .subscribe(response => {
+        this.divisionesXAño = response.divisionesXAño;
+        this.divisionXCursoActualizada.next([...this.divisionesXAño]);
+      });
+  }
+
+  inscribirEstudiante(IdEstudiante: string, division: string, documentosEntregados: any[]) {
+    return this.http.post<{ message: string; exito: boolean }>(
+      "http://localhost:3000/curso/inscripcion",
+      {
+        IdEstudiante: IdEstudiante,
+        division: division,
+        documentosEntregados: documentosEntregados
+      }
+    );
+  }
+
+  registrarRetiroAnticipado(IdEstudiante: string, antes10am: Boolean) {
+    return this.http.post<{ message: string; exito: boolean }>(
+      "http://localhost:3000/estudiante/retiro",
+      { IdEstudiante: IdEstudiante, antes10am: antes10am }
+    );
+  }
+
+  obtenerEstudiantesXCurso(curso: string) {
+    let params = new HttpParams().set("curso", curso);
+    return this.http.get<any[]>("http://localhost:3000/curso/documentos", {
+      params: params
     });
   }
 
-  inscribirEstudiante(IdEstudiante: string, division: string){
-     return this.http.post<{message: string, exito: boolean}>("http://localhost:3000/curso/inscripcion", {IdEstudiante: IdEstudiante, division: division});
-  }
-
-  registrarRetiroAnticipado(IdEstudiante: string, antes10am: Boolean){
-    return this.http.post<{message: string, exito: boolean}>("http://localhost:3000/estudiante/retiro", {IdEstudiante: IdEstudiante, antes10am: antes10am});
+  registrarDocumentosInscripcion(estudiantes: any[]) {
+    return this.http.post<{ message: string; exito: boolean }>(
+      "http://localhost:3000/estudiante/documentos",
+      estudiantes
+    );
   }
 }

@@ -194,27 +194,53 @@ router.post("/asistencia", (req, res) => {
 router.post("/retiro", (req, res) => {
   Inscripcion.findOne(
     { IdEstudiante: req.body.IdEstudiante, activa: true },
-    { asistenciaDiaria: {$slice: -1} }
+    { asistenciaDiaria: { $slice: -1 } }
   ).then(inscripcion => {
-    if(!inscripcion){
-      res.status(404).json({message: "El estudiante no está inscripto en ningún curso", exito: false});
-    }else{
+    if (!inscripcion) {
+      res.status(404).json({
+        message: "El estudiante no está inscripto en ningún curso",
+        exito: false
+      });
+    } else {
       var actualizacionInasistencia = 0.5;
       if (req.body.antes10am) {
         actualizacionInasistencia = 1;
       }
-      AsistenciaDiaria.findByIdAndUpdate(
-        inscripcion.asistenciaDiaria[0],
-        { retiroAnticipado: true, $inc: { valorInasistencia: actualizacionInasistencia } }
-      ).then((asistenciaDiaria)=> {
-        if(!asistenciaDiaria.presente){
-          res.status(404).json({message: "El estudiante no tiene registrada asistencia para el día de hoy", exito: false});
-        }else{
-          res.status(200).json({message: "Retiro anticipado exitósamente registrado", exito: true});
+      AsistenciaDiaria.findByIdAndUpdate(inscripcion.asistenciaDiaria[0], {
+        retiroAnticipado: true,
+        $inc: { valorInasistencia: actualizacionInasistencia }
+      }).then(asistenciaDiaria => {
+        if (!asistenciaDiaria.presente) {
+          res.status(404).json({
+            message:
+              "El estudiante no tiene registrada asistencia para el día de hoy",
+            exito: false
+          });
+        } else {
+          res.status(200).json({
+            message: "Retiro anticipado exitósamente registrado",
+            exito: true
+          });
         }
       });
     }
   });
+});
+
+//Vamos a recibir, un vector de los estudiantes a los que se le modificaron los documentos entregados.
+router.post("/documentos", (req, res) => {
+  try {
+    req.body.forEach(estudiante => {
+      Inscripcion.findOneAndUpdate(
+        { IdEstudiante: estudiante.IdEstudiante, activa: true },
+        {$set: { documentosEntregados: estudiante.documentosEntregados }}
+      ).exec();
+      console.dir(estudiante);
+    });
+    res.status(201).json({message: "Documentos guardados correctamente", exito: true});
+  } catch{
+    res.status(201).json({message: e, exito: false});
+  }
 });
 
 module.exports = router;

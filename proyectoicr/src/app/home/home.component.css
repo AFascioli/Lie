@@ -1,0 +1,7 @@
+.mat-card-title, .mat-card-subtitle{
+  text-align:center;
+}
+
+button:hover {
+  background-color: #ffadbd;
+}
