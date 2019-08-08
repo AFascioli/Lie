@@ -1,9 +1,9 @@
 <div *ngIf="tipoPopup === 'cancelar'" class="cancelar">
-  <h3 mat-dialog-title class="titulo">Cancelar</h3>
+  <h3 mat-dialog-title class="tituloPopup">Cancelar</h3>
   <div mat-dialog-content>
     <p class="parrafo">¿Está seguro que desea cancelar?</p>
   </div>
-  <div mat-dialog-actions align="center">
+  <div mat-dialog-actions class="buttonPopup">
     <button mat-raised-button color="primary" (click)="onYesClick()" cdkFocusInitial >
       Sí
     </button>
@@ -11,7 +11,7 @@
   </div>
 </div>
 <div *ngIf="tipoPopup === 'guardar'" class="guardar">
-  <h3 mat-dialog-title class="titulo">Guardar</h3>
+  <h3 mat-dialog-title class="tituloPopup">Guardar</h3>
   <div mat-dialog-content *ngIf="formInvalido">
     <p class="parrafo">Faltan ingresar campos</p>
   </div>
@@ -19,18 +19,18 @@
     <p *ngIf="formModificada" class="parrafo">Se han registrado los cambios correctamente</p>
     <p *ngIf="!formModificada" class="parrafo">No se han realizado cambios en el estudiante seleccionado</p>
   </div>
-  <div mat-dialog-actions align="center">
+  <div mat-dialog-actions class="buttonPopup">
     <button mat-raised-button color="primary" (click)="onOkClick()" >Ok</button>
   </div>
 </div>
 <div *ngIf="tipoPopup === 'borrar'" class="borrar">
-  <h3 mat-dialog-title class="titulo">Borrar</h3>
+  <h3 mat-dialog-title class="tituloPopup">Borrar</h3>
   <div mat-dialog-content>
     <p class="parrafo">{{ borrar }}</p>
   </div>
   <div
     *ngIf="borrar != 'El estudiante fue borrado exitosamente'"
-    mat-dialog-actions align="center">
+    mat-dialog-actions class="buttonPopup">
     <button mat-raised-button color="warn" (click)="onYesDeleteClick()" cdkFocusInitial >
       Sí
     </button>
@@ -39,7 +39,7 @@
   <div
     *ngIf="borrar === 'El estudiante fue borrado exitosamente'"
     mat-dialog-actions>
-    <div mat-dialog-actions align="center">
+    <div mat-dialog-actions class="buttonPopup">
       <button mat-raised-button color="primary" (click)="onOkClickBorrar()" >Ok</button>
     </div>
   </div>

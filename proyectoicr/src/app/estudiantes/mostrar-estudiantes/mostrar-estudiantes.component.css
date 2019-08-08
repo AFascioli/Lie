@@ -1,17 +1,15 @@
-.mat-card {
-  margin: 1rem;
-  padding-left: 20%;
-  }
-
 .mat-expansion-panel{
   width: 70%;
-
+  margin: auto;
 }
 
+/* Los campos de los paneles. */
 .mat-form-field{
    width: 45%;
 }
 
-button{
-  margin: 0.5rem;
+.div-button {
+  text-align: right;
 }
+
+

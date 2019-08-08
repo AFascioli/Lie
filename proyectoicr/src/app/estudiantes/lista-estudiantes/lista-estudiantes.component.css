@@ -1,5 +1,8 @@
 .mat-card {
-  margin: 1rem;
+  margin: auto;
+  margin-top: 1rem;
+  margin-bottom: 1.5rem;
+  max-width: 800px;
 }
 
 table {
@@ -7,27 +10,11 @@ table {
   margin: 0 auto;
 }
 
-
-
-/* @keyframes example {
-  0% {background-color: transparent;}
-  50% {background-color: #753636;}
-  100% {background-color: transparent;}
-} */
-
-/* p {
-  background-color: transparent;
-  animation-name: example;
-  animation-duration: 5s;
-  animation-iteration-count: infinite;
-  text-align: center;
-} */
-
-.columnasTabla{
+.columnasNormales{
   width:22%;
 }
 
-.visualizar{
+.columnasChicas{
   width:12%;
 }
 
@@ -35,11 +22,12 @@ table {
   margin: 2%;
 }
 
-.titulo{
-  text-align: center;
-  color: #C2185B;
+th, td{
+  text-align: center !important;
 }
 
-button{
-  margin: 0.4rem;
+th{
+  font-weight: bold;
+  font-size: 15px;
 }
+

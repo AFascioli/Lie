@@ -10,6 +10,7 @@
 h3, .mat-icon-button{
   color: #ffff;
 }
+
 .fixed-header {
   position: sticky;
   top: 0;
@@ -23,3 +24,10 @@ h3, .mat-icon-button{
   padding: 2rem;
   padding-top: 0rem;
 }
+
+/* Para que el container del sidenav sea del tamaño completo del body,
+   le pongo 100% menos el tamaño del header */
+.mat-sidenav-container{
+  height: calc(100% - 64px);
+}
+

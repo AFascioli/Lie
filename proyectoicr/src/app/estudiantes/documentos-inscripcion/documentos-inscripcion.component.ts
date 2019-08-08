@@ -48,6 +48,7 @@ export class DocumentosInscripcionComponent implements OnInit {
     this.divisionSeleccionada=true;
     this.servicio.obtenerEstudiantesXCurso(curso.value).subscribe(estudiantes =>{
       this.estudiantesConDocumentos= estudiantes;
+      console.log(estudiantes);
     });
   }
 

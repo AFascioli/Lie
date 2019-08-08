@@ -47,7 +47,9 @@ import { MatExpansionModule } from "@angular/material/expansion";
 import { InscripcionEstudianteComponent, InscripcionPopupComponent } from './estudiantes/inscripcion-estudiantes/inscripcion-estudiantes.component';
 import { RetiroAnticipadoComponent, RetiroPopupComponent } from './asistencia/retiro-anticipado/retiro-anticipado.component';
 import { DocumentosInscripcionComponent, DocumentosInscripcionPopupComponent } from './estudiantes/documentos-inscripcion/documentos-inscripcion.component';
+import {MatGridListModule} from '@angular/material/grid-list';
 import { CalificacionesEstudiantesComponent } from './estudiantes/calificaciones-estudiantes/calificaciones-estudiantes.component';
+
 
 @NgModule({
   declarations: [
@@ -108,7 +110,8 @@ import { CalificacionesEstudiantesComponent } from './estudiantes/calificaciones
     MatSlideToggleModule,
     MatExpansionModule,
     MatCheckboxModule,
-    MatSnackBarModule
+    MatSnackBarModule,
+    MatGridListModule
   ],
   providers: [EstudiantesService],
   bootstrap: [AppComponent]

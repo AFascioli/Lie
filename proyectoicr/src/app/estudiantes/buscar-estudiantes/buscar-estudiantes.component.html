@@ -1,6 +1,6 @@
 <h1 class="componente-titulo">Buscar estudiante</h1>
 
-<mat-card>
+<mat-card class="card-body-componente">
   <form #form="ngForm" (submit)="OnBuscar(form)">
     <mat-radio-group aria-label="Select an option">
       <mat-radio-button
@@ -80,7 +80,7 @@
       />
     </mat-form-field>
     <br />
-    <div align="center">
+    <div class="div-button">
       <button
         color="primary"
         routerLink="./lista"
