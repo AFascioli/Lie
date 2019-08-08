@@ -6,7 +6,7 @@
 
   <form #form="ngForm" (submit)="onGuardar(form)">
     <mat-accordion>
-        <mat-expansion-panel>
+        <mat-expansion-panel [expanded]="true">
           <mat-expansion-panel-header>
             <mat-panel-title>
               Datos personales del estudiante

@@ -2,19 +2,16 @@
 <mat-card class="card-body-componente">
   <p class="fecha">Fecha: {{ fechaActual | date: "dd/MM/yyyy" }}</p>
   <br />
+  <br />
 
   <div class="contenido">
-    <mat-accordion>
-      <mat-expansion-panel>
-        <mat-expansion-panel-header>
-          <mat-panel-title>
-            Datos del estudiante seleccionado
-          </mat-panel-title>
-        </mat-expansion-panel-header>
-        <p><b>Apellido/s: </b> {{ apellidoEstudiante }}</p>
-        <p><b>Nombre/s: </b> {{ nombreEstudiante }}</p>
-      </mat-expansion-panel>
-    </mat-accordion>
+      <mat-card class="card-body-componente">
+          <h3> Datos del estudiante seleccionado </h3>
+          <mat-card-subtitle>  <b>Apellido/s: </b> {{ apellidoEstudiante }}
+                               <br />
+                               <b>Nombre/s: </b> {{ nombreEstudiante }}
+          </mat-card-subtitle>
+        </mat-card>
   </div>
 
   <br />
