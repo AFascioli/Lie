@@ -3,7 +3,7 @@ import { EstudiantesService } from '../estudiante.service';
 import { Estudiante } from '../estudiante.model';
 import { MatDialog, MatDialogRef } from '@angular/material';
 import { Router } from '@angular/router';
-import { DialogoPopupComponent } from '../alta-estudiantes/alta-estudiantes.component';
+//import { DialogoPopupComponent } from '../alta-estudiantes/alta-estudiantes.component';
 
 @Component({
   selector: "app-lista-estudiantes",

@@ -37,6 +37,7 @@ export class RegistrarAsistenciaComponent implements OnInit {
 
   //Cambia el atributo presente del estudiante cuando se cambia de valor el toggle
   onCambioPresentismo(row) {
+    
     const indexEstudiante = this.estudiantesXDivision.findIndex(
       objConIDEstudiante => objConIDEstudiante._id == row._id
     );
