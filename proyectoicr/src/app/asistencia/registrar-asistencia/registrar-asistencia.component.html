@@ -4,6 +4,8 @@
     <div class="right" >
         <mat-form-field class="fecha">
           <input matInput placeholder="Fecha" [disabled]="true">
+          {{fechaActual | date:'EEEE'}}
+          <br/>
           {{fechaActual | date:'dd/MM/yyyy'}}
         </mat-form-field>
      </div>
