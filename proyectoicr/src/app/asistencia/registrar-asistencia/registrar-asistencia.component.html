@@ -25,7 +25,7 @@
     </mat-select>
   </mat-form-field>
   <div *ngIf="!cursoNotSelected">
-  <table  mat-table [dataSource]="estudiantesXDivision" class="mat-elevation-z8" >
+  <table  mat-table [dataSource]="estudiantesXDivision" class="mat-elevation-z8"  >
 
     <ng-container matColumnDef="apellido">
       <th class="nombreApellido"  mat-header-cell *matHeaderCellDef>Apellido/s</th>
@@ -41,13 +41,19 @@
       </td>
     </ng-container>
 
-    <ng-container matColumnDef="accion">
-      <th  class="presentismo" mat-header-cell *matHeaderCellDef>Presentismo</th>
-      <td  class="presentismo" mat-cell *matCellDef="let row">
-        <mat-slide-toggle (change)="onCambioPresentismo(row)"
 
-          >Presente</mat-slide-toggle
-        >
+    <ng-container matColumnDef="accion"  >
+      <th  class="presentismo" mat-header-cell *matHeaderCellDef>Presentismo</th>
+      <td  class="presentismo" mat-cell *matCellDef="let row" >
+
+        <mat-slide-toggle
+
+            *ngFor="let attribute of agent.attributes; let i=index"
+            [checked]="agent.attributes[i].value === 'true' ? true : false"
+            (change)="onCambioPresentismo(row,i,$event)"
+            >
+            {{agent.attributes[i].value}}
+        </mat-slide-toggle>
 
       </td>
     </ng-container>

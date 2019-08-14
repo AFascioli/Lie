@@ -2,6 +2,7 @@ import { Component, OnInit } from "@angular/core";
 import { EstudiantesService } from "src/app/estudiantes/estudiante.service";
 import { MatDialogRef, MatDialog } from "@angular/material";
 import { Router } from "@angular/router";
+import { CdkRow, CdkFooterRowDefBase } from '@angular/cdk/table';
 
 @Component({
   selector: "app-registrar-asistencia",
@@ -13,6 +14,10 @@ export class RegistrarAsistenciaComponent implements OnInit {
   estudiantesXDivision: any[];
   displayedColumns: string[] = ["apellido", "nombre", "accion"];
   fechaActual: Date;
+  agent = {"attributes": [
+      { value: "presente" },],
+
+      };
   constructor(private servicio: EstudiantesService, public popup: MatDialog) {
     }
 
@@ -36,13 +41,22 @@ export class RegistrarAsistenciaComponent implements OnInit {
   }
 
   //Cambia el atributo presente del estudiante cuando se cambia de valor el toggle
-  onCambioPresentismo(row) {
-    
+  onCambioPresentismo(row,i,e) {
+
     const indexEstudiante = this.estudiantesXDivision.findIndex(
-      objConIDEstudiante => objConIDEstudiante._id == row._id
+      objConIDEstudiante => objConIDEstudiante._id == row._id,
+
     );
+
     this.estudiantesXDivision[indexEstudiante].presente = !this
       .estudiantesXDivision[indexEstudiante].presente;
+
+      if(e.checked){
+        this.agent.attributes[i].value = 'presente'
+      }else{
+        this.agent.attributes[i].value = 'ausente'
+      }
+
   }
 
   //Envia al servicio el vector con los datos de los estudiantes y el presentismo
