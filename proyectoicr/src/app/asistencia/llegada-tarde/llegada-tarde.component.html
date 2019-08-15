@@ -20,25 +20,23 @@
 
   <br />
 
-  <mat-radio-group class="radioButton" aria-label="Select an option">
+  <mat-radio-group  aria-label="Select an option">
     <mat-radio-button
       (change)="CambiarTipoRetiro()"
-      [checked]="antes10am"
+      [checked]=" "
       value="1"
       >Hasta 10 min</mat-radio-button
     >
-    <br />
     <mat-radio-button
       (change)="CambiarTipoRetiro()"
-      [checked]="!antes10am"
+      [checked]=" "
       value="2"
       >Entre 10 y 20 min</mat-radio-button
     >
-    <br />
     <mat-radio-button
       (change)="CambiarTipoRetiro()"
-      [checked]="!antes10am"
-      value="2"
+      [checked]=""
+      value="3"
       >Luego de 20 min</mat-radio-button
     >
   </mat-radio-group>

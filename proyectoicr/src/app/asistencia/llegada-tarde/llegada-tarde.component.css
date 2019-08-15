@@ -1,6 +1,10 @@
-.curso {
-  margin-left: 1rem;
-  width: 22%;
+.mat-radio-button {
+  margin: 1rem;
+}
+
+.mat-radio-group {
+  margin-left: 18%;
+  margin-right: 18%;
 }
 
 .fecha {
@@ -9,24 +13,14 @@
   width: 20%;
   float: right;
 }
-
-table {
-  width: 100%;
-  margin: 0 auto;
-}
-
-.nombreApellido {
-  width: 40%;
-}
-
-.presentismo {
-  width: 20%;
-}
-
 .div-button {
   text-align: right;
 }
 
-.radioButton{
-  margin-right: 50%;
+.contenido {
+  width: 41%;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 1rem;
 }
+
