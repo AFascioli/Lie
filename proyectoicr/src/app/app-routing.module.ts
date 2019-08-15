@@ -12,6 +12,7 @@ import { InscripcionEstudianteComponent } from './estudiantes/inscripcion-estudi
 import { RetiroAnticipadoComponent } from './asistencia/retiro-anticipado/retiro-anticipado.component';
 import { DocumentosInscripcionComponent } from './estudiantes/documentos-inscripcion/documentos-inscripcion.component';
 import{ CalificacionesEstudiantesComponent } from './estudiantes/calificaciones-estudiantes/calificaciones-estudiantes.component';
+import { LlegadaTardeComponent } from './asistencia/llegada-tarde/llegada-tarde.component';
 
 const routes: Routes = [
   { path: "", component: MenuPrincipalComponent },
@@ -31,7 +32,8 @@ const routes: Routes = [
       { path: "curso", component: InscripcionEstudianteComponent },
       { path: "retiroAnticipado", component: RetiroAnticipadoComponent },
       { path: "documentosEstudiante", component: DocumentosInscripcionComponent },
-      { path: "calificacionesEstudiantes", component: CalificacionesEstudiantesComponent }
+      { path: "calificacionesEstudiantes", component: CalificacionesEstudiantesComponent },
+      { path: "llegadaTarde", component: LlegadaTardeComponent},
     ]
   }
 ];

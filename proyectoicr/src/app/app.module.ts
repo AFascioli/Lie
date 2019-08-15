@@ -49,6 +49,7 @@ import { RetiroAnticipadoComponent, RetiroPopupComponent } from './asistencia/re
 import { DocumentosInscripcionComponent, DocumentosInscripcionPopupComponent } from './estudiantes/documentos-inscripcion/documentos-inscripcion.component';
 import {MatGridListModule} from '@angular/material/grid-list';
 import { CalificacionesEstudiantesComponent } from './estudiantes/calificaciones-estudiantes/calificaciones-estudiantes.component';
+import { LlegadaTardeComponent } from './asistencia/llegada-tarde/llegada-tarde.component';
 
 
 @NgModule({
@@ -73,7 +74,8 @@ import { CalificacionesEstudiantesComponent } from './estudiantes/calificaciones
     RetiroPopupComponent,
     DocumentosInscripcionComponent,
     DocumentosInscripcionPopupComponent,
-    CalificacionesEstudiantesComponent
+    CalificacionesEstudiantesComponent,
+    LlegadaTardeComponent
   ],
   //entryComponents declara los componentes que se generan dinamicamente dentro de otros.
   entryComponents: [

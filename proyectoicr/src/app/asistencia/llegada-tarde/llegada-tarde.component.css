@@ -1,0 +1,32 @@
+.curso {
+  margin-left: 1rem;
+  width: 22%;
+}
+
+.fecha {
+  margin-top: 0.5rem;
+  margin-right: 1rem;
+  width: 20%;
+  float: right;
+}
+
+table {
+  width: 100%;
+  margin: 0 auto;
+}
+
+.nombreApellido {
+  width: 40%;
+}
+
+.presentismo {
+  width: 20%;
+}
+
+.div-button {
+  text-align: right;
+}
+
+.radioButton{
+  margin-right: 50%;
+}
