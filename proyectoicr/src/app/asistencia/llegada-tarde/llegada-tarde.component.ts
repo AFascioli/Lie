@@ -2,6 +2,7 @@ import { Component, OnInit, Inject } from '@angular/core';
 import { EstudiantesService } from "src/app/estudiantes/estudiante.service";
 import { MatDialogRef, MatDialog, MAT_DIALOG_DATA, MatDialogConfig } from "@angular/material";
 import { Router } from "@angular/router";
+import { DateAdapter } from "@angular/material";
 
 
 @Component({
@@ -15,7 +16,9 @@ export class LlegadaTardeComponent implements OnInit {
   nombreEstudiante: string;
   _idEstudiante: string;
   matConfig = new MatDialogConfig();
-  constructor(private servicio: EstudiantesService, public popup: MatDialog) { }
+  constructor(private servicio: EstudiantesService, public popup: MatDialog, private dateAdapter: DateAdapter<Date>) {
+    this.dateAdapter.setLocale("es");
+   }
 
   ngOnInit() {
     this.fechaActual = new Date();
@@ -59,7 +62,7 @@ export class LlegadaTardePopupComponent {
 
   //Confirma el llegada tarde  para el estudiante
   //onYesConfirmarClick(): void {
-   
+
    // });
 //  }
 
