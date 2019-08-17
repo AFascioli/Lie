@@ -2,6 +2,7 @@ import { Component, OnInit, Inject } from '@angular/core';
 import { EstudiantesService } from 'src/app/estudiantes/estudiante.service';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA, MatDialogConfig } from '@angular/material';
 import { Router } from '@angular/router';
+import { DateAdapter } from "@angular/material";
 
 @Component({
   selector: 'app-retiro-anticipado',
@@ -16,7 +17,9 @@ export class RetiroAnticipadoComponent implements OnInit {
   antes10am: Boolean = true;
   matConfig = new MatDialogConfig();
 
-  constructor(public servicio: EstudiantesService, public dialog: MatDialog) {}
+  constructor(public servicio: EstudiantesService, public dialog: MatDialog, private dateAdapter: DateAdapter<Date>) {
+    this.dateAdapter.setLocale("es");
+  }
 
   ngOnInit() {
     this.fechaActual = new Date();

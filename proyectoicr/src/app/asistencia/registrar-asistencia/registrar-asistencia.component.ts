@@ -3,6 +3,7 @@ import { EstudiantesService } from "src/app/estudiantes/estudiante.service";
 import { MatDialogRef, MatDialog } from "@angular/material";
 import { Router } from "@angular/router";
 import { CdkRow, CdkFooterRowDefBase } from '@angular/cdk/table';
+import { DateAdapter } from "@angular/material";
 
 @Component({
   selector: "app-registrar-asistencia",
@@ -18,8 +19,11 @@ export class RegistrarAsistenciaComponent implements OnInit {
       { value: "presente" },],
 
       };
-  constructor(private servicio: EstudiantesService, public popup: MatDialog) {
+  constructor(private servicio: EstudiantesService, public popup: MatDialog,private dateAdapter: DateAdapter<Date>)
+  {
+    this.dateAdapter.setLocale("es");
     }
+
 
   ngOnInit() {
     this.cursoNotSelected = true;

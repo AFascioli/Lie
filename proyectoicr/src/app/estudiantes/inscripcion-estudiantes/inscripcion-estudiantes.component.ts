@@ -8,6 +8,7 @@ import {
   MAT_DIALOG_DATA
 } from "@angular/material";
 import { NgForm } from "@angular/forms";
+import { DateAdapter } from "@angular/material";
 
 @Component({
   selector: "app-inscripcion-estudiantes",
@@ -26,7 +27,9 @@ export class InscripcionEstudianteComponent implements OnInit {
   seleccionDeAnio: boolean = false;
   fechaActual: Date;
 
-  constructor(public servicio: EstudiantesService, public dialog: MatDialog) {}
+  constructor(public servicio: EstudiantesService, public dialog: MatDialog,private dateAdapter: DateAdapter<Date>) {
+    this.dateAdapter.setLocale("es");
+  }
 
   ngOnInit() {
     this.fechaActual = new Date();
