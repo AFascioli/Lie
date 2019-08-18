@@ -5,38 +5,19 @@
   <div class="div-selects">
     <mat-form-field>
       <mat-select
-        placeholder="Seleccione año"
-        name="anio"
+        placeholder="Seleccione curso"
+        name="curso"
         ngModel
-        #anio="ngModel"
-        matNativeControl
-        [(ngModel)]="anioSeleccionado"
-        required
-        (selectionChange)="FiltrarDivisiones()"
-      >
-        <mat-option *ngFor="let anio of anios" [value]="anio">
-          {{ anio }}
-        </mat-option>
-      </mat-select>
-    </mat-form-field>
-
-    &nbsp; &nbsp;
-    <mat-form-field>
-      <mat-select
-        placeholder="Seleccione division"
-        name="division"
-        ngModel
-        #division="ngModel"
+        #curso="ngModel"
         matNativeControl
         required
-        [disabled]="!seleccionDeAnio"
-        (selectionChange)="onCursoSeleccionado(division)"
+        (selectionChange)="onCursoSeleccionado(curso)"
       >
         <mat-option
-          *ngFor="let division of divisionesFiltradas"
-          [value]="division"
+          *ngFor="let objCurso of cursos"
+          [value]="objCurso.curso"
         >
-          {{ division }}
+          {{ objCurso.curso }}
         </mat-option>
       </mat-select>
     </mat-form-field>
@@ -106,9 +87,9 @@
   <div class="div-button">
     <button
       color="primary"
-      (click)="onGuardar(division, anio)"
+      (click)="onGuardar(curso)"
       mat-raised-button
-      [disabled]="!divisionSeleccionada"
+      [disabled]="!cursoSeleccionado"
     >
       Guardar
     </button>

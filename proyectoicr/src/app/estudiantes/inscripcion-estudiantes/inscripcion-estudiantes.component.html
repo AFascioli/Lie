@@ -38,36 +38,18 @@
     <div class="div-selects">
       <mat-form-field>
         <mat-select
-          placeholder="Seleccione año"
-          name="año"
+          placeholder="Seleccione curso"
+          name="curso"
           ngModel
-          #año="ngModel"
-          matNativeControl
-          [(ngModel)]="anoSeleccionado"
-          required
-          (selectionChange)="FiltrarDivisiones()"
-        >
-          <mat-option *ngFor="let anio of anios" [value]="anio">
-            {{ anio }}
-          </mat-option>
-        </mat-select>
-      </mat-form-field>
-      &nbsp; &nbsp;
-      <mat-form-field>
-        <mat-select
-          placeholder="Seleccione division"
-          name="division"
-          ngModel
-          #division="ngModel"
+          #curso="ngModel"
           matNativeControl
           required
-          [disabled]="!seleccionDeAnio"
         >
           <mat-option
-            *ngFor="let division of divisionesFiltradas"
-            [value]="division"
+            *ngFor="let objCurso of cursos"
+            [value]="objCurso.curso"
           >
-            {{ division }}
+            {{ objCurso.curso }}
           </mat-option>
         </mat-select>
       </mat-form-field>
@@ -78,14 +60,14 @@
       <button
         mat-raised-button
         color="primary"
-        (click)="openDialogo('confirmar', form, division)"
+        (click)="openDialogo('confirmar', form, curso)"
         mat-raised-button
       >
         Inscribir
       </button>
       <button
         mat-raised-button
-        (click)="openDialogo('cancelar', form, division)"
+        (click)="openDialogo('cancelar', form, curso)"
         color="warn"
       >
         Cancelar

@@ -149,7 +149,7 @@ router.get("/division", (req, res, next) => {
         _id: objConEstudiante.estudiante[0]._id,
         nombre: objConEstudiante.estudiante[0].nombre,
         apellido: objConEstudiante.estudiante[0].apellido,
-        presente: false,
+        presente: true,
         fecha: fechaActual
       };
       estudiantesRedux.push(estudianteRedux);

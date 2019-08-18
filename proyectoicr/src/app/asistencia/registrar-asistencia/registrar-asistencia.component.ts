@@ -9,6 +9,7 @@ import { Router } from "@angular/router";
   styleUrls: ["./registrar-asistencia.component.css"]
 })
 export class RegistrarAsistenciaComponent implements OnInit {
+  cursos: any[];
   cursoNotSelected: boolean;
   estudiantesXDivision: any[];
   displayedColumns: string[] = ["apellido", "nombre", "accion"];
@@ -18,6 +19,11 @@ export class RegistrarAsistenciaComponent implements OnInit {
   ngOnInit() {
     this.cursoNotSelected = true;
     this.fechaActual = new Date();
+    this.servicio.obtenerDivisionesXAño().subscribe(response=>{
+      this.cursos= response.cursos;
+      this.cursos.sort((a, b) =>
+        a.curso.charAt(0) > b.curso.charAt(0) ? 1 : b.curso.charAt(0) > a.curso.charAt(0) ? -1 : 0);
+      });
   }
 
   //Busca los estudiantes segun el curso que se selecciono en pantalla. Los orden alfabeticamente

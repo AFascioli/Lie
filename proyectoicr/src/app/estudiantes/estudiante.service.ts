@@ -251,13 +251,16 @@ export class EstudiantesService {
     return this.divisionXCursoActualizada.asObservable();
   }
 
+  // obtenerDivisionesXAño() {
+  //   this.http
+  //     .get<{ divisionesXAño: any[] }>("http://localhost:3000/curso")
+  //     .subscribe(response => {
+  //       this.divisionesXAño = response.divisionesXAño;
+  //       this.divisionXCursoActualizada.next([...this.divisionesXAño]);
+  //     });
+  // }
   obtenerDivisionesXAño() {
-    this.http
-      .get<{ divisionesXAño: any[] }>("http://localhost:3000/curso")
-      .subscribe(response => {
-        this.divisionesXAño = response.divisionesXAño;
-        this.divisionXCursoActualizada.next([...this.divisionesXAño]);
-      });
+    return this.http.get<{ cursos: any[] }>("http://localhost:3000/curso");
   }
 
   inscribirEstudiante(IdEstudiante: string, division: string, documentosEntregados: any[]) {

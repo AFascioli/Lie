@@ -15,14 +15,11 @@ import { NgForm } from "@angular/forms";
   styleUrls: ["./inscripcion-estudiantes.component.css"]
 })
 export class InscripcionEstudianteComponent implements OnInit {
-  divisionesXAno: any[];
-  divisionesFiltradas: any[];
-  anoSeleccionado: string;
+  cursos: any[];
   apellidoEstudiante: string;
   nombreEstudiante: string;
   _idEstudiante: string;
   matConfig = new MatDialogConfig();
-  anios: number[] = [];
   seleccionDeAnio: boolean = false;
   fechaActual: Date;
   documentosEntregados = [
@@ -38,23 +35,11 @@ export class InscripcionEstudianteComponent implements OnInit {
     this.apellidoEstudiante = this.servicio.estudianteSeleccionado.apellido;
     this.nombreEstudiante = this.servicio.estudianteSeleccionado.nombre;
     this._idEstudiante = this.servicio.estudianteSeleccionado._id;
-    this.servicio.obtenerDivisionesXAño();
-    this.servicio.getDivisionXAñoListener().subscribe(divisionesXAño => {
-      this.divisionesXAno = divisionesXAño;
-      this.divisionesXAno.forEach(element => {
-        this.anios.push(element.ano);
+    this.servicio.obtenerDivisionesXAño().subscribe(response=>{
+      this.cursos= response.cursos;
+      this.cursos.sort((a, b) =>
+        a.curso.charAt(0) > b.curso.charAt(0) ? 1 : b.curso.charAt(0) > a.curso.charAt(0) ? -1 : 0);
       });
-      this.anios.sort((a, b) => (a > b ? 1 : b > a ? -1 : 0));
-    });
-  }
-
-  //Filtra las divisiones segun el año seleccionado y las ordena alfanumericamente
-  FiltrarDivisiones() {
-    this.seleccionDeAnio = true;
-    this.divisionesFiltradas = this.divisionesXAno.find(
-      divisionXAño => divisionXAño.ano === this.anoSeleccionado
-    ).divisiones;
-    this.divisionesFiltradas.sort((a, b) => (a > b ? 1 : b > a ? -1 : 0));
   }
 
   //Cambia el valor de entregado del documento seleccionado por el usuario
