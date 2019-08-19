@@ -18,14 +18,13 @@
     </mat-select>
   </mat-form-field>
 
-  <p class="fecha">Fecha: {{ fechaActual | date: "dd/MM/yyyy" }}</p>
+  <p class="fecha"><b>Fecha: </b>{{ fechaActual | date: "dd/MM/yyyy" }}</p>
 
   <br />
   <div *ngIf="!cursoNotSelected">
     <table
       mat-table
       [dataSource]="estudiantesXDivision"
-      class="mat-elevation-z8"
     >
       <ng-container matColumnDef="apellido">
         <th class="nombreApellido" mat-header-cell *matHeaderCellDef>

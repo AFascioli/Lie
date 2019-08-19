@@ -89,7 +89,7 @@ export class InscripcionPopupComponent {
   }
 
   onYesCancelarClick(): void {
-    this.router.navigate(["menuLateral/home"]);
+    this.router.navigate(["./home"]);
     this.dialogRef.close();
   }
 
@@ -108,7 +108,7 @@ export class InscripcionPopupComponent {
 
   onOkConfirmarClick() {
     if (this.formValido && this.exito) {
-      this.router.navigate(["menuLateral/home"]);
+      this.router.navigate(["./home"]);
       this.dialogRef.close();
     }
     this.dialogRef.close();

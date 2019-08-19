@@ -40,6 +40,16 @@
 .card-datos{
   margin: auto;
   margin-top: 1rem;
-  width: 100%;
+  width: 66%;
+  margin-left: auto;
+  margin-right: auto;
 }
 
+.titulo-datos-est{
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.titulos-reg-doc{
+  font-size: 20px;
+}

@@ -44,17 +44,17 @@ export class AccionesEstudiantePopupComponent {
   }
 
   onInscribir(){
-    this.router.navigate(["menuLateral/curso"]);
+    this.router.navigate(["./curso"]);
     this.dialogRef.close();
   }
 
   onMostrar(){
-    this.router.navigate(["menuLateral/mostrar"]);
+    this.router.navigate(["./mostrar"]);
     this.dialogRef.close();
   }
 
   onRetiro(){
-    this.router.navigate(["menuLateral/retiroAnticipado"]);
+    this.router.navigate(["./retiroAnticipado"]);
     this.dialogRef.close();
   }
 }

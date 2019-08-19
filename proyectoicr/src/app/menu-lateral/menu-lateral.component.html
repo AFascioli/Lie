@@ -27,14 +27,14 @@
             <mat-panel-title>
               <a mat-list-item>
                 <mat-icon>wc</mat-icon>
-                &nbsp; &nbsp; Curso &nbsp;
+                &nbsp; &nbsp; <b>Curso</b> &nbsp;
               </a>
             </mat-panel-title>
           </mat-expansion-panel-header>
           <a mat-list-item (click)="drawer.toggle()" routerLink="./">
             &nbsp; &nbsp; &nbsp; Registrar agenda de curso &nbsp;
           </a>
-          <a mat-list-item (click)="drawer.toggle()" routerLink="./asistencia">
+          <a mat-list-item (click)="drawer.toggle()" routerLink="/asistencia">
             &nbsp; &nbsp; &nbsp; Tomar asistencia &nbsp;
           </a>
           <a mat-list-item (click)="drawer.toggle()" routerLink="./">
@@ -43,7 +43,7 @@
           <a
             mat-list-item
             (click)="drawer.toggle()"
-            routerLink="./documentosEstudiante"
+            routerLink="/documentosEstudiante"
           >
             &nbsp; &nbsp; &nbsp; Registrar documentos inscripción &nbsp;
           </a>
@@ -52,7 +52,7 @@
               <mat-expansion-panel-header>
                 <mat-panel-title>
                   <a mat-list-item>
-                    Calificaciones &nbsp;
+                    <b>Calificaciones</b> &nbsp;
                   </a>
                 </mat-panel-title>
               </mat-expansion-panel-header>
@@ -62,12 +62,12 @@
               <a mat-list-item (click)="drawer.toggle()" routerLink="./">
                 &nbsp; &nbsp; &nbsp; Buscar &nbsp;
               </a>
-              <a mat-list-item (click)="drawer.toggle()" routerLink="./">
+              <!-- <a mat-list-item (click)="drawer.toggle()" routerLink="./">
                 &nbsp; &nbsp; &nbsp; Modificar &nbsp;
               </a>
               <a mat-list-item (click)="drawer.toggle()" routerLink="./">
                 &nbsp; &nbsp; &nbsp; Borrar &nbsp;
-              </a>
+              </a> -->
             </mat-expansion-panel>
           </mat-accordion>
         </mat-expansion-panel>
@@ -80,14 +80,14 @@
             <mat-panel-title>
               <a mat-list-item>
                 <mat-icon>school</mat-icon>
-                &nbsp; &nbsp; Estudiante &nbsp;
+                &nbsp; &nbsp; <b>Estudiante</b> &nbsp;
               </a>
             </mat-panel-title>
           </mat-expansion-panel-header>
-          <a mat-list-item (click)="drawer.toggle()" routerLink="./alta">
+          <a mat-list-item (click)="drawer.toggle()" routerLink="/alta">
             &nbsp; &nbsp; &nbsp; Registrar &nbsp;
           </a>
-          <a mat-list-item (click)="drawer.toggle()" routerLink="./buscar">
+          <a mat-list-item (click)="drawer.toggle()" routerLink="/buscar">
             &nbsp; &nbsp; &nbsp; Buscar &nbsp;
           </a>
         </mat-expansion-panel>
@@ -100,7 +100,7 @@
             <mat-panel-title>
               <a mat-list-item ng-Focus="onSelected(this)">
                 <mat-icon>event</mat-icon>
-                &nbsp; &nbsp; Evento &nbsp;
+                &nbsp; &nbsp; <b>Evento</b> &nbsp;
               </a>
             </mat-panel-title>
           </mat-expansion-panel-header>
@@ -110,12 +110,12 @@
           <a mat-list-item (click)="drawer.toggle()" routerLink="./">
             &nbsp; &nbsp; &nbsp; Buscar &nbsp;
           </a>
-          <a mat-list-item (click)="drawer.toggle()" routerLink="./">
+          <!-- <a mat-list-item (click)="drawer.toggle()" routerLink="./">
             &nbsp; &nbsp; &nbsp; Modificar &nbsp;
           </a>
           <a mat-list-item (click)="drawer.toggle()" routerLink="./">
             &nbsp; &nbsp; &nbsp; Eliminar &nbsp;
-          </a>
+          </a> -->
         </mat-expansion-panel>
       </mat-accordion>
     </mat-nav-list>

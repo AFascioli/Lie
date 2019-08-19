@@ -197,7 +197,7 @@ router.post("/retiro", (req, res) => {
     { asistenciaDiaria: { $slice: -1 } }
   ).then(inscripcion => {
     if (!inscripcion) {
-      res.status(404).json({
+      res.status(200).json({
         message: "El estudiante no está inscripto en ningún curso",
         exito: false
       });
@@ -206,23 +206,38 @@ router.post("/retiro", (req, res) => {
       if (req.body.antes10am) {
         actualizacionInasistencia = 1;
       }
-      AsistenciaDiaria.findByIdAndUpdate(inscripcion.asistenciaDiaria[0], {
-        retiroAnticipado: true,
-        $inc: { valorInasistencia: actualizacionInasistencia }
-      }).then(asistenciaDiaria => {
-        if (!asistenciaDiaria.presente) {
-          res.status(404).json({
-            message:
-              "El estudiante no tiene registrada asistencia para el día de hoy",
-            exito: false
-          });
-        } else {
-          res.status(200).json({
-            message: "Retiro anticipado exitósamente registrado",
-            exito: true
-          });
-        }
-      });
+      AsistenciaDiaria.findById(inscripcion.asistenciaDiaria[0])
+        .select({ retiroAnticipado: 1, presente: 1 })
+        .then(asistencia => {
+          if (!asistencia.presente) {
+            res.status(200).json({
+              message:
+                "El estudiante no tiene registrada asistencia para el día de hoy",
+              exito: false
+            });
+          } else {
+            if (asistencia.retiroAnticipado) {
+              res.status(200).json({
+                message:
+                  "El estudiante ya tiene registrado un retiro anticipado para el día de hoy",
+                exito: false
+              });
+            } else {
+              AsistenciaDiaria.findByIdAndUpdate(
+                inscripcion.asistenciaDiaria[0],
+                {
+                  retiroAnticipado: true,
+                  $inc: { valorInasistencia: actualizacionInasistencia }
+                }
+              ).then(()=> {
+                res.status(200).json({
+                  message: "Retiro anticipado exitósamente registrado",
+                  exito: true
+                });
+              });
+            }
+          }
+        }).catch(e=> console.log(e));
     }
   });
 });
@@ -233,13 +248,15 @@ router.post("/documentos", (req, res) => {
     req.body.forEach(estudiante => {
       Inscripcion.findOneAndUpdate(
         { IdEstudiante: estudiante.IdEstudiante, activa: true },
-        {$set: { documentosEntregados: estudiante.documentosEntregados }}
+        { $set: { documentosEntregados: estudiante.documentosEntregados } }
       ).exec();
       console.dir(estudiante);
     });
-    res.status(201).json({message: "Documentos guardados correctamente", exito: true});
-  } catch{
-    res.status(201).json({message: e, exito: false});
+    res
+      .status(201)
+      .json({ message: "Documentos guardados correctamente", exito: true });
+  } catch {
+    res.status(201).json({ message: e, exito: false });
   }
 });
 

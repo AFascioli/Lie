@@ -38,6 +38,8 @@ button {
 
 .tituloPopup{
   text-align: center;
+  margin: 0;
+  font-size: 30px;
 }
 
 .buttonPopup{

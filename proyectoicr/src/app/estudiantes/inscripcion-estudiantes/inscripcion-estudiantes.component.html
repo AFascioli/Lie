@@ -1,38 +1,19 @@
 <h1 class="componente-titulo">Inscribir estudiante a un curso</h1>
 <mat-card class="card-body-componente">
-  <p class="fecha">Fecha: {{ fechaActual | date: "dd/MM/yyyy" }}</p>
+  <p class="fecha"><b>Fecha: </b>{{ fechaActual | date: "dd/MM/yyyy" }}</p>
   <br />
-  <div class="contenido">
+  <!-- <div class="contenido"> -->
     <mat-card class="card-datos">
-      <h3>Datos del estudiante seleccionado</h3>
+      <p class="titulo-datos-est">Datos del estudiante seleccionado</p>
       <mat-card-subtitle>
         <b>Apellido/s: </b> {{ apellidoEstudiante }}
         <br />
         <b>Nombre/s: </b> {{ nombreEstudiante }}
       </mat-card-subtitle>
     </mat-card>
-  </div>
+  <!-- </div> -->
   <br />
-  <mat-accordion>
-    <mat-expansion-panel>
-      <mat-expansion-panel-header>
-        <mat-panel-title>
-          <b>Registrar documentos entregados</b>
-        </mat-panel-title>
-      </mat-expansion-panel-header>
-      <mat-checkbox (change)="registrarDocumento(0)">
-        Fotocopia del documento</mat-checkbox
-      >
-      <br />
-      <mat-checkbox (change)="registrarDocumento(1)">
-        Ficha médica</mat-checkbox
-      >
-      <br />
-      <mat-checkbox (change)="registrarDocumento(2)">
-        Informe año anterior</mat-checkbox
-      >
-    </mat-expansion-panel>
-  </mat-accordion>
+
   <br />
   <form #form="ngForm">
     <div class="div-selects">
@@ -55,6 +36,26 @@
       </mat-form-field>
     </div>
     <br />
+    <mat-accordion>
+      <mat-expansion-panel>
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            <b class="titulos-reg-doc">Registrar documentos entregados</b>
+          </mat-panel-title>
+        </mat-expansion-panel-header>
+        <mat-checkbox (change)="registrarDocumento(0)">
+          Fotocopia del documento</mat-checkbox
+        >
+        <br />
+        <mat-checkbox (change)="registrarDocumento(1)">
+          Ficha médica</mat-checkbox
+        >
+        <br />
+        <mat-checkbox (change)="registrarDocumento(2)">
+          Informe año anterior</mat-checkbox
+        >
+      </mat-expansion-panel>
+    </mat-accordion>
     <br />
     <div class="div-button">
       <button

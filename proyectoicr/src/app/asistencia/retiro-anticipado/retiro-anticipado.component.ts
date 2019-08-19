@@ -1,6 +1,6 @@
 import { Component, OnInit, Inject } from '@angular/core';
 import { EstudiantesService } from 'src/app/estudiantes/estudiante.service';
-import { MatDialog, MatDialogRef, MAT_DIALOG_DATA, MatDialogConfig } from '@angular/material';
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA, MatDialogConfig, MatSnackBar } from '@angular/material';
 import { Router } from '@angular/router';
 
 @Component({
@@ -63,6 +63,7 @@ export class RetiroPopupComponent {
     public dialogRef: MatDialogRef<RetiroPopupComponent>,
     public router: Router,
     public servicio: EstudiantesService,
+    public snackBar: MatSnackBar,
     @Inject(MAT_DIALOG_DATA) data
   ) {
     this.tipoPopup = data.tipoPopup;
@@ -72,7 +73,7 @@ export class RetiroPopupComponent {
 
   //Vuelve al menu principal
   onYesCancelarClick(): void {
-    this.router.navigate(["menuLateral/home"]);
+    this.router.navigate(["./home"]);
     this.dialogRef.close();
   }
 
@@ -85,14 +86,24 @@ export class RetiroPopupComponent {
   onYesConfirmarClick(): void {
     this.servicio.registrarRetiroAnticipado(this.IdEstudiante, this.antes10am).subscribe(response =>{
       this.exito= response.exito;
-      this.tipoPopup = "retirar";
+      this.dialogRef.close();
+      console.log(response);
+      if(this.exito){
+        this.snackBar.open("Se registró correctamente el retiro anticipado para el estudiante seleccionado", "", {
+          duration: 4500,
+        });
+      }else{
+        this.snackBar.open("Ya se ha registrado un retiro anticipado para el estudiante seleccionado", "", {
+          duration: 4500,
+        });
+      }
     });
   }
 
   //Si fue exitosa la operacion vuelve al menu principal, sino vuelve a la interfaz de retiro
   onOkConfirmarClick() {
     if (this.exito) {
-      this.router.navigate(["menuLateral/home"]);
+      this.router.navigate(["./home"]);
       this.dialogRef.close();
     }
     this.dialogRef.close();

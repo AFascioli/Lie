@@ -81,7 +81,7 @@ export class DocumentosInscripcionPopupComponent {
   }
 
   onYesCancelarClick(): void {
-    this.router.navigate(["menuLateral/home"]);
+    this.router.navigate(["./home"]);
     this.dialogRef.close();
   }
 
