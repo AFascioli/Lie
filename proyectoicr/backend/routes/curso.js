@@ -16,10 +16,9 @@ router.post("/inscripcion", (req, res) => {
   }).then(document => {
     if (document != null) {
       res
-        .status(400)
+        .status(200)
         .json({ message: "El estudiante ya esta inscripto", exito: false });
     } else {
-
       Division.findOne({ curso: req.body.division }).then(document => {
         const nuevaInscripcion = new Inscripcion({
           IdEstudiante: req.body.IdEstudiante,

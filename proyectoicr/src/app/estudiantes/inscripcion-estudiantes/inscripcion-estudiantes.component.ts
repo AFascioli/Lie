@@ -5,7 +5,8 @@ import {
   MatDialogRef,
   MatDialog,
   MatDialogConfig,
-  MAT_DIALOG_DATA
+  MAT_DIALOG_DATA,
+  MatSnackBar
 } from "@angular/material";
 import { NgForm } from "@angular/forms";
 
@@ -28,7 +29,7 @@ export class InscripcionEstudianteComponent implements OnInit {
     { nombre: "Informe año anterior", entregado: false }
   ];
 
-  constructor(public servicio: EstudiantesService, public dialog: MatDialog) {}
+  constructor(public servicio: EstudiantesService, public dialog: MatDialog, public snackBar: MatSnackBar) {}
 
   ngOnInit() {
     this.fechaActual = new Date();
@@ -49,16 +50,22 @@ export class InscripcionEstudianteComponent implements OnInit {
     ].entregado;
   }
 
-  openDialogo(tipo: string, form: NgForm, division) {
-    this.matConfig.data = {
-      tipoPopup: tipo,
-      formValido: form.valid,
-      IdEstudiante: this._idEstudiante,
-      division: division.value,
-      documentosEntregados: this.documentosEntregados
-    };
-    this.matConfig.width = "250px";
-    this.dialog.open(InscripcionPopupComponent, this.matConfig);
+  openDialogo(tipo: string, form: NgForm, curso) {
+    if(form.invalid){
+      this.snackBar.open("No se ha seleccionado un curso.", "", {
+        duration: 4500,
+      });
+    }else{
+      this.matConfig.data = {
+        tipoPopup: tipo,
+        formValido: form.valid,
+        IdEstudiante: this._idEstudiante,
+        curso: curso.value,
+        documentosEntregados: this.documentosEntregados
+      };
+      this.matConfig.width = "250px";
+      this.dialog.open(InscripcionPopupComponent, this.matConfig);
+    }
   }
 }
 
@@ -71,7 +78,7 @@ export class InscripcionPopupComponent {
   tipoPopup: string;
   formValido: boolean;
   IdEstudiante: string;
-  division: string;
+  curso: string;
   exito: boolean = false;
   documentosEntregados: any[];
 
@@ -79,12 +86,13 @@ export class InscripcionPopupComponent {
     public dialogRef: MatDialogRef<InscripcionPopupComponent>,
     public router: Router,
     public servicio: EstudiantesService,
+    public snackBar: MatSnackBar,
     @Inject(MAT_DIALOG_DATA) data
   ) {
     this.tipoPopup = data.tipoPopup;
     this.formValido = data.formValido;
     this.IdEstudiante = data.IdEstudiante;
-    this.division = data.division;
+    this.curso = data.curso;
     this.documentosEntregados= data.documentosEntregados;
   }
 
@@ -99,18 +107,20 @@ export class InscripcionPopupComponent {
 
   onYesConfirmarClick(): void {
     this.servicio
-      .inscribirEstudiante(this.IdEstudiante, this.division, this.documentosEntregados)
+      .inscribirEstudiante(this.IdEstudiante, this.curso, this.documentosEntregados)
       .subscribe(response => {
         this.exito = response.exito;
-        this.tipoPopup = "inscribir";
+        console.log(this.exito);
+        if(this.exito){
+          this.snackBar.open("Estudiante inscripto correctamente", "", {
+            duration: 4500,
+          });
+        }else{
+          this.snackBar.open("Inscripción no registrada. El estudiante selccionado ya se encuentra inscripto", "", {
+            duration: 4500,
+          });
+        }
+        this.dialogRef.close();
       });
-  }
-
-  onOkConfirmarClick() {
-    if (this.formValido && this.exito) {
-      this.router.navigate(["./home"]);
-      this.dialogRef.close();
-    }
-    this.dialogRef.close();
   }
 }
