@@ -275,7 +275,7 @@ export class EstudiantesService {
   }
 
   registrarRetiroAnticipado(IdEstudiante: string, antes10am: Boolean) {
-    return this.http.post<{ message: string; exito: boolean }>(
+    return this.http.post<{ message: string; exito: string }>(
       "http://localhost:3000/estudiante/retiro",
       { IdEstudiante: IdEstudiante, antes10am: antes10am }
     );

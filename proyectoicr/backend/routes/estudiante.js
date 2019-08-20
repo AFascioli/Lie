@@ -209,35 +209,43 @@ router.post("/retiro", (req, res) => {
       AsistenciaDiaria.findById(inscripcion.asistenciaDiaria[0])
         .select({ retiroAnticipado: 1, presente: 1 })
         .then(asistencia => {
-          if (!asistencia.presente) {
-            res.status(200).json({
-              message:
-                "El estudiante no tiene registrada asistencia para el día de hoy",
-              exito: false
-            });
-          } else {
-            if (asistencia.retiroAnticipado) {
+          if (asistencia) {
+            if (!asistencia.presente) {
               res.status(200).json({
-                message:
-                  "El estudiante ya tiene registrado un retiro anticipado para el día de hoy",
-                exito: false
+                message: "El estudiante esta ausente para el día de hoy",
+                exito: "ausente"
               });
             } else {
-              AsistenciaDiaria.findByIdAndUpdate(
-                inscripcion.asistenciaDiaria[0],
-                {
-                  retiroAnticipado: true,
-                  $inc: { valorInasistencia: actualizacionInasistencia }
-                }
-              ).then(()=> {
+              if (asistencia.retiroAnticipado) {
                 res.status(200).json({
-                  message: "Retiro anticipado exitósamente registrado",
-                  exito: true
+                  message:
+                    "El estudiante ya tiene registrado un retiro anticipado para el día de hoy",
+                  exito: "retirado"
                 });
-              });
+              } else {
+                AsistenciaDiaria.findByIdAndUpdate(
+                  inscripcion.asistenciaDiaria[0],
+                  {
+                    retiroAnticipado: true,
+                    $inc: { valorInasistencia: actualizacionInasistencia }
+                  }
+                ).then(() => {
+                  res.status(200).json({
+                    message: "Retiro anticipado exitósamente registrado",
+                    exito: "exito"
+                  });
+                });
+              }
             }
+          } else {
+            res.status(200).json({
+              message:
+                "El estudiante no tiene registrada la asistencia para el día de hoy",
+              exito: "faltaasistencia"
+            });
           }
-        }).catch(e=> console.log(e));
+        })
+        .catch(e => console.log(e));
     }
   });
 });
@@ -262,106 +270,116 @@ router.post("/documentos", (req, res) => {
 
 //Retorna vector con datos de los estudiantes y presente. Si ya se registro una asistencia para
 //el dia de hoy se retorna ese valor de la asistencia, sino se "construye" una nueva
-router.get("/asistenciatest", (req, res)=>{
+router.get("/asistenciatest", (req, res) => {
   Inscripcion.aggregate([
     {
-      '$lookup': {
-        'from': 'divisiones',
-        'localField': 'IdDivision',
-        'foreignField': '_id',
-        'as': 'curso'
+      $lookup: {
+        from: "divisiones",
+        localField: "IdDivision",
+        foreignField: "_id",
+        as: "curso"
       }
-    }, {
-      '$match': {
-        'curso.curso': "4A",
-        'activa': true
+    },
+    {
+      $match: {
+        "curso.curso": "4A",
+        activa: true
       }
-    }, {
-      '$project': {
-        'ultimaAsistencia': {
-          '$slice': [
-            '$asistenciaDiaria', -1
-          ]
+    },
+    {
+      $project: {
+        ultimaAsistencia: {
+          $slice: ["$asistenciaDiaria", -1]
         }
       }
-    }, {
-      '$lookup': {
-        'from': 'asistenciaDiaria',
-        'localField': 'ultimaAsistencia',
-        'foreignField': '_id',
-        'as': 'asistencia'
+    },
+    {
+      $lookup: {
+        from: "asistenciaDiaria",
+        localField: "ultimaAsistencia",
+        foreignField: "_id",
+        as: "asistencia"
       }
-    }, {
-      '$project': {
-        '_id':0,
-        'asistencia.fecha': 1
+    },
+    {
+      $project: {
+        _id: 0,
+        "asistencia.fecha": 1
       }
-    }, {
-      '$limit': 1
-  }
-  ]).then(ultimaAsistencia=>{
-    var fechaHoy= new Date();
-    fechaHoy.setHours(fechaHoy.getHours()-3);
+    },
+    {
+      $limit: 1
+    }
+  ]).then(ultimaAsistencia => {
+    var fechaHoy = new Date();
+    fechaHoy.setHours(fechaHoy.getHours() - 3);
     console.log(fechaHoy);
-    if(fechaHoy.getDate()==ultimaAsistencia[0].asistencia[0].fecha.getDate() &&
-    fechaHoy.getMonth()==ultimaAsistencia[0].asistencia[0].fecha.getMonth() &&
-    fechaHoy.getFullYear()==ultimaAsistencia[0].asistencia[0].fecha.getFullYear() ){
+    if (
+      fechaHoy.getDate() == ultimaAsistencia[0].asistencia[0].fecha.getDate() &&
+      fechaHoy.getMonth() ==
+        ultimaAsistencia[0].asistencia[0].fecha.getMonth() &&
+      fechaHoy.getFullYear() ==
+        ultimaAsistencia[0].asistencia[0].fecha.getFullYear()
+    ) {
       Inscripcion.aggregate([
         {
-          '$lookup': {
-            'from': 'divisiones',
-            'localField': 'IdDivision',
-            'foreignField': '_id',
-            'as': 'curso'
+          $lookup: {
+            from: "divisiones",
+            localField: "IdDivision",
+            foreignField: "_id",
+            as: "curso"
           }
-        }, {
-          '$lookup': {
-            'from': 'estudiantes',
-            'localField': 'IdEstudiante',
-            'foreignField': '_id',
-            'as': 'datosEstudiante'
+        },
+        {
+          $lookup: {
+            from: "estudiantes",
+            localField: "IdEstudiante",
+            foreignField: "_id",
+            as: "datosEstudiante"
           }
-        },{
-          '$match': {
-            'curso.curso': "4A",
-            'activa': true
+        },
+        {
+          $match: {
+            "curso.curso": "4A",
+            activa: true
           }
-        }, {
-          '$project': {
-            'ultimaAsistencia': {
-              '$slice': [
-                '$asistenciaDiaria', -1
-              ]
+        },
+        {
+          $project: {
+            ultimaAsistencia: {
+              $slice: ["$asistenciaDiaria", -1]
             },
-            'datosEstudiante._id': 1,
-            'datosEstudiante.nombre': 1,
-            'datosEstudiante.apellido': 1
+            "datosEstudiante._id": 1,
+            "datosEstudiante.nombre": 1,
+            "datosEstudiante.apellido": 1
           }
-        }, {
-          '$lookup': {
-            'from': 'asistenciaDiaria',
-            'localField': 'ultimaAsistencia',
-            'foreignField': '_id',
-            'as': 'asistencia'
+        },
+        {
+          $lookup: {
+            from: "asistenciaDiaria",
+            localField: "ultimaAsistencia",
+            foreignField: "_id",
+            as: "asistencia"
           }
-        }, {
-          '$project': {
-            'datosEstudiante': 1,
-            'asistencia.presente': 1
+        },
+        {
+          $project: {
+            datosEstudiante: 1,
+            "asistencia.presente": 1
           }
         }
-      ]).then(asistenciaCurso =>{
-        var respuesta= [];
-        asistenciaCurso.forEach(estudiante =>{
-          var estudianteRefinado={
+      ]).then(asistenciaCurso => {
+        var respuesta = [];
+        asistenciaCurso.forEach(estudiante => {
+          var estudianteRefinado = {
             _id: estudiante.datosEstudiante[0]._id,
             nombre: estudiante.datosEstudiante[0].nombre,
             apellido: estudiante.datosEstudiante[0].apellido,
             presente: estudiante.asistencia[0].presente
-          }
+          };
           respuesta.push(estudianteRefinado);
         });
-        res.status(200).json({estudiantes: respuesta});
+        res.status(200).json({ estudiantes: respuesta });
       });
     }
 

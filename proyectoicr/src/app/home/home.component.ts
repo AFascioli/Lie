@@ -9,4 +9,7 @@ export class HomeComponent implements OnInit {
   constructor() {}
 
   ngOnInit() {}
+
+  obra = require('../../img/acto.jpg');
+  desfile = require('../../img/desfile.jpg');
 }
