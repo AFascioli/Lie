@@ -1,7 +1,6 @@
-import { EstudiantesService } from 'src/app/estudiantes/estudiante.service';
+
 import { Component, OnInit } from '@angular/core';
-import { MatDialogRef, MatDialog, MatDialogConfig, MatSnackBar } from '@angular/material';
-import { Router } from '@angular/router';
+import { Estudiante } from '../estudiante.model';
 
 @Component({
   selector: 'app-calificaciones-estudiantes',
@@ -9,7 +8,9 @@ import { Router } from '@angular/router';
   styleUrls: ['./calificaciones-estudiantes.component.css']
 })
 export class CalificacionesEstudiantesComponent implements OnInit {
-  
+  estudiantes: Estudiante[] = [];
+  calificaciones: any[] = [];
+  displayedColumns: string[] = ["apellido", "nombre", "calif1", "calif2", "calif3","calif4", "calif5", "promedio" ];
 
   constructor() { }
 

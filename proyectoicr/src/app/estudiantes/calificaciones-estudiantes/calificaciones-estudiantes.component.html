@@ -13,7 +13,6 @@
       </mat-select>
   </mat-form-field>
 
-&nbsp; &nbsp;
 
     <mat-form-field>
         <mat-select
@@ -23,7 +22,6 @@
         </mat-select>
     </mat-form-field>
 
-&nbsp; &nbsp;
 <mat-form-field>
     <mat-select
     placeholder="Seleccione materia"
@@ -33,16 +31,27 @@
 </mat-form-field>
 </div>
 
-<div>
-  <table mat-table class="mat-elevation-z8">
+<mat-card *ngIf="estudiantes.length > 0">
+  <table mat-table [dataSource]="estudiantes" [dataSource]="calificaciones" class="mat-elevation-z8">
 
+    <ng-container matColumnDef="apellido">
+      <th  class="columnasTabla" mat-header-cell *matHeaderCellDef> <b style="font-size:15px"> Apellido/s </b> </th>
+      <td  class="columnasTabla" mat-cell *matCellDef="let estudiantes"> {{estudiantes.apellido}} </td>
+    </ng-container>
 
+    <ng-container matColumnDef="nombre">
+      <th  class="columnasTabla" mat-header-cell *matHeaderCellDef> <b style="font-size:15px"> Nombre/s </b> </th>
+      <td  class="columnasTabla" mat-cell *matCellDef="let estudiantes"> {{estudiantes.nombre}} </td>
+    </ng-container>
 
     <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
     <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
 
   </table>
-</div>
+  </mat-card>
+  <mat-card *ngIf="estudiantes.length <=0 ">
+  <p>No se encontraron estudiantes para ese curso y materia</p>
+  </mat-card>
 
 <div align="center">
   <button  mat-raised-button
