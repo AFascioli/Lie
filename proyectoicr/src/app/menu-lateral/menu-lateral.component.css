@@ -1,7 +1,7 @@
-.ubicacion_inferior{
+/* .ubicacion_inferior{
   position:absolute;
   bottom:5px;
-}
+} */
 
 .opcion{
   margin: 1rem;
@@ -29,5 +29,13 @@ h3, .mat-icon-button{
    le pongo 100% menos el tamaño del header */
 .mat-sidenav-container{
   height: calc(100% - 64px);
+}
+
+.titulo-expansion{
+  margin-left: 8%;
+}
+
+.opciones-expansion{
+  margin-left: 10%;
 }
 
