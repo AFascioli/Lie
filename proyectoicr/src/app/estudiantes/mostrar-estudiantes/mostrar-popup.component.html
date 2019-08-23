@@ -10,19 +10,6 @@
     <button mat-raised-button color="warn" (click)="onNoClick()" >No</button>
   </div>
 </div>
-<div *ngIf="tipoPopup === 'guardar'" class="guardar">
-  <h3 mat-dialog-title class="tituloPopup">Guardar</h3>
-  <div mat-dialog-content *ngIf="formInvalido">
-    <p class="parrafo">Faltan ingresar campos</p>
-  </div>
-  <div mat-dialog-content *ngIf="!formInvalido">
-    <p *ngIf="formModificada" class="parrafo">Se han registrado los cambios correctamente</p>
-    <p *ngIf="!formModificada" class="parrafo">No se han realizado cambios en el estudiante seleccionado</p>
-  </div>
-  <div mat-dialog-actions class="buttonPopup">
-    <button mat-raised-button color="primary" (click)="onOkClick()" >Ok</button>
-  </div>
-</div>
 <div *ngIf="tipoPopup === 'borrar'" class="borrar">
   <h3 mat-dialog-title class="tituloPopup">Borrar</h3>
   <div mat-dialog-content>

@@ -1,4 +1,4 @@
-<div *ngIf="tipoPopup == 'cancelar'" class= "cancelar">
+<div class= "cancelar">
 <h3 mat-dialog-title class="tituloPopup">Cancelar</h3>
 <div mat-dialog-content>
   <p class="parrafo">¿Está seguro que desea cancelar el alta del estudiante?</p>
@@ -7,7 +7,8 @@
   <button mat-raised-button  color="primary" (click)="onYesClick()"  cdkFocusInitial >Sí</button>
   <button mat-raised-button color="warn" (click)="onNoClick()">No</button>
 </div>
-</div>
+
+<!-- </div>
 <div *ngIf="tipoPopup == 'guardar'" class= "guardar">
 <h3 mat-dialog-title class="tituloPopup">Guardar</h3>
 <div mat-dialog-content *ngIf="formInvalido">
@@ -19,4 +20,4 @@
 <div mat-dialog-actions class="buttonPopup">
   <button mat-raised-button  color="primary" (click)="onOkClick()">Ok</button>
 </div>
-</div>
+</div> -->

@@ -61,7 +61,7 @@ export class BuscarPopupComponent {
         this.formInvalido = this.servicio.formInvalidoEstudiante;}
 
       onYesClick():void{
-        this.router.navigate(['menuLateral/home']);
+        this.router.navigate(['./home']);
         this.dialogRef.close();
       }
       onNoClick(): void {

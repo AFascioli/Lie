@@ -1,6 +1,6 @@
 import { Component, OnInit } from "@angular/core";
 import { EstudiantesService } from "src/app/estudiantes/estudiante.service";
-import { MatDialogRef, MatDialog } from "@angular/material";
+import { MatDialogRef, MatDialog, MatSnackBar } from "@angular/material";
 import { Router } from "@angular/router";
 
 @Component({
@@ -9,15 +9,21 @@ import { Router } from "@angular/router";
   styleUrls: ["./registrar-asistencia.component.css"]
 })
 export class RegistrarAsistenciaComponent implements OnInit {
+  cursos: any[];
   cursoNotSelected: boolean;
   estudiantesXDivision: any[];
   displayedColumns: string[] = ["apellido", "nombre", "accion"];
   fechaActual: Date;
-  constructor(private servicio: EstudiantesService, public popup: MatDialog) {}
+  constructor(private servicio: EstudiantesService, public popup: MatDialog, public snackBar: MatSnackBar) {}
 
   ngOnInit() {
     this.cursoNotSelected = true;
     this.fechaActual = new Date();
+    this.servicio.obtenerDivisionesXAño().subscribe(response=>{
+      this.cursos= response.cursos;
+      this.cursos.sort((a, b) =>
+        a.curso.charAt(0) > b.curso.charAt(0) ? 1 : b.curso.charAt(0) > a.curso.charAt(0) ? -1 : 0);
+      });
   }
 
   //Busca los estudiantes segun el curso que se selecciono en pantalla. Los orden alfabeticamente
@@ -44,10 +50,13 @@ export class RegistrarAsistenciaComponent implements OnInit {
 
   //Envia al servicio el vector con los datos de los estudiantes y el presentismo
   onGuardar() {
+    // this.servicio.tipoPopUp = "guardar";
+    // this.popup.open(AsistenciaPopupComponent, {
+      //   width: "250px"
+      // });
     this.servicio.registrarAsistencia(this.estudiantesXDivision);
-    this.servicio.tipoPopUp = "guardar";
-    this.popup.open(AsistenciaPopupComponent, {
-      width: "250px"
+    this.snackBar.open("Asistencia registrada exitósamente", "", {
+      duration: 4500,
     });
   }
 
@@ -81,7 +90,7 @@ export class AsistenciaPopupComponent {
   }
 
   onYesClick(): void {
-    this.router.navigate(["menuLateral/home"]);
+    this.router.navigate(["./home"]);
     this.dialogRef.close();
   }
 

@@ -5,7 +5,7 @@
       <mat-expansion-panel [expanded]="true">
         <mat-expansion-panel-header>
           <mat-panel-title>
-            Datos personales del estudiante
+            <b>Datos personales del estudiante</b>
           </mat-panel-title>
         </mat-expansion-panel-header>
         <mat-form-field>
@@ -193,7 +193,7 @@
       <mat-expansion-panel>
         <mat-expansion-panel-header>
           <mat-panel-title>
-            Domicilio
+            <b>Domicilio</b>
           </mat-panel-title>
         </mat-expansion-panel-header>
         <div class="domicilio">
@@ -318,7 +318,7 @@
       <button
         *ngIf="modoEditar"
         (click)="onGuardar(form)"
-        (click)="openDialogo('guardar', form)"
+        (click)="snackBarGuardar(form)"
         mat-raised-button
         color="warn"
       >

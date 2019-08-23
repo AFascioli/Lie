@@ -9,46 +9,32 @@ import { Router } from '@angular/router';
   styleUrls: ['./documentos-inscripcion.component.css']
 })
 export class DocumentosInscripcionComponent implements OnInit {
-  anios: number[]= [];
-  divisionesXAno: any[];
-  divisionesFiltradas: any[];
-  divisionSeleccionada: boolean = false;
-  seleccionDeAnio: boolean = false;
-  anioSeleccionado: string;
+
+  cursos: any[];
+  cursoSeleccionado: boolean = false;
   estudiantesConDocumentos: any[]=[];
   displayedColumns: string[] = ["apellido", "nombre", "fotocopiaDoc", "fichaMed", "informeAnt"];
   matConfig= new MatDialogConfig();
 
+
   constructor(public servicio: EstudiantesService, public popup: MatDialog, private snackBar: MatSnackBar) { }
 
+  //Sort ordena solo por año de curso, para ordenar bien, deberia dsp de el sort que esta ahora
+  //tomar de a dos cursos y ordenarlos alfabeticamente, de esa forma quedan ordenados por año y
+  //division
   ngOnInit() {
-    this.servicio.obtenerDivisionesXAño();
-    this.servicio.getDivisionXAñoListener().subscribe(divisionesXAño => {
-      this.divisionesXAno = divisionesXAño;
-      this.divisionesXAno.forEach(element => {
-        this.anios.push(element.ano);
+    this.servicio.obtenerDivisionesXAño().subscribe(response=>{
+      this.cursos= response.cursos;
+      this.cursos.sort((a, b) =>
+        a.curso.charAt(0) > b.curso.charAt(0) ? 1 : b.curso.charAt(0) > a.curso.charAt(0) ? -1 : 0);
       });
-      this.anios.sort((a, b) =>
-      a > b ? 1 : b > a ? -1 : 0);
-    });
-  }
-
-  //Filtra las divisiones segun el año seleccionado y las ordena alfanumericamente
-  FiltrarDivisiones() {
-    this.seleccionDeAnio= true;
-    this.divisionesFiltradas = this.divisionesXAno.find(
-      divisionXAño => divisionXAño.ano === this.anioSeleccionado
-    ).divisiones;
-    this.divisionesFiltradas.sort((a, b) =>
-    a > b ? 1 : b > a ? -1 : 0);
   }
 
   //Cuando el usuario selecciona una division, se obtienen los datos del estudiantes necesarios
   onCursoSeleccionado(curso){
-    this.divisionSeleccionada=true;
+    this.cursoSeleccionado=true;
     this.servicio.obtenerEstudiantesXCurso(curso.value).subscribe(estudiantes =>{
       this.estudiantesConDocumentos= estudiantes;
-      console.log(estudiantes);
     });
   }
 
@@ -59,12 +45,10 @@ export class DocumentosInscripcionComponent implements OnInit {
 
 
   //Guardar los estudiantes con los cambios, resetea los selects y abre snackBar
-  onGuardar(division, anio){
+  onGuardar(curso){
     this.servicio.registrarDocumentosInscripcion(this.estudiantesConDocumentos).subscribe(response =>{
       if(response.exito){
-        division.reset();
-        anio.reset();
-        this.seleccionDeAnio= !this.seleccionDeAnio;
+        curso.reset();
         this.estudiantesConDocumentos= [];
         this.snackBar.open("Se registró correctamente la documentación de los estudiantes", "", {
           duration: 4000,
@@ -97,7 +81,7 @@ export class DocumentosInscripcionPopupComponent {
   }
 
   onYesCancelarClick(): void {
-    this.router.navigate(["menuLateral/home"]);
+    this.router.navigate(["./home"]);
     this.dialogRef.close();
   }
 

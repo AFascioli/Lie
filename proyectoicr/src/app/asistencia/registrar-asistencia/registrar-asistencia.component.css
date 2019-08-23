@@ -27,3 +27,11 @@ table {
   text-align: right;
 }
 
+th{
+  font-weight: bold;
+  font-size: 15px;
+}
+
+.parrafo{
+  text-align: center;
+}

@@ -1,4 +1,6 @@
 import { Component, OnInit } from "@angular/core";
+//Parche para la demo #resolve
+declare var require: any;
 
 @Component({
   selector: "app-home",
@@ -9,4 +11,7 @@ export class HomeComponent implements OnInit {
   constructor() {}
 
   ngOnInit() {}
+
+  obra = require('../../img/acto.jpg');
+  desfile = require('../../img/desfile.jpg');
 }

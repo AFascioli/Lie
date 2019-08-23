@@ -8,24 +8,23 @@
       name="curso"
       ngModel
       #curso="ngModel"
+      matNativeControl
       required
       (selectionChange)="buscarEstudiantesPorDivision(curso)"
     >
-      <mat-option value="5A">5A</mat-option>
-      <mat-option value="4A">4A</mat-option>
-      <mat-option value="3A">3A</mat-option>
-      <mat-option value="2A">2A</mat-option>
+      <mat-option *ngFor="let objCurso of cursos" [value]="objCurso.curso">
+        {{ objCurso.curso }}
+      </mat-option>
     </mat-select>
   </mat-form-field>
 
-  <p class="fecha">Fecha: {{ fechaActual | date: 'dd/MM/yyyy' }}</p>
+  <p class="fecha"><b>Fecha: </b>{{ fechaActual | date: "dd/MM/yyyy" }}</p>
 
   <br />
   <div *ngIf="!cursoNotSelected">
     <table
       mat-table
       [dataSource]="estudiantesXDivision"
-      class="mat-elevation-z8"
     >
       <ng-container matColumnDef="apellido">
         <th class="nombreApellido" mat-header-cell *matHeaderCellDef>
@@ -58,8 +57,12 @@
           Presentismo
         </th>
         <td class="presentismo" mat-cell *matCellDef="let row">
-          <mat-slide-toggle (change)="onCambioPresentismo(row)"
-            >Presente</mat-slide-toggle
+          <mat-slide-toggle
+            [checked]="row.presente"
+            (change)="onCambioPresentismo(row)"
+          >
+            <p *ngIf="row.presente">Presente</p>
+            <p *ngIf="!row.presente">Ausente</p></mat-slide-toggle
           >
         </td>
       </ng-container>

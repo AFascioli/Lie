@@ -36,7 +36,7 @@ import {
   MostrarPopupComponent
 } from "./estudiantes/mostrar-estudiantes/mostrar-estudiantes.component";
 import { AppRoutingModule } from "./app-routing.module";
-import { MenuPrincipalComponent } from "./menu-principal/menu-principal.component";
+import { LoginComponent } from "./menu-principal/menu-principal.component";
 import { MenuLateralComponent } from "./menu-lateral/menu-lateral.component";
 import { HomeComponent } from "./home/home.component";
 import {
@@ -61,7 +61,7 @@ import { LlegadaTardeComponent } from './asistencia/llegada-tarde/llegada-tarde.
     MostrarEstudiantesComponent,
     AltaPopupComponent,
     MostrarPopupComponent,
-    MenuPrincipalComponent,
+    LoginComponent,
     MenuLateralComponent,
     HomeComponent,
     RegistrarAsistenciaComponent,
