@@ -6,9 +6,16 @@
       mat-icon-button
       (click)="drawer.toggle()"
     >
-      <mat-icon aria-label="Side nav toggle icon">menu</mat-icon>
+    <mat-icon aria-label="Side nav toggle icon">menu</mat-icon>
     </button>
     <h3>Menú</h3>
+
+  <div class="ubicacionHome">
+    <button mat-button (click)="onClickHome()">
+       <mat-icon class="home">home </mat-icon>
+  </button>
+
+  </div>
   </mat-toolbar-row>
 </mat-toolbar>
 
@@ -27,18 +34,33 @@
             <mat-panel-title>
               <a mat-list-item>
                 <mat-icon>wc</mat-icon>
-                 <b class="titulo-expansion">Curso</b>
+                <b class="titulo-expansion">Curso</b>
               </a>
             </mat-panel-title>
           </mat-expansion-panel-header>
-          <a mat-list-item class="opciones-expansion" (click)="drawer.toggle()" routerLink="./">
-             Registrar agenda de curso
+          <a
+            mat-list-item
+            class="opciones-expansion"
+            (click)="drawer.toggle()"
+            routerLink="./"
+          >
+            Registrar agenda de curso
           </a>
-          <a mat-list-item class="opciones-expansion" (click)="drawer.toggle()" routerLink="/asistencia">
-             Tomar asistencia
+          <a
+            mat-list-item
+            class="opciones-expansion"
+            (click)="drawer.toggle()"
+            routerLink="/asistencia"
+          >
+            Tomar asistencia
           </a>
-          <a mat-list-item class="opciones-expansion" (click)="drawer.toggle()" routerLink="./">
-             Registar pago de cuotas
+          <a
+            mat-list-item
+            class="opciones-expansion"
+            (click)="drawer.toggle()"
+            routerLink="./"
+          >
+            Registar pago de cuotas
           </a>
           <a
             mat-list-item
@@ -46,7 +68,7 @@
             (click)="drawer.toggle()"
             routerLink="/documentosEstudiante"
           >
-             Registrar documentos inscripción
+            Registrar documentos inscripción
           </a>
           <mat-accordion>
             <mat-expansion-panel>
@@ -57,11 +79,21 @@
                   </a>
                 </mat-panel-title>
               </mat-expansion-panel-header>
-              <a mat-list-item class="opciones-expansion" (click)="drawer.toggle()" routerLink="calificacionesEstudiantes">
-                 Registrar
+              <a
+                mat-list-item
+                class="opciones-expansion"
+                (click)="drawer.toggle()"
+                routerLink="calificacionesEstudiantes"
+              >
+                Registrar
               </a>
-              <a mat-list-item class="opciones-expansion" (click)="drawer.toggle()" routerLink="./">
-                 Buscar
+              <a
+                mat-list-item
+                class="opciones-expansion"
+                (click)="drawer.toggle()"
+                routerLink="./"
+              >
+                Buscar
               </a>
               <!-- <a mat-list-item (click)="drawer.toggle()" routerLink="./">
                 &nbsp; &nbsp; &nbsp; Modificar &nbsp;
@@ -81,15 +113,25 @@
             <mat-panel-title>
               <a mat-list-item>
                 <mat-icon>school</mat-icon>
-                 <b class="titulo-expansion">Estudiante</b>
+                <b class="titulo-expansion">Estudiante</b>
               </a>
             </mat-panel-title>
           </mat-expansion-panel-header>
-          <a mat-list-item class="opciones-expansion" (click)="drawer.toggle()" routerLink="/alta">
-             Registrar
+          <a
+            mat-list-item
+            class="opciones-expansion"
+            (click)="drawer.toggle()"
+            routerLink="/alta"
+          >
+            Registrar
           </a>
-          <a mat-list-item class="opciones-expansion" (click)="drawer.toggle()" routerLink="/buscar">
-             Buscar
+          <a
+            mat-list-item
+            class="opciones-expansion"
+            (click)="drawer.toggle()"
+            routerLink="/buscar"
+          >
+            Buscar
           </a>
         </mat-expansion-panel>
         <mat-expansion-panel
@@ -101,15 +143,25 @@
             <mat-panel-title>
               <a mat-list-item ng-Focus="onSelected(this)">
                 <mat-icon>event</mat-icon>
-                 <b class="titulo-expansion">Evento</b>
+                <b class="titulo-expansion">Evento</b>
               </a>
             </mat-panel-title>
           </mat-expansion-panel-header>
-          <a mat-list-item class="opciones-expansion" (click)="drawer.toggle()" routerLink="./">
-             Registrar
+          <a
+            mat-list-item
+            class="opciones-expansion"
+            (click)="drawer.toggle()"
+            routerLink="./"
+          >
+            Registrar
           </a>
-          <a mat-list-item class="opciones-expansion" (click)="drawer.toggle()" routerLink="./">
-             Buscar
+          <a
+            mat-list-item
+            class="opciones-expansion"
+            (click)="drawer.toggle()"
+            routerLink="./"
+          >
+            Buscar
           </a>
           <!-- <a mat-list-item (click)="drawer.toggle()" routerLink="./">
             &nbsp; &nbsp; &nbsp; Modificar &nbsp;
