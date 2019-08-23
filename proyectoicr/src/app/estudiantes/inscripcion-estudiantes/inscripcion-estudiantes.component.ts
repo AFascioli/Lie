@@ -9,6 +9,7 @@ import {
   MatSnackBar
 } from "@angular/material";
 import { NgForm } from "@angular/forms";
+import { DateAdapter } from "@angular/material";
 
 @Component({
   selector: "app-inscripcion-estudiantes",
@@ -29,7 +30,9 @@ export class InscripcionEstudianteComponent implements OnInit {
     { nombre: "Informe año anterior", entregado: false }
   ];
 
-  constructor(public servicio: EstudiantesService, public dialog: MatDialog, public snackBar: MatSnackBar) {}
+  constructor(public servicio: EstudiantesService, public dialog: MatDialog, public snackBar: MatSnackBar, private dateAdapter: DateAdapter<Date>) {
+    this.dateAdapter.setLocale("es");
+  }
 
   ngOnInit() {
     this.fechaActual = new Date();
