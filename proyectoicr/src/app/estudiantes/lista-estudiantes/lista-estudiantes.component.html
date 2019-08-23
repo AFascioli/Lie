@@ -1,30 +1,31 @@
 <mat-card *ngIf="estudiantes.length > 0">
-<table mat-table [dataSource]="estudiantes" class="mat-elevation-z8">
+
+<table mat-table [dataSource]="estudiantes" >
 
   <ng-container matColumnDef="apellido">
-    <th  class="columnasTabla" mat-header-cell *matHeaderCellDef> Apellido/s </th>
-    <td  class="columnasTabla" mat-cell *matCellDef="let estudiantes"> {{estudiantes.apellido}} </td>
+    <th  class="columnasNormales" mat-header-cell *matHeaderCellDef>  Apellido/s </th>
+    <td  class="columnasNormales" mat-cell *matCellDef="let estudiantes"> {{estudiantes.apellido}} </td>
   </ng-container>
 
   <ng-container matColumnDef="nombre">
-    <th  class="columnasTabla" mat-header-cell *matHeaderCellDef> Nombre/s </th>
-    <td  class="columnasTabla" mat-cell *matCellDef="let estudiantes"> {{estudiantes.nombre}} </td>
+    <th  class="columnasNormales" mat-header-cell *matHeaderCellDef>  Nombre/s </th>
+    <td  class="columnasNormales" mat-cell *matCellDef="let estudiantes"> {{estudiantes.nombre}} </td>
   </ng-container>
 
   <ng-container matColumnDef="tipo">
-    <th  class="columnasTabla" mat-header-cell *matHeaderCellDef> Tipo </th>
-    <td  class="columnasTabla" mat-cell *matCellDef="let estudiantes"> {{estudiantes.tipoDocumento}} </td>
+    <th  class="columnasChicas" mat-header-cell *matHeaderCellDef>  Tipo </th>
+    <td  class="columnasChicas" mat-cell *matCellDef="let estudiantes"> {{estudiantes.tipoDocumento}} </td>
   </ng-container>
 
   <ng-container matColumnDef="numero">
-    <th  class="columnasTabla" mat-header-cell *matHeaderCellDef> Número </th>
-    <td  class="columnasTabla" mat-cell *matCellDef="let estudiantes"> {{estudiantes.numeroDocumento}} </td>
+    <th  class="columnasChicas" mat-header-cell *matHeaderCellDef>  Número </th>
+    <td  class="columnasChicas" mat-cell *matCellDef="let estudiantes"> {{estudiantes.numeroDocumento}} </td>
   </ng-container>
 
   <ng-container matColumnDef="accion">
-    <th class="visualizar" mat-header-cell *matHeaderCellDef> Visualizar </th>
-    <td  class="visualizar" class="columnasTabla" mat-cell *matCellDef="let row">
-      <button mat-raised-button color="primary" (click)="OnSelection(row)" > Visualizar </button>
+    <th class="columnasChicas" mat-header-cell *matHeaderCellDef>  Acciones</th>
+    <td  class="columnasChicas" class="columnasTabla" mat-cell *matCellDef="let row">
+      <button mat-raised-button color="primary" (click)="OnSelection(row)" class="btnVisualizar" > Acciones </button>
     </td>
   </ng-container>
 

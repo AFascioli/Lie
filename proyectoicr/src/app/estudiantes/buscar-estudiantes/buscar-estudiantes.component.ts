@@ -49,7 +49,8 @@ export class BuscarEstudiantesComponent implements OnInit {
 
 @Component({
   selector: "app-buscar-popup",
-  templateUrl: "./buscar-popup.component.html"
+  templateUrl: "./buscar-popup.component.html",
+  styleUrls: ['./buscar-estudiantes.component.css']
 })
 export class BuscarPopupComponent {
   formInvalido : Boolean;
@@ -60,7 +61,7 @@ export class BuscarPopupComponent {
         this.formInvalido = this.servicio.formInvalidoEstudiante;}
 
       onYesClick():void{
-        this.router.navigate(['menuLateral/home']);
+        this.router.navigate(['./home']);
         this.dialogRef.close();
       }
       onNoClick(): void {

@@ -1,6 +1,6 @@
 import { Component, OnInit, Inject } from '@angular/core';
 import { EstudiantesService } from 'src/app/estudiantes/estudiante.service';
-import { MatDialog, MatDialogRef, MAT_DIALOG_DATA, MatDialogConfig } from '@angular/material';
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA, MatDialogConfig, MatSnackBar } from '@angular/material';
 import { Router } from '@angular/router';
 import { DateAdapter } from "@angular/material";
 
@@ -53,18 +53,20 @@ export class RetiroAnticipadoComponent implements OnInit {
 
 @Component({
   selector: "app-retiro-popup",
-  templateUrl: "./retiro-popup.component.html"
+  templateUrl: "./retiro-popup.component.html",
+  styleUrls: ['./retiro-anticipado.component.css']
 })
 export class RetiroPopupComponent {
   tipoPopup: string;
   IdEstudiante: string;
   antes10am: Boolean;
-  exito: boolean = false;
+  resultado: string;
 
   constructor(
     public dialogRef: MatDialogRef<RetiroPopupComponent>,
     public router: Router,
     public servicio: EstudiantesService,
+    public snackBar: MatSnackBar,
     @Inject(MAT_DIALOG_DATA) data
   ) {
     this.tipoPopup = data.tipoPopup;
@@ -74,7 +76,7 @@ export class RetiroPopupComponent {
 
   //Vuelve al menu principal
   onYesCancelarClick(): void {
-    this.router.navigate(["menuLateral/home"]);
+    this.router.navigate(["./home"]);
     this.dialogRef.close();
   }
 
@@ -86,17 +88,28 @@ export class RetiroPopupComponent {
   //Confirma el retiro anticipado para el estudiante
   onYesConfirmarClick(): void {
     this.servicio.registrarRetiroAnticipado(this.IdEstudiante, this.antes10am).subscribe(response =>{
-      this.exito= response.exito;
-      this.tipoPopup = "retirar";
-    });
-  }
-
-  //Si fue exitosa la operacion vuelve al menu principal, sino vuelve a la interfaz de retiro
-  onOkConfirmarClick() {
-    if (this.exito) {
-      this.router.navigate(["menuLateral/home"]);
+      this.resultado = response.exito;
       this.dialogRef.close();
-    }
-    this.dialogRef.close();
+      console.log(response);
+      if(this.resultado == "exito"){
+        this.snackBar.open("Se registró correctamente el retiro anticipado para el estudiante seleccionado.", "", {
+          duration: 4500,
+        });
+      }else if (this.resultado == "retirado"){
+        this.snackBar.open("Retiro no registrado. Ya se ha registrado un retiro anticipado para el estudiante seleccionado.", "", {
+          duration: 4500,
+        });
+      }
+      else if (this.resultado == "ausente"){
+        this.snackBar.open("Retiro no registrado. El estudiante esta ausente para el día de hoy.", "", {
+          duration: 4500,
+        });
+      }
+      else{
+        this.snackBar.open("Retiro no registrado. El estudiante no tiene registrada la asistencia para el día de hoy.", "", {
+          duration: 4500,
+        });
+      }
+    });
   }
 }

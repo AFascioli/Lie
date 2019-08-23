@@ -1,18 +1,22 @@
-.mat-card {
-  margin: 3rem;
-}
-
 .mat-form-field {
-  width: 35%;
+  width: 58.5%;
 }
 
 .mat-radio-button ~ .mat-radio-button {
   margin-left: 20px;
 }
-
-.mat-h1{
-  color: #C2185B;
+.mat-radio-button  {
+  margin-bottom: 20px;
 }
-button{
-  margin: 0.3rem;
+
+.mat-form-field, .mat-radio-button{
+  margin-left: 20%;
+}
+
+.div-button {
+  text-align: right;
+}
+
+.parrafo{
+  text-align: center;
 }

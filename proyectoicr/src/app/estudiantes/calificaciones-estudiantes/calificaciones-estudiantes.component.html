@@ -1,0 +1,75 @@
+<h1 class="componente-titulo">
+  Registrar calificaciones
+</h1>
+
+<mat-card class="card-body-componente">
+  <br>
+  <div align="center">
+    <mat-form-field>
+      <mat-select
+      placeholder="Seleccione trimestre"
+      name="trimestre"
+      >
+      </mat-select>
+  </mat-form-field>
+
+
+    <mat-form-field>
+        <mat-select
+        placeholder="Seleccione curso"
+        name="curso"
+        >
+        </mat-select>
+    </mat-form-field>
+
+<mat-form-field>
+    <mat-select
+    placeholder="Seleccione materia"
+    name="materia"
+    >
+    </mat-select>
+</mat-form-field>
+</div>
+
+<mat-card *ngIf="estudiantes.length > 0">
+  <table mat-table [dataSource]="estudiantes" [dataSource]="calificaciones" class="mat-elevation-z8">
+
+    <ng-container matColumnDef="apellido">
+      <th  class="columnasTabla" mat-header-cell *matHeaderCellDef> <b style="font-size:15px"> Apellido/s </b> </th>
+      <td  class="columnasTabla" mat-cell *matCellDef="let estudiantes"> {{estudiantes.apellido}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="nombre">
+      <th  class="columnasTabla" mat-header-cell *matHeaderCellDef> <b style="font-size:15px"> Nombre/s </b> </th>
+      <td  class="columnasTabla" mat-cell *matCellDef="let estudiantes"> {{estudiantes.nombre}} </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+  </table>
+  </mat-card>
+  <mat-card *ngIf="estudiantes.length <=0 ">
+  <p>No se encontraron estudiantes para ese curso y materia</p>
+  </mat-card>
+
+<div align="center">
+  <button  mat-raised-button
+    color="primary"
+    class="button"
+    >
+    Guardar
+  </button>
+
+  <button  mat-raised-button
+  color="warn"
+  >
+    Cancelar
+  </button>
+</div>
+
+<div>
+
+</div>
+
+</mat-card>

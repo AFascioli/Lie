@@ -1,4 +1,41 @@
-.ubicacion_inferior{
+/* .ubicacion_inferior{
   position:absolute;
   bottom:5px;
+} */
+
+.opcion{
+  margin: 1rem;
 }
+
+h3, .mat-icon-button{
+  color: #ffff;
+}
+
+.fixed-header {
+  position: sticky;
+  top: 0;
+  left: 0;
+  z-index: 2;
+  width: 100%  !important;
+  background-color: #c12d2a;
+}
+
+.body-contenido{
+  padding: 2rem;
+  padding-top: 0rem;
+}
+
+/* Para que el container del sidenav sea del tamaño completo del body,
+   le pongo 100% menos el tamaño del header */
+.mat-sidenav-container{
+  height: calc(100% - 64px);
+}
+
+.titulo-expansion{
+  margin-left: 8%;
+}
+
+.opciones-expansion{
+  margin-left: 10%;
+}
+

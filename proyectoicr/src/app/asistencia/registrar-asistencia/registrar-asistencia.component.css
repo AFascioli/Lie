@@ -1,22 +1,13 @@
-.mat-card {
-  margin: 3rem;
-}
-
-.mat-h1{
-  color: #C2185B;
-}
-
-table,
-button {
-  margin: 1rem;
-
-
-}
-
-.mat-form-field {
-  width: 15%;
+.curso {
   margin-left: 1rem;
-  margin-top: 1rem;
+  width: 22%;
+}
+
+.fecha {
+  margin-top: 0.5rem;
+  margin-right: 1rem;
+  width: 20%;
+  float: right;
 }
 
 table {
@@ -24,18 +15,23 @@ table {
   margin: 0 auto;
 }
 
-.fecha {
-  width: 60%;
+.nombreApellido {
+  width: 40%;
 }
 
-.nombreApellido{
-  width:40%;
+.presentismo {
+  width: 20%;
 }
 
-.presentismo{
-  width:20%;
-}
-.right{
-  float: right;
+.div-button {
+  text-align: right;
 }
 
+th{
+  font-weight: bold;
+  font-size: 15px;
+}
+
+.parrafo{
+  text-align: center;
+}

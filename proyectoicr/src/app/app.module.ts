@@ -14,7 +14,9 @@ import {
   MatToolbarModule,
   MatIconModule,
   MatListModule,
-  MatSlideToggleModule
+  MatSlideToggleModule,
+  MatCheckboxModule,
+  MatSnackBarModule
 } from "@angular/material";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { MatDatepickerModule } from "@angular/material/datepicker";
@@ -34,7 +36,7 @@ import {
   MostrarPopupComponent
 } from "./estudiantes/mostrar-estudiantes/mostrar-estudiantes.component";
 import { AppRoutingModule } from "./app-routing.module";
-import { MenuPrincipalComponent } from "./menu-principal/menu-principal.component";
+import { LoginComponent } from "./menu-principal/menu-principal.component";
 import { MenuLateralComponent } from "./menu-lateral/menu-lateral.component";
 import { HomeComponent } from "./home/home.component";
 import {
@@ -44,6 +46,11 @@ import {
 import { MatExpansionModule } from "@angular/material/expansion";
 import { InscripcionEstudianteComponent, InscripcionPopupComponent } from './estudiantes/inscripcion-estudiantes/inscripcion-estudiantes.component';
 import { RetiroAnticipadoComponent, RetiroPopupComponent } from './asistencia/retiro-anticipado/retiro-anticipado.component';
+import { DocumentosInscripcionComponent, DocumentosInscripcionPopupComponent } from './estudiantes/documentos-inscripcion/documentos-inscripcion.component';
+import {MatGridListModule} from '@angular/material/grid-list';
+import { CalificacionesEstudiantesComponent } from './estudiantes/calificaciones-estudiantes/calificaciones-estudiantes.component';
+import { LlegadaTardeComponent } from './asistencia/llegada-tarde/llegada-tarde.component';
+
 
 @NgModule({
   declarations: [
@@ -54,7 +61,7 @@ import { RetiroAnticipadoComponent, RetiroPopupComponent } from './asistencia/re
     MostrarEstudiantesComponent,
     AltaPopupComponent,
     MostrarPopupComponent,
-    MenuPrincipalComponent,
+    LoginComponent,
     MenuLateralComponent,
     HomeComponent,
     RegistrarAsistenciaComponent,
@@ -64,7 +71,11 @@ import { RetiroAnticipadoComponent, RetiroPopupComponent } from './asistencia/re
     InscripcionPopupComponent,
     AccionesEstudiantePopupComponent,
     RetiroAnticipadoComponent,
-    RetiroPopupComponent
+    RetiroPopupComponent,
+    DocumentosInscripcionComponent,
+    DocumentosInscripcionPopupComponent,
+    CalificacionesEstudiantesComponent,
+    LlegadaTardeComponent
   ],
   //entryComponents declara los componentes que se generan dinamicamente dentro de otros.
   entryComponents: [
@@ -74,7 +85,8 @@ import { RetiroAnticipadoComponent, RetiroPopupComponent } from './asistencia/re
     BuscarPopupComponent,
     InscripcionPopupComponent,
     AccionesEstudiantePopupComponent,
-    RetiroPopupComponent
+    RetiroPopupComponent,
+    DocumentosInscripcionPopupComponent
   ],
   imports: [
     BrowserModule,
@@ -98,7 +110,10 @@ import { RetiroAnticipadoComponent, RetiroPopupComponent } from './asistencia/re
     MatIconModule,
     MatListModule,
     MatSlideToggleModule,
-    MatExpansionModule
+    MatExpansionModule,
+    MatCheckboxModule,
+    MatSnackBarModule,
+    MatGridListModule
   ],
   providers: [EstudiantesService],
   bootstrap: [AppComponent]

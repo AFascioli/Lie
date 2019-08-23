@@ -1,6 +1,6 @@
 import { Component, OnInit } from "@angular/core";
 import { EstudiantesService } from "src/app/estudiantes/estudiante.service";
-import { MatDialogRef, MatDialog } from "@angular/material";
+import { MatDialogRef, MatDialog, MatSnackBar } from "@angular/material";
 import { Router } from "@angular/router";
 import { CdkRow, CdkFooterRowDefBase } from '@angular/cdk/table';
 import { DateAdapter } from "@angular/material";
@@ -11,24 +11,22 @@ import { DateAdapter } from "@angular/material";
   styleUrls: ["./registrar-asistencia.component.css"]
 })
 export class RegistrarAsistenciaComponent implements OnInit {
+  cursos: any[];
   cursoNotSelected: boolean;
   estudiantesXDivision: any[];
   displayedColumns: string[] = ["apellido", "nombre", "accion"];
   fechaActual: Date;
-  agent = {"attributes": [
-      { value: "presente" },],
 
-      };
-  constructor(private servicio: EstudiantesService, public popup: MatDialog,private dateAdapter: DateAdapter<Date>)
-  {
-    this.dateAdapter.setLocale("es");
-    }
-
+  constructor(private servicio: EstudiantesService, public popup: MatDialog, public snackBar: MatSnackBar) {}
 
   ngOnInit() {
     this.cursoNotSelected = true;
     this.fechaActual = new Date();
-
+    this.servicio.obtenerDivisionesXAño().subscribe(response=>{
+      this.cursos= response.cursos;
+      this.cursos.sort((a, b) =>
+        a.curso.charAt(0) > b.curso.charAt(0) ? 1 : b.curso.charAt(0) > a.curso.charAt(0) ? -1 : 0);
+      });
   }
 
   //Busca los estudiantes segun el curso que se selecciono en pantalla. Los orden alfabeticamente
@@ -49,7 +47,6 @@ export class RegistrarAsistenciaComponent implements OnInit {
 
     const indexEstudiante = this.estudiantesXDivision.findIndex(
       objConIDEstudiante => objConIDEstudiante._id == row._id,
-
     );
 
     this.estudiantesXDivision[indexEstudiante].presente = !this
@@ -66,9 +63,8 @@ export class RegistrarAsistenciaComponent implements OnInit {
   //Envia al servicio el vector con los datos de los estudiantes y el presentismo
   onGuardar() {
     this.servicio.registrarAsistencia(this.estudiantesXDivision);
-    this.servicio.tipoPopUp = "guardar";
-    this.popup.open(AsistenciaPopupComponent, {
-      width: "250px"
+    this.snackBar.open("Asistencia registrada exitósamente", "", {
+      duration: 4500,
     });
   }
 
@@ -82,7 +78,8 @@ export class RegistrarAsistenciaComponent implements OnInit {
 
 @Component({
   selector: "app-asistencia-popup",
-  templateUrl: "./asistencia-popup.component.html"
+  templateUrl: "./asistencia-popup.component.html",
+  styleUrls: ["./registrar-asistencia.component.css"]
 })
 export class AsistenciaPopupComponent {
   tipoPopup: string;
@@ -101,7 +98,7 @@ export class AsistenciaPopupComponent {
   }
 
   onYesClick(): void {
-    this.router.navigate(["menuLateral/home"]);
+    this.router.navigate(["./home"]);
     this.dialogRef.close();
   }
 

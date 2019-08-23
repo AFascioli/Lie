@@ -1,58 +1,78 @@
-<h1 class="mat-h1" color="accent">Inscribir estudiante a un curso</h1>
-<h3>Datos del estudiante</h3>
+<h1 class="componente-titulo">Inscribir estudiante a un curso</h1>
+<mat-card class="card-body-componente">
+  <p class="fecha"><b>Fecha: </b>{{ fechaActual | date: "dd/MM/yyyy" }}</p>
+  <br />
+  <!-- <div class="contenido"> -->
+    <mat-card class="card-datos">
+      <p class="titulo-datos-est">Datos del estudiante seleccionado</p>
+      <mat-card-subtitle>
+        <b>Apellido/s: </b> {{ apellidoEstudiante }}
+        <br />
+        <b>Nombre/s: </b> {{ nombreEstudiante }}
+      </mat-card-subtitle>
+    </mat-card>
+  <!-- </div> -->
+  <br />
 
-<h5>Apellido/s: {{ apellidoEstudiante }}</h5>
-
-<h5>Nombre/s: {{ nombreEstudiante }}</h5>
-
-<div class="right" >
-  <mat-form-field class="fecha">
-    <input matInput placeholder="Fecha" [disabled]="true">
-    {{fechaActual | date:'EEEE'}}
-    <br/>
-    {{fechaActual | date:'dd/MM/yyyy'}}
-  </mat-form-field>
-</div>
-
-<form #form="ngForm">
-  <mat-form-field>
-    <mat-select
-    placeholder="Seleccione año"
-    name="año"
-    ngModel
-    #año="ngModel"
-    matNativeControl
-    [(ngModel)]="anoSeleccionado"
-    required
-    (selectionChange)="FiltrarDivisiones()"
-  >
-    <mat-option
-    *ngFor="let anio of anios "
-    [value]="anio"
-    >
-    {{ anio }}
-  </mat-option>
-  </mat-select>
-</mat-form-field>
-<mat-form-field>
-  <mat-select
-    placeholder="Seleccione division"
-    name="division"
-    ngModel
-    #division="ngModel"
-    matNativeControl
-    required
-    [disabled]= "!seleccionDeAnio"
-    >
-    <mat-option *ngFor="let division of divisionesFiltradas" [value]="division">
-      {{ division }}
-    </mat-option>
-  </mat-select>
-</mat-form-field>
-<button color="primary"  (click)="openDialogo('confirmar', form, division)" mat-raised-button>
-  Inscribir
-</button>
-<button mat-raised-button (click)="openDialogo('cancelar', form, division)" color="warn">
-  Cancelar
-</button>
-</form>
+  <br />
+  <form #form="ngForm">
+    <div class="div-selects">
+      <mat-form-field>
+        <mat-select
+          placeholder="Seleccione curso"
+          name="curso"
+          ngModel
+          #curso="ngModel"
+          matNativeControl
+          required
+        >
+          <mat-option
+            *ngFor="let objCurso of cursos"
+            [value]="objCurso.curso"
+          >
+            {{ objCurso.curso }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+    <br />
+    <mat-accordion>
+      <mat-expansion-panel>
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            <b class="titulos-reg-doc">Registrar documentos entregados</b>
+          </mat-panel-title>
+        </mat-expansion-panel-header>
+        <mat-checkbox (change)="registrarDocumento(0)">
+          Fotocopia del documento</mat-checkbox
+        >
+        <br />
+        <mat-checkbox (change)="registrarDocumento(1)">
+          Ficha médica</mat-checkbox
+        >
+        <br />
+        <mat-checkbox (change)="registrarDocumento(2)">
+          Informe año anterior</mat-checkbox
+        >
+      </mat-expansion-panel>
+    </mat-accordion>
+    <br />
+    <div class="div-button">
+      <button
+        mat-raised-button
+        color="primary"
+        (click)="openDialogo('confirmar', form, curso)"
+        mat-raised-button
+      >
+        Inscribir
+      </button>
+      <button
+        mat-raised-button
+        (click)="openDialogo('cancelar', form, curso)"
+        color="warn"
+      >
+        Cancelar
+      </button>
+    </div>
+  </form>
+</mat-card>

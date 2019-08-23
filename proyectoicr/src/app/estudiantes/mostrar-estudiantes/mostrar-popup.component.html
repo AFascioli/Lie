@@ -1,48 +1,33 @@
 <div *ngIf="tipoPopup === 'cancelar'" class="cancelar">
-  <h3 mat-dialog-title>Cancelar</h3>
+  <h3 mat-dialog-title class="tituloPopup">Cancelar</h3>
   <div mat-dialog-content>
-    <p>¿Está seguro que desea cancelar?</p>
+    <p class="parrafo">¿Está seguro que desea cancelar?</p>
   </div>
-  <div mat-dialog-actions>
-    <button mat-button (click)="onYesClick()" cdkFocusInitial>
-      Si, volver al menú principal
+  <div mat-dialog-actions class="buttonPopup">
+    <button mat-raised-button color="primary" (click)="onYesClick()" cdkFocusInitial >
+      Sí
     </button>
-    <button mat-button (click)="onNoClick()">No, volver</button>
-  </div>
-</div>
-<div *ngIf="tipoPopup === 'guardar'" class="guardar">
-  <h3 mat-dialog-title>Guardar</h3>
-  <div mat-dialog-content *ngIf="formInvalido">
-    <p>Faltan ingresar campos</p>
-  </div>
-  <div mat-dialog-content *ngIf="!formInvalido">
-    <p *ngIf="formModificada">Se han registrado los cambios correctamente</p>
-    <p *ngIf="!formModificada">No se han realizado cambios en el estudiante</p>
-  </div>
-  <div mat-dialog-actions>
-    <button mat-button (click)="onOkClick()">OK</button>
+    <button mat-raised-button color="warn" (click)="onNoClick()" >No</button>
   </div>
 </div>
 <div *ngIf="tipoPopup === 'borrar'" class="borrar">
-  <h3 mat-dialog-title>Borrar</h3>
+  <h3 mat-dialog-title class="tituloPopup">Borrar</h3>
   <div mat-dialog-content>
-    <p>{{ borrar }}</p>
+    <p class="parrafo">{{ borrar }}</p>
   </div>
   <div
     *ngIf="borrar != 'El estudiante fue borrado exitosamente'"
-    mat-dialog-actions
-  >
-    <button mat-button (click)="onYesDeleteClick()" cdkFocusInitial>
-      Si, borrar
+    mat-dialog-actions class="buttonPopup">
+    <button mat-raised-button color="warn" (click)="onYesDeleteClick()" cdkFocusInitial >
+      Sí
     </button>
-    <button mat-button (click)="onNoClick()">No, volver</button>
+    <button mat-raised-button color="primary" (click)="onNoClick()">No</button>
   </div>
   <div
     *ngIf="borrar === 'El estudiante fue borrado exitosamente'"
-    mat-dialog-actions
-  >
-    <div mat-dialog-actions>
-      <button mat-button (click)="onOkClickBorrar()">OK</button>
+    mat-dialog-actions>
+    <div mat-dialog-actions class="buttonPopup">
+      <button mat-raised-button color="primary" (click)="onOkClickBorrar()" >Ok</button>
     </div>
   </div>
 </div>

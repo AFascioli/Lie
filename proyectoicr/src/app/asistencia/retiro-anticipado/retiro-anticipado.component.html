@@ -1,29 +1,47 @@
-<h1 class="mat-h1" color="accent">Registrar retiro anticipado
-</h1>
-<h3>Datos del estudiante</h3>
+<h1 class="componente-titulo">Registrar retiro anticipado</h1>
+<mat-card class="card-body-componente">
+  <p class="fecha"><b>Fecha: </b>{{ fechaActual | date: "dd/MM/yyyy" }}</p>
+  <br />
+  <br />
 
-<h5>Apellido/s: {{ apellidoEstudiante }}</h5>
+  <div class="contenido">
+    <mat-card class="card-datos">
+      <h3>Datos del estudiante seleccionado</h3>
+      <mat-card-subtitle>
+        <b>Apellido/s: </b> {{ apellidoEstudiante }}
+        <br />
+        <b>Nombre/s: </b> {{ nombreEstudiante }}
+      </mat-card-subtitle>
+    </mat-card>
+  </div>
 
-<h5>Nombre/s: {{ nombreEstudiante }}</h5>
+  <br />
 
-<div class="right" >
-  <mat-form-field class="fecha">
-    <input matInput placeholder="Fecha actual" [disabled]="true">
-    {{fechaActual | date:'EEEE'}}
-    <br/>
-    {{fechaActual | date:'dd/MM/yyyy'}}
-  </mat-form-field>
-</div>
+  <mat-radio-group aria-label="Select an option">
+    <mat-radio-button
+      (change)="CambiarTipoRetiro()"
+      [checked]="antes10am"
+      value="1"
+      >Antes de las 10:00 de la mañana</mat-radio-button
+    >
+    <mat-radio-button
+      (change)="CambiarTipoRetiro()"
+      [checked]="!antes10am"
+      value="2"
+      >Después de las 10:00 de la mañana</mat-radio-button
+    >
+  </mat-radio-group>
 
-<mat-radio-group aria-label="Select an option">
-  <mat-radio-button (change)="CambiarTipoRetiro()" [checked]="antes10am" value="1">Antes de las 10:00 de la mañana</mat-radio-button>
-  <mat-radio-button (change)="CambiarTipoRetiro()" [checked]="!antes10am" value="2">Después de las 10:00 de la mañana</mat-radio-button>
-</mat-radio-group>
+  <br />
+  <br />
 
-<button color="primary"  (click)="openPopup('confirmar')" mat-raised-button>
-  Guardar
-</button>
+  <div class="div-button">
+    <button color="primary" (click)="openPopup('confirmar')" mat-raised-button>
+      Guardar
+    </button>
 
-<button mat-raised-button (click)="openPopup('cancelar')" color="warn">
-  Cancelar
-</button>
+    <button mat-raised-button (click)="openPopup('cancelar')" color="warn">
+      Cancelar
+    </button>
+  </div>
+</mat-card>

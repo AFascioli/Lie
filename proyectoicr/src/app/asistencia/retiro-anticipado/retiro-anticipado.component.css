@@ -1,0 +1,32 @@
+.mat-radio-button {
+  margin: 1rem;
+}
+
+.mat-radio-group {
+  margin-left: 10%;
+  margin-right: 10%;
+}
+
+.fecha {
+  margin-top: 0.5rem;
+  margin-right: 1rem;
+  width: 20%;
+  float: right;
+}
+
+.div-button {
+  text-align: right;
+}
+
+.contenido {
+  width: 41%;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 1rem;
+}
+
+.card-datos{
+  margin: auto;
+  margin-top: 1rem;
+  width: 100%;
+}

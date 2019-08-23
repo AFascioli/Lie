@@ -1,9 +1,8 @@
-import { Component, OnInit, Inject } from "@angular/core";
+import { Component, OnInit } from "@angular/core";
 import { EstudiantesService } from '../estudiante.service';
 import { Estudiante } from '../estudiante.model';
-import { MatDialog, MatDialogRef } from '@angular/material';
+import { MatDialog, MatDialogRef, MatTabLabel } from '@angular/material';
 import { Router } from '@angular/router';
-//import { DialogoPopupComponent } from '../alta-estudiantes/alta-estudiantes.component';
 
 @Component({
   selector: "app-lista-estudiantes",
@@ -20,20 +19,21 @@ export class ListaEstudiantesComponent implements OnInit {
   ngOnInit() {
     this.servicio.getEstudiantesListener().subscribe(estudiantesBuscados =>{
       this.estudiantes = estudiantesBuscados;
-    })
+    });
+
   }
 
   OnSelection(row): void {
    this.servicio.estudianteSeleccionado = (this.estudiantes.find(estudiante => estudiante.numeroDocumento===row.numeroDocumento));
-   this.dialog.open(AccionesEstudiantePopupComponent,{ width: "250px"});
+   this.dialog.open(AccionesEstudiantePopupComponent,{ width: "350px"});
   }
 
 }
 
-
 @Component({
   selector: "app-acciones-estudiante-popup",
-  templateUrl: "./acciones-estudiante-popup.component.html"
+  templateUrl: "./acciones-estudiante-popup.component.html",
+  styleUrls: ["./lista-estudiantes.component.css"]
 })
 export class AccionesEstudiantePopupComponent {
 
@@ -44,19 +44,17 @@ export class AccionesEstudiantePopupComponent {
   }
 
   onInscribir(){
-    this.router.navigate(["menuLateral/curso"]);
+    this.router.navigate(["./curso"]);
     this.dialogRef.close();
   }
 
   onMostrar(){
-    this.router.navigate(["menuLateral/mostrar"]);
+    this.router.navigate(["./mostrar"]);
     this.dialogRef.close();
   }
 
   onRetiro(){
-    this.router.navigate(["menuLateral/retiroAnticipado"]);
+    this.router.navigate(["./retiroAnticipado"]);
     this.dialogRef.close();
   }
 }
-
-

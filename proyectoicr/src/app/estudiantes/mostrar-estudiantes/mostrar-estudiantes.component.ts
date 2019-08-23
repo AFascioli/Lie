@@ -7,7 +7,7 @@ import { Estudiante } from "../estudiante.model";
 import { FormsModule } from "@angular/forms";
 import { Nacionalidad } from "../nacionalidades.model";
 import { Localidad } from "../localidades.model";
-import { MatDialog, MatDialogRef } from "@angular/material";
+import { MatDialog, MatDialogRef, MatSnackBar } from "@angular/material";
 import { Router } from "@angular/router";
 
 @Component({
@@ -45,7 +45,8 @@ export class MostrarEstudiantesComponent implements OnInit {
   estadoCivilEstudiante: string;
   telefonoEstudiante: number;
 
-  constructor(public servicio: EstudiantesService, public dialog: MatDialog) {
+  constructor(public servicio: EstudiantesService, public dialog: MatDialog,
+    private snackBar: MatSnackBar) {
     this.apellidoEstudiante = this.servicio.estudianteSeleccionado.apellido;
     this.nombreEstudiante = this.servicio.estudianteSeleccionado.nombre;
     this.tipoDocEstudiante = this.servicio.estudianteSeleccionado.tipoDocumento;
@@ -145,11 +146,30 @@ export class MostrarEstudiantesComponent implements OnInit {
       width: "250px"
     });
   }
+
+  snackBarGuardar(form: NgForm): void {
+    if(form.dirty){
+      if(form.invalid){
+        this.snackBar.open("Faltan campos por completar", "", {
+          duration: 4000
+        });
+      }else{
+        this.snackBar.open("Se han registrado los cambios correctamente", "", {
+          duration: 4000
+        });
+      }
+    }else{
+      this.snackBar.open("No se han realizado cambios", "", {
+        duration: 4000
+      });
+    }
+  }
 }
 
 @Component({
   selector: "app-mostrar-popup",
-  templateUrl: "./mostrar-popup.component.html"
+  templateUrl: "./mostrar-popup.component.html",
+  styleUrls: ["./mostrar-estudiantes.component.css"]
 })
 export class MostrarPopupComponent {
   tipoPopup: string;
@@ -169,7 +189,7 @@ export class MostrarPopupComponent {
   }
 
   onYesClick(): void {
-    this.router.navigate(["menuLateral/home"]);
+    this.router.navigate(["./home"]);
     this.dialogRef.close();
   }
 
@@ -184,7 +204,7 @@ export class MostrarPopupComponent {
 
   onOkClickBorrar(): void {
     this.dialogRef.close();
-    this.router.navigate(["menuLateral/buscar"]);
+    this.router.navigate(["./buscar"]);
   }
 
   onYesDeleteClick() {

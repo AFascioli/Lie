@@ -1,16 +1,13 @@
-import { Nacionalidad } from './../nacionalidades.model';
+import { Nacionalidad } from "./../nacionalidades.model";
 import { Component, OnInit, OnDestroy } from "@angular/core";
 import { EstudiantesService } from "../estudiante.service";
 import { NgForm } from "@angular/forms";
 import { Provincia } from "../provincias.model";
 import { Localidad } from "../localidades.model";
 import { Subscription } from "rxjs";
-import { DateAdapter } from "@angular/material";
-import {
-  MatDialog,
-  MatDialogRef
-} from "@angular/material/dialog";
-import { Router } from '@angular/router';
+import { DateAdapter, MatSnackBar } from "@angular/material";
+import { MatDialog, MatDialogRef } from "@angular/material/dialog";
+import { Router } from "@angular/router";
 
 @Component({
   selector: "app-alta-estudiantes",
@@ -29,7 +26,8 @@ export class AltaEstudiantesComponent implements OnInit, OnDestroy {
   constructor(
     public servicio: EstudiantesService,
     private dateAdapter: DateAdapter<Date>,
-    public dialog: MatDialog
+    public dialog: MatDialog,
+    private snackBar: MatSnackBar
   ) {
     this.dateAdapter.setLocale("es");
   }
@@ -90,51 +88,52 @@ export class AltaEstudiantesComponent implements OnInit, OnDestroy {
   }
 
   FiltrarLocalidades() {
-    const idProvinciaSeleccionada = this.provincias.find(provincia => provincia.nombre===this.nombreProvinciaSeleccionada).id;
+    const idProvinciaSeleccionada = this.provincias.find(
+      provincia => provincia.nombre === this.nombreProvinciaSeleccionada
+    ).id;
     this.localidadesFiltradas = [...this.localidades];
     this.localidadesFiltradas = this.localidadesFiltradas.filter(
       localidad => localidad.id_provincia == idProvinciaSeleccionada
     );
   }
 
-
-  // Se valida el estado del formulario y se abre el pop up
-  openDialogo(tipoPopup:string, form: NgForm): void {
-    this.servicio.tipoPopUp = tipoPopup;
-    if(form.invalid){
-      this.servicio.formInvalidoEstudiante=true;
-    }else{
-      this.servicio.formInvalidoEstudiante=false;
+  snackBarGuardar(form: NgForm): void {
+    if (form.invalid) {
+      this.snackBar.open("Faltan campos por completar", "", {
+        duration: 4000
+      });
+    } else {
+      this.snackBar.open("El estudiante se ha registrado correctamente", "", {
+        duration: 4000
+      });
     }
+  }
+
+  popUpCancelar(){
     this.dialog.open(AltaPopupComponent, {
       width: "250px"
     });
   }
 }
 
+
 @Component({
   selector: "app-alta-popup",
-  templateUrl: "./alta-popup.component.html"
+  templateUrl: "./alta-popup.component.html",
+  styleUrls: ["./alta-estudiantes.component.css"]
 })
 export class AltaPopupComponent {
-  formInvalido : Boolean;
-      tipoPopup :  string;
   constructor(
-        public dialogRef: MatDialogRef<AltaPopupComponent>, public router: Router,  public servicio: EstudiantesService
-      ) {this.tipoPopup = this.servicio.tipoPopUp;
-        this.formInvalido = this.servicio.formInvalidoEstudiante;}
+    public dialogRef: MatDialogRef<AltaPopupComponent>,
+    public router: Router
+  ) {
+  }
 
-      onYesClick():void{
-        this.router.navigate(['menuLateral/home']);
-        this.dialogRef.close();
-      }
-      onNoClick(): void {
-        this.dialogRef.close();
-      }
-
-       onOkClick(): void {
-        this.servicio.formInvalidoEstudiante = true;
-        this.dialogRef.close();
-      }
+  onYesClick(): void {
+    this.router.navigate(["./home"]);
+    this.dialogRef.close();
+  }
+  onNoClick(): void {
+    this.dialogRef.close();
+  }
 }
-

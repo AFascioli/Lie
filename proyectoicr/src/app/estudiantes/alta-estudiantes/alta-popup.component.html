@@ -1,22 +1,23 @@
-<div *ngIf="tipoPopup == 'cancelar'" class= "cancelar">
-<h3 mat-dialog-title>Cancelar</h3>
+<div class= "cancelar">
+<h3 mat-dialog-title class="tituloPopup">Cancelar</h3>
 <div mat-dialog-content>
-  <p>¿Está seguro que desea cancelar el alta del estudiante?</p>
+  <p class="parrafo">¿Está seguro que desea cancelar el alta del estudiante?</p>
 </div>
-<div mat-dialog-actions>
-  <button mat-button (click)="onYesClick()" cdkFocusInitial>Si, volver al menú principal </button>
-  <button mat-button (click)="onNoClick()">No, volver</button>
+<div mat-dialog-actions class="buttonPopup" >
+  <button mat-raised-button  color="primary" (click)="onYesClick()"  cdkFocusInitial >Sí</button>
+  <button mat-raised-button color="warn" (click)="onNoClick()">No</button>
 </div>
-</div>
+
+<!-- </div>
 <div *ngIf="tipoPopup == 'guardar'" class= "guardar">
-<h3 mat-dialog-title>Guardar</h3>
+<h3 mat-dialog-title class="tituloPopup">Guardar</h3>
 <div mat-dialog-content *ngIf="formInvalido">
-  <p>Faltan ingresar campos.</p>
+  <p class="parrafo">Faltan ingresar campos</p>
 </div>
 <div mat-dialog-content *ngIf="!formInvalido">
-  <p>El estudiante se ha registrado correctamente</p>
+  <p class="parrafo">El estudiante se ha registrado correctamente</p>
 </div>
-<div mat-dialog-actions>
-  <button mat-button (click)="onOkClick()">OK</button>
+<div mat-dialog-actions class="buttonPopup">
+  <button mat-raised-button  color="primary" (click)="onOkClick()">Ok</button>
 </div>
-</div>
+</div> -->

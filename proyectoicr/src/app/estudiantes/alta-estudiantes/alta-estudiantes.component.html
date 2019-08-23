@@ -1,271 +1,322 @@
-<mat-card>
-    <meta charset="utf-8" />
-    <h1 class="mat-h1" color="accent">Registrar estudiante</h1>
+<h1 class="componente-titulo">
+  Registrar estudiante
+</h1>
+<mat-card class="card-body-componente">
+  <meta charset="utf-8" />
+
   <form #form="ngForm" (submit)="onGuardar(form)">
-    <mat-form-field>
-      <input
-        name="apellido"
-        pattern="[A-Za-záéíóúÁÉÍÓÚñÑ ]+"
-        minlength="2"
-        maxlength="40"
-        ngModel
-        #apellido="ngModel"
-        matInput
-        placeholder="Ingrese apellido/s"
-        type="text"
-        required
-      />
-    </mat-form-field>
-    <br />
-    <mat-form-field>
-      <input
-        pattern="[A-Za-záéíóúÁÉÍÓÚñÑ ]+"
-        name="nombre"
-        minlength="2"
-        maxlength="40"
-        ngModel
-        #nombre="ngModel"
-        matInput
-        placeholder="Ingrese nombre/s"
-        type="text"
-        required
-      />
-    </mat-form-field>
-     <br />
-    <mat-form-field>
-      <mat-select
-        placeholder="Seleccione tipo de documento"
-        name="tipoDocumento"
-        ngModel
-        #tipoDocumento="ngModel"
-        matNativeControl
-        required
-      >
-        <mat-option value="DNI">DNI</mat-option>
-        <mat-option value="Cedula de Identidad">Cédula de Identidad</mat-option>
-        <mat-option value="Libreta de Enrolamiento"
-          >Libreta de Enrolamiento</mat-option
-        >
-        <mat-option value="Libreta Civica">Libreta Cívica</mat-option>
-        <mat-option value="Pasaporte">Pasaporte</mat-option>
-      </mat-select>
-    </mat-form-field>
-    <br />
-    <!-- Ver de hacer el maxlength según los tipos de documento que pongamos
-    -->
-    <mat-form-field>
-      <input
-        name="nroDocumento"
-        maxlength="8"
-        pattern="[0-9]+"
-        ngModel
-        #nroDocumento="ngModel"
-        matInput
-        placeholder="Ingrese el número de documento"
-        type="number"
-        required
-      />
-    </mat-form-field>
-    <br />
-    <mat-form-field>
-      <input
-        name="cuil"
-        pattern="[0-9]+"
-        maxlength="11"
-        ngModel
-        #cuil="ngModel"
-        matInput
-        type="number"
-        placeholder="Ingrese el número de CUIL"
-      />
-    </mat-form-field>
-    <br />
-    <mat-form-field>
-      <mat-select
-        placeholder="Seleccione sexo"
-        name="sexo"
-        ngModel
-        #sexo="ngModel"
-        matNativeControl
-        required
-      >
-        <mat-option value="femenino">Femenino</mat-option>
-        <mat-option value="masculino">Masculino</mat-option>
-      </mat-select>
-    </mat-form-field>
-    <br />
-    <div class="domicilio">
-      <mat-form-field>
-        <input
-          name="calle"
-          pattern="[A-Za-záéíóúÁÉÍÓÚñÑ. ]+"
-          minlength="2"
-          maxlength="30"
-          ngModel
-          #calle="ngModel"
-          matInput
-          placeholder="Ingrese calle"
-          type="text"
-          required
-        />
-      </mat-form-field>
-      <br />
-      <mat-form-field>
-        <input
-          name="nroCalle"
-          pattern="[0-9]+"
-          maxlength="5"
-          ngModel
-          #nroCalle="ngModel"
-          matInput
-          type="number"
-          placeholder="Ingrese número"
-          required
-        />
-      </mat-form-field>
-      <br />
-      <mat-form-field>
-        <input
-          name="piso"
-          pattern="[\w]+"
-          ngModel
-          #piso="ngModel"
-          matInput
-          placeholder="Ingrese piso"
-          type="text"
-        />
-      </mat-form-field>
-      <br />
-      <mat-form-field>
-        <input
-          name="departamento"
-          ngModel
-          #departamento="ngModel"
-          matInput
-          pattern="[A-Za-záéíóúÁÉÍÓÚ]+"
-          placeholder="Ingrese departamento"
-          type="text"
-        />
-      </mat-form-field>
-      <br />
-      <mat-form-field>
-        <mat-select
-          placeholder="Seleccione provincia"
-          name="provincia"
-          ngModel
-          #provincia="ngModel"
-          matNativeControl
-          required
-          [(ngModel)]="nombreProvinciaSeleccionada"
-          (selectionChange)="FiltrarLocalidades()"
-        >
-          <mat-option
-            *ngFor="let provincia of provincias"
-            [value]="provincia.nombre"
+    <mat-accordion>
+      <mat-expansion-panel [expanded]="true">
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            <b>Datos personales del estudiante</b>
+          </mat-panel-title>
+        </mat-expansion-panel-header>
+
+        <mat-form-field>
+          <input
+            name="apellido"
+            pattern="[A-Za-záéíóúÁÉÍÓÚñÑ ]+"
+            minlength="2"
+            maxlength="40"
+            ngModel
+            #apellido="ngModel"
+            matInput
+            placeholder="Ingrese apellido/s"
+            type="text"
+            required
+          />
+        </mat-form-field>
+
+        &nbsp;
+
+        <mat-form-field>
+          <input
+            pattern="[A-Za-záéíóúÁÉÍÓÚñÑ ]+"
+            name="nombre"
+            minlength="2"
+            maxlength="40"
+            ngModel
+            #nombre="ngModel"
+            matInput
+            placeholder="Ingrese nombre/s"
+            type="text"
+            required
+          />
+        </mat-form-field>
+        <br />
+        <mat-form-field>
+          <mat-select
+            placeholder="Seleccione tipo de documento"
+            name="tipoDocumento"
+            ngModel
+            #tipoDocumento="ngModel"
+            matNativeControl
+            required
           >
-            {{ provincia.nombre }}
-          </mat-option>
-        </mat-select>
-      </mat-form-field>
-      <br />
-      <mat-form-field>
-        <mat-select
-          placeholder="Seleccione localidad"
-          name="localidad"
-          ngModel
-          #localidad="ngModel"
-          matNativeControl
-          required
-        >
-          <mat-option
-            *ngFor="let localidad of localidadesFiltradas"
-            [value]="localidad.nombre"
+            <mat-option value="DNI">DNI</mat-option>
+            <mat-option value="Cedula de Identidad"
+              >Cédula de Identidad</mat-option
+            >
+            <mat-option value="Libreta de Enrolamiento"
+              >Libreta de Enrolamiento</mat-option
+            >
+            <mat-option value="Libreta Civica">Libreta Cívica</mat-option>
+            <mat-option value="Pasaporte">Pasaporte</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        &nbsp;
+
+        <mat-form-field>
+          <input
+            name="nroDocumento"
+            maxlength="8"
+            pattern="[0-9]+"
+            ngModel
+            #nroDocumento="ngModel"
+            matInput
+            placeholder="Ingrese el número de documento"
+            type="number"
+            required
+          />
+        </mat-form-field>
+
+        <br />
+
+        <mat-form-field>
+          <input
+            name="cuil"
+            pattern="[0-9]+"
+            maxlength="11"
+            ngModel
+            #cuil="ngModel"
+            matInput
+            type="number"
+            placeholder="Ingrese el número de CUIL"
+          />
+        </mat-form-field>
+        <br />
+        <mat-form-field>
+          <mat-select
+            placeholder="Seleccione sexo"
+            name="sexo"
+            ngModel
+            #sexo="ngModel"
+            matNativeControl
+            required
           >
-            {{ localidad.nombre }}
-          </mat-option>
-        </mat-select>
-      </mat-form-field>
-      <br />
-      <mat-form-field>
-        <input
-          name="codigoPostal"
-          ngModel
-          #codigoPostal="ngModel"
-          matInput
-          placeholder="Ingrese código postal"
-          type="number"
-        />
-      </mat-form-field>
-      <br />
+            <mat-option value="femenino">Femenino</mat-option>
+            <mat-option value="masculino">Masculino</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <div class="nacionalidad">
+          <mat-form-field>
+            <input
+              matInput
+              name="fechaNac"
+              ngModel
+              #fechaNac="ngModel"
+              [max]="maxDate"
+              [matDatepicker]="picker"
+              placeholder="Seleccione fecha de nacimiento"
+              required
+            />
+            <mat-datepicker-toggle
+              matSuffix
+              [for]="picker"
+            ></mat-datepicker-toggle>
+            <mat-datepicker
+              #picker
+              startView="year"
+              disabled="false"
+            ></mat-datepicker>
+          </mat-form-field>
+          <br />
+          <mat-form-field>
+            <mat-select
+              placeholder="Seleccione nacionalidad"
+              name="nacionalidad"
+              ngModel
+              #nacionalidad="ngModel"
+              matNativeControl
+            >
+              <mat-option
+                *ngFor="let nacionalidad of nacionalidades"
+                [value]="nacionalidad.name"
+              >
+                {{ nacionalidad.name }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+          <br />
+        </div>
+        <mat-form-field>
+          <mat-select
+            placeholder="Seleccione estado civil"
+            name="estadoCivil"
+            ngModel
+            #estadoCivil="ngModel"
+            matNativeControl
+          >
+            <mat-option value="soltero">Soltero/a</mat-option>
+            <mat-option value="casado">Casado/a</mat-option>
+            <mat-option value="viudo">Viudo/a</mat-option>
+          </mat-select>
+        </mat-form-field>
+        <br />
+        <mat-form-field>
+          <input
+            matInput
+            name="telefono"
+            pattern="[0-9]{10}"
+            ngModel
+            #telefono="ngModel"
+            placeholder="Ingrese número de teléfono"
+            type="number"
+          />
+        </mat-form-field>
+      </mat-expansion-panel>
+    </mat-accordion>
+    <br />
+    <mat-accordion>
+      <mat-expansion-panel>
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            <b>Domicilio</b>
+          </mat-panel-title>
+        </mat-expansion-panel-header>
+        <div class="domicilio">
+          <mat-form-field>
+            <input
+              name="calle"
+              pattern="[A-Za-záéíóúÁÉÍÓÚñÑ. ]+"
+              minlength="2"
+              maxlength="30"
+              ngModel
+              #calle="ngModel"
+              matInput
+              placeholder="Ingrese calle"
+              type="text"
+              required
+            />
+          </mat-form-field>
+
+          &nbsp;
+
+          <mat-form-field>
+            <input
+              name="nroCalle"
+              pattern="[0-9]+"
+              maxlength="5"
+              ngModel
+              #nroCalle="ngModel"
+              matInput
+              type="number"
+              placeholder="Ingrese número"
+              required
+            />
+          </mat-form-field>
+          <br />
+          <mat-form-field>
+            <input
+              name="piso"
+              pattern="[\w]+"
+              ngModel
+              #piso="ngModel"
+              matInput
+              placeholder="Ingrese piso"
+              type="text"
+            />
+          </mat-form-field>
+          <br />
+          <mat-form-field>
+            <input
+              name="departamento"
+              ngModel
+              #departamento="ngModel"
+              matInput
+              pattern="[A-Za-záéíóúÁÉÍÓÚ]+"
+              placeholder="Ingrese departamento"
+              type="text"
+            />
+          </mat-form-field>
+          <br />
+          <mat-form-field>
+            <mat-select
+              placeholder="Seleccione provincia"
+              name="provincia"
+              ngModel
+              #provincia="ngModel"
+              matNativeControl
+              required
+              [(ngModel)]="nombreProvinciaSeleccionada"
+              (selectionChange)="FiltrarLocalidades()"
+            >
+              <mat-option
+                *ngFor="let provincia of provincias"
+                [value]="provincia.nombre"
+              >
+                {{ provincia.nombre }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          &nbsp;
+
+          <mat-form-field>
+            <mat-select
+              placeholder="Seleccione localidad"
+              name="localidad"
+              ngModel
+              #localidad="ngModel"
+              matNativeControl
+              required
+            >
+              <mat-option
+                *ngFor="let localidad of localidadesFiltradas"
+                [value]="localidad.nombre"
+              >
+                {{ localidad.nombre }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+          <br />
+          <mat-form-field>
+            <input
+              name="codigoPostal"
+              ngModel
+              #codigoPostal="ngModel"
+              matInput
+              placeholder="Ingrese código postal"
+              type="number"
+            />
+          </mat-form-field>
+          <br />
+        </div>
+      </mat-expansion-panel>
+    </mat-accordion>
+
+    <br />
+
+    <div class="div-button">
+      <button mat-raised-button>Registrar Adulto Responsable</button>
+      <button
+        type="submit"
+        (click)="snackBarGuardar(form)"
+        color="primary"
+        mat-raised-button
+      >
+        Guardar
+      </button>
+      <button
+        mat-raised-button
+        (click)="popUpCancelar()"
+        color="warn"
+      >
+        Cancelar
+      </button>
     </div>
-    <div class="nacionalidad">
-      <mat-form-field>
-        <input
-          matInput
-          name="fechaNac"
-          ngModel
-          #fechaNac="ngModel"
-          [max]="maxDate"
-          [matDatepicker]="picker"
-          placeholder="Seleccione fecha de nacimiento"
-          required
-        />
-        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-        <mat-datepicker
-          #picker
-          startView="year"
-          disabled="false"
-        ></mat-datepicker>
-      </mat-form-field>
-      <br />
-      <mat-form-field>
-        <mat-select
-          placeholder="Seleccione nacionalidad"
-          name="nacionalidad"
-          ngModel
-          #nacionalidad="ngModel"
-          matNativeControl
-        >
-          <mat-option
-            *ngFor="let nacionalidad of nacionalidades"
-            [value]="nacionalidad.name"
-          >
-            {{ nacionalidad.name }}
-          </mat-option>
-        </mat-select>
-      </mat-form-field>
-      <br />
-    </div>
-    <mat-form-field>
-      <mat-select
-        placeholder="Seleccione estado civil"
-        name="estadoCivil"
-        ngModel
-        #estadoCivil="ngModel"
-        matNativeControl
-      >
-        <mat-option value="soltero">Soltero/a</mat-option>
-        <mat-option value="casado">Casado/a</mat-option>
-        <mat-option value="viudo">Viudo/a</mat-option>
-      </mat-select>
-    </mat-form-field>
-    <br />
-    <mat-form-field>
-      <input
-        matInput
-        name="telefono"
-        pattern="[0-9]{10}"
-        ngModel
-        #telefono="ngModel"
-        placeholder="Ingrese número de teléfono"
-        type="number"
-        />
-    </mat-form-field>
-    <br />
-    <div align="center">
-    <button mat-raised-button>Registrar Adulto Responsable</button>
-    <button type="submit" (click)="openDialogo('guardar', form)"color="primary" mat-raised-button>Guardar</button>
-    <button mat-raised-button (click)="openDialogo('cancelar', form)" color="warn">Cancelar</button>
-  </div>
   </form>
 </mat-card>

@@ -1,34 +1,22 @@
 <div *ngIf="tipoPopup === 'cancelar'">
-  <h3 mat-dialog-title>Cancelar</h3>
-  <div mat-dialog-content>
+  <h3 mat-dialog-title class="tituloPopup" >Cancelar</h3>
+  <div mat-dialog-content class="parrafo">
     <p>¿Está seguro que desea cancelar?</p>
   </div>
-  <div mat-dialog-actions>
-    <button mat-button (click)="onYesCancelarClick()" cdkFocusInitial>Sí, volver al menú principal </button>
-    <button mat-button (click)="onNoCancelarConfirmarClick()">No, volver</button>
+  <div mat-dialog-actions class="buttonPopup" >
+    <button mat-raised-button color="primary" (click)="onYesCancelarClick()" cdkFocusInitial>Sí </button>
+    <button mat-raised-button color="warn" (click)="onNoCancelarConfirmarClick()">No</button>
   </div>
 </div>
 
 <div *ngIf="tipoPopup==='confirmar'">
-        <h3 mat-dialog-title>Confirmar</h3>
-        <div mat-dialog-content>
-          <p>¿Está seguro que desea registrar el retiro anticipado del estudiante?</p>
+        <h3 mat-dialog-title class="tituloPopup">Confirmar</h3>
+        <div mat-dialog-content class="parrafo">
+          <p>¿Está seguro que desea confirmar la acción?</p>
         </div>
-        <div mat-dialog-actions>
-          <button mat-button (click)="onYesConfirmarClick()" cdkFocusInitial>Sí, registrar</button>
-          <button mat-button (click)="onNoCancelarConfirmarClick()">No, volver</button>
+        <div mat-dialog-actions class="buttonPopup">
+          <button mat-raised-button color="primary"  (click)="onYesConfirmarClick()" cdkFocusInitial>Sí</button>
+          <button mat-raised-button color="warn" (click)="onNoCancelarConfirmarClick()">No </button>
         </div>
   </div>
 
-<div *ngIf="tipoPopup === 'retirar'">
-    <h3 mat-dialog-title>Retiro Anticipado</h3>
-    <div mat-dialog-content *ngIf="exito">
-        <p>Se registró correctamente el retiro anticipado</p>
-      </div>
-      <div mat-dialog-content *ngIf="!exito">
-          <p>Ya se ha registrado un retiro para el estudiante seleccionado</p>
-        </div>
-    <div mat-dialog-actions>
-      <button mat-button (click)="onOkConfirmarClick()">OK</button>
-    </div>
-  </div>

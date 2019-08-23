@@ -149,7 +149,7 @@ router.get("/division", (req, res, next) => {
         _id: objConEstudiante.estudiante[0]._id,
         nombre: objConEstudiante.estudiante[0].nombre,
         apellido: objConEstudiante.estudiante[0].apellido,
-        presente: false,
+        presente: true,
         fecha: fechaActual
       };
       estudiantesRedux.push(estudianteRedux);
@@ -194,27 +194,240 @@ router.post("/asistencia", (req, res) => {
 router.post("/retiro", (req, res) => {
   Inscripcion.findOne(
     { IdEstudiante: req.body.IdEstudiante, activa: true },
-    { asistenciaDiaria: {$slice: -1} }
+    { asistenciaDiaria: { $slice: -1 } }
   ).then(inscripcion => {
-    if(!inscripcion){
-      res.status(404).json({message: "El estudiante no está inscripto en ningún curso", exito: false});
-    }else{
+    if (!inscripcion) {
+      res.status(200).json({
+        message: "El estudiante no está inscripto en ningún curso",
+        exito: false
+      });
+    } else {
       var actualizacionInasistencia = 0.5;
       if (req.body.antes10am) {
         actualizacionInasistencia = 1;
       }
-      AsistenciaDiaria.findByIdAndUpdate(
-        inscripcion.asistenciaDiaria[0],
-        { retiroAnticipado: true, $inc: { valorInasistencia: actualizacionInasistencia } }
-      ).then((asistenciaDiaria)=> {
-        if(!asistenciaDiaria.presente){
-          res.status(404).json({message: "El estudiante no tiene registrada asistencia para el día de hoy", exito: false});
-        }else{
-          res.status(200).json({message: "Retiro anticipado exitósamente registrado", exito: true});
-        }
-      });
+      AsistenciaDiaria.findById(inscripcion.asistenciaDiaria[0])
+        .select({ retiroAnticipado: 1, presente: 1 })
+        .then(asistencia => {
+          if (asistencia) {
+            if (!asistencia.presente) {
+              res.status(200).json({
+                message: "El estudiante esta ausente para el día de hoy",
+                exito: "ausente"
+              });
+            } else {
+              if (asistencia.retiroAnticipado) {
+                res.status(200).json({
+                  message:
+                    "El estudiante ya tiene registrado un retiro anticipado para el día de hoy",
+                  exito: "retirado"
+                });
+              } else {
+                AsistenciaDiaria.findByIdAndUpdate(
+                  inscripcion.asistenciaDiaria[0],
+                  {
+                    retiroAnticipado: true,
+                    $inc: { valorInasistencia: actualizacionInasistencia }
+                  }
+                ).then(() => {
+                  res.status(200).json({
+                    message: "Retiro anticipado exitósamente registrado",
+                    exito: "exito"
+                  });
+                });
+              }
+            }
+          } else {
+            res.status(200).json({
+              message:
+                "El estudiante no tiene registrada la asistencia para el día de hoy",
+              exito: "faltaasistencia"
+            });
+          }
+        })
+        .catch(e => console.log(e));
     }
   });
 });
 
+//Vamos a recibir, un vector de los estudiantes a los que se le modificaron los documentos entregados.
+router.post("/documentos", (req, res) => {
+  try {
+    req.body.forEach(estudiante => {
+      Inscripcion.findOneAndUpdate(
+        { IdEstudiante: estudiante.IdEstudiante, activa: true },
+        { $set: { documentosEntregados: estudiante.documentosEntregados } }
+      ).exec();
+      console.dir(estudiante);
+    });
+    res
+      .status(201)
+      .json({ message: "Documentos guardados correctamente", exito: true });
+  } catch {
+    res.status(201).json({ message: e, exito: false });
+  }
+});
+
+//Retorna vector con datos de los estudiantes y presente. Si ya se registro una asistencia para
+//el dia de hoy se retorna ese valor de la asistencia, sino se "construye" una nueva
+router.get("/asistenciatest", (req, res) => {
+  Inscripcion.aggregate([
+    {
+      $lookup: {
+        from: "divisiones",
+        localField: "IdDivision",
+        foreignField: "_id",
+        as: "curso"
+      }
+    },
+    {
+      $match: {
+        "curso.curso": "4A",
+        activa: true
+      }
+    },
+    {
+      $project: {
+        ultimaAsistencia: {
+          $slice: ["$asistenciaDiaria", -1]
+        }
+      }
+    },
+    {
+      $lookup: {
+        from: "asistenciaDiaria",
+        localField: "ultimaAsistencia",
+        foreignField: "_id",
+        as: "asistencia"
+      }
+    },
+    {
+      $project: {
+        _id: 0,
+        "asistencia.fecha": 1
+      }
+    },
+    {
+      $limit: 1
+    }
+  ]).then(ultimaAsistencia => {
+    var fechaHoy = new Date();
+    fechaHoy.setHours(fechaHoy.getHours() - 3);
+    console.log(fechaHoy);
+    if (
+      fechaHoy.getDate() == ultimaAsistencia[0].asistencia[0].fecha.getDate() &&
+      fechaHoy.getMonth() ==
+        ultimaAsistencia[0].asistencia[0].fecha.getMonth() &&
+      fechaHoy.getFullYear() ==
+        ultimaAsistencia[0].asistencia[0].fecha.getFullYear()
+    ) {
+      Inscripcion.aggregate([
+        {
+          $lookup: {
+            from: "divisiones",
+            localField: "IdDivision",
+            foreignField: "_id",
+            as: "curso"
+          }
+        },
+        {
+          $lookup: {
+            from: "estudiantes",
+            localField: "IdEstudiante",
+            foreignField: "_id",
+            as: "datosEstudiante"
+          }
+        },
+        {
+          $match: {
+            "curso.curso": "4A",
+            activa: true
+          }
+        },
+        {
+          $project: {
+            ultimaAsistencia: {
+              $slice: ["$asistenciaDiaria", -1]
+            },
+            "datosEstudiante._id": 1,
+            "datosEstudiante.nombre": 1,
+            "datosEstudiante.apellido": 1
+          }
+        },
+        {
+          $lookup: {
+            from: "asistenciaDiaria",
+            localField: "ultimaAsistencia",
+            foreignField: "_id",
+            as: "asistencia"
+          }
+        },
+        {
+          $project: {
+            datosEstudiante: 1,
+            "asistencia.presente": 1
+          }
+        }
+      ]).then(asistenciaCurso => {
+        var respuesta = [];
+        asistenciaCurso.forEach(estudiante => {
+          var estudianteRefinado = {
+            _id: estudiante.datosEstudiante[0]._id,
+            nombre: estudiante.datosEstudiante[0].nombre,
+            apellido: estudiante.datosEstudiante[0].apellido,
+            presente: estudiante.asistencia[0].presente
+          };
+          respuesta.push(estudianteRefinado);
+        });
+        res.status(200).json({ estudiantes: respuesta });
+      });
+    }
+
+    Inscripcion.aggregate([
+      {
+        $lookup: {
+          from: "divisiones",
+          localField: "IdDivision",
+          foreignField: "_id",
+          as: "curso"
+        }
+      },
+      {
+        $lookup: {
+          from: "estudiantes",
+          localField: "IdEstudiante",
+          foreignField: "_id",
+          as: "estudiante"
+        }
+      },
+      {
+        $match: { "curso.curso": req.query.division, activa: true }
+      },
+      {
+        $project: {
+          _id: 0,
+          "estudiante._id": 1,
+          "estudiante.nombre": 1,
+          "estudiante.apellido": 1
+        }
+      }
+    ]).then(documents => {
+      const fechaActual = new Date();
+      fechaActual.setHours(fechaActual.getHours());
+      var estudiantesRedux = [];
+      documents.forEach(objConEstudiante => {
+        let estudianteRedux = {
+          _id: objConEstudiante.estudiante[0]._id,
+          nombre: objConEstudiante.estudiante[0].nombre,
+          apellido: objConEstudiante.estudiante[0].apellido,
+          presente: true
+        };
+        estudiantesRedux.push(estudianteRedux);
+      });
+      res.status(200).json({
+        estudiantesXCurso: estudiantesRedux
+      });
+    });
+  });
+});
 module.exports = router;
