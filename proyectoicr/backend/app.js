@@ -14,13 +14,17 @@ const app = express(); // Creo la app express
    lo que corresponda*/
 
 // Conexión a base de producción
-mongoose.connect('mongodb+srv://ComandanteJr:SNcjNuPBMG42lOh1@cluster0-qvosw.mongodb.net/icrdev?retryWrites=true',{useNewUrlParser: true })
-.then(() => {
-  console.log('Conexión a base de datos de producción exitosa');
-})
-.catch(() => {
-  console.log('Fallo conexión a la base de datos de producción');
-});
+mongoose
+  .connect(
+    "mongodb+srv://ComandanteJr:SNcjNuPBMG42lOh1@cluster0-qvosw.mongodb.net/icrdev?retryWrites=true",
+    { useNewUrlParser: true }
+  )
+  .then(() => {
+    console.log("Conexión a base de datos de producción exitosa");
+  })
+  .catch(() => {
+    console.log("Fallo conexión a la base de datos de producción");
+  });
 
 // // Conexión a base local
 // mongoose.connect('mongodb://127.0.0.1:27017/icr-local',{useNewUrlParser: true })
@@ -32,7 +36,7 @@ mongoose.connect('mongodb+srv://ComandanteJr:SNcjNuPBMG42lOh1@cluster0-qvosw.mon
 // });
 
 //Para sacar el deprecation warning de la consola
-mongoose.set('useFindAndModify', false);
+mongoose.set("useFindAndModify", false);
 
 // Usamos el body parser para poder extraer datos del request body
 app.use(bodyParser.json());

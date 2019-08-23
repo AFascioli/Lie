@@ -10,3 +10,10 @@ table {
   margin: 2rem;
 }
 
+.columnasNormales{
+  width:22%;
+}
+
+.columnasChicas{
+  width:12%;
+}

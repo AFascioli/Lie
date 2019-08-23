@@ -27,7 +27,6 @@ export class ListaEstudiantesComponent implements OnInit {
    this.servicio.estudianteSeleccionado = (this.estudiantes.find(estudiante => estudiante.numeroDocumento===row.numeroDocumento));
    this.dialog.open(AccionesEstudiantePopupComponent,{ width: "350px"});
   }
-
 }
 
 @Component({

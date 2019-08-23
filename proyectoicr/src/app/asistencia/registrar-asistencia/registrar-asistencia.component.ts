@@ -19,8 +19,8 @@ export class RegistrarAsistenciaComponent implements OnInit {
   ngOnInit() {
     this.cursoNotSelected = true;
     this.fechaActual = new Date();
-    this.servicio.obtenerDivisionesXAño().subscribe(response=>{
-      this.cursos= response.cursos;
+    this.servicio.obtenerCursos().subscribe(response=>{
+      this.cursos = response.cursos;
       this.cursos.sort((a, b) =>
         a.curso.charAt(0) > b.curso.charAt(0) ? 1 : b.curso.charAt(0) > a.curso.charAt(0) ? -1 : 0);
       });

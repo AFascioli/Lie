@@ -2,11 +2,74 @@ const express = require("express");
 const router = express.Router();
 const Division = require("../models/division");
 const Inscripcion = require("../models/inscripcion");
+const mongoose = require("mongoose");
 
-router.get("/",(req, res)=>{
-  Division.find().select({curso: 1, _id:0}).then(cursos=>{
-    res.status(200).json({cursos: cursos});
-  })
+router.get("/", (req, res) => {
+  Division.find()
+    .select({ curso: 1, _id: 1 })
+    .then(cursos => {
+      var respuesta = [];
+
+      cursos.forEach(curso => {
+        var cursoConId = {
+          id: curso._id,
+          curso: curso.curso
+        };
+        respuesta.push(cursoConId);
+      });
+
+      res.status(200).json({ cursos: respuesta });
+    });
+});
+
+router.get("/materias", (req, res) => {
+  Division.aggregate([
+    {
+      $match: {
+        _id: mongoose.Types.ObjectId(req.query.idcurso)
+      }
+    },
+    {
+      $lookup: {
+        from: "horariosMaterias",
+        localField: "agenda",
+        foreignField: "_id",
+        as: "agendaCurso"
+      }
+    },
+    {
+      $project: {
+        "agendaCurso.materia": 1,
+        _id: 0
+      }
+    },
+    {
+      $lookup: {
+        from: "materias",
+        localField: "agendaCurso.materia",
+        foreignField: "_id",
+        as: "materias"
+      }
+    },
+    {
+      $project: {
+        materias: 1
+      }
+    }
+  ]).then(materias => {
+    var respuesta = [];
+
+    materias[0].materias.forEach(materia => {
+      var elemento = {
+        id: materia._id,
+        nombre: materia.nombre
+      };
+
+      respuesta.push(elemento);
+    });
+
+    res.status(200).json({ materias: respuesta });
+  });
 });
 
 router.post("/inscripcion", (req, res) => {
@@ -40,34 +103,115 @@ router.post("/inscripcion", (req, res) => {
 router.get("/documentos", (req, res) => {
   Inscripcion.aggregate([
     {
-      '$lookup': {
-        'from': 'divisiones',
-        'localField': 'IdDivision',
-        'foreignField': '_id',
-        'as': 'divisiones'
+      $lookup: {
+        from: "divisiones",
+        localField: "IdDivision",
+        foreignField: "_id",
+        as: "divisiones"
       }
-    }, {
-      '$lookup': {
-        'from': 'estudiantes',
-        'localField': 'IdEstudiante',
-        'foreignField': '_id',
-        'as': 'datosEstudiante'
+    },
+    {
+      $lookup: {
+        from: "estudiantes",
+        localField: "IdEstudiante",
+        foreignField: "_id",
+        as: "datosEstudiante"
       }
-    }, {
-      '$match': {
-        'divisiones.curso': req.query.curso
+    },
+    {
+      $match: {
+        "divisiones.curso": req.query.curso
       }
-    }, {
-      '$project': {
-        '_id': 0,
-        'IdEstudiante': 1,
-        'documentosEntregados': 1,
-        'datosEstudiante.apellido': 1,
-        'datosEstudiante.nombre': 1
+    },
+    {
+      $project: {
+        _id: 0,
+        IdEstudiante: 1,
+        documentosEntregados: 1,
+        "datosEstudiante.apellido": 1,
+        "datosEstudiante.nombre": 1
       }
     }
   ]).then(estudiantes => {
     res.status(200).json(estudiantes);
+  });
+});
+
+router.get("/estudiantes/materias/calificaciones", (req, res) => {
+  // Falta arreglar en un array lindo la respuesta y sacar el curso y la materia hardcodeados. #resolve
+  Inscripcion.aggregate([
+    {
+      $lookup: {
+        from: "estudiantes",
+        localField: "IdEstudiante",
+        foreignField: "_id",
+        as: "datosEstudiante"
+      }
+    },
+    {
+      $project: {
+        "datosEstudiante._id": 1,
+        "datosEstudiante.nombre": 1,
+        "datosEstudiante.apellido": 1,
+        IdDivision: 1,
+        calificacionesXMateria: 1
+      }
+    },
+    {
+      $lookup: {
+        from: "divisiones",
+        localField: "IdDivision",
+        foreignField: "_id",
+        as: "curso"
+      }
+    },
+    {
+      $project: {
+        "datosEstudiante._id": 1,
+        "datosEstudiante.nombre": 1,
+        "datosEstudiante.apellido": 1,
+        "curso.curso": 1,
+        calificacionesXMateria: 1
+      }
+    },
+    {
+      $match: {
+        "curso.curso": "5A"
+      }
+    },
+    {
+      $lookup: {
+        from: "calificacionesXMateria",
+        localField: "calificacionesXMateria",
+        foreignField: "_id",
+        as: "calificacionesX"
+      }
+    },
+    {
+      $match: {
+        "calificacionesX.idMateria": mongoose.Types.ObjectId(
+          "5d60289b1c955832b86ea448"
+        )
+      }
+    },
+    {
+      $lookup: {
+        from: "calificacion",
+        localField: "calificacionesX.calificaciones",
+        foreignField: "_id",
+        as: "calificacionesNueva"
+      }
+    },
+    {
+      $project: {
+        "datosEstudiante._id": 1,
+        "datosEstudiante.nombre": 1,
+        "datosEstudiante.apellido": 1,
+        calificacionesNueva: 1
+      }
+    }
+  ]).then(respuesta => {
+    res.status(200).json(respuesta);
   });
 });
 

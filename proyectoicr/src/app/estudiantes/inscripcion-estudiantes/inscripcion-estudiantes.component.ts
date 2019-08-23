@@ -36,7 +36,7 @@ export class InscripcionEstudianteComponent implements OnInit {
     this.apellidoEstudiante = this.servicio.estudianteSeleccionado.apellido;
     this.nombreEstudiante = this.servicio.estudianteSeleccionado.nombre;
     this._idEstudiante = this.servicio.estudianteSeleccionado._id;
-    this.servicio.obtenerDivisionesXAño().subscribe(response=>{
+    this.servicio.obtenerCursos().subscribe(response=>{
       this.cursos= response.cursos;
       this.cursos.sort((a, b) =>
         a.curso.charAt(0) > b.curso.charAt(0) ? 1 : b.curso.charAt(0) > a.curso.charAt(0) ? -1 : 0);

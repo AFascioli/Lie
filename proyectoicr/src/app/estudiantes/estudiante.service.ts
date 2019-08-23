@@ -251,16 +251,13 @@ export class EstudiantesService {
     return this.divisionXCursoActualizada.asObservable();
   }
 
-  // obtenerDivisionesXAño() {
-  //   this.http
-  //     .get<{ divisionesXAño: any[] }>("http://localhost:3000/curso")
-  //     .subscribe(response => {
-  //       this.divisionesXAño = response.divisionesXAño;
-  //       this.divisionXCursoActualizada.next([...this.divisionesXAño]);
-  //     });
-  // }
-  obtenerDivisionesXAño() {
+  obtenerCursos() {
     return this.http.get<{ cursos: any[] }>("http://localhost:3000/curso");
+  }
+
+  obtenerMateriasXCurso(idcurso){
+    let params = new HttpParams().set("idcurso", idcurso);
+    return this.http.get<{materias: any[] }>("http://localhost:3000/curso/materias", {params: params})
   }
 
   inscribirEstudiante(IdEstudiante: string, division: string, documentosEntregados: any[]) {
@@ -293,5 +290,12 @@ export class EstudiantesService {
       "http://localhost:3000/estudiante/documentos",
       estudiantes
     );
+  }
+
+  obtenerEstudiantesXCursoXMateria(idcurso: string, idmateria: string){
+    let params = new HttpParams().set("idcurso", idcurso).set("idmateria", idmateria);
+    return this.http.get<any[]>("http://localhost:3000/curso/documentos", {
+      params: params
+    });
   }
 }

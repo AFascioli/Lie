@@ -3,64 +3,100 @@
 </h1>
 
 <mat-card class="card-body-componente">
-  <br>
+  <br />
   <div align="center">
     <mat-form-field>
-      <mat-select
-      placeholder="Seleccione trimestre"
-      name="trimestre"
-      >
+      <mat-select placeholder="Seleccione trimestre" name="trimestre">
       </mat-select>
-  </mat-form-field>
-
-&nbsp; &nbsp;
-
-    <mat-form-field>
-        <mat-select
-        placeholder="Seleccione curso"
-        name="curso"
-        >
-        </mat-select>
     </mat-form-field>
 
-&nbsp; &nbsp;
-<mat-form-field>
-    <mat-select
-    placeholder="Seleccione materia"
-    name="materia"
-    >
-    </mat-select>
-</mat-form-field>
-</div>
+    &nbsp; &nbsp;
 
-<div>
-  <table mat-table class="mat-elevation-z8">
+      <mat-form-field>
+        <mat-select
+          placeholder="Seleccione curso"
+          name="curso"
+          ngModel
+          #curso="ngModel"
+          matNativeControl
+          required
+          (selectionChange)="onCursoSeleccionado(curso)"
+        >
+          <mat-option
+            *ngFor="let objCurso of cursos"
+            [value]="objCurso.id"
+          >
+            {{ objCurso.curso }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
 
 
+    &nbsp; &nbsp;
+      <mat-form-field>
+        <mat-select
+          placeholder="Seleccione materia"
+          name="materia"
+          ngModel
+          #materia="ngModel"
+          matNativeControl
+          required
+          (selectionChange)="onMateriaSeleccionada(materia)"
+        >
+          <mat-option
+            *ngFor="let objMateria of materias"
+            [value]="objMateria.id"
+          >
+            {{ objMateria.nombre }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
 
-    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    <mat-card *ngIf="estudiantes.length > 0">
+      <table mat-table [dataSource]="estudiantes">
+        <ng-container matColumnDef="apellido">
+          <th class="columnasNormales" mat-header-cell *matHeaderCellDef>
+            Apellido/s
+          </th>
+          <td class="columnasNormales" mat-cell *matCellDef="let estudiantes">
+            {{ estudiantes.apellido }}
+          </td>
+        </ng-container>
 
-  </table>
-</div>
+        <ng-container matColumnDef="nombre">
+          <th class="columnasNormales" mat-header-cell *matHeaderCellDef>
+            Nombre/s
+          </th>
+          <td class="columnasNormales" mat-cell *matCellDef="let estudiantes">
+            {{ estudiantes.nombre }}
+          </td>
+        </ng-container>
 
-<div align="center">
-  <button  mat-raised-button
-    color="primary"
-    class="button"
-    >
-    Guardar
-  </button>
+        <ng-container matColumnDef="cal1">
+          <th class="columnasChicas" mat-header-cell *matHeaderCellDef>Tipo</th>
+          <td class="columnasChicas" mat-cell *matCellDef="let estudiantes">
+            {{ estudiantes.calificaciones }}
+          </td>
+        </ng-container>
 
-  <button  mat-raised-button
-  color="warn"
-  >
-    Cancelar
-  </button>
-</div>
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+      </table>
+    </mat-card>
+    <mat-card *ngIf="estudiantes.length <= 0">
+      <p>No se encontraron estudiantes</p>
+    </mat-card>
 
-<div>
+  <div align="center">
+    <button mat-raised-button color="primary" class="button">
+      Guardar
+    </button>
 
-</div>
+    <button mat-raised-button color="warn">
+      Cancelar
+    </button>
+  </div>
 
+  <div></div>
 </mat-card>

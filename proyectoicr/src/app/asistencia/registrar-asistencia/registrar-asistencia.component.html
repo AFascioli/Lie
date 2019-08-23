@@ -22,10 +22,7 @@
 
   <br />
   <div *ngIf="!cursoNotSelected">
-    <table
-      mat-table
-      [dataSource]="estudiantesXDivision"
-    >
+    <table mat-table [dataSource]="estudiantesXDivision">
       <ng-container matColumnDef="apellido">
         <th class="nombreApellido" mat-header-cell *matHeaderCellDef>
           Apellido/s
