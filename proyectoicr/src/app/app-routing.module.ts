@@ -8,10 +8,11 @@ import { MostrarEstudiantesComponent } from "./estudiantes/mostrar-estudiantes/m
 import { MenuLateralComponent } from "./menu-lateral/menu-lateral.component";
 import { LoginComponent } from "./menu-principal/menu-principal.component";
 import { RegistrarAsistenciaComponent } from "./asistencia/registrar-asistencia/registrar-asistencia.component";
-import { InscripcionEstudianteComponent } from "./estudiantes/inscripcion-estudiantes/inscripcion-estudiantes.component";
-import { RetiroAnticipadoComponent } from "./asistencia/retiro-anticipado/retiro-anticipado.component";
-import { DocumentosInscripcionComponent } from "./estudiantes/documentos-inscripcion/documentos-inscripcion.component";
-import { CalificacionesEstudiantesComponent } from "./estudiantes/calificaciones-estudiantes/calificaciones-estudiantes.component";
+import { InscripcionEstudianteComponent } from './estudiantes/inscripcion-estudiantes/inscripcion-estudiantes.component';
+import { RetiroAnticipadoComponent } from './asistencia/retiro-anticipado/retiro-anticipado.component';
+import { DocumentosInscripcionComponent } from './estudiantes/documentos-inscripcion/documentos-inscripcion.component';
+import{ CalificacionesEstudiantesComponent } from './estudiantes/calificaciones-estudiantes/calificaciones-estudiantes.component';
+import { LlegadaTardeComponent } from './asistencia/llegada-tarde/llegada-tarde.component';
 
 const routes: Routes = [
   // { path: "login", component: LoginComponent },
@@ -35,14 +36,9 @@ const routes: Routes = [
       { path: "asistencia", component: RegistrarAsistenciaComponent },
       { path: "curso", component: InscripcionEstudianteComponent },
       { path: "retiroAnticipado", component: RetiroAnticipadoComponent },
-      {
-        path: "documentosEstudiante",
-        component: DocumentosInscripcionComponent
-      },
-      {
-        path: "calificacionesEstudiantes",
-        component: CalificacionesEstudiantesComponent
-      }
+      { path: "documentosEstudiante", component: DocumentosInscripcionComponent },
+      { path: "calificacionesEstudiantes", component: CalificacionesEstudiantesComponent },
+      { path: "llegadaTarde", component: LlegadaTardeComponent},
     ]
   }
 ];

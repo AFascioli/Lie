@@ -1,0 +1,56 @@
+<h1 class="componente-titulo">Registrar llegada tarde</h1>
+<mat-card class="card-body-componente">
+  <p class="fecha">
+     {{ fechaActual | date: "EEEE" }}
+      <br>
+     Fecha: {{ fechaActual | date: "dd/MM/yyyy" }}
+  </p>
+  <br />
+  <br />
+
+  <div class="contenido">
+      <mat-card class="card-body-componente">
+          <h3> Datos del estudiante seleccionado </h3>
+          <mat-card-subtitle>  <b>Apellido/s: </b> {{ apellidoEstudiante }}
+                               <br />
+                               <b>Nombre/s: </b> {{ nombreEstudiante }}
+          </mat-card-subtitle>
+        </mat-card>
+  </div>
+
+  <br />
+
+  <mat-radio-group  aria-label="Select an option">
+    <mat-radio-button
+      (change)="CambiarTipoRetiro()"
+      [checked]=" "
+      value="1"
+      >Hasta 10 min</mat-radio-button
+    >
+    <mat-radio-button
+      (change)="CambiarTipoRetiro()"
+      [checked]=" "
+      value="2"
+      >Entre 10 y 20 min</mat-radio-button
+    >
+    <mat-radio-button
+      (change)="CambiarTipoRetiro()"
+      [checked]=""
+      value="3"
+      >Luego de 20 min</mat-radio-button
+    >
+  </mat-radio-group>
+
+  <br />
+  <br />
+
+  <div class="div-button">
+    <button color="primary" (click)="openPopup('confirmar')" mat-raised-button>
+      Guardar
+    </button>
+
+    <button mat-raised-button (click)="openPopup('cancelar')" color="warn">
+      Cancelar
+    </button>
+  </div>
+</mat-card>
