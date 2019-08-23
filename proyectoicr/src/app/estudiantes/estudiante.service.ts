@@ -294,7 +294,7 @@ export class EstudiantesService {
 
   obtenerEstudiantesXCursoXMateria(idcurso: string, idmateria: string){
     let params = new HttpParams().set("idcurso", idcurso).set("idmateria", idmateria);
-    return this.http.get<any[]>("http://localhost:3000/curso/documentos", {
+    return this.http.get<{estudiantes: any[]}>("http://localhost:3000/curso/documentos", {
       params: params
     });
   }

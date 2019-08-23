@@ -16,7 +16,7 @@ import { Router } from "@angular/router";
 export class CalificacionesEstudiantesComponent implements OnInit {
   cursos: any[];
   materias: any[];
-  estudiantes: any[];
+  estudiantes: any[] = [];
   displayedColumns: string[] = ["apellido", "nombre", "cal1", "cal2", "cal3"];
 
   constructor(public servicio: EstudiantesService) {}
@@ -40,7 +40,7 @@ export class CalificacionesEstudiantesComponent implements OnInit {
     });
   }
 
-  onMateriaSeleccionada(materia) {
+  onMateriaSeleccionada(materia, curso) {
     this.servicio.obtenerEstudiantesXCursoXMateria(curso.value, materia.value).subscribe(respuesta => {
       this.estudiantes = respuesta.estudiantes;
     });
