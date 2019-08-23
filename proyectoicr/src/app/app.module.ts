@@ -30,7 +30,7 @@ import { FormsModule } from "@angular/forms";
 import { HttpClientModule } from "@angular/common/http";
 import { EstudiantesService } from "./estudiantes/estudiante.service";
 import { BuscarEstudiantesComponent, BuscarPopupComponent } from "./estudiantes/buscar-estudiantes/buscar-estudiantes.component";
-import { ListaEstudiantesComponent, AccionesEstudiantePopupComponent } from "./estudiantes/lista-estudiantes/lista-estudiantes.component";
+import { ListaEstudiantesComponent} from "./estudiantes/lista-estudiantes/lista-estudiantes.component";
 import {
   MostrarEstudiantesComponent,
   MostrarPopupComponent
@@ -68,7 +68,6 @@ import { CalificacionesEstudiantesComponent } from './estudiantes/calificaciones
     BuscarPopupComponent,
     InscripcionEstudianteComponent,
     InscripcionPopupComponent,
-    AccionesEstudiantePopupComponent,
     RetiroAnticipadoComponent,
     RetiroPopupComponent,
     DocumentosInscripcionComponent,
@@ -82,7 +81,6 @@ import { CalificacionesEstudiantesComponent } from './estudiantes/calificaciones
     AsistenciaPopupComponent,
     BuscarPopupComponent,
     InscripcionPopupComponent,
-    AccionesEstudiantePopupComponent,
     RetiroPopupComponent,
     DocumentosInscripcionPopupComponent
   ],

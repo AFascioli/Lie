@@ -1,39 +1,47 @@
 <mat-card *ngIf="estudiantes.length > 0">
-
-<table mat-table [dataSource]="estudiantes" >
-
-  <ng-container matColumnDef="apellido">
-    <th  class="columnasNormales" mat-header-cell *matHeaderCellDef>  Apellido/s </th>
-    <td  class="columnasNormales" mat-cell *matCellDef="let estudiantes"> {{estudiantes.apellido}} </td>
-  </ng-container>
-
-  <ng-container matColumnDef="nombre">
-    <th  class="columnasNormales" mat-header-cell *matHeaderCellDef>  Nombre/s </th>
-    <td  class="columnasNormales" mat-cell *matCellDef="let estudiantes"> {{estudiantes.nombre}} </td>
-  </ng-container>
-
-  <ng-container matColumnDef="tipo">
-    <th  class="columnasChicas" mat-header-cell *matHeaderCellDef>  Tipo </th>
-    <td  class="columnasChicas" mat-cell *matCellDef="let estudiantes"> {{estudiantes.tipoDocumento}} </td>
-  </ng-container>
-
-  <ng-container matColumnDef="numero">
-    <th  class="columnasChicas" mat-header-cell *matHeaderCellDef>  Número </th>
-    <td  class="columnasChicas" mat-cell *matCellDef="let estudiantes"> {{estudiantes.numeroDocumento}} </td>
-  </ng-container>
-
-  <ng-container matColumnDef="accion">
-    <th class="columnasChicas" mat-header-cell *matHeaderCellDef>  Acciones</th>
-    <td  class="columnasChicas" class="columnasTabla" mat-cell *matCellDef="let row">
-      <button mat-raised-button color="primary" (click)="OnSelection(row)" class="btnVisualizar" > Acciones </button>
-    </td>
-  </ng-container>
-
-  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-  <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-
-</table>
+  <div *ngFor="let estudiante of estudiantes; let i = index">
+    <mat-expansion-panel>
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          <b class="datosEstudiantes">
+            {{ estudiante.apellido }}, {{ estudiante.nombre }} -
+            {{ estudiante.tipoDocumento }}: {{ estudiante.numeroDocumento }}
+          </b>
+        </mat-panel-title>
+      </mat-expansion-panel-header>
+     <p class="tituloAcciones"> <u >Acciones</u> </p>
+      <div class="botonesAcciones">
+        <button
+          mat-raised-button
+          class="button"
+          color="primary"
+          (click)="onInscribir(i)"
+        >
+          Inscribir estudiante a un curso
+        </button>
+        <br />
+        <button
+          mat-raised-button
+          class="button"
+          color="primary"
+          (click)="onMostrar(i)"
+        >
+          Visualizar estudiante
+        </button>
+        <br />
+        <button
+          mat-raised-button
+          class="button"
+          color="primary"
+          (click)="onRetiro(i)"
+        >
+          Registrar retiro anticipado
+        </button>
+      </div>
+    </mat-expansion-panel>
+  </div>
 </mat-card>
-<mat-card *ngIf="estudiantes.length <=0 ">
-<p>No se encontraron estudiantes</p>
+
+<mat-card *ngIf="estudiantes.length <= 0">
+  <p>No se encontraron estudiantes</p>
 </mat-card>
