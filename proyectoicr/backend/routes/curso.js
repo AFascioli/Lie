@@ -138,6 +138,7 @@ router.get("/documentos", (req, res) => {
 });
 
 router.get("/estudiantes/materias/calificaciones", (req, res) => {
+
   Inscripcion.aggregate([
     {
       $lookup: {
@@ -165,17 +166,17 @@ router.get("/estudiantes/materias/calificaciones", (req, res) => {
       }
     },
     {
+      $match: {
+        "curso._id": mongoose.Types.ObjectId(req.query.idcurso)
+      }
+    },
+    {
       $project: {
         "datosEstudiante._id": 1,
         "datosEstudiante.nombre": 1,
         "datosEstudiante.apellido": 1,
         "curso.curso": 1,
         calificacionesXMateria: 1
-      }
-    },
-    {
-      $match: {
-        "curso.curso": mongoose.Types.ObjectId(req.query.idcurso)
       }
     },
     {
@@ -190,7 +191,8 @@ router.get("/estudiantes/materias/calificaciones", (req, res) => {
       $match: {
         "calificacionesX.idMateria": mongoose.Types.ObjectId(
           req.query.idmateria
-        )
+        ),
+        "calificacionesX.trimestre": parseInt(req.query.trimestre, 10)
       }
     },
     {
@@ -209,11 +211,33 @@ router.get("/estudiantes/materias/calificaciones", (req, res) => {
         calificacionesEstudiante: 1
       }
     }
-  ]).then(respuesta => {
-    //Falta acomodar la respuesta
+  ]).then(documentos => {
+    //Borrar logs #resolve
+    var respuesta = [];
+    console.log("Respuesta seleccion reg. calif. ");
+    console.dir(documentos);
+    documentos.forEach(califEst => {
+      var cEstudiante = {
+        idEstudiante: califEst.datosEstudiante[0]._id,
+        apellido: califEst.datosEstudiante[0].apellido,
+        nombre: califEst.datosEstudiante[0].nombre,
+        calificaciones: []
+      };
 
+      califEst.calificacionesEstudiante.forEach(calificacion => {
+        var calif = {
+          id: calificacion._id,
+          fecha: calificacion.fecha,
+          valor: calificacion.valor
+        };
+
+        cEstudiante.calificaciones.push(calif);
+      });
+
+      respuesta.push(cEstudiante);
+    });
+    console.log("Respuesta formateada");
     console.log(respuesta);
-
     res.status(200).json(respuesta);
   });
 });

@@ -299,10 +299,11 @@ export class EstudiantesService {
     );
   }
 
-  obtenerEstudiantesXCursoXMateria(idcurso: string, idmateria: string) {
+  obtenerEstudiantesXCursoXMateria(idcurso: string, idmateria: string, trimestre: string) {
     let params = new HttpParams()
       .set("idcurso", idcurso)
-      .set("idmateria", idmateria);
+      .set("idmateria", idmateria)
+      .set("trimestre", trimestre);
     return this.http.get<{ estudiantes: any[] }>(
       "http://localhost:3000/curso//estudiantes/materias/calificaciones",
       {

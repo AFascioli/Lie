@@ -6,7 +6,18 @@
   <form #form="ngForm">
     <div align="center">
       <mat-form-field>
-        <mat-select placeholder="Seleccione trimestre" name="trimestre">
+        <mat-select
+          name="trimestre"
+          ngModel
+          #trimestre="ngModel"
+          matNativeControl
+          required
+          placeholder="Seleccione trimestre"
+          name="trimestre"
+        >
+          <mat-option value="1">Primer</mat-option>
+          <mat-option value="2">Segundo</mat-option>
+          <mat-option value="3">Tercer</mat-option>
         </mat-select>
       </mat-form-field>
 
@@ -37,7 +48,7 @@
           #materia="ngModel"
           matNativeControl
           required
-          (selectionChange)="onMateriaSeleccionada(materia)"
+          (selectionChange)="onMateriaSeleccionada(form)"
         >
           <mat-option
             *ngFor="let objMateria of materias"
@@ -70,7 +81,19 @@
         </ng-container>
 
         <ng-container matColumnDef="cal1">
-          <th class="columnasChicas" mat-header-cell *matHeaderCellDef>Tipo</th>
+          <th class="columnasChicas" mat-header-cell *matHeaderCellDef>1°</th>
+          <td class="columnasChicas" mat-cell *matCellDef="let estudiantes">
+            {{ estudiantes.calificaciones }}
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="cal2">
+          <th class="columnasChicas" mat-header-cell *matHeaderCellDef>2°</th>
+          <td class="columnasChicas" mat-cell *matCellDef="let estudiantes">
+            {{ estudiantes.calificaciones }}
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="cal3">
+          <th class="columnasChicas" mat-header-cell *matHeaderCellDef>3°</th>
           <td class="columnasChicas" mat-cell *matCellDef="let estudiantes">
             {{ estudiantes.calificaciones }}
           </td>
