@@ -138,7 +138,6 @@ router.get("/documentos", (req, res) => {
 });
 
 router.get("/estudiantes/materias/calificaciones", (req, res) => {
-  // Falta arreglar en un array lindo la respuesta y sacar el curso y la materia hardcodeados. #resolve
   Inscripcion.aggregate([
     {
       $lookup: {
@@ -176,7 +175,7 @@ router.get("/estudiantes/materias/calificaciones", (req, res) => {
     },
     {
       $match: {
-        "curso.curso": "5A"
+        "curso.curso": mongoose.Types.ObjectId(req.query.idcurso)
       }
     },
     {
@@ -190,7 +189,7 @@ router.get("/estudiantes/materias/calificaciones", (req, res) => {
     {
       $match: {
         "calificacionesX.idMateria": mongoose.Types.ObjectId(
-          "5d60289b1c955832b86ea448"
+          req.query.idmateria
         )
       }
     },
@@ -199,7 +198,7 @@ router.get("/estudiantes/materias/calificaciones", (req, res) => {
         from: "calificacion",
         localField: "calificacionesX.calificaciones",
         foreignField: "_id",
-        as: "calificacionesNueva"
+        as: "calificacionesEstudiante"
       }
     },
     {
@@ -207,10 +206,14 @@ router.get("/estudiantes/materias/calificaciones", (req, res) => {
         "datosEstudiante._id": 1,
         "datosEstudiante.nombre": 1,
         "datosEstudiante.apellido": 1,
-        calificacionesNueva: 1
+        calificacionesEstudiante: 1
       }
     }
   ]).then(respuesta => {
+    //Falta acomodar la respuesta
+
+    console.log(respuesta);
+
     res.status(200).json(respuesta);
   });
 });

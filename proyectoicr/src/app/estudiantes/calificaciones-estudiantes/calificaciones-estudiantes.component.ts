@@ -7,6 +7,7 @@ import {
   MatSnackBar
 } from "@angular/material";
 import { Router } from "@angular/router";
+import { NgForm } from '@angular/forms';
 
 @Component({
   selector: "app-calificaciones-estudiantes",
@@ -40,8 +41,9 @@ export class CalificacionesEstudiantesComponent implements OnInit {
     });
   }
 
-  onMateriaSeleccionada(materia, curso) {
-    this.servicio.obtenerEstudiantesXCursoXMateria(curso.value, materia.value).subscribe(respuesta => {
+  onMateriaSeleccionada(materia) {
+    //hay que pasar valor del curso y de la materia
+    this.servicio.obtenerEstudiantesXCursoXMateria(materia.value, "s").subscribe(respuesta => {
       this.estudiantes = respuesta.estudiantes;
     });
   }

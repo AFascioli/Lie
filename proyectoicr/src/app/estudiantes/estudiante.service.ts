@@ -255,12 +255,19 @@ export class EstudiantesService {
     return this.http.get<{ cursos: any[] }>("http://localhost:3000/curso");
   }
 
-  obtenerMateriasXCurso(idcurso){
+  obtenerMateriasXCurso(idcurso) {
     let params = new HttpParams().set("idcurso", idcurso);
-    return this.http.get<{materias: any[] }>("http://localhost:3000/curso/materias", {params: params})
+    return this.http.get<{ materias: any[] }>(
+      "http://localhost:3000/curso/materias",
+      { params: params }
+    );
   }
 
-  inscribirEstudiante(IdEstudiante: string, division: string, documentosEntregados: any[]) {
+  inscribirEstudiante(
+    IdEstudiante: string,
+    division: string,
+    documentosEntregados: any[]
+  ) {
     return this.http.post<{ message: string; exito: boolean }>(
       "http://localhost:3000/curso/inscripcion",
       {
@@ -292,10 +299,15 @@ export class EstudiantesService {
     );
   }
 
-  obtenerEstudiantesXCursoXMateria(idcurso: string, idmateria: string){
-    let params = new HttpParams().set("idcurso", idcurso).set("idmateria", idmateria);
-    return this.http.get<{estudiantes: any[]}>("http://localhost:3000/curso/documentos", {
-      params: params
-    });
+  obtenerEstudiantesXCursoXMateria(idcurso: string, idmateria: string) {
+    let params = new HttpParams()
+      .set("idcurso", idcurso)
+      .set("idmateria", idmateria);
+    return this.http.get<{ estudiantes: any[] }>(
+      "http://localhost:3000/curso//estudiantes/materias/calificaciones",
+      {
+        params: params
+      }
+    );
   }
 }

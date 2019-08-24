@@ -3,14 +3,14 @@
 </h1>
 
 <mat-card class="card-body-componente">
-  <br />
-  <div align="center">
-    <mat-form-field>
-      <mat-select placeholder="Seleccione trimestre" name="trimestre">
-      </mat-select>
-    </mat-form-field>
+  <form #form="ngForm">
+    <div align="center">
+      <mat-form-field>
+        <mat-select placeholder="Seleccione trimestre" name="trimestre">
+        </mat-select>
+      </mat-form-field>
 
-    &nbsp; &nbsp;
+      &nbsp; &nbsp;
 
       <mat-form-field>
         <mat-select
@@ -22,17 +22,13 @@
           required
           (selectionChange)="onCursoSeleccionado(curso)"
         >
-          <mat-option
-            *ngFor="let objCurso of cursos"
-            [value]="objCurso.id"
-          >
+          <mat-option *ngFor="let objCurso of cursos" [value]="objCurso.id">
             {{ objCurso.curso }}
           </mat-option>
         </mat-select>
       </mat-form-field>
 
-
-    &nbsp; &nbsp;
+      &nbsp; &nbsp;
       <mat-form-field>
         <mat-select
           placeholder="Seleccione materia"
@@ -88,15 +84,14 @@
       <p>No se encontraron estudiantes</p>
     </mat-card>
 
-  <div align="center">
-    <button mat-raised-button color="primary" class="button">
-      Guardar
-    </button>
+    <div align="center">
+      <button mat-raised-button color="primary" class="button">
+        Guardar
+      </button>
 
-    <button mat-raised-button color="warn">
-      Cancelar
-    </button>
-  </div>
-
-  <div></div>
+      <button mat-raised-button color="warn">
+        Cancelar
+      </button>
+    </div>
+  </form>
 </mat-card>
