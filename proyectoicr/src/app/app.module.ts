@@ -36,7 +36,7 @@ import {
   MostrarPopupComponent
 } from "./estudiantes/mostrar-estudiantes/mostrar-estudiantes.component";
 import { AppRoutingModule } from "./app-routing.module";
-import { LoginComponent } from "./menu-principal/menu-principal.component";
+import { LoginComponent } from "./login/login.component";
 import { MenuLateralComponent } from "./menu-lateral/menu-lateral.component";
 import { HomeComponent } from "./home/home.component";
 import {
