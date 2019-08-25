@@ -24,10 +24,14 @@ export class EstudiantesService {
   private divisionXCursoActualizada = new Subject<any[]>();
   formInvalidoEstudiante: Boolean;
   estudianteSeleccionado: Estudiante;
+  retornoDesdeAcciones: Boolean;
   tipoPopUp: string;
   formEstudianteModificada: boolean;
+  busquedaEstudianteXNombre: boolean;
 
-  constructor(public http: HttpClient) {}
+  constructor(public http: HttpClient) {
+    this.retornoDesdeAcciones= false;
+  }
 
   altaEstudiante(
     apellido: string,

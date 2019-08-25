@@ -20,21 +20,29 @@ export class ListaEstudiantesComponent implements OnInit {
     this.servicio.getEstudiantesListener().subscribe(estudiantesBuscados =>{
       this.estudiantes = estudiantesBuscados;
     });
+
+    if(this.servicio.retornoDesdeAcciones)
+    {
+      this.servicio.retornoDesdeAcciones=false;
+    }
   }
 
   onInscribir(indice){
     this.servicio.estudianteSeleccionado = (this.estudiantes.find(estudiante => estudiante.numeroDocumento===this.estudiantes[indice].numeroDocumento));
     this.router.navigate(["./curso"]);
+    this.servicio.retornoDesdeAcciones=true;
   }
 
   onMostrar(indice){
     this.servicio.estudianteSeleccionado = (this.estudiantes.find(estudiante => estudiante.numeroDocumento===this.estudiantes[indice].numeroDocumento));
     this.router.navigate(["./mostrar"]);
+    this.servicio.retornoDesdeAcciones=true;
   }
 
   onRetiro(indice){
     this.servicio.estudianteSeleccionado = (this.estudiantes.find(estudiante => estudiante.numeroDocumento===this.estudiantes[indice].numeroDocumento));
     this.router.navigate(["./retiroAnticipado"]);
+    this.servicio.retornoDesdeAcciones=true;
   }
 
 }

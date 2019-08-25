@@ -1,5 +1,4 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { FormGroup, FormControl } from '@angular/forms';
 
 @Component({
   selector: 'app-login',
@@ -8,21 +7,9 @@ import { FormGroup, FormControl } from '@angular/forms';
 })
 export class LoginComponent implements OnInit {
 
-username: string;
-password: string;
-
   constructor() { }
 
   ngOnInit() {
   }
 
-
-
-
-login() : void {
-  if(this.username == 'admin' && this.password == 'admin'){
-  }else {
-    alert("Invalid credentials");
-  }
-}
 }
