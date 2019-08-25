@@ -17,10 +17,14 @@ import { NgForm } from "@angular/forms";
 export class CalificacionesEstudiantesComponent implements OnInit {
   cursos: any[];
   materias: any[];
-  estudiantes: any[] = [];
+  estudiantes: any[];
   displayedColumns: string[] = ["apellido", "nombre", "cal1", "cal2", "cal3"];
 
-  constructor(public servicio: EstudiantesService) {}
+  constructor(
+    public servicio: EstudiantesService,
+    public popup: MatDialog,
+    private snackBar: MatSnackBar
+  ) {}
 
   ngOnInit() {
     this.servicio.obtenerCursos().subscribe(response => {
@@ -49,8 +53,43 @@ export class CalificacionesEstudiantesComponent implements OnInit {
         form.value.trimestre
       )
       .subscribe(respuesta => {
-        console.dir(respuesta);
         this.estudiantes = [...respuesta.estudiantes];
       });
+  }
+
+  onGuardar(form: NgForm){
+    if(form.invalid){
+      this.snackBar.open("Faltan campos por seleccionar","",{duration: 4500})
+    }else{
+      // Metodo del servicio para guardar las notas
+      // if(respuesta.exito){
+        this.snackBar.open("Calificaciones registradas exitósamente","",{duration: 4500})
+      // }
+    }
+  }
+
+  onCancelar() {
+    this.popup.open(CalificacionesEstudiantePopupComponent);
+  }
+}
+
+@Component({
+  selector: "app-calificaciones-estudiantes",
+  templateUrl: "./calificaciones-estudiantes-popup.component.html",
+  styleUrls: ["./calificaciones-estudiantes.component.css"]
+})
+export class CalificacionesEstudiantePopupComponent {
+  constructor(
+    public dialogRef: MatDialogRef<CalificacionesEstudiantePopupComponent>,
+    public router: Router
+  ) {}
+
+  onYesCancelarClick(): void {
+    this.router.navigate(["./home"]);
+    this.dialogRef.close();
+  }
+
+  onNoCancelarClick(): void {
+    this.dialogRef.close();
   }
 }

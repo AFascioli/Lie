@@ -1,10 +1,7 @@
-button{
-  margin: 0.4rem;
-}
-
 .columnasTabla{
   width: 18%;
 }
+
 table {
   width: 95%;
   margin: 2rem;
@@ -16,4 +13,22 @@ table {
 
 .columnasChicas{
   width:12%;
+}
+
+th{
+  font-weight: bold;
+  font-size: 15px;
+}
+
+.div-button {
+  text-align: right;
+}
+
+.div-selects{
+  text-align: center;
+}
+
+.mat-form-field{
+  margin-left: 0.5rem;
+  margin-right: 0.5rem;
 }

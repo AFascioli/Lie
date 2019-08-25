@@ -212,10 +212,7 @@ router.get("/estudiantes/materias/calificaciones", (req, res) => {
       }
     }
   ]).then(documentos => {
-    //Borrar logs #resolve
     var respuesta = [];
-    console.log("Respuesta seleccion reg. calif. ");
-    console.dir(documentos);
     documentos.forEach(califEst => {
       var cEstudiante = {
         idEstudiante: califEst.datosEstudiante[0]._id,
@@ -236,10 +233,11 @@ router.get("/estudiantes/materias/calificaciones", (req, res) => {
 
       respuesta.push(cEstudiante);
     });
-    console.log("Respuesta formateada");
-    console.log(respuesta);
-    res.status(200).json(respuesta);
+    res.status(200).json({estudiantes: respuesta});
   });
 });
 
+router.post("/estudiantes/materias/calificaciones", (req, res)=>{
+// Logica
+});
 module.exports = router;

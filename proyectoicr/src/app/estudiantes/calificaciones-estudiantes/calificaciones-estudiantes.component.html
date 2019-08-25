@@ -4,7 +4,7 @@
 
 <mat-card class="card-body-componente">
   <form #form="ngForm">
-    <div align="center">
+    <div class="div-selects">
       <mat-form-field>
         <mat-select
           name="trimestre"
@@ -21,8 +21,6 @@
         </mat-select>
       </mat-form-field>
 
-      &nbsp; &nbsp;
-
       <mat-form-field>
         <mat-select
           placeholder="Seleccione curso"
@@ -38,8 +36,6 @@
           </mat-option>
         </mat-select>
       </mat-form-field>
-
-      &nbsp; &nbsp;
       <mat-form-field>
         <mat-select
           placeholder="Seleccione materia"
@@ -59,60 +55,66 @@
         </mat-select>
       </mat-form-field>
     </div>
+    <table mat-table [dataSource]="estudiantes" *ngIf="estudiantes">
+      <ng-container matColumnDef="apellido">
+        <th class="columnasNormales" mat-header-cell *matHeaderCellDef>
+          Apellido/s
+        </th>
+        <td class="columnasNormales" mat-cell *matCellDef="let estudiantes">
+          {{ estudiantes.apellido }}
+        </td>
+      </ng-container>
 
-    <mat-card *ngIf="estudiantes.length > 0">
-      <table mat-table [dataSource]="estudiantes">
-        <ng-container matColumnDef="apellido">
-          <th class="columnasNormales" mat-header-cell *matHeaderCellDef>
-            Apellido/s
-          </th>
-          <td class="columnasNormales" mat-cell *matCellDef="let estudiantes">
-            {{ estudiantes.apellido }}
-          </td>
-        </ng-container>
+      <ng-container matColumnDef="nombre">
+        <th class="columnasNormales" mat-header-cell *matHeaderCellDef>
+          Nombre/s
+        </th>
+        <td class="columnasNormales" mat-cell *matCellDef="let estudiantes">
+          {{ estudiantes.nombre }}
+        </td>
+      </ng-container>
 
-        <ng-container matColumnDef="nombre">
-          <th class="columnasNormales" mat-header-cell *matHeaderCellDef>
-            Nombre/s
-          </th>
-          <td class="columnasNormales" mat-cell *matCellDef="let estudiantes">
-            {{ estudiantes.nombre }}
-          </td>
-        </ng-container>
+      <ng-container matColumnDef="cal1">
+        <th class="columnasChicas" mat-header-cell *matHeaderCellDef>1°</th>
+        <td class="columnasChicas" mat-cell *matCellDef="let estudiantes">
+          <p *ngIf="estudiantes.calificaciones[0]">
+            {{ estudiantes.calificaciones[0].valor }}
+          </p>
+          <p *ngIf="!estudiantes.calificaciones[0]">-</p>
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="cal2">
+        <th class="columnasChicas" mat-header-cell *matHeaderCellDef>2°</th>
+        <td class="columnasChicas" mat-cell *matCellDef="let estudiantes">
+          <p *ngIf="estudiantes.calificaciones[1]">
+            {{ estudiantes.calificaciones[1].valor }}
+          </p>
+          <p *ngIf="!estudiantes.calificaciones[1]">-</p>
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="cal3">
+        <th class="columnasChicas" mat-header-cell *matHeaderCellDef>3°</th>
+        <td class="columnasChicas" mat-cell *matCellDef="let estudiantes">
+          <p *ngIf="estudiantes.calificaciones[2]">
+            {{ estudiantes.calificaciones[2].valor }}
+          </p>
+          <p *ngIf="!estudiantes.calificaciones[2]">-</p>
+        </td>
+      </ng-container>
 
-        <ng-container matColumnDef="cal1">
-          <th class="columnasChicas" mat-header-cell *matHeaderCellDef>1°</th>
-          <td class="columnasChicas" mat-cell *matCellDef="let estudiantes">
-            {{ estudiantes.calificaciones }}
-          </td>
-        </ng-container>
-        <ng-container matColumnDef="cal2">
-          <th class="columnasChicas" mat-header-cell *matHeaderCellDef>2°</th>
-          <td class="columnasChicas" mat-cell *matCellDef="let estudiantes">
-            {{ estudiantes.calificaciones }}
-          </td>
-        </ng-container>
-        <ng-container matColumnDef="cal3">
-          <th class="columnasChicas" mat-header-cell *matHeaderCellDef>3°</th>
-          <td class="columnasChicas" mat-cell *matCellDef="let estudiantes">
-            {{ estudiantes.calificaciones }}
-          </td>
-        </ng-container>
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+    </table>
 
-        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-        <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
-      </table>
-    </mat-card>
-    <mat-card *ngIf="estudiantes.length <= 0">
+    <mat-card *ngIf="!estudiantes">
       <p>No se encontraron estudiantes</p>
     </mat-card>
 
-    <div align="center">
-      <button mat-raised-button color="primary" class="button">
+    <div class="div-button">
+      <button mat-raised-button color="primary" class="button" (click)="onGuardar(form)">
         Guardar
       </button>
-
-      <button mat-raised-button color="warn">
+      <button mat-raised-button color="warn" (click)="onCancelar()">
         Cancelar
       </button>
     </div>
