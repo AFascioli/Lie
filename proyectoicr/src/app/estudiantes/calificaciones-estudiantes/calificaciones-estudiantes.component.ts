@@ -57,13 +57,17 @@ export class CalificacionesEstudiantesComponent implements OnInit {
       });
   }
 
-  onGuardar(form: NgForm){
-    if(form.invalid){
-      this.snackBar.open("Faltan campos por seleccionar","",{duration: 4500})
-    }else{
+  onGuardar(form: NgForm) {
+    if (form.invalid) {
+      this.snackBar.open("Faltan campos por seleccionar", "", {
+        duration: 4500
+      });
+    } else {
       // Metodo del servicio para guardar las notas
       // if(respuesta.exito){
-        this.snackBar.open("Calificaciones registradas exitósamente","",{duration: 4500})
+      this.snackBar.open("Calificaciones registradas exitósamente", "", {
+        duration: 4500
+      });
       // }
     }
   }

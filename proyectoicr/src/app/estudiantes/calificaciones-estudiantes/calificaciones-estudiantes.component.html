@@ -76,7 +76,12 @@
 
       <ng-container matColumnDef="cal1">
         <th class="columnasChicas" mat-header-cell *matHeaderCellDef>1°</th>
-        <td class="columnasChicas" mat-cell *matCellDef="let estudiantes">
+        <td
+          class="columnasChicas"
+          mat-cell
+          *matCellDef="let estudiantes"
+          contenteditable="true"
+        >
           <p *ngIf="estudiantes.calificaciones[0]">
             {{ estudiantes.calificaciones[0].valor }}
           </p>
@@ -85,7 +90,12 @@
       </ng-container>
       <ng-container matColumnDef="cal2">
         <th class="columnasChicas" mat-header-cell *matHeaderCellDef>2°</th>
-        <td class="columnasChicas" mat-cell *matCellDef="let estudiantes">
+        <td
+          class="columnasChicas"
+          mat-cell
+          *matCellDef="let estudiantes"
+          contenteditable="true"
+        >
           <p *ngIf="estudiantes.calificaciones[1]">
             {{ estudiantes.calificaciones[1].valor }}
           </p>
@@ -94,7 +104,12 @@
       </ng-container>
       <ng-container matColumnDef="cal3">
         <th class="columnasChicas" mat-header-cell *matHeaderCellDef>3°</th>
-        <td class="columnasChicas" mat-cell *matCellDef="let estudiantes">
+        <td
+          class="columnasChicas"
+          mat-cell
+          *matCellDef="let estudiantes"
+          contenteditable="true"
+        >
           <p *ngIf="estudiantes.calificaciones[2]">
             {{ estudiantes.calificaciones[2].valor }}
           </p>
@@ -111,7 +126,12 @@
     </mat-card>
 
     <div class="div-button">
-      <button mat-raised-button color="primary" class="button" (click)="onGuardar(form)">
+      <button
+        mat-raised-button
+        color="primary"
+        class="button"
+        (click)="onGuardar(form)"
+      >
         Guardar
       </button>
       <button mat-raised-button color="warn" (click)="onCancelar()">
