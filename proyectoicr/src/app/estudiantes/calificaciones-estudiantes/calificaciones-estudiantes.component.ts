@@ -64,7 +64,7 @@ export class CalificacionesEstudiantesComponent implements OnInit {
       });
     } else {
       this.servicio
-        .registrarCalificaciones(this.estudiantes)
+        .registrarCalificaciones(this.estudiantes, form.value.materia )
         .subscribe(respuesta => {
           if (respuesta.exito) {
             this.snackBar.open(respuesta.message, "", {

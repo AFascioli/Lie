@@ -316,10 +316,11 @@ export class EstudiantesService {
     );
   }
 
-  registrarCalificaciones(estudiantes: any[]) {
+  registrarCalificaciones(estudiantes: any[], idMateria: string) {
+    let params = new HttpParams().set("idMateria", idMateria)
     return this.http.post<{ message: string; exito: boolean }>(
-      "http://localhost:3000/curso/estudiantes/materias/calificaciones",
-      estudiantes
+      "http://localhost:3000/curso/estudiantes/materias/calificacionesttt",
+      estudiantes, {params: params}
     );
   }
 }

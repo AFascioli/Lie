@@ -94,12 +94,12 @@
           class="columnasChicas"
           mat-cell
           *matCellDef="let estudiantes"
-          contenteditable="true"
         >
-          <p *ngIf="estudiantes.calificaciones[1]">
+          <!-- <p *ngIf="estudiantes.calificaciones[1]">
             {{ estudiantes.calificaciones[1].valor }}
           </p>
-          <p *ngIf="!estudiantes.calificaciones[1]">-</p>
+          <p *ngIf="!estudiantes.calificaciones[1]">-</p> -->
+          <input [(ngModel)]="estudiantes.calificaciones[1].valor" type="number" name="nota2" value="estudiantes.calificaciones[1].valor"/>
         </td>
       </ng-container>
       <ng-container matColumnDef="cal3">

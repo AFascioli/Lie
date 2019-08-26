@@ -5,4 +5,4 @@ const calificacionSchema = mongoose.Schema({
   valor: Number
 });
 
-module.exports= mongoose.model('calificaciones', calificacionSchema, 'calificaciones');
+module.exports= mongoose.model('calificacion', calificacionSchema, 'calificacion');

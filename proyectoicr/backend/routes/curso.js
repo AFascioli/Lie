@@ -251,31 +251,31 @@ router.post("/estudiantes/materias/calificaciones", (req, res) => {
       console.dir(inscripcionE);
       await CalificacionesXMateria.findById(
         inscripcionE.calificacionesXMateria._id
-      ).then( async califXMateria => {
+      ).then(async califXMateria => {
         // Se crea el nuevo vector de calificaciones para asignarle a la califXMateria
-        await estudiante.calificaciones.forEach( async (calif, index) => {
-          if(califXMateria.calificaciones[index]){
-            califXMateria.calificaciones.map( async cc => {
-              if(cc._id = calif._id)
-              {
+        await estudiante.calificaciones.forEach(async (calif, index) => {
+          if (califXMateria.calificaciones[index]) {
+            califXMateria.calificaciones.map(async cc => {
+              if ((cc._id = calif._id)) {
+                //y cc.valor /= calif.valor => updateById ()
                 cc.valor = calif.valor;
                 await cc.save();
               }
             });
           } else {
             var calificacionN = new Calificacion({
-            fecha: estudiante.calificaciones[index].fecha,
-            valor: estudiante.calificaciones[index].valor
+              fecha: estudiante.calificaciones[index].fecha, //Deberia ser la fecha de hoy
+              valor: estudiante.calificaciones[index].valor
             });
             await calificacionN.save().then(async calif => {
-            await califXMateria.calificaciones.push(calif);
+              await califXMateria.calificaciones.push(calif);
             });
           }
 
           await califXMateria.save();
           //#resolve
           console.dir(califXMateria);
-      });
+        });
 
         var cXMateriaN = new CalificacionesXMateria({
           _id: califXMateria._id,
@@ -283,9 +283,101 @@ router.post("/estudiantes/materias/calificaciones", (req, res) => {
           calificaciones: calificacionN,
           trimestre: califXMateria.trimestre
         });
-
       });
     });
+  });
+});
+
+router.post("/estudiantes/materias/calificacionesttt", (req, res) => {
+  req.body.forEach(estudiante => {
+    console.dir(estudiante);
+    Inscripcion.aggregate([
+      {
+        $match: {
+          IdEstudiante: mongoose.Types.ObjectId(estudiante.idEstudiante) // mongoose.Types.ObjectId(estudiante.IdEstudiante)
+          // IdEstudiante: mongoose.Types.ObjectId("5d1a5a66941efc2e98b15c0e")
+        }
+      },
+      {
+        $lookup: {
+          from: "calificacionesXMateria",
+          localField: "calificacionesXMateria",
+          foreignField: "_id",
+          as: "calXMatEstudiante"
+        }
+      },
+      {
+        $match: {
+          "calXMatEstudiante.idMateria": mongoose.Types.ObjectId(
+            req.query.idMateria
+          )
+          // "calXMatEstudiante.idMateria": mongoose.Types.ObjectId(
+          //   "5d60289b1c955832b86ea448")
+        }
+      },
+      {
+        $lookup: {
+          from: "calificacion",
+          localField: "calXMatEstudiante.calificaciones",
+          foreignField: "_id",
+          as: "calificaciones"
+        }
+      },
+      {
+        $project: {
+          calificaciones: 1,
+          "calXMatEstudiante._id": 1
+        }
+      }
+    ])
+      .then(resultadoAg => {
+        var calificacionesBD = resultadoAg[0].calificaciones;
+        //Hacemos un for que recorra el vector que viene del Frontend, ya que puede ser que tenga mayor length que el de la bd
+        for (var index = 0; index < estudiante.calificaciones.length; index++) {
+          //revisar logica corte for
+          //Si existe ese elemento en el vector y tienen distintas notas, se actualiza la calificacion de la BD
+          if (
+            calificacionesBD[index] &&
+            calificacionesBD[index].valor !=
+              estudiante.calificaciones[index].valor
+          ) {
+            console.log(
+              "Calificacion modificada: _id: " +
+                calificacionesBD[index]._id +
+                " valor: " +
+                estudiante.calificaciones[index].valor
+            );
+            Calificacion.findByIdAndUpdate(calificacionesBD[index]._id, {
+              valor: estudiante.calificaciones[index].valor
+            }).exec().catch(e=> console.log(e));
+          }
+          //Si no existe elemento para un index determinado, significa que tenemos que agregar una calificacion
+          else if(!calificacionesBD[index]) {
+            //Creamos la nueva calificacion
+            var nuevaCalificacion = new Calificacion({
+              fecha: estudiante.calificaciones[index].fecha,
+              valor: estudiante.calificaciones[index].valor
+            });
+            console.log("Nueva calificacion: " + nuevaCalificacion);
+            //Guardamos la nueva calificacion y la pusheamos al vector calificaciones de la collection
+            //calificacionesXMateria
+            nuevaCalificacion.save().then(califGuardada => {
+              console.dir(califGuardada);
+              console.log("Id nueva calificacion: " + califGuardada._id);
+              CalificacionesXMateria.findByIdAndUpdate(
+                resultadoAg.calXMatEstudiante[0]._id,
+                {
+                  $addToSet: {
+                    calificaciones: mongoose.Types.ObjectId(califGuardada._id)
+                  }
+                }
+              );
+            });
+          }
+        }
+        res.json({ message: "Parece que todo bien", exito: true });
+      })
+      .catch(e => res.json(e));
   });
 });
 module.exports = router;
