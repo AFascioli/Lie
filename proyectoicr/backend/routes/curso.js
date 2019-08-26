@@ -244,9 +244,10 @@ router.post("/estudiantes/materias/calificaciones", (req, res) => {
   console.dir(req.body);
   req.body.forEach(estudiante => {
     Inscripcion.findOne({
-      activa: true, // No es necesario
-      IdEstudiante: mongoose.Types.ObjectId(estudiante.IdEstudiante)
+      IdEstudiante: estudiante.IdEstudiante, // mongoose.Types.ObjectId(estudiante.IdEstudiante)
+      activa: true // No es necesario
     }).then(async inscripcionE => {
+      // #resolve inscripcionE es null, osea no encuentra
       console.dir(inscripcionE);
       await CalificacionesXMateria.findById(
         inscripcionE.calificacionesXMateria._id
