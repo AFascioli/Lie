@@ -63,12 +63,15 @@ export class CalificacionesEstudiantesComponent implements OnInit {
         duration: 4500
       });
     } else {
-      // Metodo del servicio para guardar las notas
-      // if(respuesta.exito){
-      this.snackBar.open("Calificaciones registradas exitósamente", "", {
-        duration: 4500
-      });
-      // }
+      this.servicio
+        .registrarCalificaciones(this.estudiantes)
+        .subscribe(respuesta => {
+          if (respuesta.exito) {
+            this.snackBar.open(respuesta.message, "", {
+              duration: 4500
+            });
+          }
+        });
     }
   }
 

@@ -2,6 +2,8 @@ const express = require("express");
 const router = express.Router();
 const Division = require("../models/division");
 const Inscripcion = require("../models/inscripcion");
+const CalificacionesXMateria = require("../models/calificacionesXMateria");
+const Calificacion = require("../models/calificacion");
 const mongoose = require("mongoose");
 
 router.get("/", (req, res) => {
@@ -138,7 +140,7 @@ router.get("/documentos", (req, res) => {
 });
 
 router.get("/estudiantes/materias/calificaciones", (req, res) => {
-
+  // #resolve Filtrar por inscripción activa
   Inscripcion.aggregate([
     {
       $lookup: {
@@ -233,11 +235,56 @@ router.get("/estudiantes/materias/calificaciones", (req, res) => {
 
       respuesta.push(cEstudiante);
     });
-    res.status(200).json({estudiantes: respuesta});
+    res.status(200).json({ estudiantes: respuesta });
   });
 });
 
-router.post("/estudiantes/materias/calificaciones", (req, res)=>{
-// Logica
+router.post("/estudiantes/materias/calificaciones", (req, res) => {
+  //#resolve Ver si usamos el find con "$in": {[]} para hacer una sola consulta
+  console.dir(req.body);
+  req.body.forEach(estudiante => {
+    Inscripcion.findOne({
+      activa: true, // No es necesario
+      IdEstudiante: mongoose.Types.ObjectId(estudiante.IdEstudiante)
+    }).then(async inscripcionE => {
+      console.dir(inscripcionE);
+      await CalificacionesXMateria.findById(
+        inscripcionE.calificacionesXMateria._id
+      ).then( async califXMateria => {
+        // Se crea el nuevo vector de calificaciones para asignarle a la califXMateria
+        await estudiante.calificaciones.forEach( async (calif, index) => {
+          if(califXMateria.calificaciones[index]){
+            califXMateria.calificaciones.map( async cc => {
+              if(cc._id = calif._id)
+              {
+                cc.valor = calif.valor;
+                await cc.save();
+              }
+            });
+          } else {
+            var calificacionN = new Calificacion({
+            fecha: estudiante.calificaciones[index].fecha,
+            valor: estudiante.calificaciones[index].valor
+            });
+            await calificacionN.save().then(async calif => {
+            await califXMateria.calificaciones.push(calif);
+            });
+          }
+
+          await califXMateria.save();
+          //#resolve
+          console.dir(califXMateria);
+      });
+
+        var cXMateriaN = new CalificacionesXMateria({
+          _id: califXMateria._id,
+          idmateria: califXMateria.idmateria,
+          calificaciones: calificacionN,
+          trimestre: califXMateria.trimestre
+        });
+
+      });
+    });
+  });
 });
 module.exports = router;
