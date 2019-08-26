@@ -1,9 +1,13 @@
-<mat-card>
-  <mat-card-header>
-    <mat-card-title class="componente-titulo">Iniciar Sesión</mat-card-title>
-  </mat-card-header>
-  <mat-card-content>
-    <form action="">
+<mat-toolbar class="fixed-header">
+  <mat-toolbar-row>
+  </mat-toolbar-row>
+</mat-toolbar>
+<h1 class="componente-titulo">
+  Inicia sesión en Lié
+</h1>
+<mat-card class="card-body-componente">
+  <meta charset="utf-8" />
+  <form>
       <mat-form-field>
         <input
           type="text"
@@ -11,8 +15,10 @@
           placeholder="Usuario"
           name="username"
           required
+          class="campos"
         />
       </mat-form-field>
+      <br>
       <mat-form-field>
         <input
           type="password"
@@ -21,13 +27,17 @@
           type="password"
           name="password"
           required
+          class="campos"
         />
       </mat-form-field>
-      <div class="button">
-        <button type="submit" mat-button routerLink="/home">
+      <div class="div-button">
+        <button
+        mat-raised-button
+        class="button"
+        color="primary"
+        routerLink="/home">
           Iniciar Sesión
         </button>
       </div>
     </form>
-  </mat-card-content>
 </mat-card>

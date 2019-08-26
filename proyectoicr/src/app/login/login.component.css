@@ -1,4 +1,4 @@
-:host {
+/* :host {
   display: flex;
   justify-content: center;
   margin: 100px 0px;
@@ -23,5 +23,22 @@ body
 {
     background-image: url('../../img/desfile.jpg');
   ;
+} */
+
+.mat-form-field{
+  width: 45%;
+  margin-left: 30%;
 }
 
+.div-button {
+  text-align: right;
+}
+
+.fixed-header {
+  position: sticky;
+  /* top: 0;
+  left: 0;
+  z-index: 2; */
+  width: 100%  !important;
+  background-color: #c12d2a;
+}
