@@ -80,12 +80,8 @@
           class="columnasChicas"
           mat-cell
           *matCellDef="let estudiantes"
-          contenteditable="true"
         >
-          <p *ngIf="estudiantes.calificaciones[0]">
-            {{ estudiantes.calificaciones[0].valor }}
-          </p>
-          <p *ngIf="!estudiantes.calificaciones[0]">-</p>
+          <input [(ngModel)]="estudiantes.calificaciones[0].valor" type="number" name="nota1" value="estudiantes.calificaciones[0].valor"/>
         </td>
       </ng-container>
       <ng-container matColumnDef="cal2">
@@ -95,10 +91,6 @@
           mat-cell
           *matCellDef="let estudiantes"
         >
-          <!-- <p *ngIf="estudiantes.calificaciones[1]">
-            {{ estudiantes.calificaciones[1].valor }}
-          </p>
-          <p *ngIf="!estudiantes.calificaciones[1]">-</p> -->
           <input [(ngModel)]="estudiantes.calificaciones[1].valor" type="number" name="nota2" value="estudiantes.calificaciones[1].valor"/>
         </td>
       </ng-container>
@@ -108,12 +100,38 @@
           class="columnasChicas"
           mat-cell
           *matCellDef="let estudiantes"
-          contenteditable="true"
         >
-          <p *ngIf="estudiantes.calificaciones[2]">
-            {{ estudiantes.calificaciones[2].valor }}
-          </p>
-          <p *ngIf="!estudiantes.calificaciones[2]">-</p>
+          <input [(ngModel)]="estudiantes.calificaciones[2].valor" type="number" name="nota3" value="estudiantes.calificaciones[2].valor"/>
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="cal4">
+        <th class="columnasChicas" mat-header-cell *matHeaderCellDef>4°</th>
+        <td
+          class="columnasChicas"
+          mat-cell
+          *matCellDef="let estudiantes"
+        >
+          <input [(ngModel)]="estudiantes.calificaciones[3].valor" type="number" name="nota4" value="estudiantes.calificaciones[3].valor"/>
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="cal5">
+        <th class="columnasChicas" mat-header-cell *matHeaderCellDef>5°</th>
+        <td
+          class="columnasChicas"
+          mat-cell
+          *matCellDef="let estudiantes"
+        >
+          <input [(ngModel)]="estudiantes.calificaciones[4].valor" type="number" name="nota5" value="estudiantes.calificaciones[4].valor"/>
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="cal6">
+        <th class="columnasChicas" mat-header-cell *matHeaderCellDef>6°</th>
+        <td
+          class="columnasChicas"
+          mat-cell
+          *matCellDef="let estudiantes"
+        >
+          <input [(ngModel)]="estudiantes.calificaciones[5].valor" type="number" name="nota6" value="estudiantes.calificaciones[5].valor"/>
         </td>
       </ng-container>
 

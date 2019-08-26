@@ -290,7 +290,6 @@ router.post("/estudiantes/materias/calificaciones", (req, res) => {
 
 router.post("/estudiantes/materias/calificacionesttt", (req, res) => {
   req.body.forEach(estudiante => {
-    console.dir(estudiante);
     Inscripcion.aggregate([
       {
         $match: {
@@ -333,34 +332,38 @@ router.post("/estudiantes/materias/calificacionesttt", (req, res) => {
       .then(resultadoAg => {
         var calificacionesBD = resultadoAg[0].calificaciones;
         //Hacemos un for que recorra el vector que viene del Frontend, ya que puede ser que tenga mayor length que el de la bd
-        for (var index = 0; index < estudiante.calificaciones.length; index++) {
-          //revisar logica corte for
+
+        estudiante.calificaciones.forEach(async (calif, index) => {
           //Si existe ese elemento en el vector y tienen distintas notas, se actualiza la calificacion de la BD
           if (
-            calificacionesBD[index] &&
-            calificacionesBD[index].valor !=
-              estudiante.calificaciones[index].valor
+            calificacionesBD[index].valor != calif.valor &&
+            calificacionesBD[index].valor != "-"
           ) {
             console.log(
               "Calificacion modificada: _id: " +
                 calificacionesBD[index]._id +
                 " valor: " +
-                estudiante.calificaciones[index].valor
+                calif.valor
             );
             Calificacion.findByIdAndUpdate(calificacionesBD[index]._id, {
-              valor: estudiante.calificaciones[index].valor
-            }).exec().catch(e=> console.log(e));
+              valor: calif.valor
+            })
+              .exec()
+              .catch(e => console.log(e));
           }
           //Si no existe elemento para un index determinado, significa que tenemos que agregar una calificacion
-          else if(!calificacionesBD[index]) {
+          else if (
+            calificacionesBD[index].valor != calif.valor &&
+            calificacionesBD[index].valor == "-"
+          ) {
             //Creamos la nueva calificacion
             var nuevaCalificacion = new Calificacion({
-              fecha: estudiante.calificaciones[index].fecha,
-              valor: estudiante.calificaciones[index].valor
+              fecha: calif.fecha, //Ver si ponemos aca la fecha o en el front end
+              valor: calif.valor
             });
-            console.log("Nueva calificacion: " + nuevaCalificacion);
             //Guardamos la nueva calificacion y la pusheamos al vector calificaciones de la collection
             //calificacionesXMateria
+
             nuevaCalificacion.save().then(califGuardada => {
               console.dir(califGuardada);
               console.log("Id nueva calificacion: " + califGuardada._id);
@@ -374,10 +377,94 @@ router.post("/estudiantes/materias/calificacionesttt", (req, res) => {
               );
             });
           }
-        }
+        });
         res.json({ message: "Parece que todo bien", exito: true });
       })
       .catch(e => res.json(e));
   });
+});
+
+//#resolve logica que cuando se inscribe a un nuevo alumno
+// popula el array calificacionesXMateria teniendo las materias del curso.
+// Teniendo eso, por cada uno de esos objetos,
+// crearles 6 calificaciones con fecha y valor= "-", todo esto por trimestre.
+router.post("ZONA TESTING!!!!!!!!!!!!!!!!!!!!", (req, res) => {
+  var vectorMaterias = [];
+  var idInscripcion= "";
+  //AGREGAR ASYNC AWAIT PARA QUE SE TERMINE DE EJECUTAR EL AGGREGATE
+  Inscripcion.aggregate([
+    {
+      '$match': {
+        'IdDivision': mongoose.Types.ObjectId("ID DEL CURSO")
+      }
+    }, {
+      '$lookup': {
+        'from': 'divisiones',
+        'localField': 'IdDivision',
+        'foreignField': '_id',
+        'as': 'curso'
+      }
+    }, {
+      '$lookup': {
+        'from': 'horariosMaterias',
+        'localField': 'curso.agenda',
+        'foreignField': '_id',
+        'as': 'horariosMaterias'
+      }
+    }, {
+      '$lookup': {
+        'from': 'materias',
+        'localField': 'horariosMaterias.materia',
+        'foreignField': '_id',
+        'as': 'materias'
+      }
+    }, {
+      '$project': {
+        'materias._id': 1
+      }
+    }
+  ]).then(resultado =>{
+    idInscripcion= resultado._id;
+    resultado.materias.forEach(materia=>{
+      vectorMaterias.push(materia._id);
+    });
+  });
+
+  //Por cada trimestre
+  for (let trimestre = 1; trimestre < 4; trimestre++) {
+
+    //Por cada materia, se crea un objeto CalificacionesXMateria
+  vectorMaterias.forEach(materia => {
+    var calificacionXMateria = new CalificacionesXMateria({
+      idMateria: materia,
+      calificaciones: [],
+      trimestre: trimestre
+    });
+
+    //Se guarda CalificacionesXMateria y se crean las calificaciones
+    calificacionXMateria.save().then(calXMatGuardada => {
+      for (let index = 0; index < 5; index++) {
+        var calificacion = new Calificacion({
+          fecha: "-",
+          valor: "-"
+        });
+        //Agregar Calificacion al vector calificaciones de CalificacionesXMateria
+        calificacion.save().then(califGuardada => {
+          CalificacionesXMateria.findByIdAndUpdate(calXMatGuardada._id, {
+            $addToSet: {
+              calificaciones: mongoose.Types.ObjectId(califGuardada._id)
+            }
+          });
+        });
+      }
+      //Agregar CalificacionesXMateria a inscripcion
+      Inscripcion.findByIdAndUpdate(idInscripcion, {
+        $addToSet: {
+          calificacionesXMateria: mongoose.Types.ObjectId(calXMatGuardada._id)
+        }
+      });
+    });
+  });
+}
 });
 module.exports = router;
