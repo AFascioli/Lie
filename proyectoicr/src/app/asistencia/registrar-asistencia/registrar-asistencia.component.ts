@@ -14,6 +14,7 @@ export class RegistrarAsistenciaComponent implements OnInit {
   estudiantesXDivision: any[];
   displayedColumns: string[] = ["apellido", "nombre", "accion"];
   fechaActual: Date;
+  asistenciaNueva: string;
   constructor(
     private servicio: EstudiantesService,
     public popup: MatDialog,
@@ -39,6 +40,7 @@ export class RegistrarAsistenciaComponent implements OnInit {
   onCursoSeleccionado(curso) {
     this.cursoNotSelected = false;
     this.servicio.cargarAsistenciaBackend(curso.value).subscribe(respuesta => {
+      this.asistenciaNueva= respuesta.asistenciaNueva;
       this.estudiantesXDivision = respuesta.estudiantes.sort((a, b) =>
         a.apellido > b.apellido ? 1 : b.apellido > a.apellido ? -1 : 0
       );
@@ -60,7 +62,7 @@ export class RegistrarAsistenciaComponent implements OnInit {
     // this.popup.open(AsistenciaPopupComponent, {
     //   width: "250px"
     // });
-    this.servicio.registrarAsistencia(this.estudiantesXDivision);
+    this.servicio.registrarAsistencia(this.estudiantesXDivision, this.asistenciaNueva);
     this.snackBar.open("Asistencia registrada exitósamente", "", {
       duration: 4500
     });

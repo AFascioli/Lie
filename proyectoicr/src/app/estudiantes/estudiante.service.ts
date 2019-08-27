@@ -238,11 +238,12 @@ export class EstudiantesService {
   }
 
   //Recibe un vector con datos de estudiantes (_id, nombre y apellido) y presentismo (fecha y presente) y lo envia al backend para registrarlo
-  registrarAsistencia(estudiantesXDivision: any[]) {
+  registrarAsistencia(estudiantesXDivision: any[], asistenciaNueva: string) {
+    let params = new HttpParams().set("asistenciaNueva", asistenciaNueva);
     this.http
       .post<{ message: string }>(
         "http://localhost:3000/estudiante/asistencia",
-        estudiantesXDivision
+        estudiantesXDivision,{params: params}
       )
       .subscribe(response => {});
   }
@@ -326,8 +327,8 @@ export class EstudiantesService {
 
   cargarAsistenciaBackend(curso: string){
     let params = new HttpParams().set("curso", curso)
-    return this.http.get<{ estudiantes: any[] }>(
-      "http://localhost:3000/estudiante/asistenciatest", {params: params}
+    return this.http.get<{ estudiantes: any[], asistenciaNueva: string }>(
+      "http://localhost:3000/estudiante/asistencia", {params: params}
     );
   }
 }
