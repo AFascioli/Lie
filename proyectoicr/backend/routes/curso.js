@@ -377,7 +377,10 @@ router.post("/estudiantes/materias/calificacionesttt", (req, res) => {
             });
           }
         });
-        res.json({ message: "Calificaciones registradas correctamente", exito: true });
+        res.json({
+          message: "Calificaciones registradas correctamente",
+          exito: true
+        });
       })
       .catch(e => res.json(e));
   });
@@ -389,86 +392,89 @@ router.post("/estudiantes/materias/calificacionesttt", (req, res) => {
 // crearles 6 calificaciones con fecha y valor= "-", todo esto por trimestre.
 router.get("/scripts", (req, res) => {
   var vectorMaterias = [];
-  var idInscripcion= "";
+  var idInscripcion = "";
   //AGREGAR ASYNC AWAIT PARA QUE SE TERMINE DE EJECUTAR EL AGGREGATE
   Inscripcion.aggregate([
     {
-      '$match': {
-        'IdDivision': mongoose.Types.ObjectId("5d27767eafa09407c479bdc3") //AAAAAAAAAAAAAAAA
+      $match: {
+        IdDivision: mongoose.Types.ObjectId("5d27767eafa09407c479bdc3") //AAAAAAAAAAAAAAAA
       }
-    }, {
-      '$lookup': {
-        'from': 'divisiones',
-        'localField': 'IdDivision',
-        'foreignField': '_id',
-        'as': 'curso'
+    },
+    {
+      $lookup: {
+        from: "divisiones",
+        localField: "IdDivision",
+        foreignField: "_id",
+        as: "curso"
       }
-    }, {
-      '$lookup': {
-        'from': 'horariosMaterias',
-        'localField': 'curso.agenda',
-        'foreignField': '_id',
-        'as': 'horariosMaterias'
+    },
+    {
+      $lookup: {
+        from: "horariosMaterias",
+        localField: "curso.agenda",
+        foreignField: "_id",
+        as: "horariosMaterias"
       }
-    }, {
-      '$lookup': {
-        'from': 'materias',
-        'localField': 'horariosMaterias.materia',
-        'foreignField': '_id',
-        'as': 'materias'
+    },
+    {
+      $lookup: {
+        from: "materias",
+        localField: "horariosMaterias.materia",
+        foreignField: "_id",
+        as: "materias"
       }
-    }, {
-      '$project': {
-        'materias._id': 1
+    },
+    {
+      $project: {
+        "materias._id": 1
       }
     }
-  ]).then(resultado =>{
+  ]).then(resultado => {
     console.dir(+resultado);
-    idInscripcion= resultado._id;
-    resultado.materias.forEach(materia=>{
+    idInscripcion = resultado._id;
+    resultado.materias.forEach(materia => {
       vectorMaterias.push(materia._id);
     });
   });
 
   //Por cada trimestre
   for (let trimestre = 1; trimestre < 4; trimestre++) {
-    console.log("Empezo for trimestre "+trimestre);
+    console.log("Empezo for trimestre " + trimestre);
     //Por cada materia, se crea un objeto CalificacionesXMateria
-  vectorMaterias.forEach(materia => {
-    console.log("for materias");
-    var calificacionXMateria = new CalificacionesXMateria({
-      idMateria: materia,
-      calificaciones: [],
-      trimestre: trimestre
-    });
+    vectorMaterias.forEach(materia => {
+      console.log("for materias");
+      var calificacionXMateria = new CalificacionesXMateria({
+        idMateria: materia,
+        calificaciones: [],
+        trimestre: trimestre
+      });
 
-    //Se guarda CalificacionesXMateria y se crean las calificaciones
-    calificacionXMateria.save().then(calXMatGuardada => {
-      for (let index = 0; index < 5; index++) {
-        console.log("for calificacion");
-        var calificacion = new Calificacion({
-          fecha: "-",
-          valor: "-"
-        });
-        //Agregar Calificacion al vector calificaciones de CalificacionesXMateria
-        calificacion.save().then(califGuardada => {
-          CalificacionesXMateria.findByIdAndUpdate(calXMatGuardada._id, {
-            $addToSet: {
-              calificaciones: mongoose.Types.ObjectId(califGuardada._id)
-            }
+      //Se guarda CalificacionesXMateria y se crean las calificaciones
+      calificacionXMateria.save().then(calXMatGuardada => {
+        for (let index = 0; index < 5; index++) {
+          console.log("for calificacion");
+          var calificacion = new Calificacion({
+            fecha: "-",
+            valor: "-"
           });
-        });
-      }
-      //Agregar CalificacionesXMateria a inscripcion
-      Inscripcion.findByIdAndUpdate(idInscripcion, {
-        $addToSet: {
-          calificacionesXMateria: mongoose.Types.ObjectId(calXMatGuardada._id)
+          //Agregar Calificacion al vector calificaciones de CalificacionesXMateria
+          calificacion.save().then(califGuardada => {
+            CalificacionesXMateria.findByIdAndUpdate(calXMatGuardada._id, {
+              $addToSet: {
+                calificaciones: mongoose.Types.ObjectId(califGuardada._id)
+              }
+            });
+          });
         }
+        //Agregar CalificacionesXMateria a inscripcion
+        Inscripcion.findByIdAndUpdate(idInscripcion, {
+          $addToSet: {
+            calificacionesXMateria: mongoose.Types.ObjectId(calXMatGuardada._id)
+          }
+        });
       });
     });
-  });
-}
-
-res.json({message: "Parece que esta todo bien"});
+  }
+  res.json({ message: "Parece que esta todo bien" });
 });
 module.exports = router;
