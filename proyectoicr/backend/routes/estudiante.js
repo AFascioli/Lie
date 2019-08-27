@@ -282,7 +282,7 @@ router.get("/asistenciatest", (req, res) => {
     },
     {
       $match: {
-        "curso.curso": "4A",
+        "curso.curso": req.query.curso,
         activa: true
       }
     },
@@ -313,8 +313,7 @@ router.get("/asistenciatest", (req, res) => {
   ]).then(ultimaAsistencia => {
     var fechaHoy = new Date();
     fechaHoy.setHours(fechaHoy.getHours() - 3);
-    console.log(fechaHoy);
-    if (
+    if (ultimaAsistencia[0].asistencia.length>0 &&
       fechaHoy.getDate() == ultimaAsistencia[0].asistencia[0].fecha.getDate() &&
       fechaHoy.getMonth() ==
         ultimaAsistencia[0].asistencia[0].fecha.getMonth() &&
@@ -340,7 +339,7 @@ router.get("/asistenciatest", (req, res) => {
         },
         {
           $match: {
-            "curso.curso": "4A",
+            "curso.curso": req.query.curso,
             activa: true
           }
         },
@@ -375,61 +374,62 @@ router.get("/asistenciatest", (req, res) => {
             _id: estudiante.datosEstudiante[0]._id,
             nombre: estudiante.datosEstudiante[0].nombre,
             apellido: estudiante.datosEstudiante[0].apellido,
+            fecha: fechaHoy,
             presente: estudiante.asistencia[0].presente
           };
           respuesta.push(estudianteRefinado);
         });
         res.status(200).json({ estudiantes: respuesta });
       });
+    } else {
+      Inscripcion.aggregate([
+        {
+          $lookup: {
+            from: "divisiones",
+            localField: "IdDivision",
+            foreignField: "_id",
+            as: "curso"
+          }
+        },
+        {
+          $lookup: {
+            from: "estudiantes",
+            localField: "IdEstudiante",
+            foreignField: "_id",
+            as: "estudiante"
+          }
+        },
+        {
+          $match: { "curso.curso": req.query.curso, activa: true }
+        },
+        {
+          $project: {
+            _id: 0,
+            "estudiante._id": 1,
+            "estudiante.nombre": 1,
+            "estudiante.apellido": 1
+          }
+        }
+      ]).then(documents => {
+        const fechaActual = new Date();
+        fechaActual.setHours(fechaActual.getHours());
+        var estudiantesRedux = [];
+        documents.forEach(objConEstudiante => {
+          let estudianteRedux = {
+            _id: objConEstudiante.estudiante[0]._id,
+            nombre: objConEstudiante.estudiante[0].nombre,
+            apellido: objConEstudiante.estudiante[0].apellido,
+            fecha:fechaHoy,
+            presente: true
+          };
+          estudiantesRedux.push(estudianteRedux);
+        });
+        res.status(200).json({
+          estudiantes: estudiantesRedux
+        });
+      });
     }
-
-    Inscripcion.aggregate([
-      {
-        $lookup: {
-          from: "divisiones",
-          localField: "IdDivision",
-          foreignField: "_id",
-          as: "curso"
-        }
-      },
-      {
-        $lookup: {
-          from: "estudiantes",
-          localField: "IdEstudiante",
-          foreignField: "_id",
-          as: "estudiante"
-        }
-      },
-      {
-        $match: { "curso.curso": req.query.division, activa: true }
-      },
-      {
-        $project: {
-          _id: 0,
-          "estudiante._id": 1,
-          "estudiante.nombre": 1,
-          "estudiante.apellido": 1
-        }
-      }
-    ]).then(documents => {
-      const fechaActual = new Date();
-      fechaActual.setHours(fechaActual.getHours());
-      var estudiantesRedux = [];
-      documents.forEach(objConEstudiante => {
-        let estudianteRedux = {
-          _id: objConEstudiante.estudiante[0]._id,
-          nombre: objConEstudiante.estudiante[0].nombre,
-          apellido: objConEstudiante.estudiante[0].apellido,
-          presente: true
-        };
-        estudiantesRedux.push(estudianteRedux);
-      });
-      res.status(200).json({
-        estudiantesXCurso: estudiantesRedux
-      });
-    });
   });
 });
-
 
 module.exports = router;

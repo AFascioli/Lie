@@ -323,4 +323,11 @@ export class EstudiantesService {
       estudiantes, {params: params}
     );
   }
+
+  cargarAsistenciaBackend(curso: string){
+    let params = new HttpParams().set("curso", curso)
+    return this.http.get<{ estudiantes: any[] }>(
+      "http://localhost:3000/estudiante/asistenciatest", {params: params}
+    );
+  }
 }

@@ -10,7 +10,7 @@
       #curso="ngModel"
       matNativeControl
       required
-      (selectionChange)="buscarEstudiantesPorDivision(curso)"
+      (selectionChange)="onCursoSeleccionado(curso)"
     >
       <mat-option *ngFor="let objCurso of cursos" [value]="objCurso.curso">
         {{ objCurso.curso }}
