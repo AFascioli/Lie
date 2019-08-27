@@ -155,6 +155,7 @@ router.get("/estudiantes/materias/calificaciones", (req, res) => {
         "datosEstudiante._id": 1,
         "datosEstudiante.nombre": 1,
         "datosEstudiante.apellido": 1,
+        activa: 1,
         IdDivision: 1,
         calificacionesXMateria: 1
       }
@@ -169,7 +170,8 @@ router.get("/estudiantes/materias/calificaciones", (req, res) => {
     },
     {
       $match: {
-        "curso._id": mongoose.Types.ObjectId(req.query.idcurso)
+        "curso._id": mongoose.Types.ObjectId(req.query.idcurso),
+        activa: true
       }
     },
     {
@@ -293,8 +295,7 @@ router.post("/estudiantes/materias/calificacionesttt", (req, res) => {
     Inscripcion.aggregate([
       {
         $match: {
-          IdEstudiante: mongoose.Types.ObjectId(estudiante.idEstudiante) // mongoose.Types.ObjectId(estudiante.IdEstudiante)
-          // IdEstudiante: mongoose.Types.ObjectId("5d1a5a66941efc2e98b15c0e")
+          IdEstudiante: mongoose.Types.ObjectId(estudiante.idEstudiante)
         }
       },
       {
@@ -310,8 +311,6 @@ router.post("/estudiantes/materias/calificacionesttt", (req, res) => {
           "calXMatEstudiante.idMateria": mongoose.Types.ObjectId(
             req.query.idMateria
           )
-          // "calXMatEstudiante.idMateria": mongoose.Types.ObjectId(
-          //   "5d60289b1c955832b86ea448")
         }
       },
       {
@@ -378,7 +377,7 @@ router.post("/estudiantes/materias/calificacionesttt", (req, res) => {
             });
           }
         });
-        res.json({ message: "Parece que todo bien", exito: true });
+        res.json({ message: "Calificaciones registradas correctamente", exito: true });
       })
       .catch(e => res.json(e));
   });
@@ -388,14 +387,14 @@ router.post("/estudiantes/materias/calificacionesttt", (req, res) => {
 // popula el array calificacionesXMateria teniendo las materias del curso.
 // Teniendo eso, por cada uno de esos objetos,
 // crearles 6 calificaciones con fecha y valor= "-", todo esto por trimestre.
-router.post("ZONA TESTING!!!!!!!!!!!!!!!!!!!!", (req, res) => {
+router.get("/scripts", (req, res) => {
   var vectorMaterias = [];
   var idInscripcion= "";
   //AGREGAR ASYNC AWAIT PARA QUE SE TERMINE DE EJECUTAR EL AGGREGATE
   Inscripcion.aggregate([
     {
       '$match': {
-        'IdDivision': mongoose.Types.ObjectId("ID DEL CURSO")
+        'IdDivision': mongoose.Types.ObjectId("5d27767eafa09407c479bdc3") //AAAAAAAAAAAAAAAA
       }
     }, {
       '$lookup': {
@@ -424,6 +423,7 @@ router.post("ZONA TESTING!!!!!!!!!!!!!!!!!!!!", (req, res) => {
       }
     }
   ]).then(resultado =>{
+    console.dir(+resultado);
     idInscripcion= resultado._id;
     resultado.materias.forEach(materia=>{
       vectorMaterias.push(materia._id);
@@ -432,9 +432,10 @@ router.post("ZONA TESTING!!!!!!!!!!!!!!!!!!!!", (req, res) => {
 
   //Por cada trimestre
   for (let trimestre = 1; trimestre < 4; trimestre++) {
-
+    console.log("Empezo for trimestre "+trimestre);
     //Por cada materia, se crea un objeto CalificacionesXMateria
   vectorMaterias.forEach(materia => {
+    console.log("for materias");
     var calificacionXMateria = new CalificacionesXMateria({
       idMateria: materia,
       calificaciones: [],
@@ -444,6 +445,7 @@ router.post("ZONA TESTING!!!!!!!!!!!!!!!!!!!!", (req, res) => {
     //Se guarda CalificacionesXMateria y se crean las calificaciones
     calificacionXMateria.save().then(calXMatGuardada => {
       for (let index = 0; index < 5; index++) {
+        console.log("for calificacion");
         var calificacion = new Calificacion({
           fecha: "-",
           valor: "-"
@@ -466,5 +468,7 @@ router.post("ZONA TESTING!!!!!!!!!!!!!!!!!!!!", (req, res) => {
     });
   });
 }
+
+res.json({message: "Parece que esta todo bien"});
 });
 module.exports = router;
