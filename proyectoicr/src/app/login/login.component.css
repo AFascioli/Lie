@@ -1,37 +1,29 @@
-/* :host {
-  display: flex;
-  justify-content: center;
-  margin: 100px 0px;
-}
+.componente-titulo-login{
+  color: black;
+  text-align: center;
+  opacity: 0.8;
 
-.mat-form-field {
-  width: 100%;
-  min-width: 300px;
 }
-
-.mat-card-content {
-  display: flex;
-  justify-content: center;
-}
-
-.button {
-  display: flex;
-  justify-content: flex-end;
-}
-
 body
 {
-    background-image: url('../../img/desfile.jpg');
-  ;
-} */
+  background: linear-gradient(90deg, #53bbbf 10%, #0f1939 90%);
+
+}
 
 .mat-form-field{
-  width: 45%;
-  margin-left: 30%;
+  width:70%;
+  margin-left: 15%;
+  padding: 0%;
+  margin-top: 10%;
+  text-align: cover;
+  text-align: left;
+
 }
 
 .div-button {
   text-align: right;
+  margin-right: 15%;
+  opacity: 0.99;
 }
 
 .fixed-header {
@@ -42,3 +34,13 @@ body
   width: 100%  !important;
   background-color: #c12d2a;
 }
+
+mat-card {
+  margin-top: 10%;
+  margin-bottom: 10%;
+  padding: 0;
+  width: 30%;
+  height: 45%;
+}
+
+
