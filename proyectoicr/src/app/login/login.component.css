@@ -6,7 +6,12 @@
 }
 body
 {
-  background: linear-gradient(90deg, #53bbbf 10%, #0f1939 90%);
+  background-image: url('../../img/cristoReyTrans.jpg');
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-attachment: fixed;
+  background-position: center center;
+
 
 }
 
@@ -19,11 +24,12 @@ body
   text-align: left;
 
 }
-
 .div-button {
+  margin-top: 6%;
   text-align: right;
   margin-right: 15%;
   opacity: 0.99;
+
 }
 
 .fixed-header {
@@ -36,11 +42,15 @@ body
 }
 
 mat-card {
-  margin-top: 10%;
+  margin-top: 6%;
   margin-bottom: 10%;
   padding: 0;
   width: 30%;
-  height: 45%;
+  height: 47%;
+  opacity: 0.8;
 }
 
-
+.componente-titulo-login{
+  text-align: center;
+  color: black;
+}
