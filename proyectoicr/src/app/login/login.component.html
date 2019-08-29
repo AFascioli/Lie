@@ -1,22 +1,22 @@
 <body>
-  <br>
+ <br>
   <br>
   <br>
 <h1 class="componente-titulo-login">
-  Inicia sesión en Lié
+  Instituto "Cristo Rey"
 </h1>
 <mat-card class="card-body-componente" >
   <meta charset="utf-8" />
   <form>
       <mat-form-field>
-        <input class="tamano"
-
+        <input
           type="text"
           matInput
           placeholder="Usuario"
           name="username"
+          minlength="5"
+          maxlength="30"
           required
-          class="campos"
         />
       </mat-form-field>
       <br>
@@ -27,8 +27,9 @@
           placeholder="Contraseña"
           type="password"
           name="password"
+          minlength="11"
           required
-          class="campos"
+
         />
       </mat-form-field>
       <div class="div-button">
@@ -36,9 +37,8 @@
         class="button-color"
         mat-raised-button
         class="button"
-        color="primary"
         routerLink="/home">
-          Iniciar Sesión
+        Iniciar Sesión
         </button>
       </div>
     </form>
