@@ -54,6 +54,10 @@ export class CalificacionesEstudiantesComponent implements OnInit {
       )
       .subscribe(respuesta => {
         this.estudiantes = [...respuesta.estudiantes];
+        console.log(this.estudiantes);
+        this.estudiantes.forEach(estudiante=>{
+          estudiante.calificaciones= [0,0,0,0,0,0];
+        });
       });
   }
 
@@ -64,7 +68,7 @@ export class CalificacionesEstudiantesComponent implements OnInit {
       });
     } else {
       this.servicio
-        .registrarCalificaciones(this.estudiantes, form.value.materia )
+        .registrarCalificaciones(this.estudiantes, form.value.materia, form.value.trimestre )
         .subscribe(respuesta => {
           if (respuesta.exito) {
             this.snackBar.open(respuesta.message, "", {

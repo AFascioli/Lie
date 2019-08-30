@@ -142,67 +142,74 @@ router.get("/documentos", (req, res) => {
 router.get("/estudiantes/materias/calificaciones", (req, res) => {
   Inscripcion.aggregate([
     {
-      '$lookup': {
-        'from': 'estudiantes',
-        'localField': 'IdEstudiante',
-        'foreignField': '_id',
-        'as': 'datosEstudiante'
+      $lookup: {
+        from: "estudiantes",
+        localField: "IdEstudiante",
+        foreignField: "_id",
+        as: "datosEstudiante"
       }
-    }, {
-      '$project': {
-        'datosEstudiante._id': 1,
-        'datosEstudiante.nombre': 1,
-        'datosEstudiante.apellido': 1,
-        'activa': 1,
-        'IdDivision': 1,
-        'calificacionesXMateria': 1
+    },
+    {
+      $project: {
+        "datosEstudiante._id": 1,
+        "datosEstudiante.nombre": 1,
+        "datosEstudiante.apellido": 1,
+        activa: 1,
+        IdDivision: 1,
+        calificacionesXMateria: 1
       }
-    }, {
-      '$lookup': {
-        'from': 'divisiones',
-        'localField': 'IdDivision',
-        'foreignField': '_id',
-        'as': 'curso'
+    },
+    {
+      $lookup: {
+        from: "divisiones",
+        localField: "IdDivision",
+        foreignField: "_id",
+        as: "curso"
       }
-    }, {
-      '$match': {
-        'curso._id': mongoose.Types.ObjectId(req.query.idcurso),
-        'activa': true
+    },
+    {
+      $match: {
+        "curso._id": mongoose.Types.ObjectId(req.query.idcurso),
+        activa: true
       }
-    }, {
-      '$project': {
-        'datosEstudiante._id': 1,
-        'datosEstudiante.nombre': 1,
-        'datosEstudiante.apellido': 1,
-        'curso.curso': 1,
-        'calificacionesXMateria': 1
+    },
+    {
+      $project: {
+        "datosEstudiante._id": 1,
+        "datosEstudiante.nombre": 1,
+        "datosEstudiante.apellido": 1,
+        "curso.curso": 1,
+        calificacionesXMateria: 1
       }
-    }, {
-      '$lookup': {
-        'from': 'calificacionesXMateria',
-        'localField': 'calificacionesXMateria',
-        'foreignField': '_id',
-        'as': 'notas'
+    },
+    {
+      $lookup: {
+        from: "calificacionesXMateria",
+        localField: "calificacionesXMateria",
+        foreignField: "_id",
+        as: "notas"
       }
-    }, {
-      '$unwind': {
-        'path': '$notas'
+    },
+    {
+      $unwind: {
+        path: "$notas"
       }
-    }, {
-      '$match': {
-        'notas.idMateria': mongoose.Types.ObjectId(req.query.idmateria),
-        'notas.trimestre': parseInt(req.query.trimestre,10)
+    },
+    {
+      $match: {
+        "notas.idMateria": mongoose.Types.ObjectId(req.query.idmateria),
+        "notas.trimestre": parseInt(req.query.trimestre, 10)
       }
-    }, {
-      '$project': {
-        'datosEstudiante._id': 1,
-        'datosEstudiante.nombre': 1,
-        'datosEstudiante.apellido': 1,
-        'notas.calificaciones': 1
+    },
+    {
+      $project: {
+        "datosEstudiante._id": 1,
+        "datosEstudiante.nombre": 1,
+        "datosEstudiante.apellido": 1,
+        "notas.calificaciones": 1
       }
     }
   ]).then(documentos => {
-    console.log(documentos);
     var respuesta = [];
     documentos.forEach(califEst => {
       var cEstudiante = {
@@ -217,8 +224,8 @@ router.get("/estudiantes/materias/calificaciones", (req, res) => {
   });
 });
 
-
-router.post("/estudiantes/materias/calificacionesttt", (req, res) => {
+//Registra las calificaciones por alumno de un curso y materia determinada
+router.post("/estudiantes/materias/calificaciones", (req, res) => {
   req.body.forEach(estudiante => {
     Inscripcion.aggregate([
       {
@@ -235,18 +242,16 @@ router.post("/estudiantes/materias/calificacionesttt", (req, res) => {
         }
       },
       {
-        $match: {
-          "calXMatEstudiante.idMateria": mongoose.Types.ObjectId(
-            req.query.idMateria
-          )
+        $unwind: {
+          path: "$calXMatEstudiante"
         }
       },
       {
-        $lookup: {
-          from: "calificacion",
-          localField: "calXMatEstudiante.calificaciones",
-          foreignField: "_id",
-          as: "calificaciones"
+        $match: {
+          "calXMatEstudiante.idMateria": mongoose.Types.ObjectId(
+            req.query.idMateria
+          ),
+          "calXMatEstudiante.trimestre": parseInt(req.query.trimestre, 10)
         }
       },
       {
@@ -255,62 +260,22 @@ router.post("/estudiantes/materias/calificacionesttt", (req, res) => {
           "calXMatEstudiante._id": 1
         }
       }
-    ])
-      .then(resultadoAg => {
-        var calificacionesBD = resultadoAg[0].calificaciones;
-        //Hacemos un for que recorra el vector que viene del Frontend, ya que puede ser que tenga mayor length que el de la bd
-
-        estudiante.calificaciones.forEach(async (calif, index) => {
-          //Si existe ese elemento en el vector y tienen distintas notas, se actualiza la calificacion de la BD
-          if (
-            calificacionesBD[index].valor != calif.valor &&
-            calificacionesBD[index].valor != "-"
-          ) {
-            console.log(
-              "Calificacion modificada: _id: " +
-                calificacionesBD[index]._id +
-                " valor: " +
-                calif.valor
-            );
-            Calificacion.findByIdAndUpdate(calificacionesBD[index]._id, {
-              valor: calif.valor
-            })
-              .exec()
-              .catch(e => console.log(e));
+    ]).then(resultadoAg => {
+      CalificacionesXMateria.findByIdAndUpdate(
+        resultadoAg[0].calXMatEstudiante._id,
+        { $set:
+          {
+            calificaciones: estudiante.calificaciones
           }
-          //Si no existe elemento para un index determinado, significa que tenemos que agregar una calificacion
-          else if (
-            calificacionesBD[index].valor != calif.valor &&
-            calificacionesBD[index].valor == "-"
-          ) {
-            //Creamos la nueva calificacion
-            var nuevaCalificacion = new Calificacion({
-              fecha: calif.fecha, //Ver si ponemos aca la fecha o en el front end
-              valor: calif.valor
-            });
-            //Guardamos la nueva calificacion y la pusheamos al vector calificaciones de la collection
-            //calificacionesXMateria
-
-            nuevaCalificacion.save().then(califGuardada => {
-              console.dir(califGuardada);
-              console.log("Id nueva calificacion: " + califGuardada._id);
-              CalificacionesXMateria.findByIdAndUpdate(
-                resultadoAg.calXMatEstudiante[0]._id,
-                {
-                  $addToSet: {
-                    calificaciones: mongoose.Types.ObjectId(califGuardada._id)
-                  }
-                }
-              );
-            });
-          }
-        });
-        res.json({
-          message: "Calificaciones registradas correctamente",
-          exito: true
-        });
-      })
-      .catch(e => res.json(e));
+       }
+      )
+      .exec()
+      .catch(e => console.log(e));
+    });
+  });
+  res.json({
+    message: "Calificaciones registradas correctamente",
+    exito: true
   });
 });
 
