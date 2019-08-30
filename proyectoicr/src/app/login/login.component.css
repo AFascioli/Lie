@@ -5,10 +5,9 @@
   font-family: 'Times New Roman', Times, serif;
   font-weight: 100%;
   margin-top: 7%
-
 }
-body
-{
+
+body{
   margin: 0;
   padding: 0;
   background-image: url('../../img/cristoReyTrans.jpg');
@@ -20,13 +19,11 @@ body
 }
 
 mat-card {
-
   margin-bottom: 10%;
   padding: 0;
   width: 30%;
-  height: 47%;
+  height: 41%;
   position: relative;
-
 }
 
 .mat-form-field{
@@ -36,6 +33,7 @@ mat-card {
   margin-top: 10%;
   text-align: cover;
   text-align: left;
+
 }
 
 .div-button {
@@ -50,7 +48,4 @@ mat-card {
   color: white;
 }
 
-a{
-color: #551111;
-font-size: 40%;
-}
+
