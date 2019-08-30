@@ -30,7 +30,7 @@ mat-card {
   width:70%;
   margin-left: 15%;
   padding: 0%;
-  margin-top: 10%;
+  margin-top: 2%;
   text-align: cover;
   text-align: left;
 
@@ -43,9 +43,13 @@ mat-card {
   opacity: 0.99;
 }
 
+
 .button{
   background-color: #551111 !important;
   color: white;
 }
 
 
+form{
+  margin-top: 10%;
+}
