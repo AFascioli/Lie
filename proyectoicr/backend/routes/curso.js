@@ -140,155 +140,83 @@ router.get("/documentos", (req, res) => {
 });
 
 router.get("/estudiantes/materias/calificaciones", (req, res) => {
-  // #resolve Filtrar por inscripción activa
   Inscripcion.aggregate([
     {
-      $lookup: {
-        from: "estudiantes",
-        localField: "IdEstudiante",
-        foreignField: "_id",
-        as: "datosEstudiante"
+      '$lookup': {
+        'from': 'estudiantes',
+        'localField': 'IdEstudiante',
+        'foreignField': '_id',
+        'as': 'datosEstudiante'
       }
-    },
-    {
-      $project: {
-        "datosEstudiante._id": 1,
-        "datosEstudiante.nombre": 1,
-        "datosEstudiante.apellido": 1,
-        activa: 1,
-        IdDivision: 1,
-        calificacionesXMateria: 1
+    }, {
+      '$project': {
+        'datosEstudiante._id': 1,
+        'datosEstudiante.nombre': 1,
+        'datosEstudiante.apellido': 1,
+        'activa': 1,
+        'IdDivision': 1,
+        'calificacionesXMateria': 1
       }
-    },
-    {
-      $lookup: {
-        from: "divisiones",
-        localField: "IdDivision",
-        foreignField: "_id",
-        as: "curso"
+    }, {
+      '$lookup': {
+        'from': 'divisiones',
+        'localField': 'IdDivision',
+        'foreignField': '_id',
+        'as': 'curso'
       }
-    },
-    {
-      $match: {
-        "curso._id": mongoose.Types.ObjectId(req.query.idcurso),
-        activa: true
+    }, {
+      '$match': {
+        'curso._id': mongoose.Types.ObjectId(req.query.idcurso),
+        'activa': true
       }
-    },
-    {
-      $project: {
-        "datosEstudiante._id": 1,
-        "datosEstudiante.nombre": 1,
-        "datosEstudiante.apellido": 1,
-        "curso.curso": 1,
-        calificacionesXMateria: 1
+    }, {
+      '$project': {
+        'datosEstudiante._id': 1,
+        'datosEstudiante.nombre': 1,
+        'datosEstudiante.apellido': 1,
+        'curso.curso': 1,
+        'calificacionesXMateria': 1
       }
-    },
-    {
-      $lookup: {
-        from: "calificacionesXMateria",
-        localField: "calificacionesXMateria",
-        foreignField: "_id",
-        as: "calificacionesX"
+    }, {
+      '$lookup': {
+        'from': 'calificacionesXMateria',
+        'localField': 'calificacionesXMateria',
+        'foreignField': '_id',
+        'as': 'notas'
       }
-    },
-    {
-      $match: {
-        "calificacionesX.idMateria": mongoose.Types.ObjectId(
-          req.query.idmateria
-        ),
-        "calificacionesX.trimestre": parseInt(req.query.trimestre, 10)
+    }, {
+      '$unwind': {
+        'path': '$notas'
       }
-    },
-    {
-      $lookup: {
-        from: "calificacion",
-        localField: "calificacionesX.calificaciones",
-        foreignField: "_id",
-        as: "calificacionesEstudiante"
+    }, {
+      '$match': {
+        'notas.idMateria': mongoose.Types.ObjectId(req.query.idmateria),
+        'notas.trimestre': parseInt(req.query.trimestre,10)
       }
-    },
-    {
-      $project: {
-        "datosEstudiante._id": 1,
-        "datosEstudiante.nombre": 1,
-        "datosEstudiante.apellido": 1,
-        calificacionesEstudiante: 1
+    }, {
+      '$project': {
+        'datosEstudiante._id': 1,
+        'datosEstudiante.nombre': 1,
+        'datosEstudiante.apellido': 1,
+        'notas.calificaciones': 1
       }
     }
   ]).then(documentos => {
+    console.log(documentos);
     var respuesta = [];
     documentos.forEach(califEst => {
       var cEstudiante = {
         idEstudiante: califEst.datosEstudiante[0]._id,
         apellido: califEst.datosEstudiante[0].apellido,
         nombre: califEst.datosEstudiante[0].nombre,
-        calificaciones: []
+        calificaciones: califEst.notas.calificaciones
       };
-
-      califEst.calificacionesEstudiante.forEach(calificacion => {
-        var calif = {
-          id: calificacion._id,
-          fecha: calificacion.fecha,
-          valor: calificacion.valor
-        };
-
-        cEstudiante.calificaciones.push(calif);
-      });
-
       respuesta.push(cEstudiante);
     });
     res.status(200).json({ estudiantes: respuesta });
   });
 });
 
-router.post("/estudiantes/materias/calificaciones", (req, res) => {
-  //#resolve Ver si usamos el find con "$in": {[]} para hacer una sola consulta
-  console.dir(req.body);
-  req.body.forEach(estudiante => {
-    Inscripcion.findOne({
-      IdEstudiante: estudiante.IdEstudiante, // mongoose.Types.ObjectId(estudiante.IdEstudiante)
-      activa: true // No es necesario
-    }).then(async inscripcionE => {
-      // #resolve inscripcionE es null, osea no encuentra
-      console.dir(inscripcionE);
-      await CalificacionesXMateria.findById(
-        inscripcionE.calificacionesXMateria._id
-      ).then(async califXMateria => {
-        // Se crea el nuevo vector de calificaciones para asignarle a la califXMateria
-        await estudiante.calificaciones.forEach(async (calif, index) => {
-          if (califXMateria.calificaciones[index]) {
-            califXMateria.calificaciones.map(async cc => {
-              if ((cc._id = calif._id)) {
-                //y cc.valor /= calif.valor => updateById ()
-                cc.valor = calif.valor;
-                await cc.save();
-              }
-            });
-          } else {
-            var calificacionN = new Calificacion({
-              fecha: estudiante.calificaciones[index].fecha, //Deberia ser la fecha de hoy
-              valor: estudiante.calificaciones[index].valor
-            });
-            await calificacionN.save().then(async calif => {
-              await califXMateria.calificaciones.push(calif);
-            });
-          }
-
-          await califXMateria.save();
-          //#resolve
-          console.dir(califXMateria);
-        });
-
-        var cXMateriaN = new CalificacionesXMateria({
-          _id: califXMateria._id,
-          idmateria: califXMateria.idmateria,
-          calificaciones: calificacionN,
-          trimestre: califXMateria.trimestre
-        });
-      });
-    });
-  });
-});
 
 router.post("/estudiantes/materias/calificacionesttt", (req, res) => {
   req.body.forEach(estudiante => {
