@@ -60,8 +60,8 @@
         <th class="columnasNormales" mat-header-cell *matHeaderCellDef>
           Apellido/s
         </th>
-        <td class="columnasNormales" mat-cell *matCellDef="let estudiantes">
-          {{ estudiantes.apellido }}
+        <td class="columnasNormales" mat-cell *matCellDef="let estudiante">
+          {{ estudiante.apellido }}
         </td>
       </ng-container>
 
@@ -69,8 +69,8 @@
         <th class="columnasNormales" mat-header-cell *matHeaderCellDef>
           Nombre/s
         </th>
-        <td class="columnasNormales" mat-cell *matCellDef="let estudiantes">
-          {{ estudiantes.nombre }}
+        <td class="columnasNormales" mat-cell *matCellDef="let estudiante">
+          {{ estudiante.nombre }}
         </td>
       </ng-container>
 
@@ -79,9 +79,9 @@
         <td
           class="columnasChicas"
           mat-cell
-          *matCellDef="let estudiantes"
+          *matCellDef="let estudiante"
         >
-          <input  [(ngModel)]="estudiantes.calificaciones[0]" type="number" name="nota1" value="estudiantes.calificaciones[0]" placeholder="-"/>
+        <input [(ngModel)]="estudiante.calificaciones[0]" name="nota1{{estudiante.calificaciones[0]}}" type="number" />
         </td>
       </ng-container>
       <ng-container matColumnDef="cal2">
@@ -89,9 +89,9 @@
         <td
           class="columnasChicas"
           mat-cell
-          *matCellDef="let estudiantes"
+          *matCellDef="let estudiante"
         >
-          <input [(ngModel)]="estudiantes.calificaciones[1]" type="number" name="nota2" value="estudiantes.calificaciones[1]" placeholder="-"/>
+          <input [(ngModel)]="estudiante.calificaciones[1]" type="number" name="nota2{{estudiante.calificaciones[1]}}" />
         </td>
       </ng-container>
       <ng-container matColumnDef="cal3">
@@ -99,9 +99,9 @@
         <td
           class="columnasChicas"
           mat-cell
-          *matCellDef="let estudiantes"
+          *matCellDef="let estudiante"
         >
-          <input [(ngModel)]="estudiantes.calificaciones[2]" type="number" name="nota3" value="estudiantes.calificaciones[2]" placeholder="-"/>
+          <input [(ngModel)]="estudiante.calificaciones[2]" type="number" name="nota3{{estudiante.calificaciones[2]}}" />
         </td>
       </ng-container>
       <ng-container matColumnDef="cal4">
@@ -109,9 +109,9 @@
         <td
           class="columnasChicas"
           mat-cell
-          *matCellDef="let estudiantes"
+          *matCellDef="let estudiante"
         >
-          <input [(ngModel)]="estudiantes.calificaciones[3]" type="number" name="nota4" value="estudiantes.calificaciones[3]"/>
+          <input [(ngModel)]="estudiante.calificaciones[3]" type="number" name="nota4{{estudiante.calificaciones[3]}}"/>
         </td>
       </ng-container>
       <ng-container matColumnDef="cal5">
@@ -119,9 +119,9 @@
         <td
           class="columnasChicas"
           mat-cell
-          *matCellDef="let estudiantes"
+          *matCellDef="let estudiante"
         >
-          <input [(ngModel)]="estudiantes.calificaciones[4]" type="number" name="nota5" value="estudiantes.calificaciones[4]" placeholder="-"/>
+          <input [(ngModel)]="estudiante.calificaciones[4]" type="number" name="nota5{{estudiante.calificaciones[4]}}"  />
         </td>
       </ng-container>
       <ng-container matColumnDef="cal6">
@@ -129,9 +129,9 @@
         <td
           class="columnasChicas"
           mat-cell
-          *matCellDef="let estudiantes"
+          *matCellDef="let estudiante"
         >
-          <input [(ngModel)]="estudiantes.calificaciones[5]" type="number" name="nota6" value="estudiantes.calificaciones[5]" placeholder="-"/>
+          <input [(ngModel)]="estudiante.calificaciones[5]" type="number" name="nota6{{estudiante.calificaciones[5]}}" />
         </td>
       </ng-container>
 
