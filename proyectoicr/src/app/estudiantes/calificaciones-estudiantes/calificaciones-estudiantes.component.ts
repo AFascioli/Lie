@@ -61,7 +61,7 @@ export class CalificacionesEstudiantesComponent implements OnInit {
   onGuardar(form: NgForm) {
     if (form.invalid) {
       this.snackBar.open("Faltan campos por seleccionar", "", {
-        duration: 4500
+        duration: 3000
       });
     } else {
       console.log(this.estudiantes);
@@ -70,7 +70,7 @@ export class CalificacionesEstudiantesComponent implements OnInit {
         .subscribe(respuesta => {
           if (respuesta.exito) {
             this.snackBar.open(respuesta.message, "", {
-              duration: 4500
+              duration: 3000
             });
           }
         });
@@ -78,6 +78,7 @@ export class CalificacionesEstudiantesComponent implements OnInit {
   }
 
   onCancelar() {
+    this.servicio.tipoPopUp = "cancelar";
     this.popup.open(CalificacionesEstudiantePopupComponent);
   }
 }
