@@ -19,6 +19,7 @@ export class CalificacionesEstudiantesComponent implements OnInit {
   materias: any[];
   estudiantes: any[];
   displayedColumns: string[] = ["apellido", "nombre", "cal1", "cal2", "cal3","cal4", "cal5", "cal6"];
+  trimestrePorDefecto: string;
 
   constructor(
     public servicio: EstudiantesService,
@@ -37,6 +38,22 @@ export class CalificacionesEstudiantesComponent implements OnInit {
           : 0
       );
     });
+
+    this.trimestrePorDefault();
+  }
+
+  trimestrePorDefault()
+  {
+    var today = new Date();
+    var t1 = new Date(2019, 4, 31);
+    var t2 = new Date(2019, 8, 15);
+
+    if (today < t1)
+    this.trimestrePorDefecto = "1";
+    else if(today > t2)
+    this.trimestrePorDefecto = "3";
+    else
+    this.trimestrePorDefecto = "2";
   }
 
   onCursoSeleccionado(curso) {
@@ -60,9 +77,17 @@ export class CalificacionesEstudiantesComponent implements OnInit {
 
   onGuardar(form: NgForm) {
     if (form.invalid) {
-      this.snackBar.open("Faltan campos por seleccionar", "", {
+      if(form.value.curso == '' || form.value.materia =='')
+      {
+        this.snackBar.open("Faltan campos por seleccionar", "", {
         duration: 3000
       });
+      }
+      else{
+        this.snackBar.open("Las calificaciones sólo pueden ser números entre 1 y 10.", "", {
+          duration: 3000
+        });
+      }
     } else {
       console.log(this.estudiantes);
       this.servicio
