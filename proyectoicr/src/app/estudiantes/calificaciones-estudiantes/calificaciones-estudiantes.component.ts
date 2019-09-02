@@ -18,7 +18,7 @@ export class CalificacionesEstudiantesComponent implements OnInit {
   cursos: any[];
   materias: any[];
   estudiantes: any[];
-  displayedColumns: string[] = ["apellido", "nombre", "cal1", "cal2", "cal3","cal4", "cal5", "cal6"];
+  displayedColumns: string[] = ["apellido", "nombre", "cal1", "cal2", "cal3","cal4", "cal5", "cal6", "prom"];
   trimestrePorDefecto: string;
 
   constructor(
@@ -100,6 +100,15 @@ export class CalificacionesEstudiantesComponent implements OnInit {
           }
         });
     }
+  }
+  contadorNotasValidas(index):number{
+  var cont =0;
+  this.estudiantes[index].calificaciones.forEach
+  (nota => {
+    if (nota !=0)
+    cont++;
+   });
+   return cont;
   }
 
   onCancelar() {

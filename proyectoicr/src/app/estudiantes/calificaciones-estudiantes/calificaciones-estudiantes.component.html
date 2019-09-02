@@ -136,6 +136,22 @@
         </td>
       </ng-container>
 
+      <ng-container matColumnDef="prom">
+        <th class="columnasChicas" mat-header-cell *matHeaderCellDef>Promedio</th>
+        <td
+          class="columnasChicas"
+          mat-cell
+          *matCellDef="let estudiante; let i = index"
+        >
+        <p *ngIf="!(contadorNotasValidas(i)==0); else sinNotas">
+          {{((estudiante.calificaciones[0]+estudiante.calificaciones[1]+estudiante.calificaciones[2]+
+            estudiante.calificaciones[3]+estudiante.calificaciones[4]+estudiante.calificaciones[5])
+            / contadorNotasValidas(i)).toFixed(2)}}
+          </p>
+          <ng-template #sinNotas>0</ng-template>
+        </td>
+      </ng-container>
+
       <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
       <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
     </table>
