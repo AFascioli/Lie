@@ -108,84 +108,205 @@ router.delete("/borrar", (req, res, next) => {
   );
 });
 
-//Retorna un vector que tiene objetos (estudianteRedux) que tienen _id, nombre, apellido, presente y fecha.
-//Se tiene que crear el vector estudiantesRedux para que devuelva los datos bien al frontend
-//Se tiene que convertir la fecha porque Date esta en UTC y en argentina estamos en UTC-3
-router.get("/division", (req, res, next) => {
+//Retorna vector con datos de los estudiantes y presente. Si ya se registro una asistencia para
+//el dia de hoy se retorna ese valor de la asistencia, sino se "construye" una nueva
+router.get("/asistencia", (req, res) => {
   Inscripcion.aggregate([
     {
       $lookup: {
         from: "divisiones",
         localField: "IdDivision",
         foreignField: "_id",
-        as: "division"
+        as: "curso"
+      }
+    },
+    {
+      $match: {
+        "curso.curso": req.query.curso,
+        activa: true
+      }
+    },
+    {
+      $project: {
+        ultimaAsistencia: {
+          $slice: ["$asistenciaDiaria", -1]
+        }
       }
     },
     {
       $lookup: {
-        from: "estudiantes",
-        localField: "IdEstudiante",
+        from: "asistenciaDiaria",
+        localField: "ultimaAsistencia",
         foreignField: "_id",
-        as: "estudiante"
+        as: "asistencia"
       }
-    },
-    {
-      $match: { "division.curso": req.query.division, activa: true }
     },
     {
       $project: {
         _id: 0,
-        "estudiante._id": 1,
-        "estudiante.nombre": 1,
-        "estudiante.apellido": 1
+        "asistencia.fecha": 1
       }
+    },
+    {
+      $limit: 1
     }
-  ]).then(documents => {
-    const fechaActual = new Date();
-    fechaActual.setHours(fechaActual.getHours());
-    var estudiantesRedux = [];
-    documents.forEach(objConEstudiante => {
-      let estudianteRedux = {
-        _id: objConEstudiante.estudiante[0]._id,
-        nombre: objConEstudiante.estudiante[0].nombre,
-        apellido: objConEstudiante.estudiante[0].apellido,
-        presente: true,
-        fecha: fechaActual
-      };
-      estudiantesRedux.push(estudianteRedux);
-    });
-    res.status(200).json({
-      estudiantesXDivision: estudiantesRedux
-    });
+  ]).then(ultimaAsistencia => {
+    var fechaHoy = new Date();
+    fechaHoy.setHours(fechaHoy.getHours() - 3);
+    if (ultimaAsistencia[0].asistencia.length>0 &&
+      fechaHoy.getDate() == ultimaAsistencia[0].asistencia[0].fecha.getDate() &&
+      fechaHoy.getMonth() ==
+        ultimaAsistencia[0].asistencia[0].fecha.getMonth() &&
+      fechaHoy.getFullYear() ==
+        ultimaAsistencia[0].asistencia[0].fecha.getFullYear()
+    ) {
+      Inscripcion.aggregate([
+        {
+          $lookup: {
+            from: "divisiones",
+            localField: "IdDivision",
+            foreignField: "_id",
+            as: "curso"
+          }
+        },
+        {
+          $lookup: {
+            from: "estudiantes",
+            localField: "IdEstudiante",
+            foreignField: "_id",
+            as: "datosEstudiante"
+          }
+        },
+        {
+          $match: {
+            "curso.curso": req.query.curso,
+            activa: true
+          }
+        },
+        {
+          $project: {
+            ultimaAsistencia: {
+              $slice: ["$asistenciaDiaria", -1]
+            },
+            "datosEstudiante._id": 1,
+            "datosEstudiante.nombre": 1,
+            "datosEstudiante.apellido": 1
+          }
+        },
+        {
+          $lookup: {
+            from: "asistenciaDiaria",
+            localField: "ultimaAsistencia",
+            foreignField: "_id",
+            as: "asistencia"
+          }
+        },
+        {
+          $project: {
+            datosEstudiante: 1,
+            "asistencia.presente": 1,
+            "asistencia._id":1
+          }
+        }
+      ]).then(asistenciaCurso => {
+        var respuesta = [];
+        asistenciaCurso.forEach(estudiante => {
+          var estudianteRefinado = {
+            _id: estudiante.datosEstudiante[0]._id,
+            nombre: estudiante.datosEstudiante[0].nombre,
+            apellido: estudiante.datosEstudiante[0].apellido,
+            idAsistencia: estudiante.asistencia[0]._id,
+            fecha: fechaHoy,
+            presente: estudiante.asistencia[0].presente
+          };
+          respuesta.push(estudianteRefinado);
+        });
+        res.status(200).json({ estudiantes: respuesta, asistenciaNueva: "false" });
+      });
+    } else {
+      Inscripcion.aggregate([
+        {
+          $lookup: {
+            from: "divisiones",
+            localField: "IdDivision",
+            foreignField: "_id",
+            as: "curso"
+          }
+        },
+        {
+          $lookup: {
+            from: "estudiantes",
+            localField: "IdEstudiante",
+            foreignField: "_id",
+            as: "estudiante"
+          }
+        },
+        {
+          $match: { "curso.curso": req.query.curso, activa: true }
+        },
+        {
+          $project: {
+            _id: 0,
+            "estudiante._id": 1,
+            "estudiante.nombre": 1,
+            "estudiante.apellido": 1
+          }
+        }
+      ]).then(documents => {
+        const fechaActual = new Date();
+        fechaActual.setHours(fechaActual.getHours());
+        var estudiantesRedux = [];
+        documents.forEach(objConEstudiante => {
+          let estudianteRedux = {
+            _id: objConEstudiante.estudiante[0]._id,
+            nombre: objConEstudiante.estudiante[0].nombre,
+            apellido: objConEstudiante.estudiante[0].apellido,
+            fecha:fechaHoy,
+            presente: true
+          };
+          estudiantesRedux.push(estudianteRedux);
+        });
+        res.status(200).json({
+          estudiantes: estudiantesRedux, asistenciaNueva: "true"
+        });
+      });
+    }
   });
 });
 
-//Registrar asistencia 2.0, recibe un vector de estudiantes y para cada uno, encuentra la inscripcion que le corresponde
+// Registrar asistencia 2.0, recibe un vector de estudiantes y para cada uno, encuentra la inscripcion que le corresponde
 // luego crea la asistencia diaria usando la _id de la inscripcion, luego guarda la asistenciaDiaria y
 // guarda la _id de esta asistenciaDiaria en el vector de asistenciasDiarias de la inscripcion.
+// Si ya se tomo asistencia en el dia, se actualiza el valor presente de la asistencia individual.
 router.post("/asistencia", (req, res) => {
-  req.body.forEach(estudiante => {
-    var valorInasistencia = 0;
-    if (!estudiante.presente) {
-      valorInasistencia = 1;
-    }
-    Inscripcion.findOne({
-      IdEstudiante: estudiante._id,
-      activa: true
-    }).then(async inscripcion => {
-      var asistenciaEstudiante = new AsistenciaDiaria({
-        IdInscripcion: inscripcion._id,
-        fecha: estudiante.fecha,
-        presente: estudiante.presente,
-        valorInasistencia: valorInasistencia
-      });
+  if(req.query.asistenciaNueva=="true"){
+    req.body.forEach(estudiante => {
+      var valorInasistencia = 0;
+      if (!estudiante.presente) {
+        valorInasistencia = 1;
+      }
+      Inscripcion.findOne({
+        IdEstudiante: estudiante._id,
+        activa: true
+      }).then(async inscripcion => {
+        var asistenciaEstudiante = new AsistenciaDiaria({
+          IdInscripcion: inscripcion._id,
+          fecha: estudiante.fecha,
+          presente: estudiante.presente,
+          valorInasistencia: valorInasistencia
+        });
 
-      await asistenciaEstudiante.save().then(async asistenciaDiaria => {
-        await inscripcion.asistenciaDiaria.push(asistenciaDiaria._id);
-        inscripcion.save();
+        await asistenciaEstudiante.save().then(async asistenciaDiaria => {
+          await inscripcion.asistenciaDiaria.push(asistenciaDiaria._id);
+          inscripcion.save();
+        });
       });
     });
-  });
+  }else{
+    req.body.forEach(estudiante => {
+      AsistenciaDiaria.findByIdAndUpdate(estudiante.idAsistencia,{presente: estudiante.presente}).exec();
+    });
+  }
 
   res.status(201).json({ message: "Asistencia registrada exitósamente" });
 });
@@ -268,166 +389,6 @@ router.post("/documentos", (req, res) => {
   }
 });
 
-//Retorna vector con datos de los estudiantes y presente. Si ya se registro una asistencia para
-//el dia de hoy se retorna ese valor de la asistencia, sino se "construye" una nueva
-router.get("/asistenciatest", (req, res) => {
-  Inscripcion.aggregate([
-    {
-      $lookup: {
-        from: "divisiones",
-        localField: "IdDivision",
-        foreignField: "_id",
-        as: "curso"
-      }
-    },
-    {
-      $match: {
-        "curso.curso": "4A",
-        activa: true
-      }
-    },
-    {
-      $project: {
-        ultimaAsistencia: {
-          $slice: ["$asistenciaDiaria", -1]
-        }
-      }
-    },
-    {
-      $lookup: {
-        from: "asistenciaDiaria",
-        localField: "ultimaAsistencia",
-        foreignField: "_id",
-        as: "asistencia"
-      }
-    },
-    {
-      $project: {
-        _id: 0,
-        "asistencia.fecha": 1
-      }
-    },
-    {
-      $limit: 1
-    }
-  ]).then(ultimaAsistencia => {
-    var fechaHoy = new Date();
-    fechaHoy.setHours(fechaHoy.getHours() - 3);
-    console.log(fechaHoy);
-    if (
-      fechaHoy.getDate() == ultimaAsistencia[0].asistencia[0].fecha.getDate() &&
-      fechaHoy.getMonth() ==
-        ultimaAsistencia[0].asistencia[0].fecha.getMonth() &&
-      fechaHoy.getFullYear() ==
-        ultimaAsistencia[0].asistencia[0].fecha.getFullYear()
-    ) {
-      Inscripcion.aggregate([
-        {
-          $lookup: {
-            from: "divisiones",
-            localField: "IdDivision",
-            foreignField: "_id",
-            as: "curso"
-          }
-        },
-        {
-          $lookup: {
-            from: "estudiantes",
-            localField: "IdEstudiante",
-            foreignField: "_id",
-            as: "datosEstudiante"
-          }
-        },
-        {
-          $match: {
-            "curso.curso": "4A",
-            activa: true
-          }
-        },
-        {
-          $project: {
-            ultimaAsistencia: {
-              $slice: ["$asistenciaDiaria", -1]
-            },
-            "datosEstudiante._id": 1,
-            "datosEstudiante.nombre": 1,
-            "datosEstudiante.apellido": 1
-          }
-        },
-        {
-          $lookup: {
-            from: "asistenciaDiaria",
-            localField: "ultimaAsistencia",
-            foreignField: "_id",
-            as: "asistencia"
-          }
-        },
-        {
-          $project: {
-            datosEstudiante: 1,
-            "asistencia.presente": 1
-          }
-        }
-      ]).then(asistenciaCurso => {
-        var respuesta = [];
-        asistenciaCurso.forEach(estudiante => {
-          var estudianteRefinado = {
-            _id: estudiante.datosEstudiante[0]._id,
-            nombre: estudiante.datosEstudiante[0].nombre,
-            apellido: estudiante.datosEstudiante[0].apellido,
-            presente: estudiante.asistencia[0].presente
-          };
-          respuesta.push(estudianteRefinado);
-        });
-        res.status(200).json({ estudiantes: respuesta });
-      });
-    }
 
-    Inscripcion.aggregate([
-      {
-        $lookup: {
-          from: "divisiones",
-          localField: "IdDivision",
-          foreignField: "_id",
-          as: "curso"
-        }
-      },
-      {
-        $lookup: {
-          from: "estudiantes",
-          localField: "IdEstudiante",
-          foreignField: "_id",
-          as: "estudiante"
-        }
-      },
-      {
-        $match: { "curso.curso": req.query.division, activa: true }
-      },
-      {
-        $project: {
-          _id: 0,
-          "estudiante._id": 1,
-          "estudiante.nombre": 1,
-          "estudiante.apellido": 1
-        }
-      }
-    ]).then(documents => {
-      const fechaActual = new Date();
-      fechaActual.setHours(fechaActual.getHours());
-      var estudiantesRedux = [];
-      documents.forEach(objConEstudiante => {
-        let estudianteRedux = {
-          _id: objConEstudiante.estudiante[0]._id,
-          nombre: objConEstudiante.estudiante[0].nombre,
-          apellido: objConEstudiante.estudiante[0].apellido,
-          presente: true
-        };
-        estudiantesRedux.push(estudianteRedux);
-      });
-      res.status(200).json({
-        estudiantesXCurso: estudiantesRedux
-      });
-    });
-  });
-});
+
 module.exports = router;

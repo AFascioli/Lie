@@ -48,9 +48,8 @@ import { InscripcionEstudianteComponent, InscripcionPopupComponent } from './est
 import { RetiroAnticipadoComponent, RetiroPopupComponent } from './asistencia/retiro-anticipado/retiro-anticipado.component';
 import { DocumentosInscripcionComponent, DocumentosInscripcionPopupComponent } from './estudiantes/documentos-inscripcion/documentos-inscripcion.component';
 import {MatGridListModule} from '@angular/material/grid-list';
-import { CalificacionesEstudiantesComponent } from './estudiantes/calificaciones-estudiantes/calificaciones-estudiantes.component';
+import { CalificacionesEstudiantesComponent, CalificacionesEstudiantePopupComponent } from './estudiantes/calificaciones-estudiantes/calificaciones-estudiantes.component';
 import { LlegadaTardeComponent } from './asistencia/llegada-tarde/llegada-tarde.component';
-
 
 @NgModule({
   declarations: [
@@ -74,6 +73,7 @@ import { LlegadaTardeComponent } from './asistencia/llegada-tarde/llegada-tarde.
     DocumentosInscripcionComponent,
     DocumentosInscripcionPopupComponent,
     CalificacionesEstudiantesComponent,
+    CalificacionesEstudiantePopupComponent
     LlegadaTardeComponent
   ],
   //entryComponents declara los componentes que se generan dinamicamente dentro de otros.
@@ -84,7 +84,8 @@ import { LlegadaTardeComponent } from './asistencia/llegada-tarde/llegada-tarde.
     BuscarPopupComponent,
     InscripcionPopupComponent,
     RetiroPopupComponent,
-    DocumentosInscripcionPopupComponent
+    DocumentosInscripcionPopupComponent,
+    CalificacionesEstudiantePopupComponent
   ],
   imports: [
     BrowserModule,
