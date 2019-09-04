@@ -2,6 +2,8 @@ import { Component, OnInit } from "@angular/core";
 import { EstudiantesService } from "src/app/estudiantes/estudiante.service";
 import { MatDialogRef, MatDialog, MatSnackBar } from "@angular/material";
 import { Router } from "@angular/router";
+import { CdkRow, CdkFooterRowDefBase } from '@angular/cdk/table';
+import { DateAdapter } from "@angular/material";
 
 @Component({
   selector: "app-registrar-asistencia",
@@ -48,20 +50,25 @@ export class RegistrarAsistenciaComponent implements OnInit {
   }
 
   //Cambia el atributo presente del estudiante cuando se cambia de valor el toggle
-  onCambioPresentismo(row) {
+  onCambioPresentismo(row,i,e) {
+
     const indexEstudiante = this.estudiantesXDivision.findIndex(
-      objConIDEstudiante => objConIDEstudiante._id == row._id
+      objConIDEstudiante => objConIDEstudiante._id == row._id,
     );
+
     this.estudiantesXDivision[indexEstudiante].presente = !this
       .estudiantesXDivision[indexEstudiante].presente;
+
+      if(e.checked){
+        this.agent.attributes[i].value = 'presente'
+      }else{
+        this.agent.attributes[i].value = 'ausente'
+      }
+
   }
 
   //Envia al servicio el vector con los datos de los estudiantes y el presentismo
   onGuardar() {
-    // this.servicio.tipoPopUp = "guardar";
-    // this.popup.open(AsistenciaPopupComponent, {
-    //   width: "250px"
-    // });
     this.servicio.registrarAsistencia(this.estudiantesXDivision, this.asistenciaNueva);
     this.snackBar.open("Asistencia registrada exitósamente", "", {
       duration: 4500

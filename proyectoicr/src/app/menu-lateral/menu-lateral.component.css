@@ -7,7 +7,7 @@
   margin: 1rem;
 }
 
-h3, .mat-icon-button{
+h3, .mat-icon-button, .home{
   color: #ffff;
 }
 
@@ -39,3 +39,8 @@ h3, .mat-icon-button{
   margin-left: 10%;
 }
 
+.ubicacionHome
+{
+  margin-left: 88%;
+  margin-right: 7%;
+}

@@ -1,0 +1,53 @@
+.componente-titulo-login{
+  text-align: center;
+  opacity: 0.8;
+  font-weight: 100%;
+  margin-top: 7%
+}
+
+body{
+  margin: 0;
+  padding: 0;
+  background-image: url('../../img/cristoReyTrans.jpg');
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-attachment: fixed;
+  background-position: center center;
+  height: 100vh;
+}
+
+mat-card {
+  margin-bottom: 10%;
+  padding: 0;
+  width: 30%;
+  height: 41%;
+  position: relative;
+}
+
+.mat-form-field{
+  width:70%;
+  margin-left: 15%;
+  padding: 0%;
+  margin-top: 2%;
+  text-align: cover;
+  text-align: left;
+
+}
+
+.div-button {
+  margin-top: 6%;
+  text-align: right;
+  margin-right: 15%;
+  opacity: 0.99;
+}
+
+
+.button{
+  background-color: #551111 !important;
+  color: white;
+}
+
+
+form{
+  margin-top: 10%;
+}

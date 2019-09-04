@@ -1,0 +1,43 @@
+<body>
+  <br>
+<h1 class="componente-titulo-login">
+  Instituto "Cristo Rey"
+</h1>
+<mat-card class="card-body-componente" >
+  <meta charset="utf-8" />
+  <form>
+      <mat-form-field>
+        <input
+          type="text"
+          matInput
+          placeholder="Usuario"
+          name="username"
+          minlength="5"
+          maxlength="30"
+          required
+        />
+      </mat-form-field>
+      <br>
+      <mat-form-field>
+        <input
+          type="password"
+          matInput
+          placeholder="Contraseña"
+          type="password"
+          name="password"
+          minlength="11"
+          required
+        />
+      </mat-form-field>
+      <div class="div-button">
+        <button
+        class="button-color"
+        mat-raised-button
+        class="button"
+        routerLink="/home">
+        Iniciar Sesión
+        </button>
+      </div>
+    </form>
+</mat-card>
+</body>

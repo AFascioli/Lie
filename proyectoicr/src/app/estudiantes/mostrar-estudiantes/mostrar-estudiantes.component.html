@@ -132,8 +132,8 @@
             ></mat-datepicker-toggle>
             <mat-datepicker
               #picker
-              startView="year"
-              disabled="false"
+              startView="multi-year"
+              [disabled]="!modoEditar"
             ></mat-datepicker>
           </mat-form-field>
           <br />
@@ -341,6 +341,13 @@
       >
         Cancelar
       </button>
+      <button
+      mat-raised-button
+      [routerLink]="['/buscar/lista']"
+      color="primary"
+    >
+     Volver
+    </button>
     </div>
   </form>
 </mat-card>

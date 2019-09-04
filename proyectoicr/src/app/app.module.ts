@@ -30,13 +30,13 @@ import { FormsModule } from "@angular/forms";
 import { HttpClientModule } from "@angular/common/http";
 import { EstudiantesService } from "./estudiantes/estudiante.service";
 import { BuscarEstudiantesComponent, BuscarPopupComponent } from "./estudiantes/buscar-estudiantes/buscar-estudiantes.component";
-import { ListaEstudiantesComponent, AccionesEstudiantePopupComponent } from "./estudiantes/lista-estudiantes/lista-estudiantes.component";
+import { ListaEstudiantesComponent} from "./estudiantes/lista-estudiantes/lista-estudiantes.component";
 import {
   MostrarEstudiantesComponent,
   MostrarPopupComponent
 } from "./estudiantes/mostrar-estudiantes/mostrar-estudiantes.component";
 import { AppRoutingModule } from "./app-routing.module";
-import { LoginComponent } from "./menu-principal/menu-principal.component";
+import { LoginComponent } from "./login/login.component";
 import { MenuLateralComponent } from "./menu-lateral/menu-lateral.component";
 import { HomeComponent } from "./home/home.component";
 import {
@@ -49,7 +49,7 @@ import { RetiroAnticipadoComponent, RetiroPopupComponent } from './asistencia/re
 import { DocumentosInscripcionComponent, DocumentosInscripcionPopupComponent } from './estudiantes/documentos-inscripcion/documentos-inscripcion.component';
 import {MatGridListModule} from '@angular/material/grid-list';
 import { CalificacionesEstudiantesComponent, CalificacionesEstudiantePopupComponent } from './estudiantes/calificaciones-estudiantes/calificaciones-estudiantes.component';
-
+import { LlegadaTardeComponent } from './asistencia/llegada-tarde/llegada-tarde.component';
 
 @NgModule({
   declarations: [
@@ -68,13 +68,13 @@ import { CalificacionesEstudiantesComponent, CalificacionesEstudiantePopupCompon
     BuscarPopupComponent,
     InscripcionEstudianteComponent,
     InscripcionPopupComponent,
-    AccionesEstudiantePopupComponent,
     RetiroAnticipadoComponent,
     RetiroPopupComponent,
     DocumentosInscripcionComponent,
     DocumentosInscripcionPopupComponent,
     CalificacionesEstudiantesComponent,
     CalificacionesEstudiantePopupComponent
+    LlegadaTardeComponent
   ],
   //entryComponents declara los componentes que se generan dinamicamente dentro de otros.
   entryComponents: [
@@ -83,7 +83,6 @@ import { CalificacionesEstudiantesComponent, CalificacionesEstudiantePopupCompon
     AsistenciaPopupComponent,
     BuscarPopupComponent,
     InscripcionPopupComponent,
-    AccionesEstudiantePopupComponent,
     RetiroPopupComponent,
     DocumentosInscripcionPopupComponent,
     CalificacionesEstudiantePopupComponent
