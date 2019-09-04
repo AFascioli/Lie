@@ -4,12 +4,15 @@
   <form #form="ngForm" (submit)="OnBuscar(form)">
     <mat-radio-group aria-label="Select an option">
       <mat-radio-button
-        [checked]="'true'"
+        [checked]="buscarPorNomYAp"
         (change)="DeshabilitarInputs(form)"
         value="1"
         >Buscar por nombre y apellido</mat-radio-button
       >
-      <mat-radio-button (change)="DeshabilitarInputs(form)" value="2"
+      <mat-radio-button
+      (change)="DeshabilitarInputs(form)"
+      value="2"
+      [checked]="!buscarPorNomYAp"
         >Buscar por documento</mat-radio-button
       >
     </mat-radio-group>
@@ -26,6 +29,7 @@
         maxlength="30"
         placeholder="Ingrese apellido"
         type="text"
+        [(ngModel)]="apellidoEstSelec"
         required
       />
     </mat-form-field>
@@ -42,6 +46,7 @@
         maxlength="30"
         placeholder="Ingrese nombre"
         type="text"
+        [(ngModel)]="nombreEstSelec"
         required
       />
     </mat-form-field>
@@ -52,6 +57,7 @@
         placeholder="Seleccione tipo de documento"
         name="tipoDocumento"
         ngModel
+        [(ngModel)]="tipoDocEstSelec"
         #tipoDocumento="ngModel"
         matNativeControl
         required
@@ -73,6 +79,7 @@
         name="numeroDocumento"
         ngModel
         #numeroDocumento="ngModel"
+        [(ngModel)]="nroDocEstSelec"
         pattern="[0-9]+"
         maxlength="8"
         placeholder="Ingrese número de documento"

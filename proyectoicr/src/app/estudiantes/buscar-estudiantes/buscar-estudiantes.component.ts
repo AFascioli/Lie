@@ -15,10 +15,27 @@ export class BuscarEstudiantesComponent implements OnInit {
 
   estudiantes: Estudiante[] = [];
   buscarPorNomYAp= true;
+  apellidoEstSelec:string;
+  nombreEstSelec:string;
+  nroDocEstSelec:number;
+  tipoDocEstSelec:string;
 
   constructor(public servicio: EstudiantesService, public dialog: MatDialog) {   }
 
   ngOnInit() {
+   if(this.servicio.retornoDesdeAcciones && this.servicio.busquedaEstudianteXNombre)
+   {
+    this.servicio.buscarEstudiantesNombreApellido(this.servicio.estudianteSeleccionado.nombre, this.servicio.estudianteSeleccionado.apellido);
+    this.nombreEstSelec=this.servicio.estudianteSeleccionado.nombre;
+    this.apellidoEstSelec=this.servicio.estudianteSeleccionado.apellido;
+   }
+   if(this.servicio.retornoDesdeAcciones && !this.servicio.busquedaEstudianteXNombre)
+   {
+    this.servicio.buscarEstudiantesDocumento(this.servicio.estudianteSeleccionado.tipoDocumento, this.servicio.estudianteSeleccionado.numeroDocumento);
+    this.nroDocEstSelec=this.servicio.estudianteSeleccionado.numeroDocumento;
+    this.tipoDocEstSelec=this.servicio.estudianteSeleccionado.tipoDocumento;
+    this.buscarPorNomYAp= false;
+   }
 
   }
 
@@ -26,9 +43,11 @@ export class BuscarEstudiantesComponent implements OnInit {
   OnBuscar(form: NgForm){
     if(!form.invalid){
       if(this.buscarPorNomYAp){
+        this.servicio.busquedaEstudianteXNombre = true;
         this.servicio.buscarEstudiantesNombreApellido(form.value.nombre, form.value.apellido);
       }else{
         this.servicio.buscarEstudiantesDocumento(form.value.tipoDocumento, form.value.numeroDocumento);
+        this.servicio.busquedaEstudianteXNombre = false;
       }
     }
 

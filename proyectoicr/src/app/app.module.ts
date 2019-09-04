@@ -30,13 +30,13 @@ import { FormsModule } from "@angular/forms";
 import { HttpClientModule } from "@angular/common/http";
 import { EstudiantesService } from "./estudiantes/estudiante.service";
 import { BuscarEstudiantesComponent, BuscarPopupComponent } from "./estudiantes/buscar-estudiantes/buscar-estudiantes.component";
-import { ListaEstudiantesComponent, AccionesEstudiantePopupComponent } from "./estudiantes/lista-estudiantes/lista-estudiantes.component";
+import { ListaEstudiantesComponent} from "./estudiantes/lista-estudiantes/lista-estudiantes.component";
 import {
   MostrarEstudiantesComponent,
   MostrarPopupComponent
 } from "./estudiantes/mostrar-estudiantes/mostrar-estudiantes.component";
 import { AppRoutingModule } from "./app-routing.module";
-import { LoginComponent } from "./menu-principal/menu-principal.component";
+import { LoginComponent } from "./login/login.component";
 import { MenuLateralComponent } from "./menu-lateral/menu-lateral.component";
 import { HomeComponent } from "./home/home.component";
 import {
@@ -69,7 +69,6 @@ import { LlegadaTardeComponent } from './asistencia/llegada-tarde/llegada-tarde.
     BuscarPopupComponent,
     InscripcionEstudianteComponent,
     InscripcionPopupComponent,
-    AccionesEstudiantePopupComponent,
     RetiroAnticipadoComponent,
     RetiroPopupComponent,
     DocumentosInscripcionComponent,
@@ -84,7 +83,6 @@ import { LlegadaTardeComponent } from './asistencia/llegada-tarde/llegada-tarde.
     AsistenciaPopupComponent,
     BuscarPopupComponent,
     InscripcionPopupComponent,
-    AccionesEstudiantePopupComponent,
     RetiroPopupComponent,
     DocumentosInscripcionPopupComponent
   ],

@@ -5,24 +5,11 @@
   max-width: 800px;
 }
 
-table {
-  width: 95%;
-  margin: 0 auto;
-}
-
-.columnasNormales{
-  width:22%;
-}
-
-.columnasChicas{
-  width:12%;
-}
-
 .btnVisualizar{
   margin: 2%;
 }
 
-th, td{
+th, td {
   text-align: center !important;
 }
 
@@ -32,9 +19,17 @@ th{
 }
 
 .button{
-  width: 80%
+  width: 45%;
 }
 
-.tituloPopup{
-  margin-bottom: 1rem;
+.botonesAcciones{
+  text-align: center;
 }
+
+.tituloAcciones{
+  text-align: center;
+  font-weight: bold;
+  margin-top: 0;
+}
+
+
