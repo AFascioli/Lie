@@ -73,7 +73,7 @@ import { LlegadaTardeComponent } from './asistencia/llegada-tarde/llegada-tarde.
     DocumentosInscripcionComponent,
     DocumentosInscripcionPopupComponent,
     CalificacionesEstudiantesComponent,
-    CalificacionesEstudiantePopupComponent
+    CalificacionesEstudiantePopupComponent,
     LlegadaTardeComponent
   ],
   //entryComponents declara los componentes que se generan dinamicamente dentro de otros.

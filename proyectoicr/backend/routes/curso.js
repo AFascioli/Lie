@@ -6,7 +6,6 @@ const CalificacionesXMateria = require("../models/calificacionesXMateria");
 const Calificacion = require("../models/calificacion");
 const mongoose = require("mongoose");
 
-//Cambio minimo
 router.get("/", (req, res) => {
   Division.find()
     .select({ curso: 1, _id: 1 })
