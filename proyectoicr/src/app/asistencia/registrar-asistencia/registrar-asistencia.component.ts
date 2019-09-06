@@ -2,8 +2,6 @@ import { Component, OnInit } from "@angular/core";
 import { EstudiantesService } from "src/app/estudiantes/estudiante.service";
 import { MatDialogRef, MatDialog, MatSnackBar } from "@angular/material";
 import { Router } from "@angular/router";
-import { CdkRow, CdkFooterRowDefBase } from "@angular/cdk/table";
-import { DateAdapter } from "@angular/material";
 
 @Component({
   selector: "app-registrar-asistencia",
