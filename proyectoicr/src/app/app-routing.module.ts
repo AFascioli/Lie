@@ -13,12 +13,14 @@ import { RetiroAnticipadoComponent } from './asistencia/retiro-anticipado/retiro
 import { DocumentosInscripcionComponent } from './estudiantes/documentos-inscripcion/documentos-inscripcion.component';
 import{ CalificacionesEstudiantesComponent } from './estudiantes/calificaciones-estudiantes/calificaciones-estudiantes.component';
 import { LlegadaTardeComponent } from './asistencia/llegada-tarde/llegada-tarde.component';
+import { AuthGuard } from './login/auth.guard';
 
 const routes: Routes = [
   { path: "login", component: LoginComponent },
   {
     path: "",
     component: MenuLateralComponent,
+    canActivate: [AuthGuard],
     children: [
       {
         path: "",
@@ -45,6 +47,7 @@ const routes: Routes = [
 
 @NgModule({
   imports: [RouterModule.forRoot(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
+  providers: [AuthGuard]
 })
 export class AppRoutingModule {}

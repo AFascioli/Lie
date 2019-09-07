@@ -1,3 +1,4 @@
+import { AuthInterceptor } from './login/auth-interceptor';
 import { BrowserModule } from "@angular/platform-browser";
 import { NgModule } from "@angular/core";
 import {
@@ -27,7 +28,7 @@ import {
   AltaPopupComponent,
 } from "./estudiantes/alta-estudiantes/alta-estudiantes.component";
 import { FormsModule } from "@angular/forms";
-import { HttpClientModule } from "@angular/common/http";
+import { HttpClientModule, HTTP_INTERCEPTORS } from "@angular/common/http";
 import { EstudiantesService } from "./estudiantes/estudiante.service";
 import { BuscarEstudiantesComponent, BuscarPopupComponent } from "./estudiantes/buscar-estudiantes/buscar-estudiantes.component";
 import { ListaEstudiantesComponent} from "./estudiantes/lista-estudiantes/lista-estudiantes.component";
@@ -114,7 +115,10 @@ import { LlegadaTardeComponent } from './asistencia/llegada-tarde/llegada-tarde.
     MatSnackBarModule,
     MatGridListModule
   ],
-  providers: [EstudiantesService],
+  //le decimos a angular que vamos a tener un interceptor nuevo (provide), luego le indicamos que
+  //interceptor usar (useClass) y finalmente aclaramos que no sobreescriba el interceptor que esta
+  //ya que podemos utilizar más de uno (multi).
+  providers: [EstudiantesService, {provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true}],
   bootstrap: [AppComponent]
 })
 
