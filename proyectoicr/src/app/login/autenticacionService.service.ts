@@ -28,7 +28,7 @@ export class AutencacionService {
   crearUsuario(email: string, password: string) {
     const authData = { email: email, password: password };
     this.http
-      .post("http://localhost:3000/COMPLETAR", authData)
+      .post("http://localhost:3000//usuario/signup", authData)
       .subscribe(response => {
         console.log(response);
       });
@@ -40,7 +40,7 @@ export class AutencacionService {
     const authData = { email: email, password: password };
     this.http
       .post<{ token: string; duracionToken: number }>(
-        "http://localhost:3000/COMPLETAR",
+        "http://localhost:3000/usuario/login",
         authData
       )
       .subscribe(response => {
