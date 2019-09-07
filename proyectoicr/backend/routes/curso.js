@@ -5,8 +5,9 @@ const Inscripcion = require("../models/inscripcion");
 const CalificacionesXMateria = require("../models/calificacionesXMateria");
 const Calificacion = require("../models/calificacion");
 const mongoose = require("mongoose");
+const checkAuthMiddleware=  require("../middleware/check-auth");
 
-router.get("/", (req, res) => {
+router.get("/", checkAuthMiddleware,(req, res) => {
   Division.find()
     .select({ curso: 1, _id: 1 })
     .then(cursos => {
@@ -24,7 +25,7 @@ router.get("/", (req, res) => {
     });
 });
 
-router.get("/materias", (req, res) => {
+router.get("/materias", checkAuthMiddleware,(req, res) => {
   Division.aggregate([
     {
       $match: {
@@ -74,7 +75,7 @@ router.get("/materias", (req, res) => {
   });
 });
 
-router.post("/inscripcion", (req, res) => {
+router.post("/inscripcion", checkAuthMiddleware,(req, res) => {
   Inscripcion.findOne({
     IdEstudiante: req.body.IdEstudiante,
     activa: true
@@ -102,7 +103,7 @@ router.post("/inscripcion", (req, res) => {
   });
 });
 
-router.get("/documentos", (req, res) => {
+router.get("/documentos", checkAuthMiddleware,(req, res) => {
   Inscripcion.aggregate([
     {
       $lookup: {
@@ -139,7 +140,7 @@ router.get("/documentos", (req, res) => {
   });
 });
 
-router.get("/estudiantes/materias/calificaciones", (req, res) => {
+router.get("/estudiantes/materias/calificaciones", checkAuthMiddleware,(req, res) => {
   Inscripcion.aggregate([
     {
       $lookup: {
@@ -225,7 +226,7 @@ router.get("/estudiantes/materias/calificaciones", (req, res) => {
 });
 
 //Registra las calificaciones por alumno de un curso y materia determinada
-router.post("/estudiantes/materias/calificaciones", (req, res) => {
+router.post("/estudiantes/materias/calificaciones", checkAuthMiddleware,(req, res) => {
   req.body.forEach(estudiante => {
     Inscripcion.aggregate([
       {

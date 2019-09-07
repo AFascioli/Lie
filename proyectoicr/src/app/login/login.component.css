@@ -2,10 +2,13 @@
   text-align: center;
   opacity: 0.8;
   font-weight: 100%;
-  margin-top: 7%
+  margin-top: 0 !important;
+}
+.contenedor{
+  margin: auto;
 }
 
-body{
+.fondo{
   margin: 0;
   padding: 0;
   background-image: url('../../img/cristoReyTrans.jpg');
@@ -13,15 +16,12 @@ body{
   background-size: cover;
   background-attachment: fixed;
   background-position: center center;
-  height: 100vh;
+  height: 100%;
+  display:flex;
 }
 
 mat-card {
-  margin-bottom: 10%;
-  padding: 0;
-  width: 30%;
-  height: 41%;
-  position: relative;
+  padding: 0 !important;
 }
 
 .mat-form-field{
@@ -29,16 +29,13 @@ mat-card {
   margin-left: 15%;
   padding: 0%;
   margin-top: 2%;
-  text-align: cover;
   text-align: left;
 
 }
 
 .div-button {
   margin-top: 6%;
-  text-align: right;
-  margin-right: 15%;
-  opacity: 0.99;
+  text-align: center;
 }
 
 
@@ -50,4 +47,5 @@ mat-card {
 
 form{
   margin-top: 10%;
+  margin-bottom: 10% !important;
 }

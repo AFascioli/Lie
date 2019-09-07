@@ -39,14 +39,14 @@ export class AutencacionService {
   login(email: string, password: string) {
     const authData = { email: email, password: password };
     this.http
-      .post<{ token: string; expiresIn: number }>(
+      .post<{ token: string; duracionToken: number }>(
         "http://localhost:3000/COMPLETAR",
         authData
       )
       .subscribe(response => {
         this.token = response.token;
         if (response.token) {
-          const duracionToken = response.expiresIn;
+          const duracionToken = response.duracionToken;
           this.timerAutenticacion(duracionToken);
           this.estaAutenticado = true;
           this.authStatusListener.next(true);

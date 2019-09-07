@@ -5,8 +5,10 @@ const Division = require("../models/division");
 const AsistenciaDiaria = require("../models/asistenciaDiaria");
 const router = express.Router();
 
+const checkAuthMiddleware= require("../middleware/check-auth");
+
 //Registra un nuevo estudiante en la base de datos
-router.post("", (req, res, next) => {
+router.post("", checkAuthMiddleware,(req, res, next) => {
   const estudiante = new Estudiante({
     apellido: req.body.apellido,
     nombre: req.body.nombre,
@@ -39,7 +41,7 @@ router.post("", (req, res, next) => {
 });
 
 //Obtiene un estudiante dado un numero y tipo de documento
-router.get("/documento", (req, res, next) => {
+router.get("/documento", checkAuthMiddleware,(req, res, next) => {
   const tipo = req.query.tipo;
   const numero = req.query.numero;
 
@@ -55,7 +57,7 @@ router.get("/documento", (req, res, next) => {
 });
 
 //Busqueda de un estudisante por nombre y apellido ignorando mayusculas
-router.get("/nombreyapellido", (req, res, next) => {
+router.get("/nombreyapellido", checkAuthMiddleware,(req, res, next) => {
   const nombre = req.query.nombre;
   const apellido = req.query.apellido;
   Estudiante.find({
@@ -70,7 +72,7 @@ router.get("/nombreyapellido", (req, res, next) => {
 });
 
 //Modifica un estudiante
-router.patch("/modificar", (req, res, next) => {
+router.patch("/modificar", checkAuthMiddleware,(req, res, next) => {
   Estudiante.findByIdAndUpdate(req.body._id, {
     apellido: req.body.apellido,
     nombre: req.body.nombre,
@@ -98,7 +100,7 @@ router.patch("/modificar", (req, res, next) => {
 });
 
 //Borrado logico de un estudiante
-router.delete("/borrar", (req, res, next) => {
+router.delete("/borrar", checkAuthMiddleware,(req, res, next) => {
   Estudiante.findOneAndUpdate({ _id: req.query._id }, { activo: false }).then(
     () => {
       res.status(202).json({
@@ -110,7 +112,7 @@ router.delete("/borrar", (req, res, next) => {
 
 //Retorna vector con datos de los estudiantes y presente. Si ya se registro una asistencia para
 //el dia de hoy se retorna ese valor de la asistencia, sino se "construye" una nueva
-router.get("/asistencia", (req, res) => {
+router.get("/asistencia", checkAuthMiddleware,(req, res) => {
   Inscripcion.aggregate([
     {
       $lookup: {
@@ -278,7 +280,7 @@ router.get("/asistencia", (req, res) => {
 // luego crea la asistencia diaria usando la _id de la inscripcion, luego guarda la asistenciaDiaria y
 // guarda la _id de esta asistenciaDiaria en el vector de asistenciasDiarias de la inscripcion.
 // Si ya se tomo asistencia en el dia, se actualiza el valor presente de la asistencia individual.
-router.post("/asistencia", (req, res) => {
+router.post("/asistencia", checkAuthMiddleware,(req, res) => {
   if(req.query.asistenciaNueva=="true"){
     req.body.forEach(estudiante => {
       var valorInasistencia = 0;
@@ -312,7 +314,7 @@ router.post("/asistencia", (req, res) => {
 });
 
 //Obtiene la id de la asistencia diaria del dia de hoy, y cambia los valores correspondientes en la coleccion de asistencia diaria
-router.post("/retiro", (req, res) => {
+router.post("/retiro", checkAuthMiddleware,(req, res) => {
   Inscripcion.findOne(
     { IdEstudiante: req.body.IdEstudiante, activa: true },
     { asistenciaDiaria: { $slice: -1 } }
@@ -372,7 +374,7 @@ router.post("/retiro", (req, res) => {
 });
 
 //Vamos a recibir, un vector de los estudiantes a los que se le modificaron los documentos entregados.
-router.post("/documentos", (req, res) => {
+router.post("/documentos", checkAuthMiddleware,(req, res) => {
   try {
     req.body.forEach(estudiante => {
       Inscripcion.findOneAndUpdate(
