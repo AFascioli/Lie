@@ -17,11 +17,16 @@ export class RegistrarAsistenciaComponent implements OnInit {
   displayedColumns: string[] = ["apellido", "nombre", "accion"];
   fechaActual: Date;
   asistenciaNueva: string;
+  agent: any;
+
   constructor(
     private servicio: EstudiantesService,
     public popup: MatDialog,
+    private dateAdapter: DateAdapter<Date>,
     public snackBar: MatSnackBar
-  ) {}
+  ) {
+    this.dateAdapter.setLocale("es");
+  }
 
   ngOnInit() {
     this.cursoNotSelected = true;
@@ -94,9 +99,11 @@ export class AsistenciaPopupComponent {
   constructor(
     public dialogRef: MatDialogRef<AsistenciaPopupComponent>,
     public router: Router,
+    private dateAdapter: DateAdapter<Date>,
     public servicio: EstudiantesService
   ) {
     this.tipoPopup = this.servicio.tipoPopUp;
+    this.dateAdapter.setLocale("es");
   }
 
   // Se cierra el popup
