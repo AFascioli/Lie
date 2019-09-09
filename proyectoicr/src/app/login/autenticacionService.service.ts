@@ -3,7 +3,6 @@ import { HttpClient } from "@angular/common/http";
 import { Router } from "@angular/router";
 import { Subject } from "rxjs";
 
-
 @Injectable({ providedIn: "root" })
 export class AutencacionService {
   private estaAutenticado = false;
@@ -27,36 +26,44 @@ export class AutencacionService {
 
   crearUsuario(email: string, password: string) {
     const authData = { email: email, password: password };
-    return  this.http
-      .post<{message: string, exito:string}>("http://localhost:3000/usuario/signup", authData);
+    return this.http.post<{ message: string; exito: string }>(
+      "http://localhost:3000/usuario/signup",
+      authData
+    );
   }
 
   //Manda al backend email y contraseña y si devuelve un token, autentica al usuario y guarda
-  //en el local storage el token y el vencimiento del token (para auto loguearlo)
-  login(email: string, password: string): string {
-    let mensaje: string;
-    const authData = { email: email, password: password};
+  //en el local storage el token y el vencimiento del token (para auto loguearlo).
+  //Se retorna un obsevable para que el componente pueda leer el mensaje del backend.
+  login(email: string, password: string) {
+    const authData = { email: email, password: password };
+    let respuesta: string = "Autenciación fallida";
+    var subject = new Subject<string>();
     this.http
-      .post<{ token: string; duracionToken: number, exito: boolean, message:string }>(
-        "http://localhost:3000/usuario/login",
-        authData
-      )
+      .post<{
+        token: string;
+        duracionToken: number;
+        exito: boolean;
+        message: string;
+      }>("http://localhost:3000/usuario/login", authData)
       .subscribe(response => {
-        mensaje=response.message;
-        console.log("mensaje servicio"+response.message)
         if (response.token) {
           this.token = response.token;
+          respuesta = response.message;
           const duracionToken = response.duracionToken;
           this.timerAutenticacion(duracionToken);
           this.estaAutenticado = true;
           this.authStatusListener.next(true);
           const fechaActual = new Date();
-          const vencimientoToken = new Date(fechaActual.getTime() + duracionToken * 1000);
+          const vencimientoToken = new Date(
+            fechaActual.getTime() + duracionToken * 1000
+          );
           this.guardarDatosAutenticacion(response.token, vencimientoToken);
           this.router.navigate(["/"]);
         }
+        subject.next(respuesta);
       });
-      return mensaje;
+    return subject.asObservable();
   }
 
   //Obtine la info guardada en el local storage y si no se vencio en token lo autentica al usuario
@@ -66,7 +73,8 @@ export class AutencacionService {
       return;
     }
     const fechaActual = new Date();
-    const expiraEn = infoAutenticacion.vencimientoToken.getTime() - fechaActual.getTime();
+    const expiraEn =
+      infoAutenticacion.vencimientoToken.getTime() - fechaActual.getTime();
     if (expiraEn > 0) {
       this.token = infoAutenticacion.token;
       this.estaAutenticado = true;
@@ -83,6 +91,7 @@ export class AutencacionService {
     clearTimeout(this.tokenTimer);
     this.limpiarDatosAutenticacion();
     this.router.navigate(["/"]);
+    console.log("autenticacion automatica");
   }
 
   //Recibe la duracion en segundo y pone un timer que cuando se cumpla el tiempo desloguea al usuario
@@ -111,6 +120,6 @@ export class AutencacionService {
     return {
       token: token,
       vencimientoToken: new Date(fechaVencimiento)
-    }
+    };
   }
 }
