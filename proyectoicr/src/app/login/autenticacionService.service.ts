@@ -90,8 +90,7 @@ export class AutencacionService {
     this.authStatusListener.next(false);
     clearTimeout(this.tokenTimer);
     this.limpiarDatosAutenticacion();
-    this.router.navigate(["/"]);
-    console.log("autenticacion automatica");
+    this.router.navigate(["/login"]);
   }
 
   //Recibe la duracion en segundo y pone un timer que cuando se cumpla el tiempo desloguea al usuario

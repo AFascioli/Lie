@@ -54,7 +54,7 @@ router.post("/login",(req, res, next) => {
       );
       res.status(200).json({
         token: token,
-        duracionToken: 10, //43200,
+        duracionToken: 43200,
         message: "Autenticación exitosa",
         exito: true
       });
