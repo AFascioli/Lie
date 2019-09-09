@@ -1,0 +1,51 @@
+<mat-card class="card-body-componente">
+  <mat-card-title class= "componente-titulo">
+    {{ apellidoEstudiante }} {{ nombreEstudiante }}
+  </mat-card-title>
+
+  <mat-card-subtitle >
+      <b>CALIFICACIONES: </b>
+  </mat-card-subtitle>
+  <button class="button-perfil-calificaciones"
+      mat-raised-button
+    >
+     Ver calificaciones
+    </button>
+
+
+  <mat-card-subtitle >
+      <b>INASISTENCIA: </b>
+    </mat-card-subtitle>
+
+    <div class="grafico">
+        <div class="sombra"></div>
+        <div id="porcion1" class="recorte"><div class="quesito" data-rel="70"></div></div>
+        <div id="porcion2" class="recorte"><div class="quesito" data-rel="120"></div></div>
+   </div>
+
+    <mat-card-subtitle >
+      <b>SANCIONES: </b>
+    </mat-card-subtitle>
+
+  <mat-card-subtitle >
+      <b>AGENDA: </b>
+  </mat-card-subtitle>
+  <button class="button-perfil"
+      mat-raised-button
+    >
+     Ver agenda de cursado
+    </button>
+
+  <mat-card-subtitle >
+      <b>TUTORES: </b>
+  </mat-card-subtitle>
+
+  <div >
+  <button class="button-volver"
+      mat-raised-button
+  >
+     Volver
+    </button>
+  </div>
+
+</mat-card>
