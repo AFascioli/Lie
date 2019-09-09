@@ -44,3 +44,11 @@ h3, .mat-icon-button, .home{
   margin-left: 88%;
   margin-right: 7%;
 }
+
+.cierreSesion{
+  position: absolute;
+  left:    0;
+  bottom:   0;
+  font-weight: bold;
+  font-size: 16px;
+}

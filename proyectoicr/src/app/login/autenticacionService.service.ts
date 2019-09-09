@@ -27,25 +27,25 @@ export class AutencacionService {
 
   crearUsuario(email: string, password: string) {
     const authData = { email: email, password: password };
-    this.http
-      .post("http://localhost:3000//usuario/signup", authData)
-      .subscribe(response => {
-        console.log(response);
-      });
+    return  this.http
+      .post<{message: string, exito:string}>("http://localhost:3000/usuario/signup", authData);
   }
 
   //Manda al backend email y contraseña y si devuelve un token, autentica al usuario y guarda
   //en el local storage el token y el vencimiento del token (para auto loguearlo)
-  login(email: string, password: string) {
-    const authData = { email: email, password: password };
+  login(email: string, password: string): string {
+    let mensaje: string;
+    const authData = { email: email, password: password};
     this.http
-      .post<{ token: string; duracionToken: number }>(
+      .post<{ token: string; duracionToken: number, exito: boolean, message:string }>(
         "http://localhost:3000/usuario/login",
         authData
       )
       .subscribe(response => {
-        this.token = response.token;
+        mensaje=response.message;
+        console.log("mensaje servicio"+response.message)
         if (response.token) {
+          this.token = response.token;
           const duracionToken = response.duracionToken;
           this.timerAutenticacion(duracionToken);
           this.estaAutenticado = true;
@@ -56,6 +56,7 @@ export class AutencacionService {
           this.router.navigate(["/"]);
         }
       });
+      return mensaje;
   }
 
   //Obtine la info guardada en el local storage y si no se vencio en token lo autentica al usuario

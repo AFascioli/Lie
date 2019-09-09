@@ -1,7 +1,7 @@
 <div class="fondo">
   <div class="contenedor">
     <h1 class="componente-titulo-login">
-      Instituto Cristo Rey
+      Instituto "Cristo Rey"
     </h1>
     <mat-card class="card-body-componente">
       <meta charset="utf-8" />
@@ -14,6 +14,7 @@
             type="email"
             placeholder="E-Mail"
             #emailInput="ngModel"
+            [(ngModel)]="email"
             required
             email
           />
@@ -27,11 +28,17 @@
             type="password"
             matInput
             placeholder="Contraseña"
+            ngModel
             type="password"
             name="password"
             minlength="11"
+            [(ngModel)]="password"
+            #passwordInput="ngModel"
             required
           />
+          <mat-error *ngIf="passwordInput.invalid"
+          >Por favor ingrese una Contraseña válida</mat-error
+          >
         </mat-form-field>
         <div class="div-button">
           <button
@@ -39,6 +46,7 @@
             mat-raised-button
             class="button"
             routerLink="/home"
+            (click)="iniciarSesion()"
           >
             Iniciar Sesión
           </button>
