@@ -1,3 +1,4 @@
+import { CambiarContrasenia } from './cambiarcontrasenia.component';
 import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { Router } from "@angular/router";
@@ -37,7 +38,7 @@ export class AutencacionService {
   //Se retorna un obsevable para que el componente pueda leer el mensaje del backend.
   login(email: string, password: string) {
     const authData = { email: email, password: password };
-    let respuesta: string = "Autenciación fallida";
+    let respuesta: string;
     var subject = new Subject<string>();
     this.http
       .post<{
@@ -47,9 +48,9 @@ export class AutencacionService {
         message: string;
       }>("http://localhost:3000/usuario/login", authData)
       .subscribe(response => {
+        respuesta= response.message;
         if (response.token) {
           this.token = response.token;
-          respuesta = response.message;
           const duracionToken = response.duracionToken;
           this.timerAutenticacion(duracionToken);
           this.estaAutenticado = true;
@@ -120,5 +121,9 @@ export class AutencacionService {
       token: token,
       vencimientoToken: new Date(fechaVencimiento)
     };
+  }
+
+  cambiarContrasenia(contraseniaVieja, contraseniaNueva){
+
   }
 }

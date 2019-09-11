@@ -1,3 +1,4 @@
+import { CambiarContrasenia } from './login/cambiarcontrasenia.component';
 import { AuthInterceptor } from './login/auth-interceptor';
 import { BrowserModule } from "@angular/platform-browser";
 import { NgModule } from "@angular/core";
@@ -75,7 +76,8 @@ import { LlegadaTardeComponent } from './asistencia/llegada-tarde/llegada-tarde.
     DocumentosInscripcionPopupComponent,
     CalificacionesEstudiantesComponent,
     CalificacionesEstudiantePopupComponent,
-    LlegadaTardeComponent
+    LlegadaTardeComponent,
+    CambiarContrasenia
   ],
   //entryComponents declara los componentes que se generan dinamicamente dentro de otros.
   entryComponents: [

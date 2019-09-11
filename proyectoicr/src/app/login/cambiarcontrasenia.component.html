@@ -1,0 +1,56 @@
+<h1 class="componente-titulo">Cambiar contraseña</h1>
+<mat-card class="card-body-componente">
+  <meta charset="utf-8" />
+
+  <form #form="ngForm" (submit)="onGuardar(form)">
+
+        <mat-form-field>
+          <input
+            name="contraseñaAnterior"
+            ngModel
+            #contraseñaAnterior="ngModel"
+            matInput
+            placeholder="Ingrese contraseña anterior"
+            type="text"
+            required
+          />
+        </mat-form-field>
+        <mat-form-field>
+          <input
+            name="contraseñaNueva"
+            ngModel
+            #contraseñaNueva="ngModel"
+            matInput
+            placeholder="Ingrese contraseña nueva"
+            type="text"
+            required
+          />
+        </mat-form-field>
+        <mat-form-field>
+          <input
+            name="contraseñaNuevaRepetida"
+            ngModel
+            #contraseñaNuevaRepetida="ngModel"
+            matInput
+            placeholder="Ingrese contraseña nuevamente"
+            type="text"
+            required
+          />
+        </mat-form-field>
+  </form>
+  <div class="div-button">
+    <button
+      type="submit"
+      color="primary"
+      mat-raised-button
+    >
+      Guardar
+    </button>
+    <button
+      mat-raised-button
+      color="warn"
+    >
+      Cancelar
+    </button>
+  </div>
+</mat-card>

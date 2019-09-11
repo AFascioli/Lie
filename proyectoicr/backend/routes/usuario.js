@@ -40,7 +40,7 @@ router.post("/login",(req, res, next) => {
       }
       else{
          usuarioEncontrado = usuario;
-         if (!bcrypt.compare(req.body.password, usuario.password) ) {
+         if (!bcrypt.compareSync(req.body.password, usuario.password) ) {
           return res.status(200).json({
             message: "La contraseña ingresada es incorrecta",
             exito: false
