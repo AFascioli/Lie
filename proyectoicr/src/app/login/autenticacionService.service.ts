@@ -10,6 +10,7 @@ export class AutencacionService {
   private token: string;
   private tokenTimer: any;
   private authStatusListener = new Subject<boolean>();
+  private usuarioAutenticado: string;
 
   constructor(private http: HttpClient, private router: Router) {}
 
@@ -23,6 +24,10 @@ export class AutencacionService {
 
   getAuthStatusListener() {
     return this.authStatusListener.asObservable();
+  }
+
+  getUsuarioAutenticado(){
+    return this.usuarioAutenticado;
   }
 
   crearUsuario(email: string, password: string) {
@@ -50,6 +55,7 @@ export class AutencacionService {
       .subscribe(response => {
         respuesta= response.message;
         if (response.token) {
+          this.usuarioAutenticado=email;
           this.token = response.token;
           const duracionToken = response.duracionToken;
           this.timerAutenticacion(duracionToken);
@@ -88,6 +94,7 @@ export class AutencacionService {
   logout() {
     this.token = null;
     this.estaAutenticado = false;
+    this.usuarioAutenticado="";
     this.authStatusListener.next(false);
     clearTimeout(this.tokenTimer);
     this.limpiarDatosAutenticacion();
@@ -124,6 +131,16 @@ export class AutencacionService {
   }
 
   cambiarContrasenia(contraseniaVieja, contraseniaNueva){
+    if(this.usuarioAutenticado){
+    const datosContraseña = {contraseniaVieja: contraseniaVieja, contraseniaNueva: contraseniaNueva, usuario: this.usuarioAutenticado  }
+    this.http
+      .post<{
+        exito: boolean;
+        message: string;
+      }>("http://localhost:3000/usuario/cambiarContrasenia", datosContraseña).subscribe( res =>
+        {console.log(res.message);}
+      );
+  }
 
   }
 }

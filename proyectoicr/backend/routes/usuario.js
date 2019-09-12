@@ -12,7 +12,7 @@ router.post("/signup", (req, res, next) => {
       email: req.body.email,
       password: hash
     });
-     usuario
+    usuario
       .save()
       .then(result => {
         res.status(201).json({
@@ -28,40 +28,59 @@ router.post("/signup", (req, res, next) => {
   });
 });
 
-router.post("/login",(req, res, next) => {
+router.post("/login", (req, res, next) => {
   let usuarioEncontrado;
-  Usuario.findOne({ email: req.body.email })
-    .then(usuario => {
-      if (!usuario) {
+  Usuario.findOne({ email: req.body.email }).then(usuario => {
+    if (!usuario) {
+      return res.status(200).json({
+        message: "El usuario ingresado no existe",
+        exito: false
+      });
+    } else {
+      usuarioEncontrado = usuario;
+      if (!bcrypt.compareSync(req.body.password, usuario.password)) {
         return res.status(200).json({
-          message: "El usuario ingresado no existe",
+          message: "La contraseña ingresada es incorrecta",
           exito: false
         });
+      } else {
+        const token = jwt.sign(
+          { email: usuarioEncontrado.email, userId: usuarioEncontrado._id },
+          "aca_va_el_secreto_que_es_una_string_larga",
+          { expiresIn: "12h" }
+        );
+        res.status(200).json({
+          token: token,
+          duracionToken: 43200,
+          message: "Autenticación exitosa",
+          exito: true
+        });
       }
-      else{
-         usuarioEncontrado = usuario;
-         if (!bcrypt.compareSync(req.body.password, usuario.password) ) {
-          return res.status(200).json({
-            message: "La contraseña ingresada es incorrecta",
-            exito: false
-          });
-        }
-        else{
-           const token = jwt.sign(
-        { email: usuarioEncontrado.email, userId: usuarioEncontrado._id },
-        "aca_va_el_secreto_que_es_una_string_larga",
-        { expiresIn: "12h" }
-      );
-      res.status(200).json({
-        token: token,
-        duracionToken: 43200,
-        message: "Autenticación exitosa",
-        exito: true
-      });
-        }
-      }
-    });
+    }
   });
+});
+
+router.post("/cambiarContrasenia", (req, res, next) => {
+  const passwordNueva = bcrypt.hash(req.body.contraseniaNueva, 10);
+
+  Usuario.findOne({ email: req.body.email }).then(usuario => {
+    if (!bcrypt.compareSync(req.body.contraseniaVieja, usuario.password)) {
+      return res.status(200).json({
+        message: "La contraseña ingresada no coincide con la actual",
+        exito: false
+      });
+    } else {
+      Usuario.findOneAndUpdate(
+        { email: req.body.usuario },
+        { $set: { password: passwordNueva } }
+      ).exec();
+      return res
+      .status(200)
+      .json({ message: "Contraseña cambiada correctamente",
+       exito: true });
+    }
+  });
+});
 
 // router.post("/login",(req, res, next) => {
 //   let usuarioEncontrado;

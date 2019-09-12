@@ -21,6 +21,10 @@ export class MenuLateralComponent implements OnInit {
     this.router.navigate(["./login"]);
   }
 
+  cambiarContrasenia(){
+    this.router.navigate(["/cambiarContraseña"]);
+  }
+
   }
 
 
