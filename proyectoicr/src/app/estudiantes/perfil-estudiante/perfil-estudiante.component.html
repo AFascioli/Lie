@@ -19,14 +19,45 @@
 
     <div class="grafico">
         <div class="sombra"></div>
-        <div id="porcion1" class="recorte"><div class="quesito" data-rel="70"></div></div>
+        <div id="porcion1" class="recorte"><div class="quesito" data-rel="80"></div></div>
         <div id="porcion2" class="recorte"><div class="quesito" data-rel="120"></div></div>
    </div>
 
     <mat-card-subtitle >
       <b>SANCIONES: </b>
     </mat-card-subtitle>
+    <table mat-table [dataSource]="estudiantesXDivision">
+        <ng-container matColumnDef="tipo">
+          <th class="tipoCantidad" mat-header-cell *matHeaderCellDef>
+           Tipo
+          </th>
+          <td
+            class="tipoCantidad"
+            mat-cell
+            *matCellDef=""
+          >
 
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="cantidad">
+          <th class="tipoCantidad" mat-header-cell *matHeaderCellDef>
+            Cantidad
+          </th>
+          <td
+            class="tipoCantidad"
+            mat-cell
+            *matCellDef=" "
+          >
+          </td>
+        </ng-container>
+
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+      </table>
+
+<br>
+<br>
   <mat-card-subtitle >
       <b>AGENDA: </b>
   </mat-card-subtitle>
@@ -35,10 +66,17 @@
     >
      Ver agenda de cursado
     </button>
-
+<br>
+<br>
   <mat-card-subtitle >
       <b>TUTORES: </b>
   </mat-card-subtitle>
+  <mat-card-content class="contenido">
+      <b> Apellido/s y Nombre/s: </b> Tornete Rosana
+  </mat-card-content>
+  <mat-card-content class="contenido">
+      <b>Teléfono: </b> 56665-1559886
+  </mat-card-content>
 
   <div >
   <button class="button-volver"
