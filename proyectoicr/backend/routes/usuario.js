@@ -63,13 +63,14 @@ router.post("/login", (req, res, next) => {
 router.post("/cambiarContrasenia", (req, res, next) => {
   const passwordNueva = bcrypt.hash(req.body.contraseniaNueva, 10);
 
-  Usuario.findOne({ email: req.body.email }).then(usuario => {
+  Usuario.findOne({ email: req.body.usuario }).then(usuario => {
     if (!bcrypt.compareSync(req.body.contraseniaVieja, usuario.password)) {
       return res.status(200).json({
         message: "La contraseña ingresada no coincide con la actual",
         exito: false
       });
     } else {
+      try{
       Usuario.findOneAndUpdate(
         { email: req.body.usuario },
         { $set: { password: passwordNueva } }
@@ -78,6 +79,12 @@ router.post("/cambiarContrasenia", (req, res, next) => {
       .status(200)
       .json({ message: "Contraseña cambiada correctamente",
        exito: true });
+      }
+      catch {
+        res.status(200).json({
+          message: e,
+          exito: false });
+      }
     }
   });
 });

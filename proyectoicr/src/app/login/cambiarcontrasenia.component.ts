@@ -14,7 +14,7 @@ export class CambiarContrasenia implements OnInit {
   }
 
   constructor(private servicio: AutencacionService,  private snackBar: MatSnackBar){
-
+   
   }
 
   onGuardar(form: NgForm){
