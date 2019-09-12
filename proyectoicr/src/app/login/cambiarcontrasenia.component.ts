@@ -14,20 +14,18 @@ export class CambiarContrasenia implements OnInit {
   }
 
   constructor(private servicio: AutencacionService,  private snackBar: MatSnackBar){
-   
+
   }
 
   onGuardar(form: NgForm){
-  if( form.value.contraseñaNueva === form.value.contraseñaNuevaRepetida ){
+    if( form.value.contraseñaNueva === form.value.contraseñaNuevaRepetida ){
     this.servicio.cambiarContrasenia(
       form.value.contraseñaAnterior,
       form.value.contraseñaNueva    )
-      console.log("entro");
     } else {
       this.snackBar.open("Las contraseñas ingresadas no coinciden", "", {
         duration: 4000
       });
-      console.log("entro2");
   }
   }
 

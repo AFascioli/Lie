@@ -65,7 +65,7 @@ export class AutencacionService {
           const vencimientoToken = new Date(
             fechaActual.getTime() + duracionToken * 1000
           );
-          this.guardarDatosAutenticacion(response.token, vencimientoToken);
+          this.guardarDatosAutenticacion(response.token, vencimientoToken, this.usuarioAutenticado);
           this.router.navigate(["/"]);
         }
         subject.next(respuesta);
@@ -84,6 +84,7 @@ export class AutencacionService {
       infoAutenticacion.vencimientoToken.getTime() - fechaActual.getTime();
     if (expiraEn > 0) {
       this.token = infoAutenticacion.token;
+      this.usuarioAutenticado = infoAutenticacion.usuario;
       this.estaAutenticado = true;
       this.timerAutenticacion(expiraEn / 1000);
       this.authStatusListener.next(true);
@@ -108,31 +109,37 @@ export class AutencacionService {
     }, duration * 1000);
   }
 
-  private guardarDatosAutenticacion(token: string, fechaVencimiento: Date) {
+  private guardarDatosAutenticacion(token: string, fechaVencimiento: Date, usuario: string) {
     localStorage.setItem("token", token);
     localStorage.setItem("vencimiento", fechaVencimiento.toISOString());
+    localStorage.setItem("usuario", usuario);
   }
 
   private limpiarDatosAutenticacion() {
     localStorage.removeItem("token");
     localStorage.removeItem("vencimiento");
+    localStorage.removeItem("usuario");
   }
 
   private obtenerDatosAutenticacion() {
     const token = localStorage.getItem("token");
     const fechaVencimiento = localStorage.getItem("vencimiento");
+    const usuario = localStorage.getItem("usuario");
     if (!token || !fechaVencimiento) {
       return;
     }
     return {
       token: token,
-      vencimientoToken: new Date(fechaVencimiento)
+      vencimientoToken: new Date(fechaVencimiento),
+      usuario: usuario
     };
   }
 
   cambiarContrasenia(contraseniaVieja, contraseniaNueva){
     if(this.usuarioAutenticado){
-    const datosContraseña = {contraseniaVieja: contraseniaVieja, contraseniaNueva: contraseniaNueva, usuario: this.usuarioAutenticado  }
+    const datosContraseña = {contraseniaVieja: contraseniaVieja,
+      contraseniaNueva: contraseniaNueva,
+       usuario: this.usuarioAutenticado  }
     this.http
       .post<{
         exito: boolean;
