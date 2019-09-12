@@ -17,9 +17,11 @@ export class LoginComponent implements OnInit {
     private snackBar: MatSnackBar
   ) {}
 
-  ngOnInit() {}
+  ngOnInit() {
+  }
 
   iniciarSesion() {
+
     if (this.password && this.email) {
       this.authService.login(this.email, this.password).subscribe(respuesta => {
         this.snackBar.open(respuesta, "", {

@@ -7,6 +7,7 @@ const Usuario = require("../models/usuario");
 const router = express.Router();
 
 router.post("/signup", (req, res, next) => {
+  console.log(req.body);
   bcrypt.hash(req.body.password, 10).then(hash => {
     const usuario = new Usuario({
       email: req.body.email,
@@ -37,6 +38,7 @@ router.post("/login", (req, res, next) => {
         exito: false
       });
     } else {
+      console.log(usuario);
       usuarioEncontrado = usuario;
       if (!bcrypt.compareSync(req.body.password, usuario.password)) {
         return res.status(200).json({
@@ -60,9 +62,11 @@ router.post("/login", (req, res, next) => {
   });
 });
 
-router.post("/cambiarContrasenia", (req, res, next) => {
-  const passwordNueva = bcrypt.hash(req.body.contraseniaNueva, 10);
-
+router.post("/cambiarContrasenia", async(req, res, next) => {
+  let passwordNueva;
+  await bcrypt.hash(req.body.contraseniaNueva, 10).then(hash => {
+    passwordNueva = hash;
+  });
   Usuario.findOne({ email: req.body.usuario }).then(usuario => {
     if (!bcrypt.compareSync(req.body.contraseniaVieja, usuario.password)) {
       return res.status(200).json({
@@ -70,21 +74,13 @@ router.post("/cambiarContrasenia", (req, res, next) => {
         exito: false
       });
     } else {
-      try{
       Usuario.findOneAndUpdate(
         { email: req.body.usuario },
-        { $set: { password: passwordNueva } }
+        { password: passwordNueva }
       ).exec();
       return res
-      .status(200)
-      .json({ message: "Contraseña cambiada correctamente",
-       exito: true });
-      }
-      catch {
-        res.status(200).json({
-          message: e,
-          exito: false });
-      }
+        .status(200)
+        .json({ message: "Contraseña cambiada correctamente", exito: true });
     }
   });
 });

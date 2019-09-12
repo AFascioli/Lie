@@ -136,10 +136,9 @@ export class AutencacionService {
   }
 
   cambiarContrasenia(contraseniaVieja, contraseniaNueva){
-    if(this.usuarioAutenticado){
     const datosContraseña = {contraseniaVieja: contraseniaVieja,
       contraseniaNueva: contraseniaNueva,
-       usuario: this.usuarioAutenticado  }
+       usuario: this.usuarioAutenticado}
     this.http
       .post<{
         exito: boolean;
@@ -147,7 +146,7 @@ export class AutencacionService {
       }>("http://localhost:3000/usuario/cambiarContrasenia", datosContraseña).subscribe( res =>
         {console.log(res.message);}
       );
-  }
+
 
   }
 }
