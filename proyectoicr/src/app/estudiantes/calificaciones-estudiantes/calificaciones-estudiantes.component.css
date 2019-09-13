@@ -1,0 +1,46 @@
+table {
+  width: 95%;
+  margin: 2rem;
+}
+
+.columnasNormales{
+  width:22% !important;
+}
+
+.columnasChicas{
+  width:8%;
+}
+
+th{
+  font-weight: bold;
+  font-size: 15px;
+}
+
+.div-button {
+  text-align: right;
+}
+
+.div-selects{
+  text-align: center;
+}
+
+.mat-form-field{
+  margin-left: 0.5rem;
+  margin-right: 0.5rem;
+}
+
+/* Nuevo */
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input{
+  border: none;
+  width: 40%;
+}
+
+input:focus{
+  outline: none;
+}

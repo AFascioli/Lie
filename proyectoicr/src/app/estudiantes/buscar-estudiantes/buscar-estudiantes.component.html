@@ -1,0 +1,105 @@
+<h1 class="componente-titulo">Buscar estudiante</h1>
+
+<mat-card class="card-body-componente">
+  <form #form="ngForm" (submit)="OnBuscar(form)">
+    <mat-radio-group aria-label="Select an option">
+      <mat-radio-button
+        [checked]="buscarPorNomYAp"
+        (change)="DeshabilitarInputs(form)"
+        value="1"
+        >Buscar por nombre y apellido</mat-radio-button
+      >
+      <mat-radio-button
+      (change)="DeshabilitarInputs(form)"
+      value="2"
+      [checked]="!buscarPorNomYAp"
+        >Buscar por documento</mat-radio-button
+      >
+    </mat-radio-group>
+    <br />
+    <mat-form-field>
+      <input
+        [disabled]="!buscarPorNomYAp"
+        ngModel
+        #apellido="ngModel"
+        matInput
+        name="apellido"
+        pattern="[A-Za-záéíóúÁÉÍÓÚñÑ ]+"
+        minlength="2"
+        maxlength="30"
+        placeholder="Ingrese apellido"
+        type="text"
+        [(ngModel)]="apellidoEstSelec"
+        required
+      />
+    </mat-form-field>
+    <br />
+    <mat-form-field>
+      <input
+        [disabled]="!buscarPorNomYAp"
+        ngModel
+        #nombre="ngModel"
+        matInput
+        name="nombre"
+        pattern="[A-Za-záéíóúÁÉÍÓÚñÑ ]+"
+        minlength="2"
+        maxlength="30"
+        placeholder="Ingrese nombre"
+        type="text"
+        [(ngModel)]="nombreEstSelec"
+        required
+      />
+    </mat-form-field>
+    <br />
+    <mat-form-field>
+      <mat-select
+        [disabled]="buscarPorNomYAp"
+        placeholder="Seleccione tipo de documento"
+        name="tipoDocumento"
+        ngModel
+        [(ngModel)]="tipoDocEstSelec"
+        #tipoDocumento="ngModel"
+        matNativeControl
+        required
+      >
+        <mat-option value="DNI">DNI</mat-option>
+        <mat-option value="Cedula de Identidad">Cédula de Identidad</mat-option>
+        <mat-option value="Libreta de Enrolamiento"
+          >Libreta de Enrolamiento</mat-option
+        >
+        <mat-option value="Libreta Civica">Libreta Cívica</mat-option>
+        <mat-option value="Pasaporte">Pasaporte</mat-option>
+      </mat-select>
+    </mat-form-field>
+    <br />
+    <mat-form-field>
+      <input
+        [disabled]="buscarPorNomYAp"
+        matInput
+        name="numeroDocumento"
+        ngModel
+        #numeroDocumento="ngModel"
+        [(ngModel)]="nroDocEstSelec"
+        pattern="[0-9]+"
+        maxlength="8"
+        placeholder="Ingrese número de documento"
+        required
+      />
+    </mat-form-field>
+    <br />
+    <div class="div-button">
+      <button
+        color="primary"
+        routerLink="./lista"
+        type="submit"
+        mat-raised-button
+      >
+        Buscar
+      </button>
+      <button mat-raised-button (click)="onCancelar()" color="warn">
+        Cancelar
+      </button>
+    </div>
+  </form>
+</mat-card>
+<router-outlet></router-outlet>

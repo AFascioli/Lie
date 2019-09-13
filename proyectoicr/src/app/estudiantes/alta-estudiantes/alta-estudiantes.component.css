@@ -1,0 +1,17 @@
+.mat-expansion-panel{
+  width: 70%;
+  margin: auto;
+}
+
+/* Los campos de los paneles. */
+.mat-form-field{
+   width: 45%;
+}
+
+.div-button {
+  text-align: right;
+}
+
+.parrafo{
+  text-align: center;
+}

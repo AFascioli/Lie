@@ -1,0 +1,50 @@
+<h1 class="componente-titulo">Registrar retiro anticipado</h1>
+<mat-card class="card-body-componente">
+  <p class="fecha"><b>Fecha: </b>{{ fechaActual | date: "dd/MM/yyyy" }}</p>
+  <br />
+  <br />
+
+  <div class="contenido">
+    <mat-card class="card-datos">
+      <h3>Datos del estudiante seleccionado</h3>
+      <mat-card-subtitle>
+        <b>Apellido/s: </b> {{ apellidoEstudiante }}
+        <br />
+        <b>Nombre/s: </b> {{ nombreEstudiante }}
+      </mat-card-subtitle>
+    </mat-card>
+  </div>
+
+  <br />
+
+  <mat-radio-group aria-label="Select an option">
+    <mat-radio-button
+      (change)="CambiarTipoRetiro()"
+      [checked]="antes10am"
+      value="1"
+      >Antes de las 10:00 de la mañana</mat-radio-button
+    >
+    <mat-radio-button
+      (change)="CambiarTipoRetiro()"
+      [checked]="!antes10am"
+      value="2"
+      >Después de las 10:00 de la mañana</mat-radio-button
+    >
+  </mat-radio-group>
+
+  <br />
+  <br />
+
+  <div class="div-button">
+    <button color="primary" (click)="openPopup('confirmar')" mat-raised-button>
+      Guardar
+    </button>
+
+    <button mat-raised-button (click)="openPopup('cancelar')" color="warn">
+      Cancelar
+    </button>
+    <button mat-raised-button [routerLink]="['/buscar/lista']" color="primary">
+      Volver
+    </button>
+  </div>
+</mat-card>

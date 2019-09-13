@@ -1,0 +1,205 @@
+<mat-toolbar class="fixed-header">
+  <mat-toolbar-row>
+    <button
+      type="button"
+      aria-label="Toggle sidenav"
+      mat-icon-button
+      (click)="drawer.toggle()"
+    >
+    <mat-icon aria-label="Side nav toggle icon">menu</mat-icon>
+    </button>
+    <h3>Menú</h3>
+
+  <div class="ubicacionHome">
+    <button mat-button (click)="onClickHome()">
+       <mat-icon class="home">home </mat-icon>
+  </button>
+
+  </div>
+  </mat-toolbar-row>
+</mat-toolbar>
+
+<!-- Menu lateral de la aplicación -->
+<mat-sidenav-container hasBackdrop="true">
+  <mat-sidenav
+    #drawer
+    mode="mobileQuery.matches ? 'over' : 'side'"
+    fixedInViewport="mobileQuery.matches"
+    fixedTopGap="64"
+  >
+    <mat-nav-list>
+      <mat-accordion>
+        <mat-expansion-panel class="opcion">
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              <a mat-list-item>
+                <mat-icon>wc</mat-icon>
+                <b class="titulo-expansion">Curso</b>
+              </a>
+            </mat-panel-title>
+          </mat-expansion-panel-header>
+          <a
+            mat-list-item
+            class="opciones-expansion"
+            (click)="drawer.toggle()"
+            routerLink="./"
+          >
+            Registrar agenda de curso
+          </a>
+          <a
+            mat-list-item
+            class="opciones-expansion"
+            (click)="drawer.toggle()"
+            routerLink="/asistencia"
+          >
+            Tomar asistencia
+          </a>
+          <a
+            mat-list-item
+            class="opciones-expansion"
+            (click)="drawer.toggle()"
+            routerLink="./"
+          >
+            Registar pago de cuotas
+          </a>
+          <a
+            mat-list-item
+            class="opciones-expansion"
+            (click)="drawer.toggle()"
+            routerLink="/documentosEstudiante"
+          >
+            Registrar documentos inscripción
+          </a>
+          <mat-accordion>
+            <mat-expansion-panel>
+              <mat-expansion-panel-header>
+                <mat-panel-title>
+                  <a mat-list-item>
+                    <b>Calificaciones</b>
+                  </a>
+                </mat-panel-title>
+              </mat-expansion-panel-header>
+              <a
+                mat-list-item
+                class="opciones-expansion"
+                (click)="drawer.toggle()"
+                routerLink="calificacionesEstudiantes"
+              >
+                Registrar
+              </a>
+              <a
+                mat-list-item
+                class="opciones-expansion"
+                (click)="drawer.toggle()"
+                routerLink="./"
+              >
+                Buscar
+              </a>
+              <!-- <a mat-list-item (click)="drawer.toggle()" routerLink="./">
+                &nbsp; &nbsp; &nbsp; Modificar &nbsp;
+              </a>
+              <a mat-list-item (click)="drawer.toggle()" routerLink="./">
+                &nbsp; &nbsp; &nbsp; Borrar &nbsp;
+              </a> -->
+            </mat-expansion-panel>
+          </mat-accordion>
+        </mat-expansion-panel>
+        <mat-expansion-panel
+          class="opcion"
+          (opened)="panelOpenState = true"
+          (closed)="panelOpenState = false"
+        >
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              <a mat-list-item>
+                <mat-icon>school</mat-icon>
+                <b class="titulo-expansion">Estudiante</b>
+              </a>
+            </mat-panel-title>
+          </mat-expansion-panel-header>
+          <a
+            mat-list-item
+            class="opciones-expansion"
+            (click)="drawer.toggle()"
+            routerLink="/alta"
+          >
+            Registrar
+          </a>
+          <a
+            mat-list-item
+            class="opciones-expansion"
+            (click)="drawer.toggle()"
+            routerLink="/buscar"
+          >
+            Buscar
+          </a>
+        </mat-expansion-panel>
+        <mat-expansion-panel
+          class="opcion"
+          (opened)="panelOpenState = true"
+          (closed)="panelOpenState = false"
+        >
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              <a mat-list-item ng-Focus="onSelected(this)">
+                <mat-icon>event</mat-icon>
+                <b class="titulo-expansion">Evento</b>
+              </a>
+            </mat-panel-title>
+          </mat-expansion-panel-header>
+          <a
+            mat-list-item
+            class="opciones-expansion"
+            (click)="drawer.toggle()"
+            routerLink="./"
+          >
+            Registrar
+          </a>
+          <a
+            mat-list-item
+            class="opciones-expansion"
+            (click)="drawer.toggle()"
+            routerLink="./"
+          >
+            Buscar
+          </a>
+          <!-- <a mat-list-item (click)="drawer.toggle()" routerLink="./">
+            &nbsp; &nbsp; &nbsp; Modificar &nbsp;
+          </a>
+          <a mat-list-item (click)="drawer.toggle()" routerLink="./">
+            &nbsp; &nbsp; &nbsp; Eliminar &nbsp;
+          </a> -->
+        </mat-expansion-panel>
+      </mat-accordion>
+    </mat-nav-list>
+
+    <button mat-button
+    (click)="cambiarContrasenia()">
+     Cambiar contraseña
+   </button>
+
+    <button mat-button
+    class="cierreSesion"
+    (click)="cierreSesion()">
+    <mat-icon>exit_to_app</mat-icon>
+     Cerrar sesión
+   </button>
+    <!-- <mat-nav-list class="ubicacion_inferior">
+      <a
+        mat-list-item
+        (click)="drawer.toggle()"
+        routerLink="#"
+        title="Configuración"
+      >
+        <mat-icon>settings</mat-icon>
+
+        <p>Configuración</p>
+      </a>
+    </mat-nav-list> -->
+  </mat-sidenav>
+  <mat-sidenav-content>
+    <div class="body-contenido">
+      <router-outlet></router-outlet>
+    </div>
+  </mat-sidenav-content>
+</mat-sidenav-container>

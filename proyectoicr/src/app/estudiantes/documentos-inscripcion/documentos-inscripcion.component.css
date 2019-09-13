@@ -1,0 +1,25 @@
+.columnasTabla{
+  width: 18%;
+}
+
+table {
+  width: 95%;
+  margin: 1.5rem;
+  margin-top: 0rem;
+}
+
+.div-selects, th, td{
+  text-align: center !important;
+}
+
+th{
+  font-weight: bold;
+  font-size: 15px;
+}
+
+.div-button {
+  text-align: right;
+}
+
+
+

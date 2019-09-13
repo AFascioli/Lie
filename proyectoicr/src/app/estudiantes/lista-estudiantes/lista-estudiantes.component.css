@@ -1,0 +1,35 @@
+.mat-card {
+  margin: auto;
+  margin-top: 1rem;
+  margin-bottom: 1.5rem;
+  max-width: 800px;
+}
+
+.btnVisualizar{
+  margin: 2%;
+}
+
+th, td {
+  text-align: center !important;
+}
+
+th{
+  font-weight: bold;
+  font-size: 15px;
+}
+
+.button{
+  width: 45%;
+}
+
+.botonesAcciones{
+  text-align: center;
+}
+
+.tituloAcciones{
+  text-align: center;
+  font-weight: bold;
+  margin-top: 0;
+}
+
+
