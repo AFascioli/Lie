@@ -9,6 +9,8 @@ import { MatSnackBar } from "@angular/material";
   styleUrls: ["./login.component.css"]
 })
 export class CambiarContrasenia implements OnInit {
+
+
   ngOnInit() {}
 
   constructor(
