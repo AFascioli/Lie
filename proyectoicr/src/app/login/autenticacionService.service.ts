@@ -139,13 +139,11 @@ export class AutencacionService {
     const datosContraseña = {contraseniaVieja: contraseniaVieja,
       contraseniaNueva: contraseniaNueva,
        usuario: this.usuarioAutenticado}
-    this.http
+    return this.http
       .post<{
         exito: boolean;
         message: string;
-      }>("http://localhost:3000/usuario/cambiarContrasenia", datosContraseña).subscribe( res =>
-        {console.log(res.message);}
-      );
+      }>("http://localhost:3000/usuario/cambiarContrasenia", datosContraseña);
 
 
   }

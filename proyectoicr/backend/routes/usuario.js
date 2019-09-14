@@ -7,7 +7,6 @@ const Usuario = require("../models/usuario");
 const router = express.Router();
 
 router.post("/signup", (req, res, next) => {
-  console.log(req.body);
   bcrypt.hash(req.body.password, 10).then(hash => {
     const usuario = new Usuario({
       email: req.body.email,
@@ -38,7 +37,6 @@ router.post("/login", (req, res, next) => {
         exito: false
       });
     } else {
-      console.log(usuario);
       usuarioEncontrado = usuario;
       if (!bcrypt.compareSync(req.body.password, usuario.password)) {
         return res.status(200).json({
@@ -54,7 +52,7 @@ router.post("/login", (req, res, next) => {
         res.status(200).json({
           token: token,
           duracionToken: 43200,
-          message: "Autenticación exitosa",
+          message: "Bienvenido a Lié",
           exito: true
         });
       }
