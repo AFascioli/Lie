@@ -39,9 +39,17 @@ export class CambiarContrasenia implements OnInit {
         });
       }
     }else{
-      this.snackBar.open("Faltan campos por completar", "", {
+
+      if(!form.value.contraseniaAnterior || !form.value.contraseniaNueva || !form.value.contraseñaNuevaRepetida ){
+        this.snackBar.open("Faltan campos por completar", "", {
+          duration: 4000
+          });
+      } else {
+         this.snackBar.open("Los campos ingresados no son validos", "", {
         duration: 4000
-      });
+        });
+      }
+
     }
   }
 
