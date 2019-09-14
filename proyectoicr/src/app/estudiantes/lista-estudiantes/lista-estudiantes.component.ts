@@ -45,7 +45,7 @@ export class ListaEstudiantesComponent implements OnInit {
     this.servicio.retornoDesdeAcciones=true;
   }
 
-  onVisualizarPerfil(indice){
+    onVisualizarPerfil(indice){
     this.servicio.estudianteSeleccionado = (this.estudiantes.find(estudiante => estudiante.numeroDocumento===this.estudiantes[indice].numeroDocumento));
     this.router.navigate(["./perfilEstudiante"]);
     this.servicio.retornoDesdeAcciones=true;

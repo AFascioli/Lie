@@ -51,6 +51,8 @@ import {MatGridListModule} from '@angular/material/grid-list';
 import { CalificacionesEstudiantesComponent, CalificacionesEstudiantePopupComponent } from './estudiantes/calificaciones-estudiantes/calificaciones-estudiantes.component';
 import { LlegadaTardeComponent } from './asistencia/llegada-tarde/llegada-tarde.component';
 import { PerfilEstudianteComponent } from './estudiantes/perfil-estudiante/perfil-estudiante.component';
+import { CalificacionesPerfilEstudianteComponent } from './estudiantes/perfil-estudiante/calificaciones-perfil-estudiante/calificaciones-perfil-estudiante.component';
+import { AgendaCursoPerfilEstudianteComponent } from './estudiantes/perfil-estudiante/agenda-curso-perfil-estudiante/agenda-curso-perfil-estudiante.component';
 
 @NgModule({
   declarations: [
@@ -77,6 +79,8 @@ import { PerfilEstudianteComponent } from './estudiantes/perfil-estudiante/perfi
     CalificacionesEstudiantePopupComponent,
     LlegadaTardeComponent,
     PerfilEstudianteComponent,
+    CalificacionesPerfilEstudianteComponent,
+    AgendaCursoPerfilEstudianteComponent,
   ],
   //entryComponents declara los componentes que se generan dinamicamente dentro de otros.
   entryComponents: [

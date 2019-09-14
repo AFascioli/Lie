@@ -24,14 +24,19 @@ mat-card-content{
   color: #fff !important;
   margin-left: 87% !important;
 }
-.tipoCantidad{
-  width: 20%;
-}
 
 table {
-  width: 20%;
-  height: 80%;
+  width: 50%;
   margin-left: 30%;
+}
+
+.tipoCantidad{
+  width:22% !important;
+}
+
+th{
+  font-weight: bold;
+  font-size: 15px;
 }
 
 * {
@@ -42,7 +47,7 @@ table {
   margin: 1rem auto;
   position: relative;
   width: 200px;
-    }
+}
   .sombra {
   background-color: #fff;
   border-radius: 50%;
@@ -51,15 +56,15 @@ table {
   height: 100%;
   position: absolute;
   width: 100%;
-   }
+}
 .recorte {
   border-radius: 50%;
   clip: rect(0px, 200px, 200px, 100px);
   height: 100%;
   position: absolute;
   width: 100%;
-   }
-.quesito {
+}
+.porsion {
   border-radius: 50%;
   clip: rect(0px, 100px, 200px, 0px);
   height: 100%;
@@ -68,59 +73,48 @@ table {
   font-family: monospace;
   font-size: 1.5rem;
   color: #fff !important;
-   }
+}
 
 
 #porcion1 {
   transform: rotate(0deg);
-   }
-
-#porcion1 .quesito {
-  background-color:maroon;
-  transform: rotate(70deg);
-   }
-#porcion2 {
-  transform: rotate(70deg);
-   }
-#porcion2 .quesito {
-  background-color: teal;
-  transform: rotate(120deg);
-   }
-
-
-#porcionFin {
-  transform:rotate(-145deg);
-   }
-#porcionFin .quesito {
-  background-color: rgba(255,0,0,.7);
-  transform: rotate(145deg);
-   }
-#porcion1 .quesito:after {
-  content: attr(data-rel);
-  left: 25%;
-  line-height: 5;
-  position: absolute;
-  top: 0;
-  transform: rotate(-70deg);
 }
-#porcion2 .quesito:after {
+
+#porcion1 .porsion {
+  background-color:maroon;
+  transform: rotate(180deg);
+}
+
+#porcion2 {
+  transform: rotate(180deg);
+}
+#porcion2 .porsion {
+  background-color: teal;
+  transform: rotate(180deg);
+   }
+
+
+
+#porcion1 .porsion:after {
   content: attr(data-rel);
   left: 15%;
+  line-height: 5;
   position: absolute;
-  top: 30%;
-  transform: rotate(-190deg);
+  top: 25%;
+  transform: rotate(180deg);
+}
+#porcion2 .porsion:after {
+  content: attr(data-rel);
+  left: 15%;
+  line-height: 5;
+  position: absolute;
+  top: 25%;
+  transform: rotate(0deg);
 }
 
-#porcionFin .quesito:after {
- content: attr(data-rel);
- left: 10%;
- position: absolute;
- top: 30%;
-}
 
-table {
-  width: 50%;
-}
+
+
 
 
 

@@ -1,0 +1,14 @@
+mat-card-subtitle{
+  color: black;
+}
+
+mat-card-content{
+  text-indent: 34%;
+}
+
+.button-volver{
+  text-align: right;
+  background-color: rgb(179, 182, 187) !important;
+  color: #fff !important;
+  margin-left: 87% !important;
+}
