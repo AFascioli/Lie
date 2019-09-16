@@ -1,7 +1,6 @@
 import { Component, OnInit } from "@angular/core";
 import { AutencacionService } from "./autenticacionService.service";
 import { MatSnackBar } from "@angular/material";
-import { async } from "q";
 
 @Component({
   selector: "app-login",
@@ -21,7 +20,6 @@ export class LoginComponent implements OnInit {
   }
 
   iniciarSesion() {
-
     if (this.password && this.email) {
       this.authService.login(this.email, this.password).subscribe(respuesta => {
         this.snackBar.open(respuesta, "", {

@@ -1,4 +1,3 @@
-import { CambiarContrasenia, CambiarPasswordPopupComponent } from './login/cambiarcontrasenia.component';
 import { AuthInterceptor } from './login/auth-interceptor';
 import { BrowserModule } from "@angular/platform-browser";
 import { NgModule } from "@angular/core";
@@ -39,7 +38,7 @@ import {
 } from "./estudiantes/mostrar-estudiantes/mostrar-estudiantes.component";
 import { AppRoutingModule } from "./app-routing.module";
 import { LoginComponent } from "./login/login.component";
-import { MenuLateralComponent } from "./menu-lateral/menu-lateral.component";
+import { MenuLateralComponent, CerrarSesionPopupComponent } from "./menu-lateral/menu-lateral.component";
 import { HomeComponent } from "./home/home.component";
 import {
   RegistrarAsistenciaComponent,
@@ -52,6 +51,7 @@ import { DocumentosInscripcionComponent, DocumentosInscripcionPopupComponent } f
 import {MatGridListModule} from '@angular/material/grid-list';
 import { CalificacionesEstudiantesComponent, CalificacionesEstudiantePopupComponent } from './estudiantes/calificaciones-estudiantes/calificaciones-estudiantes.component';
 import { LlegadaTardeComponent } from './asistencia/llegada-tarde/llegada-tarde.component';
+import { CambiarPassword, CambiarPasswordPopupComponent } from './login/cambiar-password.component';
 
 @NgModule({
   declarations: [
@@ -77,8 +77,9 @@ import { LlegadaTardeComponent } from './asistencia/llegada-tarde/llegada-tarde.
     CalificacionesEstudiantesComponent,
     CalificacionesEstudiantePopupComponent,
     LlegadaTardeComponent,
-    CambiarContrasenia,
-    CambiarPasswordPopupComponent
+    CambiarPassword,
+    CambiarPasswordPopupComponent,
+    CerrarSesionPopupComponent
   ],
   //entryComponents declara los componentes que se generan dinamicamente dentro de otros.
   entryComponents: [
@@ -90,7 +91,8 @@ import { LlegadaTardeComponent } from './asistencia/llegada-tarde/llegada-tarde.
     RetiroPopupComponent,
     DocumentosInscripcionPopupComponent,
     CalificacionesEstudiantePopupComponent,
-    CambiarPasswordPopupComponent
+    CambiarPasswordPopupComponent,
+    CerrarSesionPopupComponent
   ],
   imports: [
     BrowserModule,

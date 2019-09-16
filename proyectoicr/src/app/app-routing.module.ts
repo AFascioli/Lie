@@ -1,4 +1,3 @@
-import { CambiarContrasenia } from './login/cambiarcontrasenia.component';
 import { HomeComponent } from "./home/home.component";
 import { NgModule } from "@angular/core";
 import { RouterModule, Routes } from "@angular/router";
@@ -15,6 +14,7 @@ import { DocumentosInscripcionComponent } from './estudiantes/documentos-inscrip
 import{ CalificacionesEstudiantesComponent } from './estudiantes/calificaciones-estudiantes/calificaciones-estudiantes.component';
 import { LlegadaTardeComponent } from './asistencia/llegada-tarde/llegada-tarde.component';
 import { AuthGuard } from './login/auth.guard';
+import { CambiarPassword } from './login/cambiar-password.component';
 
 const routes: Routes = [
   { path: "login", component: LoginComponent },
@@ -42,7 +42,7 @@ const routes: Routes = [
       { path: "documentosEstudiante", component: DocumentosInscripcionComponent },
       { path: "calificacionesEstudiantes", component: CalificacionesEstudiantesComponent },
       { path: "llegadaTarde", component: LlegadaTardeComponent},
-      { path: "cambiarContraseña", component: CambiarContrasenia}
+      { path: "cambiarContraseña", component: CambiarPassword}
     ]
   }
 ];

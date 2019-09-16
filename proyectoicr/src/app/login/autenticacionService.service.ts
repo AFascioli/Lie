@@ -1,4 +1,3 @@
-import { CambiarContrasenia } from './cambiarcontrasenia.component';
 import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { Router } from "@angular/router";
@@ -135,16 +134,14 @@ export class AutencacionService {
     };
   }
 
-  cambiarContrasenia(contraseniaVieja, contraseniaNueva){
-    const datosContraseña = {contraseniaVieja: contraseniaVieja,
-      contraseniaNueva: contraseniaNueva,
+  cambiarPassword(passwordVieja, passwordNueva){
+    const datosContraseña = {passwordVieja: passwordVieja,
+      passwordNueva: passwordNueva,
        usuario: this.usuarioAutenticado}
     return this.http
       .post<{
         exito: boolean;
         message: string;
-      }>("http://localhost:3000/usuario/cambiarContrasenia", datosContraseña);
-
-
+      }>("http://localhost:3000/usuario/cambiarPassword", datosContraseña);
   }
 }

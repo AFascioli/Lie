@@ -60,13 +60,13 @@ router.post("/login", (req, res, next) => {
   });
 });
 
-router.post("/cambiarContrasenia", async(req, res, next) => {
+router.post("/cambiarPassword", async(req, res, next) => {
   let passwordNueva;
-  await bcrypt.hash(req.body.contraseniaNueva, 10).then(hash => {
+  await bcrypt.hash(req.body.passwordNueva, 10).then(hash => {
     passwordNueva = hash;
   });
   Usuario.findOne({ email: req.body.usuario }).then(usuario => {
-    if (!bcrypt.compareSync(req.body.contraseniaVieja, usuario.password)) {
+    if (!bcrypt.compareSync(req.body.passwordVieja, usuario.password)) {
       return res.status(200).json({
         message: "La contraseña ingresada no coincide con la actual",
         exito: false

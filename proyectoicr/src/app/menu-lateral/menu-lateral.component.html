@@ -8,7 +8,7 @@
     >
     <mat-icon aria-label="Side nav toggle icon">menu</mat-icon>
     </button>
-    <h3>Menú</h3>
+    <h3 class="tituloMenu">Menú</h3>
 
   <div class="ubicacionHome">
     <button mat-button (click)="onClickHome()">
@@ -174,7 +174,7 @@
     </mat-nav-list>
 
     <button mat-button
-    (click)="cambiarContrasenia()">
+    (click)=" drawer.toggle(); cambiarContrasenia()">
      Cambiar contraseña
    </button>
 

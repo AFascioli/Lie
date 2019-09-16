@@ -5,11 +5,11 @@ import { MatSnackBar, MatDialogRef, MatDialog } from "@angular/material";
 import { Router } from '@angular/router';
 
 @Component({
-  selector: "app-cambiar-contrasenia",
-  templateUrl: "./cambiarcontrasenia.component.html",
+  selector: "app-cambiar-password",
+  templateUrl: "./cambiar-password.component.html",
   styleUrls: ["./login.component.css"]
 })
-export class CambiarContrasenia implements OnInit {
+export class CambiarPassword implements OnInit {
   esVisible1: boolean=false;
   esVisible2: boolean=false;
   esVisible3: boolean=false;
@@ -24,14 +24,15 @@ export class CambiarContrasenia implements OnInit {
 
   onGuardar(form: NgForm) {
     if(form.valid){
-      if (form.value.contraseñaNueva === form.value.contraseñaNuevaRepetida) {
-        this.servicio.cambiarContrasenia(
-          form.value.contraseniaAnterior,
-          form.value.contraseñaNueva
+      if (form.value.passwordNueva === form.value.passwordNuevaRepetida) {
+        this.servicio.cambiarPassword(
+          form.value.passwordAnterior,
+          form.value.passwordNueva
         ).subscribe(response=> {
           this.snackBar.open(response.message, "", {
             duration: 4000
           });
+          form.reset();
         });
       } else {
         this.snackBar.open("Las contraseñas ingresadas no coinciden", "", {
@@ -40,7 +41,7 @@ export class CambiarContrasenia implements OnInit {
       }
     }else{
 
-      if(!form.value.contraseniaAnterior || !form.value.contraseniaNueva || !form.value.contraseñaNuevaRepetida ){
+      if(!form.value.passwordAnterior || !form.value.passwordNueva || !form.value.passwordNuevaRepetida ){
         this.snackBar.open("Faltan campos por completar", "", {
           duration: 4000
           });
