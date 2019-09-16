@@ -13,6 +13,7 @@ import { DateAdapter } from "@angular/material";
 export class RegistrarAsistenciaComponent implements OnInit {
   cursos: any[];
   cursoNotSelected: boolean;
+  diaActual: string;
   estudiantesXDivision: any[];
   displayedColumns: string[] = ["apellido", "nombre", "accion"];
   fechaActual: Date;
@@ -31,6 +32,7 @@ export class RegistrarAsistenciaComponent implements OnInit {
   ngOnInit() {
     this.cursoNotSelected = true;
     this.fechaActual = new Date();
+    this.conversionDiaActual();
     this.servicio.obtenerCursos().subscribe(response => {
       this.cursos = response.cursos;
       this.cursos.sort((a, b) =>
@@ -41,6 +43,21 @@ export class RegistrarAsistenciaComponent implements OnInit {
           : 0
       );
     });
+  }
+  conversionDiaActual() {
+    this.diaActual = this.fechaActual.toString();
+    let dia = this.diaActual.substring(0,3);
+    if( dia === 'Mon'){
+      this.diaActual="Lunes"
+    }else if(dia === 'Tue'){
+      this.diaActual="Martes"
+    }else if(dia === 'Wed'){
+      this.diaActual="Miércoles"
+    }else if(dia === 'Thu'){
+      this.diaActual="Jueves"
+    }else{
+      this.diaActual="Viernes"
+    }
   }
 
   //Busca los estudiantes segun el curso que se selecciono en pantalla. Los orden alfabeticamente

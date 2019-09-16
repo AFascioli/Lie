@@ -13,6 +13,7 @@ export class RetiroAnticipadoComponent implements OnInit {
   fechaActual = new Date();
   apellidoEstudiante: string;
   nombreEstudiante: string;
+  diaActual: string;
   _idEstudiante: string;
   antes10am: Boolean = true;
   matConfig = new MatDialogConfig();
@@ -23,6 +24,7 @@ export class RetiroAnticipadoComponent implements OnInit {
 
   ngOnInit() {
     this.fechaActual = new Date();
+    this.conversionDiaActual();
     this.apellidoEstudiante= this.servicio.estudianteSeleccionado.apellido;
     this.nombreEstudiante= this.servicio.estudianteSeleccionado.nombre;
     this._idEstudiante= this.servicio.estudianteSeleccionado._id;
@@ -33,6 +35,22 @@ export class RetiroAnticipadoComponent implements OnInit {
   validarHora(){
     if(this.fechaActual.getHours()>=10){
       this.antes10am= false;
+    }
+  }
+
+  conversionDiaActual() {
+    this.diaActual = this.fechaActual.toString();
+    let dia = this.diaActual.substring(0,3);
+    if( dia === 'Mon'){
+      this.diaActual="Lunes"
+    }else if(dia === 'Tue'){
+      this.diaActual="Martes"
+    }else if(dia === 'Wed'){
+      this.diaActual="Miércoles"
+    }else if(dia === 'Thu'){
+      this.diaActual="Jueves"
+    }else{
+      this.diaActual="Viernes"
     }
   }
 

@@ -10,16 +10,14 @@
   margin: 1rem;
 }
 
-.mat-form-field {
-  width: 25%;
+.ubicacionfecha {
+  margin-top: 0.5rem;
+  float: right;
 }
 
-.fecha {
-  margin-top: 0.5rem;
-  margin-right: 1rem;
-  margin-bottom: 0rem;
-  width: 20%;
-  float: right;
+.inputFecha{
+  width: 45%;
+  color: black !important;
 }
 
 .div-button {
@@ -30,11 +28,15 @@
   text-align: center !important;
 }
 
+.curso{
+  width: 25%;
+}
+
 .contenido {
   width: 41%;
   margin-left: auto;
   margin-right: auto;
-  margin-top: 1rem;
+  margin-top: 3rem !important;
 }
 
 .card-datos{
@@ -48,6 +50,7 @@
 .titulo-datos-est{
   font-size: 20px;
   font-weight: bold;
+  text-align: center;
 }
 
 .titulos-reg-doc{

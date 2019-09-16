@@ -18,6 +18,7 @@ import { DateAdapter } from "@angular/material";
 })
 export class InscripcionEstudianteComponent implements OnInit {
   cursos: any[];
+  diaActual: string;
   apellidoEstudiante: string;
   nombreEstudiante: string;
   _idEstudiante: string;
@@ -36,6 +37,7 @@ export class InscripcionEstudianteComponent implements OnInit {
 
   ngOnInit() {
     this.fechaActual = new Date();
+    this.conversionDiaActual();
     this.apellidoEstudiante = this.servicio.estudianteSeleccionado.apellido;
     this.nombreEstudiante = this.servicio.estudianteSeleccionado.nombre;
     this._idEstudiante = this.servicio.estudianteSeleccionado._id;
@@ -51,6 +53,22 @@ export class InscripcionEstudianteComponent implements OnInit {
     this.documentosEntregados[indexDoc].entregado = !this.documentosEntregados[
       indexDoc
     ].entregado;
+  }
+
+  conversionDiaActual(){
+     this.diaActual = this.fechaActual.toString();
+    let dia = this.diaActual.substring(0,3);
+    if( dia === 'Mon'){
+      this.diaActual="Lunes"
+    }else if(dia === 'Tue'){
+      this.diaActual="Martes"
+    }else if(dia === 'Wed'){
+      this.diaActual="Miércoles"
+    }else if(dia === 'Thu'){
+      this.diaActual="Jueves"
+    }else{
+      this.diaActual="Viernes"
+    }
   }
 
   openDialogo(tipo: string, form: NgForm, curso) {
@@ -113,7 +131,6 @@ export class InscripcionPopupComponent {
       .inscribirEstudiante(this.IdEstudiante, this.curso, this.documentosEntregados)
       .subscribe(response => {
         this.exito = response.exito;
-        console.log(this.exito);
         if(this.exito){
           this.snackBar.open("Estudiante inscripto correctamente", "", {
             duration: 4500,

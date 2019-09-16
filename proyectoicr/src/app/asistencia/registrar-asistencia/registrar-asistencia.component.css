@@ -3,12 +3,14 @@
   width: 22%;
 }
 
-.fecha {
+.ubicacionfecha {
   margin-top: 0.5rem;
-  margin-right: 1rem;
-  width: 20%;
   float: right;
-  
+}
+
+.inputFecha{
+  width: 45%;
+  color: black !important;
 }
 
 table {
