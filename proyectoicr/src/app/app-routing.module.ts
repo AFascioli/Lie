@@ -8,13 +8,14 @@ import { MostrarEstudiantesComponent } from "./estudiantes/mostrar-estudiantes/m
 import { MenuLateralComponent } from "./menu-lateral/menu-lateral.component";
 import { LoginComponent } from "./login/login.component";
 import { RegistrarAsistenciaComponent } from "./asistencia/registrar-asistencia/registrar-asistencia.component";
-import { InscripcionEstudianteComponent } from './estudiantes/inscripcion-estudiantes/inscripcion-estudiantes.component';
-import { RetiroAnticipadoComponent } from './asistencia/retiro-anticipado/retiro-anticipado.component';
-import { DocumentosInscripcionComponent } from './estudiantes/documentos-inscripcion/documentos-inscripcion.component';
-import{ CalificacionesEstudiantesComponent } from './estudiantes/calificaciones-estudiantes/calificaciones-estudiantes.component';
-import { LlegadaTardeComponent } from './asistencia/llegada-tarde/llegada-tarde.component';
-import { AuthGuard } from './login/auth.guard';
-import { CambiarPassword } from './login/cambiar-password.component';
+import { InscripcionEstudianteComponent } from "./estudiantes/inscripcion-estudiantes/inscripcion-estudiantes.component";
+import { RetiroAnticipadoComponent } from "./asistencia/retiro-anticipado/retiro-anticipado.component";
+import { DocumentosInscripcionComponent } from "./estudiantes/documentos-inscripcion/documentos-inscripcion.component";
+import { CalificacionesEstudiantesComponent } from "./estudiantes/calificaciones-estudiantes/calificaciones-estudiantes.component";
+import { LlegadaTardeComponent } from "./asistencia/llegada-tarde/llegada-tarde.component";
+import { AuthGuard } from "./login/auth.guard";
+import { CambiarPassword } from "./login/cambiar-password.component";
+import { RouteGuard } from "./route.guard";
 
 const routes: Routes = [
   { path: "login", component: LoginComponent },
@@ -33,16 +34,31 @@ const routes: Routes = [
       {
         path: "buscar",
         component: BuscarEstudiantesComponent,
-        children: [{ path: "lista", component: ListaEstudiantesComponent }]
+        children: [{ path: "lista", component: ListaEstudiantesComponent}]
       },
-      { path: "mostrar", component: MostrarEstudiantesComponent },
+      {
+        path: "mostrar",
+        component: MostrarEstudiantesComponent, canActivate:[RouteGuard]
+      },
       { path: "asistencia", component: RegistrarAsistenciaComponent },
-      { path: "curso", component: InscripcionEstudianteComponent },
-      { path: "retiroAnticipado", component: RetiroAnticipadoComponent },
-      { path: "documentosEstudiante", component: DocumentosInscripcionComponent },
-      { path: "calificacionesEstudiantes", component: CalificacionesEstudiantesComponent },
-      { path: "llegadaTarde", component: LlegadaTardeComponent},
-      { path: "cambiarContraseña", component: CambiarPassword}
+      {
+        path: "curso",
+        component: InscripcionEstudianteComponent, canActivate:[RouteGuard]
+      },
+      {
+        path: "retiroAnticipado",
+        component: RetiroAnticipadoComponent, canActivate:[RouteGuard]
+      },
+      {
+        path: "documentosEstudiante",
+        component: DocumentosInscripcionComponent
+      },
+      {
+        path: "calificacionesEstudiantes",
+        component: CalificacionesEstudiantesComponent
+      },
+      { path: "llegadaTarde", component: LlegadaTardeComponent },
+      { path: "cambiarContraseña", component: CambiarPassword }
     ]
   }
 ];
@@ -50,6 +66,6 @@ const routes: Routes = [
 @NgModule({
   imports: [RouterModule.forRoot(routes)],
   exports: [RouterModule],
-  providers: [AuthGuard]
+  providers: [AuthGuard, RouteGuard]
 })
 export class AppRoutingModule {}
