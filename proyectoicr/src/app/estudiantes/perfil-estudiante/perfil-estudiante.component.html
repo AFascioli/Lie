@@ -1,6 +1,6 @@
 <mat-card class="card-body-componente">
   <mat-card-title class= "componente-titulo">
-    {{ apellidoEstudiante }} {{ nombreEstudiante }}
+    <p> {{ apellidoEstudiante }}, {{ nombreEstudiante }}</p>
   </mat-card-title>
 <br>
 &nbsp;
@@ -29,10 +29,10 @@
     <div class="grafico">
         <div class="sombra"></div>
         <div id="porcion1" class="recorte">
-          <div class="porsion" data-rel="180"></div>
+          <div class="porcion" data-rel="180"></div>
         </div>
         <div id="porcion2" class="recorte">
-          <div class="porsion" data-rel="180"></div>
+          <div class="porcion" data-rel="180"></div>
         </div>
    </div>
 
@@ -103,9 +103,12 @@
 &nbsp;
 
 <div >
-  <button class="button-volver" mat-raised-button [routerLink]="['/buscar/lista']" >
+  <button class="button-volver"
+  mat-raised-button
+  [routerLink]="['/buscar/lista']"
+  color="primary" >
      Volver
-    </button>
+  </button>
 </div>
 
 </mat-card>

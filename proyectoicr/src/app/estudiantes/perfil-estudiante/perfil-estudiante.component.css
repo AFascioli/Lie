@@ -20,8 +20,6 @@ mat-card-content{
 
 .button-volver{
   text-align: right;
-  background-color: rgb(179, 182, 187) !important;
-  color: #fff !important;
   margin-left: 87% !important;
 }
 
@@ -64,7 +62,7 @@ th{
   position: absolute;
   width: 100%;
 }
-.porsion {
+.porcion {
   border-radius: 50%;
   clip: rect(0px, 100px, 200px, 0px);
   height: 100%;
@@ -80,7 +78,7 @@ th{
   transform: rotate(0deg);
 }
 
-#porcion1 .porsion {
+#porcion1 .porcion {
   background-color:maroon;
   transform: rotate(180deg);
 }
@@ -88,14 +86,14 @@ th{
 #porcion2 {
   transform: rotate(180deg);
 }
-#porcion2 .porsion {
+#porcion2 .porcion {
   background-color: teal;
   transform: rotate(180deg);
    }
 
 
 
-#porcion1 .porsion:after {
+#porcion1 .porcion:after {
   content: attr(data-rel);
   left: 15%;
   line-height: 5;
@@ -103,7 +101,7 @@ th{
   top: 25%;
   transform: rotate(180deg);
 }
-#porcion2 .porsion:after {
+#porcion2 .porcion:after {
   content: attr(data-rel);
   left: 15%;
   line-height: 5;
