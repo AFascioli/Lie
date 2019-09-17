@@ -30,7 +30,7 @@ export class CalificacionesEstudiantesComponent implements OnInit {
   ngOnInit() {
 
     this.servicio.obtenerCursos().subscribe(response => {
-      this.cursos = response.cursos;  
+      this.cursos = response.cursos;
       this.cursos.sort((a, b) =>
         a.curso.charAt(0) > b.curso.charAt(0)
           ? 1
@@ -104,7 +104,7 @@ export class CalificacionesEstudiantesComponent implements OnInit {
   var cont =0;
   this.estudiantes[index].calificaciones.forEach
   (nota => {
-    if (nota !=0)
+    if (nota !=0 && nota != null)
     cont++;
    });
    return cont;

@@ -2,7 +2,6 @@ import { Component, OnInit, Inject } from '@angular/core';
 import { EstudiantesService } from 'src/app/estudiantes/estudiante.service';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA, MatDialogConfig, MatSnackBar } from '@angular/material';
 import { Router } from '@angular/router';
-import { DateAdapter } from "@angular/material";
 
 @Component({
   selector: 'app-retiro-anticipado',
@@ -18,13 +17,11 @@ export class RetiroAnticipadoComponent implements OnInit {
   antes10am: Boolean = true;
   matConfig = new MatDialogConfig();
 
-  constructor(public servicio: EstudiantesService, public dialog: MatDialog, private dateAdapter: DateAdapter<Date>) {
-    this.dateAdapter.setLocale("es");
+  constructor(public servicio: EstudiantesService, public dialog: MatDialog) {
   }
 
   ngOnInit() {
     this.fechaActual = new Date();
-    this.conversionDiaActual();
     this.apellidoEstudiante= this.servicio.estudianteSeleccionado.apellido;
     this.nombreEstudiante= this.servicio.estudianteSeleccionado.nombre;
     this._idEstudiante= this.servicio.estudianteSeleccionado._id;
@@ -38,21 +35,6 @@ export class RetiroAnticipadoComponent implements OnInit {
     }
   }
 
-  conversionDiaActual() {
-    this.diaActual = this.fechaActual.toString();
-    let dia = this.diaActual.substring(0,3);
-    if( dia === 'Mon'){
-      this.diaActual="Lunes"
-    }else if(dia === 'Tue'){
-      this.diaActual="Martes"
-    }else if(dia === 'Wed'){
-      this.diaActual="Miércoles"
-    }else if(dia === 'Thu'){
-      this.diaActual="Jueves"
-    }else{
-      this.diaActual="Viernes"
-    }
-  }
 
   CambiarTipoRetiro(){
     this.antes10am= !this.antes10am;
@@ -67,7 +49,6 @@ export class RetiroAnticipadoComponent implements OnInit {
     this.dialog.open(RetiroPopupComponent,this.matConfig);
   }
 }
-
 
 @Component({
   selector: "app-retiro-popup",

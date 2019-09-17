@@ -53,6 +53,10 @@ import { LlegadaTardeComponent } from './asistencia/llegada-tarde/llegada-tarde.
 import { PerfilEstudianteComponent } from './estudiantes/perfil-estudiante/perfil-estudiante.component';
 import { CalificacionesPerfilEstudianteComponent } from './estudiantes/perfil-estudiante/calificaciones-perfil-estudiante/calificaciones-perfil-estudiante.component';
 import { AgendaCursoPerfilEstudianteComponent } from './estudiantes/perfil-estudiante/agenda-curso-perfil-estudiante/agenda-curso-perfil-estudiante.component';
+import { LOCALE_ID } from '@angular/core';
+import localePy from '@angular/common/locales/es';
+import { registerLocaleData } from '@angular/common';
+registerLocaleData(localePy, 'es');
 
 @NgModule({
   declarations: [
@@ -80,7 +84,7 @@ import { AgendaCursoPerfilEstudianteComponent } from './estudiantes/perfil-estud
     LlegadaTardeComponent,
     PerfilEstudianteComponent,
     CalificacionesPerfilEstudianteComponent,
-    AgendaCursoPerfilEstudianteComponent,
+    AgendaCursoPerfilEstudianteComponent
   ],
   //entryComponents declara los componentes que se generan dinamicamente dentro de otros.
   entryComponents: [
@@ -118,9 +122,9 @@ import { AgendaCursoPerfilEstudianteComponent } from './estudiantes/perfil-estud
     MatExpansionModule,
     MatCheckboxModule,
     MatSnackBarModule,
-    MatGridListModule
+    MatGridListModule,
   ],
-  providers: [EstudiantesService],
+  providers: [EstudiantesService, { provide: LOCALE_ID, useValue: 'es' }],
   bootstrap: [AppComponent]
 })
 

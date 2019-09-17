@@ -2,8 +2,7 @@ import { Component, OnInit } from "@angular/core";
 import { EstudiantesService } from "src/app/estudiantes/estudiante.service";
 import { MatDialogRef, MatDialog, MatSnackBar } from "@angular/material";
 import { Router } from "@angular/router";
-import { CdkRow, CdkFooterRowDefBase } from '@angular/cdk/table';
-import { DateAdapter } from "@angular/material";
+//import { CdkRow, CdkFooterRowDefBase } from '@angular/cdk/table';
 
 @Component({
   selector: "app-registrar-asistencia",
@@ -23,16 +22,13 @@ export class RegistrarAsistenciaComponent implements OnInit {
   constructor(
     private servicio: EstudiantesService,
     public popup: MatDialog,
-    private dateAdapter: DateAdapter<Date>,
     public snackBar: MatSnackBar
   ) {
-    this.dateAdapter.setLocale("es");
   }
 
   ngOnInit() {
     this.cursoNotSelected = true;
     this.fechaActual = new Date();
-    this.conversionDiaActual();
     this.servicio.obtenerCursos().subscribe(response => {
       this.cursos = response.cursos;
       this.cursos.sort((a, b) =>
@@ -43,21 +39,6 @@ export class RegistrarAsistenciaComponent implements OnInit {
           : 0
       );
     });
-  }
-  conversionDiaActual() {
-    this.diaActual = this.fechaActual.toString();
-    let dia = this.diaActual.substring(0,3);
-    if( dia === 'Mon'){
-      this.diaActual="Lunes"
-    }else if(dia === 'Tue'){
-      this.diaActual="Martes"
-    }else if(dia === 'Wed'){
-      this.diaActual="Miércoles"
-    }else if(dia === 'Thu'){
-      this.diaActual="Jueves"
-    }else{
-      this.diaActual="Viernes"
-    }
   }
 
   //Busca los estudiantes segun el curso que se selecciono en pantalla. Los orden alfabeticamente
@@ -116,11 +97,9 @@ export class AsistenciaPopupComponent {
   constructor(
     public dialogRef: MatDialogRef<AsistenciaPopupComponent>,
     public router: Router,
-    private dateAdapter: DateAdapter<Date>,
     public servicio: EstudiantesService
   ) {
     this.tipoPopup = this.servicio.tipoPopUp;
-    this.dateAdapter.setLocale("es");
   }
 
   // Se cierra el popup

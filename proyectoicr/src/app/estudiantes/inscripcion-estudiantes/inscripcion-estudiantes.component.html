@@ -13,7 +13,9 @@
             [(ngModel)]="diaActual"
             required
             class="inputFecha"
-          />  {{ fechaActual | date: "dd/MM/yyyy" }}
+          />
+          {{ fechaActual | date: "EEEE" | titlecase  }}
+          {{ fechaActual | date: "dd/MM/yyyy" }}
            </mat-form-field>
   </div>
   <br />
