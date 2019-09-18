@@ -1,5 +1,7 @@
-import { Component, OnInit, ViewChild, ElementRef } from "@angular/core";
-import { Router } from '@angular/router';
+import { MatDialog, MatDialogRef } from "@angular/material";
+import { Component, OnInit } from "@angular/core";
+import { Router } from "@angular/router";
+import { AutencacionService } from "../login/autenticacionService.service";
 
 @Component({
   selector: "app-menu-lateral",
@@ -7,7 +9,11 @@ import { Router } from '@angular/router';
   styleUrls: ["./menu-lateral.component.css"]
 })
 export class MenuLateralComponent implements OnInit {
-  constructor( public router: Router) { }
+  constructor(
+    public router: Router,
+    public authService: AutencacionService,
+    public dialog: MatDialog
+  ) {}
 
   ngOnInit() {}
 
@@ -15,7 +21,40 @@ export class MenuLateralComponent implements OnInit {
     this.router.navigate(["./home"]);
   }
 
+  cierreSesion() {
+    // this.authService.logout();
+    // this.router.navigate(["./login"]);
+    this.dialog.open(CerrarSesionPopupComponent, {
+      width: "250px"
+    });
   }
 
+  cambiarContrasenia() {
+    this.router.navigate(["/cambiarContraseña"]);
+  }
 
+}
 
+@Component({
+  selector: "app-cerrar-sesion-popup",
+  templateUrl: "./cerrar-sesion-popup.component.html",
+  styleUrls: ["./menu-lateral.component.css"]
+})
+export class CerrarSesionPopupComponent {
+  formInvalido: Boolean;
+  tipoPopup: string;
+  constructor(
+    public dialogRef: MatDialogRef<CerrarSesionPopupComponent>,
+    public router: Router,
+    public authService: AutencacionService
+  ) {}
+
+  onYesClick(): void {
+    this.dialogRef.close();
+    this.authService.logout();
+    this.router.navigate(["./login"]);
+  }
+  onNoClick(): void {
+    this.dialogRef.close();
+  }
+}

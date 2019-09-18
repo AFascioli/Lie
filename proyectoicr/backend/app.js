@@ -6,6 +6,7 @@ const provinciasRoutes = require("./routes/provincia");
 const localidadesRoutes = require("./routes/localidad");
 const nacionalidadesRoutes = require("./routes/nacionalidad");
 const cursoRoutes = require("./routes/curso");
+const usuarioRoutes= require("./routes/usuario");
 
 const app = express(); // Creo la app express
 
@@ -47,7 +48,7 @@ app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader(
     "Access-Control-Allow-Headers",
-    "Origin, X-Requested-With, Content-Type, Accept"
+    "Origin, X-Requested-With, Content-Type, Accept, Authorization"
   );
   res.setHeader(
     "Access-Control-Allow-Methods",
@@ -64,5 +65,7 @@ app.use("/localidad", localidadesRoutes);
 app.use("/nacionalidad", nacionalidadesRoutes);
 
 app.use("/curso", cursoRoutes);
+
+app.use("/usuario", usuarioRoutes);
 
 module.exports = app;

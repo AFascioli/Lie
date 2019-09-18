@@ -109,13 +109,34 @@ export class AltaEstudiantesComponent implements OnInit, OnDestroy {
     }
   }
 
-  popUpCancelar(){
+  popUpCancelar() {
     this.dialog.open(AltaPopupComponent, {
       width: "250px"
     });
   }
-}
 
+  //Chequea que solo se puedan tipear letras y espacio
+  checkLetras(event) {
+    var inputValue = event.which;
+    if (
+      !(inputValue >= 65 && inputValue <= 122 || (inputValue == 209 ||  inputValue == 241)) &&
+      (inputValue != 32 && inputValue != 0)
+    ) {
+      event.preventDefault();
+    }
+  }
+
+  //Chequea que solo se puedan tipear numeros
+  checkNumeros(event) {
+    var inputValue = event.which;
+    if (
+      !(inputValue >= 48 && inputValue <= 57) &&
+      (inputValue != 32 && inputValue != 0)
+    ) {
+      event.preventDefault();
+    }
+  }
+}
 
 @Component({
   selector: "app-alta-popup",
@@ -126,8 +147,7 @@ export class AltaPopupComponent {
   constructor(
     public dialogRef: MatDialogRef<AltaPopupComponent>,
     public router: Router
-  ) {
-  }
+  ) {}
 
   onYesClick(): void {
     this.router.navigate(["./home"]);
