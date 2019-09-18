@@ -183,7 +183,7 @@
             ngModel
             #telefono="ngModel"
             placeholder="Ingrese número de teléfono"
-            type="tel"
+            type="number"
           />
         </mat-form-field>
       </mat-expansion-panel>
@@ -233,6 +233,7 @@
             <input
               [disabled]="!modoEditar"
               [(ngModel)]="pisoEstudiante"
+              pattern="[\w]+"
               name="piso"
               ngModel
               #piso="ngModel"
@@ -249,6 +250,7 @@
               name="departamento"
               ngModel
               #departamento="ngModel"
+              pattern="[A-Za-záéíóúÁÉÍÓÚ]+"
               matInput
               placeholder="Ingrese departamento"
               type="text"
@@ -320,7 +322,7 @@
         (click)="onGuardar(form)"
         (click)="snackBarGuardar(form)"
         mat-raised-button
-        color="warn"
+        color="primary"
       >
         Guardar
       </button>
