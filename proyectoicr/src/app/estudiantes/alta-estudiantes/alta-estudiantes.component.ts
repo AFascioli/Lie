@@ -29,7 +29,7 @@ export class AltaEstudiantesComponent implements OnInit, OnDestroy {
     public dialog: MatDialog,
     private snackBar: MatSnackBar
   ) {
-    this.dateAdapter.setLocale("es");
+//    this.dateAdapter.setLocale("es");
   }
 
   // Cuando se inicializa el componente se cargar las provincias.

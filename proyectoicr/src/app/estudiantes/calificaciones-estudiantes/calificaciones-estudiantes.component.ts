@@ -28,6 +28,7 @@ export class CalificacionesEstudiantesComponent implements OnInit {
   ) {}
 
   ngOnInit() {
+
     this.servicio.obtenerCursos().subscribe(response => {
       this.cursos = response.cursos;
       this.cursos.sort((a, b) =>
@@ -71,7 +72,6 @@ export class CalificacionesEstudiantesComponent implements OnInit {
       )
       .subscribe(respuesta => {
         this.estudiantes = [...respuesta.estudiantes];
-        console.log(this.estudiantes);
       });
   }
 
@@ -89,7 +89,6 @@ export class CalificacionesEstudiantesComponent implements OnInit {
         });
       }
     } else {
-      console.log(this.estudiantes);
       this.servicio
         .registrarCalificaciones(this.estudiantes, form.value.materia, form.value.trimestre )
         .subscribe(respuesta => {
@@ -105,7 +104,7 @@ export class CalificacionesEstudiantesComponent implements OnInit {
   var cont =0;
   this.estudiantes[index].calificaciones.forEach
   (nota => {
-    if (nota !=0)
+    if (nota !=0 && nota != null)
     cont++;
    });
    return cont;

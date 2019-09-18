@@ -1,73 +1,102 @@
 <mat-card class="card-body-componente">
   <mat-card-title class= "componente-titulo">
-    {{ apellidoEstudiante }} {{ nombreEstudiante }}
+    <p> {{ apellidoEstudiante }}, {{ nombreEstudiante }}</p>
   </mat-card-title>
+<br>
+&nbsp;
 
+<div>
   <mat-card-subtitle >
       <b>CALIFICACIONES: </b>
   </mat-card-subtitle>
-  <button class="button-perfil-calificaciones"
-      mat-raised-button
+  <button
+    mat-raised-button
+    class="button-perfil-calificaciones"
+    (click)="onVisualizarCalificacionesEstudiante(i)"
     >
      Ver calificaciones
     </button>
+</div>
+<br>
+<br>
+&nbsp;
 
-
+<div>
   <mat-card-subtitle >
       <b>INASISTENCIA: </b>
-    </mat-card-subtitle>
+  </mat-card-subtitle>
 
-    <div class="grafico">
+    <!-- <div class="grafico">
         <div class="sombra"></div>
-        <div id="porcion1" class="recorte"><div class="quesito" data-rel="80"></div></div>
-        <div id="porcion2" class="recorte"><div class="quesito" data-rel="120"></div></div>
-   </div>
+        <div id="porcion1" class="recorte">
+          <div class="porcion" data-rel="contadorInasistencia"></div>
+        </div>
+        <div id="porcion2" class="contadorInasistencia">
+          <div class="porcion" data-rel="contadorInasistenciaJustificada"></div>
+        </div>
+   </div> -->
 
+   <div *ngIf="contadorInasistencia" style="display: block">
+    <canvas baseChart
+            [data]="pieChartData"
+            [labels]="pieChartLabels"
+            [chartType]="pieChartType"
+            ></canvas>
+  </div>
+
+</div>
+<br>
+<br>
+&nbsp;
+
+<div>
     <mat-card-subtitle >
       <b>SANCIONES: </b>
     </mat-card-subtitle>
-    <table mat-table [dataSource]="estudiantesXDivision">
+    <table mat-table [dataSource]="">
         <ng-container matColumnDef="tipo">
           <th class="tipoCantidad" mat-header-cell *matHeaderCellDef>
            Tipo
-          </th>
-          <td
-            class="tipoCantidad"
-            mat-cell
-            *matCellDef=""
-          >
 
+          </th>
+          <td class="tipoCantidad" mat-cell *matCellDef="">
           </td>
         </ng-container>
+
         <ng-container matColumnDef="cantidad">
           <th class="tipoCantidad" mat-header-cell *matHeaderCellDef>
             Cantidad
           </th>
-          <td
-            class="tipoCantidad"
-            mat-cell
-            *matCellDef=" "
-          >
+          <td class="tipoCantidad" mat-cell *matCellDef=" ">
+            Injustificadas
           </td>
         </ng-container>
-
 
         <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
         <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
       </table>
+</div>
+<br>
+<br>
+&nbsp;
 
-<br>
-<br>
+<div>
   <mat-card-subtitle >
       <b>AGENDA: </b>
   </mat-card-subtitle>
   <button class="button-perfil"
       mat-raised-button
+      (click)="onVisualizarAgendaCursoEstudiante(i)"
     >
      Ver agenda de cursado
     </button>
+
+  </div>
 <br>
 <br>
+&nbsp;
+
+<div>
   <mat-card-subtitle >
       <b>TUTORES: </b>
   </mat-card-subtitle>
@@ -77,13 +106,17 @@
   <mat-card-content class="contenido">
       <b>Teléfono: </b> 56665-1559886
   </mat-card-content>
+</div>
+<br>
+&nbsp;
 
-  <div >
+<div >
   <button class="button-volver"
-      mat-raised-button
-  >
+  mat-raised-button
+  [routerLink]="['/buscar/lista']"
+  color="primary" >
      Volver
-    </button>
-  </div>
+  </button>
+</div>
 
 </mat-card>

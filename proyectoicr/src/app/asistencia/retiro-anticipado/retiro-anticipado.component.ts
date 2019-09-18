@@ -2,7 +2,6 @@ import { Component, OnInit, Inject } from '@angular/core';
 import { EstudiantesService } from 'src/app/estudiantes/estudiante.service';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA, MatDialogConfig, MatSnackBar } from '@angular/material';
 import { Router } from '@angular/router';
-import { DateAdapter } from "@angular/material";
 
 @Component({
   selector: 'app-retiro-anticipado',
@@ -13,12 +12,12 @@ export class RetiroAnticipadoComponent implements OnInit {
   fechaActual = new Date();
   apellidoEstudiante: string;
   nombreEstudiante: string;
+  diaActual: string;
   _idEstudiante: string;
   antes10am: Boolean = true;
   matConfig = new MatDialogConfig();
 
-  constructor(public servicio: EstudiantesService, public dialog: MatDialog, private dateAdapter: DateAdapter<Date>) {
-    this.dateAdapter.setLocale("es");
+  constructor(public servicio: EstudiantesService, public dialog: MatDialog) {
   }
 
   ngOnInit() {
@@ -36,6 +35,7 @@ export class RetiroAnticipadoComponent implements OnInit {
     }
   }
 
+
   CambiarTipoRetiro(){
     this.antes10am= !this.antes10am;
   }
@@ -49,7 +49,6 @@ export class RetiroAnticipadoComponent implements OnInit {
     this.dialog.open(RetiroPopupComponent,this.matConfig);
   }
 }
-
 
 @Component({
   selector: "app-retiro-popup",

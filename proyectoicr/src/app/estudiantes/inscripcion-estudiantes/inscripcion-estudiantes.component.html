@@ -1,28 +1,40 @@
 <h1 class="componente-titulo">Inscribir estudiante a un curso</h1>
 <mat-card class="card-body-componente">
-  <p class="fecha">
-      <b>Fecha: </b>
-      <br>
-      {{ fechaActual | date: "EEEE" }} {{ fechaActual | date: "dd/MM/yyyy" }}</p>
-      <br />
-    
+<div class="ubicacionfecha">
+    <b>Fecha: </b>
+      &nbsp;
+      <mat-form-field>
+          <input
+            [disabled]="true"
+            ngModel
+            #diaFecha="ngModel"
+            matInput
+            name="diaFecha"
+            [(ngModel)]="diaActual"
+            required
+            class="inputFecha"
+          />
+          {{ fechaActual | date: "EEEE" | titlecase  }}
+          {{ fechaActual | date: "dd/MM/yyyy" }}
+           </mat-form-field>
+  </div>
   <br />
-  <!-- <div class="contenido"> -->
-    <mat-card class="card-datos">
-      <p class="titulo-datos-est">Datos del estudiante seleccionado</p>
+ <div class="contenido">
+    <mat-card >
+      <p class="titulo-datos-est">Datos del estudiante</p>
       <mat-card-subtitle>
         <b>Apellido/s: </b> {{ apellidoEstudiante }}
         <br />
         <b>Nombre/s: </b> {{ nombreEstudiante }}
       </mat-card-subtitle>
     </mat-card>
-  <!-- </div> -->
+  </div>
   <br />
 
   <br />
   <form #form="ngForm">
     <div class="div-selects">
-      <mat-form-field>
+      <mat-form-field class="curso">
         <mat-select
           placeholder="Seleccione curso"
           name="curso"

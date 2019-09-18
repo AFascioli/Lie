@@ -53,6 +53,13 @@ import { CalificacionesEstudiantesComponent, CalificacionesEstudiantePopupCompon
 import { LlegadaTardeComponent } from './asistencia/llegada-tarde/llegada-tarde.component';
 import { CambiarPassword, CambiarPasswordPopupComponent } from './login/cambiar-password.component';
 import { PerfilEstudianteComponent } from './estudiantes/perfil-estudiante/perfil-estudiante.component';
+import { CalificacionesPerfilEstudianteComponent } from './estudiantes/perfil-estudiante/calificaciones-perfil-estudiante/calificaciones-perfil-estudiante.component';
+import { AgendaCursoPerfilEstudianteComponent } from './estudiantes/perfil-estudiante/agenda-curso-perfil-estudiante/agenda-curso-perfil-estudiante.component';
+import { LOCALE_ID } from '@angular/core';
+import { registerLocaleData } from '@angular/common';
+import { ChartsModule } from 'ng2-charts';
+registerLocaleData(localePy, 'es');
+import localePy from '@angular/common/locales/es';
 
 @NgModule({
   declarations: [
@@ -82,6 +89,8 @@ import { PerfilEstudianteComponent } from './estudiantes/perfil-estudiante/perfi
     CambiarPasswordPopupComponent,
     CerrarSesionPopupComponent
     PerfilEstudianteComponent,
+    CalificacionesPerfilEstudianteComponent,
+    AgendaCursoPerfilEstudianteComponent
   ],
   //entryComponents declara los componentes que se generan dinamicamente dentro de otros.
   entryComponents: [
@@ -121,12 +130,13 @@ import { PerfilEstudianteComponent } from './estudiantes/perfil-estudiante/perfi
     MatExpansionModule,
     MatCheckboxModule,
     MatSnackBarModule,
-    MatGridListModule
+    MatGridListModule,
+    ChartsModule
   ],
   //le decimos a angular que vamos a tener un interceptor nuevo (provide), luego le indicamos que
   //interceptor usar (useClass) y finalmente aclaramos que no sobreescriba el interceptor que esta
   //ya que podemos utilizar más de uno (multi).
-  providers: [EstudiantesService, {provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true}],
+  providers: [EstudiantesService, {provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true}, { provide: LOCALE_ID, useValue: 'es' }],
   bootstrap: [AppComponent]
 })
 

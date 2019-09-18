@@ -1,3 +1,5 @@
+import { AgendaCursoPerfilEstudianteComponent } from './estudiantes/perfil-estudiante/agenda-curso-perfil-estudiante/agenda-curso-perfil-estudiante.component';
+import { CalificacionesPerfilEstudianteComponent } from './estudiantes/perfil-estudiante/calificaciones-perfil-estudiante/calificaciones-perfil-estudiante.component';
 import { PerfilEstudianteComponent } from './estudiantes/perfil-estudiante/perfil-estudiante.component';
 import { HomeComponent } from "./home/home.component";
 import { NgModule } from "@angular/core";
@@ -42,7 +44,6 @@ const routes: Routes = [
         component: MostrarEstudiantesComponent, canActivate:[RouteGuard]
       },
       { path: "asistencia", component: RegistrarAsistenciaComponent },
-
       {
         path: "curso",
         component: InscripcionEstudianteComponent, canActivate:[RouteGuard]

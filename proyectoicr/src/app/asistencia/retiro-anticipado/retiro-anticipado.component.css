@@ -7,11 +7,14 @@
   margin-right: 10%;
 }
 
-.fecha {
+.ubicacionfecha {
   margin-top: 0.5rem;
-  margin-right: 1rem;
-  width: 20%;
   float: right;
+}
+
+.inputFecha{
+  width: 10%;
+  color: black !important;
 }
 
 .div-button {
@@ -27,6 +30,6 @@
 
 .card-datos{
   margin: auto;
-  margin-top: 1rem;
+  margin-top: 3rem !important;
   width: 100%;
 }

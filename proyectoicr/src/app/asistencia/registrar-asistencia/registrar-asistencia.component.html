@@ -18,10 +18,22 @@
     </mat-select>
   </mat-form-field>
 
-  <p class="fecha">
-    <b>Fecha: </b>
-    <br>
-    {{ fechaActual | date: "EEEE" }} {{ fechaActual | date: "dd/MM/yyyy" }}</p>
+  <div class="ubicacionfecha">
+      <b>Fecha: </b> &nbsp;
+        <mat-form-field>
+            <input
+              [disabled]="true"
+              ngModel
+              #diaFecha="ngModel"
+              matInput
+              name="diaFecha"
+              [(ngModel)]="diaActual"
+              required
+              class="inputFecha"
+            />  {{ fechaActual | date: "EEEE" | titlecase  }}
+                {{ fechaActual | date: "dd/MM/yyyy" }}
+             </mat-form-field>
+    </div>
     <br />
   <div *ngIf="!cursoNotSelected">
     <table mat-table [dataSource]="estudiantesXDivision">

@@ -11,6 +11,7 @@ import { Router } from "@angular/router";
 export class RegistrarAsistenciaComponent implements OnInit {
   cursos: any[];
   cursoNotSelected: boolean;
+  diaActual: string;
   estudiantesXDivision: any[];
   displayedColumns: string[] = ["apellido", "nombre", "accion"];
   fechaActual: Date;
@@ -20,10 +21,8 @@ export class RegistrarAsistenciaComponent implements OnInit {
   constructor(
     private servicio: EstudiantesService,
     public popup: MatDialog,
-    private dateAdapter: DateAdapter<Date>,
     public snackBar: MatSnackBar
   ) {
-    this.dateAdapter.setLocale("es");
   }
 
   ngOnInit() {
@@ -91,11 +90,9 @@ export class AsistenciaPopupComponent {
   constructor(
     public dialogRef: MatDialogRef<AsistenciaPopupComponent>,
     public router: Router,
-    private dateAdapter: DateAdapter<Date>,
     public servicio: EstudiantesService
   ) {
     this.tipoPopup = this.servicio.tipoPopUp;
-    this.dateAdapter.setLocale("es");
   }
 
   // Se cierra el popup

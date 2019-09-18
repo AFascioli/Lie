@@ -155,7 +155,8 @@ router.get("/asistencia", checkAuthMiddleware,(req, res) => {
   ]).then(ultimaAsistencia => {
     var fechaHoy = new Date();
     fechaHoy.setHours(fechaHoy.getHours() - 3);
-    if (ultimaAsistencia[0].asistencia.length>0 &&
+    if (
+      ultimaAsistencia[0].asistencia.length > 0 &&
       fechaHoy.getDate() == ultimaAsistencia[0].asistencia[0].fecha.getDate() &&
       fechaHoy.getMonth() ==
         ultimaAsistencia[0].asistencia[0].fecha.getMonth() &&
@@ -207,7 +208,7 @@ router.get("/asistencia", checkAuthMiddleware,(req, res) => {
           $project: {
             datosEstudiante: 1,
             "asistencia.presente": 1,
-            "asistencia._id":1
+            "asistencia._id": 1
           }
         }
       ]).then(asistenciaCurso => {
@@ -223,7 +224,9 @@ router.get("/asistencia", checkAuthMiddleware,(req, res) => {
           };
           respuesta.push(estudianteRefinado);
         });
-        res.status(200).json({ estudiantes: respuesta, asistenciaNueva: "false" });
+        res
+          .status(200)
+          .json({ estudiantes: respuesta, asistenciaNueva: "false" });
       });
     } else {
       Inscripcion.aggregate([
@@ -263,13 +266,14 @@ router.get("/asistencia", checkAuthMiddleware,(req, res) => {
             _id: objConEstudiante.estudiante[0]._id,
             nombre: objConEstudiante.estudiante[0].nombre,
             apellido: objConEstudiante.estudiante[0].apellido,
-            fecha:fechaHoy,
+            fecha: fechaHoy,
             presente: true
           };
           estudiantesRedux.push(estudianteRedux);
         });
         res.status(200).json({
-          estudiantes: estudiantesRedux, asistenciaNueva: "true"
+          estudiantes: estudiantesRedux,
+          asistenciaNueva: "true"
         });
       });
     }
@@ -300,13 +304,17 @@ router.post("/asistencia", checkAuthMiddleware,(req, res) => {
 
         await asistenciaEstudiante.save().then(async asistenciaDiaria => {
           await inscripcion.asistenciaDiaria.push(asistenciaDiaria._id);
+          inscripcion.contadorInasistencia =
+            inscripcion.contadorInasistencia + valorInasistencia;
           inscripcion.save();
         });
       });
     });
-  }else{
+  } else {
     req.body.forEach(estudiante => {
-      AsistenciaDiaria.findByIdAndUpdate(estudiante.idAsistencia,{presente: estudiante.presente}).exec();
+      AsistenciaDiaria.findByIdAndUpdate(estudiante.idAsistencia, {
+        presente: estudiante.presente
+      }).exec();
     });
   }
 
@@ -373,6 +381,18 @@ router.post("/retiro", checkAuthMiddleware,(req, res) => {
   });
 });
 
+//Este metodo filtra las inscripciones por estudiante y retorna el contador de inasistencias
+//de dicho estudiante
+router.get("/asistenciaEstudiante", (req, res) => {
+  Inscripcion.findOne({ IdEstudiante: req.query.idEstudiante }).then(estudiante =>
+     {let contadorInasistencia = estudiante.contadorInasistencia;
+      res.status(200).json({
+        message: "Operacion exitosa",
+        exito: true,
+        contadorInasistencia : contadorInasistencia})}
+    );
+});
+
 //Vamos a recibir, un vector de los estudiantes a los que se le modificaron los documentos entregados.
 router.post("/documentos", checkAuthMiddleware,(req, res) => {
   try {
@@ -381,7 +401,6 @@ router.post("/documentos", checkAuthMiddleware,(req, res) => {
         { IdEstudiante: estudiante.IdEstudiante, activa: true },
         { $set: { documentosEntregados: estudiante.documentosEntregados } }
       ).exec();
-      console.dir(estudiante);
     });
     res
       .status(201)
@@ -390,7 +409,5 @@ router.post("/documentos", checkAuthMiddleware,(req, res) => {
     res.status(201).json({ message: e, exito: false });
   }
 });
-
-
 
 module.exports = router;

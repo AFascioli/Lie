@@ -9,7 +9,6 @@ import {
   MatSnackBar
 } from "@angular/material";
 import { NgForm } from "@angular/forms";
-import { DateAdapter } from "@angular/material";
 
 @Component({
   selector: "app-inscripcion-estudiantes",
@@ -18,6 +17,7 @@ import { DateAdapter } from "@angular/material";
 })
 export class InscripcionEstudianteComponent implements OnInit {
   cursos: any[];
+  diaActual: string;
   apellidoEstudiante: string;
   nombreEstudiante: string;
   _idEstudiante: string;
@@ -30,8 +30,7 @@ export class InscripcionEstudianteComponent implements OnInit {
     { nombre: "Informe año anterior", entregado: false }
   ];
 
-  constructor(public servicio: EstudiantesService, public dialog: MatDialog, public snackBar: MatSnackBar, private dateAdapter: DateAdapter<Date>) {
-    this.dateAdapter.setLocale("es");
+  constructor(public servicio: EstudiantesService, public dialog: MatDialog, public snackBar: MatSnackBar) {
   }
 
   ngOnInit() {
@@ -113,7 +112,6 @@ export class InscripcionPopupComponent {
       .inscribirEstudiante(this.IdEstudiante, this.curso, this.documentosEntregados)
       .subscribe(response => {
         this.exito = response.exito;
-        console.log(this.exito);
         if(this.exito){
           this.snackBar.open("Estudiante inscripto correctamente", "", {
             duration: 4500,
