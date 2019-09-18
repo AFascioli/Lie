@@ -330,9 +330,16 @@ export class EstudiantesService {
   }
 
   cargarAsistenciaBackend(curso: string){
-    let params = new HttpParams().set("curso", curso)
+    let params = new HttpParams().set("curso", curso);
     return this.http.get<{ estudiantes: any[], asistenciaNueva: string }>(
       "http://localhost:3000/estudiante/asistencia", {params: params}
+    );
+  }
+
+  obtenerInasistenciasDeEstudiante(){
+    let params = new HttpParams().set("idEstudiante", this.estudianteSeleccionado._id);
+    return this.http.get<{message: string, exito: boolean, contadorInasistencia: number}> (
+      "http://localhost:3000/estudiante/asistenciaEstudiante", {params: params}
     );
   }
 }

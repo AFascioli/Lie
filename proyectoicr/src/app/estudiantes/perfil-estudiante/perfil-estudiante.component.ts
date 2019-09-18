@@ -15,18 +15,26 @@ export class PerfilEstudianteComponent implements OnInit {
   estudiantes: Estudiante[] = [];
   _idEstudiante: string;
   displayedColumns: string[] = ["tipo", "cantidad",];
-
-
-
+  contadorInasistenciaJustificada: number;
+  contadorInasistencia: number;
+  pieChartLabels: string [];
+  pieChartData:number[];
+  pieChartType:string;
 
   constructor(public servicio: EstudiantesService,  public router: Router) { }
-
-
 
   ngOnInit() {
     this.apellidoEstudiante = this.servicio.estudianteSeleccionado.apellido;
     this.nombreEstudiante = this.servicio.estudianteSeleccionado.nombre;
     this._idEstudiante = this.servicio.estudianteSeleccionado._id;
+    this.servicio.obtenerInasistenciasDeEstudiante().subscribe( response => {
+      console.log(response);
+      this.contadorInasistencia = response.contadorInasistencia;
+      this.contadorInasistenciaJustificada= 7; //#resolve
+      this.pieChartLabels = ['Inasistencias', 'Inasistencias Justificadas'];
+      this.pieChartData = [this.contadorInasistencia, this.contadorInasistenciaJustificada];
+      this.pieChartType = 'pie';
+      });
   }
 
   onVisualizarCalificacionesEstudiante(indice){
