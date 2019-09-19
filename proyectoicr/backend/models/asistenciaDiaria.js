@@ -5,7 +5,8 @@ const asistenciaDiariaSchema= mongoose.Schema({
   fecha: Date,
   presente: Boolean,
   retiroAnticipado: Boolean,
-  valorInasistencia: Number
+  valorInasistencia: Number,
+  justificado: Boolean
 });
 
 module.exports= mongoose.model('asistenciaDiaria', asistenciaDiariaSchema, 'asistenciaDiaria');

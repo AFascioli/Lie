@@ -6,10 +6,10 @@ const AsistenciaDiaria = require("../models/asistenciaDiaria");
 const router = express.Router();
 const mongoose = require("mongoose");
 
-const checkAuthMiddleware= require("../middleware/check-auth");
+const checkAuthMiddleware = require("../middleware/check-auth");
 
 //Registra un nuevo estudiante en la base de datos
-router.post("", checkAuthMiddleware,(req, res, next) => {
+router.post("", checkAuthMiddleware, (req, res, next) => {
   const estudiante = new Estudiante({
     apellido: req.body.apellido,
     nombre: req.body.nombre,
@@ -42,7 +42,7 @@ router.post("", checkAuthMiddleware,(req, res, next) => {
 });
 
 //Obtiene un estudiante dado un numero y tipo de documento
-router.get("/documento", checkAuthMiddleware,(req, res, next) => {
+router.get("/documento", checkAuthMiddleware, (req, res, next) => {
   const tipo = req.query.tipo;
   const numero = req.query.numero;
 
@@ -58,7 +58,7 @@ router.get("/documento", checkAuthMiddleware,(req, res, next) => {
 });
 
 //Busqueda de un estudisante por nombre y apellido ignorando mayusculas
-router.get("/nombreyapellido", checkAuthMiddleware,(req, res, next) => {
+router.get("/nombreyapellido", checkAuthMiddleware, (req, res, next) => {
   const nombre = req.query.nombre;
   const apellido = req.query.apellido;
   Estudiante.find({
@@ -73,7 +73,7 @@ router.get("/nombreyapellido", checkAuthMiddleware,(req, res, next) => {
 });
 
 //Modifica un estudiante
-router.patch("/modificar", checkAuthMiddleware,(req, res, next) => {
+router.patch("/modificar", checkAuthMiddleware, (req, res, next) => {
   Estudiante.findByIdAndUpdate(req.body._id, {
     apellido: req.body.apellido,
     nombre: req.body.nombre,
@@ -101,7 +101,7 @@ router.patch("/modificar", checkAuthMiddleware,(req, res, next) => {
 });
 
 //Borrado logico de un estudiante
-router.delete("/borrar", checkAuthMiddleware,(req, res, next) => {
+router.delete("/borrar", checkAuthMiddleware, (req, res, next) => {
   Estudiante.findOneAndUpdate({ _id: req.query._id }, { activo: false }).then(
     () => {
       res.status(202).json({
@@ -113,7 +113,7 @@ router.delete("/borrar", checkAuthMiddleware,(req, res, next) => {
 
 //Retorna vector con datos de los estudiantes y presente. Si ya se registro una asistencia para
 //el dia de hoy se retorna ese valor de la asistencia, sino se "construye" una nueva
-router.get("/asistencia", checkAuthMiddleware,(req, res) => {
+router.get("/asistencia", checkAuthMiddleware, (req, res) => {
   Inscripcion.aggregate([
     {
       $lookup: {
@@ -285,8 +285,8 @@ router.get("/asistencia", checkAuthMiddleware,(req, res) => {
 // luego crea la asistencia diaria usando la _id de la inscripcion, luego guarda la asistenciaDiaria y
 // guarda la _id de esta asistenciaDiaria en el vector de asistenciasDiarias de la inscripcion.
 // Si ya se tomo asistencia en el dia, se actualiza el valor presente de la asistencia individual.
-router.post("/asistencia", checkAuthMiddleware,(req, res) => {
-  if(req.query.asistenciaNueva=="true"){
+router.post("/asistencia", checkAuthMiddleware, (req, res) => {
+  if (req.query.asistenciaNueva == "true") {
     req.body.forEach(estudiante => {
       var valorInasistencia = 0;
       if (!estudiante.presente) {
@@ -305,8 +305,8 @@ router.post("/asistencia", checkAuthMiddleware,(req, res) => {
 
         await asistenciaEstudiante.save().then(async asistenciaDiaria => {
           await inscripcion.asistenciaDiaria.push(asistenciaDiaria._id);
-          inscripcion.contadorInasistencia =
-            inscripcion.contadorInasistencia + valorInasistencia;
+          inscripcion.contadorInasistencias =
+            inscripcion.contadorInasistencias + valorInasistencia;
           inscripcion.save();
         });
       });
@@ -323,7 +323,7 @@ router.post("/asistencia", checkAuthMiddleware,(req, res) => {
 });
 
 //Obtiene la id de la asistencia diaria del dia de hoy, y cambia los valores correspondientes en la coleccion de asistencia diaria
-router.post("/retiro", checkAuthMiddleware,(req, res) => {
+router.post("/retiro", checkAuthMiddleware, (req, res) => {
   Inscripcion.findOne(
     { IdEstudiante: req.body.IdEstudiante, activa: true },
     { asistenciaDiaria: { $slice: -1 } }
@@ -385,17 +385,20 @@ router.post("/retiro", checkAuthMiddleware,(req, res) => {
 //Este metodo filtra las inscripciones por estudiante y retorna el contador de inasistencias
 //de dicho estudiante
 router.get("/asistenciaEstudiante", (req, res) => {
-  Inscripcion.findOne({ IdEstudiante: req.query.idEstudiante }).then(estudiante =>
-     {let contadorInasistencia = estudiante.contadorInasistencia;
+  Inscripcion.findOne({ IdEstudiante: req.query.idEstudiante }).then(
+    estudiante => {
+      let contadorInasistencia = estudiante.contadorInasistencias;
       res.status(200).json({
         message: "Operacion exitosa",
         exito: true,
-        contadorInasistencia : contadorInasistencia})}
-    );
+        contadorInasistencia: contadorInasistencia
+      });
+    }
+  );
 });
 
 //Vamos a recibir, un vector de los estudiantes a los que se le modificaron los documentos entregados.
-router.post("/documentos", checkAuthMiddleware,(req, res) => {
+router.post("/documentos", checkAuthMiddleware, (req, res) => {
   try {
     req.body.forEach(estudiante => {
       Inscripcion.findOneAndUpdate(
@@ -412,51 +415,129 @@ router.post("/documentos", checkAuthMiddleware,(req, res) => {
 });
 
 //Dado una id de estudiante y un trimestre obtiene todas las materias con sus respectivas calificaciones
-router.get("/calif/materia", (req, res)=>{
+router.get("/calif/materia", (req, res) => {
   Inscripcion.aggregate([
     {
-      '$match': {
-        'IdEstudiante': mongoose.Types.ObjectId(req.query.idEstudiante),
-        'activa': true
+      $match: {
+        IdEstudiante: mongoose.Types.ObjectId(req.query.idEstudiante),
+        activa: true
       }
-    }, {
-      '$lookup': {
-        'from': 'calificacionesXMateria',
-        'localField': 'calificacionesXMateria',
-        'foreignField': '_id',
-        'as': 'cXM'
+    },
+    {
+      $lookup: {
+        from: "calificacionesXMateria",
+        localField: "calificacionesXMateria",
+        foreignField: "_id",
+        as: "cXM"
       }
-    }, {
-      '$unwind': {
-        'path': '$cXM'
+    },
+    {
+      $unwind: {
+        path: "$cXM"
       }
-    }, {
-      '$match': {
-        'cXM.trimestre': req.query.trimestre
+    },
+    {
+      $match: {
+        "cXM.trimestre": req.query.trimestre
       }
-    }, {
-      '$lookup': {
-        'from': 'materias',
-        'localField': 'cXM.idMateria',
-        'foreignField': '_id',
-        'as': 'materia'
+    },
+    {
+      $lookup: {
+        from: "materias",
+        localField: "cXM.idMateria",
+        foreignField: "_id",
+        as: "materia"
       }
-    }, {
-      '$project': {
-        'cXM.calificaciones': 1,
-        'materia.nombre': 1
+    },
+    {
+      $project: {
+        "cXM.calificaciones": 1,
+        "materia.nombre": 1
       }
     }
-  ]).then(resultado=>{
-    let vectorRespuesta=[];
-    resultado.forEach(objEnResultado=>{
+  ]).then(resultado => {
+    let vectorRespuesta = [];
+    resultado.forEach(objEnResultado => {
       vectorRespuesta.push({
-        materia:objEnResultado.materia[0].nombre,
-        calificaciones:objEnResultado.cXM.calificaciones
+        materia: objEnResultado.materia[0].nombre,
+        calificaciones: objEnResultado.cXM.calificaciones
       });
     });
-    res.status(200).json({message: "Operación exitosa", exito: true, vectorCalXMat: vectorRespuesta});
+    res.status(200).json({
+      message: "Operación exitosa",
+      exito: true,
+      vectorCalXMat: vectorRespuesta
+    });
   });
+});
+
+//Ver como manejar los dos tipos de justificacion, esta manejado solo la justificacion para un dia
+router.get("/inasistencia/justificada",(req, res) => {
+  if (!req.query.justificacionMultiple) {
+    Inscripcion.aggregate([
+      {
+        $match: {
+          IdEstudiante: mongoose.Types.ObjectId("5d1a5a66941efc2e98b15c0e"),
+          activa: true
+        }
+      },
+      {
+        $unwind: {
+          path: "$asistenciaDiaria"
+        }
+      },
+      {
+        $lookup: {
+          from: "asistenciaDiaria",
+          localField: "asistenciaDiaria",
+          foreignField: "_id",
+          as: "presentismo"
+        }
+      },
+      {
+        $match: {
+          "presentismo.fecha": {
+            $gte: new Date("Tue, 16 Jul 2019 00:00:00 GMT"),
+            $lt: new Date("Tue, 16 Jul 2019 23:59:59 GMT")
+          }
+        }
+      },
+      {
+        $project: {
+          "presentismo._id": 1,
+          "presentismo.presente": 1,
+          "presentismo.justificado": 1
+        }
+      }
+    ]).then(resultado => {
+      //5d2e30dd32a43405043e76c6 id de la asistencia que retorna
+      if (resultado[0].presentismo[0].presente) {
+        return res
+          .status(200)
+          .json({
+            message: "El estudiante estuvo presente para la fecha ingresada",
+            exito: false
+          });
+      } else if (resultado[0].presentismo[0].justificado) {
+        return res
+          .status(200)
+          .json({
+            message: "El estudiante ya tiene justificada la inasistencia",
+            exito: false
+          });
+      } else {
+        let idAsistencia = resultado[0].presentismo[0]._id;
+        AsistenciaDiaria.findByIdAndUpdate(idAsistencia, {
+          justificado: true
+        }).then(() => {
+          res.json({
+            message: "Asistencia exitósamente justificada",
+            exito: true
+          });
+        });
+      }
+    });
+  }
 });
 
 module.exports = router;
