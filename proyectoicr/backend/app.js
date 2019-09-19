@@ -8,6 +8,7 @@ const nacionalidadesRoutes = require("./routes/nacionalidad");
 const cursoRoutes = require("./routes/curso");
 const usuarioRoutes= require("./routes/usuario");
 const adultoResponsableRoutes= require("./routes/adultoResponsable");
+const empleadoRoutes= require("./routes/empleado");
 
 const app = express(); // Creo la app express
 
@@ -57,6 +58,7 @@ app.use((req, res, next) => {
   );
   next();
 });
+
 app.use("/estudiante", estudiantesRoutes);
 
 app.use("/provincia", provinciasRoutes);
@@ -70,5 +72,7 @@ app.use("/curso", cursoRoutes);
 app.use("/usuario", usuarioRoutes);
 
 app.use("/adultoResponsable", adultoResponsableRoutes);
+
+app.use("/empleado", empleadoRoutes);
 
 module.exports = app;

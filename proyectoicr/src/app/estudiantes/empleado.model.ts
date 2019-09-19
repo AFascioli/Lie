@@ -1,4 +1,4 @@
-export interface AdultoResponsable {
+export interface Empleado {
   //_id: string;
   apellido: string;
   nombre: string;
@@ -8,7 +8,7 @@ export interface AdultoResponsable {
   nacionalidad: string;
   fechaNacimiento: string;
   telefono: number;
-  email: string; 
-  tutor: boolean;
+  email: string;
+  tipoEmpleado: string;
   idUsuario: string;
 }
