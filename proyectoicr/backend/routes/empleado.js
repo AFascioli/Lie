@@ -1,9 +1,10 @@
 const express = require("express");
-const Empleado = require("../models/empleado");
 const router = express.Router();
+const Empleado = require("../models/empleado");
+const checkAuthMiddleware= require("../middleware/check-auth");
 
 //Registra un nuevo empleado en la base de datos
-router.post("", checkAuthMiddleware,(req, res) => {
+router.post("/", checkAuthMiddleware,(req, res) => {
   const empleado= new Empleado({
     apellido: req.body.apellido,
     nombre: req.body.nombre,

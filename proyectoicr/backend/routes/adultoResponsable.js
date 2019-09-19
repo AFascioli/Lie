@@ -1,9 +1,10 @@
 const express = require("express");
-const AdultoResponsable = require("../models/adultoResponsable");
 const router = express.Router();
+const AdultoResponsable = require("../models/adultoResponsable");
+const checkAuthMiddleware= require("../middleware/check-auth");
 
 //Registra un nuevo adulto responsable en la base de datos
-router.post("", checkAuthMiddleware,(req, res) => {
+router.post("/", checkAuthMiddleware,(req, res) => {
   const adultoResponsable= new AdultoResponsable({
     apellido: req.body.apellido,
     nombre: req.body.nombre,

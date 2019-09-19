@@ -426,4 +426,22 @@ export class EstudiantesService {
       params: params
     });
   }
+
+  //Con el id del estudiante y el trimestre seleccionado, obtiene las materias y sus calificaciones
+  obtenerCalificacionesXMateriaXEstudiante(trimestre: string){
+    let params = new HttpParams().set(
+      "idEstudiante",
+      this.estudianteSeleccionado._id
+    ).set(
+      "trimestre",
+      trimestre
+    );
+    return this.http.get<{
+      message: string;
+      exito: boolean;
+      vectorResultado: any[];
+    }>("http://localhost:3000/estudiante/calif/materia", {
+      params: params
+    });
+  }
 }

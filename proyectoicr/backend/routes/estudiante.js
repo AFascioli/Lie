@@ -4,6 +4,7 @@ const Inscripcion = require("../models/inscripcion");
 const Division = require("../models/division");
 const AsistenciaDiaria = require("../models/asistenciaDiaria");
 const router = express.Router();
+const mongoose = require("mongoose");
 
 const checkAuthMiddleware= require("../middleware/check-auth");
 
@@ -408,6 +409,54 @@ router.post("/documentos", checkAuthMiddleware,(req, res) => {
   } catch {
     res.status(201).json({ message: e, exito: false });
   }
+});
+
+//Dado una id de estudiante y un trimestre obtiene todas las materias con sus respectivas calificaciones
+router.get("/calif/materia", (req, res)=>{
+  Inscripcion.aggregate([
+    {
+      '$match': {
+        'IdEstudiante': mongoose.Types.ObjectId(req.query.idEstudiante),
+        'activa': true
+      }
+    }, {
+      '$lookup': {
+        'from': 'calificacionesXMateria',
+        'localField': 'calificacionesXMateria',
+        'foreignField': '_id',
+        'as': 'cXM'
+      }
+    }, {
+      '$unwind': {
+        'path': '$cXM'
+      }
+    }, {
+      '$match': {
+        'cXM.trimestre': req.query.trimestre
+      }
+    }, {
+      '$lookup': {
+        'from': 'materias',
+        'localField': 'cXM.idMateria',
+        'foreignField': '_id',
+        'as': 'materia'
+      }
+    }, {
+      '$project': {
+        'cXM.calificaciones': 1,
+        'materia.nombre': 1
+      }
+    }
+  ]).then(resultado=>{
+    let vectorRespuesta=[];
+    resultado.forEach(objEnResultado=>{
+      vectorRespuesta.push({
+        materia:objEnResultado.materia[0].nombre,
+        calificaciones:objEnResultado.cXM.calificaciones
+      });
+    });
+    res.status(200).json({message: "Operación exitosa", exito: true, vectorCalXMat: vectorRespuesta});
+  });
 });
 
 module.exports = router;
