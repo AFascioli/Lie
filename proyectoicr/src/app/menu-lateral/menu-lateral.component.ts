@@ -2,6 +2,7 @@ import { MatDialog, MatDialogRef } from "@angular/material";
 import { Component, OnInit } from "@angular/core";
 import { Router } from "@angular/router";
 import { AutencacionService } from "../login/autenticacionService.service";
+import { EstudiantesService } from '../estudiantes/estudiante.service';
 
 @Component({
   selector: "app-menu-lateral",
@@ -12,7 +13,8 @@ export class MenuLateralComponent implements OnInit {
   constructor(
     public router: Router,
     public authService: AutencacionService,
-    public dialog: MatDialog
+    public dialog: MatDialog,
+    public estudianteService: EstudiantesService
   ) {}
 
   ngOnInit() {}

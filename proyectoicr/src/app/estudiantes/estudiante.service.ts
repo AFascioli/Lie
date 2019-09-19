@@ -5,6 +5,7 @@ import { Provincia } from "./provincias.model";
 import { Subject } from "rxjs";
 import { Localidad } from "./localidades.model";
 import { Nacionalidad } from "./nacionalidades.model";
+import { AdultoResponsable } from './adultoResponsable.model';
 
 @Injectable({
   providedIn: "root"
@@ -30,7 +31,7 @@ export class EstudiantesService {
   busquedaEstudianteXNombre: boolean;
 
   constructor(public http: HttpClient) {
-    this.retornoDesdeAcciones= false;
+    this.retornoDesdeAcciones = false;
   }
 
   altaEstudiante(
@@ -247,7 +248,8 @@ export class EstudiantesService {
     this.http
       .post<{ message: string }>(
         "http://localhost:3000/estudiante/asistencia",
-        estudiantesXDivision,{params: params}
+        estudiantesXDivision,
+        { params: params }
       )
       .subscribe(response => {});
   }
@@ -321,25 +323,71 @@ export class EstudiantesService {
     );
   }
 
-  registrarCalificaciones(estudiantes: any[], idMateria: string, trimestre: string) {
-    let params = new HttpParams().set("idMateria", idMateria).set("trimestre", trimestre);
+  registrarAdultoResponsable(
+    apellido: string,
+    nombre: string,
+    tipoDocumento: string,
+    numeroDocumento: number,
+    sexo: string,
+    nacionalidad: string,
+    fechaNacimiento: string,
+    telefono: number,
+    tutor: boolean,
+    idUsuario: string
+  ) {
+    const adultoResponsable: AdultoResponsable = {
+      apellido,
+      nombre,
+      tipoDocumento,
+      numeroDocumento,
+      sexo,
+      nacionalidad,
+      fechaNacimiento,
+      telefono,
+      tutor,
+      idUsuario//idUsuario #resolve
+    };
+    this.http
+      .post<{ message: string, exito: boolean }>("http://localhost:3000/adultoResponsable", adultoResponsable)
+      .subscribe(response => {
+        console.log(response);
+      });
+  }
+
+  registrarCalificaciones(
+    estudiantes: any[],
+    idMateria: string,
+    trimestre: string
+  ) {
+    let params = new HttpParams()
+      .set("idMateria", idMateria)
+      .set("trimestre", trimestre);
     return this.http.post<{ message: string; exito: boolean }>(
       "http://localhost:3000/curso/estudiantes/materias/calificaciones",
-      estudiantes, {params: params}
+      estudiantes,
+      { params: params }
     );
   }
 
-  cargarAsistenciaBackend(curso: string){
+  cargarAsistenciaBackend(curso: string) {
     let params = new HttpParams().set("curso", curso);
-    return this.http.get<{ estudiantes: any[], asistenciaNueva: string }>(
-      "http://localhost:3000/estudiante/asistencia", {params: params}
+    return this.http.get<{ estudiantes: any[]; asistenciaNueva: string }>(
+      "http://localhost:3000/estudiante/asistencia",
+      { params: params }
     );
   }
 
-  obtenerInasistenciasDeEstudiante(){
-    let params = new HttpParams().set("idEstudiante", this.estudianteSeleccionado._id);
-    return this.http.get<{message: string, exito: boolean, contadorInasistencia: number}> (
-      "http://localhost:3000/estudiante/asistenciaEstudiante", {params: params}
+  obtenerInasistenciasDeEstudiante() {
+    let params = new HttpParams().set(
+      "idEstudiante",
+      this.estudianteSeleccionado._id
     );
+    return this.http.get<{
+      message: string;
+      exito: boolean;
+      contadorInasistencia: number;
+    }>("http://localhost:3000/estudiante/asistenciaEstudiante", {
+      params: params
+    });
   }
 }

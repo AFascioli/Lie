@@ -61,7 +61,11 @@ const routes: Routes = [
         component: CalificacionesEstudiantesComponent
       },
       { path: "llegadaTarde", component: LlegadaTardeComponent },
-      { path: "cambiarContraseña", component: CambiarPassword }
+      { path: "cambiarContraseña", component: CambiarPassword },
+      {
+        path: "perfilEstudiante",
+        component: PerfilEstudianteComponent, canActivate:[RouteGuard]
+      }
     ]
   }
 ];

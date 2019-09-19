@@ -87,7 +87,7 @@ import localePy from '@angular/common/locales/es';
     LlegadaTardeComponent,
     CambiarPassword,
     CambiarPasswordPopupComponent,
-    CerrarSesionPopupComponent
+    CerrarSesionPopupComponent,
     PerfilEstudianteComponent,
     CalificacionesPerfilEstudianteComponent,
     AgendaCursoPerfilEstudianteComponent

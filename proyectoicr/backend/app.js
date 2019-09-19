@@ -7,6 +7,7 @@ const localidadesRoutes = require("./routes/localidad");
 const nacionalidadesRoutes = require("./routes/nacionalidad");
 const cursoRoutes = require("./routes/curso");
 const usuarioRoutes= require("./routes/usuario");
+const adultoResponsableRoutes= require("./routes/adultoResponsable");
 
 const app = express(); // Creo la app express
 
@@ -67,5 +68,7 @@ app.use("/nacionalidad", nacionalidadesRoutes);
 app.use("/curso", cursoRoutes);
 
 app.use("/usuario", usuarioRoutes);
+
+app.use("/adultoResponsable", adultoResponsableRoutes);
 
 module.exports = app;
