@@ -25,7 +25,7 @@ export class AutencacionService {
     return this.authStatusListener.asObservable();
   }
 
-  getUsuarioAutenticado(){
+  getUsuarioAutenticado() {
     return this.usuarioAutenticado;
   }
 
@@ -52,9 +52,9 @@ export class AutencacionService {
         message: string;
       }>("http://localhost:3000/usuario/login", authData)
       .subscribe(response => {
-        respuesta= response.message;
+        respuesta = response.message;
         if (response.token) {
-          this.usuarioAutenticado=email;
+          this.usuarioAutenticado = email;
           this.token = response.token;
           const duracionToken = response.duracionToken;
           this.timerAutenticacion(duracionToken);
@@ -64,7 +64,11 @@ export class AutencacionService {
           const vencimientoToken = new Date(
             fechaActual.getTime() + duracionToken * 1000
           );
-          this.guardarDatosAutenticacion(response.token, vencimientoToken, this.usuarioAutenticado);
+          this.guardarDatosAutenticacion(
+            response.token,
+            vencimientoToken,
+            this.usuarioAutenticado
+          );
           this.router.navigate(["/"]);
         }
         subject.next(respuesta);
@@ -94,7 +98,7 @@ export class AutencacionService {
   logout() {
     this.token = null;
     this.estaAutenticado = false;
-    this.usuarioAutenticado="";
+    this.usuarioAutenticado = "";
     this.authStatusListener.next(false);
     clearTimeout(this.tokenTimer);
     this.limpiarDatosAutenticacion();
@@ -108,7 +112,11 @@ export class AutencacionService {
     }, duration * 1000);
   }
 
-  private guardarDatosAutenticacion(token: string, fechaVencimiento: Date, usuario: string) {
+  private guardarDatosAutenticacion(
+    token: string,
+    fechaVencimiento: Date,
+    usuario: string
+  ) {
     localStorage.setItem("token", token);
     localStorage.setItem("vencimiento", fechaVencimiento.toISOString());
     localStorage.setItem("usuario", usuario);
@@ -134,14 +142,24 @@ export class AutencacionService {
     };
   }
 
-  cambiarPassword(passwordVieja, passwordNueva){
-    const datosContraseña = {passwordVieja: passwordVieja,
+  cambiarPassword(passwordVieja, passwordNueva) {
+    const datosContraseña = {
+      passwordVieja: passwordVieja,
       passwordNueva: passwordNueva,
-       usuario: this.usuarioAutenticado}
-    return this.http
-      .post<{
-        exito: boolean;
-        message: string;
-      }>("http://localhost:3000/usuario/cambiarPassword", datosContraseña);
+      usuario: this.usuarioAutenticado
+    };
+    return this.http.post<{
+      exito: boolean;
+      message: string;
+    }>("http://localhost:3000/usuario/cambiarPassword", datosContraseña);
+  }
+
+  //Metodo sign up que crea un usuario segun un rol dado
+  signUp(mail: string, password: string, rol: string) {
+    return this.http.post("http://localhost:3000/usuario/signup", {
+      mail: mail,
+      password: password,
+      rol: rol
+    });
   }
 }
