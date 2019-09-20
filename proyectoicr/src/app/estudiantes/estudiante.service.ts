@@ -378,6 +378,7 @@ export class EstudiantesService {
     let params = new HttpParams()
       .set("fechaInicio", fechaInicio)
       .set("fechaFin", fechaFin)
+      .set("idEstudiante", this.estudianteSeleccionado._id)
       .set("esMultiple", esMultiple.toString());
     return this.http.get<{
       message: string;

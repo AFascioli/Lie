@@ -481,10 +481,11 @@ router.get("/inasistencia/justificada", (req, res) => {
   let fechaFin = new Date(req.query.fechaFin);
   fechaInicio.setHours(fechaInicio.getHours() - 3);
   fechaFin.setHours(fechaFin.getHours() - 3);
+  //5d1a5a66941efc2e98b15c0e id del estudiante que tiene los datos bien
   Inscripcion.aggregate([
     {
       $match: {
-        IdEstudiante: mongoose.Types.ObjectId("5d1a5a66941efc2e98b15c0e"), //Deshardcodear
+        IdEstudiante: mongoose.Types.ObjectId(req.query.idEstudiante),
         activa: true
       }
     },
