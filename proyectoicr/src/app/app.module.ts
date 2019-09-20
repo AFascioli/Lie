@@ -60,6 +60,7 @@ import { registerLocaleData } from '@angular/common';
 import { ChartsModule } from 'ng2-charts';
 registerLocaleData(localePy, 'es');
 import localePy from '@angular/common/locales/es';
+import { JustificacionInasistenciaComponent } from './asistencia/justificacion-inasistencia/justificacion-inasistencia.component';
 
 @NgModule({
   declarations: [
@@ -90,7 +91,8 @@ import localePy from '@angular/common/locales/es';
     CerrarSesionPopupComponent,
     PerfilEstudianteComponent,
     CalificacionesPerfilEstudianteComponent,
-    AgendaCursoPerfilEstudianteComponent
+    AgendaCursoPerfilEstudianteComponent,
+    JustificacionInasistenciaComponent
   ],
   //entryComponents declara los componentes que se generan dinamicamente dentro de otros.
   entryComponents: [

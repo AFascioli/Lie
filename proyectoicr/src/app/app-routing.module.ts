@@ -19,6 +19,7 @@ import { LlegadaTardeComponent } from "./asistencia/llegada-tarde/llegada-tarde.
 import { AuthGuard } from "./login/auth.guard";
 import { CambiarPassword } from "./login/cambiar-password.component";
 import { RouteGuard } from "./route.guard";
+import { JustificacionInasistenciaComponent } from './asistencia/justificacion-inasistencia/justificacion-inasistencia.component';
 
 const routes: Routes = [
   { path: "login", component: LoginComponent },
@@ -65,6 +66,10 @@ const routes: Routes = [
       {
         path: "perfilEstudiante",
         component: PerfilEstudianteComponent, canActivate:[RouteGuard]
+      },
+      {
+        path: "justificarInasistencia",
+        component: JustificacionInasistenciaComponent, canActivate:[RouteGuard]
       }
     ]
   }

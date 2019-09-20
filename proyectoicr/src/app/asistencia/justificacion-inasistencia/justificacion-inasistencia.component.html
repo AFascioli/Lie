@@ -1,0 +1,44 @@
+<h1 class="componente-titulo">Justificar inasistencia</h1>
+<mat-card class="card-body-componente">
+  <form >
+      <mat-radio-group aria-label="Select an option">
+          <mat-radio-button class="contenedor-div"
+
+            >Para un único día</mat-radio-button
+          >
+
+          <mat-radio-button class="mi-imagen-abajo-derecha"
+
+            >Múltiplos días</mat-radio-button
+          >
+        </mat-radio-group>
+  </form>
+
+
+
+
+  <div class="div-button">
+    <button
+      mat-raised-button
+      color="primary"
+
+      mat-raised-button
+    >
+      Guardar
+    </button>
+    <button
+      mat-raised-button
+
+      color="warn"
+    >
+      Cancelar
+    </button>
+    <button
+    mat-raised-button
+    [routerLink]="['/buscar/lista']"
+    color="primary"
+  >
+   Volver
+  </button>
+  </div>
+</mat-card>
