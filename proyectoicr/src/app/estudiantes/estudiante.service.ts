@@ -5,8 +5,7 @@ import { Provincia } from "./provincias.model";
 import { Subject } from "rxjs";
 import { Localidad } from "./localidades.model";
 import { Nacionalidad } from "./nacionalidades.model";
-import { AdultoResponsable } from './adultoResponsable.model';
-import { Empleado } from './empleado.model';
+
 
 @Injectable({
   providedIn: "root"
@@ -324,71 +323,7 @@ export class EstudiantesService {
     );
   }
 
-  registrarAdultoResponsable(
-    apellido: string,
-    nombre: string,
-    tipoDocumento: string,
-    numeroDocumento: number,
-    sexo: string,
-    nacionalidad: string,
-    fechaNacimiento: string,
-    telefono: number,
-    email: string,
-    tutor: boolean,
-    idUsuario: string
-  ) {
-    const adultoResponsable: AdultoResponsable = {
-      apellido,
-      nombre,
-      tipoDocumento,
-      numeroDocumento,
-      sexo,
-      nacionalidad,
-      fechaNacimiento,
-      telefono,
-      email,
-      tutor,
-      idUsuario//idUsuario #resolve
-    };
-    this.http
-      .post<{ message: string, exito: boolean }>("http://localhost:3000/adultoResponsable", adultoResponsable)
-      .subscribe(response => {
-        console.log(response);
-      });
-  }
-
-  registrarEmpleado(
-    apellido: string,
-    nombre: string,
-    tipoDocumento: string,
-    numeroDocumento: number,
-    sexo: string,
-    nacionalidad: string,
-    fechaNacimiento: string,
-    telefono: number,
-    email: string,
-    tipoEmpleado: string,
-    idUsuario: string
-  ) {
-    const empleado: Empleado = {
-      apellido,
-      nombre,
-      tipoDocumento,
-      numeroDocumento,
-      sexo,
-      nacionalidad,
-      fechaNacimiento,
-      telefono,
-      email,
-      tipoEmpleado,
-      idUsuario//idUsuario #resolve
-    };
-    this.http
-      .post<{ message: string, exito: boolean }>("http://localhost:3000/empleado", empleado)
-      .subscribe(response => {
-        console.log(response);
-      });
-  }
+  
 
   registrarCalificaciones(
     estudiantes: any[],
