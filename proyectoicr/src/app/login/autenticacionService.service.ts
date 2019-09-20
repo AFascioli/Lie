@@ -30,8 +30,8 @@ export class AutencacionService {
   }
 
   crearUsuario(email: string, password: string) {
-    const authData = { email: email, password: password };
-    return this.http.post<{ message: string; exito: string }>(
+    const authData = { email: email, password: password};
+    return this.http.post<{ message: string; exito: string; id: string  }>(
       "http://localhost:3000/usuario/signup",
       authData
     );

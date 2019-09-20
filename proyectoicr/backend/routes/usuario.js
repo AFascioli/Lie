@@ -17,7 +17,8 @@ router.post("/signup", (req, res, next) => {
       .then(result => {
         res.status(201).json({
           message: "Usuario creado exitosamente",
-          exito: true
+          exito: true,
+          id: usuario._id
         });
       })
       .catch(err => {
