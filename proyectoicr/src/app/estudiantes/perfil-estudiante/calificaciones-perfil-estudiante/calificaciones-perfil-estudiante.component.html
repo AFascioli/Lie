@@ -1,9 +1,9 @@
-<mat-card>
+<mat-card class="card-body-componente">
   <mat-card-title class="componente-titulo">
     <p>{{ apellidoEstudiante }}, {{ nombreEstudiante }}</p>
   </mat-card-title>
 
-  <mat-form-field>
+  <mat-form-field class="selectTrimestre">
     <mat-select
       name="trimestre"
       ngModel
@@ -36,55 +36,55 @@
     </ng-container>
 
     <ng-container matColumnDef="calif1">
-      <th class="columnasNormales" mat-header-cell *matHeaderCellDef>
+      <th class="columnasChicas" mat-header-cell *matHeaderCellDef>
         1º
       </th>
-      <td class="columnasNormales" mat-cell *matCellDef="let calificacionesXMateria">
+      <td class="columnasChicas" mat-cell *matCellDef="let calificacionesXMateria">
         {{ calificacionesXMateria.calificaciones[0] }}
       </td>
     </ng-container>
 
     <ng-container matColumnDef="calif2">
-      <th class="columnasNormales" mat-header-cell *matHeaderCellDef>
+      <th class="columnasChicas" mat-header-cell *matHeaderCellDef>
         2º
       </th>
-      <td class="columnasNormales" mat-cell *matCellDef="let calificacionesXMateria">
+      <td class="columnasChicas" mat-cell *matCellDef="let calificacionesXMateria">
         {{ calificacionesXMateria.calificaciones[1] }}
       </td>
     </ng-container>
 
     <ng-container matColumnDef="calif3">
-      <th class="columnasNormales" mat-header-cell *matHeaderCellDef>
+      <th class="columnasChicas" mat-header-cell *matHeaderCellDef>
         3º
       </th>
-      <td class="columnasNormales" mat-cell *matCellDef="let calificaciones">
+      <td class="columnasChicas" mat-cell *matCellDef="let calificacionesXMateria">
         {{ calificacionesXMateria.calificaciones[2] }}
       </td>
     </ng-container>
 
     <ng-container matColumnDef="calif4">
-      <th class="columnasNormales" mat-header-cell *matHeaderCellDef>
+      <th class="columnasChicas" mat-header-cell *matHeaderCellDef>
         4º
       </th>
-      <td class="columnasNormales" mat-cell *matCellDef="let calificaciones">
+      <td class="columnasChicas" mat-cell *matCellDef="let calificacionesXMateria">
         {{ calificacionesXMateria.calificaciones[3] }}
       </td>
     </ng-container>
 
     <ng-container matColumnDef="calif5">
-      <th class="columnasNormales" mat-header-cell *matHeaderCellDef>
+      <th class="columnasChicas" mat-header-cell *matHeaderCellDef>
         5º
       </th>
-      <td class="columnasNormales" mat-cell *matCellDef="let calificaciones">
+      <td class="columnasChicas" mat-cell *matCellDef="let calificacionesXMateria">
         {{ calificacionesXMateria.calificaciones[4] }}
       </td>
     </ng-container>
 
     <ng-container matColumnDef="calif6">
-      <th class="columnasNormales" mat-header-cell *matHeaderCellDef>
+      <th class="columnasChicas" mat-header-cell *matHeaderCellDef>
         6º
       </th>
-      <td class="columnasNormales" mat-cell *matCellDef="let calificaciones">
+      <td class="columnasChicas" mat-cell *matCellDef="let calificacionesXMateria">
         {{ calificacionesXMateria.calificaciones[5] }}
       </td>
     </ng-container>

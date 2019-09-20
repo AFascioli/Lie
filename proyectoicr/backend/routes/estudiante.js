@@ -438,7 +438,7 @@ router.get("/calif/materia", (req, res) => {
     },
     {
       $match: {
-        "cXM.trimestre": req.query.trimestre
+        "cXM.trimestre": parseInt(req.query.trimestre,10)
       }
     },
     {
