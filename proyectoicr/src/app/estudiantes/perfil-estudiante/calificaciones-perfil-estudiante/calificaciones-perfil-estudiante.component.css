@@ -10,3 +10,21 @@ mat-card-content{
   text-align: right;
   margin-left: 87% !important;
 }
+
+table {
+  width: 95%;
+  margin: 2rem;
+}
+
+.columnasNormales{
+  width:22% !important;
+}
+
+.columnasChicas{
+  width:8%;
+}
+
+th{
+  font-weight: bold;
+  font-size: 15px;
+}

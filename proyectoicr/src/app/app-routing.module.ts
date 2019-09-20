@@ -70,6 +70,10 @@ const routes: Routes = [
       {
         path: "justificarInasistencia",
         component: JustificacionInasistenciaComponent, canActivate:[RouteGuard]
+      },
+      {
+        path: "calificacionesEstudiante",
+        component: CalificacionesPerfilEstudianteComponent, canActivate:[RouteGuard]
       }
     ]
   }

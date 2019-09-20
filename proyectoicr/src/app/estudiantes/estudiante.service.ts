@@ -6,7 +6,6 @@ import { Subject } from "rxjs";
 import { Localidad } from "./localidades.model";
 import { Nacionalidad } from "./nacionalidades.model";
 
-
 @Injectable({
   providedIn: "root"
 })
@@ -323,8 +322,6 @@ export class EstudiantesService {
     );
   }
 
-  
-
   registrarCalificaciones(
     estudiantes: any[],
     idMateria: string,
@@ -363,20 +360,16 @@ export class EstudiantesService {
   }
 
   //Con el id del estudiante y el trimestre seleccionado, obtiene las materias y sus calificaciones
-  obtenerCalificacionesXMateriaXEstudiante(trimestre: string){
-    let params = new HttpParams().set(
-      "idEstudiante",
-      this.estudianteSeleccionado._id
-    ).set(
-      "trimestre",
-      trimestre
-    );
+  obtenerCalificacionesXMateriaXEstudiante(trimestre: string) {
+    let params = new HttpParams()
+      .set("idEstudiante", this.estudianteSeleccionado._id)
+      .set("trimestre", trimestre);
     return this.http.get<{
       message: string;
       exito: boolean;
-      vectorResultado: any[];
+      vectorCalXMat: any[];
     }>("http://localhost:3000/estudiante/calif/materia", {
       params: params
-    });
+    })
   }
 }

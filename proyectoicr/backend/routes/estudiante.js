@@ -463,6 +463,7 @@ router.get("/calif/materia", (req, res) => {
         calificaciones: objEnResultado.cXM.calificaciones
       });
     });
+
     res.status(200).json({
       message: "Operación exitosa",
       exito: true,

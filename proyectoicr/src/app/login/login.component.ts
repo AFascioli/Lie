@@ -17,10 +17,6 @@ export class LoginComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.authService.crearUsuario("camibargiano@hotmail.com","12345").subscribe(res =>
-      {
-        console.log(res);
-      })
   }
 
   iniciarSesion() {

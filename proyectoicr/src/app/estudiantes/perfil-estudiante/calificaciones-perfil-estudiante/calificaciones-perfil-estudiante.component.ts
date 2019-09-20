@@ -11,13 +11,43 @@ import { Router } from '@angular/router';
 export class CalificacionesPerfilEstudianteComponent implements OnInit {
   apellidoEstudiante: string;
   nombreEstudiante: string;
-  _idEstudiante: string;
+  calificacionesXMateria: any[];
+  trimestre: string;
+  displayedColumns: string[] = ["materia", "calif1", "calif2", "calif3","calif4", "calif5", "calif6", "prom"];
   constructor(public servicio: EstudiantesService,  public router: Router) { }
 
   ngOnInit() {
     this.apellidoEstudiante = this.servicio.estudianteSeleccionado.apellido;
     this.nombreEstudiante = this.servicio.estudianteSeleccionado.nombre;
-    this._idEstudiante = this.servicio.estudianteSeleccionado._id;
+    this.obtenerTrimestrePorDefecto();
+    this.servicio.obtenerCalificacionesXMateriaXEstudiante(this.trimestre).subscribe(
+      res =>  {
+        this.calificacionesXMateria = res.vectorCalXMat;
+      }
+    );
   }
+
+  onChangeTrimestre(){
+    this.servicio.obtenerCalificacionesXMateriaXEstudiante(this.trimestre).subscribe(
+      res =>  {
+        this.calificacionesXMateria = res.vectorCalXMat;
+      }
+    );
+  }
+
+  obtenerTrimestrePorDefecto()
+  {
+    var today = new Date();
+    var t1 = new Date(2019, 4, 31);
+    var t2 = new Date(2019, 8, 15);
+
+    if (today < t1)
+    this.trimestre = "1";
+    else if(today > t2)
+    this.trimestre = "3";
+    else
+    this.trimestre = "2";
+  }
+
 
 }

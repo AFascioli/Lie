@@ -1,18 +1,122 @@
 <mat-card>
-  <mat-card-title class= "componente-titulo">
-    {{ apellidoEstudiante }} {{ nombreEstudiante }}
+  <mat-card-title class="componente-titulo">
+    <p>{{ apellidoEstudiante }}, {{ nombreEstudiante }}</p>
   </mat-card-title>
 
-  <table>
+  <mat-form-field>
+    <mat-select
+      name="trimestre"
+      ngModel
+      #trimestreElegido="ngModel"
+      matNativeControl
+      required
+      placeholder="Seleccione trimestre"
+      name="trimestre"
+      [(ngModel)]="trimestre"
+      (onChange)="onChangeTrimestre()"
+    >
+      <mat-option value="1">Primer</mat-option>
+      <mat-option value="2">Segundo</mat-option>
+      <mat-option value="3">Tercer</mat-option>
+    </mat-select>
+  </mat-form-field>
 
+  <table
+    mat-table
+    [dataSource]="calificacionesXMateria"
+    *ngIf="calificacionesXMateria"
+  >
+    <ng-container matColumnDef="materia">
+      <th class="columnasNormales" mat-header-cell *matHeaderCellDef>
+        Materia
+      </th>
+      <td class="columnasNormales" mat-cell *matCellDef="let calificacionesXMateria">
+        {{ calificacionesXMateria.materia }}
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="calif1">
+      <th class="columnasNormales" mat-header-cell *matHeaderCellDef>
+        1º
+      </th>
+      <td class="columnasNormales" mat-cell *matCellDef="let calificacionesXMateria">
+        {{ calificacionesXMateria.calificaciones[0] }}
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="calif2">
+      <th class="columnasNormales" mat-header-cell *matHeaderCellDef>
+        2º
+      </th>
+      <td class="columnasNormales" mat-cell *matCellDef="let calificacionesXMateria">
+        {{ calificacionesXMateria.calificaciones[1] }}
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="calif3">
+      <th class="columnasNormales" mat-header-cell *matHeaderCellDef>
+        3º
+      </th>
+      <td class="columnasNormales" mat-cell *matCellDef="let calificaciones">
+        {{ calificacionesXMateria.calificaciones[2] }}
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="calif4">
+      <th class="columnasNormales" mat-header-cell *matHeaderCellDef>
+        4º
+      </th>
+      <td class="columnasNormales" mat-cell *matCellDef="let calificaciones">
+        {{ calificacionesXMateria.calificaciones[3] }}
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="calif5">
+      <th class="columnasNormales" mat-header-cell *matHeaderCellDef>
+        5º
+      </th>
+      <td class="columnasNormales" mat-cell *matCellDef="let calificaciones">
+        {{ calificacionesXMateria.calificaciones[4] }}
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="calif6">
+      <th class="columnasNormales" mat-header-cell *matHeaderCellDef>
+        6º
+      </th>
+      <td class="columnasNormales" mat-cell *matCellDef="let calificaciones">
+        {{ calificacionesXMateria.calificaciones[5] }}
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="prom">
+      <th class="columnasChicas" mat-header-cell *matHeaderCellDef>Promedio</th>
+      <td
+        class="columnasChicas"
+        mat-cell
+        *matCellDef="let estudiante; let i = index"
+      >
+      <p *ngIf="!(contadorNotasValidas(i)==0); else sinNotas">
+        {{((estudiante.calificaciones[0]+estudiante.calificaciones[1]+estudiante.calificaciones[2]+
+          estudiante.calificaciones[3]+estudiante.calificaciones[4]+estudiante.calificaciones[5])
+          / contadorNotasValidas(i)).toFixed(2)}}
+        </p>
+        <ng-template #sinNotas>0</ng-template>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
   </table>
 
-  <div >
-      <button class="button-volver"
-       mat-raised-button
-       color="primary"
-       [routerLink]="['/perfilEstudiante']" >
-         Volver
-        </button>
-    </div>
+  <div>
+    <button
+      class="button-volver"
+      mat-raised-button
+      color="primary"
+      [routerLink]="['/perfilEstudiante']"
+    >
+      Volver
+    </button>
+  </div>
 </mat-card>
