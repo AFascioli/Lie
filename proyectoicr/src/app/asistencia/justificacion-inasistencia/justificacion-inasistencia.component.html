@@ -12,10 +12,28 @@
             >Múltiplos días</mat-radio-button
           >
         </mat-radio-group>
-  </form>
+        <br />
+        <mat-form-field>
+            <input
+              matInput
 
+             
 
-
+              [max]="maxDate"
+              [matDatepicker]="picker"
+              placeholder="Seleccione fecha inicial"
+              required
+            />
+            <mat-datepicker-toggle
+              matSuffix
+              [for]="picker"
+            ></mat-datepicker-toggle>
+            <mat-datepicker
+              #picker
+              startView="multi-year"
+              disabled="false"
+            ></mat-datepicker>
+          </mat-form-field>
 
   <div class="div-button">
     <button
@@ -41,4 +59,5 @@
    Volver
   </button>
   </div>
+</form>
 </mat-card>

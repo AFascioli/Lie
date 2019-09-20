@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { DateAdapter} from "@angular/material";
 
 @Component({
   selector: 'app-justificacion-inasistencia',
@@ -6,8 +7,11 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./justificacion-inasistencia.component.css']
 })
 export class JustificacionInasistenciaComponent implements OnInit {
+  maxDate = new Date();
 
-  constructor() { }
+  constructor(
+    private dateAdapter: DateAdapter<Date>,
+  ) { }
 
   ngOnInit() {
   }
