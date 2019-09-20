@@ -44,6 +44,7 @@ export class CalificacionesPerfilEstudianteComponent implements OnInit {
       });
   }
 
+  //Segun la fecha actual selecciona por defecto el trimestre
   obtenerTrimestrePorDefecto() {
     var today = new Date();
     var t1 = new Date(2019, 4, 31);
@@ -56,15 +57,11 @@ export class CalificacionesPerfilEstudianteComponent implements OnInit {
 
   //Dado el indice de la tabla que representa una materia, retorna cuantas
   //notas tienen valor distinto a cero
-  contadorNotasValidas(index):number{
-    var cont =0;
-    this.calificacionesXMateria[index].calificaciones.forEach
-    (nota => {
-      if (nota !=0 && nota != null)
-      cont++;
-     });
-     return cont;
-    }
-
-
+  contadorNotasValidas(index): number {
+    var cont = 0;
+    this.calificacionesXMateria[index].calificaciones.forEach(nota => {
+      if (nota != 0 && nota != null) cont++;
+    });
+    return cont;
+  }
 }

@@ -438,7 +438,7 @@ router.get("/calif/materia", (req, res) => {
     },
     {
       $match: {
-        "cXM.trimestre": parseInt(req.query.trimestre,10)
+        "cXM.trimestre": parseInt(req.query.trimestre, 10)
       }
     },
     {
@@ -472,73 +472,91 @@ router.get("/calif/materia", (req, res) => {
   });
 });
 
-//Ver como manejar los dos tipos de justificacion, esta manejado solo la justificacion para un dia
-router.get("/inasistencia/justificada",(req, res) => {
-  if (!req.query.justificacionMultiple) {
-    Inscripcion.aggregate([
-      {
-        $match: {
-          IdEstudiante: mongoose.Types.ObjectId("5d1a5a66941efc2e98b15c0e"),
-          activa: true
-        }
-      },
-      {
-        $unwind: {
-          path: "$asistenciaDiaria"
-        }
-      },
-      {
-        $lookup: {
-          from: "asistenciaDiaria",
-          localField: "asistenciaDiaria",
-          foreignField: "_id",
-          as: "presentismo"
-        }
-      },
-      {
-        $match: {
-          "presentismo.fecha": {
-            $gte: new Date("Tue, 16 Jul 2019 00:00:00 GMT"),
-            $lt: new Date("Tue, 16 Jul 2019 23:59:59 GMT")
-          }
-        }
-      },
-      {
-        $project: {
-          "presentismo._id": 1,
-          "presentismo.presente": 1,
-          "presentismo.justificado": 1
+//Primero, las fechas del backend estan adelantadas por 3 hrs, se corrige eso. Luego se realiza
+//la consulta y segun sea multiple justificacion o no realiza las operaciones correspondientes
+//Nota: no deja justificar si el alumno estuvo presente para la fecha o si ya fue
+//justificada la asistencia para ese dia
+router.get("/inasistencia/justificada", (req, res) => {
+  let fechaInicio = new Date(req.query.fechaInicio);
+  let fechaFin = new Date(req.query.fechaFin);
+  fechaInicio.setHours(fechaInicio.getHours() - 3);
+  fechaFin.setHours(fechaFin.getHours() - 3);
+  Inscripcion.aggregate([
+    {
+      $match: {
+        IdEstudiante: mongoose.Types.ObjectId("5d1a5a66941efc2e98b15c0e"), //Deshardcodear
+        activa: true
+      }
+    },
+    {
+      $unwind: {
+        path: "$asistenciaDiaria"
+      }
+    },
+    {
+      $lookup: {
+        from: "asistenciaDiaria",
+        localField: "asistenciaDiaria",
+        foreignField: "_id",
+        as: "presentismo"
+      }
+    },
+    {
+      $match: {
+        "presentismo.fecha": {
+          $gte: fechaInicio,
+          $lt: fechaFin
         }
       }
-    ]).then(resultado => {
-      //5d2e30dd32a43405043e76c6 id de la asistencia que retorna
+    },
+    {
+      $project: {
+        "presentismo._id": 1,
+        "presentismo.presente": 1,
+        "presentismo.justificado": 1
+      }
+    }
+  ]).then(resultado => {
+    //5d2e30dd32a43405043e76c6 id de la asistencia que retorna
+    console.log(JSON.stringify(resultado));
+    if(req.query.esMultiple=="true"){
+      resultado[0].presentismo.forEach(async asistenciaDiaria => {
+        if(!resultado[0].presentismo[0].presente && !resultado[0].presentismo[0].justificado){
+          let idAsistencia = asistenciaDiaria._id;
+          await AsistenciaDiaria.findByIdAndUpdate(idAsistencia, {
+            justificado: true
+          }).exec();
+        }
+      });
+      res.status(200).json({message: "Inasistencias justificadas exitosamente", exito: true});
+    }else{
       if (resultado[0].presentismo[0].presente) {
-        return res
-          .status(200)
-          .json({
-            message: "El estudiante estuvo presente para la fecha ingresada",
-            exito: false
-          });
-      } else if (resultado[0].presentismo[0].justificado) {
-        return res
-          .status(200)
-          .json({
+      return res
+        .status(200)
+        .json({
+          message: "El estudiante estuvo presente para la fecha ingresada",
+          exito: false
+        });
+    } else if (resultado[0].presentismo[0].justificado) {
+      return res
+        .status(200)
+        .json({
             message: "El estudiante ya tiene justificada la inasistencia",
-            exito: false
-          });
-      } else {
-        let idAsistencia = resultado[0].presentismo[0]._id;
-        AsistenciaDiaria.findByIdAndUpdate(idAsistencia, {
-          justificado: true
-        }).then(() => {
-          res.json({
-            message: "Asistencia exitósamente justificada",
+          exito: false
+        });
+    } else {
+      let idAsistencia = resultado[0].presentismo[0]._id;
+      AsistenciaDiaria.findByIdAndUpdate(idAsistencia, {
+        justificado: true
+      }).then(() => {
+        res.json({
+            message: "Asistencia exitosamente justificada",
             exito: true
           });
         });
       }
-    });
-  }
+    }
+  });
 });
 
 module.exports = router;

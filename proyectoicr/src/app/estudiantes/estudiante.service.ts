@@ -370,6 +370,20 @@ export class EstudiantesService {
       vectorCalXMat: any[];
     }>("http://localhost:3000/estudiante/calif/materia", {
       params: params
+    });
+  }
+
+  //Dada una fecha de inicio y una fecha fin, justifica cada asistencia diaria dentro de ese periodo
+  justificarInasistencia(fechaInicio:string, fechaFin: string,esMultiple: boolean){
+    let params = new HttpParams()
+      .set("fechaInicio", fechaInicio)
+      .set("fechaFin", fechaFin)
+      .set("esMultiple", esMultiple.toString());
+    return this.http.get<{
+      message: string;
+      exito: boolean;
+    }>("http://localhost:3000/estudiante/inasistencia/justificada", {
+      params: params
     })
   }
 }
