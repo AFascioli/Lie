@@ -2,6 +2,7 @@ import { AdultoResponsable } from "./adultoResponsable.model";
 import { HttpClient, HttpParams } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { AutencacionService } from "../login/autenticacionService.service";
+import { Estudiante } from '../estudiantes/estudiante.model';
 
 @Injectable({
   providedIn: "root"
@@ -22,7 +23,8 @@ export class AdultoResponsableService {
     fechaNacimiento: string,
     telefono: number,
     email: string,
-    tutor: boolean
+    tutor: boolean,
+    estudiante: Estudiante
   ) {
     this.authServicio
       .crearUsuario(email, numeroDocumento.toString())
@@ -45,7 +47,7 @@ export class AdultoResponsableService {
           this.http
             .post<{ message: string; exito: boolean }>(
               "http://localhost:3000/adultoResponsable",
-              adultoResponsable
+              {AR: adultoResponsable, estudiante: estudiante}
             )
             .subscribe(response => {
               console.log(response);
@@ -55,4 +57,6 @@ export class AdultoResponsableService {
         }
       });
   }
+
+
 }
