@@ -6,7 +6,7 @@ export interface Empleado {
   numeroDocumento: number;
   sexo: string;
   nacionalidad: string;
-  fechaNacimiento: string;
+  fechaNacimiento: Date;
   telefono: number;
   email: string;
   tipoEmpleado: string;

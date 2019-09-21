@@ -1,3 +1,4 @@
+import { AdultoResponsableService } from './../../adulto-responsable/adultoResponsable.service';
 import { Component, OnInit } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { EstudiantesService } from '../estudiante.service';
@@ -20,7 +21,7 @@ export class BuscarEstudiantesComponent implements OnInit {
   nroDocEstSelec:number;
   tipoDocEstSelec:string;
 
-  constructor(public servicio: EstudiantesService, public dialog: MatDialog) {   }
+  constructor(public servicio: EstudiantesService, public dialog: MatDialog, public servicioAR: AdultoResponsableService) {   }
 
   ngOnInit() {
    if(this.servicio.retornoDesdeAcciones && this.servicio.busquedaEstudianteXNombre)
@@ -36,7 +37,8 @@ export class BuscarEstudiantesComponent implements OnInit {
     this.tipoDocEstSelec=this.servicio.estudianteSeleccionado.tipoDocumento;
     this.buscarPorNomYAp= false;
    }
-
+   //slet fecha = new Date();
+   //this.servicioAR.registrarAdultoResponsable("Gomez", "Ramiro", "DNI", 24536845, "Masculino", "Argentina", fecha , 395435286, "ramirogomez@gmail.com", false, "5d0ee07c489bdd0830bd1d0d");
   }
 
   // Si el formulario no es valido no hace nada, luego controla que tipo de busqueda es

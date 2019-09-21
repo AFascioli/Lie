@@ -20,11 +20,11 @@ export class AdultoResponsableService {
     numeroDocumento: number,
     sexo: string,
     nacionalidad: string,
-    fechaNacimiento: string,
+    fechaNacimiento: Date,
     telefono: number,
     email: string,
     tutor: boolean,
-    estudiante: Estudiante
+    idEstudiante: string
   ) {
     this.authServicio
       .crearUsuario(email, numeroDocumento.toString())
@@ -47,7 +47,7 @@ export class AdultoResponsableService {
           this.http
             .post<{ message: string; exito: boolean }>(
               "http://localhost:3000/adultoResponsable",
-              {AR: adultoResponsable, estudiante: estudiante}
+              {AR: adultoResponsable, idEstudiante: idEstudiante}
             )
             .subscribe(response => {
               console.log(response);
@@ -57,6 +57,5 @@ export class AdultoResponsableService {
         }
       });
   }
-
 
 }

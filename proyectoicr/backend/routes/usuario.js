@@ -6,30 +6,39 @@ const Usuario = require("../models/usuario");
 
 const router = express.Router();
 
-router.post("/signup", (req, res, next) => {
-  bcrypt.hash(req.body.password, 10).then(hash => {
-    const usuario = new Usuario({
-      email: req.body.email,
-      password: hash
-    });
-    usuario
-      .save()
-      .then(result => {
-        res.status(201).json({
-          message: "Usuario creado exitosamente",
-          exito: true,
-          id: usuario._id
-        });
-      })
-      .catch(err => {
-        res.status(200).json({
-          exito: false
-        });
+router.post("/signup", (req, res) => {
+  Usuario.findOne({ email: req.body.email }).then(usuario => {
+    if (usuario) {
+      return res.status(200).json({
+        message: "El usuario ya estaba registrado",
+        exito: true
       });
+    } else {
+      bcrypt.hash(req.body.password, 10).then(hash => {
+        const usuario = new Usuario({
+          email: req.body.email,
+          password: hash
+        });
+        usuario
+          .save()
+          .then(result => {
+            res.status(201).json({
+              message: "Usuario creado exitosamente",
+              exito: true,
+              id: usuario._id
+            });
+          })
+          .catch(err => {
+            res.status(200).json({
+              exito: false
+            });
+          });
+      });
+    }
   });
 });
 
-router.post("/login", (req, res, next) => {
+router.post("/login", (req, res) => {
   let usuarioEncontrado;
   Usuario.findOne({ email: req.body.email }).then(usuario => {
     if (!usuario) {
@@ -61,7 +70,7 @@ router.post("/login", (req, res, next) => {
   });
 });
 
-router.post("/cambiarPassword", async(req, res, next) => {
+router.post("/cambiarPassword", async (req, res, next) => {
   let passwordNueva;
   await bcrypt.hash(req.body.passwordNueva, 10).then(hash => {
     passwordNueva = hash;
@@ -83,45 +92,5 @@ router.post("/cambiarPassword", async(req, res, next) => {
     }
   });
 });
-
-// router.post("/login",(req, res, next) => {
-//   let usuarioEncontrado;
-//   Usuario.findOne({ email: req.body.email })
-//     .then(usuario => {
-//       if (!usuario) {
-//         return res.status(200).json({
-//           message: "El usuario ingresado no existe",
-//           exito: false
-//         });
-//       }
-//       usuarioEncontrado = usuario;
-//       return bcrypt.compare(req.body.password, usuario.password);
-//     })
-//     .then(resultado => {
-//       if (!resultado) {
-//         return res.status(200).json({
-//           message: "La contraseña ingresada es incorrecta",
-//           exito: false
-//         });
-//       }
-//       const token = jwt.sign(
-//         { email: usuarioEncontrado.email, userId: usuarioEncontrado._id },
-//         "aca_va_el_secreto_que_es_una_string_larga",
-//         { expiresIn: "12h" }
-//       );
-//       res.status(200).json({
-//         token: token,
-//         duracionToken: 43200,
-//         message: "Autenticación exitosa",
-//         exito: true
-//       });
-//     })
-//     // .catch(err => {
-//     //   return res.status(200).json({
-//     //     message: "Autenticación fallida",
-//     //     exito: false
-//     //   });
-//     // });
-// });
 
 module.exports = router;

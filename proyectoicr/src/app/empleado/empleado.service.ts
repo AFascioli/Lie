@@ -19,7 +19,7 @@ export class EmpleadoService {
     numeroDocumento: number,
     sexo: string,
     nacionalidad: string,
-    fechaNacimiento: string,
+    fechaNacimiento: Date,
     telefono: number,
     email: string,
     tipoEmpleado: string
