@@ -353,7 +353,8 @@ export class EstudiantesService {
     return this.http.get<{
       message: string;
       exito: boolean;
-      contadorInasistencia: number;
+      contadorInasistencias: number;
+      contadorInasistenciasJustificada: number;
     }>("http://localhost:3000/estudiante/asistenciaEstudiante", {
       params: params
     });

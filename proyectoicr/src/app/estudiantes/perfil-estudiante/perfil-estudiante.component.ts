@@ -29,9 +29,8 @@ export class PerfilEstudianteComponent implements OnInit {
     this.nombreEstudiante = this.servicio.estudianteSeleccionado.nombre;
     this._idEstudiante = this.servicio.estudianteSeleccionado._id;
     this.servicio.obtenerInasistenciasDeEstudiante().subscribe( response => {
-      this.contadorInasistencia = response.contadorInasistencia;
-      console.log(response.contadorInasistencia);
-      this.contadorInasistenciaJustificada= 7; //#resolve
+      this.contadorInasistencia = response.contadorInasistencias;
+      this.contadorInasistenciaJustificada= response.contadorInasistenciasJustificada;
       this.pieChartLabels = ['Inasistencias', 'Inasistencias Justificadas'];
       this.pieChartData = [this.contadorInasistencia, this.contadorInasistenciaJustificada];
       this.pieChartType = 'pie';

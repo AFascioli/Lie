@@ -16,8 +16,7 @@ router.post("/", checkAuthMiddleware,(req, res) => {
     telefono: req.body.telefono,
     email: req.body.email,
     tutor: req.body.tutor,
-    idUsuario: req.body.idUsuario,
-
+    idUsuario: req.body.idUsuario
   });
   adultoResponsable
     .save()

@@ -26,23 +26,14 @@
       <b>INASISTENCIA: </b>
   </mat-card-subtitle>
 
-    <!-- <div class="grafico">
-        <div class="sombra"></div>
-        <div id="porcion1" class="recorte">
-          <div class="porcion" data-rel="contadorInasistencia"></div>
-        </div>
-        <div id="porcion2" class="contadorInasistencia">
-          <div class="porcion" data-rel="contadorInasistenciaJustificada"></div>
-        </div>
-   </div> -->
-
-   <div *ngIf="contadorInasistencia" style="display: block">
+   <div *ngIf="contadorInasistencia && contadorInasistencia!=0" style="display: block">
     <canvas baseChart
             [data]="pieChartData"
             [labels]="pieChartLabels"
             [chartType]="pieChartType"
             ></canvas>
   </div>
+  <p *ngIf="contadorInasistencia==0">El estudiante no presenta ninguna inasistencia</p>
 
 </div>
 <br>
@@ -111,7 +102,7 @@
 &nbsp;
 
 <div class="div-button">
-  <button 
+  <button
   mat-raised-button
   [routerLink]="['/buscar']"
   color="primary" >
