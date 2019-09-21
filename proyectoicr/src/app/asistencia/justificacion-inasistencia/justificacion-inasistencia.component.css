@@ -1,13 +1,19 @@
 .mat-form-field {
   width: 58.5%;
+  margin-bottom: 1rem;
+  margin-top: 1rem;
+}
+
+.ubicacionDatePickers{
+ margin-top: 1rem; 
 }
 
 .mat-radio-button ~ .mat-radio-button {
   margin-left: 20%;
 }
-.mat-radio-button  {
+/* .mat-radio-button  {
   margin-bottom: 20%;
-}
+} */
 
 .mat-form-field, .mat-radio-button{
   margin-left: 20%;

@@ -52,7 +52,7 @@ import {MatGridListModule} from '@angular/material/grid-list';
 import { CalificacionesEstudiantesComponent, CalificacionesEstudiantePopupComponent } from './estudiantes/calificaciones-estudiantes/calificaciones-estudiantes.component';
 import { LlegadaTardeComponent } from './asistencia/llegada-tarde/llegada-tarde.component';
 import { CambiarPassword, CambiarPasswordPopupComponent } from './login/cambiar-password.component';
-import { PerfilEstudianteComponent } from './estudiantes/perfil-estudiante/perfil-estudiante.component';
+import { PerfilEstudianteComponent, PerfilEstudiantePopupComponent } from './estudiantes/perfil-estudiante/perfil-estudiante.component';
 import { CalificacionesPerfilEstudianteComponent } from './estudiantes/perfil-estudiante/calificaciones-perfil-estudiante/calificaciones-perfil-estudiante.component';
 import { AgendaCursoPerfilEstudianteComponent } from './estudiantes/perfil-estudiante/agenda-curso-perfil-estudiante/agenda-curso-perfil-estudiante.component';
 import { LOCALE_ID } from '@angular/core';
@@ -78,6 +78,7 @@ import { AltaEmpleadoComponent } from './empleado/alta-empleado/alta-empleado.co
     HomeComponent,
     RegistrarAsistenciaComponent,
     AsistenciaPopupComponent,
+    PerfilEstudiantePopupComponent,
     BuscarPopupComponent,
     InscripcionEstudianteComponent,
     InscripcionPopupComponent,
@@ -103,6 +104,7 @@ import { AltaEmpleadoComponent } from './empleado/alta-empleado/alta-empleado.co
     AltaPopupComponent,
     MostrarPopupComponent,
     AsistenciaPopupComponent,
+    PerfilEstudiantePopupComponent,
     BuscarPopupComponent,
     InscripcionPopupComponent,
     RetiroPopupComponent,

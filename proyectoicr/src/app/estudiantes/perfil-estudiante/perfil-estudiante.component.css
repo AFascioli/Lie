@@ -2,9 +2,9 @@ mat-card-subtitle{
   color: black;
 }
 
-mat-card-content{
+/* mat-card-content{
   text-indent: 34%;
-}
+} */
 
 .button-perfil{
   background-color:#551111 !important;
@@ -16,11 +16,6 @@ mat-card-content{
   background-color: #551111 !important;
   color: #fff !important;
   margin-left: 41% !important;
-}
-
-.button-volver{
-  text-align: right;
-  margin-left: 87% !important;
 }
 
 table {
@@ -41,7 +36,11 @@ th{
   box-sizing: border-box;
 }
 
-.grafico {
+.div-button {
+  text-align: right;
+}
+
+/* .grafico {
   height: 200px;
   margin: 1rem auto;
   position: relative;
@@ -109,7 +108,7 @@ th{
   position: absolute;
   top: 25%;
   transform: rotate(0deg);
-}
+} */
 
 
 

@@ -12,7 +12,7 @@
   <button
     mat-raised-button
     class="button-perfil-calificaciones"
-    (click)="onVisualizarCalificacionesEstudiante(i)"
+    (click)="onVisualizarCalificacionesEstudiante()"
     >
      Ver calificaciones
     </button>
@@ -86,7 +86,7 @@
   </mat-card-subtitle>
   <button class="button-perfil"
       mat-raised-button
-      (click)="onVisualizarAgendaCursoEstudiante(i)"
+      (click)="onVisualizarAgendaCursoEstudiante()"
     >
      Ver agenda de cursado
     </button>
@@ -110,12 +110,18 @@
 <br>
 &nbsp;
 
-<div >
-  <button class="button-volver"
+<div class="div-button">
+  <button 
   mat-raised-button
-  [routerLink]="['/buscar/lista']"
+  [routerLink]="['/buscar']"
   color="primary" >
      Volver
+  </button>
+  <button
+  mat-raised-button
+  (click)="onCancelar()"
+  color="warn" >
+     Cancelar
   </button>
 </div>
 

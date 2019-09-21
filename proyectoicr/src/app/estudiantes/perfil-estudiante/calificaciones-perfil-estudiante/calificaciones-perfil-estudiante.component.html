@@ -30,7 +30,11 @@
       <th class="columnasNormales" mat-header-cell *matHeaderCellDef>
         Materia
       </th>
-      <td class="columnasNormales" mat-cell *matCellDef="let calificacionesXMateria">
+      <td
+        class="columnasNormales"
+        mat-cell
+        *matCellDef="let calificacionesXMateria"
+      >
         {{ calificacionesXMateria.materia }}
       </td>
     </ng-container>
@@ -39,8 +43,22 @@
       <th class="columnasChicas" mat-header-cell *matHeaderCellDef>
         1º
       </th>
-      <td class="columnasChicas" mat-cell *matCellDef="let calificacionesXMateria">
-        {{ calificacionesXMateria.calificaciones[0] }}
+      <td
+        class="columnasChicas"
+        mat-cell
+        *matCellDef="let calificacionesXMateria"
+      >
+        <p
+          *ngIf="
+            calificacionesXMateria.calificaciones[0] != 0;
+            else noTieneNotas
+          "
+        >
+          {{ calificacionesXMateria.calificaciones[0] }}
+        </p>
+        <ng-template #noTieneNotas>
+          <p>-</p>
+        </ng-template>
       </td>
     </ng-container>
 
@@ -48,8 +66,22 @@
       <th class="columnasChicas" mat-header-cell *matHeaderCellDef>
         2º
       </th>
-      <td class="columnasChicas" mat-cell *matCellDef="let calificacionesXMateria">
-        {{ calificacionesXMateria.calificaciones[1] }}
+      <td
+        class="columnasChicas"
+        mat-cell
+        *matCellDef="let calificacionesXMateria"
+      >
+      <p
+      *ngIf="
+        calificacionesXMateria.calificaciones[1] != 0;
+        else noTieneNotas
+      "
+    >
+      {{ calificacionesXMateria.calificaciones[1] }}
+    </p>
+    <ng-template #noTieneNotas>
+      <p>-</p>
+    </ng-template>
       </td>
     </ng-container>
 
@@ -57,8 +89,22 @@
       <th class="columnasChicas" mat-header-cell *matHeaderCellDef>
         3º
       </th>
-      <td class="columnasChicas" mat-cell *matCellDef="let calificacionesXMateria">
-        {{ calificacionesXMateria.calificaciones[2] }}
+      <td
+        class="columnasChicas"
+        mat-cell
+        *matCellDef="let calificacionesXMateria"
+      >
+      <p
+      *ngIf="
+        calificacionesXMateria.calificaciones[2] != 0;
+        else noTieneNotas
+      "
+    >
+      {{ calificacionesXMateria.calificaciones[2] }}
+    </p>
+    <ng-template #noTieneNotas>
+      <p>-</p>
+    </ng-template>
       </td>
     </ng-container>
 
@@ -66,8 +112,22 @@
       <th class="columnasChicas" mat-header-cell *matHeaderCellDef>
         4º
       </th>
-      <td class="columnasChicas" mat-cell *matCellDef="let calificacionesXMateria">
-        {{ calificacionesXMateria.calificaciones[3] }}
+      <td
+        class="columnasChicas"
+        mat-cell
+        *matCellDef="let calificacionesXMateria"
+      >
+      <p
+      *ngIf="
+        calificacionesXMateria.calificaciones[3] != 0;
+        else noTieneNotas
+      "
+    >
+      {{ calificacionesXMateria.calificaciones[3] }}
+    </p>
+    <ng-template #noTieneNotas>
+      <p>-</p>
+    </ng-template>
       </td>
     </ng-container>
 
@@ -75,8 +135,22 @@
       <th class="columnasChicas" mat-header-cell *matHeaderCellDef>
         5º
       </th>
-      <td class="columnasChicas" mat-cell *matCellDef="let calificacionesXMateria">
-        {{ calificacionesXMateria.calificaciones[4] }}
+      <td
+        class="columnasChicas"
+        mat-cell
+        *matCellDef="let calificacionesXMateria"
+      >
+      <p
+      *ngIf="
+        calificacionesXMateria.calificaciones[4] != 0;
+        else noTieneNotas
+      "
+    >
+      {{ calificacionesXMateria.calificaciones[4] }}
+    </p>
+    <ng-template #noTieneNotas>
+      <p>-</p>
+    </ng-template>
       </td>
     </ng-container>
 
@@ -84,8 +158,22 @@
       <th class="columnasChicas" mat-header-cell *matHeaderCellDef>
         6º
       </th>
-      <td class="columnasChicas" mat-cell *matCellDef="let calificacionesXMateria">
-        {{ calificacionesXMateria.calificaciones[5] }}
+      <td
+        class="columnasChicas"
+        mat-cell
+        *matCellDef="let calificacionesXMateria"
+      >
+      <p
+      *ngIf="
+        calificacionesXMateria.calificaciones[5] != 0;
+        else noTieneNotas
+      "
+    >
+      {{ calificacionesXMateria.calificaciones[5] }}
+    </p>
+    <ng-template #noTieneNotas>
+      <p>-</p>
+    </ng-template>
       </td>
     </ng-container>
 
@@ -96,10 +184,18 @@
         mat-cell
         *matCellDef="let estudiante; let i = index"
       >
-      <p *ngIf="!(contadorNotasValidas(i)==0); else sinNotas">
-        {{((estudiante.calificaciones[0]+estudiante.calificaciones[1]+estudiante.calificaciones[2]+
-          estudiante.calificaciones[3]+estudiante.calificaciones[4]+estudiante.calificaciones[5])
-          / contadorNotasValidas(i)).toFixed(2)}}
+        <p *ngIf="!(contadorNotasValidas(i) == 0); else sinNotas">
+          {{
+            (
+              (estudiante.calificaciones[0] +
+                estudiante.calificaciones[1] +
+                estudiante.calificaciones[2] +
+                estudiante.calificaciones[3] +
+                estudiante.calificaciones[4] +
+                estudiante.calificaciones[5]) /
+              contadorNotasValidas(i)
+            ).toFixed(2)
+          }}
         </p>
         <ng-template #sinNotas>0</ng-template>
       </td>
