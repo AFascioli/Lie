@@ -16,7 +16,12 @@ export class HomeComponent implements OnInit {
   constructor(private swPush: SwPush, private servicio: AutencacionService) {}
 
   ngOnInit() {
-    this.subscribeToNotifications();
+    if ('serviceWorker' in navigator){
+    navigator.serviceWorker.register("ngsw-worker.js").then((swreg) => {
+      console.log('Registered as service worker');
+      this.subscribeToNotifications();
+    });
+    }
   }
 
   obra = require('../../img/acto.jpg');
