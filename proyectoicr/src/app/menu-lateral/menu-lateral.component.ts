@@ -1,7 +1,7 @@
 import { MatDialog, MatDialogRef } from "@angular/material";
 import { Component, OnInit } from "@angular/core";
 import { Router } from "@angular/router";
-import { AutencacionService } from "../login/autenticacionService.service";
+import { AutenticacionService } from "../login/autenticacionService.service";
 import { EstudiantesService } from '../estudiantes/estudiante.service';
 
 @Component({
@@ -12,7 +12,7 @@ import { EstudiantesService } from '../estudiantes/estudiante.service';
 export class MenuLateralComponent implements OnInit {
   constructor(
     public router: Router,
-    public authService: AutencacionService,
+    public authService: AutenticacionService,
     public dialog: MatDialog,
     public estudianteService: EstudiantesService
   ) {}
@@ -48,7 +48,7 @@ export class CerrarSesionPopupComponent {
   constructor(
     public dialogRef: MatDialogRef<CerrarSesionPopupComponent>,
     public router: Router,
-    public authService: AutencacionService
+    public authService: AutenticacionService
   ) {}
 
   onYesClick(): void {

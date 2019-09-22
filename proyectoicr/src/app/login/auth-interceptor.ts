@@ -4,12 +4,11 @@ import {
   HttpHandler
 } from "@angular/common/http";
 import { Injectable } from "@angular/core";
-
-import { AutencacionService } from "./autenticacionService.service";
+import { AutenticacionService } from "./autenticacionService.service";
 
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
-  constructor(private servicio: AutencacionService) {}
+  constructor(private servicio: AutenticacionService) {}
 
   //Toma cada una de las request que salen hacia el backend y les agrega el token para que puedan ser
   //verificadas

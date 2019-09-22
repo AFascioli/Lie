@@ -1,7 +1,7 @@
 import { AdultoResponsable } from "./adultoResponsable.model";
 import { HttpClient, HttpParams } from "@angular/common/http";
 import { Injectable } from "@angular/core";
-import { AutencacionService } from "../login/autenticacionService.service";
+import { AutenticacionService } from "../login/autenticacionService.service";
 import { Estudiante } from '../estudiantes/estudiante.model';
 
 @Injectable({
@@ -10,7 +10,7 @@ import { Estudiante } from '../estudiantes/estudiante.model';
 export class AdultoResponsableService {
   constructor(
     public http: HttpClient,
-    public authServicio: AutencacionService
+    public authServicio: AutenticacionService
   ) {}
 
   registrarAdultoResponsable(
@@ -27,7 +27,7 @@ export class AdultoResponsableService {
     idEstudiante: string
   ) {
     this.authServicio
-      .crearUsuario(email, numeroDocumento.toString())
+      .crearUsuario(email, numeroDocumento.toString(), 'AdultoResponsable')
       .subscribe(res => {
         if (res.exito) {
           let idUsuario = res.id;

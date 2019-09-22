@@ -61,13 +61,15 @@ router.post("/login", (req, res) => {
           "aca_va_el_secreto_que_es_una_string_larga",
           { expiresIn: "12h" }
         );
-        res.status(200).json({
-          token: token,
-          duracionToken: 43200,
-          rol: usuarioEncontrado.rol,
-          message: "Bienvenido a Lié",
-          exito: true
-        });
+        Rol.findById(usuarioEncontrado.rol).then(rol => {
+              res.status(200).json({
+              token: token,
+              duracionToken: 43200,
+              rol: rol.tipo,
+              message: "Bienvenido a Lié",
+              exito: true
+            });
+        })
       }
     }
   });

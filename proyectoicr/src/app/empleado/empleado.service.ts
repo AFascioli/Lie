@@ -1,4 +1,4 @@
-import { AutencacionService } from "./../login/autenticacionService.service";
+import { AutenticacionService } from "./../login/autenticacionService.service";
 import { HttpClient, HttpParams } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { Empleado } from "./empleado.model";
@@ -9,7 +9,7 @@ import { Empleado } from "./empleado.model";
 export class EmpleadoService {
   constructor(
     public http: HttpClient,
-    public authServicio: AutencacionService
+    public authServicio: AutenticacionService
   ) {}
 
   registrarEmpleado(
@@ -25,7 +25,7 @@ export class EmpleadoService {
     tipoEmpleado: string
   ) {
     this.authServicio
-      .crearUsuario(email, numeroDocumento.toString())
+      .crearUsuario(email, numeroDocumento.toString(), tipoEmpleado)
       .subscribe(res => {
         if (res.exito) {
           let idUsuario = res.id;

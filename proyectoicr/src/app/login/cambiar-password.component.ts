@@ -1,5 +1,5 @@
 import { OnInit, Component } from "@angular/core";
-import { AutencacionService } from "./autenticacionService.service";
+import { AutenticacionService } from "./autenticacionService.service";
 import { NgForm } from "@angular/forms";
 import { MatSnackBar, MatDialogRef, MatDialog } from "@angular/material";
 import { Router } from '@angular/router';
@@ -17,7 +17,7 @@ export class CambiarPassword implements OnInit {
   ngOnInit() {}
 
   constructor(
-    private servicio: AutencacionService,
+    private servicio: AutenticacionService,
     private snackBar: MatSnackBar,
     public dialog: MatDialog
   ) {}
