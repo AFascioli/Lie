@@ -60,6 +60,8 @@ import { registerLocaleData } from '@angular/common';
 import { ChartsModule } from 'ng2-charts';
 registerLocaleData(localePy, 'es');
 import localePy from '@angular/common/locales/es';
+import { ServiceWorkerModule } from '@angular/service-worker';
+import { environment } from '../environments/environment';
 
 @NgModule({
   declarations: [
@@ -87,7 +89,7 @@ import localePy from '@angular/common/locales/es';
     LlegadaTardeComponent,
     CambiarPassword,
     CambiarPasswordPopupComponent,
-    CerrarSesionPopupComponent
+    CerrarSesionPopupComponent,
     PerfilEstudianteComponent,
     CalificacionesPerfilEstudianteComponent,
     AgendaCursoPerfilEstudianteComponent
@@ -131,7 +133,8 @@ import localePy from '@angular/common/locales/es';
     MatCheckboxModule,
     MatSnackBarModule,
     MatGridListModule,
-    ChartsModule
+    ChartsModule,
+    ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production })
   ],
   //le decimos a angular que vamos a tener un interceptor nuevo (provide), luego le indicamos que
   //interceptor usar (useClass) y finalmente aclaramos que no sobreescriba el interceptor que esta

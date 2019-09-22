@@ -123,4 +123,36 @@ router.post("/cambiarPassword", async(req, res, next) => {
 //     // });
 // });
 
+router.post("/suscripcion", (req, res) => {
+  const emailuser = req.body.usuarioAutenticado;
+  const suscripcion = req.body.sub;
+
+  Usuario.findOneAndUpdate({email: emailuser}, { $push: { suscripciones: suscripcion }}).then(() => {
+    return res.status(201).json({message: "Suscripción registrada correctamente"});
+  }).catch((e) => {
+    console.log(e);
+  });
+
+});
+
+// #resolve borrar
+// router.get("/test", (req, res) => {
+//   const emailuser = "agufascioli@gmail.com";
+//   const suscripcion = {
+//     endpoint: "endpoint",
+//     expirationTime: 12,
+//     p256dh: "cosaolorasa",
+//     auth: "auth"
+//   };
+//   console.log("/usuarios/test");
+
+//   Usuario.findOneAndUpdate({email: emailuser}, { $push: { suscripciones: suscripcion }}).then((usuario) => {
+//      console.log(usuario.email);
+//   }).catch((e) => {
+//     console.log(e);
+//   });
+
+//   return res.status(201).json({message: "Suscripción registrada correctamente"});
+// });
+
 module.exports = router;

@@ -1,5 +1,5 @@
 {
-  "name": "proyectoicr",
+  "name": "lie",
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
@@ -22,7 +22,9 @@
     "@angular/material": "^7.3.7",
     "@angular/platform-browser": "~8.0.1",
     "@angular/platform-browser-dynamic": "~8.0.1",
+    "@angular/pwa": "^0.803.5",
     "@angular/router": "~8.0.1",
+    "@angular/service-worker": "~8.0.1",
     "bcrypt": "^3.0.6",
     "body-parser": "^1.19.0",
     "chart.js": "^2.8.0",
