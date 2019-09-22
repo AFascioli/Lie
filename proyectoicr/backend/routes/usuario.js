@@ -128,6 +128,7 @@ router.post("/suscripcion", (req, res) => {
   const suscripcion = req.body.sub;
 
   Usuario.findOneAndUpdate({email: emailuser}, { $push: { suscripciones: suscripcion }}).then(() => {
+    console.log('Suscripcion registrada.');
     return res.status(201).json({message: "Suscripción registrada correctamente"});
   }).catch((e) => {
     console.log(e);

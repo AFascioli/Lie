@@ -3,6 +3,7 @@ const Estudiante = require("../models/estudiante");
 const Inscripcion = require("../models/inscripcion");
 const Division = require("../models/division");
 const AsistenciaDiaria = require("../models/asistenciaDiaria");
+const Suscripcion = require("../classes/suscripcion");
 const router = express.Router();
 
 const checkAuthMiddleware= require("../middleware/check-auth");
@@ -361,6 +362,9 @@ router.post("/retiro", checkAuthMiddleware,(req, res) => {
                     $inc: { valorInasistencia: actualizacionInasistencia }
                   }
                 ).then(() => {
+                  //#resolve
+                  Suscripcion.notificar("agufascioli@gmail.com","Nuestra primera notificación","Salio.")
+
                   res.status(200).json({
                     message: "Retiro anticipado exitósamente registrado",
                     exito: "exito"

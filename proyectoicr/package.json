@@ -8,7 +8,9 @@
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
-    "dev": "nodemon ./backend/server.js"
+    "dev": "nodemon ./backend/server.js",
+    "http-server": "http-server /dist/proyectoicr -p 4200",
+    "deploy": "npm run build && npm run http-server"
   },
   "private": true,
   "dependencies": {
