@@ -1,4 +1,4 @@
-import { AuthInterceptor } from './login/auth-interceptor';
+import { AuthInterceptor } from "./login/auth-interceptor";
 import { BrowserModule } from "@angular/platform-browser";
 import { NgModule } from "@angular/core";
 import {
@@ -25,43 +25,67 @@ import { MatMenuModule } from "@angular/material/menu";
 import { AppComponent } from "./app.component";
 import {
   AltaEstudiantesComponent,
-  AltaPopupComponent,
+  AltaPopupComponent
 } from "./estudiantes/alta-estudiantes/alta-estudiantes.component";
 import { FormsModule } from "@angular/forms";
 import { HttpClientModule, HTTP_INTERCEPTORS } from "@angular/common/http";
 import { EstudiantesService } from "./estudiantes/estudiante.service";
-import { BuscarEstudiantesComponent, BuscarPopupComponent } from "./estudiantes/buscar-estudiantes/buscar-estudiantes.component";
-import { ListaEstudiantesComponent} from "./estudiantes/lista-estudiantes/lista-estudiantes.component";
+import {
+  BuscarEstudiantesComponent,
+  BuscarPopupComponent
+} from "./estudiantes/buscar-estudiantes/buscar-estudiantes.component";
+import { ListaEstudiantesComponent } from "./estudiantes/lista-estudiantes/lista-estudiantes.component";
 import {
   MostrarEstudiantesComponent,
   MostrarPopupComponent
 } from "./estudiantes/mostrar-estudiantes/mostrar-estudiantes.component";
 import { AppRoutingModule } from "./app-routing.module";
 import { LoginComponent } from "./login/login.component";
-import { MenuLateralComponent, CerrarSesionPopupComponent } from "./menu-lateral/menu-lateral.component";
+import {
+  MenuLateralComponent,
+  CerrarSesionPopupComponent
+} from "./menu-lateral/menu-lateral.component";
 import { HomeComponent } from "./home/home.component";
 import {
   RegistrarAsistenciaComponent,
   AsistenciaPopupComponent
 } from "./asistencia/registrar-asistencia/registrar-asistencia.component";
 import { MatExpansionModule } from "@angular/material/expansion";
-import { InscripcionEstudianteComponent, InscripcionPopupComponent } from './estudiantes/inscripcion-estudiantes/inscripcion-estudiantes.component';
-import { RetiroAnticipadoComponent, RetiroPopupComponent } from './asistencia/retiro-anticipado/retiro-anticipado.component';
-import { DocumentosInscripcionComponent, DocumentosInscripcionPopupComponent } from './estudiantes/documentos-inscripcion/documentos-inscripcion.component';
-import {MatGridListModule} from '@angular/material/grid-list';
-import { CalificacionesEstudiantesComponent, CalificacionesEstudiantePopupComponent } from './estudiantes/calificaciones-estudiantes/calificaciones-estudiantes.component';
-import { LlegadaTardeComponent } from './asistencia/llegada-tarde/llegada-tarde.component';
-import { CambiarPassword, CambiarPasswordPopupComponent } from './login/cambiar-password.component';
-import { PerfilEstudianteComponent } from './estudiantes/perfil-estudiante/perfil-estudiante.component';
-import { CalificacionesPerfilEstudianteComponent } from './estudiantes/perfil-estudiante/calificaciones-perfil-estudiante/calificaciones-perfil-estudiante.component';
-import { AgendaCursoPerfilEstudianteComponent } from './estudiantes/perfil-estudiante/agenda-curso-perfil-estudiante/agenda-curso-perfil-estudiante.component';
-import { LOCALE_ID } from '@angular/core';
-import { registerLocaleData } from '@angular/common';
-import { ChartsModule } from 'ng2-charts';
-registerLocaleData(localePy, 'es');
-import localePy from '@angular/common/locales/es';
-import { ServiceWorkerModule } from '@angular/service-worker';
-import { environment } from '../environments/environment';
+import {
+  InscripcionEstudianteComponent,
+  InscripcionPopupComponent
+} from "./estudiantes/inscripcion-estudiantes/inscripcion-estudiantes.component";
+import {
+  RetiroAnticipadoComponent,
+  RetiroPopupComponent
+} from "./asistencia/retiro-anticipado/retiro-anticipado.component";
+import {
+  DocumentosInscripcionComponent,
+  DocumentosInscripcionPopupComponent
+} from "./estudiantes/documentos-inscripcion/documentos-inscripcion.component";
+import { MatGridListModule } from "@angular/material/grid-list";
+import {
+  CalificacionesEstudiantesComponent,
+  CalificacionesEstudiantePopupComponent
+} from "./estudiantes/calificaciones-estudiantes/calificaciones-estudiantes.component";
+import {
+  LlegadaTardeComponent,
+  LlegadaTardePopupComponent
+} from "./asistencia/llegada-tarde/llegada-tarde.component";
+import {
+  CambiarPassword,
+  CambiarPasswordPopupComponent
+} from "./login/cambiar-password.component";
+import { PerfilEstudianteComponent } from "./estudiantes/perfil-estudiante/perfil-estudiante.component";
+import { CalificacionesPerfilEstudianteComponent } from "./estudiantes/perfil-estudiante/calificaciones-perfil-estudiante/calificaciones-perfil-estudiante.component";
+import { AgendaCursoPerfilEstudianteComponent } from "./estudiantes/perfil-estudiante/agenda-curso-perfil-estudiante/agenda-curso-perfil-estudiante.component";
+import { LOCALE_ID } from "@angular/core";
+import { registerLocaleData } from "@angular/common";
+import { ChartsModule } from "ng2-charts";
+registerLocaleData(localePy, "es");
+import localePy from "@angular/common/locales/es";
+import { ServiceWorkerModule } from "@angular/service-worker";
+import { environment } from "../environments/environment";
 
 @NgModule({
   declarations: [
@@ -72,7 +96,6 @@ import { environment } from '../environments/environment';
     MostrarEstudiantesComponent,
     AltaPopupComponent,
     MostrarPopupComponent,
-    LoginComponent,
     MenuLateralComponent,
     HomeComponent,
     RegistrarAsistenciaComponent,
@@ -87,11 +110,13 @@ import { environment } from '../environments/environment';
     CalificacionesEstudiantesComponent,
     CalificacionesEstudiantePopupComponent,
     LlegadaTardeComponent,
+    LlegadaTardePopupComponent,
     CambiarPassword,
     CambiarPasswordPopupComponent,
     CerrarSesionPopupComponent,
     PerfilEstudianteComponent,
     CalificacionesPerfilEstudianteComponent,
+    LoginComponent,
     AgendaCursoPerfilEstudianteComponent
   ],
   //entryComponents declara los componentes que se generan dinamicamente dentro de otros.
@@ -105,7 +130,8 @@ import { environment } from '../environments/environment';
     DocumentosInscripcionPopupComponent,
     CalificacionesEstudiantePopupComponent,
     CambiarPasswordPopupComponent,
-    CerrarSesionPopupComponent
+    CerrarSesionPopupComponent,
+    LlegadaTardePopupComponent
   ],
   imports: [
     BrowserModule,
@@ -134,13 +160,19 @@ import { environment } from '../environments/environment';
     MatSnackBarModule,
     MatGridListModule,
     ChartsModule,
-    ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production })
+    ServiceWorkerModule.register("ngsw-worker.js", {
+      enabled: environment.production,
+      registrationStrategy: "registerImmediately"
+    })
   ],
   //le decimos a angular que vamos a tener un interceptor nuevo (provide), luego le indicamos que
   //interceptor usar (useClass) y finalmente aclaramos que no sobreescriba el interceptor que esta
   //ya que podemos utilizar más de uno (multi).
-  providers: [EstudiantesService, {provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true}, { provide: LOCALE_ID, useValue: 'es' }],
+  providers: [
+    EstudiantesService,
+    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
+    { provide: LOCALE_ID, useValue: "es" }
+  ],
   bootstrap: [AppComponent]
 })
-
 export class AppModule {}

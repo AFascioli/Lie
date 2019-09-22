@@ -1,16 +1,12 @@
 const webpush = require("web-push");
 const mongoose = require("mongoose");
 const Usuario = require("../models/usuario");
+const vapidKeys = require("../assets/vapid_keys");
 
-const vapidKeys = {
-  publicKey:
-    "BMlC2dLJTBP6T1GCl3S3sDBmhERNVcjN7ff2a6JAoOg8bA_qXjikveleRwjz0Zn8c9-58mnrNo2K4p07UPK0DKQ",
-  privateKey: "nvrxnM7juFwnVOaGA0gY6S7KWKi69ZVC0z7jU5bmQss"
-};
 webpush.setVapidDetails(
   "mailtoexample@ejemplo.org",
-  vapidKeys.publicKey,
-  vapidKeys.privateKey
+  vapidKeys.vapid_public_key,
+  vapidKeys.vapid_private_key
 );
 
 export function notificar(idusuario, titulo, cuerpo) {

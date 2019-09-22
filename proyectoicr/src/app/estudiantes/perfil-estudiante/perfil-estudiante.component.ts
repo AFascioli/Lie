@@ -37,11 +37,11 @@ export class PerfilEstudianteComponent implements OnInit {
       });
   }
 
-  onVisualizarCalificacionesEstudiante(indice){
+  onVisualizarCalificacionesEstudiante(){
     this.router.navigate(["./calificacionesEstudiante"]);
   }
 
-  onVisualizarAgendaCursoEstudiante(indice){
+  onVisualizarAgendaCursoEstudiante(){
     this.router.navigate(["./calificacionesEstudiante"]);
   }
 

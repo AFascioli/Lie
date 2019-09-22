@@ -16,6 +16,7 @@ export class LlegadaTardeComponent implements OnInit {
   nombreEstudiante: string;
   _idEstudiante: string;
   matConfig = new MatDialogConfig();
+
   constructor(private servicio: EstudiantesService, public popup: MatDialog, private dateAdapter: DateAdapter<Date>) {
     this.dateAdapter.setLocale("es");
    }
@@ -26,6 +27,8 @@ export class LlegadaTardeComponent implements OnInit {
     this.nombreEstudiante= this.servicio.estudianteSeleccionado.nombre;
     this._idEstudiante= this.servicio.estudianteSeleccionado._id;
   }
+
+  cambiarTipoRetiro(){}
 }
 
 @Component({
@@ -33,6 +36,7 @@ export class LlegadaTardeComponent implements OnInit {
   templateUrl: "./llegadaTarde-popup.component.html",
   styleUrls: ['./llegada-tarde.component.css']
 })
+
 export class LlegadaTardePopupComponent {
   tipoPopup: string;
   IdEstudiante: string;
@@ -59,12 +63,6 @@ export class LlegadaTardePopupComponent {
   onNoCancelarConfirmarClick(): void {
     this.dialogRef.close();
   }
-
-  //Confirma el llegada tarde  para el estudiante
-  //onYesConfirmarClick(): void {
-
-   // });
-//  }
 
   //Si fue exitosa la operacion vuelve al menu principal, sino vuelve a la interfaz de retiro
   onOkConfirmarClick() {
