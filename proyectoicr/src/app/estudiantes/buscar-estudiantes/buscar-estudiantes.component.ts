@@ -37,8 +37,10 @@ export class BuscarEstudiantesComponent implements OnInit {
     this.tipoDocEstSelec=this.servicio.estudianteSeleccionado.tipoDocumento;
     this.buscarPorNomYAp= false;
    }
-   //slet fecha = new Date();
-   //this.servicioAR.registrarAdultoResponsable("Gomez", "Ramiro", "DNI", 24536845, "Masculino", "Argentina", fecha , 395435286, "ramirogomez@gmail.com", false, "5d0ee07c489bdd0830bd1d0d");
+   let fecha = new Date();
+  // this.servicioAR.registrarAdultoResponsable("Pedroni", "Ramiro", "DNI", 24534645, "Masculino", "Argentina", fecha , 3562413037, "pedroniramiro@gmail.com", true, "5d0ee07c489bdd0830bd1d0d");
+   //this.servicioAR.registrarAdultoResponsable("Bargiano", "Liliana", "DNI", 17111331, "Femenino", "Argentina", fecha , 3562414037, "bargianoliliana@gmail.com", true, "5d0ee07c489bdd0830bd1d0d");
+   //this.servicioAR.registrarAdultoResponsable("Bargiano", "Fernando", "DNI", 17121331, "Masculino", "Argentina", fecha , 3562414047, "bargianofernando@gmail.com", true, "5d0ee07c489bdd0830bd1d0d");
   }
 
   // Si el formulario no es valido no hace nada, luego controla que tipo de busqueda es

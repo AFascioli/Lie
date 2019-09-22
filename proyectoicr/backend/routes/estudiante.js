@@ -1,6 +1,7 @@
 const express = require("express");
 const Estudiante = require("../models/estudiante");
 const Inscripcion = require("../models/inscripcion");
+const AdultoResponsable = require("../models/adultoResponsable");
 const Division = require("../models/division");
 const AsistenciaDiaria = require("../models/asistenciaDiaria");
 const router = express.Router();
@@ -403,7 +404,8 @@ router.get("/asistenciaEstudiante", (req, res) => {
         message: "Operacion exitosa",
         exito: true,
         contadorInasistencias: estudiante.contadorInasistencias,
-        contadorInasistenciasJustificada: estudiante.contadorInasistenciasJustificada
+        contadorInasistenciasJustificada:
+          estudiante.contadorInasistenciasJustificada
       });
     }
   );
@@ -544,16 +546,15 @@ router.get("/inasistencia/justificada", (req, res) => {
           }).exec();
           Inscripcion.findByIdAndUpdate(resultado[0]._id, {
             contadorInasistenciasJustificada:
-              contadorInasistenciasJustificada + 1
+              contadorInasistenciasJustificada + 1,
+            contadorInasistencias: contadorInasistencias - 1
           }).exec();
         }
       });
-      res
-        .status(200)
-        .json({
-          message: "Inasistencias justificadas exitosamente",
-          exito: true
-        });
+      res.status(200).json({
+        message: "Inasistencias justificadas exitosamente",
+        exito: true
+      });
     } else {
       if (resultado[0].presentismo[0].presente) {
         return res.status(200).json({
@@ -577,6 +578,59 @@ router.get("/inasistencia/justificada", (req, res) => {
         });
       }
     }
+  });
+});
+
+router.get("/tutores", (req, res) => {
+  Estudiante.aggregate([
+    {
+      $match: {
+        _id: mongoose.Types.ObjectId("5d0ee07c489bdd0830bd1d0d"),
+        activo: true
+      }
+    },
+    {
+      $lookup: {
+        from: "adultoResponsable",
+        localField: "adultoResponsable",
+        foreignField: "_id",
+        as: "datosAR"
+      }
+    },
+    {
+      $unwind: {
+        path: "$datosAR"
+      }
+    },
+    {
+      $match: {
+        "datosAR.tutor": true
+      }
+    },
+    {
+      $project: {
+        "datosAR._id": 1,
+        "datosAR.apellido": 1,
+        "datosAR.nombre": 1,
+        "datosAR.telefono": 1
+      }
+    }
+  ]).then(datosTutores => {
+    if (!datosTutores) {
+      return res.status(200).json({
+        message: "El estudiante no tiene tutores",
+        exito: false
+      });
+    }
+    let tutores = [];
+    datosTutores.forEach(tutor => {
+      tutores.push(tutor.datosAR);
+    });
+    return res.status(200).json({
+      message: "Se obtuvieron los tutores exitosamente",
+      exito: true,
+      tutores: tutores
+    });
   });
 });
 

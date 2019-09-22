@@ -35,6 +35,7 @@ export class PerfilEstudianteComponent implements OnInit {
       this.pieChartData = [this.contadorInasistencia, this.contadorInasistenciaJustificada];
       this.pieChartType = 'pie';
       });
+    this.servicio.getTutoresDeEstudiante();
   }
 
   onVisualizarCalificacionesEstudiante(){
