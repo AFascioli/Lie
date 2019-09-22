@@ -1,9 +1,8 @@
 const express = require("express");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-
 const Usuario = require("../models/usuario");
-
+const Rol = require("../models/rol");
 const router = express.Router();
 
 router.post("/signup", (req, res) => {
@@ -14,26 +13,29 @@ router.post("/signup", (req, res) => {
         exito: true
       });
     } else {
-      bcrypt.hash(req.body.password, 10).then(hash => {
-        const usuario = new Usuario({
-          email: req.body.email,
-          password: hash
-        });
-        usuario
-          .save()
-          .then(result => {
-            res.status(201).json({
-              message: "Usuario creado exitosamente",
-              exito: true,
-              id: usuario._id
-            });
-          })
-          .catch(err => {
-            res.status(200).json({
-              exito: false
-            });
+      Rol.findOne({tipo: req.body.rol}).then(rol => {
+        bcrypt.hash(req.body.password, 10).then(hash => {
+          const usuario = new Usuario({
+            email: req.body.email,
+            password: hash,
+            rol: rol._id
           });
-      });
+          usuario
+            .save()
+            .then(result => {
+              res.status(201).json({
+                message: "Usuario creado exitosamente",
+                exito: true,
+                id: usuario._id
+              });
+            })
+            .catch(err => {
+              res.status(200).json({
+                exito: false
+              });
+            });
+        });
+      })
     }
   });
 });
@@ -55,13 +57,14 @@ router.post("/login", (req, res) => {
         });
       } else {
         const token = jwt.sign(
-          { email: usuarioEncontrado.email, userId: usuarioEncontrado._id },
+          { email: usuarioEncontrado.email, userId: usuarioEncontrado._id, rol: usuarioEncontrado.rol  },
           "aca_va_el_secreto_que_es_una_string_larga",
           { expiresIn: "12h" }
         );
         res.status(200).json({
           token: token,
           duracionToken: 43200,
+          rol: usuarioEncontrado.rol,
           message: "Bienvenido a Lié",
           exito: true
         });
@@ -92,5 +95,7 @@ router.post("/cambiarPassword", async (req, res, next) => {
     }
   });
 });
+
+
 
 module.exports = router;
