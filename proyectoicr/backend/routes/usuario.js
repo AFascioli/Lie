@@ -125,7 +125,6 @@ router.get("/permisosDeRol", (req, res) => {
       }
     }
   ]).then(permisos => {
-    console.log(permisos);
     return res
       .status(200)
       .json({

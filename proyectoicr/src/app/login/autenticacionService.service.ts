@@ -74,7 +74,8 @@ export class AutenticacionService {
           this.guardarDatosAutenticacion(
             response.token,
             vencimientoToken,
-            this.usuarioAutenticado
+            this.usuarioAutenticado,
+            this.rol
           );
           this.router.navigate(["/"]);
         }
@@ -95,6 +96,7 @@ export class AutenticacionService {
     if (expiraEn > 0) {
       this.token = infoAutenticacion.token;
       this.usuarioAutenticado = infoAutenticacion.usuario;
+      this.rol = infoAutenticacion.rol;
       this.estaAutenticado = true;
       this.timerAutenticacion(expiraEn / 1000);
       this.authStatusListener.next(true);
@@ -122,30 +124,35 @@ export class AutenticacionService {
   private guardarDatosAutenticacion(
     token: string,
     fechaVencimiento: Date,
-    usuario: string
+    usuario: string,
+    rol: string
   ) {
     localStorage.setItem("token", token);
     localStorage.setItem("vencimiento", fechaVencimiento.toISOString());
     localStorage.setItem("usuario", usuario);
+    localStorage.setItem("rol", rol);
   }
 
   private limpiarDatosAutenticacion() {
     localStorage.removeItem("token");
     localStorage.removeItem("vencimiento");
     localStorage.removeItem("usuario");
+    localStorage.removeItem("rol");
   }
 
   private obtenerDatosAutenticacion() {
     const token = localStorage.getItem("token");
     const fechaVencimiento = localStorage.getItem("vencimiento");
     const usuario = localStorage.getItem("usuario");
+    const rol = localStorage.getItem("rol");
     if (!token || !fechaVencimiento) {
       return;
     }
     return {
       token: token,
       vencimientoToken: new Date(fechaVencimiento),
-      usuario: usuario
+      usuario: usuario,
+      rol: rol
     };
   }
 
