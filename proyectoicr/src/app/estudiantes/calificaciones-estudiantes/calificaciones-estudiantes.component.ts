@@ -4,7 +4,6 @@ import { Component, OnInit } from "@angular/core";
 import {
   MatDialogRef,
   MatDialog,
-  MatDialogConfig,
   MatSnackBar
 } from "@angular/material";
 import { Router } from "@angular/router";
@@ -44,9 +43,17 @@ export class CalificacionesEstudiantesComponent implements OnInit {
     });
 
     this.trimestrePorDefault();
-    this.servicioAutenticacion.obtenerPermisosDeRol().subscribe(res => {
-      console.log(res);
-    })
+    this.validarPermisos();
+
+  }
+
+  validarPermisos(){
+    this.servicioAutenticacion.obtenerPermisosDeRol().subscribe(res =>
+      {
+        if(res.permisos.notas == 2 ){
+         this.rolConPermisosEdicion = true;
+        }
+      });
   }
 
   trimestrePorDefault()

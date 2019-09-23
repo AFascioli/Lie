@@ -166,7 +166,7 @@ export class AutenticacionService {
     return this.http.get<{
       message: string;
       exito: boolean;
-      permisos: any[];
+      permisos: any;
     }>("http://localhost:3000/usuario/permisosDeRol", {
       params: params
     });

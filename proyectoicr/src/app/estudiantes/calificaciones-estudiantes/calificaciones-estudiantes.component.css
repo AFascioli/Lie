@@ -44,3 +44,7 @@ input{
 input:focus{
   outline: none;
 }
+
+[hidden] {
+  display: none !important;
+}
