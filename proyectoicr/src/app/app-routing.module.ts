@@ -1,8 +1,9 @@
+
 import { AltaARComponent } from './adulto-responsable/alta-ar/alta-ar.component';
 import { AltaEmpleadoComponent } from './empleado/alta-empleado/alta-empleado.component';
-import { AgendaCursoPerfilEstudianteComponent } from './estudiantes/perfil-estudiante/agenda-curso-perfil-estudiante/agenda-curso-perfil-estudiante.component';
-import { CalificacionesPerfilEstudianteComponent } from './estudiantes/perfil-estudiante/calificaciones-perfil-estudiante/calificaciones-perfil-estudiante.component';
-import { PerfilEstudianteComponent } from './estudiantes/perfil-estudiante/perfil-estudiante.component';
+import { AgendaCursoPerfilEstudianteComponent } from "./estudiantes/perfil-estudiante/agenda-curso-perfil-estudiante/agenda-curso-perfil-estudiante.component";
+import { CalificacionesPerfilEstudianteComponent } from "./estudiantes/perfil-estudiante/calificaciones-perfil-estudiante/calificaciones-perfil-estudiante.component";
+import { PerfilEstudianteComponent } from "./estudiantes/perfil-estudiante/perfil-estudiante.component";
 import { HomeComponent } from "./home/home.component";
 import { NgModule } from "@angular/core";
 import { RouterModule, Routes } from "@angular/router";
@@ -21,7 +22,8 @@ import { LlegadaTardeComponent } from "./asistencia/llegada-tarde/llegada-tarde.
 import { AuthGuard } from "./login/auth.guard";
 import { CambiarPassword } from "./login/cambiar-password.component";
 import { RouteGuard } from "./route.guard";
-import { JustificacionInasistenciaComponent } from './asistencia/justificacion-inasistencia/justificacion-inasistencia.component';
+import { JustificacionInasistenciaComponent } from "./asistencia/justificacion-inasistencia/justificacion-inasistencia.component";
+import { RoleGuard } from './role.guard';
 
 const routes: Routes = [
   { path: "login", component: LoginComponent },
@@ -36,46 +38,82 @@ const routes: Routes = [
         redirectTo: "home"
       },
       { path: "home", component: HomeComponent },
-      { path: "alta", component: AltaEstudiantesComponent },
+      {
+        path: "alta",
+        component: AltaEstudiantesComponent,
+        canActivate: [RoleGuard],
+        data: { rolesValidos: ["Admin", "Preceptor", "Director"] }
+      },
       {
         path: "buscar",
         component: BuscarEstudiantesComponent,
-        children: [{ path: "lista", component: ListaEstudiantesComponent}]
+        canActivate: [RoleGuard],
+        data: { rolesValidos: ["Admin", "Preceptor", "Director"] },
+        children: [{ path: "lista", component: ListaEstudiantesComponent }]
       },
       {
         path: "mostrar",
-        component: MostrarEstudiantesComponent, canActivate:[RouteGuard]
+        component: MostrarEstudiantesComponent,
+        canActivate: [RouteGuard, RoleGuard],
+        data: { rolesValidos: ["Admin", "Preceptor", "Director"] }
       },
-      { path: "asistencia", component: RegistrarAsistenciaComponent },
       {
-        path: "curso",
-        component: InscripcionEstudianteComponent, canActivate:[RouteGuard]
+        path: "asistencia",
+        canActivate: [RoleGuard],
+        data: { rolesValidos: ["Admin", "Preceptor", "Director"] },
+        component: RegistrarAsistenciaComponent
+      },
+      {
+        path: "curso", //ruta inscribir estudiante a un curso
+        component: InscripcionEstudianteComponent,
+        canActivate: [RouteGuard, RoleGuard],
+        data: { rolesValidos: ["Admin", "Preceptor", "Director"] }
       },
       {
         path: "retiroAnticipado",
-        component: RetiroAnticipadoComponent, canActivate:[RouteGuard]
+        component: RetiroAnticipadoComponent,
+        canActivate: [RouteGuard, RoleGuard],
+        data: { rolesValidos: ["Admin", "Preceptor", "Director"] }
       },
       {
         path: "documentosEstudiante",
-        component: DocumentosInscripcionComponent
+        component: DocumentosInscripcionComponent,
+        canActivate: [RoleGuard],
+        data: { rolesValidos: ["Admin", "Preceptor", "Director"] }
       },
       {
         path: "calificacionesEstudiantes",
-        component: CalificacionesEstudiantesComponent
+        component: CalificacionesEstudiantesComponent,
+        canActivate: [RoleGuard],
+        data: { rolesValidos: ["Admin", "Preceptor", "Director", "Docente"] }
       },
-      { path: "llegadaTarde", component: LlegadaTardeComponent },
-      { path: "cambiarContraseña", component: CambiarPassword },
+      {
+        path: "llegadaTarde",
+        component: LlegadaTardeComponent,
+        canActivate: [RoleGuard],
+        data: { rolesValidos: ["Admin", "Preceptor", "Director"] }
+      },
+      { path: "cambiarContraseña",
+      component: CambiarPassword },
       {
         path: "perfilEstudiante",
-        component: PerfilEstudianteComponent, canActivate:[RouteGuard]
+        component: PerfilEstudianteComponent,
+        canActivate: [RouteGuard,RoleGuard],
+        data: { rolesValidos: ["Admin", "Preceptor", "Director"] }
       },
       {
         path: "justificarInasistencia",
-        component: JustificacionInasistenciaComponent//, canActivate:[RouteGuard]
+        component: JustificacionInasistenciaComponent,
+        canActivate: [RouteGuard, RoleGuard],
+        data: { rolesValidos: ["Admin", "Preceptor", "Director"] }
       },
       {
         path: "calificacionesEstudiante",
-        component: CalificacionesPerfilEstudianteComponent, canActivate:[RouteGuard]
+
+        component: CalificacionesPerfilEstudianteComponent,
+        canActivate: [RouteGuard, RoleGuard],
+        data: { rolesValidos: ["Admin", "Preceptor", "Director"] }
+
       },
       {
         path: "altaEmpleado",
@@ -86,10 +124,6 @@ const routes: Routes = [
         component: AltaARComponent
       },
 
-
-
-
-
     ]
   }
 ];
@@ -97,6 +131,6 @@ const routes: Routes = [
 @NgModule({
   imports: [RouterModule.forRoot(routes)],
   exports: [RouterModule],
-  providers: [AuthGuard, RouteGuard]
+  providers: [AuthGuard, RouteGuard, RoleGuard]
 })
 export class AppRoutingModule {}

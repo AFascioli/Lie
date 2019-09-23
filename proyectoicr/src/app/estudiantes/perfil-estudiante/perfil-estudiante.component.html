@@ -12,7 +12,7 @@
   <button
     mat-raised-button
     class="button-perfil-calificaciones"
-    (click)="onVisualizarCalificacionesEstudiante(i)"
+    (click)="onVisualizarCalificacionesEstudiante()"
     >
      Ver calificaciones
     </button>
@@ -26,23 +26,14 @@
       <b>INASISTENCIA: </b>
   </mat-card-subtitle>
 
-    <!-- <div class="grafico">
-        <div class="sombra"></div>
-        <div id="porcion1" class="recorte">
-          <div class="porcion" data-rel="contadorInasistencia"></div>
-        </div>
-        <div id="porcion2" class="contadorInasistencia">
-          <div class="porcion" data-rel="contadorInasistenciaJustificada"></div>
-        </div>
-   </div> -->
-
-   <div *ngIf="contadorInasistencia" style="display: block">
+   <div *ngIf="contadorInasistencia && contadorInasistencia!=0" style="display: block">
     <canvas baseChart
             [data]="pieChartData"
             [labels]="pieChartLabels"
             [chartType]="pieChartType"
             ></canvas>
   </div>
+  <p *ngIf="contadorInasistencia==0">El estudiante no presenta ninguna inasistencia</p>
 
 </div>
 <br>
@@ -86,7 +77,7 @@
   </mat-card-subtitle>
   <button class="button-perfil"
       mat-raised-button
-      (click)="onVisualizarAgendaCursoEstudiante(i)"
+      (click)="onVisualizarAgendaCursoEstudiante()"
     >
      Ver agenda de cursado
     </button>
@@ -110,12 +101,18 @@
 <br>
 &nbsp;
 
-<div >
-  <button class="button-volver"
+<div class="div-button">
+  <button
   mat-raised-button
-  [routerLink]="['/buscar/lista']"
+  [routerLink]="['/buscar']"
   color="primary" >
      Volver
+  </button>
+  <button
+  mat-raised-button
+  (click)="onCancelar()"
+  color="warn" >
+     Cancelar
   </button>
 </div>
 

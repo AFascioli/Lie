@@ -4,17 +4,22 @@ import { Router } from "@angular/router";
 import { Subject } from "rxjs";
 
 @Injectable({ providedIn: "root" })
-export class AutencacionService {
+export class AutenticacionService {
   private estaAutenticado = false;
   private token: string;
   private tokenTimer: any;
   private authStatusListener = new Subject<boolean>();
   private usuarioAutenticado: string;
+  private rol: string;
 
   constructor(private http: HttpClient, private router: Router) {}
 
   getToken() {
     return this.token;
+  }
+
+  getRol(){
+    return this.rol;
   }
 
   getIsAuth() {
@@ -29,8 +34,8 @@ export class AutencacionService {
     return this.usuarioAutenticado;
   }
 
-  crearUsuario(email: string, password: string) {
-    const authData = { email: email, password: password};
+  crearUsuario(email: string, password: string, rol: string) {
+    const authData = { email: email, password: password, rol: rol};
     return this.http.post<{ message: string; exito: string; id: string  }>(
       "http://localhost:3000/usuario/signup",
       authData
@@ -50,6 +55,7 @@ export class AutencacionService {
         duracionToken: number;
         exito: boolean;
         message: string;
+        rol: string;
       }>("http://localhost:3000/usuario/login", authData)
       .subscribe(response => {
         respuesta= response.message;
@@ -57,6 +63,7 @@ export class AutencacionService {
           this.usuarioAutenticado=email;
           this.token = response.token;
           const duracionToken = response.duracionToken;
+          this.rol= response.rol;
           this.timerAutenticacion(duracionToken);
           this.estaAutenticado = true;
           this.authStatusListener.next(true);

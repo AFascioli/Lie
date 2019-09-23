@@ -1,5 +1,5 @@
 import { Component, OnInit } from "@angular/core";
-import { AutencacionService } from "./autenticacionService.service";
+import { AutenticacionService } from "./autenticacionService.service";
 import { MatSnackBar } from "@angular/material";
 
 @Component({
@@ -12,7 +12,7 @@ export class LoginComponent implements OnInit {
   password: string;
 
   constructor(
-    public authService: AutencacionService,
+    public authService: AutenticacionService,
     private snackBar: MatSnackBar
   ) {}
 

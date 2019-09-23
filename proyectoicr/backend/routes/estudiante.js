@@ -1,6 +1,7 @@
 const express = require("express");
 const Estudiante = require("../models/estudiante");
 const Inscripcion = require("../models/inscripcion");
+const AdultoResponsable = require("../models/adultoResponsable");
 const Division = require("../models/division");
 const AsistenciaDiaria = require("../models/asistenciaDiaria");
 const router = express.Router();
@@ -288,6 +289,7 @@ router.get("/asistencia", checkAuthMiddleware, (req, res) => {
 router.post("/asistencia", checkAuthMiddleware, (req, res) => {
   if (req.query.asistenciaNueva == "true") {
     req.body.forEach(estudiante => {
+      console.log(estudiante);
       var valorInasistencia = 0;
       if (!estudiante.presente) {
         valorInasistencia = 1;
@@ -300,11 +302,13 @@ router.post("/asistencia", checkAuthMiddleware, (req, res) => {
           IdInscripcion: inscripcion._id,
           fecha: estudiante.fecha,
           presente: estudiante.presente,
-          valorInasistencia: valorInasistencia
+          valorInasistencia: valorInasistencia,
+          justificado: false
         });
 
         await asistenciaEstudiante.save().then(async asistenciaDiaria => {
           await inscripcion.asistenciaDiaria.push(asistenciaDiaria._id);
+          console.log(inscripcion);
           inscripcion.contadorInasistencias =
             inscripcion.contadorInasistencias + valorInasistencia;
           inscripcion.save();
@@ -316,6 +320,15 @@ router.post("/asistencia", checkAuthMiddleware, (req, res) => {
       AsistenciaDiaria.findByIdAndUpdate(estudiante.idAsistencia, {
         presente: estudiante.presente
       }).exec();
+      if (!estudiante.presente) {
+        Inscripcion.findOneAndUpdate(
+          {
+            IdEstudiante: estudiante._id,
+            activa: true
+          },
+          { contadorInasistencias: contadorInasistencias + 1 }
+        ).exec();
+      }
     });
   }
 
@@ -387,11 +400,12 @@ router.post("/retiro", checkAuthMiddleware, (req, res) => {
 router.get("/asistenciaEstudiante", (req, res) => {
   Inscripcion.findOne({ IdEstudiante: req.query.idEstudiante }).then(
     estudiante => {
-      let contadorInasistencia = estudiante.contadorInasistencias;
       res.status(200).json({
         message: "Operacion exitosa",
         exito: true,
-        contadorInasistencia: contadorInasistencia
+        contadorInasistencias: estudiante.contadorInasistencias,
+        contadorInasistenciasJustificada:
+          estudiante.contadorInasistenciasJustificada
       });
     }
   );
@@ -520,43 +534,103 @@ router.get("/inasistencia/justificada", (req, res) => {
   ]).then(resultado => {
     //5d2e30dd32a43405043e76c6 id de la asistencia que retorna
     console.log(JSON.stringify(resultado));
-    if(req.query.esMultiple=="true"){
+    if (req.query.esMultiple == "true") {
       resultado[0].presentismo.forEach(async asistenciaDiaria => {
-        if(!resultado[0].presentismo[0].presente && !resultado[0].presentismo[0].justificado){
+        if (
+          !resultado[0].presentismo[0].presente &&
+          !resultado[0].presentismo[0].justificado
+        ) {
           let idAsistencia = asistenciaDiaria._id;
           await AsistenciaDiaria.findByIdAndUpdate(idAsistencia, {
             justificado: true
           }).exec();
+          Inscripcion.findByIdAndUpdate(resultado[0]._id, {
+            contadorInasistenciasJustificada:
+              contadorInasistenciasJustificada + 1,
+            contadorInasistencias: contadorInasistencias - 1
+          }).exec();
         }
       });
-      res.status(200).json({message: "Inasistencias justificadas exitosamente", exito: true});
-    }else{
+      res.status(200).json({
+        message: "Inasistencias justificadas exitosamente",
+        exito: true
+      });
+    } else {
       if (resultado[0].presentismo[0].presente) {
-      return res
-        .status(200)
-        .json({
+        return res.status(200).json({
           message: "El estudiante estuvo presente para la fecha ingresada",
           exito: false
         });
-    } else if (resultado[0].presentismo[0].justificado) {
-      return res
-        .status(200)
-        .json({
-            message: "El estudiante ya tiene justificada la inasistencia",
+      } else if (resultado[0].presentismo[0].justificado) {
+        return res.status(200).json({
+          message: "El estudiante ya tiene justificada la inasistencia",
           exito: false
         });
-    } else {
-      let idAsistencia = resultado[0].presentismo[0]._id;
-      AsistenciaDiaria.findByIdAndUpdate(idAsistencia, {
-        justificado: true
-      }).then(() => {
-        res.json({
+      } else {
+        let idAsistencia = resultado[0].presentismo[0]._id;
+        AsistenciaDiaria.findByIdAndUpdate(idAsistencia, {
+          justificado: true
+        }).then(() => {
+          res.json({
             message: "Asistencia exitosamente justificada",
             exito: true
           });
         });
       }
     }
+  });
+});
+
+router.get("/tutores", (req, res) => {
+  Estudiante.aggregate([
+    {
+      $match: {
+        _id: mongoose.Types.ObjectId("5d0ee07c489bdd0830bd1d0d"),
+        activo: true
+      }
+    },
+    {
+      $lookup: {
+        from: "adultoResponsable",
+        localField: "adultoResponsable",
+        foreignField: "_id",
+        as: "datosAR"
+      }
+    },
+    {
+      $unwind: {
+        path: "$datosAR"
+      }
+    },
+    {
+      $match: {
+        "datosAR.tutor": true
+      }
+    },
+    {
+      $project: {
+        "datosAR._id": 1,
+        "datosAR.apellido": 1,
+        "datosAR.nombre": 1,
+        "datosAR.telefono": 1
+      }
+    }
+  ]).then(datosTutores => {
+    if (!datosTutores) {
+      return res.status(200).json({
+        message: "El estudiante no tiene tutores",
+        exito: false
+      });
+    }
+    let tutores = [];
+    datosTutores.forEach(tutor => {
+      tutores.push(tutor.datosAR);
+    });
+    return res.status(200).json({
+      message: "Se obtuvieron los tutores exitosamente",
+      exito: true,
+      tutores: tutores
+    });
   });
 });
 

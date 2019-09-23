@@ -1,3 +1,4 @@
+import { AdultoResponsable } from "./../adulto-responsable/adultoResponsable.model";
 import { Injectable } from "@angular/core";
 import { Estudiante } from "./estudiante.model";
 import { HttpClient, HttpParams } from "@angular/common/http";
@@ -353,7 +354,8 @@ export class EstudiantesService {
     return this.http.get<{
       message: string;
       exito: boolean;
-      contadorInasistencia: number;
+      contadorInasistencias: number;
+      contadorInasistenciasJustificada: number;
     }>("http://localhost:3000/estudiante/asistenciaEstudiante", {
       params: params
     });
@@ -374,7 +376,11 @@ export class EstudiantesService {
   }
 
   //Dada una fecha de inicio y una fecha fin, justifica cada asistencia diaria dentro de ese periodo
-  justificarInasistencia(fechaInicio:string, fechaFin: string,esMultiple: boolean){
+  justificarInasistencia(
+    fechaInicio: string,
+    fechaFin: string,
+    esMultiple: boolean
+  ) {
     let params = new HttpParams()
       .set("fechaInicio", fechaInicio)
       .set("fechaFin", fechaFin)
@@ -385,6 +391,24 @@ export class EstudiantesService {
       exito: boolean;
     }>("http://localhost:3000/estudiante/inasistencia/justificada", {
       params: params
-    })
+    });
+  }
+
+  getTutoresDeEstudiante() {
+    let params = new HttpParams().set(
+      "idEstudiante",
+      this.estudianteSeleccionado._id
+    );
+    return this.http
+      .get<{
+        message: string;
+        exito: boolean;
+        tutores: any[];
+      }>("http://localhost:3000/estudiante/tutores", {
+        params: params
+      })
+      .subscribe(tutores => {
+        console.log(tutores);
+      });
   }
 }

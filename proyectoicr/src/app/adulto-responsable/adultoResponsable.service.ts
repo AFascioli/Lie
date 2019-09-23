@@ -1,7 +1,8 @@
 import { AdultoResponsable } from "./adultoResponsable.model";
 import { HttpClient, HttpParams } from "@angular/common/http";
 import { Injectable } from "@angular/core";
-import { AutencacionService } from "../login/autenticacionService.service";
+import { AutenticacionService } from "../login/autenticacionService.service";
+import { Estudiante } from '../estudiantes/estudiante.model';
 
 @Injectable({
   providedIn: "root"
@@ -9,7 +10,7 @@ import { AutencacionService } from "../login/autenticacionService.service";
 export class AdultoResponsableService {
   constructor(
     public http: HttpClient,
-    public authServicio: AutencacionService
+    public authServicio: AutenticacionService
   ) {}
 
   registrarAdultoResponsable(
@@ -19,13 +20,14 @@ export class AdultoResponsableService {
     numeroDocumento: number,
     sexo: string,
     nacionalidad: string,
-    fechaNacimiento: string,
+    fechaNacimiento: Date,
     telefono: number,
     email: string,
-    tutor: boolean
+    tutor: boolean,
+    idEstudiante: string
   ) {
     this.authServicio
-      .crearUsuario(email, numeroDocumento.toString())
+      .crearUsuario(email, numeroDocumento.toString(), 'AdultoResponsable')
       .subscribe(res => {
         if (res.exito) {
           let idUsuario = res.id;
@@ -45,7 +47,7 @@ export class AdultoResponsableService {
           this.http
             .post<{ message: string; exito: boolean }>(
               "http://localhost:3000/adultoResponsable",
-              adultoResponsable
+              {AR: adultoResponsable, idEstudiante: idEstudiante}
             )
             .subscribe(response => {
               console.log(response);
@@ -55,4 +57,5 @@ export class AdultoResponsableService {
         }
       });
   }
+
 }

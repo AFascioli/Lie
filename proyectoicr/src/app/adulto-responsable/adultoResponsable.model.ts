@@ -6,9 +6,9 @@ export interface AdultoResponsable {
   numeroDocumento: number;
   sexo: string;
   nacionalidad: string;
-  fechaNacimiento: string;
+  fechaNacimiento: Date;
   telefono: number;
-  email: string; 
+  email: string;
   tutor: boolean;
   idUsuario: string;
 }
