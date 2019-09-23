@@ -6,16 +6,15 @@
       mat-icon-button
       (click)="drawer.toggle()"
     >
-    <mat-icon aria-label="Side nav toggle icon">menu</mat-icon>
+      <mat-icon aria-label="Side nav toggle icon">menu</mat-icon>
     </button>
     <h3 class="tituloMenu">Menú</h3>
 
-  <div class="ubicacionHome">
-    <button mat-button (click)="onClickHome()">
-       <mat-icon class="home">home </mat-icon>
-  </button>
-
-  </div>
+    <div class="ubicacionHome">
+      <button mat-button (click)="onClickHome()">
+        <mat-icon class="home">home </mat-icon>
+      </button>
+    </div>
   </mat-toolbar-row>
 </mat-toolbar>
 
@@ -43,6 +42,7 @@
             class="opciones-expansion"
             (click)="drawer.toggle()"
             routerLink="./"
+            *ngIf="permisos.agendaCursos > 1"
           >
             Registrar agenda de curso
           </a>
@@ -51,6 +51,7 @@
             class="opciones-expansion"
             (click)="drawer.toggle()"
             routerLink="/asistencia"
+            *ngIf="permisos.asistencia > 1"
           >
             Tomar asistencia
           </a>
@@ -59,6 +60,7 @@
             class="opciones-expansion"
             (click)="drawer.toggle()"
             routerLink="./"
+            *ngIf="permisos.registrarCuota > 1"
           >
             Registar pago de cuotas
           </a>
@@ -67,6 +69,7 @@
             class="opciones-expansion"
             (click)="drawer.toggle()"
             routerLink="/documentosEstudiante"
+            *ngIf="permisos.inscribirEstudiante > 1"
           >
             Registrar documentos inscripción
           </a>
@@ -84,6 +87,7 @@
                 class="opciones-expansion"
                 (click)="drawer.toggle()"
                 routerLink="/calificacionesEstudiantes"
+                *ngIf="permisos.notas >= 1"
               >
                 Registrar
               </a>
@@ -92,6 +96,7 @@
                 class="opciones-expansion"
                 (click)="drawer.toggle()"
                 routerLink="./"
+                *ngIf="permisos.notas > 1"
               >
                 Buscar
               </a>
@@ -122,6 +127,7 @@
             class="opciones-expansion"
             (click)="drawer.toggle()"
             routerLink="/alta"
+            *ngIf="permisos.inscribirEstudiante >= 1"
           >
             Registrar
           </a>
@@ -152,6 +158,7 @@
             class="opciones-expansion"
             (click)="drawer.toggle()"
             routerLink="./"
+            *ngIf="permisos.eventos > 1"
           >
             Registrar
           </a>
@@ -160,6 +167,7 @@
             class="opciones-expansion"
             (click)="drawer.toggle()"
             routerLink="./"
+            *ngIf="permisos.eventos > 1"
           >
             Buscar
           </a>
@@ -174,11 +182,11 @@
           class="opcion"
           (opened)="panelOpenState = true"
           (closed)="panelOpenState = false"
+          *ngIf="permisos.registrarEmpleado >= 1"
         >
           <mat-expansion-panel-header>
             <mat-panel-title>
               <a mat-list-item>
-
                 <b class="titulo-expansion">Empleado</b>
               </a>
             </mat-panel-title>
@@ -191,22 +199,18 @@
           >
             Registrar
           </a>
-
         </mat-expansion-panel>
       </mat-accordion>
     </mat-nav-list>
 
-    <button mat-button
-    (click)=" drawer.toggle(); cambiarContrasenia()">
-     Cambiar contraseña
-   </button>
+    <button mat-button (click)="drawer.toggle(); cambiarContrasenia()">
+      Cambiar contraseña
+    </button>
 
-    <button mat-button
-    class="cierreSesion"
-    (click)="cierreSesion()">
-    <mat-icon>exit_to_app</mat-icon>
-     Cerrar sesión
-   </button>
+    <button mat-button class="cierreSesion" (click)="cierreSesion()">
+      <mat-icon>exit_to_app</mat-icon>
+      Cerrar sesión
+    </button>
     <!-- <mat-nav-list class="ubicacion_inferior">
       <a
         mat-list-item

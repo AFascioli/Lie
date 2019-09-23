@@ -10,6 +10,18 @@ import { EstudiantesService } from '../estudiantes/estudiante.service';
   styleUrls: ["./menu-lateral.component.css"]
 })
 export class MenuLateralComponent implements OnInit {
+  //Lo inicializo porque sino salta error en la consola del browser
+  permisos={
+    notas:0,
+    asistencia:0,
+    eventos:0,
+    sanciones:0,
+    agendaCursos:0,
+    inscribirEstudiante:0,
+    registrarEmpleado:0,
+    registrarCuota:0
+  };
+
   constructor(
     public router: Router,
     public authService: AutenticacionService,
@@ -17,7 +29,12 @@ export class MenuLateralComponent implements OnInit {
     public estudianteService: EstudiantesService
   ) {}
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.authService.obtenerPermisosDeRol().subscribe(response=>{
+      this.permisos=response.permisos;
+      console.log((this.permisos.agendaCursos>=1));
+    });
+  }
 
   onClickHome() {
     this.router.navigate(["./home"]);
