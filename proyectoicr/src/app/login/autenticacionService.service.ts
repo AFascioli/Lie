@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { HttpClient } from "@angular/common/http";
+import { HttpClient, HttpParams } from "@angular/common/http";
 import { Router } from "@angular/router";
 import { Subject } from "rxjs";
 
@@ -18,7 +18,7 @@ export class AutenticacionService {
     return this.token;
   }
 
-  getRol(){
+  getRol() {
     return this.rol;
   }
 
@@ -30,13 +30,13 @@ export class AutenticacionService {
     return this.authStatusListener.asObservable();
   }
 
-  getUsuarioAutenticado(){
+  getUsuarioAutenticado() {
     return this.usuarioAutenticado;
   }
 
   crearUsuario(email: string, password: string, rol: string) {
-    const authData = { email: email, password: password, rol: rol};
-    return this.http.post<{ message: string; exito: string; id: string  }>(
+    const authData = { email: email, password: password, rol: rol };
+    return this.http.post<{ message: string; exito: string; id: string }>(
       "http://localhost:3000/usuario/signup",
       authData
     );
@@ -58,12 +58,12 @@ export class AutenticacionService {
         rol: string;
       }>("http://localhost:3000/usuario/login", authData)
       .subscribe(response => {
-        respuesta= response.message;
+        respuesta = response.message;
         if (response.token) {
-          this.usuarioAutenticado=email;
+          this.usuarioAutenticado = email;
           this.token = response.token;
           const duracionToken = response.duracionToken;
-          this.rol= response.rol;
+          this.rol = response.rol;
           this.timerAutenticacion(duracionToken);
           this.estaAutenticado = true;
           this.authStatusListener.next(true);
@@ -71,7 +71,11 @@ export class AutenticacionService {
           const vencimientoToken = new Date(
             fechaActual.getTime() + duracionToken * 1000
           );
-          this.guardarDatosAutenticacion(response.token, vencimientoToken, this.usuarioAutenticado);
+          this.guardarDatosAutenticacion(
+            response.token,
+            vencimientoToken,
+            this.usuarioAutenticado
+          );
           this.router.navigate(["/"]);
         }
         subject.next(respuesta);
@@ -101,7 +105,7 @@ export class AutenticacionService {
   logout() {
     this.token = null;
     this.estaAutenticado = false;
-    this.usuarioAutenticado="";
+    this.usuarioAutenticado = "";
     this.authStatusListener.next(false);
     clearTimeout(this.tokenTimer);
     this.limpiarDatosAutenticacion();
@@ -115,7 +119,11 @@ export class AutenticacionService {
     }, duration * 1000);
   }
 
-  private guardarDatosAutenticacion(token: string, fechaVencimiento: Date, usuario: string) {
+  private guardarDatosAutenticacion(
+    token: string,
+    fechaVencimiento: Date,
+    usuario: string
+  ) {
     localStorage.setItem("token", token);
     localStorage.setItem("vencimiento", fechaVencimiento.toISOString());
     localStorage.setItem("usuario", usuario);
@@ -141,14 +149,26 @@ export class AutenticacionService {
     };
   }
 
-  cambiarPassword(passwordVieja, passwordNueva){
-    const datosContraseña = {passwordVieja: passwordVieja,
+  cambiarPassword(passwordVieja, passwordNueva) {
+    const datosContraseña = {
+      passwordVieja: passwordVieja,
       passwordNueva: passwordNueva,
-       usuario: this.usuarioAutenticado}
-    return this.http
-      .post<{
-        exito: boolean;
-        message: string;
-      }>("http://localhost:3000/usuario/cambiarPassword", datosContraseña);
+      usuario: this.usuarioAutenticado
+    };
+    return this.http.post<{
+      exito: boolean;
+      message: string;
+    }>("http://localhost:3000/usuario/cambiarPassword", datosContraseña);
+  }
+
+  obtenerPermisosDeRol() {
+    let params = new HttpParams().set("rol", this.getRol());
+    return this.http.get<{
+      message: string;
+      exito: boolean;
+      permisos: any[];
+    }>("http://localhost:3000/usuario/permisosDeRol", {
+      params: params
+    });
   }
 }

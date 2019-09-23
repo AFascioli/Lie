@@ -117,11 +117,15 @@ const routes: Routes = [
       },
       {
         path: "altaEmpleado",
-        component: AltaEmpleadoComponent
+        component: AltaEmpleadoComponent,
+        canActivate: [ RoleGuard],
+        data: { rolesValidos: ["Admin", "Director"] }
       },
       {
         path: "altaAdultoResponsable",
-        component: AltaARComponent
+        component: AltaARComponent,
+        canActivate: [ RoleGuard],
+        data: { rolesValidos: ["Admin", "Director", "Preceptor"] }
       },
 
     ]

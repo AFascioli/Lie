@@ -13,7 +13,7 @@ router.post("/signup", (req, res) => {
         exito: true
       });
     } else {
-      Rol.findOne({tipo: req.body.rol}).then(rol => {
+      Rol.findOne({ tipo: req.body.rol }).then(rol => {
         bcrypt.hash(req.body.password, 10).then(hash => {
           const usuario = new Usuario({
             email: req.body.email,
@@ -35,7 +35,7 @@ router.post("/signup", (req, res) => {
               });
             });
         });
-      })
+      });
     }
   });
 });
@@ -57,19 +57,23 @@ router.post("/login", (req, res) => {
         });
       } else {
         const token = jwt.sign(
-          { email: usuarioEncontrado.email, userId: usuarioEncontrado._id, rol: usuarioEncontrado.rol  },
+          {
+            email: usuarioEncontrado.email,
+            userId: usuarioEncontrado._id,
+            rol: usuarioEncontrado.rol
+          },
           "aca_va_el_secreto_que_es_una_string_larga",
           { expiresIn: "12h" }
         );
         Rol.findById(usuarioEncontrado.rol).then(rol => {
-              res.status(200).json({
-              token: token,
-              duracionToken: 43200,
-              rol: rol.tipo,
-              message: "Bienvenido a Lié",
-              exito: true
-            });
-        })
+          res.status(200).json({
+            token: token,
+            duracionToken: 43200,
+            rol: rol.tipo,
+            message: "Bienvenido a Lié",
+            exito: true
+          });
+        });
       }
     }
   });
@@ -98,6 +102,38 @@ router.post("/cambiarPassword", async (req, res, next) => {
   });
 });
 
-
+router.get("/permisosDeRol", (req, res) => {
+  Rol.aggregate([
+    {
+      $match: {
+        tipo: req.query.rol
+      }
+    },
+    {
+      $lookup: {
+        from: "permisos",
+        localField: "permisos",
+        foreignField: "_id",
+        as: "permisosRol"
+      }
+    },
+    {
+      $project: {
+        _id: 0,
+        tipo: 0,
+        permisos: 0
+      }
+    }
+  ]).then(permisos => {
+    console.log(permisos);
+    return res
+      .status(200)
+      .json({
+        message: "Se obtuvo los permisos del rol exitosamente",
+        exito: true,
+        permisos: permisos[0].permisosRol[0]
+      });
+  });
+});
 
 module.exports = router;

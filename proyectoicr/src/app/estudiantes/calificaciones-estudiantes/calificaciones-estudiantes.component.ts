@@ -1,3 +1,4 @@
+import { AutenticacionService } from './../../login/autenticacionService.service';
 import { EstudiantesService } from "src/app/estudiantes/estudiante.service";
 import { Component, OnInit } from "@angular/core";
 import {
@@ -20,11 +21,13 @@ export class CalificacionesEstudiantesComponent implements OnInit {
   estudiantes: any[];
   displayedColumns: string[] = ["apellido", "nombre", "cal1", "cal2", "cal3","cal4", "cal5", "cal6", "prom"];
   trimestrePorDefecto: string;
+  rolConPermisosEdicion = false;
 
   constructor(
     public servicio: EstudiantesService,
     public popup: MatDialog,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    public servicioAutenticacion: AutenticacionService
   ) {}
 
   ngOnInit() {
@@ -41,6 +44,9 @@ export class CalificacionesEstudiantesComponent implements OnInit {
     });
 
     this.trimestrePorDefault();
+    this.servicioAutenticacion.obtenerPermisosDeRol().subscribe(res => {
+      console.log(res);
+    })
   }
 
   trimestrePorDefault()
