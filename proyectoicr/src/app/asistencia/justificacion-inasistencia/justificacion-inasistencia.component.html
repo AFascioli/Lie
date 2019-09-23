@@ -77,12 +77,12 @@
       <button mat-raised-button color="primary" mat-raised-button (click)="justificarInasistencia()">
         Guardar
       </button>
-      <button mat-raised-button color="warn">
-        Cancelar
+      <button mat-raised-button color="warn" (click)="onCancelar()" >
+          Cancelar
       </button>
       <button
         mat-raised-button
-        [routerLink]="['/buscar']"
+        [routerLink]="['/buscar/lista']"
         color="primary"
       >
         Volver

@@ -57,6 +57,12 @@ export class ListaEstudiantesComponent implements OnInit {
     this.servicio.retornoDesdeAcciones=true;
   }
 
+  onVRegistrarAR(indice){
+    this.servicio.estudianteSeleccionado = (this.estudiantes.find(estudiante => estudiante.numeroDocumento===this.estudiantes[indice].numeroDocumento));
+    this.router.navigate(["./altaAdultoResponsable"]);
+    this.servicio.retornoDesdeAcciones=true;
+  }
+
 
 }
 

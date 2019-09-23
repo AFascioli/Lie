@@ -1,3 +1,5 @@
+import { AltaARComponent } from './adulto-responsable/alta-ar/alta-ar.component';
+import { AltaEmpleadoComponent } from './empleado/alta-empleado/alta-empleado.component';
 import { AgendaCursoPerfilEstudianteComponent } from './estudiantes/perfil-estudiante/agenda-curso-perfil-estudiante/agenda-curso-perfil-estudiante.component';
 import { CalificacionesPerfilEstudianteComponent } from './estudiantes/perfil-estudiante/calificaciones-perfil-estudiante/calificaciones-perfil-estudiante.component';
 import { PerfilEstudianteComponent } from './estudiantes/perfil-estudiante/perfil-estudiante.component';
@@ -74,7 +76,20 @@ const routes: Routes = [
       {
         path: "calificacionesEstudiante",
         component: CalificacionesPerfilEstudianteComponent, canActivate:[RouteGuard]
-      }
+      },
+      {
+        path: "altaEmpleado",
+        component: AltaEmpleadoComponent
+      },
+      {
+        path: "altaAdultoResponsable",
+        component: AltaARComponent
+      },
+
+
+
+
+
     ]
   }
 ];

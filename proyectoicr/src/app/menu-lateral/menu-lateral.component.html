@@ -170,6 +170,29 @@
             &nbsp; &nbsp; &nbsp; Eliminar &nbsp;
           </a> -->
         </mat-expansion-panel>
+        <mat-expansion-panel
+          class="opcion"
+          (opened)="panelOpenState = true"
+          (closed)="panelOpenState = false"
+        >
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              <a mat-list-item>
+
+                <b class="titulo-expansion">Empleado</b>
+              </a>
+            </mat-panel-title>
+          </mat-expansion-panel-header>
+          <a
+            mat-list-item
+            class="opciones-expansion"
+            (click)="drawer.toggle()"
+            routerLink="/altaEmpleado"
+          >
+            Registrar
+          </a>
+
+        </mat-expansion-panel>
       </mat-accordion>
     </mat-nav-list>
 

@@ -60,7 +60,7 @@ import { registerLocaleData } from '@angular/common';
 import { ChartsModule } from 'ng2-charts';
 registerLocaleData(localePy, 'es');
 import localePy from '@angular/common/locales/es';
-import { JustificacionInasistenciaComponent } from './asistencia/justificacion-inasistencia/justificacion-inasistencia.component';
+import { JustificacionInasistenciaComponent, JustificacionInasistenciaPopupComponent } from './asistencia/justificacion-inasistencia/justificacion-inasistencia.component';
 import { AltaARComponent } from './adulto-responsable/alta-ar/alta-ar.component';
 import { AltaEmpleadoComponent } from './empleado/alta-empleado/alta-empleado.component';
 
@@ -96,7 +96,8 @@ import { AltaEmpleadoComponent } from './empleado/alta-empleado/alta-empleado.co
     AgendaCursoPerfilEstudianteComponent,
     JustificacionInasistenciaComponent,
     AltaARComponent,
-    AltaEmpleadoComponent
+    AltaEmpleadoComponent,
+    JustificacionInasistenciaPopupComponent
   ],
   //entryComponents declara los componentes que se generan dinamicamente dentro de otros.
   entryComponents: [
@@ -109,7 +110,8 @@ import { AltaEmpleadoComponent } from './empleado/alta-empleado/alta-empleado.co
     DocumentosInscripcionPopupComponent,
     CalificacionesEstudiantePopupComponent,
     CambiarPasswordPopupComponent,
-    CerrarSesionPopupComponent
+    CerrarSesionPopupComponent,
+    JustificacionInasistenciaPopupComponent
   ],
   imports: [
     BrowserModule,

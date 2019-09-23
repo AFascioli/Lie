@@ -1,7 +1,9 @@
 import { EstudiantesService } from "./../../estudiantes/estudiante.service";
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, Inject} from "@angular/core";
 import { DateAdapter, MatSnackBar } from "@angular/material";
 import { NgForm } from "@angular/forms";
+import { MatDialogRef, MatDialog, MAT_DIALOG_DATA, MatDialogConfig } from "@angular/material";
+import { Router } from "@angular/router";
 
 @Component({
   selector: "app-justificacion-inasistencia",
@@ -17,7 +19,8 @@ export class JustificacionInasistenciaComponent implements OnInit {
 
   constructor(
     private servicio: EstudiantesService,
-    public snackBar: MatSnackBar
+    public snackBar: MatSnackBar,
+    public dialog: MatDialog,
   ) {}
 
   ngOnInit() {}
@@ -46,4 +49,34 @@ export class JustificacionInasistenciaComponent implements OnInit {
   deshabilitarPickers(form: NgForm) {
     this.esMultiple = !this.esMultiple;
   }
+
+  onCancelar(){
+    this.dialog.open(JustificacionInasistenciaPopupComponent, {
+        width: "250px"
+      });
+    }
 }
+
+@Component({
+  selector: "app-justificacion-inasistencia-popup",
+  templateUrl: "./justificacion-inasistencia-popup.component.html",
+  styleUrls: ['./justificacion-inasistencia.component.css']
+})
+export class JustificacionInasistenciaPopupComponent {
+  formInvalido : Boolean;
+      tipoPopup :  string;
+  constructor(
+        public dialogRef: MatDialogRef<JustificacionInasistenciaPopupComponent>, public router: Router,
+      ) {}
+
+      onYesClick():void{
+        this.router.navigate(['./home']);
+        this.dialogRef.close();
+      }
+      onNoClick(): void {
+        this.dialogRef.close();
+      }
+
+
+    }
+
