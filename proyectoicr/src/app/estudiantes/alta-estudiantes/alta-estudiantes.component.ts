@@ -100,11 +100,13 @@ export class AltaEstudiantesComponent implements OnInit, OnDestroy {
   snackBarGuardar(form: NgForm): void {
     if (form.invalid) {
       this.snackBar.open("Faltan campos por completar", "", {
-        duration: 4000
+        duration: 4000,
+        panelClass: ['snack-bar-fracaso']
       });
     } else {
       this.snackBar.open("El estudiante se ha registrado correctamente", "", {
-        duration: 4000
+        duration: 4000,
+        panelClass: ['snack-bar-exito']
       });
     }
   }

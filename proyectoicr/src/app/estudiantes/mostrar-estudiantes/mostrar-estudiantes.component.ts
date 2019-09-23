@@ -2,9 +2,8 @@ import { Component, OnInit, Input } from "@angular/core";
 import { EstudiantesService } from "../estudiante.service";
 import { Subscription } from "rxjs";
 import { Provincia } from "../provincias.model";
-import { FormGroup, NgForm } from "@angular/forms";
+import { NgForm } from "@angular/forms";
 import { Estudiante } from "../estudiante.model";
-import { FormsModule } from "@angular/forms";
 import { Nacionalidad } from "../nacionalidades.model";
 import { Localidad } from "../localidades.model";
 import { MatDialog, MatDialogRef, MatSnackBar } from "@angular/material";
@@ -151,15 +150,18 @@ export class MostrarEstudiantesComponent implements OnInit {
     if(form.dirty){
       if(form.invalid){
         this.snackBar.open("Faltan campos por completar", "", {
+          panelClass: ['snack-bar-fracaso'],
           duration: 4000
         });
       }else{
         this.snackBar.open("Se han registrado los cambios correctamente", "", {
+          panelClass: ['snack-bar-exito'],
           duration: 4000
         });
       }
     }else{
       this.snackBar.open("No se han realizado cambios", "", {
+        panelClass: ['snack-bar-fracaso'],
         duration: 4000
       });
     }
