@@ -54,3 +54,11 @@ button {
 .snack-bar-fracaso {
   background-color: #f02626;
 }
+
+.mat-drawer-inner-container{
+  background-color: #fae099;
+}
+
+.mat-expansion-panel-body{
+  background-color: #fae099;
+}

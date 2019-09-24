@@ -23,6 +23,11 @@
   padding: 2rem;
 }
 
+.mat-sidenav{
+  box-shadow: 2px 0 5px -2px #888;
+  border-right: 0px !important;
+}
+
 /* Para que el container del sidenav sea del tamaño completo del body,
    le pongo 100% menos el tamaño del header */
 .mat-sidenav-container{
@@ -33,9 +38,9 @@
   margin-left: 4%;
 }
 
-.opciones-expansion{
+/* .opciones-expansion{
   margin-left: 10%;
-}
+} */
 
 .homeButton{
   margin-left: auto !important;
@@ -47,6 +52,13 @@
   bottom: 0;
   font-weight: bold;
   font-size: 16px;
+  margin: 0px !important;
+  width: 100%;
+  background: #ffd358;
+  text-align: left;
+  height: 7%;
+  border-radius: 0% !important;
+  box-shadow: 4px 4px 4px 4px rgba(0,0,0,0.71) !important;
 }
 
 .contenedor-total {
