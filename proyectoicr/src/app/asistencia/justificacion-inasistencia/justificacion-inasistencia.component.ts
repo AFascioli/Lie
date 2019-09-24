@@ -39,7 +39,12 @@ export class JustificacionInasistenciaComponent implements OnInit {
     this.servicio
       .justificarInasistencia(fechaInicio.toString(), fechaFin.toString(),this.esMultiple)
       .subscribe(respuesta => {
+        let tipoSnackBar='snack-bar-fracaso';
+        if(respuesta.exito){
+          tipoSnackBar='snack-bar-exito';
+        }
         this.snackBar.open(respuesta.message, "", {
+          panelClass: [tipoSnackBar],
           duration: 4500
         });
       });

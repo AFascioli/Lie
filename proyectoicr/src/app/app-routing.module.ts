@@ -48,14 +48,14 @@ const routes: Routes = [
         path: "buscar",
         component: BuscarEstudiantesComponent,
         canActivate: [RoleGuard],
-        data: { rolesValidos: ["Admin", "Preceptor", "Director"] },
+        data: { rolesValidos: ["Admin", "Preceptor", "Director", "Docente"] },
         children: [{ path: "lista", component: ListaEstudiantesComponent }]
       },
       {
         path: "mostrar",
         component: MostrarEstudiantesComponent,
         canActivate: [RouteGuard, RoleGuard],
-        data: { rolesValidos: ["Admin", "Preceptor", "Director"] }
+        data: { rolesValidos: ["Admin", "Preceptor", "Director", "Docente"] }
       },
       {
         path: "asistencia",
@@ -99,7 +99,7 @@ const routes: Routes = [
         path: "perfilEstudiante",
         component: PerfilEstudianteComponent,
         canActivate: [RouteGuard,RoleGuard],
-        data: { rolesValidos: ["Admin", "Preceptor", "Director"] }
+        data: { rolesValidos: ["Admin", "Preceptor", "Director", "Docente"] }
       },
       {
         path: "justificarInasistencia",
@@ -112,7 +112,7 @@ const routes: Routes = [
 
         component: CalificacionesPerfilEstudianteComponent,
         canActivate: [RouteGuard, RoleGuard],
-        data: { rolesValidos: ["Admin", "Preceptor", "Director"] }
+        data: { rolesValidos: ["Admin", "Preceptor", "Director", "Docente"] }
 
       },
       {

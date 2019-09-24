@@ -50,7 +50,7 @@ import { RetiroAnticipadoComponent, RetiroPopupComponent } from './asistencia/re
 import { DocumentosInscripcionComponent, DocumentosInscripcionPopupComponent } from './estudiantes/documentos-inscripcion/documentos-inscripcion.component';
 import {MatGridListModule} from '@angular/material/grid-list';
 import { CalificacionesEstudiantesComponent, CalificacionesEstudiantePopupComponent } from './estudiantes/calificaciones-estudiantes/calificaciones-estudiantes.component';
-import { LlegadaTardeComponent } from './asistencia/llegada-tarde/llegada-tarde.component';
+import { LlegadaTardeComponent, LlegadaTardePopupComponent } from './asistencia/llegada-tarde/llegada-tarde.component';
 import { CambiarPassword, CambiarPasswordPopupComponent } from './login/cambiar-password.component';
 import { PerfilEstudianteComponent, PerfilEstudiantePopupComponent } from './estudiantes/perfil-estudiante/perfil-estudiante.component';
 import { CalificacionesPerfilEstudianteComponent } from './estudiantes/perfil-estudiante/calificaciones-perfil-estudiante/calificaciones-perfil-estudiante.component';
@@ -90,6 +90,7 @@ import { AltaEmpleadoComponent, AltaEmpleadoPopupComponent } from './empleado/al
     CalificacionesEstudiantesComponent,
     CalificacionesEstudiantePopupComponent,
     LlegadaTardeComponent,
+    LlegadaTardePopupComponent,
     CambiarPassword,
     CambiarPasswordPopupComponent,
     CerrarSesionPopupComponent,
@@ -102,8 +103,6 @@ import { AltaEmpleadoComponent, AltaEmpleadoPopupComponent } from './empleado/al
     JustificacionInasistenciaPopupComponent,
     AltaEmpleadoPopupComponent,
     AltaARPopupComponent
-
-
 
   ],
   //entryComponents declara los componentes que se generan dinamicamente dentro de otros.

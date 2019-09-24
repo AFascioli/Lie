@@ -29,13 +29,19 @@ export class CambiarPassword implements OnInit {
           form.value.passwordAnterior,
           form.value.passwordNueva
         ).subscribe(response=> {
+          let tipoSnackBar='snack-bar-fracaso';
+          if(response.exito){
+            tipoSnackBar='snack-bar-exito';
+          }
           this.snackBar.open(response.message, "", {
+            panelClass: [tipoSnackBar],
             duration: 4000
           });
           form.reset();
         });
       } else {
         this.snackBar.open("Las contraseñas ingresadas no coinciden", "", {
+          panelClass: ['snack-bar-fracaso'],
           duration: 4000
         });
       }
@@ -43,10 +49,12 @@ export class CambiarPassword implements OnInit {
 
       if(!form.value.passwordAnterior || !form.value.passwordNueva || !form.value.passwordNuevaRepetida ){
         this.snackBar.open("Faltan campos por completar", "", {
+          panelClass: ['snack-bar-fracaso'],
           duration: 4000
           });
       } else {
          this.snackBar.open("Los campos ingresados no son validos", "", {
+          panelClass: ['snack-bar-fracaso'],
         duration: 4000
         });
       }

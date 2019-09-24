@@ -76,11 +76,13 @@ export class DocumentosInscripcionComponent implements OnInit {
             "Se registró correctamente la documentación de los estudiantes",
             "",
             {
+              panelClass: ['snack-bar-exito'],
               duration: 4000
             }
           );
         } else {
           this.snackBar.open("Ocurrió un problema al tratar de guardar", "", {
+            panelClass: ['snack-bar-fracaso'],
             duration: 4500
           });
         }

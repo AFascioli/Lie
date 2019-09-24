@@ -5,31 +5,33 @@
   max-width: 800px;
 }
 
-.btnVisualizar{
+.btnVisualizar {
   margin: 2%;
 }
 
-th, td {
+th,
+td {
   text-align: center !important;
 }
 
-th{
+th {
   font-weight: bold;
   font-size: 15px;
 }
 
-.button{
+.button {
   width: 45%;
 }
 
-.botonesAcciones{
+.botonesAcciones {
   text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
-.tituloAcciones{
+.tituloAcciones {
   text-align: center;
   font-weight: bold;
   margin-top: 0;
 }
-
-

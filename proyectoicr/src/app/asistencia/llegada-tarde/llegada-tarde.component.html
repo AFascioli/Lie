@@ -2,39 +2,32 @@
 <mat-card class="card-body-componente">
   <p class="fecha">
     <b>Fecha: </b>
-    <br>
-    {{ fechaActual | date: "EEEE" }} {{ fechaActual | date: "dd/MM/yyyy" }}</p>
+    <br />
+    {{ fechaActual | date: "EEEE" }} {{ fechaActual | date: "dd/MM/yyyy" }}
+  </p>
   <br />
 
   <div class="contenido">
-      <mat-card class="card-body-componente">
-          <h3> Datos del estudiante seleccionado </h3>
-          <mat-card-subtitle>  <b>Apellido/s: </b> {{ apellidoEstudiante }}
-                               <br />
-                               <b>Nombre/s: </b> {{ nombreEstudiante }}
-          </mat-card-subtitle>
-        </mat-card>
+    <mat-card class="card-body-componente">
+      <h3>Datos del estudiante seleccionado</h3>
+      <mat-card-subtitle>
+        <b>Apellido/s: </b> {{ apellidoEstudiante }}
+        <br />
+        <b>Nombre/s: </b> {{ nombreEstudiante }}
+      </mat-card-subtitle>
+    </mat-card>
   </div>
 
   <br />
 
-  <mat-radio-group  aria-label="Select an option">
-    <mat-radio-button
-      (change)="CambiarTipoRetiro()"
-      [checked]=" "
-      value="1"
+  <mat-radio-group aria-label="Select an option">
+    <mat-radio-button (change)="cambioTipoRetiro()" [checked]="" value="1"
       >Hasta 10 min</mat-radio-button
     >
-    <mat-radio-button
-      (change)="CambiarTipoRetiro()"
-      [checked]=" "
-      value="2"
+    <mat-radio-button (change)="cambioTipoRetiro()" [checked]="" value="2"
       >Entre 10 y 20 min</mat-radio-button
     >
-    <mat-radio-button
-      (change)="CambiarTipoRetiro()"
-      [checked]=""
-      value="3"
+    <mat-radio-button (change)="cambioTipoRetiro()" [checked]="" value="3"
       >Luego de 20 min</mat-radio-button
     >
   </mat-radio-group>
@@ -43,11 +36,11 @@
   <br />
 
   <div class="div-button">
-    <button color="primary" (click)="openPopup('confirmar')" mat-raised-button>
+    <button color="primary"  mat-raised-button>
       Guardar
     </button>
 
-    <button mat-raised-button (click)="openPopup('cancelar')" color="warn">
+    <button mat-raised-button color="warn">
       Cancelar
     </button>
   </div>

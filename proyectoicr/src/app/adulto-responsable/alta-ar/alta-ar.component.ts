@@ -64,10 +64,12 @@ export class AltaARComponent implements OnInit, OnDestroy{
 snackBarGuardar(form: NgForm): void {
     if (form.invalid) {
       this.snackBar.open("Faltan campos por completar", "", {
+        panelClass: ['snack-bar-fracaso'],
         duration: 4000
       });
     } else {
       this.snackBar.open("El adulto responsable se ha registrado correctamente", "", {
+        panelClass: ['snack-bar-exito'],
         duration: 4000
       });
     }

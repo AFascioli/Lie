@@ -26,6 +26,10 @@ export class LlegadaTardeComponent implements OnInit {
     this.nombreEstudiante= this.servicio.estudianteSeleccionado.nombre;
     this._idEstudiante= this.servicio.estudianteSeleccionado._id;
   }
+
+  cambioTipoRetiro(){
+
+  }
 }
 
 @Component({

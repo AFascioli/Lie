@@ -55,6 +55,7 @@ export class InscripcionEstudianteComponent implements OnInit {
   openDialogo(tipo: string, form: NgForm, curso) {
     if(form.invalid){
       this.snackBar.open("No se ha seleccionado un curso.", "", {
+        panelClass: ['snack-bar-fracaso'],
         duration: 4500,
       });
     }else{

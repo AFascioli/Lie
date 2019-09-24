@@ -326,13 +326,14 @@
       >
         Guardar
       </button>
-      <button (click)="onEditar()" mat-raised-button color="primary">
+      <button (click)="onEditar()" mat-raised-button color="primary" *ngIf="permisos.inscribirEstudiante > 1">
         Editar
       </button>
       <button
         mat-raised-button
         (click)="openDialogo('borrar', form)"
         color="warn"
+        *ngIf="permisos.inscribirEstudiante > 1"
       >
         Borrar
       </button>

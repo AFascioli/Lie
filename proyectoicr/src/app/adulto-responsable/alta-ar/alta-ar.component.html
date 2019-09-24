@@ -4,7 +4,7 @@
   <mat-card class="card-body-componente">
     <meta charset="utf-8" />
 
-    <form #form="ngForm" (submit)="onGuardar(form)">
+    <form #form="ngForm">
           <mat-form-field>
             <input
               name="apellido"
@@ -140,7 +140,7 @@
               ngModel
               #telefono="ngModel"
               placeholder="Ingrese número de teléfono"
-              
+
               (keypress)="checkNumeros($event)"
             />
           </mat-form-field>

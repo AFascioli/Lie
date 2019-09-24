@@ -1,3 +1,4 @@
+import { AutenticacionService } from './../../login/autenticacionService.service';
 import { Component, OnInit, Input } from "@angular/core";
 import { EstudiantesService } from "../estudiante.service";
 import { Subscription } from "rxjs";
@@ -44,9 +45,19 @@ export class MostrarEstudiantesComponent implements OnInit {
   nacionalidadEstudiante: string;
   estadoCivilEstudiante: string;
   telefonoEstudiante: number;
+  permisos={
+    notas:0,
+    asistencia:0,
+    eventos:0,
+    sanciones:0,
+    agendaCursos:0,
+    inscribirEstudiante:0,
+    registrarEmpleado:0,
+    registrarCuota:0
+  };
 
   constructor(public servicio: EstudiantesService, public dialog: MatDialog,
-    private snackBar: MatSnackBar) {
+    private snackBar: MatSnackBar, public authService: AutenticacionService) {
     this.apellidoEstudiante = this.servicio.estudianteSeleccionado.apellido;
     this.nombreEstudiante = this.servicio.estudianteSeleccionado.nombre;
     this.tipoDocEstudiante = this.servicio.estudianteSeleccionado.tipoDocumento;
@@ -87,6 +98,9 @@ export class MostrarEstudiantesComponent implements OnInit {
       .getNacionalidadesListener()
       .subscribe(nacionalidadesActualizadas => {
         this.nacionalidades = nacionalidadesActualizadas;
+      });
+      this.authService.obtenerPermisosDeRol().subscribe(response=>{
+        this.permisos=response.permisos;
       });
   }
 
@@ -151,15 +165,18 @@ export class MostrarEstudiantesComponent implements OnInit {
     if(form.dirty){
       if(form.invalid){
         this.snackBar.open("Faltan campos por completar", "", {
+          panelClass: ['snack-bar-fracaso'],
           duration: 4000
         });
       }else{
         this.snackBar.open("Se han registrado los cambios correctamente", "", {
+          panelClass: ['snack-bar-exito'],
           duration: 4000
         });
       }
     }else{
       this.snackBar.open("No se han realizado cambios", "", {
+        panelClass: ['snack-bar-fracaso'],
         duration: 4000
       });
     }

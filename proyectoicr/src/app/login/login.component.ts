@@ -21,8 +21,13 @@ export class LoginComponent implements OnInit {
 
   iniciarSesion() {
     if (this.password && this.email) {
-      this.authService.login(this.email, this.password).subscribe(respuesta => {
+      this.authService.login(this.email, this.password).subscribe(respuesta =>{
+        let tipoSnackBar='snack-bar-fracaso';
+          if(respuesta.exito){
+            tipoSnackBar='snack-bar-exito';
+          }
         this.snackBar.open(respuesta, "", {
+          panelClass:[tipoSnackBar],
           duration: 4000
         });
       });

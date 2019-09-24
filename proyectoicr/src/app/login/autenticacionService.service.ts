@@ -47,8 +47,8 @@ export class AutenticacionService {
   //Se retorna un obsevable para que el componente pueda leer el mensaje del backend.
   login(email: string, password: string) {
     const authData = { email: email, password: password };
-    let respuesta: string;
-    var subject = new Subject<string>();
+    let respuesta: any;
+    var subject = new Subject<any>();
     this.http
       .post<{
         token: string;
@@ -58,7 +58,7 @@ export class AutenticacionService {
         rol: string;
       }>("http://localhost:3000/usuario/login", authData)
       .subscribe(response => {
-        respuesta = response.message;
+        respuesta = response;
         if (response.token) {
           this.usuarioAutenticado = email;
           this.token = response.token;

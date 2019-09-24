@@ -1,3 +1,4 @@
+import { AutenticacionService } from './../../login/autenticacionService.service';
 import { Component, OnInit } from "@angular/core";
 import { EstudiantesService } from '../estudiante.service';
 import { Estudiante } from '../estudiante.model';
@@ -13,8 +14,18 @@ export class ListaEstudiantesComponent implements OnInit {
   dniSeleccionado: number;
   estudiantes: Estudiante[] = [];
   displayedColumns: string[] = ["apellido", "nombre", "tipo", "numero", "accion"];
+  permisos={
+    notas:0,
+    asistencia:0,
+    eventos:0,
+    sanciones:0,
+    agendaCursos:0,
+    inscribirEstudiante:0,
+    registrarEmpleado:0,
+    registrarCuota:0
+  };
 
-  constructor(public servicio: EstudiantesService, public router: Router) {}
+  constructor(public servicio: EstudiantesService, public router: Router, public authService: AutenticacionService) {}
 
   ngOnInit() {
     this.servicio.getEstudiantesListener().subscribe(estudiantesBuscados =>{
@@ -25,6 +36,9 @@ export class ListaEstudiantesComponent implements OnInit {
     {
       this.servicio.retornoDesdeAcciones=false;
     }
+    this.authService.obtenerPermisosDeRol().subscribe(response=>{
+      this.permisos=response.permisos;
+    });
   }
 
   onInscribir(indice){

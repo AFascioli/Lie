@@ -16,51 +16,52 @@
           class="button"
           color="primary"
           (click)="onInscribir(i)"
+          *ngIf="permisos.inscribirEstudiante > 1"
         >
           Inscribir estudiante a un curso
         </button>
-        <br />
         <button
           mat-raised-button
           class="button"
           color="primary"
           (click)="onMostrar(i)"
+          *ngIf="permisos.inscribirEstudiante >= 1"
         >
           Visualizar estudiante
         </button>
-        <br />
         <button
           mat-raised-button
           class="button"
           color="primary"
           (click)="onRetiro(i)"
+          *ngIf="permisos.asistencia > 1"
         >
           Registrar retiro anticipado
         </button>
-        <br />
         <button
           mat-raised-button
           class="button"
           color="primary"
           (click)="onJustificar(i)"
+          *ngIf="permisos.asistencia > 1"
         >
           Justificar inasistencia
         </button>
-        <br />
         <button
           mat-raised-button
           class="button"
           color="primary"
           (click)="onVisualizarPerfil(i)"
+          *ngIf="permisos.inscribirEstudiante >= 1"
         >
           Visualizar perfil de estudiante
         </button>
-        <br />
         <button
         mat-raised-button
         class="button"
         color="primary"
         (click)="onVRegistrarAR(i)"
+        *ngIf="permisos.inscribirEstudiante > 1"
       >
         Registrar Adulto Responsable
       </button>

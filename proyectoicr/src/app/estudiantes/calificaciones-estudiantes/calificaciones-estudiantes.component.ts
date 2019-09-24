@@ -91,6 +91,7 @@ export class CalificacionesEstudiantesComponent implements OnInit {
     if (form.invalid) {
       if (form.value.curso == "" || form.value.materia == "") {
         this.snackBar.open("Faltan campos por seleccionar", "", {
+          panelClass: ["snack-bar-fracaso"],
           duration: 3000
         });
       } else {
@@ -98,6 +99,7 @@ export class CalificacionesEstudiantesComponent implements OnInit {
           "Las calificaciones sólo pueden ser números entre 1 y 10.",
           "",
           {
+            panelClass: ['snack-bar-fracaso'],
             duration: 3000
           }
         );
@@ -112,6 +114,7 @@ export class CalificacionesEstudiantesComponent implements OnInit {
         .subscribe(respuesta => {
           if (respuesta.exito) {
             this.snackBar.open(respuesta.message, "", {
+              panelClass: ['snack-bar-exito'],
               duration: 3000
             });
           }
