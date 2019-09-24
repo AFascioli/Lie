@@ -1,5 +1,6 @@
 .opcion{
-  margin: 1rem;
+  /* margin: 1rem; */
+  margin:0;
 }
 
 .tituloMenu, .mat-icon-button, .homeButton{
@@ -12,7 +13,9 @@
   left: 0;
   z-index: 2;
   width: 100%  !important;
-  background-color: #c12d2a;
+  /* background-color: #c12d2a; */
+  background-color: rgb(47, 100, 131);
+/* https://colorhunt.co/palette/157179 paleta de color para el azul */
   height: 64px;
 }
 
@@ -27,7 +30,7 @@
 }
 
 .titulo-expansion{
-  margin-left: 8%;
+  margin-left: 4%;
 }
 
 .opciones-expansion{
@@ -59,8 +62,31 @@
 .contenedor-sidenav{
   flex:1;
   top:64px !important;
+  background-color: #ffd358;
 }
+
 
 .body-contenido{
   height: 100%;
+}
+
+/* nuevo */
+.mat-expansion-panel{
+  border-radius: 0px !important;
+  margin:0 !important;
+  background-color: #ffd358;
+}
+
+.mat-expansion-panel-header{
+  padding-left: 2%;
+  box-shadow: 0px 0px 4px 0px rgba(0,0,0,0.71) !important;
+}
+
+/* .contenidoMatExp{
+  background-color: #f4f1eb75 !important;
+} */
+
+/* Comiezo del menu lateral que sea luego del header */
+.mat-list-base{
+  padding-top: 0 !important;
 }

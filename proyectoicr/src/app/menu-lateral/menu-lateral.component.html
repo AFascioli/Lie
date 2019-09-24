@@ -124,23 +124,25 @@
                 </a>
               </mat-panel-title>
             </mat-expansion-panel-header>
-            <a
-              mat-list-item
-              class="opciones-expansion"
-              routerLink="/alta"
-              *ngIf="permisos.inscribirEstudiante >= 1"
-              (click)="cerrarMenuLateral(sideNav)"
-            >
-              Registrar
-            </a>
-            <a
-              mat-list-item
-              class="opciones-expansion"
-              routerLink="/buscar"
-              (click)="cerrarMenuLateral(sideNav)"
-            >
-              Buscar
-            </a>
+              <a
+                mat-list-item
+                class="opciones-expansion"
+                routerLink="/alta"
+                *ngIf="permisos.inscribirEstudiante >= 1"
+                (click)="cerrarMenuLateral(sideNav)"
+              >
+                <mat-icon>add_circle_outline</mat-icon>
+                Registrar
+              </a>
+              <a
+                mat-list-item
+                class="opciones-expansion"
+                routerLink="/buscar"
+                (click)="cerrarMenuLateral(sideNav)"
+              >
+                <mat-icon>search</mat-icon>
+                Buscar
+              </a>
           </mat-expansion-panel>
           <mat-expansion-panel
             class="opcion"
