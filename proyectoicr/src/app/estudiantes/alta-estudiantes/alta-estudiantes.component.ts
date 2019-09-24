@@ -156,5 +156,5 @@ export class AltaPopupComponent {
   onNoClick(): void {
     this.dialogRef.close();
   }
-  
+
 }

@@ -5,7 +5,6 @@
     <meta charset="utf-8" />
 
     <form #form="ngForm" (submit)="onGuardar(form)">
-
           <mat-form-field>
             <input
               name="apellido"
@@ -70,7 +69,6 @@
               #nroDocumento="ngModel"
               matInput
               placeholder="Ingrese el número de documento"
-              type="number"
               required
               (keypress)="checkNumeros($event)"
             />
@@ -142,7 +140,7 @@
               ngModel
               #telefono="ngModel"
               placeholder="Ingrese número de teléfono"
-              type="number"
+              
               (keypress)="checkNumeros($event)"
             />
           </mat-form-field>
@@ -152,7 +150,6 @@
           <input
             matInput
             name="Email"
-
             ngModel
             #Email="ngModel"
             placeholder="Ingrese Email"
