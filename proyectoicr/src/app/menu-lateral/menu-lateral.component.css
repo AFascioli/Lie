@@ -1,28 +1,23 @@
-/* .ubicacion_inferior{
-  position:absolute;
-  bottom:5px;
-} */
-
 .opcion{
   margin: 1rem;
 }
 
-.tituloMenu, .mat-icon-button, .home{
+.tituloMenu, .mat-icon-button, .homeButton{
   color: #ffff;
 }
 
 .fixed-header {
-  position: sticky;
+  position: fixed;
   top: 0;
   left: 0;
   z-index: 2;
   width: 100%  !important;
   background-color: #c12d2a;
+  height: 64px;
 }
 
 .body-contenido{
   padding: 2rem;
-  padding-top: 0rem;
 }
 
 /* Para que el container del sidenav sea del tamaño completo del body,
@@ -39,16 +34,33 @@
   margin-left: 10%;
 }
 
-.ubicacionHome
-{
-  margin-left: 88%;
-  margin-right: 7%;
+.homeButton{
+  margin-left: auto !important;
 }
 
 .cierreSesion{
   position: absolute;
-  left:    0;
-  bottom:   0;
+  left: 0;
+  bottom: 0;
   font-weight: bold;
   font-size: 16px;
+}
+
+.contenedor-total {
+  display: flex;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+
+/* top para que empiece luego del header */
+.contenedor-sidenav{
+  flex:1;
+  top:64px !important;
+}
+
+.body-contenido{
+  height: 100%;
 }

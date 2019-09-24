@@ -1,8 +1,10 @@
-import { MatDialog, MatDialogRef } from "@angular/material";
-import { Component, OnInit } from "@angular/core";
+import { CambiarPassword } from './../login/cambiar-password.component';
+import { MatDialog, MatDialogRef, MatDrawer, MatSidenav } from "@angular/material";
+import { Component, OnInit, ChangeDetectorRef } from "@angular/core";
 import { Router } from "@angular/router";
 import { AutenticacionService } from "../login/autenticacionService.service";
 import { EstudiantesService } from '../estudiantes/estudiante.service';
+import { MediaMatcher } from '@angular/cdk/layout';
 
 @Component({
   selector: "app-menu-lateral",
@@ -21,18 +23,26 @@ export class MenuLateralComponent implements OnInit {
     registrarEmpleado:0,
     registrarCuota:0
   };
+  _mobileQueryListener: () => void;
+  mobileQuery: MediaQueryList;
 
+  //Basicamente tenemos comportamiento que se fija si el display es menor a 600 px o no
   constructor(
     public router: Router,
     public authService: AutenticacionService,
     public dialog: MatDialog,
-    public estudianteService: EstudiantesService
-  ) {}
+    public estudianteService: EstudiantesService,
+    public changeDetectorRef: ChangeDetectorRef,
+    public media: MediaMatcher
+  ) {
+    this.mobileQuery = media.matchMedia('(max-width: 600px)');
+    this._mobileQueryListener = () => changeDetectorRef.detectChanges();
+    this.mobileQuery.addListener(this._mobileQueryListener);
+  }
 
   ngOnInit() {
     this.authService.obtenerPermisosDeRol().subscribe(response=>{
       this.permisos=response.permisos;
-      console.log((this.permisos.agendaCursos>=1));
     });
   }
 
@@ -48,8 +58,14 @@ export class MenuLateralComponent implements OnInit {
     });
   }
 
-  cambiarContrasenia() {
+  cambiarPassword() {
     this.router.navigate(["/cambiarContraseña"]);
+  }
+
+  cerrarMenuLateral(sideNav: MatSidenav){
+    if(this.mobileQuery.matches){
+      sideNav.toggle();
+    }
   }
 
 }
