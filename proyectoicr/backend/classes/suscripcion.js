@@ -29,7 +29,7 @@ function notificar(idusuario, titulo, cuerpo) {
 
     try {
       webpush.setVapidDetails(
-        "www.google.com.ar",
+        "ejemplo@ejemplo.com",
         vapidKeys.vapid_public_key,
         vapidKeys.vapid_private_key
       );

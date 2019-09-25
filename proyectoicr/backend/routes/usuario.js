@@ -124,10 +124,7 @@ router.post("/cambiarPassword", async(req, res, next) => {
 router.post("/suscripcion", (req, res) => {
   const emailuser = req.body.usuarioAutenticado;
   const suscripcion = req.body.sub;
-  console.log('Backend: Req.body.sub--------------------------');
-  console.log(req.body.sub);
-  console.log('Backend: Suscripcion---------------------------');
-  console.log(suscripcion);
+
   //#resolve esta isando id agufascioli
   Usuario.findOneAndUpdate({_id: "5d7bfd1b93119f33f80819a1"}, { $push: { suscripciones: suscripcion }}).then((usuario) => {
     usuario.save();
