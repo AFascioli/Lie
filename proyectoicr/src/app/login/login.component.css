@@ -1,36 +1,75 @@
-.componente-titulo-login{
+/* .componente-titulo-login{
   text-align: center;
   opacity: 0.8;
   font-weight: 100%;
   margin-top: 0 !important;
+  color: #ffffff;
+  flex: 1 1 auto;
 }
-.contenedor{
-  margin: auto;
+*/
+
+.titulo-login {
+  text-align: center;
+  opacity: 0.8;
+  font-weight: 100%;
+  margin-top: 0 !important;
+  color: rgb(255, 211, 88);
+  /* Para poder alinear el parrafo al centro */
+  flex: 1 1 auto;
+  font-size: 30px;
 }
 
-.fondo{
+.contenedor {
+  margin: auto;
+  color: white;
+  font-weight: bold;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 2;
+  width: 80%;
+  padding: 20px;
+  text-align: center;
+}
+
+.fixed-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 2;
+  width: 100% !important;
+  /* background-color: #c12d2a; */
+  background-color: rgb(47, 100, 131);
+  /* https://colorhunt.co/palette/157179 paleta de color para el azul */
+  height: 75px;
+}
+
+.fondo {
   margin: 0;
   padding: 0;
-  background-image: url('../../img/cristoReyTrans.jpg');
+  background-image: url("../../img/school2.jpg");
   background-repeat: no-repeat;
   background-size: cover;
   background-attachment: fixed;
   background-position: center center;
+  filter: blur(8px);
+  -webkit-filter: blur(8px);
   height: 100%;
-  display:flex;
+  display: flex;
 }
 
 mat-card {
   padding: 0 !important;
 }
 
-.mat-form-field{
-  width:50%;
-  margin:auto;
+.mat-form-field {
+  width: 50%;
+  margin: auto;
   padding: 0%;
+  padding-left: 2%;
   margin-top: 2%;
   text-align: left;
-
 }
 
 .div-button {
@@ -39,28 +78,39 @@ mat-card {
   text-align: center;
 }
 
-
-.buttonLogin{
-  background-color: #551111 !important;
+.buttonLogin {
+  background-color: rgb(47, 100, 131);
   color: white;
 }
 
-
-form{
-  margin-top: 4%;
-  margin-bottom: 4% !important;
+form {
+  padding-top: 4%;
+  padding-bottom: 4% !important;
   text-align: center;
 }
 
-.visibilidad{
+.visibilidad {
   padding: 0 !important;
   min-width: 0;
 }
 
-.card-body-componente{
-  max-width: 600 !important;
+.card-body-componente {
+  max-width: 600px !important;
 }
 
-.parrafo{
+.parrafo {
   text-align: center;
+}
+
+.mat-card{
+  background-color: rgb(255, 211, 88) !important;
+  background-color: rgb(255, 211, 88, 0.7)!important;
+}
+
+.mat-input {
+  background-color: transparent !important;
+}
+
+button{
+  margin: 0 !important;
 }

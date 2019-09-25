@@ -1,18 +1,24 @@
-<div class="fondo">
+<mat-toolbar class="fixed-header">
+    <mat-toolbar-row>
+        <h1 class="titulo-login">
+            Instituto Cristo Rey
+        </h1>
+    </mat-toolbar-row>
+  </mat-toolbar>
+
+<div class="fondo"></div>
+
   <div class="contenedor">
-    <h1 class="componente-titulo-login">
-      Instituto "Cristo Rey"
-    </h1>
     <mat-card class="card-body-componente">
       <meta charset="utf-8" />
       <form>
+        <b>Ingrese e-mail: </b>
         <mat-form-field>
           <input
             matInput
             name="email"
             ngModel
             type="email"
-            placeholder="E-Mail"
             #emailInput="ngModel"
             [(ngModel)]="email"
             required
@@ -23,11 +29,11 @@
           >
         </mat-form-field>
         <br />
+        <b>Ingrese contraseña: </b>
         <mat-form-field>
           <input
             type="password"
             matInput
-            placeholder="Contraseña"
             ngModel
             type="password"
             name="password"
@@ -47,10 +53,10 @@
             routerLink="/home"
             (click)="iniciarSesion()"
           >
-            Iniciar Sesión
+           Iniciar Sesión
           </button>
         </div>
       </form>
     </mat-card>
   </div>
-</div>
+

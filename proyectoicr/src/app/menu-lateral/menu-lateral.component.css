@@ -102,3 +102,12 @@
 .mat-list-base{
   padding-top: 0 !important;
 }
+
+.titulo-row{
+   text-align: center !important;
+  color: #ffff;
+  flex: 1 1 auto;
+  font-size: 30px;
+  margin: 0px;
+  padding: 0px;
+}

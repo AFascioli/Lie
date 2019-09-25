@@ -26,7 +26,7 @@ export class LoginComponent implements OnInit {
           if(respuesta.exito){
             tipoSnackBar='snack-bar-exito';
           }
-        this.snackBar.open(respuesta, "", {
+        this.snackBar.open(respuesta.message, "", {
           panelClass:[tipoSnackBar],
           duration: 4000
         });
