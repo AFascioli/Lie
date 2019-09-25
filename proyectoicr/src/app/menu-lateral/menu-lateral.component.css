@@ -14,7 +14,7 @@
   z-index: 2;
   width: 100%  !important;
   /* background-color: #c12d2a; */
-  background-color: rgb(47, 100, 131);
+  background-color: #2f6483;
 /* https://colorhunt.co/palette/157179 paleta de color para el azul */
   height: 64px;
 }
@@ -54,7 +54,7 @@
   font-size: 16px;
   margin: 0px !important;
   width: 100%;
-  background: #ffd358;
+  background: #47988d59;
   text-align: left;
   height: 7%;
   border-radius: 0% !important;
@@ -74,7 +74,7 @@
 .contenedor-sidenav{
   flex:1;
   top:64px !important;
-  background-color: #ffd358;
+  background-color: #eef0f1;
 }
 
 
@@ -86,7 +86,9 @@
 .mat-expansion-panel{
   border-radius: 0px !important;
   margin:0 !important;
-  background-color: #ffd358;
+  background: #47988d59;
+  /* background-color: #E6F4F1; */
+
 }
 
 .mat-expansion-panel-header{
@@ -110,4 +112,8 @@
   font-size: 30px;
   margin: 0px;
   padding: 0px;
+}
+
+.parrafo{
+  text-align: center;
 }

@@ -5,21 +5,15 @@
 }
 
 .ubicacionDatePickers{
- margin-top: 1rem; 
+ margin-top: 1rem;
 }
 
 .mat-radio-button ~ .mat-radio-button {
   margin-left: 20%;
 }
-<<<<<<< HEAD
 .mat-radio-button  {
   margin-bottom: 5%;
 }
-=======
-/* .mat-radio-button  {
-  margin-bottom: 20%;
-} */
->>>>>>> 5f65c71712a95b443809284bec6586e05320c645
 
 .mat-form-field, .mat-radio-button{
   margin-left: 20%;
