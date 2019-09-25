@@ -2,15 +2,18 @@ import { AdultoResponsable } from "./adultoResponsable.model";
 import { HttpClient, HttpParams } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { AutenticacionService } from "../login/autenticacionService.service";
-import { Estudiante } from '../estudiantes/estudiante.model';
+
 
 @Injectable({
   providedIn: "root"
 })
 export class AdultoResponsableService {
+  adultoResponsableEstudiante: AdultoResponsable;
+  
   constructor(
     public http: HttpClient,
-    public authServicio: AutenticacionService
+    public authServicio: AutenticacionService,
+
   ) {}
 
   registrarAdultoResponsable(

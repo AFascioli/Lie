@@ -3,6 +3,8 @@ import { EstudiantesService } from "../estudiante.service";
 import { Estudiante } from '../estudiante.model';
 import { Router } from '@angular/router';
 import { MatDialogRef, MatDialog } from '@angular/material';
+import { AdultoResponsableService } from 'src/app/adulto-responsable/adultoResponsable.service';
+import { AdultoResponsable } from 'src/app/adulto-responsable/adultoResponsable.model';
 
 
 @Component({
@@ -13,8 +15,12 @@ import { MatDialogRef, MatDialog } from '@angular/material';
 export class PerfilEstudianteComponent implements OnInit {
   apellidoEstudiante: string;
   nombreEstudiante: string;
+  apellidoAR: string;
+  nombreAR: string;
   estudiantes: Estudiante[] = [];
+  adulto: AdultoResponsable[] = [];
   _idEstudiante: string;
+  idUsuario: string;
   displayedColumns: string[] = ["tipo", "cantidad",];
   contadorInasistenciaJustificada: number;
   contadorInasistencia: number;
@@ -22,12 +28,19 @@ export class PerfilEstudianteComponent implements OnInit {
   pieChartData:number[];
   pieChartType:string;
 
-  constructor(public servicio: EstudiantesService,  public router: Router, public popup: MatDialog) { }
+  constructor(
+    public servicio: EstudiantesService,
+    public servicioAR: AdultoResponsableService,
+    public router: Router,
+    public popup: MatDialog) { }
 
   ngOnInit() {
     this.apellidoEstudiante = this.servicio.estudianteSeleccionado.apellido;
     this.nombreEstudiante = this.servicio.estudianteSeleccionado.nombre;
     this._idEstudiante = this.servicio.estudianteSeleccionado._id;
+    this.apellidoAR= this.servicioAR.adultoResponsableEstudiante.apellido;
+    this.nombreAR = this.servicioAR.adultoResponsableEstudiante.nombre;
+    this.idUsuario = this.servicioAR.adultoResponsableEstudiante.idUsuario;
     this.servicio.obtenerInasistenciasDeEstudiante().subscribe( response => {
       this.contadorInasistencia = response.contadorInasistencias;
       this.contadorInasistenciaJustificada= response.contadorInasistenciasJustificada;
@@ -37,6 +50,8 @@ export class PerfilEstudianteComponent implements OnInit {
       });
     this.servicio.getTutoresDeEstudiante();
   }
+
+
 
   onVisualizarCalificacionesEstudiante(){
     this.router.navigate(["./calificacionesEstudiante"]);
