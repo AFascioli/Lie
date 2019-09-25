@@ -27,11 +27,15 @@ function notificar(idusuario, titulo, cuerpo) {
       }
     };
 
-    webpush.setVapidDetails(
-      "mailtoexample@ejemplo.org",
-      vapidKeys.vapid_public_key,
-      vapidKeys.vapid_private_key
-    );
+    try {
+      webpush.setVapidDetails(
+        "www.google.com.ar",
+        vapidKeys.vapid_public_key,
+        vapidKeys.vapid_private_key
+      );
+    } catch (error) {
+      console.log(error);
+    }
 
     Promise.all(
       allSubscriptions.map(sub =>

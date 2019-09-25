@@ -1,9 +1,7 @@
 const express = require("express");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-
 const Usuario = require("../models/usuario");
-
 const router = express.Router();
 
 router.post("/signup", (req, res, next) => {
@@ -126,34 +124,20 @@ router.post("/cambiarPassword", async(req, res, next) => {
 router.post("/suscripcion", (req, res) => {
   const emailuser = req.body.usuarioAutenticado;
   const suscripcion = req.body.sub;
-
-  Usuario.findOneAndUpdate({email: emailuser}, { $push: { suscripciones: suscripcion }}).then(() => {
+  console.log('Backend: Req.body.sub--------------------------');
+  console.log(req.body.sub);
+  console.log('Backend: Suscripcion---------------------------');
+  console.log(suscripcion);
+  //#resolve esta isando id agufascioli
+  Usuario.findOneAndUpdate({_id: "5d7bfd1b93119f33f80819a1"}, { $push: { suscripciones: suscripcion }}).then((usuario) => {
+    usuario.save();
     console.log('Suscripcion registrada.');
+    console.log(usuario);
     return res.status(201).json({message: "Suscripción registrada correctamente"});
   }).catch((e) => {
     console.log(e);
   });
 
 });
-
-// #resolve borrar
-// router.get("/test", (req, res) => {
-//   const emailuser = "agufascioli@gmail.com";
-//   const suscripcion = {
-//     endpoint: "endpoint",
-//     expirationTime: 12,
-//     p256dh: "cosaolorasa",
-//     auth: "auth"
-//   };
-//   console.log("/usuarios/test");
-
-//   Usuario.findOneAndUpdate({email: emailuser}, { $push: { suscripciones: suscripcion }}).then((usuario) => {
-//      console.log(usuario.email);
-//   }).catch((e) => {
-//     console.log(e);
-//   });
-
-//   return res.status(201).json({message: "Suscripción registrada correctamente"});
-// });
 
 module.exports = router;

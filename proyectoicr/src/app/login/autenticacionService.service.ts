@@ -154,7 +154,15 @@ export class AutencacionService {
     }>("http://localhost:3000/usuario/cambiarPassword", datosContraseña);
   }
 
-  addPushSubscriber(sub: any) {
-    return this.http.post("/usuario/suscripcion", [sub, this.usuarioAutenticado]);
+  addPushSubscriber(sus: any) {
+    console.log('Servicio: Envio post a /usuario/suscripcion');
+    // return this.http.post<{message: string}>("http://localhost:3000/usuario/suscripcion", { sub: sus, email: "agufascioli@gmail.com"});
+    return this.http.post<{message: string}>("http://localhost:3000/usuario/suscripcion", { sub: sus, email: this.usuarioAutenticado});
+  }
+
+  //#resolve #borrar
+  testNP(){
+    console.log('Envio de get a /estudiante/notificacion');
+    return this.http.get<{message: string}>("http://localhost:3000/estudiante/notificacion");
   }
 }

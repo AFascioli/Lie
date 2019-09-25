@@ -32,7 +32,6 @@ export class MenuLateralComponent implements OnInit {
   cambiarContrasenia() {
     this.router.navigate(["/cambiarContraseña"]);
   }
-
 }
 
 @Component({
