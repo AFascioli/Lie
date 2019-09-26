@@ -13,10 +13,13 @@
   opacity: 0.8;
   font-weight: 100%;
   margin-top: 0 !important;
-  color: rgb(255, 211, 88);
+  color: #ffffff;
   /* Para poder alinear el parrafo al centro */
   flex: 1 1 auto;
-  font-size: 30px;
+  font-size: 40px;
+  font-weight: bold;
+  background-color: rgb(47, 100, 131);
+  text-shadow: 2px 2px 4px #000000;
 }
 
 .contenedor {
@@ -31,6 +34,10 @@
   width: 80%;
   padding: 20px;
   text-align: center;
+}
+
+.inputs{
+  text-align: right;
 }
 
 .fixed-header {
@@ -48,15 +55,9 @@
 .fondo {
   margin: 0;
   padding: 0;
-  background-image: url("../../img/school2.jpg");
-  background-repeat: no-repeat;
-  background-size: cover;
-  background-attachment: fixed;
-  background-position: center center;
-  filter: blur(8px);
-  -webkit-filter: blur(8px);
   height: 100%;
   display: flex;
+  background-image: linear-gradient(to top, #2f6483 0%, #47988d59 99%, #ffffff 100%);
 }
 
 mat-card {
@@ -75,7 +76,8 @@ mat-card {
 .div-button {
   margin-top: 6%;
   margin-bottom: 5% !important;
-  text-align: center;
+  text-align: right;
+  margin-right: 5%;
 }
 
 .buttonLogin {
@@ -87,6 +89,15 @@ form {
   padding-top: 4%;
   padding-bottom: 4% !important;
   text-align: center;
+  background-image: url("../../img/institutocristoreyprueba.png");
+  background-repeat: no-repeat;
+}
+
+.avatar {
+  vertical-align: middle;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
 }
 
 .visibilidad {
@@ -103,8 +114,7 @@ form {
 }
 
 .mat-card{
-  background-color: rgb(255, 211, 88) !important;
-  background-color: rgb(255, 211, 88, 0.7)!important;
+  background-color: white !important;
 }
 
 .mat-input {
