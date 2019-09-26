@@ -106,12 +106,19 @@
 }
 
 .titulo-row{
-   text-align: center !important;
-  color: #ffff;
-  flex: 1 1 auto;
-  font-size: 30px;
   margin: 0px;
   padding: 0px;
+  text-align: center;
+  opacity: 0.8;
+  font-weight: 100%;
+  margin-top: 0 !important;
+  color: #ffffff;
+  /* Para poder alinear el parrafo al centro */
+  flex: 1 1 auto;
+  font-size: 40px;
+  font-weight: bold;
+  background-color: rgb(47, 100, 131);
+  text-shadow: 2px 2px 4px #000000;
 }
 
 .parrafo{
