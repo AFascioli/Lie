@@ -129,7 +129,7 @@
                 </mat-option>
               </mat-select>
             </mat-form-field>
-            
+
           </div>
 
           <mat-form-field>
@@ -168,7 +168,7 @@
         <button
           type="submit"
           (click)="snackBarGuardar(form)"
-          color="primary"
+          class="buttonPrimary"
           mat-raised-button
         >
           Guardar
@@ -176,14 +176,14 @@
         <button
           mat-raised-button
           (click)="popUpCancelar()"
-          color="warn"
+          class="buttonWarn"
         >
           Cancelar
         </button>
         <button class="button-volver"
         mat-raised-button
-        [routerLink]="['/buscar/lista']"
-        color="primary" >
+        [routerLink]="['/buscar']"
+        class="buttonPrimary" >
            Volver
         </button>
       </div>

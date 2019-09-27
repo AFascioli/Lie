@@ -52,21 +52,21 @@
   <br />
 
   <div class="div-button">
-    <button color="primary" (click)="openPopup('confirmar')" mat-raised-button>
+    <button class="buttonPrimary" (click)="openPopup('confirmar')" mat-raised-button>
       Guardar
     </button>
 
     <button
       mat-raised-button
       (click)="openPopup('cancelar')"
-      color="warn"
+      class="buttonWarn"
     >
       Cancelar
     </button>
     <button
       mat-raised-button
       [routerLink]="['/buscar/lista']"
-      color="primary"
+      class="buttonPrimary"
     >
       Volver
     </button>

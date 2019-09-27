@@ -72,3 +72,17 @@ button {
   background: #47988d59;
   box-shadow: 0px 0px 4px 0px rgba(0,0,0,0.71) !important;
 }
+
+.mat-expansion-panel-header{
+  height: 48px !important;
+}
+
+.buttonWarn{
+  background: #d62114;
+  color: #ffffff;
+}
+
+.buttonPrimary{
+  background: #2f6483;
+  color: #ffffff;
+}

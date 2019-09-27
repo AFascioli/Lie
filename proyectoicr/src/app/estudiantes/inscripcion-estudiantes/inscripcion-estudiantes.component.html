@@ -77,7 +77,7 @@
     <div class="div-button">
       <button
         mat-raised-button
-        color="primary"
+        class="buttonPrimary"
         (click)="openDialogo('confirmar', form, curso)"
         mat-raised-button
       >
@@ -86,14 +86,14 @@
       <button
         mat-raised-button
         (click)="openDialogo('cancelar', form, curso)"
-        color="warn"
+        class="buttonWarn"
       >
         Cancelar
       </button>
       <button
       mat-raised-button
       [routerLink]="['/buscar/lista']"
-      color="primary"
+      class="buttonPrimary"
     >
      Volver
     </button>

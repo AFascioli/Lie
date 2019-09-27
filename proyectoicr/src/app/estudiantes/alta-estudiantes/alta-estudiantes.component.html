@@ -77,7 +77,7 @@
             ngModel
             #nroDocumento="ngModel"
             matInput
-            placeholder="Ingrese el número de documento"
+            placeholder="Ingrese número de documento"
             type="number"
             required
             (keypress)="checkNumeros($event)"
@@ -95,7 +95,7 @@
             #cuil="ngModel"
             matInput
             type="number"
-            placeholder="Ingrese el número de CUIL"
+            placeholder="Ingrese número de CUIL"
             (keypress)="checkNumeros($event)"
           />
         </mat-form-field>
@@ -123,7 +123,7 @@
               #fechaNac="ngModel"
               [max]="maxDate"
               [matDatepicker]="picker"
-              placeholder="Seleccione fecha de nacimiento"
+              placeholder="Sel. fecha de nacimiento"
               required
             />
             <mat-datepicker-toggle
@@ -218,7 +218,7 @@
               #nroCalle="ngModel"
               matInput
               type="number"
-              placeholder="Ingrese número"
+              placeholder="Ingrese altura"
               required
               (keypress)="checkNumeros($event)"
             />
@@ -309,6 +309,7 @@
     <div class="div-button">
       <button
         mat-raised-button
+        class="buttonPrimary"
         routerLink="/altaAdultoResponsable"
       >
         Registrar Adulto Responsable
@@ -316,7 +317,7 @@
       <button
         type="submit"
         (click)="snackBarGuardar(form)"
-        color="primary"
+        class="buttonPrimary"
         mat-raised-button
       >
         Guardar
@@ -324,7 +325,7 @@
       <button
         mat-raised-button
         (click)="popUpCancelar()"
-        color="warn"
+        class="buttonWarn"
       >
         Cancelar
       </button>

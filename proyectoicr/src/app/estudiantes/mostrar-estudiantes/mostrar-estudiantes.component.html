@@ -332,7 +332,7 @@
       <button
         mat-raised-button
         (click)="openDialogo('borrar', form)"
-        color="warn"
+        class="buttonPrimary"
         *ngIf="permisos.inscribirEstudiante > 1"
       >
         Borrar
@@ -340,14 +340,14 @@
       <button
         mat-raised-button
         (click)="openDialogo('cancelar', form)"
-        color="warn"
+        class="buttonWarn"
       >
         Cancelar
       </button>
       <button
       mat-raised-button
       [routerLink]="['/buscar/lista']"
-      color="primary"
+      class="buttonPrimary"
     >
      Volver
     </button>
