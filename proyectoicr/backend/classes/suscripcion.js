@@ -4,10 +4,10 @@ const vapidKeys = require("../assets/vapid_keys");
 
 // Función para enviar notif a un usuario con la id correspondiente.
 // #resolve permitir recibir un vector de ids
+// #resolve Considerar en el futuro pasar las acciones que se quieren y la url a donde redirigir.
 function notificar(idusuario, titulo, cuerpo) {
   Usuario.findOne({ _id: idusuario }).then(usuario => {
     const allSubscriptions = usuario.suscripciones;
-    console.dir(allSubscriptions);
 
     const notificationPayload = {
       notification: {
@@ -27,19 +27,19 @@ function notificar(idusuario, titulo, cuerpo) {
       }
     };
 
-    try {
-      webpush.setVapidDetails(
-        "ejemplo@ejemplo.com",
-        vapidKeys.vapid_public_key,
-        vapidKeys.vapid_private_key
-      );
-    } catch (error) {
-      console.log(error);
-    }
+    webpush.setVapidDetails(
+      'https://my-site.com/contact',
+       vapidKeys.vapid_public_key,
+       vapidKeys.vapid_private_key
+    );
 
     Promise.all(
       allSubscriptions.map(sub =>
-        webpush.sendNotification(sub, JSON.stringify(notificationPayload))
+        webpush.sendNotification(sub, JSON.stringify(notificationPayload)).then((sendRes) => {
+           console.log('>Notif. enviada.');
+        }).catch(e => {
+          console.log(e.headers.body);
+        })
       )
     );
   });

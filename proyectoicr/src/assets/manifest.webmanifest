@@ -1,20 +1,35 @@
 {
   "name": "Lie",
   "short_name": "Lie",
-  "theme_color": "#093655",
-  "background_color": "#fafafa",
+  "theme_color": "#2f6483",
+  "background_color": "#eef0f1",
   "display": "standalone",
   "scope": "/",
   "start_url": "/",
   "icons": [
     {
-      "src": "/assets/icons/icon-96x96.png",
+      "src": "/assets/icons/icon-96.png",
       "sizes": "96x96",
       "type": "image/png"
     },
     {
-      "src": "/assets/icons/icon-144x144.png",
+      "src": "/assets/icons/icon-128.png",
+      "sizes": "128x128",
+      "type": "image/png"
+    },
+    {
+      "src": "/assets/icons/icon-144.png",
       "sizes": "144x144",
+      "type": "image/png"
+    },
+    {
+      "src": "/assets/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/assets/icons/icon-256.png",
+      "sizes": "256x256",
       "type": "image/png"
     }
   ],

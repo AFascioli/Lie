@@ -155,8 +155,6 @@ export class AutencacionService {
   }
 
   addPushSubscriber(sus: any) {
-    console.log('Servicio: Envio post a /usuario/suscripcion');
-    // return this.http.post<{message: string}>("http://localhost:3000/usuario/suscripcion", { sub: sus, email: "agufascioli@gmail.com"});
     return this.http.post<{message: string}>("http://localhost:3000/usuario/suscripcion", { sub: sus, email: this.usuarioAutenticado});
   }
 

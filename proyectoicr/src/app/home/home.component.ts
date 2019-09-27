@@ -16,12 +16,11 @@ export class HomeComponent implements OnInit {
   constructor(private swPush: SwPush, private servicio: AutencacionService) {}
 
   ngOnInit() {
-    console.log("Console log del console log");
     if ("serviceWorker" in navigator) {
       // Estamos usanto un timer para dejar al browser cargar el sw. #resolve
       navigator.serviceWorker.register("ngsw-worker.js").then(swreg => {
         if (swreg.active) {
-          console.log("Registered the service worker");
+          console.log("Se registro el service worker.");
           this.subscribeToNotifications();
         }
       });
@@ -32,24 +31,27 @@ export class HomeComponent implements OnInit {
   desfile = require("../../img/desfile.jpg");
 
   subscribeToNotifications() {
-    console.log("Home: subscribeToNotif()");
-    this.swPush
-      .requestSubscription({
-        serverPublicKey: this.VAPID_PUBLIC
-      })
-      .then(pushsub => {
-        console.log('Home: Subscripcion a notif: ');
-        this.servicio.addPushSubscriber(pushsub).subscribe((res) => {
-          console.log(res.message);
-        });
-      })
-      .catch(err => console.error("Could not subscribe to notifications", err));
+    if (Notification.permission === "granted") {
+      console.log("Ya se otorgó el permiso de envio de notificaciones.");
+    } else {
+      console.log("Home: subscribeToNotif()");
+      this.swPush
+        .requestSubscription({
+          serverPublicKey: this.VAPID_PUBLIC
+        })
+        .then(pushsub => {
+          this.servicio.addPushSubscriber(pushsub).subscribe(res => {});
+        })
+        .catch(err =>
+          console.error("No se pudo suscribir a las notificaciones push.", err)
+        );
+    }
   }
 
   testNP() {
     console.log("testNP()");
-    this.servicio.testNP().subscribe((res) => {
+    this.servicio.testNP().subscribe(res => {
       console.log(res.message);
-    });;
+    });
   }
 }

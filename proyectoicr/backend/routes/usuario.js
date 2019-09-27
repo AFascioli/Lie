@@ -125,11 +125,8 @@ router.post("/suscripcion", (req, res) => {
   const emailuser = req.body.usuarioAutenticado;
   const suscripcion = req.body.sub;
 
-  //#resolve esta isando id agufascioli
-  Usuario.findOneAndUpdate({_id: "5d7bfd1b93119f33f80819a1"}, { $push: { suscripciones: suscripcion }}).then((usuario) => {
+  Usuario.findOneAndUpdate({email: req.body.usuarioAutenticado}, { $push: { suscripciones: suscripcion }}).then((usuario) => {
     usuario.save();
-    console.log('Suscripcion registrada.');
-    console.log(usuario);
     return res.status(201).json({message: "Suscripción registrada correctamente"});
   }).catch((e) => {
     console.log(e);

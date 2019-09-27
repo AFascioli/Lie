@@ -413,7 +413,6 @@ router.post("/documentos", checkAuthMiddleware,(req, res) => {
 
 //Prueba notif #resolve #borrar
 router.get("/notificacion",(req, res) => {
-  console.log('/notificacion: Se envio notif desde el backend.');
   Suscripcion.notificar("5d7bfd1b93119f33f80819a1","Título de prueba", "Contenido de prueba.");
   res.status(200).json({message: "Prueba de notificación"})
 });
