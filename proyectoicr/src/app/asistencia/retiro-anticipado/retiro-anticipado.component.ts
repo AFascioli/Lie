@@ -1,7 +1,8 @@
-import { Component, OnInit, Inject } from '@angular/core';
+import { Component, OnInit, Inject, ChangeDetectorRef } from '@angular/core';
 import { EstudiantesService } from 'src/app/estudiantes/estudiante.service';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA, MatDialogConfig, MatSnackBar } from '@angular/material';
 import { Router } from '@angular/router';
+import { MediaMatcher } from '@angular/cdk/layout';
 
 @Component({
   selector: 'app-retiro-anticipado',
@@ -16,8 +17,15 @@ export class RetiroAnticipadoComponent implements OnInit {
   _idEstudiante: string;
   antes10am: Boolean = true;
   matConfig = new MatDialogConfig();
+  _mobileQueryListener: () => void;
+  mobileQuery: MediaQueryList;
 
-  constructor(public servicio: EstudiantesService, public dialog: MatDialog) {
+  constructor(public servicio: EstudiantesService, public dialog: MatDialog,
+    public changeDetectorRef: ChangeDetectorRef,
+    public media: MediaMatcher) {
+      this.mobileQuery = media.matchMedia('(max-width: 1000px)');
+        this._mobileQueryListener = () => changeDetectorRef.detectChanges();
+        this.mobileQuery.addListener(this._mobileQueryListener);
   }
 
   ngOnInit() {

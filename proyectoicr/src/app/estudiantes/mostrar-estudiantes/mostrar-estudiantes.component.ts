@@ -1,5 +1,5 @@
 import { AutenticacionService } from './../../login/autenticacionService.service';
-import { Component, OnInit, Input } from "@angular/core";
+import { Component, OnInit, Input, ChangeDetectorRef } from "@angular/core";
 import { EstudiantesService } from "../estudiante.service";
 import { Subscription } from "rxjs";
 import { Provincia } from "../provincias.model";
@@ -10,6 +10,7 @@ import { Nacionalidad } from "../nacionalidades.model";
 import { Localidad } from "../localidades.model";
 import { MatDialog, MatDialogRef, MatSnackBar } from "@angular/material";
 import { Router } from "@angular/router";
+import { MediaMatcher } from '@angular/cdk/layout';
 
 @Component({
   selector: "app-mostrar-estudiantes",
@@ -55,9 +56,13 @@ export class MostrarEstudiantesComponent implements OnInit {
     registrarEmpleado:0,
     registrarCuota:0
   };
+  _mobileQueryListener: () => void;
+  mobileQuery: MediaQueryList;
 
   constructor(public servicio: EstudiantesService, public dialog: MatDialog,
-    private snackBar: MatSnackBar, public authService: AutenticacionService) {
+    private snackBar: MatSnackBar, public authService: AutenticacionService,
+    public changeDetectorRef: ChangeDetectorRef,
+    public media: MediaMatcher) {
     this.apellidoEstudiante = this.servicio.estudianteSeleccionado.apellido;
     this.nombreEstudiante = this.servicio.estudianteSeleccionado.nombre;
     this.tipoDocEstudiante = this.servicio.estudianteSeleccionado.tipoDocumento;
@@ -75,6 +80,9 @@ export class MostrarEstudiantesComponent implements OnInit {
     this.nacionalidadEstudiante = this.servicio.estudianteSeleccionado.nacionalidad;
     this.estadoCivilEstudiante = this.servicio.estudianteSeleccionado.estadoCivil;
     this.telefonoEstudiante = this.servicio.estudianteSeleccionado.telefonoFijo;
+    this.mobileQuery = media.matchMedia('(max-width: 1000px)');
+      this._mobileQueryListener = () => changeDetectorRef.detectChanges();
+      this.mobileQuery.addListener(this._mobileQueryListener);
   }
 
   ngOnInit() {

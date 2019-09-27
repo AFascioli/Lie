@@ -6,14 +6,14 @@
 
   <form #form="ngForm" (submit)="onGuardar(form)">
     <mat-accordion>
-      <mat-expansion-panel [expanded]="true">
+      <mat-expansion-panel [class.mat-expansion-panel-mobile]="mobileQuery.matches" [expanded]="true">
         <mat-expansion-panel-header>
           <mat-panel-title>
             <b>Datos personales del estudiante</b>
           </mat-panel-title>
         </mat-expansion-panel-header>
 
-        <mat-form-field>
+        <mat-form-field [class.mat-form-field-mobile]="mobileQuery.matches">
           <input
             name="apellido"
             minlength="2"
@@ -30,7 +30,7 @@
 
         &nbsp;
 
-        <mat-form-field>
+        <mat-form-field [class.mat-form-field-mobile]="mobileQuery.matches">
           <input
             pattern="[A-Za-záéíóúÁÉÍÓÚñÑ ]+"
             name="nombre"
@@ -46,7 +46,7 @@
           />
         </mat-form-field>
         <br />
-        <mat-form-field>
+        <mat-form-field [class.mat-form-field-mobile]="mobileQuery.matches">
           <mat-select
             placeholder="Seleccione tipo de documento"
             name="tipoDocumento"
@@ -69,7 +69,7 @@
 
         &nbsp;
 
-        <mat-form-field>
+        <mat-form-field [class.mat-form-field-mobile]="mobileQuery.matches">
           <input
             name="nroDocumento"
             maxlength="8"
@@ -86,7 +86,7 @@
 
         <br />
 
-        <mat-form-field>
+        <mat-form-field [class.mat-form-field-mobile]="mobileQuery.matches">
           <input
             name="cuil"
             pattern="[0-9]+"
@@ -100,7 +100,7 @@
           />
         </mat-form-field>
         <br />
-        <mat-form-field>
+        <mat-form-field [class.mat-form-field-mobile]="mobileQuery.matches">
           <mat-select
             placeholder="Seleccione sexo"
             name="sexo"
@@ -115,7 +115,7 @@
         </mat-form-field>
 
         <div class="nacionalidad">
-          <mat-form-field>
+          <mat-form-field [class.mat-form-field-mobile]="mobileQuery.matches">
             <input
               matInput
               name="fechaNac"
@@ -137,7 +137,7 @@
             ></mat-datepicker>
           </mat-form-field>
           <br />
-          <mat-form-field>
+          <mat-form-field [class.mat-form-field-mobile]="mobileQuery.matches">
             <mat-select
               placeholder="Seleccione nacionalidad"
               name="nacionalidad"
@@ -155,7 +155,7 @@
           </mat-form-field>
           <br />
         </div>
-        <mat-form-field>
+        <mat-form-field [class.mat-form-field-mobile]="mobileQuery.matches">
           <mat-select
             placeholder="Seleccione estado civil"
             name="estadoCivil"
@@ -169,7 +169,7 @@
           </mat-select>
         </mat-form-field>
         <br />
-        <mat-form-field>
+        <mat-form-field [class.mat-form-field-mobile]="mobileQuery.matches">
           <input
             matInput
             name="telefono"
@@ -185,14 +185,14 @@
     </mat-accordion>
     <br />
     <mat-accordion>
-      <mat-expansion-panel>
+      <mat-expansion-panel [class.mat-expansion-panel-mobile]="mobileQuery.matches">
         <mat-expansion-panel-header>
           <mat-panel-title>
             <b>Domicilio</b>
           </mat-panel-title>
         </mat-expansion-panel-header>
         <div class="domicilio">
-          <mat-form-field>
+          <mat-form-field [class.mat-form-field-mobile]="mobileQuery.matches">
             <input
               name="calle"
               pattern="[A-Za-záéíóúÁÉÍÓÚñÑ. ]+"
@@ -209,7 +209,7 @@
 
           &nbsp;
 
-          <mat-form-field>
+          <mat-form-field [class.mat-form-field-mobile]="mobileQuery.matches">
             <input
               name="nroCalle"
               pattern="[0-9]+"
@@ -224,7 +224,7 @@
             />
           </mat-form-field>
           <br />
-          <mat-form-field>
+          <mat-form-field [class.mat-form-field-mobile]="mobileQuery.matches">
             <input
               name="piso"
               pattern="[\w]+"
@@ -236,7 +236,7 @@
             />
           </mat-form-field>
           <br />
-          <mat-form-field>
+          <mat-form-field [class.mat-form-field-mobile]="mobileQuery.matches">
             <input
               name="departamento"
               ngModel
@@ -248,7 +248,7 @@
             />
           </mat-form-field>
           <br />
-          <mat-form-field>
+          <mat-form-field [class.mat-form-field-mobile]="mobileQuery.matches">
             <mat-select
               placeholder="Seleccione provincia"
               name="provincia"
@@ -270,7 +270,7 @@
 
           &nbsp;
 
-          <mat-form-field>
+          <mat-form-field [class.mat-form-field-mobile]="mobileQuery.matches">
             <mat-select
               placeholder="Seleccione localidad"
               name="localidad"
@@ -288,7 +288,7 @@
             </mat-select>
           </mat-form-field>
           <br />
-          <mat-form-field>
+          <mat-form-field [class.mat-form-field-mobile]="mobileQuery.matches">
             <input
               name="codigoPostal"
               ngModel

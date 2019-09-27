@@ -21,6 +21,12 @@
 
 .body-contenido{
   padding: 2rem;
+  height: 100%;
+}
+
+.body-contenido-mobile{
+  height: 100%;
+  padding: 0rem !important;
 }
 
 .mat-expansion-panel-body{
@@ -81,10 +87,6 @@
   background-color: #eef0f1;
 }
 
-
-.body-contenido{
-  height: 100%;
-}
 
 /* nuevo */
 .mat-expansion-panel{

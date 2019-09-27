@@ -248,7 +248,7 @@
     </mat-nav-list> -->
     </mat-sidenav>
     <mat-sidenav-content>
-      <div class="body-contenido">
+      <div class="body-contenido" [class.body-contenido-mobile]="mobileQuery.matches">
         <router-outlet></router-outlet>
       </div>
     </mat-sidenav-content>
