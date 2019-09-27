@@ -7,13 +7,13 @@
         [checked]="buscarPorNomYAp"
         (change)="DeshabilitarInputs(form)"
         value="1"
-        >Buscar por nombre y apellido</mat-radio-button
+        ><span class="label-radio-button">Buscar por nombre y apellido</span></mat-radio-button
       >
       <mat-radio-button
       (change)="DeshabilitarInputs(form)"
       value="2"
       [checked]="!buscarPorNomYAp"
-        >Buscar por documento</mat-radio-button
+        ><span class="label-radio-button"> Buscar por documento</span></mat-radio-button
       >
     </mat-radio-group>
     <br />

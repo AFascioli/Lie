@@ -22,12 +22,15 @@ button {
 .componente-titulo {
   text-align: center;
   color: black;
+  margin-top: 0%;
 }
 
 .card-body-componente {
   /* Para que no se comprima al pasar a vistas mobile, y la segunda linea para que aparezca el scroll.*/
   /* Si hay problemas con la interfaz, investigar la propiedad white-space! */
-  white-space: nowrap;
+  /* white-space: nowrap; */
+  /* normal para que se pongan uno abajo del otro en mobile */
+  white-space: normal;
   overflow-x: auto;
   margin: auto;
   margin-top: 1rem;

@@ -1,5 +1,6 @@
 .mat-form-field {
-  width: 58.5%;
+  width: 78.5%;
+  /* Considerar a cambiarlo de 58.5 a 78.5 */
 }
 
 .mat-radio-button ~ .mat-radio-button {
@@ -9,8 +10,8 @@
   margin-bottom: 20px;
 }
 
-.mat-form-field, .mat-radio-button{
-  margin-left: 20%;
+form{
+  text-align: center;
 }
 
 .div-button {
@@ -21,3 +22,16 @@
   text-align: center;
 }
 
+.card-body-componente{
+  display: flex;
+  flex-direction: column;
+}
+
+.label-radio-button{
+  white-space: normal !important;
+}
+
+/* sacar white-space no wrap, por normal mobile
+  font-size: x-small;
+  Para side nav width: min-content;
+  */
