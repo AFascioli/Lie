@@ -9,39 +9,21 @@
           </b>
         </mat-panel-title>
       </mat-expansion-panel-header>
-     <h3 class="tituloAcciones"> Acciones </h3>
+      <h3 class="tituloAcciones"> Acciones </h3>
       <div class="botonesAcciones">
         <button
           mat-raised-button
           class="button"
-          color="primary"
-          (click)="onInscribir(i)"
-          *ngIf="permisos.inscribirEstudiante > 1"
-        >
-          Inscribir estudiante a un curso
-        </button>
-        <button
-          mat-raised-button
-          class="button"
-          color="primary"
+          class="buttonPrimary"
           (click)="onMostrar(i)"
           *ngIf="permisos.inscribirEstudiante >= 1"
-        >
+          >
           Visualizar estudiante
         </button>
         <button
           mat-raised-button
           class="button"
-          color="primary"
-          (click)="onRetiro(i)"
-          *ngIf="permisos.asistencia > 1"
-        >
-          Registrar retiro anticipado
-        </button>
-        <button
-          mat-raised-button
-          class="button"
-          color="primary"
+          class="buttonPrimary"
           (click)="onJustificar(i)"
           *ngIf="permisos.asistencia > 1"
         >
@@ -50,7 +32,25 @@
         <button
           mat-raised-button
           class="button"
-          color="primary"
+          class="buttonPrimary"
+          (click)="onRetiro(i)"
+          *ngIf="permisos.asistencia > 1"
+        >
+          Registrar retiro anticipado
+        </button>
+        <button
+        mat-raised-button
+          class="button"
+          class="buttonPrimary"
+          (click)="onInscribir(i)"
+          *ngIf="permisos.inscribirEstudiante > 1"
+          >
+          Inscribir estudiante a un curso
+        </button>
+        <button
+          mat-raised-button
+          class="button"
+          class="buttonPrimary"
           (click)="onVisualizarPerfil(i)"
           *ngIf="permisos.inscribirEstudiante >= 1"
         >
@@ -59,7 +59,7 @@
         <button
         mat-raised-button
         class="button"
-        color="primary"
+        class="buttonPrimary"
         (click)="onVRegistrarAR(i)"
         *ngIf="permisos.inscribirEstudiante > 1"
       >
