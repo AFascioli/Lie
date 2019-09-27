@@ -122,10 +122,7 @@ router.post("/cambiarPassword", async(req, res, next) => {
 // });
 
 router.post("/suscripcion", (req, res) => {
-  const emailuser = req.body.usuarioAutenticado;
-  const suscripcion = req.body.sub;
-
-  Usuario.findOneAndUpdate({email: req.body.usuarioAutenticado}, { $push: { suscripciones: suscripcion }}).then((usuario) => {
+  Usuario.findOneAndUpdate({email: req.body.email}, { $push: { suscripciones: req.body.sub }}).then((usuario) => {
     usuario.save();
     return res.status(201).json({message: "Suscripción registrada correctamente"});
   }).catch((e) => {

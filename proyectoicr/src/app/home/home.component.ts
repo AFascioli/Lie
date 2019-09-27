@@ -34,13 +34,14 @@ export class HomeComponent implements OnInit {
     if (Notification.permission === "granted") {
       console.log("Ya se otorgó el permiso de envio de notificaciones.");
     } else {
-      console.log("Home: subscribeToNotif()");
       this.swPush
         .requestSubscription({
           serverPublicKey: this.VAPID_PUBLIC
         })
         .then(pushsub => {
-          this.servicio.addPushSubscriber(pushsub).subscribe(res => {});
+          this.servicio.addPushSubscriber(pushsub).subscribe(res => {
+            console.log('Se suscribió a recibir notificaciones push.');
+          });
         })
         .catch(err =>
           console.error("No se pudo suscribir a las notificaciones push.", err)
@@ -49,7 +50,6 @@ export class HomeComponent implements OnInit {
   }
 
   testNP() {
-    console.log("testNP()");
     this.servicio.testNP().subscribe(res => {
       console.log(res.message);
     });
