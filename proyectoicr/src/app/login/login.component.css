@@ -38,6 +38,8 @@
 
 .inputs{
   text-align: right;
+  width: 90%;
+  margin-top: 3%;
 }
 
 .fixed-header {
@@ -73,11 +75,15 @@ mat-card {
   text-align: left;
 }
 
+/* .hr{
+  margin: 0px !important;
+} */
+
 .div-button {
   margin-top: 6%;
   margin-bottom: 5% !important;
   text-align: right;
-  margin-right: 5%;
+  margin-right: 21% !important;
 }
 
 .buttonLogin {
@@ -94,7 +100,6 @@ form {
   background-position: left center;
   margin-left: 4%;
 }
-
 
 .visibilidad {
   padding: 0 !important;

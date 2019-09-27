@@ -9,7 +9,7 @@
       >
         <mat-icon aria-label="Side nav toggle icon">menu</mat-icon>
       </button>
-      <h3 class="tituloMenu">Menú</h3>
+      <!-- <h3 class="tituloMenu">Menú</h3> -->
       <p class="titulo-row"> L I É</p>
       <button mat-button class="homeButton" (click)="onClickHome()">
         <mat-icon>home </mat-icon>
@@ -49,6 +49,7 @@
             >
               Registrar agenda de curso
             </a>
+            <mat-divider></mat-divider>
             <a
               mat-list-item
               class="opciones-expansion"
@@ -58,6 +59,7 @@
             >
               Tomar asistencia
             </a>
+            <mat-divider></mat-divider>
             <a
               mat-list-item
               class="opciones-expansion"
@@ -67,6 +69,7 @@
             >
               Registar pago de cuotas
             </a>
+            <mat-divider></mat-divider>
             <a
               mat-list-item
               class="opciones-expansion"
@@ -76,7 +79,17 @@
             >
               Registrar documentos inscripción
             </a>
-            <mat-accordion>
+            <mat-divider></mat-divider>
+            <a
+            mat-list-item
+            class="opciones-expansion"
+            routerLink="/calificacionesEstudiantes"
+            *ngIf="permisos.notas >= 1"
+            (click)="cerrarMenuLateral(sideNav)"
+          >
+            Registrar calificaciones
+          </a>
+            <!-- <mat-accordion>
               <mat-expansion-panel>
                 <mat-expansion-panel-header>
                   <mat-panel-title>
@@ -94,6 +107,7 @@
                 >
                   Registrar
                 </a>
+                <mat-divider></mat-divider>
                 <a
                   mat-list-item
                   class="opciones-expansion"
@@ -102,15 +116,15 @@
                   (click)="cerrarMenuLateral(sideNav)"
                 >
                   Buscar
-                </a>
+                </a> -->
                 <!-- <a mat-list-item  routerLink="./">
                 &nbsp; &nbsp; &nbsp; Modificar &nbsp;
               </a>
               <a mat-list-item  routerLink="./">
                 &nbsp; &nbsp; &nbsp; Borrar &nbsp;
               </a> -->
-              </mat-expansion-panel>
-            </mat-accordion>
+              <!-- </mat-expansion-panel>
+            </mat-accordion> -->
           </mat-expansion-panel>
           <mat-expansion-panel
             class="opcion"
@@ -134,6 +148,7 @@
               >
                 Registrar
               </a>
+              <mat-divider></mat-divider>
               <a
                 mat-list-item
                 class="opciones-expansion"
@@ -165,6 +180,7 @@
             >
               Registrar
             </a>
+            <mat-divider></mat-divider>
             <a
               mat-list-item
               class="opciones-expansion"

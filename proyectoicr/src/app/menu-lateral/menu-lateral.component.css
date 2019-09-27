@@ -23,6 +23,10 @@
   padding: 2rem;
 }
 
+.mat-expansion-panel-body{
+  padding-bottom: 0px !important;
+}
+
 .mat-sidenav{
   box-shadow: 2px 0 5px -2px #888;
   border-right: 0px !important;
@@ -58,7 +62,7 @@
   text-align: left;
   height: 7%;
   border-radius: 0% !important;
-  box-shadow: 4px 4px 4px 4px rgba(0,0,0,0.71) !important;
+  box-shadow: 0px 0px 4px 0px rgba(0,0,0,0.71) !important;
 }
 
 .contenedor-total {
@@ -93,7 +97,6 @@
 
 .mat-expansion-panel-header{
   padding-left: 2%;
-  box-shadow: 0px 0px 4px 0px rgba(0,0,0,0.71) !important;
 }
 
 /* .contenidoMatExp{
@@ -124,3 +127,12 @@
 .parrafo{
   text-align: center;
 }
+
+/* .hr {
+  display: block;
+  /* margin-top: 0.5em;
+  margin-bottom: 0.5em; */
+  /* overflow: hidden;
+  border-style: inset;
+  border-width: 1px;
+/* } */
