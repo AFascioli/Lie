@@ -171,7 +171,7 @@
           Promedio
         </th>
         <td
-          class="columnasChicas"
+          class="columnasChicas promedio"
           mat-cell
           *matCellDef="let estudiante; let i = index"
         >
@@ -203,6 +203,7 @@
         class="button"
         (click)="onGuardar(form)"
         class="buttonPrimary"
+        *ngIf= "estudiantes"
       >
         Guardar
       </button>

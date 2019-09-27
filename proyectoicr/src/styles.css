@@ -88,3 +88,21 @@ button {
   background: #2f6483;
   color: #ffffff;
 }
+
+/* Para cambiar el color de los toggle */
+.mat-slide-toggle.mat-checked .mat-slide-toggle-thumb {
+  background-color: #2f6483 !important;
+}
+
+.mat-slide-toggle.mat-checked .mat-slide-toggle-bar {
+  background-color: rgb(47, 100, 131,.54) !important;
+}
+
+.mat-header-cell{
+  color: rgba(0,0,0);
+}
+
+/* Para cambiar el color de los checkbox */
+.mat-checkbox-checked.mat-accent .mat-checkbox-background, .mat-checkbox-indeterminate.mat-accent .mat-checkbox-background, .mat-accent .mat-pseudo-checkbox-checked, .mat-accent .mat-pseudo-checkbox-indeterminate, .mat-pseudo-checkbox-checked, .mat-pseudo-checkbox-indeterminate {
+  background-color: rgb(47, 100, 131) !important;
+}
