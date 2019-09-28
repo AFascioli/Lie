@@ -173,11 +173,11 @@
           <input
             matInput
             name="telefono"
-            pattern="[0-9]{10}"
+            maxlength="20"
             ngModel
             #telefono="ngModel"
             placeholder="Ingrese número de teléfono"
-            type="number"
+            type="text"
             (keypress)="checkNumeros($event)"
           />
         </mat-form-field>
@@ -311,7 +311,7 @@
         mat-raised-button
         class="buttonPrimary"
         routerLink="/altaAdultoResponsable"
-        
+
       >
         Registrar Adulto Responsable
       </button>
