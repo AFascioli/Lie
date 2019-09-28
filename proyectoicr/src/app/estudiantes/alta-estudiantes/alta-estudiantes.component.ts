@@ -27,7 +27,8 @@ export class AltaEstudiantesComponent implements OnInit, OnDestroy {
     public servicio: EstudiantesService,
     private dateAdapter: DateAdapter<Date>,
     public dialog: MatDialog,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    
   ) {
 //    this.dateAdapter.setLocale("es");
   }
@@ -110,6 +111,7 @@ export class AltaEstudiantesComponent implements OnInit, OnDestroy {
       });
     }
   }
+
 
   popUpCancelar() {
     this.dialog.open(AltaPopupComponent, {

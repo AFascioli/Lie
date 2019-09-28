@@ -129,19 +129,19 @@
                 </mat-option>
               </mat-select>
             </mat-form-field>
-            
+
           </div>
 
           <mat-form-field>
             <input
-              matInput
-              name="telefono"
-              pattern="[0-9]{10}"
-              ngModel
-              #telefono="ngModel"
-              placeholder="Ingrese número de teléfono"
-              type="number"
-              (keypress)="checkNumeros($event)"
+            matInput
+            name="telefono"
+            maxlength="20"
+            ngModel
+            #telefono="ngModel"
+            placeholder="Ingrese número de teléfono"
+            type="text"
+            (keypress)="checkNumeros($event)"
             />
           </mat-form-field>
       <br />

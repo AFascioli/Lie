@@ -130,16 +130,16 @@
               </mat-select>
             </mat-form-field>
           </div>
-         
+
           <mat-form-field>
             <input
               matInput
               name="telefono"
-              pattern="[0-9]{10}"
+              maxlength="20"
               ngModel
               #telefono="ngModel"
               placeholder="Ingrese número de teléfono"
-              type="number"
+              type="text"
               (keypress)="checkNumeros($event)"
             />
           </mat-form-field>
@@ -149,10 +149,9 @@
           <input
             matInput
             name="Email"
-
             ngModel
             #Email="ngModel"
-            placeholder="Ingrese Email"
+            placeholder="Ingrese email"
             type="email"
 
           />

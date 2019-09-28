@@ -35,6 +35,7 @@ export class PerfilEstudianteComponent implements OnInit {
     public popup: MatDialog) { }
 
   ngOnInit() {
+    
     this.apellidoEstudiante = this.servicio.estudianteSeleccionado.apellido;
     this.nombreEstudiante = this.servicio.estudianteSeleccionado.nombre;
     this._idEstudiante = this.servicio.estudianteSeleccionado._id;
