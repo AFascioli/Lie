@@ -53,14 +53,10 @@ function notificar(idusuario, titulo, cuerpo) {
 
 function notificarAll(idusuarios, titulo, cuerpo) {
   Usuario.find({ _id: { $in: idusuarios } }).then(usuarios => {
-    const allSubscriptions = [];
-
+    var allSubscriptions = [];
     usuarios.forEach(usuario => {
-      allSubscriptions.concat(usuario.suscripciones);
+      allSubscriptions = allSubscriptions.concat(usuario.suscripciones);
     });
-
-    console.log('Total de suscripciones: ');
-    console.log(allSubscriptions.length());
       const notificationPayload = {
         notification: {
           title: titulo,
@@ -89,9 +85,7 @@ function notificarAll(idusuarios, titulo, cuerpo) {
         allSubscriptions.map(sub =>
           webpush
             .sendNotification(sub, JSON.stringify(notificationPayload))
-            .then(sendRes => {
-              console.log(">Notif. enviada.");
-            })
+            .then(sendRes => {})
             .catch(e => {
               console.log(e.headers.body);
             })

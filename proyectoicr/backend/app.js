@@ -68,6 +68,4 @@ app.use("/curso", cursoRoutes);
 
 app.use("/usuario", usuarioRoutes);
 
-
-
 module.exports = app;
