@@ -17,7 +17,6 @@ export class HomeComponent implements OnInit {
 
   ngOnInit() {
     if ("serviceWorker" in navigator) {
-      // Estamos usanto un timer para dejar al browser cargar el sw. #resolve
       navigator.serviceWorker.register("ngsw-worker.js").then(swreg => {
         if (swreg.active) {
           console.log("Se registro el service worker.");
