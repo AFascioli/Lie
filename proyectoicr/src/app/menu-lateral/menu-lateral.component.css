@@ -66,9 +66,29 @@
   width: 100%;
   background: #47988d59;
   text-align: left;
-  height: 7%;
+  height: 42.5px;
   border-radius: 0% !important;
   box-shadow: 0px 0px 4px 0px rgba(0,0,0,0.71) !important;
+  line-height: 0px !important;
+  padding-left: 23px !important;
+}
+
+.preferencias{
+  position: absolute;
+  font-weight: bold;
+  font-size: 16px;
+  margin: 0px !important;
+  width: 100%;
+  background: #47988d59;
+  text-align: left;
+  height: 42.5px;
+  border-radius: 0% !important;
+  box-shadow: 0px 0px 4px 0px rgba(0,0,0,0.71) !important;
+  line-height: 0px !important;
+  padding-left: 23px !important;
+  margin-bottom: 42.5px !important;
+  left: 0;
+  bottom: 0;
 }
 
 .contenedor-total {
@@ -101,10 +121,6 @@
   padding-left: 2%;
 }
 
-/* .contenidoMatExp{
-  background-color: #f4f1eb75 !important;
-} */
-
 /* Comiezo del menu lateral que sea luego del header */
 .mat-list-base{
   padding-top: 0 !important;
@@ -129,12 +145,3 @@
 .parrafo{
   text-align: center;
 }
-
-/* .hr {
-  display: block;
-  /* margin-top: 0.5em;
-  margin-bottom: 0.5em; */
-  /* overflow: hidden;
-  border-style: inset;
-  border-width: 1px;
-/* } */

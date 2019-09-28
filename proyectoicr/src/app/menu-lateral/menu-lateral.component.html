@@ -36,7 +36,7 @@
               <mat-panel-title>
                 <a mat-list-item>
                   <mat-icon>wc</mat-icon>
-                  <b class="titulo-expansion">Curso</b>
+                  <b class="titulo-expansion">Cursos</b>
                 </a>
               </mat-panel-title>
             </mat-expansion-panel-header>
@@ -89,42 +89,6 @@
           >
             Registrar calificaciones
           </a>
-            <!-- <mat-accordion>
-              <mat-expansion-panel>
-                <mat-expansion-panel-header>
-                  <mat-panel-title>
-                    <a mat-list-item>
-                      <b>Calificaciones</b>
-                    </a>
-                  </mat-panel-title>
-                </mat-expansion-panel-header>
-                <a
-                  mat-list-item
-                  class="opciones-expansion"
-                  routerLink="/calificacionesEstudiantes"
-                  *ngIf="permisos.notas >= 1"
-                  (click)="cerrarMenuLateral(sideNav)"
-                >
-                  Registrar
-                </a>
-                <mat-divider></mat-divider>
-                <a
-                  mat-list-item
-                  class="opciones-expansion"
-                  routerLink="./"
-                  *ngIf="permisos.notas > 1"
-                  (click)="cerrarMenuLateral(sideNav)"
-                >
-                  Buscar
-                </a> -->
-                <!-- <a mat-list-item  routerLink="./">
-                &nbsp; &nbsp; &nbsp; Modificar &nbsp;
-              </a>
-              <a mat-list-item  routerLink="./">
-                &nbsp; &nbsp; &nbsp; Borrar &nbsp;
-              </a> -->
-              <!-- </mat-expansion-panel>
-            </mat-accordion> -->
           </mat-expansion-panel>
           <mat-expansion-panel
             class="opcion"
@@ -135,7 +99,7 @@
               <mat-panel-title>
                 <a mat-list-item>
                   <mat-icon>school</mat-icon>
-                  <b class="titulo-expansion">Estudiante</b>
+                  <b class="titulo-expansion">Estudiantes</b>
                 </a>
               </mat-panel-title>
             </mat-expansion-panel-header>
@@ -167,7 +131,7 @@
               <mat-panel-title>
                 <a mat-list-item ng-Focus="onSelected(this)">
                   <mat-icon>event</mat-icon>
-                  <b class="titulo-expansion">Evento</b>
+                  <b class="titulo-expansion">Eventos</b>
                 </a>
               </mat-panel-title>
             </mat-expansion-panel-header>
@@ -190,12 +154,6 @@
             >
               Buscar
             </a>
-            <!-- <a mat-list-item  routerLink="./">
-            &nbsp; &nbsp; &nbsp; Modificar &nbsp;
-          </a>
-          <a mat-list-item  routerLink="./">
-            &nbsp; &nbsp; &nbsp; Eliminar &nbsp;
-          </a> -->
           </mat-expansion-panel>
           <mat-expansion-panel
             class="opcion"
@@ -207,7 +165,7 @@
               <mat-panel-title>
                 <a mat-list-item>
                   <mat-icon>person</mat-icon>
-                  <b class="titulo-expansion">Empleado</b>
+                  <b class="titulo-expansion">Empleados</b>
                 </a>
               </mat-panel-title>
             </mat-expansion-panel-header>
@@ -230,11 +188,14 @@
       >
         Cambiar contraseña
       </button>
-
-      <button mat-button class="cierreSesion" (click)="cierreSesion()">
-        <mat-icon>exit_to_app</mat-icon>
-        Cerrar sesión
-      </button>
+        <button mat-button class="preferencias" >
+          <mat-icon>settings</mat-icon>
+          Preferencias
+        </button>
+        <button mat-button class="cierreSesion" (click)="cierreSesion()">
+          <mat-icon>exit_to_app</mat-icon>
+          Cerrar sesión
+        </button>
       <!-- <mat-nav-list class="ubicacion_inferior">
       <a
         mat-list-item
