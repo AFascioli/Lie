@@ -4,7 +4,7 @@
   <mat-card class="card-body-componente">
     <meta charset="utf-8" />
 
-    <form #form="ngForm">
+    <form #form="ngForm" (submit)="onGuardar(form)">
           <mat-form-field>
             <input
               name="apellido"
