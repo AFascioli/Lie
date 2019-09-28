@@ -9,7 +9,7 @@
     "lint": "ng lint",
     "e2e": "ng e2e",
     "dev": "nodemon ./backend/server.js",
-    "http-server": "http-server -p 4200 --ssl ./dist/proyectoicr -o https://localhost:4200/index.html",
+    "http-server": "http-server -p 4200 --ssl --cert ./cert.pem --key ./key.pem ./dist/proyectoicr -o https://localhost:4200/index.html",
     "deploy": "npm run build && npm run http-server"
   },
   "private": true,
