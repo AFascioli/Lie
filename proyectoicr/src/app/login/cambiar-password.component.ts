@@ -7,7 +7,7 @@ import { Router } from '@angular/router';
 @Component({
   selector: "app-cambiar-password",
   templateUrl: "./cambiar-password.component.html",
-  styleUrls: ["./login.component.css"]
+  styleUrls: ["./cambiar-password.component.css"]
 })
 export class CambiarPassword implements OnInit {
   esVisible1: boolean=false;

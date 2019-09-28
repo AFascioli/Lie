@@ -48,3 +48,7 @@ input:focus{
 [hidden] {
   display: none !important;
 }
+
+.promedio{
+  text-align: center !important;
+}

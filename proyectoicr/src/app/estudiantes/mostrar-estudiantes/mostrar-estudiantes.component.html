@@ -2,13 +2,13 @@
 <mat-card class="card-body-componente">
   <form #form="ngForm">
     <mat-accordion>
-      <mat-expansion-panel [expanded]="true">
+      <mat-expansion-panel [class.mat-expansion-panel-mobile]="mobileQuery.matches" [expanded]="true">
         <mat-expansion-panel-header>
           <mat-panel-title>
             <b>Datos personales del estudiante</b>
           </mat-panel-title>
         </mat-expansion-panel-header>
-        <mat-form-field>
+        <mat-form-field [class.mat-form-field-mobile]="mobileQuery.matches" [class.mat-form-field-mobile]="mobileQuery.matches">
           <input
             [disabled]="!modoEditar"
             name="apellido"
@@ -25,7 +25,7 @@
           />
         </mat-form-field>
         &nbsp;
-        <mat-form-field>
+        <mat-form-field [class.mat-form-field-mobile]="mobileQuery.matches" [class.mat-form-field-mobile]="mobileQuery.matches">
           <input
             [disabled]="!modoEditar"
             [(ngModel)]="nombreEstudiante"
@@ -42,7 +42,7 @@
           />
         </mat-form-field>
         <br />
-        <mat-form-field>
+        <mat-form-field [class.mat-form-field-mobile]="mobileQuery.matches" [class.mat-form-field-mobile]="mobileQuery.matches">
           <mat-select
             [disabled]="!modoEditar"
             [(ngModel)]="tipoDocEstudiante"
@@ -65,7 +65,7 @@
           </mat-select>
         </mat-form-field>
         &nbsp;
-        <mat-form-field>
+        <mat-form-field [class.mat-form-field-mobile]="mobileQuery.matches">
           <input
             [disabled]="!modoEditar"
             [(ngModel)]="nroDocEstudiante"
@@ -81,7 +81,7 @@
           />
         </mat-form-field>
         <br />
-        <mat-form-field>
+        <mat-form-field [class.mat-form-field-mobile]="mobileQuery.matches">
           <input
             [disabled]="!modoEditar"
             [(ngModel)]="cuilEstudiante"
@@ -96,7 +96,7 @@
           />
         </mat-form-field>
         <br />
-        <mat-form-field>
+        <mat-form-field [class.mat-form-field-mobile]="mobileQuery.matches">
           <mat-select
             [disabled]="!modoEditar"
             [(ngModel)]="sexoEstudiante"
@@ -113,7 +113,7 @@
         </mat-form-field>
         <br />
         <div class="nacionalidad">
-          <mat-form-field>
+          <mat-form-field [class.mat-form-field-mobile]="mobileQuery.matches">
             <input
               [disabled]="!modoEditar"
               [(ngModel)]="fechaNacEstudiante"
@@ -137,7 +137,7 @@
             ></mat-datepicker>
           </mat-form-field>
           <br />
-          <mat-form-field>
+          <mat-form-field [class.mat-form-field-mobile]="mobileQuery.matches">
             <mat-select
               [disabled]="!modoEditar"
               [(ngModel)]="nacionalidadEstudiante"
@@ -157,7 +157,7 @@
           </mat-form-field>
           <br />
         </div>
-        <mat-form-field>
+        <mat-form-field [class.mat-form-field-mobile]="mobileQuery.matches">
           <mat-select
             [disabled]="!modoEditar"
             [(ngModel)]="estadoCivilEstudiante"
@@ -173,7 +173,7 @@
           </mat-select>
         </mat-form-field>
         <br />
-        <mat-form-field>
+        <mat-form-field [class.mat-form-field-mobile]="mobileQuery.matches">
           <input
             [disabled]="!modoEditar"
             [(ngModel)]="telefonoEstudiante"
@@ -190,14 +190,14 @@
     </mat-accordion>
     <br />
     <mat-accordion>
-      <mat-expansion-panel>
+      <mat-expansion-panel [class.mat-expansion-panel-mobile]="mobileQuery.matches">
         <mat-expansion-panel-header>
           <mat-panel-title>
             <b>Domicilio</b>
           </mat-panel-title>
         </mat-expansion-panel-header>
         <div class="domicilio">
-          <mat-form-field>
+          <mat-form-field [class.mat-form-field-mobile]="mobileQuery.matches">
             <input
               [disabled]="!modoEditar"
               [(ngModel)]="calleEstudiante"
@@ -214,7 +214,7 @@
             />
           </mat-form-field>
           &nbsp;
-          <mat-form-field>
+          <mat-form-field [class.mat-form-field-mobile]="mobileQuery.matches">
             <input
               [disabled]="!modoEditar"
               [(ngModel)]="nroCalleEstudiante"
@@ -229,7 +229,7 @@
             />
           </mat-form-field>
           <br />
-          <mat-form-field>
+          <mat-form-field [class.mat-form-field-mobile]="mobileQuery.matches">
             <input
               [disabled]="!modoEditar"
               [(ngModel)]="pisoEstudiante"
@@ -243,7 +243,7 @@
             />
           </mat-form-field>
           <br />
-          <mat-form-field>
+          <mat-form-field [class.mat-form-field-mobile]="mobileQuery.matches">
             <input
               [disabled]="!modoEditar"
               [(ngModel)]="departamentoEstudiante"
@@ -257,7 +257,7 @@
             />
           </mat-form-field>
           <br />
-          <mat-form-field>
+          <mat-form-field [class.mat-form-field-mobile]="mobileQuery.matches">
             <mat-select
               [disabled]="!modoEditar"
               [(ngModel)]="provinciaEstudiante"
@@ -278,7 +278,7 @@
             </mat-select>
           </mat-form-field>
           &nbsp;
-          <mat-form-field>
+          <mat-form-field [class.mat-form-field-mobile]="mobileQuery.matches">
             <mat-select
               [disabled]="!modoEditar"
               [(ngModel)]="localidadEstudiante"
@@ -298,7 +298,7 @@
             </mat-select>
           </mat-form-field>
           <br />
-          <mat-form-field>
+          <mat-form-field [class.mat-form-field-mobile]="mobileQuery.matches">
             <input
               [disabled]="!modoEditar"
               [(ngModel)]="CPEstudiante"
@@ -332,7 +332,7 @@
       <button
         mat-raised-button
         (click)="openDialogo('borrar', form)"
-        color="warn"
+        class="buttonPrimary"
         *ngIf="permisos.inscribirEstudiante > 1"
       >
         Borrar
@@ -340,14 +340,14 @@
       <button
         mat-raised-button
         (click)="openDialogo('cancelar', form)"
-        color="warn"
+        class="buttonWarn"
       >
         Cancelar
       </button>
       <button
       mat-raised-button
       [routerLink]="['/buscar/lista']"
-      color="primary"
+      class="buttonPrimary"
     >
      Volver
     </button>

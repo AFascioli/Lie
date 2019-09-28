@@ -3,9 +3,16 @@
   margin: auto;
 }
 
-/* Los campos de los paneles. */
+.mat-expansion-panel-mobile{
+  width: 100%;
+}
+
 .mat-form-field{
    width: 45%;
+}
+
+.mat-form-field-mobile{
+  width: 100%;
 }
 
 .div-button {

@@ -171,7 +171,7 @@
           Promedio
         </th>
         <td
-          class="columnasChicas"
+          class="columnasChicas promedio"
           mat-cell
           *matCellDef="let estudiante; let i = index"
         >
@@ -200,13 +200,14 @@
       <button
         [hidden]="!rolConPermisosEdicion"
         mat-raised-button
-        color="primary"
         class="button"
         (click)="onGuardar(form)"
+        class="buttonPrimary"
+        *ngIf= "estudiantes"
       >
         Guardar
       </button>
-      <button mat-raised-button color="warn" (click)="onCancelar()">
+      <button mat-raised-button class="buttonWarn" (click)="onCancelar()">
         Cancelar
       </button>
     </div>
