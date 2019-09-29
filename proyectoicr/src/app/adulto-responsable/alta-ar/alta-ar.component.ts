@@ -16,6 +16,9 @@ import { Nacionalidad } from 'src/app/estudiantes/nacionalidades.model';
   styleUrls: ['./alta-ar.component.css']
 })
 export class AltaARComponent implements OnInit, OnDestroy{
+  apellidoEstudiante: string;
+  nombreEstudiante: string;
+  _idEstudiante: string;
   maxDate = new Date();
   nacionalidades: Nacionalidad[] = [];
   suscripcion: Subscription;
@@ -28,6 +31,9 @@ export class AltaARComponent implements OnInit, OnDestroy{
   ) { }
 
   ngOnInit() {
+    this.apellidoEstudiante= this.servicioEstudiante.estudianteSeleccionado.apellido;
+    this.nombreEstudiante= this.servicioEstudiante.estudianteSeleccionado.nombre;
+    this._idEstudiante= this.servicioEstudiante.estudianteSeleccionado._id;
     this.servicioEstudiante.getNacionalidades();
     this.suscripcion = this.servicioEstudiante
    .getNacionalidadesListener()

@@ -2,8 +2,10 @@
     Registrar adulto responsable
   </h1>
   <mat-card class="card-body-componente">
+    <mat-card-subtitle >
+      <b >Estudiante: </b> {{ apellidoEstudiante }} {{ nombreEstudiante }}
+    </mat-card-subtitle>
     <meta charset="utf-8" />
-
     <form #form="ngForm" (submit)="onGuardar(form)">
           <mat-form-field>
             <input
@@ -23,7 +25,6 @@
 
           <mat-form-field>
             <input
-              pattern="[A-Za-záéíóúÁÉÍÓÚñÑ ]+"
               name="nombre"
               minlength="2"
               maxlength="40"
@@ -149,7 +150,7 @@
       <mat-form-field>
           <input
             matInput
-            name="Email"
+            name="email"
             ngModel
             #Email="ngModel"
             placeholder="Ingrese Email"
@@ -182,10 +183,11 @@
         </button>
         <button class="button-volver"
         mat-raised-button
-        [routerLink]="['/buscar']"
+        [routerLink]="['/buscar/lista']"
         class="buttonPrimary" >
            Volver
         </button>
+
       </div>
     </form>
   </mat-card>
