@@ -1,3 +1,4 @@
+import { PreferenciasComponent } from './menu-lateral/preferencias/preferencias.component';
 
 import { AltaARComponent } from './adulto-responsable/alta-ar/alta-ar.component';
 import { AltaEmpleadoComponent } from './empleado/alta-empleado/alta-empleado.component';
@@ -109,7 +110,6 @@ const routes: Routes = [
       },
       {
         path: "calificacionesEstudiante",
-
         component: CalificacionesPerfilEstudianteComponent,
         canActivate: [RouteGuard, RoleGuard],
         data: { rolesValidos: ["Admin", "Preceptor", "Director", "Docente"] }
@@ -118,16 +118,19 @@ const routes: Routes = [
       {
         path: "altaEmpleado",
         component: AltaEmpleadoComponent,
-        canActivate: [ RoleGuard],
+        canActivate: [RoleGuard],
         data: { rolesValidos: ["Admin", "Director"] }
       },
       {
         path: "altaAdultoResponsable",
         component: AltaARComponent,
-        canActivate: [ RoleGuard],
+        canActivate: [RoleGuard],
         data: { rolesValidos: ["Admin", "Director", "Preceptor"] }
       },
-
+      {
+        path:"preferencias",
+        component: PreferenciasComponent
+      }
     ]
   }
 ];

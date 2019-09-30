@@ -63,6 +63,7 @@ import localePy from '@angular/common/locales/es';
 import { JustificacionInasistenciaComponent, JustificacionInasistenciaPopupComponent } from './asistencia/justificacion-inasistencia/justificacion-inasistencia.component';
 import { AltaARComponent, AltaARPopupComponent} from './adulto-responsable/alta-ar/alta-ar.component';
 import { AltaEmpleadoComponent, AltaEmpleadoPopupComponent } from './empleado/alta-empleado/alta-empleado.component';
+import { PreferenciasComponent } from './menu-lateral/preferencias/preferencias.component';
 
 
 @NgModule({
@@ -102,7 +103,8 @@ import { AltaEmpleadoComponent, AltaEmpleadoPopupComponent } from './empleado/al
     AltaEmpleadoComponent,
     JustificacionInasistenciaPopupComponent,
     AltaEmpleadoPopupComponent,
-    AltaARPopupComponent
+    AltaARPopupComponent,
+    PreferenciasComponent
 
   ],
   //entryComponents declara los componentes que se generan dinamicamente dentro de otros.

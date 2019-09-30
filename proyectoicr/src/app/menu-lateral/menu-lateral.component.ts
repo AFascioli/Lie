@@ -58,9 +58,6 @@ export class MenuLateralComponent implements OnInit {
     });
   }
 
-  cambiarPassword() {
-    this.router.navigate(["/cambiarContraseña"]);
-  }
 
   cerrarMenuLateral(sideNav: MatSidenav){
     if(this.mobileQuery.matches){

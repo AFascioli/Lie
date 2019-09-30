@@ -23,3 +23,7 @@
 .parrafo{
   text-align: center;
 }
+
+.datos-personales, .domicilio{
+  margin-top: 2% !important;
+}

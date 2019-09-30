@@ -180,15 +180,7 @@
           </mat-expansion-panel>
         </mat-accordion>
       </mat-nav-list>
-
-      <button
-        mat-button
-        (click)="cambiarPassword()"
-        (click)="cerrarMenuLateral(sideNav)"
-      >
-        Cambiar contraseña
-      </button>
-        <button mat-button class="preferencias" >
+        <button mat-button class="preferencias" routerLink="/preferencias" >
           <mat-icon>settings</mat-icon>
           Preferencias
         </button>
@@ -196,17 +188,6 @@
           <mat-icon>exit_to_app</mat-icon>
           Cerrar sesión
         </button>
-      <!-- <mat-nav-list class="ubicacion_inferior">
-      <a
-        mat-list-item
-        routerLink="#"
-        title="Configuración"
-      >
-        <mat-icon>settings</mat-icon>
-
-        <p>Configuración</p>
-      </a>
-    </mat-nav-list> -->
     </mat-sidenav>
     <mat-sidenav-content>
       <div class="body-contenido" [class.body-contenido-mobile]="mobileQuery.matches">

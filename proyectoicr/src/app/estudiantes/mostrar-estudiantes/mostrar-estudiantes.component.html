@@ -8,6 +8,7 @@
             <b>Datos personales del estudiante</b>
           </mat-panel-title>
         </mat-expansion-panel-header>
+        <div class="datos-personales">
         <mat-form-field [class.mat-form-field-mobile]="mobileQuery.matches" [class.mat-form-field-mobile]="mobileQuery.matches">
           <input
             [disabled]="!modoEditar"
@@ -25,7 +26,7 @@
           />
         </mat-form-field>
         &nbsp;
-        <mat-form-field [class.mat-form-field-mobile]="mobileQuery.matches" [class.mat-form-field-mobile]="mobileQuery.matches">
+        <mat-form-field [class.mat-form-field-mobile]="mobileQuery.matches">
           <input
             [disabled]="!modoEditar"
             [(ngModel)]="nombreEstudiante"
@@ -42,7 +43,7 @@
           />
         </mat-form-field>
         <br />
-        <mat-form-field [class.mat-form-field-mobile]="mobileQuery.matches" [class.mat-form-field-mobile]="mobileQuery.matches">
+        <mat-form-field [class.mat-form-field-mobile]="mobileQuery.matches">
           <mat-select
             [disabled]="!modoEditar"
             [(ngModel)]="tipoDocEstudiante"
@@ -186,6 +187,7 @@
             type="number"
           />
         </mat-form-field>
+      </div>
       </mat-expansion-panel>
     </mat-accordion>
     <br />
