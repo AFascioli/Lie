@@ -1,179 +1,172 @@
 <h1 class="componente-titulo">
-    Registrar empleado
-  </h1>
-  <mat-card class="card-body-componente">
-    <meta charset="utf-8" />
+  Registrar empleado
+</h1>
+<mat-card class="card-body-componente">
+  <meta charset="utf-8" />
 
-    <form #form="ngForm" (submit)="onGuardar(form)">
-          <mat-form-field>
-            <input
-              name="apellido"
-              minlength="2"
-              maxlength="40"
-              ngModel
-              #apellido="ngModel"
-              matInput
-              placeholder="Ingrese apellido/s"
-              type="text"
-              required
-              (keypress)="checkLetras($event)"
-            />
-          </mat-form-field>
-          <br/>
-
-          <mat-form-field>
-            <input
-              pattern="[A-Za-záéíóúÁÉÍÓÚñÑ ]+"
-              name="nombre"
-              minlength="2"
-              maxlength="40"
-              ngModel
-              #nombre="ngModel"
-              matInput
-              placeholder="Ingrese nombre/s"
-              type="text"
-              required
-              (keypress)="checkLetras($event)"
-            />
-          </mat-form-field>
-          <br />
-
-          <mat-form-field>
-            <mat-select
-              placeholder="Seleccione tipo de documento"
-              name="tipoDocumento"
-              ngModel
-              #tipoDocumento="ngModel"
-              matNativeControl
-              required
-            >
-              <mat-option value="DNI">DNI</mat-option>
-              <mat-option value="Cedula de Identidad"
-                >Cédula de Identidad</mat-option
-              >
-              <mat-option value="Libreta de Enrolamiento"
-                >Libreta de Enrolamiento</mat-option
-              >
-              <mat-option value="Libreta Civica">Libreta Cívica</mat-option>
-              <mat-option value="Pasaporte">Pasaporte</mat-option>
-            </mat-select>
-          </mat-form-field>
-          <br />
-
-          <mat-form-field>
-            <input
-              name="nroDocumento"
-              maxlength="8"
-              pattern="[0-9]+"
-              ngModel
-              #nroDocumento="ngModel"
-              matInput
-              placeholder="Ingrese el número de documento"
-              required
-              (keypress)="checkNumeros($event)"
-            />
-          </mat-form-field>
-          <br />
-
-          <mat-form-field>
-            <mat-select
-              placeholder="Seleccione sexo"
-              name="sexo"
-              ngModel
-              #sexo="ngModel"
-              matNativeControl
-              required
-            >
-              <mat-option value="femenino">Femenino</mat-option>
-              <mat-option value="masculino">Masculino</mat-option>
-            </mat-select>
-          </mat-form-field>
-
-          <div class="nacionalidad">
-            <mat-form-field>
-              <input
-                matInput
-                name="fechaNac"
-                ngModel
-                #fechaNac="ngModel"
-                [max]="maxDate"
-                [matDatepicker]="picker"
-                placeholder="Seleccione fecha de nacimiento"
-                required
-              />
-              <mat-datepicker-toggle
-                matSuffix
-                [for]="picker"
-              ></mat-datepicker-toggle>
-              <mat-datepicker
-                #picker
-                startView="multi-year"
-                disabled="false"
-              ></mat-datepicker>
-            </mat-form-field>
-            <br />
-
-            <mat-form-field>
-              <mat-select
-                placeholder="Seleccione nacionalidad"
-                name="nacionalidad"
-                ngModel
-                #nacionalidad="ngModel"
-                matNativeControl
-              >
-                <mat-option
-                  *ngFor="let nacionalidad of nacionalidades"
-                  [value]="nacionalidad.name"
-                >
-                  {{ nacionalidad.name }}
-                </mat-option>
-              </mat-select>
-            </mat-form-field>
-          </div>
-
-          <mat-form-field>
-            <input
-              matInput
-              name="telefono"
-              maxlength="20"
-              ngModel
-              #telefono="ngModel"
-              placeholder="Ingrese número de teléfono"
-              type="text"
-              (keypress)="checkNumeros($event)"
-            />
-          </mat-form-field>
+  <form #form="ngForm">
+    <mat-expansion-panel [class.mat-expansion-panel-mobile]="mobileQuery.matches"
+    [expanded]="true">
+      <mat-expansion-panel-header>
+        <b>Datos Empleado</b>
+      </mat-expansion-panel-header>
+      <mat-form-field [class.mat-form-field-mobile]="mobileQuery.matches">
+        <input
+          name="apellido"
+          minlength="2"
+          maxlength="40"
+          ngModel
+          #apellido="ngModel"
+          matInput
+          placeholder="Ingrese apellido/s"
+          type="text"
+          required
+          (keypress)="checkLetras($event)"
+        />
+      </mat-form-field>
+      <br />
+      <mat-form-field [class.mat-form-field-mobile]="mobileQuery.matches">
+        <input
+          pattern="[A-Za-záéíóúÁÉÍÓÚñÑ ]+"
+          name="nombre"
+          minlength="2"
+          maxlength="40"
+          ngModel
+          #nombre="ngModel"
+          matInput
+          placeholder="Ingrese nombre/s"
+          type="text"
+          required
+          (keypress)="checkLetras($event)"
+        />
+      </mat-form-field>
       <br />
 
-      <mat-form-field>
+      <mat-form-field [class.mat-form-field-mobile]="mobileQuery.matches">
+        <mat-select
+          placeholder="Seleccione tipo de documento"
+          name="tipoDocumento"
+          ngModel
+          #tipoDocumento="ngModel"
+          matNativeControl
+          required
+        >
+          <mat-option value="DNI">DNI</mat-option>
+          <mat-option value="Cedula de Identidad"
+            >Cédula de Identidad</mat-option
+          >
+          <mat-option value="Libreta de Enrolamiento"
+            >Libreta de Enrolamiento</mat-option
+          >
+          <mat-option value="Libreta Civica">Libreta Cívica</mat-option>
+          <mat-option value="Pasaporte">Pasaporte</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <br />
+      <mat-form-field [class.mat-form-field-mobile]="mobileQuery.matches">
+        <input
+          name="nroDocumento"
+          maxlength="8"
+          pattern="[0-9]+"
+          ngModel
+          #nroDocumento="ngModel"
+          matInput
+          placeholder="Ingrese el número de documento"
+          required
+          (keypress)="checkNumeros($event)"
+        />
+      </mat-form-field>
+      <br />
+      <mat-form-field [class.mat-form-field-mobile]="mobileQuery.matches">
+        <mat-select
+          placeholder="Seleccione sexo"
+          name="sexo"
+          ngModel
+          #sexo="ngModel"
+          matNativeControl
+          required
+        >
+          <mat-option value="femenino">Femenino</mat-option>
+          <mat-option value="masculino">Masculino</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <br />
+        <mat-form-field [class.mat-form-field-mobile]="mobileQuery.matches">
           <input
             matInput
-            name="Email"
+            name="fechaNac"
             ngModel
-            #Email="ngModel"
-            placeholder="Ingrese email"
-            type="email"
-
+            #fechaNac="ngModel"
+            [max]="maxDate"
+            [matDatepicker]="picker"
+            placeholder="Seleccione fecha de nacimiento"
+            required
           />
+          <mat-datepicker-toggle
+            matSuffix
+            [for]="picker"
+          ></mat-datepicker-toggle>
+          <mat-datepicker
+            #picker
+            startView="multi-year"
+            disabled="false"
+          ></mat-datepicker>
         </mat-form-field>
         <br />
-
-      <div class="div-button">
-        <button
-          type="submit"
-          (click)="snackBarGuardar(form)"
-          class="buttonPrimary"
-          mat-raised-button
-        >
-          Guardar
-        </button>
-        <button
-          mat-raised-button
-          (click)="popUpCancelar()"
-          class="buttonWarn"
-        >
-          Cancelar
-        </button>
-      </div>
-    </form>
-  </mat-card>
+        <mat-form-field [class.mat-form-field-mobile]="mobileQuery.matches">
+          <mat-select
+            placeholder="Seleccione nacionalidad"
+            name="nacionalidad"
+            ngModel
+            #nacionalidad="ngModel"
+            matNativeControl
+          >
+            <mat-option
+              *ngFor="let nacionalidad of nacionalidades"
+              [value]="nacionalidad.name"
+            >
+              {{ nacionalidad.name }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+        <br/>
+      <mat-form-field [class.mat-form-field-mobile]="mobileQuery.matches">
+        <input
+          matInput
+          name="telefono"
+          maxlength="20"
+          ngModel
+          #telefono="ngModel"
+          placeholder="Ingrese número de teléfono"
+          type="text"
+          (keypress)="checkNumeros($event)"
+        />
+      </mat-form-field>
+      <br />
+      <mat-form-field [class.mat-form-field-mobile]="mobileQuery.matches">
+        <input
+          matInput
+          name="Email"
+          ngModel
+          #Email="ngModel"
+          placeholder="Ingrese email"
+          type="email"
+        />
+      </mat-form-field>
+    </mat-expansion-panel>
+    <br />
+    <div class="div-button">
+      <button
+        type="submit"
+        (click)="snackBarGuardar(form)"
+        class="buttonPrimary"
+        mat-raised-button
+      >
+        Guardar
+      </button>
+      <button mat-raised-button (click)="popUpCancelar()" class="buttonWarn">
+        Cancelar
+      </button>
+    </div>
+  </form>
+</mat-card>

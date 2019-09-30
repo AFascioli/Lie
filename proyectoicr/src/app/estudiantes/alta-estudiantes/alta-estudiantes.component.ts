@@ -31,7 +31,6 @@ export class AltaEstudiantesComponent implements OnInit, OnDestroy {
     private dateAdapter: DateAdapter<Date>,
     public dialog: MatDialog,
     private snackBar: MatSnackBar,
-
     public changeDetectorRef: ChangeDetectorRef,
     public media: MediaMatcher
   ) {

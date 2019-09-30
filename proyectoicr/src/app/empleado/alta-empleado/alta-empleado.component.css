@@ -11,3 +11,16 @@
 .parrafo{
   text-align: center;
 }
+
+.mat-expansion-panel{
+  width: 80%;
+  margin: auto;
+}
+
+.mat-expansion-panel-mobile{
+  width: 100%;
+}
+
+.mat-form-field-mobile{
+  width: 100%;
+}

@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy} from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef} from '@angular/core';
 import { MatDialog, MatDialogRef } from "@angular/material/dialog";
 import { Router } from "@angular/router";
 import { Subscription } from "rxjs";
@@ -7,6 +7,7 @@ import { EmpleadoService } from '../empleado.service';
 import { EstudiantesService } from 'src/app/estudiantes/estudiante.service';
 import { DateAdapter,MatSnackBar} from '@angular/material';
 import { NgForm } from '@angular/forms';
+import { MediaMatcher } from '@angular/cdk/layout';
 
 @Component({
   selector: 'app-alta-empleado',
@@ -17,13 +18,22 @@ export class AltaEmpleadoComponent implements OnInit, OnDestroy {
   maxDate = new Date();
   nacionalidades: Nacionalidad[] = [];
   suscripcion: Subscription;
+  _mobileQueryListener: () => void;
+  mobileQuery: MediaQueryList;
+
   constructor(
     public servicio: EmpleadoService,
     public servicioEstudiante: EstudiantesService,
     private dateAdapter: DateAdapter<Date>,
     public dialog: MatDialog,
-    private snackBar: MatSnackBar
-  ) { }
+    private snackBar: MatSnackBar,
+    public changeDetectorRef: ChangeDetectorRef,
+    public media: MediaMatcher
+  ) {
+  this.mobileQuery = media.matchMedia('(max-width: 1000px)');
+  this._mobileQueryListener = () => changeDetectorRef.detectChanges();
+  this.mobileQuery.addListener(this._mobileQueryListener);
+  }
 
   ngOnInit() {
     this.servicioEstudiante.getNacionalidades();
