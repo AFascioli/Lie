@@ -124,7 +124,7 @@ const routes: Routes = [
       {
         path: "altaAdultoResponsable",
         component: AltaARComponent,
-        canActivate: [RoleGuard],
+        canActivate: [RouteGuard, RoleGuard],
         data: { rolesValidos: ["Admin", "Director", "Preceptor"] }
       },
       {

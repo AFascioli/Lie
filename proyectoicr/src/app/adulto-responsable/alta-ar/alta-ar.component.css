@@ -3,9 +3,21 @@
   margin: auto;
 }
 
-/* Los campos de los paneles. */
+.mat-expansion-panel{
+  width: 80%;
+  margin: auto;
+}
+
+.mat-expansion-panel-mobile{
+  width: 100%;
+}
+
 .mat-form-field{
-   width: 45%;
+   width: 55%;
+}
+
+.mat-form-field-mobile{
+  width: 100%;
 }
 
 .div-button {
@@ -19,4 +31,9 @@
 .mat-card-subtitle{
   text-align: center;
   color: black
+}
+
+.datos-AR{
+  margin-top: 2% !important;
+  margin-bottom: 4% !important;
 }
