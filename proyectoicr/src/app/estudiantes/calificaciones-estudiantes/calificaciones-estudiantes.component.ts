@@ -1,11 +1,7 @@
+import { AutenticacionService } from "./../../login/autenticacionService.service";
 import { EstudiantesService } from "src/app/estudiantes/estudiante.service";
 import { Component, OnInit } from "@angular/core";
-import {
-  MatDialogRef,
-  MatDialog,
-  MatDialogConfig,
-  MatSnackBar
-} from "@angular/material";
+import { MatDialogRef, MatDialog, MatSnackBar } from "@angular/material";
 import { Router } from "@angular/router";
 import { NgForm } from "@angular/forms";
 
@@ -18,17 +14,28 @@ export class CalificacionesEstudiantesComponent implements OnInit {
   cursos: any[];
   materias: any[];
   estudiantes: any[];
-  displayedColumns: string[] = ["apellido", "nombre", "cal1", "cal2", "cal3","cal4", "cal5", "cal6", "prom"];
+  displayedColumns: string[] = [
+    "apellido",
+    "nombre",
+    "cal1",
+    "cal2",
+    "cal3",
+    "cal4",
+    "cal5",
+    "cal6",
+    "prom"
+  ];
   trimestrePorDefecto: string;
+  rolConPermisosEdicion = false;
 
   constructor(
     public servicio: EstudiantesService,
     public popup: MatDialog,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    public servicioAutenticacion: AutenticacionService
   ) {}
 
   ngOnInit() {
-
     this.servicio.obtenerCursos().subscribe(response => {
       this.cursos = response.cursos;
       this.cursos.sort((a, b) =>
@@ -41,20 +48,25 @@ export class CalificacionesEstudiantesComponent implements OnInit {
     });
 
     this.trimestrePorDefault();
+    this.validarPermisos();
   }
 
-  trimestrePorDefault()
-  {
+  validarPermisos() {
+    this.servicioAutenticacion.obtenerPermisosDeRol().subscribe(res => {
+      if (res.permisos.notas == 2) {
+        this.rolConPermisosEdicion = true;
+      }
+    });
+  }
+
+  trimestrePorDefault() {
     var today = new Date();
     var t1 = new Date(2019, 4, 31);
     var t2 = new Date(2019, 8, 15);
 
-    if (today < t1)
-    this.trimestrePorDefecto = "1";
-    else if(today > t2)
-    this.trimestrePorDefecto = "3";
-    else
-    this.trimestrePorDefecto = "2";
+    if (today < t1) this.trimestrePorDefecto = "1";
+    else if (today > t2) this.trimestrePorDefecto = "3";
+    else this.trimestrePorDefecto = "2";
   }
 
   onCursoSeleccionado(curso) {
@@ -77,8 +89,7 @@ export class CalificacionesEstudiantesComponent implements OnInit {
 
   onGuardar(form: NgForm) {
     if (form.invalid) {
-      if(form.value.curso == '' || form.value.materia =='')
-      {
+      if (form.value.curso == "" || form.value.materia == "") {
         this.snackBar.open("Faltan campos por seleccionar", "", {
         panelClass: ['snack-bar-fracaso'],
         duration: 3000
@@ -89,10 +100,23 @@ export class CalificacionesEstudiantesComponent implements OnInit {
           panelClass: ['snack-bar-fracaso'],
           duration: 3000
         });
+      } else {
+        this.snackBar.open(
+          "Las calificaciones sólo pueden ser números entre 1 y 10.",
+          "",
+          {
+            panelClass: ['snack-bar-fracaso'],
+            duration: 3000
+          }
+        );
       }
     } else {
       this.servicio
-        .registrarCalificaciones(this.estudiantes, form.value.materia, form.value.trimestre )
+        .registrarCalificaciones(
+          this.estudiantes,
+          form.value.materia,
+          form.value.trimestre
+        )
         .subscribe(respuesta => {
           if (respuesta.exito) {
             this.snackBar.open(respuesta.message, "", {
@@ -103,14 +127,12 @@ export class CalificacionesEstudiantesComponent implements OnInit {
         });
     }
   }
-  contadorNotasValidas(index):number{
-  var cont =0;
-  this.estudiantes[index].calificaciones.forEach
-  (nota => {
-    if (nota !=0 && nota != null)
-    cont++;
-   });
-   return cont;
+  contadorNotasValidas(index): number {
+    var cont = 0;
+    this.estudiantes[index].calificaciones.forEach(nota => {
+      if (nota != 0 && nota != null) cont++;
+    });
+    return cont;
   }
 
   onCancelar() {

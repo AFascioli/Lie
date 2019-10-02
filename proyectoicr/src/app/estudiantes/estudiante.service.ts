@@ -1,3 +1,4 @@
+import { AdultoResponsable } from "./../adulto-responsable/adultoResponsable.model";
 import { Injectable } from "@angular/core";
 import { Estudiante } from "./estudiante.model";
 import { HttpClient, HttpParams } from "@angular/common/http";
@@ -31,7 +32,7 @@ export class EstudiantesService {
   busquedaEstudianteXNombre: boolean;
 
   constructor(public http: HttpClient) {
-    this.retornoDesdeAcciones= false;
+    this.retornoDesdeAcciones = false;
   }
 
   altaEstudiante(
@@ -322,15 +323,21 @@ export class EstudiantesService {
     );
   }
 
-  registrarCalificaciones(estudiantes: any[], idMateria: string, trimestre: string) {
-    let params = new HttpParams().set("idMateria", idMateria).set("trimestre", trimestre);
+  registrarCalificaciones(
+    estudiantes: any[],
+    idMateria: string,
+    trimestre: string
+  ) {
+    let params = new HttpParams()
+      .set("idMateria", idMateria)
+      .set("trimestre", trimestre);
     return this.http.post<{ message: string; exito: boolean }>(
       environment.apiUrl + "/curso/estudiantes/materias/calificaciones",
       estudiantes, {params: params}
     );
   }
 
-  cargarAsistenciaBackend(curso: string){
+  cargarAsistenciaBackend(curso: string) {
     let params = new HttpParams().set("curso", curso);
     return this.http.get<{ estudiantes: any[], asistenciaNueva: string }>(
       environment.apiUrl + "/estudiante/asistencia", {params: params}
@@ -342,5 +349,64 @@ export class EstudiantesService {
     return this.http.get<{message: string, exito: boolean, contadorInasistencia: number}> (
       environment.apiUrl + "/estudiante/asistenciaEstudiante", {params: params}
     );
+    return this.http.get<{
+      message: string;
+      exito: boolean;
+      contadorInasistencias: number;
+      contadorInasistenciasJustificada: number;
+    }>("http://localhost:3000/estudiante/asistenciaEstudiante", {
+      params: params
+    });
+  }
+
+  //Con el id del estudiante y el trimestre seleccionado, obtiene las materias y sus calificaciones
+  obtenerCalificacionesXMateriaXEstudiante(trimestre: string) {
+    let params = new HttpParams()
+      .set("idEstudiante", this.estudianteSeleccionado._id)
+      .set("trimestre", trimestre);
+    return this.http.get<{
+      message: string;
+      exito: boolean;
+      vectorCalXMat: any[];
+    }>("http://localhost:3000/estudiante/calif/materia", {
+      params: params
+    });
+  }
+
+  //Dada una fecha de inicio y una fecha fin, justifica cada asistencia diaria dentro de ese periodo
+  justificarInasistencia(
+    fechaInicio: string,
+    fechaFin: string,
+    esMultiple: boolean
+  ) {
+    let params = new HttpParams()
+      .set("fechaInicio", fechaInicio)
+      .set("fechaFin", fechaFin)
+      .set("idEstudiante", this.estudianteSeleccionado._id)
+      .set("esMultiple", esMultiple.toString());
+    return this.http.get<{
+      message: string;
+      exito: boolean;
+    }>("http://localhost:3000/estudiante/inasistencia/justificada", {
+      params: params
+    });
+  }
+
+  getTutoresDeEstudiante() {
+    let params = new HttpParams().set(
+      "idEstudiante",
+      this.estudianteSeleccionado._id
+    );
+    return this.http
+      .get<{
+        message: string;
+        exito: boolean;
+        tutores: any[];
+      }>("http://localhost:3000/estudiante/tutores", {
+        params: params
+      })
+      .subscribe(tutores => {
+        console.log(tutores);
+      });
   }
 }

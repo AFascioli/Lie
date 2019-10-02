@@ -1,0 +1,108 @@
+<h1 class="componente-titulo">Justificar inasistencia</h1>
+<mat-card class="card-body-componente">
+  <form #form="ngForm">
+    <mat-radio-group aria-label="Select an option">
+      <mat-radio-button
+        [checked]="!esMultiple"
+        (change)="deshabilitarPickers(form)"
+        value="1"
+        >Para un único día</mat-radio-button
+      >
+      <mat-radio-button
+        [checked]="esMultiple"
+        (change)="deshabilitarPickers(form)"
+        value="2"
+        >Múltiples días</mat-radio-button
+      >
+    </mat-radio-group>
+    <br />
+    <div class="ubicacionDatePickers">
+      <mat-form-field>
+        <input
+          matInput
+          name="fechaUnica"
+          [(ngModel)]="fechaUnica"
+          [max]="fechaActual"
+          [matDatepicker]="picker1"
+          placeholder="Seleccione fecha"
+          required
+          [disabled]="esMultiple"
+        />
+        <mat-datepicker-toggle
+          matSuffix
+          [for]="picker1"
+        ></mat-datepicker-toggle>
+        <mat-datepicker
+          #picker1
+          startView="multi-year"
+          [disabled]="esMultiple"
+        ></mat-datepicker>
+      </mat-form-field>
+      <br />
+      <mat-form-field>
+        <input
+          matInput
+          name="fechaInicio"
+          [(ngModel)]="fechaInicio"
+          [max]="fechaActual"
+          [matDatepicker]="picker2"
+          placeholder="Seleccione fecha inicial"
+          required
+          [disabled]="!esMultiple"
+        />
+        <mat-datepicker-toggle
+          matSuffix
+          [for]="picker2"
+        ></mat-datepicker-toggle>
+        <mat-datepicker
+          #picker2
+          startView="multi-year"
+          [disabled]="!esMultiple"
+        ></mat-datepicker>
+      </mat-form-field>
+      <br />
+      <mat-form-field>
+        <input
+          matInput
+          name="fechaFin"
+          [(ngModel)]="fechaFin"
+          [max]="fechaActual"
+          [matDatepicker]="picker3"
+          placeholder="Seleccione fecha final"
+          required
+          [disabled]="!esMultiple"
+        />
+        <mat-datepicker-toggle
+          matSuffix
+          [for]="picker3"
+        ></mat-datepicker-toggle>
+        <mat-datepicker
+          #picker3
+          startView="multi-year"
+          [disabled]="!esMultiple"
+        ></mat-datepicker>
+      </mat-form-field>
+    </div>
+
+    <div class="div-button">
+      <button
+        mat-raised-button
+        class="buttonPrimary"
+        mat-raised-button
+        (click)="justificarInasistencia()"
+      >
+        Guardar
+      </button>
+      <button mat-raised-button (click)="onCancelar()" class="buttonWarn">
+        Cancelar
+      </button>
+      <button
+        mat-raised-button
+        [routerLink]="['/buscar/lista']"
+        class="buttonPrimary"
+      >
+        Volver
+      </button>
+    </div>
+  </form>
+</mat-card>

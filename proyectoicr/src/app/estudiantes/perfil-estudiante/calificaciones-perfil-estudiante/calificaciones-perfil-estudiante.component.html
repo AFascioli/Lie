@@ -1,18 +1,218 @@
-<mat-card>
-  <mat-card-title class= "componente-titulo">
-    {{ apellidoEstudiante }} {{ nombreEstudiante }}
+<mat-card class="card-body-componente">
+  <mat-card-title class="componente-titulo">
+    <p>{{ apellidoEstudiante }}, {{ nombreEstudiante }}</p>
   </mat-card-title>
 
-  <table>
+  <mat-form-field class="selectTrimestre">
+    <mat-select
+      name="trimestre"
+      ngModel
+      #trimestreElegido="ngModel"
+      matNativeControl
+      required
+      placeholder="Seleccione trimestre"
+      name="trimestre"
+      [(ngModel)]="trimestre"
+      (selectionChange)="onChangeTrimestre()"
+    >
+      <mat-option value="1">Primer</mat-option>
+      <mat-option value="2">Segundo</mat-option>
+      <mat-option value="3">Tercer</mat-option>
+    </mat-select>
+  </mat-form-field>
 
+  <table
+    mat-table
+    [dataSource]="calificacionesXMateria"
+    *ngIf="calificacionesXMateria"
+  >
+    <ng-container matColumnDef="materia">
+      <th class="columnasNormales" mat-header-cell *matHeaderCellDef>
+        Materia
+      </th>
+      <td
+        class="columnasNormales"
+        mat-cell
+        *matCellDef="let calificacionesXMateria"
+      >
+        {{ calificacionesXMateria.materia }}
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="calif1">
+      <th class="columnasChicas" mat-header-cell *matHeaderCellDef>
+        1º
+      </th>
+      <td
+        class="columnasChicas"
+        mat-cell
+        *matCellDef="let calificacionesXMateria"
+      >
+        <p
+          *ngIf="
+            calificacionesXMateria.calificaciones[0] != 0;
+            else noTieneNotas
+          "
+        >
+          {{ calificacionesXMateria.calificaciones[0] }}
+        </p>
+        <ng-template #noTieneNotas>
+          <p>-</p>
+        </ng-template>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="calif2">
+      <th class="columnasChicas" mat-header-cell *matHeaderCellDef>
+        2º
+      </th>
+      <td
+        class="columnasChicas"
+        mat-cell
+        *matCellDef="let calificacionesXMateria"
+      >
+      <p
+      *ngIf="
+        calificacionesXMateria.calificaciones[1] != 0;
+        else noTieneNotas
+      "
+    >
+      {{ calificacionesXMateria.calificaciones[1] }}
+    </p>
+    <ng-template #noTieneNotas>
+      <p>-</p>
+    </ng-template>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="calif3">
+      <th class="columnasChicas" mat-header-cell *matHeaderCellDef>
+        3º
+      </th>
+      <td
+        class="columnasChicas"
+        mat-cell
+        *matCellDef="let calificacionesXMateria"
+      >
+      <p
+      *ngIf="
+        calificacionesXMateria.calificaciones[2] != 0;
+        else noTieneNotas
+      "
+    >
+      {{ calificacionesXMateria.calificaciones[2] }}
+    </p>
+    <ng-template #noTieneNotas>
+      <p>-</p>
+    </ng-template>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="calif4">
+      <th class="columnasChicas" mat-header-cell *matHeaderCellDef>
+        4º
+      </th>
+      <td
+        class="columnasChicas"
+        mat-cell
+        *matCellDef="let calificacionesXMateria"
+      >
+      <p
+      *ngIf="
+        calificacionesXMateria.calificaciones[3] != 0;
+        else noTieneNotas
+      "
+    >
+      {{ calificacionesXMateria.calificaciones[3] }}
+    </p>
+    <ng-template #noTieneNotas>
+      <p>-</p>
+    </ng-template>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="calif5">
+      <th class="columnasChicas" mat-header-cell *matHeaderCellDef>
+        5º
+      </th>
+      <td
+        class="columnasChicas"
+        mat-cell
+        *matCellDef="let calificacionesXMateria"
+      >
+      <p
+      *ngIf="
+        calificacionesXMateria.calificaciones[4] != 0;
+        else noTieneNotas
+      "
+    >
+      {{ calificacionesXMateria.calificaciones[4] }}
+    </p>
+    <ng-template #noTieneNotas>
+      <p>-</p>
+    </ng-template>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="calif6">
+      <th class="columnasChicas" mat-header-cell *matHeaderCellDef>
+        6º
+      </th>
+      <td
+        class="columnasChicas"
+        mat-cell
+        *matCellDef="let calificacionesXMateria"
+      >
+      <p
+      *ngIf="
+        calificacionesXMateria.calificaciones[5] != 0;
+        else noTieneNotas
+      "
+    >
+      {{ calificacionesXMateria.calificaciones[5] }}
+    </p>
+    <ng-template #noTieneNotas>
+      <p>-</p>
+    </ng-template>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="prom">
+      <th class="columnasChicas" mat-header-cell *matHeaderCellDef>Promedio</th>
+      <td
+        class="columnasChicas"
+        mat-cell
+        *matCellDef="let estudiante; let i = index"
+      >
+        <p *ngIf="!(contadorNotasValidas(i) == 0); else sinNotas">
+          {{
+            (
+              (estudiante.calificaciones[0] +
+                estudiante.calificaciones[1] +
+                estudiante.calificaciones[2] +
+                estudiante.calificaciones[3] +
+                estudiante.calificaciones[4] +
+                estudiante.calificaciones[5]) /
+              contadorNotasValidas(i)
+            ).toFixed(2)
+          }}
+        </p>
+        <ng-template #sinNotas>-</ng-template>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
   </table>
 
-  <div >
-      <button class="button-volver"
-       mat-raised-button
-       color="primary"
-       [routerLink]="['/perfilEstudiante']" >
-         Volver
-        </button>
-    </div>
+  <div>
+    <button
+      class="button-volver"
+      mat-raised-button
+      class="buttonPrimary"
+      [routerLink]="['/perfilEstudiante']"
+    >
+      Volver
+    </button>
+  </div>
 </mat-card>

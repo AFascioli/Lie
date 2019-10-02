@@ -4,8 +4,8 @@
     <p>¿Está seguro que desea cancelar?</p>
   </div>
   <div mat-dialog-actions class="buttonPopup" >
-    <button mat-raised-button color="primary" (click)="onYesCancelarClick()" cdkFocusInitial>Sí </button>
-    <button mat-raised-button color="warn" (click)="onNoCancelarConfirmarClick()">No</button>
+    <button mat-raised-button class="buttonPrimary" (click)="onYesCancelarClick()" cdkFocusInitial>Sí </button>
+    <button mat-raised-button class="buttonWarn" (click)="onNoCancelarConfirmarClick()">No</button>
   </div>
 </div>
 
@@ -15,8 +15,8 @@
           <p>¿Está seguro que desea confirmar la acción?</p>
         </div>
         <div mat-dialog-actions class="buttonPopup">
-          <button mat-raised-button color="primary"  (click)="onYesConfirmarClick()" cdkFocusInitial>Sí</button>
-          <button mat-raised-button color="warn" (click)="onNoCancelarConfirmarClick()">No </button>
+          <button mat-raised-button class="buttonPrimary"  (click)="onYesConfirmarClick()" cdkFocusInitial>Sí</button>
+          <button mat-raised-button class="buttonWarn" (click)="onNoCancelarConfirmarClick()">No </button>
         </div>
   </div>
 

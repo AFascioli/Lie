@@ -1,5 +1,5 @@
 import { OnInit, Component } from "@angular/core";
-import { AutencacionService } from "./autenticacionService.service";
+import { AutenticacionService } from "./autenticacionService.service";
 import { NgForm } from "@angular/forms";
 import { MatSnackBar, MatDialogRef, MatDialog } from "@angular/material";
 import { Router } from '@angular/router';
@@ -7,7 +7,7 @@ import { Router } from '@angular/router';
 @Component({
   selector: "app-cambiar-password",
   templateUrl: "./cambiar-password.component.html",
-  styleUrls: ["./login.component.css"]
+  styleUrls: ["./cambiar-password.component.css"]
 })
 export class CambiarPassword implements OnInit {
   esVisible1: boolean=false;
@@ -17,7 +17,7 @@ export class CambiarPassword implements OnInit {
   ngOnInit() {}
 
   constructor(
-    private servicio: AutencacionService,
+    private servicio: AutenticacionService,
     private snackBar: MatSnackBar,
     public dialog: MatDialog
   ) {}
@@ -29,13 +29,19 @@ export class CambiarPassword implements OnInit {
           form.value.passwordAnterior,
           form.value.passwordNueva
         ).subscribe(response=> {
+          let tipoSnackBar='snack-bar-fracaso';
+          if(response.exito){
+            tipoSnackBar='snack-bar-exito';
+          }
           this.snackBar.open(response.message, "", {
+            panelClass: [tipoSnackBar],
             duration: 4000
           });
           form.reset();
         });
       } else {
         this.snackBar.open("Las contraseñas ingresadas no coinciden", "", {
+          panelClass: ['snack-bar-fracaso'],
           duration: 4000
         });
       }
@@ -43,10 +49,12 @@ export class CambiarPassword implements OnInit {
 
       if(!form.value.passwordAnterior || !form.value.passwordNueva || !form.value.passwordNuevaRepetida ){
         this.snackBar.open("Faltan campos por completar", "", {
+          panelClass: ['snack-bar-fracaso'],
           duration: 4000
           });
       } else {
          this.snackBar.open("Los campos ingresados no son validos", "", {
+          panelClass: ['snack-bar-fracaso'],
         duration: 4000
         });
       }

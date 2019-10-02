@@ -1,21 +1,26 @@
 import { Injectable } from "@angular/core";
-import { HttpClient } from "@angular/common/http";
+import { HttpClient, HttpParams } from "@angular/common/http";
 import { Router } from "@angular/router";
 import { Subject } from "rxjs";
 import { environment } from "src/environments/environment";
 
 @Injectable({ providedIn: "root" })
-export class AutencacionService {
+export class AutenticacionService {
   private estaAutenticado = false;
   private token: string;
   private tokenTimer: any;
   private authStatusListener = new Subject<boolean>();
   private usuarioAutenticado: string;
+  private rol: string;
 
   constructor(private http: HttpClient, private router: Router) {}
 
   getToken() {
     return this.token;
+  }
+
+  getRol() {
+    return this.rol;
   }
 
   getIsAuth() {
@@ -30,9 +35,9 @@ export class AutencacionService {
     return this.usuarioAutenticado;
   }
 
-  crearUsuario(email: string, password: string) {
-    const authData = { email: email, password: password };
-    return this.http.post<{ message: string; exito: string }>(
+  crearUsuario(email: string, password: string, rol: string) {
+    const authData = { email: email, password: password, rol: rol };
+    return this.http.post<{ message: string; exito: string; id: string }>(
       environment.apiUrl + "/usuario/signup",
       authData
     );
@@ -43,14 +48,15 @@ export class AutencacionService {
   //Se retorna un obsevable para que el componente pueda leer el mensaje del backend.
   login(email: string, password: string) {
     const authData = { email: email, password: password };
-    let respuesta: string;
-    var subject = new Subject<string>();
+    let respuesta: any;
+    var subject = new Subject<any>();
     this.http
       .post<{
         token: string;
         duracionToken: number;
         exito: boolean;
         message: string;
+        rol: string;
       }>(environment.apiUrl + "/usuario/login", authData)
       .subscribe(response => {
         respuesta = response.message;
@@ -58,6 +64,7 @@ export class AutencacionService {
           this.usuarioAutenticado = email;
           this.token = response.token;
           const duracionToken = response.duracionToken;
+          this.rol = response.rol;
           this.timerAutenticacion(duracionToken);
           this.estaAutenticado = true;
           this.authStatusListener.next(true);
@@ -68,7 +75,8 @@ export class AutencacionService {
           this.guardarDatosAutenticacion(
             response.token,
             vencimientoToken,
-            this.usuarioAutenticado
+            this.usuarioAutenticado,
+            this.rol
           );
           this.router.navigate(["/"]);
         }
@@ -89,6 +97,7 @@ export class AutencacionService {
     if (expiraEn > 0) {
       this.token = infoAutenticacion.token;
       this.usuarioAutenticado = infoAutenticacion.usuario;
+      this.rol = infoAutenticacion.rol;
       this.estaAutenticado = true;
       this.timerAutenticacion(expiraEn / 1000);
       this.authStatusListener.next(true);
@@ -116,30 +125,35 @@ export class AutencacionService {
   private guardarDatosAutenticacion(
     token: string,
     fechaVencimiento: Date,
-    usuario: string
+    usuario: string,
+    rol: string
   ) {
     localStorage.setItem("token", token);
     localStorage.setItem("vencimiento", fechaVencimiento.toISOString());
     localStorage.setItem("usuario", usuario);
+    localStorage.setItem("rol", rol);
   }
 
   private limpiarDatosAutenticacion() {
     localStorage.removeItem("token");
     localStorage.removeItem("vencimiento");
     localStorage.removeItem("usuario");
+    localStorage.removeItem("rol");
   }
 
   private obtenerDatosAutenticacion() {
     const token = localStorage.getItem("token");
     const fechaVencimiento = localStorage.getItem("vencimiento");
     const usuario = localStorage.getItem("usuario");
+    const rol = localStorage.getItem("rol");
     if (!token || !fechaVencimiento) {
       return;
     }
     return {
       token: token,
       vencimientoToken: new Date(fechaVencimiento),
-      usuario: usuario
+      usuario: usuario,
+      rol: rol
     };
   }
 
@@ -152,7 +166,17 @@ export class AutencacionService {
     return this.http.post<{
       exito: boolean;
       message: string;
-    }>(environment.apiUrl + "/usuario/cambiarPassword", datosContraseña);
+    }>("http://localhost:3000/usuario/cambiarPassword", datosContraseña);
+  }
+
+  obtenerPermisosDeRol() {
+    let params = new HttpParams().set("rol", this.getRol());
+    return this.http.get<{
+      message: string;
+      exito: boolean;
+      permisos: any;
+    }>(environment.apiUrl + "/usuario/permisosDeRol", {
+      params: params
   }
 
   addPushSubscriber(sus: any) {

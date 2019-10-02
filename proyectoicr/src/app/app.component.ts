@@ -1,4 +1,4 @@
-import { AutencacionService } from "./login/autenticacionService.service";
+import { AutenticacionService } from './login/autenticacionService.service';
 import { Component, OnInit } from "@angular/core";
 
 @Component({
@@ -9,7 +9,7 @@ import { Component, OnInit } from "@angular/core";
 export class AppComponent implements OnInit {
   title = "Lie";
 
-  constructor(private servicio: AutencacionService) {}
+  constructor(private servicio: AutenticacionService){}
   ngOnInit(): void {
     this.servicio.autenticacionAutomatica();
   }

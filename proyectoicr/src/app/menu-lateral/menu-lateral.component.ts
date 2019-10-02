@@ -1,7 +1,10 @@
-import { MatDialog, MatDialogRef } from "@angular/material";
-import { Component, OnInit } from "@angular/core";
+import { CambiarPassword } from './../login/cambiar-password.component';
+import { MatDialog, MatDialogRef, MatDrawer, MatSidenav } from "@angular/material";
+import { Component, OnInit, ChangeDetectorRef } from "@angular/core";
 import { Router } from "@angular/router";
-import { AutencacionService } from "../login/autenticacionService.service";
+import { AutenticacionService } from "../login/autenticacionService.service";
+import { EstudiantesService } from '../estudiantes/estudiante.service';
+import { MediaMatcher } from '@angular/cdk/layout';
 
 @Component({
   selector: "app-menu-lateral",
@@ -9,13 +12,39 @@ import { AutencacionService } from "../login/autenticacionService.service";
   styleUrls: ["./menu-lateral.component.css"]
 })
 export class MenuLateralComponent implements OnInit {
+  //Lo inicializo porque sino salta error en la consola del browser
+  permisos={
+    notas:0,
+    asistencia:0,
+    eventos:0,
+    sanciones:0,
+    agendaCursos:0,
+    inscribirEstudiante:0,
+    registrarEmpleado:0,
+    registrarCuota:0
+  };
+  _mobileQueryListener: () => void;
+  mobileQuery: MediaQueryList;
+
+  //Basicamente tenemos comportamiento que se fija si el display es menor a 600 px o no
   constructor(
     public router: Router,
-    public authService: AutencacionService,
-    public dialog: MatDialog
-  ) {}
+    public authService: AutenticacionService,
+    public dialog: MatDialog,
+    public estudianteService: EstudiantesService,
+    public changeDetectorRef: ChangeDetectorRef,
+    public media: MediaMatcher
+  ) {
+    this.mobileQuery = media.matchMedia('(max-width: 800px)');
+    this._mobileQueryListener = () => changeDetectorRef.detectChanges();
+    this.mobileQuery.addListener(this._mobileQueryListener);
+  }
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.authService.obtenerPermisosDeRol().subscribe(response=>{
+      this.permisos=response.permisos;
+    });
+  }
 
   onClickHome() {
     this.router.navigate(["./home"]);
@@ -29,8 +58,11 @@ export class MenuLateralComponent implements OnInit {
     });
   }
 
-  cambiarContrasenia() {
-    this.router.navigate(["/cambiarContraseña"]);
+
+  cerrarMenuLateral(sideNav: MatSidenav){
+    if(this.mobileQuery.matches){
+      sideNav.toggle();
+    }
   }
 }
 
@@ -45,7 +77,7 @@ export class CerrarSesionPopupComponent {
   constructor(
     public dialogRef: MatDialogRef<CerrarSesionPopupComponent>,
     public router: Router,
-    public authService: AutencacionService
+    public authService: AutenticacionService
   ) {}
 
   onYesClick(): void {

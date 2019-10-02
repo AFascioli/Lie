@@ -20,8 +20,8 @@
   </div>
   <br />
 
-  <div class="contenido">
-    <mat-card class="card-datos">
+  <div class="contenido" [class.contenido-mobile]="mobileQuery.matches">
+    <mat-card class="card-datos" [class.card-datos-mobile]="mobileQuery.matches">
       <h3>Datos del estudiante</h3>
       <mat-card-subtitle>
         <b>Apellido/s: </b> {{ apellidoEstudiante }}
@@ -38,13 +38,13 @@
       (change)="CambiarTipoRetiro()"
       [checked]="antes10am"
       value="1"
-      >Antes de las 10:00 de la mañana</mat-radio-button
+      ><span class="label-radio-button">Antes de las 10:00 de la mañana</span></mat-radio-button
     >
     <mat-radio-button
       (change)="CambiarTipoRetiro()"
       [checked]="!antes10am"
       value="2"
-      >Después de las 10:00 de la mañana</mat-radio-button
+      ><span class="label-radio-button">Después de las 10:00 de la mañana</span></mat-radio-button
     >
   </mat-radio-group>
 
@@ -52,14 +52,22 @@
   <br />
 
   <div class="div-button">
-    <button color="primary" (click)="openPopup('confirmar')" mat-raised-button>
+    <button class="buttonPrimary" (click)="openPopup('confirmar')" mat-raised-button>
       Guardar
     </button>
 
-    <button mat-raised-button (click)="openPopup('cancelar')" color="warn">
+    <button
+      mat-raised-button
+      (click)="openPopup('cancelar')"
+      class="buttonWarn"
+    >
       Cancelar
     </button>
-    <button mat-raised-button [routerLink]="['/buscar/lista']" color="primary">
+    <button
+      mat-raised-button
+      [routerLink]="['/buscar/lista']"
+      class="buttonPrimary"
+    >
       Volver
     </button>
   </div>

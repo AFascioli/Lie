@@ -2,18 +2,20 @@
 <mat-card class="card-body-componente">
   <p class="fecha">
     <b>Fecha: </b>
-    <br>
-    {{ fechaActual | date: "EEEE" }} {{ fechaActual | date: "dd/MM/yyyy" }}</p>
+    <br />
+    {{ fechaActual | date: "EEEE" }} {{ fechaActual | date: "dd/MM/yyyy" }}
+  </p>
   <br />
 
   <div class="contenido">
-      <mat-card class="card-body-componente">
-          <h3> Datos del estudiante seleccionado </h3>
-          <mat-card-subtitle>  <b>Apellido/s: </b> {{ apellidoEstudiante }}
-                               <br />
-                               <b>Nombre/s: </b> {{ nombreEstudiante }}
-          </mat-card-subtitle>
-        </mat-card>
+    <mat-card class="card-body-componente">
+      <h3>Datos del estudiante seleccionado</h3>
+      <mat-card-subtitle>
+        <b>Apellido/s: </b> {{ apellidoEstudiante }}
+        <br />
+        <b>Nombre/s: </b> {{ nombreEstudiante }}
+      </mat-card-subtitle>
+    </mat-card>
   </div>
 
   <br />
@@ -40,15 +42,14 @@
   </mat-radio-group>
 
   <br />
-  <br />
 
   <div class="div-button">
-    <!-- <button color="primary" (click)="openPopup('confirmar')" mat-raised-button>
+    <button class="buttonPrimary" mat-raised-button>
       Guardar
     </button>
 
-    <button mat-raised-button (click)="openPopup('cancelar')" color="warn">
+    <button mat-raised-button class="buttonWarn">
       Cancelar
-    </button> -->
+    </button>
   </div>
 </mat-card>

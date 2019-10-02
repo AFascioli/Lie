@@ -1,66 +1,123 @@
-.componente-titulo-login{
+/* .componente-titulo-login{
   text-align: center;
   opacity: 0.8;
   font-weight: 100%;
   margin-top: 0 !important;
+  color: #ffffff;
+  flex: 1 1 auto;
 }
-.contenedor{
-  margin: auto;
+*/
+
+.titulo-login {
+  text-align: center;
+  opacity: 0.8;
+  font-weight: 100%;
+  margin-top: 0 !important;
+  color: #ffffff;
+  /* Para poder alinear el parrafo al centro */
+  flex: 1 1 auto;
+  font-size: 40px;
+  font-weight: bold;
+  background-color: rgb(47, 100, 131);
+  text-shadow: 2px 2px 4px #000000;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
+    Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
 }
 
-.fondo{
+.contenedor {
+  margin: auto;
+  color: white;
+  font-weight: bold;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 2;
+  width: 80%;
+  padding: 20px;
+  text-align: center;
+}
+
+.inputs{
+  text-align: right;
+  width: 90%;
+  margin-top: 3%;
+}
+
+.fixed-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 2;
+  width: 100% !important;
+  background-color: rgb(47, 100, 131);
+  height: 64px;
+}
+
+.fondo {
   margin: 0;
   padding: 0;
-  background-image: url('../../img/cristoReyTrans.jpg');
-  background-repeat: no-repeat;
-  background-size: cover;
-  background-attachment: fixed;
-  background-position: center center;
   height: 100%;
-  display:flex;
+  display: flex;
+  background-image: linear-gradient(to top, #2f6483 0%, #47988d59 99%, #ffffff 100%);
 }
 
 mat-card {
   padding: 0 !important;
 }
 
-.mat-form-field{
-  width:50%;
-  margin:auto;
+.mat-form-field {
+  width: 50%;
+  margin: auto;
   padding: 0%;
+  padding-left: 2%;
   margin-top: 2%;
   text-align: left;
-
 }
 
 .div-button {
   margin-top: 6%;
   margin-bottom: 5% !important;
-  text-align: center;
+  text-align: right;
+  margin-right: 21% !important;
 }
 
-
-.buttonLogin{
-  background-color: #551111 !important;
+.buttonLogin {
+  background-color: rgb(47, 100, 131);
   color: white;
 }
 
-
-form{
-  margin-top: 4%;
-  margin-bottom: 4% !important;
+form {
+  padding-top: 4%;
+  padding-bottom: 4% !important;
   text-align: center;
+  background-image: url("../../img/institutocristoreyprueba.png");
+  background-repeat: no-repeat;
+  background-position: left center;
+  margin-left: 4%;
 }
 
-.visibilidad{
+.visibilidad {
   padding: 0 !important;
   min-width: 0;
 }
 
-.card-body-componente{
-  max-width: 600 !important;
+.card-body-componente {
+  max-width: 600px !important;
 }
 
-.parrafo{
+.parrafo {
   text-align: center;
+}
+
+.mat-card{
+  background-color: white !important;
+}
+
+.mat-input {
+  background-color: transparent !important;
+}
+
+button{
+  margin: 0 !important;
 }

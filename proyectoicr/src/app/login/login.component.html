@@ -1,19 +1,26 @@
-<div class="fondo">
+<mat-toolbar class="fixed-header">
+    <mat-toolbar-row>
+        <h1 class="titulo-login">
+            L I É
+        </h1>
+    </mat-toolbar-row>
+  </mat-toolbar>
+<div class="fondo"></div>
   <div class="contenedor">
-    <h1 class="componente-titulo-login">
-      Instituto "Cristo Rey"
-    </h1>
     <mat-card class="card-body-componente">
       <meta charset="utf-8" />
       <form>
+        <!-- <hr width="1" size="500"> -->
+        <div class="inputs">
         <mat-form-field>
           <input
+            class="emailInput"
             matInput
             name="email"
             ngModel
             type="email"
-            placeholder="E-Mail"
             #emailInput="ngModel"
+            placeholder="Ingrese e-mail"
             [(ngModel)]="email"
             required
             email
@@ -27,30 +34,32 @@
           <input
             type="password"
             matInput
-            placeholder="Contraseña"
             ngModel
             type="password"
             name="password"
             [(ngModel)]="password"
             #passwordInput="ngModel"
+            placeholder="Ingrese contraseña"
             required
           />
           <mat-error *ngIf="passwordInput.invalid"
           >Por favor ingrese una contraseña válida</mat-error
           >
         </mat-form-field>
+      </div>
         <div class="div-button">
           <button
             class="button-color"
+            class="buttonPrimary"
             mat-raised-button
             class="buttonLogin"
             routerLink="/home"
             (click)="iniciarSesion()"
           >
-            Iniciar Sesión
+           Iniciar Sesión
           </button>
         </div>
       </form>
     </mat-card>
   </div>
-</div>
+

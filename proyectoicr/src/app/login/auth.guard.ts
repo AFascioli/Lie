@@ -7,11 +7,11 @@ import {
 import { Injectable } from "@angular/core";
 import { Observable } from "rxjs";
 
-import { AutencacionService } from "./autenticacionService.service";
+import { AutenticacionService } from "./autenticacionService.service";
 
 @Injectable()
 export class AuthGuard implements CanActivate {
-  constructor(private servicio: AutencacionService, private router: Router) {}
+  constructor(private servicio: AutenticacionService, private router: Router) {}
 
   //Este metodo se ejecuta en las rutas protegidas (fijarse en app-routing).
   //Si el usuario esta autenticado, lo deja pasar, sino lo manda al login

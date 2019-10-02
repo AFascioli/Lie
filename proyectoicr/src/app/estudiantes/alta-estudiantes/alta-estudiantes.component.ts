@@ -1,5 +1,5 @@
 import { Nacionalidad } from "./../nacionalidades.model";
-import { Component, OnInit, OnDestroy } from "@angular/core";
+import { Component, OnInit, OnDestroy, ChangeDetectorRef } from "@angular/core";
 import { EstudiantesService } from "../estudiante.service";
 import { NgForm } from "@angular/forms";
 import { Provincia } from "../provincias.model";
@@ -8,6 +8,7 @@ import { Subscription } from "rxjs";
 import { DateAdapter, MatSnackBar } from "@angular/material";
 import { MatDialog, MatDialogRef } from "@angular/material/dialog";
 import { Router } from "@angular/router";
+import { MediaMatcher } from '@angular/cdk/layout';
 
 @Component({
   selector: "app-alta-estudiantes",
@@ -22,14 +23,21 @@ export class AltaEstudiantesComponent implements OnInit, OnDestroy {
   localidadesFiltradas: Localidad[] = [];
   suscripcion: Subscription;
   nombreProvinciaSeleccionada: string;
+  _mobileQueryListener: () => void;
+  mobileQuery: MediaQueryList;
 
   constructor(
     public servicio: EstudiantesService,
     private dateAdapter: DateAdapter<Date>,
     public dialog: MatDialog,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    public changeDetectorRef: ChangeDetectorRef,
+    public media: MediaMatcher
   ) {
 //    this.dateAdapter.setLocale("es");
+  this.mobileQuery = media.matchMedia('(max-width: 1000px)');
+    this._mobileQueryListener = () => changeDetectorRef.detectChanges();
+    this.mobileQuery.addListener(this._mobileQueryListener);
   }
 
   // Cuando se inicializa el componente se cargar las provincias.
@@ -100,16 +108,17 @@ export class AltaEstudiantesComponent implements OnInit, OnDestroy {
   snackBarGuardar(form: NgForm): void {
     if (form.invalid) {
       this.snackBar.open("Faltan campos por completar", "", {
-        duration: 4000,
-        panelClass: ['snack-bar-fracaso']
+        panelClass: ['snack-bar-fracaso'],
+        duration: 4000
       });
     } else {
       this.snackBar.open("El estudiante se ha registrado correctamente", "", {
-        duration: 4000,
-        panelClass: ['snack-bar-exito']
+        panelClass: ['snack-bar-exito'],
+        duration: 4000
       });
     }
   }
+
 
   popUpCancelar() {
     this.dialog.open(AltaPopupComponent, {
@@ -158,4 +167,5 @@ export class AltaPopupComponent {
   onNoClick(): void {
     this.dialogRef.close();
   }
+
 }

@@ -1,5 +1,5 @@
 import { Component, OnInit } from "@angular/core";
-import { AutencacionService } from "./autenticacionService.service";
+import { AutenticacionService } from "./autenticacionService.service";
 import { MatSnackBar } from "@angular/material";
 
 @Component({
@@ -10,9 +10,8 @@ import { MatSnackBar } from "@angular/material";
 export class LoginComponent implements OnInit {
   email: string;
   password: string;
-
   constructor(
-    public authService: AutencacionService,
+    public authService: AutenticacionService,
     private snackBar: MatSnackBar
   ) {}
 
@@ -21,8 +20,13 @@ export class LoginComponent implements OnInit {
 
   iniciarSesion() {
     if (this.password && this.email) {
-      this.authService.login(this.email, this.password).subscribe(respuesta => {
-        this.snackBar.open(respuesta, "", {
+      this.authService.login(this.email, this.password).subscribe(respuesta =>{
+        let tipoSnackBar='snack-bar-fracaso';
+          if(respuesta.exito){
+            tipoSnackBar='snack-bar-exito';
+          }
+        this.snackBar.open(respuesta.message, "", {
+          panelClass:[tipoSnackBar],
           duration: 4000
         });
       });

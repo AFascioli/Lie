@@ -9,43 +9,62 @@
           </b>
         </mat-panel-title>
       </mat-expansion-panel-header>
-     <h3 class="tituloAcciones"> Acciones </h3>
+      <h3 class="tituloAcciones"> Acciones </h3>
       <div class="botonesAcciones">
         <button
           mat-raised-button
           class="button"
-          color="primary"
-          (click)="onInscribir(i)"
-        >
-          Inscribir estudiante a un curso
-        </button>
-        <br />
-        <button
-          mat-raised-button
-          class="button"
-          color="primary"
+          class="buttonPrimary"
           (click)="onMostrar(i)"
-        >
+          *ngIf="permisos.inscribirEstudiante >= 1"
+          >
           Visualizar estudiante
         </button>
-        <br />
         <button
           mat-raised-button
           class="button"
-          color="primary"
+          class="buttonPrimary"
+          (click)="onJustificar(i)"
+          *ngIf="permisos.asistencia > 1"
+        >
+          Justificar inasistencia
+        </button>
+        <button
+          mat-raised-button
+          class="button"
+          class="buttonPrimary"
           (click)="onRetiro(i)"
+          *ngIf="permisos.asistencia > 1"
         >
           Registrar retiro anticipado
         </button>
-        <br />
+        <button
+        mat-raised-button
+          class="button"
+          class="buttonPrimary"
+          (click)="onInscribir(i)"
+          *ngIf="permisos.inscribirEstudiante > 1"
+          >
+          Inscribir estudiante a un curso
+        </button>
         <button
           mat-raised-button
           class="button"
-          color="primary"
+          class="buttonPrimary"
           (click)="onVisualizarPerfil(i)"
+          *ngIf="permisos.inscribirEstudiante >= 1"
         >
           Visualizar perfil de estudiante
         </button>
+        <button
+        mat-raised-button
+        class="button"
+        class="buttonPrimary"
+        (click)="onVRegistrarAR(i)"
+        *ngIf="permisos.inscribirEstudiante > 1"
+      >
+        Registrar adulto responsable
+      </button>
       </div>
     </mat-expansion-panel>
   </div>

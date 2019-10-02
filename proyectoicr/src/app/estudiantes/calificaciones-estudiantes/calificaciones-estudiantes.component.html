@@ -77,76 +77,116 @@
 
       <ng-container matColumnDef="cal1">
         <th class="columnasChicas" mat-header-cell *matHeaderCellDef>1°</th>
-        <td
-          class="columnasChicas"
-          mat-cell
-          *matCellDef="let estudiante"
-        >
-        <input [(ngModel)]="estudiante.calificaciones[0]" name="nota1{{estudiante.calificaciones[0]}}" type="number" pattern="([0-9]|10)"/>
+        <td class="columnasChicas" mat-cell *matCellDef="let estudiante">
+          <input
+            *ngIf="rolConPermisosEdicion"
+            [(ngModel)]="estudiante.calificaciones[0]"
+            name="nota1{{ estudiante.calificaciones[0] }}"
+            type="number"
+            pattern="([0-9]|10)"
+          />
+          <p *ngIf="!rolConPermisosEdicion">
+            {{ estudiante.calificaciones[0] }}
+          </p>
         </td>
       </ng-container>
       <ng-container matColumnDef="cal2">
         <th class="columnasChicas" mat-header-cell *matHeaderCellDef>2°</th>
-        <td
-          class="columnasChicas"
-          mat-cell
-          *matCellDef="let estudiante"
-        >
-        <input [(ngModel)]="estudiante.calificaciones[1]" type="number" name="nota2{{estudiante.calificaciones[1]}}" pattern="([0-9]|10)"/>
+        <td class="columnasChicas" mat-cell *matCellDef="let estudiante">
+          <input
+            *ngIf="rolConPermisosEdicion"
+            [(ngModel)]="estudiante.calificaciones[1]"
+            type="number"
+            name="nota2{{ estudiante.calificaciones[1] }}"
+            pattern="([0-9]|10)"
+          />
+          <p *ngIf="!rolConPermisosEdicion">
+            {{ estudiante.calificaciones[1] }}
+          </p>
         </td>
       </ng-container>
       <ng-container matColumnDef="cal3">
         <th class="columnasChicas" mat-header-cell *matHeaderCellDef>3°</th>
-        <td
-          class="columnasChicas"
-          mat-cell
-          *matCellDef="let estudiante"
-        >
-        <input [(ngModel)]="estudiante.calificaciones[2]" type="number" name="nota3{{estudiante.calificaciones[2]}}" pattern="([0-9]|10)"/>
+        <td class="columnasChicas" mat-cell *matCellDef="let estudiante">
+          <input
+            *ngIf="rolConPermisosEdicion"
+            [(ngModel)]="estudiante.calificaciones[2]"
+            type="number"
+            name="nota3{{ estudiante.calificaciones[2] }}"
+            pattern="([0-9]|10)"
+          />
+          <p *ngIf="!rolConPermisosEdicion">
+            {{ estudiante.calificaciones[2] }}
+          </p>
         </td>
       </ng-container>
       <ng-container matColumnDef="cal4">
         <th class="columnasChicas" mat-header-cell *matHeaderCellDef>4°</th>
-        <td
-          class="columnasChicas"
-          mat-cell
-          *matCellDef="let estudiante"
-        >
-        <input [(ngModel)]="estudiante.calificaciones[3]" type="number" name="nota4{{estudiante.calificaciones[3]}}" pattern="([0-9]|10)"/>
+        <td class="columnasChicas" mat-cell *matCellDef="let estudiante">
+          <input
+            *ngIf="rolConPermisosEdicion"
+            [(ngModel)]="estudiante.calificaciones[3]"
+            type="number"
+            name="nota4{{ estudiante.calificaciones[3] }}"
+            pattern="([0-9]|10)"
+          />
+          <p *ngIf="!rolConPermisosEdicion">
+            {{ estudiante.calificaciones[3] }}
+          </p>
         </td>
       </ng-container>
       <ng-container matColumnDef="cal5">
         <th class="columnasChicas" mat-header-cell *matHeaderCellDef>5°</th>
-        <td
-          class="columnasChicas"
-          mat-cell
-          *matCellDef="let estudiante"
-        >
-        <input [(ngModel)]="estudiante.calificaciones[4]" type="number" name="nota5{{estudiante.calificaciones[4]}}" pattern="([0-9]|10)"/>
+        <td class="columnasChicas" mat-cell *matCellDef="let estudiante">
+          <input
+            *ngIf="rolConPermisosEdicion"
+            [(ngModel)]="estudiante.calificaciones[4]"
+            type="number"
+            name="nota5{{ estudiante.calificaciones[4] }}"
+            pattern="([0-9]|10)"
+          />
+          <p *ngIf="!rolConPermisosEdicion">
+            {{ estudiante.calificaciones[4] }}
+          </p>
         </td>
       </ng-container>
       <ng-container matColumnDef="cal6">
         <th class="columnasChicas" mat-header-cell *matHeaderCellDef>6°</th>
-        <td
-          class="columnasChicas"
-          mat-cell
-          *matCellDef="let estudiante"
-        >
-      <input [(ngModel)]="estudiante.calificaciones[5]" type="number" name="nota6{{estudiante.calificaciones[5]}}" pattern="([0-9]|10)"/>
+        <td class="columnasChicas" mat-cell *matCellDef="let estudiante">
+          <input
+            *ngIf="rolConPermisosEdicion"
+            [(ngModel)]="estudiante.calificaciones[5]"
+            type="number"
+            name="nota6{{ estudiante.calificaciones[5] }}"
+            pattern="([0-9]|10)"
+          />
+          <p *ngIf="!rolConPermisosEdicion">
+            {{ estudiante.calificaciones[4] }}
+          </p>
         </td>
       </ng-container>
 
       <ng-container matColumnDef="prom">
-        <th class="columnasChicas" mat-header-cell *matHeaderCellDef>Promedio</th>
+        <th class="columnasChicas" mat-header-cell *matHeaderCellDef>
+          Promedio
+        </th>
         <td
-          class="columnasChicas"
+          class="columnasChicas promedio"
           mat-cell
           *matCellDef="let estudiante; let i = index"
         >
-        <p *ngIf="!(contadorNotasValidas(i)==0); else sinNotas">
-          {{((estudiante.calificaciones[0]+estudiante.calificaciones[1]+estudiante.calificaciones[2]+
-            estudiante.calificaciones[3]+estudiante.calificaciones[4]+estudiante.calificaciones[5])
-            / contadorNotasValidas(i)).toFixed(2)}}
+          <p *ngIf="!(contadorNotasValidas(i) == 0); else sinNotas">
+            {{
+              (
+                (estudiante.calificaciones[0] +
+                  estudiante.calificaciones[1] +
+                  estudiante.calificaciones[2] +
+                  estudiante.calificaciones[3] +
+                  estudiante.calificaciones[4] +
+                  estudiante.calificaciones[5]) /
+                contadorNotasValidas(i)
+              ).toFixed(2)
+            }}
           </p>
           <ng-template #sinNotas>0</ng-template>
         </td>
@@ -158,14 +198,16 @@
 
     <div class="div-button">
       <button
+        [hidden]="!rolConPermisosEdicion"
         mat-raised-button
-        color="primary"
         class="button"
         (click)="onGuardar(form)"
+        class="buttonPrimary"
+        *ngIf= "estudiantes"
       >
         Guardar
       </button>
-      <button mat-raised-button color="warn" (click)="onCancelar()">
+      <button mat-raised-button class="buttonWarn" (click)="onCancelar()">
         Cancelar
       </button>
     </div>

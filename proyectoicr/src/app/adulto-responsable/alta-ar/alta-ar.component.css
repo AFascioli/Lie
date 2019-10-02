@@ -1,0 +1,39 @@
+.mat-expansion-panel{
+  width: 70%;
+  margin: auto;
+}
+
+.mat-expansion-panel{
+  width: 80%;
+  margin: auto;
+}
+
+.mat-expansion-panel-mobile{
+  width: 100%;
+}
+
+.mat-form-field{
+   width: 55%;
+}
+
+.mat-form-field-mobile{
+  width: 100%;
+}
+
+.div-button {
+  text-align: right;
+}
+
+.parrafo{
+  text-align: center;
+}
+
+.mat-card-subtitle{
+  text-align: center;
+  color: black
+}
+
+.datos-AR{
+  margin-top: 2% !important;
+  margin-bottom: 4% !important;
+}

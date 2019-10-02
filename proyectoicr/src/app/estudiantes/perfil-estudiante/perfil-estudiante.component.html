@@ -26,23 +26,14 @@
       <b>INASISTENCIA: </b>
   </mat-card-subtitle>
 
-    <!-- <div class="grafico">
-        <div class="sombra"></div>
-        <div id="porcion1" class="recorte">
-          <div class="porcion" data-rel="contadorInasistencia"></div>
-        </div>
-        <div id="porcion2" class="contadorInasistencia">
-          <div class="porcion" data-rel="contadorInasistenciaJustificada"></div>
-        </div>
-   </div> -->
-
-   <div *ngIf="contadorInasistencia" style="display: block">
+   <div *ngIf="contadorInasistencia && contadorInasistencia!=0" style="display: block">
     <canvas baseChart
             [data]="pieChartData"
             [labels]="pieChartLabels"
             [chartType]="pieChartType"
             ></canvas>
   </div>
+  <p *ngIf="contadorInasistencia==0">El estudiante no presenta ninguna inasistencia</p>
 
 </div>
 <br>
@@ -101,21 +92,27 @@
       <b>TUTORES: </b>
   </mat-card-subtitle>
   <mat-card-content class="contenido">
-      <b> Apellido/s y Nombre/s: </b> Tornete Rosana
+      <b> Apellido/s y Nombre/s: </b> <p> {{apellidoAR}},{{nombreAR}}</p>
   </mat-card-content>
   <mat-card-content class="contenido">
       <b>Teléfono: </b> 56665-1559886
   </mat-card-content>
 </div>
-<br>
-&nbsp;
+<br />
 
-<div >
-  <button class="button-volver"
+
+<div class="div-button">
+  <button
   mat-raised-button
   [routerLink]="['/buscar/lista']"
-  color="primary" >
+  class="buttonPrimary" >
      Volver
+  </button>
+  <button
+  mat-raised-button
+  (click)="onCancelar()"
+  class="buttonWarn" >
+     Cancelar
   </button>
 </div>
 

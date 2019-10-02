@@ -51,39 +51,25 @@ import {
   AsistenciaPopupComponent
 } from "./asistencia/registrar-asistencia/registrar-asistencia.component";
 import { MatExpansionModule } from "@angular/material/expansion";
-import {
-  InscripcionEstudianteComponent,
-  InscripcionPopupComponent
-} from "./estudiantes/inscripcion-estudiantes/inscripcion-estudiantes.component";
-import {
-  RetiroAnticipadoComponent,
-  RetiroPopupComponent
-} from "./asistencia/retiro-anticipado/retiro-anticipado.component";
-import {
-  DocumentosInscripcionComponent,
-  DocumentosInscripcionPopupComponent
-} from "./estudiantes/documentos-inscripcion/documentos-inscripcion.component";
-import { MatGridListModule } from "@angular/material/grid-list";
-import {
-  CalificacionesEstudiantesComponent,
-  CalificacionesEstudiantePopupComponent
-} from "./estudiantes/calificaciones-estudiantes/calificaciones-estudiantes.component";
-import {
-  LlegadaTardeComponent,
-  LlegadaTardePopupComponent
-} from "./asistencia/llegada-tarde/llegada-tarde.component";
-import {
-  CambiarPassword,
-  CambiarPasswordPopupComponent
-} from "./login/cambiar-password.component";
-import { PerfilEstudianteComponent } from "./estudiantes/perfil-estudiante/perfil-estudiante.component";
-import { CalificacionesPerfilEstudianteComponent } from "./estudiantes/perfil-estudiante/calificaciones-perfil-estudiante/calificaciones-perfil-estudiante.component";
-import { AgendaCursoPerfilEstudianteComponent } from "./estudiantes/perfil-estudiante/agenda-curso-perfil-estudiante/agenda-curso-perfil-estudiante.component";
-import { LOCALE_ID } from "@angular/core";
-import { registerLocaleData } from "@angular/common";
-import { ChartsModule } from "ng2-charts";
-registerLocaleData(localePy, "es");
-import localePy from "@angular/common/locales/es";
+import { InscripcionEstudianteComponent, InscripcionPopupComponent } from './estudiantes/inscripcion-estudiantes/inscripcion-estudiantes.component';
+import { RetiroAnticipadoComponent, RetiroPopupComponent } from './asistencia/retiro-anticipado/retiro-anticipado.component';
+import { DocumentosInscripcionComponent, DocumentosInscripcionPopupComponent } from './estudiantes/documentos-inscripcion/documentos-inscripcion.component';
+import {MatGridListModule} from '@angular/material/grid-list';
+import { CalificacionesEstudiantesComponent, CalificacionesEstudiantePopupComponent } from './estudiantes/calificaciones-estudiantes/calificaciones-estudiantes.component';
+import { LlegadaTardeComponent, LlegadaTardePopupComponent } from './asistencia/llegada-tarde/llegada-tarde.component';
+import { CambiarPassword, CambiarPasswordPopupComponent } from './login/cambiar-password.component';
+import { PerfilEstudianteComponent, PerfilEstudiantePopupComponent } from './estudiantes/perfil-estudiante/perfil-estudiante.component';
+import { CalificacionesPerfilEstudianteComponent } from './estudiantes/perfil-estudiante/calificaciones-perfil-estudiante/calificaciones-perfil-estudiante.component';
+import { AgendaCursoPerfilEstudianteComponent } from './estudiantes/perfil-estudiante/agenda-curso-perfil-estudiante/agenda-curso-perfil-estudiante.component';
+import { LOCALE_ID } from '@angular/core';
+import { registerLocaleData } from '@angular/common';
+import { ChartsModule } from 'ng2-charts';
+registerLocaleData(localePy, 'es');
+import localePy from '@angular/common/locales/es';
+import { JustificacionInasistenciaComponent, JustificacionInasistenciaPopupComponent } from './asistencia/justificacion-inasistencia/justificacion-inasistencia.component';
+import { AltaARComponent, AltaARPopupComponent} from './adulto-responsable/alta-ar/alta-ar.component';
+import { AltaEmpleadoComponent, AltaEmpleadoPopupComponent } from './empleado/alta-empleado/alta-empleado.component';
+import { PreferenciasComponent } from './menu-lateral/preferencias/preferencias.component';
 import { ServiceWorkerModule } from "@angular/service-worker";
 import { environment } from "../environments/environment";
 
@@ -100,6 +86,7 @@ import { environment } from "../environments/environment";
     HomeComponent,
     RegistrarAsistenciaComponent,
     AsistenciaPopupComponent,
+    PerfilEstudiantePopupComponent,
     BuscarPopupComponent,
     InscripcionEstudianteComponent,
     InscripcionPopupComponent,
@@ -116,14 +103,22 @@ import { environment } from "../environments/environment";
     CerrarSesionPopupComponent,
     PerfilEstudianteComponent,
     CalificacionesPerfilEstudianteComponent,
-    LoginComponent,
-    AgendaCursoPerfilEstudianteComponent
+    AgendaCursoPerfilEstudianteComponent,
+    JustificacionInasistenciaComponent,
+    AltaARComponent,
+    AltaEmpleadoComponent,
+    JustificacionInasistenciaPopupComponent,
+    AltaEmpleadoPopupComponent,
+    AltaARPopupComponent,
+    PreferenciasComponent
+    LoginComponent
   ],
   //entryComponents declara los componentes que se generan dinamicamente dentro de otros.
   entryComponents: [
     AltaPopupComponent,
     MostrarPopupComponent,
     AsistenciaPopupComponent,
+    PerfilEstudiantePopupComponent,
     BuscarPopupComponent,
     InscripcionPopupComponent,
     RetiroPopupComponent,
@@ -131,6 +126,9 @@ import { environment } from "../environments/environment";
     CalificacionesEstudiantePopupComponent,
     CambiarPasswordPopupComponent,
     CerrarSesionPopupComponent,
+    JustificacionInasistenciaPopupComponent,
+    AltaEmpleadoPopupComponent,
+    AltaARPopupComponent
     LlegadaTardePopupComponent
   ],
   imports: [
