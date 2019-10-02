@@ -46,3 +46,12 @@ button {
   text-align: center;
 }
 
+.snack-bar-exito {
+  background-color: #29dd47;
+  color: black;
+}
+
+.snack-bar-fracaso {
+  background-color: #f02626;
+}
+

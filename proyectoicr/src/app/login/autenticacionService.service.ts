@@ -163,5 +163,13 @@ export class AutencacionService {
   testNP(){
     console.log('Envio de get a /estudiante/notificacion');
     return this.http.get<{message: string}>(environment.apiUrl + "/estudiante/notificacion");
+
+  //Metodo sign up que crea un usuario segun un rol dado
+  signUp(mail: string, password: string, rol: string) {
+    return this.http.post("http://localhost:3000/usuario/signup", {
+      mail: mail,
+      password: password,
+      rol: rol
+    });
   }
 }
