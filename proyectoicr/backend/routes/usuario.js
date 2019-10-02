@@ -3,30 +3,42 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
 const Usuario = require("../models/usuario");
+const Rol= require("../models/rol");
 
 const router = express.Router();
 
-router.post("/signup", (req, res, next) => {
-  bcrypt.hash(req.body.password, 10).then(hash => {
-    const usuario = new Usuario({
-      email: req.body.email,
-      password: hash
-    });
-    usuario
-      .save()
-      .then(result => {
-        res.status(201).json({
-          message: "Usuario creado exitosamente",
-          exito: true
-        });
-      })
-      .catch(err => {
-        res.status(200).json({
-          exito: false
-        });
-      });
-  });
-});
+// router.post("/signup", async (req, res, next) => {
+//   bcrypt.hash(req.body.password, 10).then(hash => {
+//     // Se crea el rol segun lo enviado desde el frontend (falta ver que onda con permisos)
+//     let idRolCreado="";
+//     const rol= new Rol({
+//       tipo= req.body.rol,
+//       permisos=""
+//     });
+//     // Se guarda la id del rol creado para asignarsela al usuario
+//     await rol.save().then(rolCreado=>{
+//       idRolCreado=rolCreado._id;
+//     });
+//     const usuario = new Usuario({
+//       email: req.body.email,
+//       password: hash,
+//       rol: idRolCreado
+//     });
+//     usuario
+//       .save()
+//       .then(result => {
+//         res.status(201).json({
+//           message: "Usuario creado exitosamente",
+//           exito: true
+//         });
+//       })
+//       .catch(err => {
+//         res.status(200).json({
+//           exito: false
+//         });
+//       });
+//   });
+// });
 
 router.post("/login", (req, res, next) => {
   let usuarioEncontrado;

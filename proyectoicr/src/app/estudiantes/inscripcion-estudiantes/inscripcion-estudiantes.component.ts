@@ -55,6 +55,7 @@ export class InscripcionEstudianteComponent implements OnInit {
   openDialogo(tipo: string, form: NgForm, curso) {
     if(form.invalid){
       this.snackBar.open("No se ha seleccionado un curso.", "", {
+        panelClass: ['snack-bar-fracaso'],
         duration: 4500,
       });
     }else{
@@ -114,11 +115,13 @@ export class InscripcionPopupComponent {
         this.exito = response.exito;
         if(this.exito){
           this.snackBar.open("Estudiante inscripto correctamente", "", {
+            panelClass: ['snack-bar-exito'],
             duration: 4500,
           });
         }else{
           this.snackBar.open("Inscripción no registrada. El estudiante selccionado ya se encuentra inscripto", "", {
             duration: 4500,
+            panelClass: ['snack-bar-fracaso']
           });
         }
         this.dialogRef.close();
