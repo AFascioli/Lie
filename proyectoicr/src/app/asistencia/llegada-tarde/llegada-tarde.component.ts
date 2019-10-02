@@ -20,6 +20,7 @@ export class LlegadaTardeComponent implements OnInit {
   nombreEstudiante: string;
   _idEstudiante: string;
   matConfig = new MatDialogConfig();
+  
   constructor(
     private servicio: EstudiantesService,
     public popup: MatDialog,
@@ -34,6 +35,8 @@ export class LlegadaTardeComponent implements OnInit {
     this.nombreEstudiante = this.servicio.estudianteSeleccionado.nombre;
     this._idEstudiante = this.servicio.estudianteSeleccionado._id;
   }
+
+  cambiarTipoRetiro(){}
 }
 
 @Component({
@@ -41,6 +44,7 @@ export class LlegadaTardeComponent implements OnInit {
   templateUrl: "./llegadaTarde-popup.component.html",
   styleUrls: ["./llegada-tarde.component.css"]
 })
+
 export class LlegadaTardePopupComponent {
   tipoPopup: string;
   IdEstudiante: string;

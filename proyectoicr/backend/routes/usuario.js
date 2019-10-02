@@ -1,10 +1,8 @@
 const express = require("express");
-const bcrypt = require("bcrypt");
+const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-
 const Usuario = require("../models/usuario");
 const Rol= require("../models/rol");
-
 const router = express.Router();
 
 // router.post("/signup", async (req, res, next) => {
@@ -134,5 +132,15 @@ router.post("/cambiarPassword", async(req, res, next) => {
 //     //   });
 //     // });
 // });
+
+router.post("/suscripcion", (req, res) => {
+  Usuario.findOneAndUpdate({email: req.body.email}, { $push: { suscripciones: req.body.sub }}).then((usuario) => {
+    usuario.save();
+    return res.status(201).json({message: "Suscripción registrada correctamente"});
+  }).catch((e) => {
+    console.log(e);
+  });
+
+});
 
 module.exports = router;

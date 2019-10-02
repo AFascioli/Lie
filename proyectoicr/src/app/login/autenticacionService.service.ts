@@ -2,6 +2,7 @@ import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { Router } from "@angular/router";
 import { Subject } from "rxjs";
+import { environment } from "src/environments/environment";
 
 @Injectable({ providedIn: "root" })
 export class AutencacionService {
@@ -32,7 +33,7 @@ export class AutencacionService {
   crearUsuario(email: string, password: string) {
     const authData = { email: email, password: password };
     return this.http.post<{ message: string; exito: string }>(
-      "http://localhost:3000/usuario/signup",
+      environment.apiUrl + "/usuario/signup",
       authData
     );
   }
@@ -50,7 +51,7 @@ export class AutencacionService {
         duracionToken: number;
         exito: boolean;
         message: string;
-      }>("http://localhost:3000/usuario/login", authData)
+      }>(environment.apiUrl + "/usuario/login", authData)
       .subscribe(response => {
         respuesta = response.message;
         if (response.token) {
@@ -151,8 +152,17 @@ export class AutencacionService {
     return this.http.post<{
       exito: boolean;
       message: string;
-    }>("http://localhost:3000/usuario/cambiarPassword", datosContraseña);
+    }>(environment.apiUrl + "/usuario/cambiarPassword", datosContraseña);
   }
+
+  addPushSubscriber(sus: any) {
+    return this.http.post<{message: string}>(environment.apiUrl + "/usuario/suscripcion", { sub: sus, email: this.usuarioAutenticado});
+  }
+
+  //#resolve #borrar
+  testNP(){
+    console.log('Envio de get a /estudiante/notificacion');
+    return this.http.get<{message: string}>(environment.apiUrl + "/estudiante/notificacion");
 
   //Metodo sign up que crea un usuario segun un rol dado
   signUp(mail: string, password: string, rol: string) {

@@ -3,12 +3,13 @@ const Estudiante = require("../models/estudiante");
 const Inscripcion = require("../models/inscripcion");
 const Division = require("../models/division");
 const AsistenciaDiaria = require("../models/asistenciaDiaria");
+const Suscripcion = require("../classes/suscripcion");
 const router = express.Router();
 
-const checkAuthMiddleware= require("../middleware/check-auth");
+const checkAuthMiddleware = require("../middleware/check-auth");
 
 //Registra un nuevo estudiante en la base de datos
-router.post("", checkAuthMiddleware,(req, res, next) => {
+router.post("", checkAuthMiddleware, (req, res, next) => {
   const estudiante = new Estudiante({
     apellido: req.body.apellido,
     nombre: req.body.nombre,
@@ -41,7 +42,7 @@ router.post("", checkAuthMiddleware,(req, res, next) => {
 });
 
 //Obtiene un estudiante dado un numero y tipo de documento
-router.get("/documento", checkAuthMiddleware,(req, res, next) => {
+router.get("/documento", checkAuthMiddleware, (req, res, next) => {
   const tipo = req.query.tipo;
   const numero = req.query.numero;
 
@@ -57,7 +58,7 @@ router.get("/documento", checkAuthMiddleware,(req, res, next) => {
 });
 
 //Busqueda de un estudisante por nombre y apellido ignorando mayusculas
-router.get("/nombreyapellido", checkAuthMiddleware,(req, res, next) => {
+router.get("/nombreyapellido", checkAuthMiddleware, (req, res, next) => {
   const nombre = req.query.nombre;
   const apellido = req.query.apellido;
   Estudiante.find({
@@ -72,7 +73,7 @@ router.get("/nombreyapellido", checkAuthMiddleware,(req, res, next) => {
 });
 
 //Modifica un estudiante
-router.patch("/modificar", checkAuthMiddleware,(req, res, next) => {
+router.patch("/modificar", checkAuthMiddleware, (req, res, next) => {
   Estudiante.findByIdAndUpdate(req.body._id, {
     apellido: req.body.apellido,
     nombre: req.body.nombre,
@@ -100,7 +101,7 @@ router.patch("/modificar", checkAuthMiddleware,(req, res, next) => {
 });
 
 //Borrado logico de un estudiante
-router.delete("/borrar", checkAuthMiddleware,(req, res, next) => {
+router.delete("/borrar", checkAuthMiddleware, (req, res, next) => {
   Estudiante.findOneAndUpdate({ _id: req.query._id }, { activo: false }).then(
     () => {
       res.status(202).json({
@@ -284,8 +285,8 @@ router.get("/asistencia", checkAuthMiddleware,(req, res) => {
 // luego crea la asistencia diaria usando la _id de la inscripcion, luego guarda la asistenciaDiaria y
 // guarda la _id de esta asistenciaDiaria en el vector de asistenciasDiarias de la inscripcion.
 // Si ya se tomo asistencia en el dia, se actualiza el valor presente de la asistencia individual.
-router.post("/asistencia", checkAuthMiddleware,(req, res) => {
-  if(req.query.asistenciaNueva=="true"){
+router.post("/asistencia", checkAuthMiddleware, (req, res) => {
+  if (req.query.asistenciaNueva == "true") {
     req.body.forEach(estudiante => {
       var valorInasistencia = 0;
       if (!estudiante.presente) {
@@ -304,8 +305,8 @@ router.post("/asistencia", checkAuthMiddleware,(req, res) => {
 
         await asistenciaEstudiante.save().then(async asistenciaDiaria => {
           await inscripcion.asistenciaDiaria.push(asistenciaDiaria._id);
-          inscripcion.contadorInasistencia =
-            inscripcion.contadorInasistencia + valorInasistencia;
+          inscripcion.contadorInasistencia = 1;
+            // inscripcion.contadorInasistencia + valorInasistencia;
           inscripcion.save();
         });
       });
@@ -317,12 +318,12 @@ router.post("/asistencia", checkAuthMiddleware,(req, res) => {
       }).exec();
     });
   }
-
+  Suscripcion.notificarAll(["5d7bfd1b93119f33f80819a1", "5d7bfd1b93119f33f80819a3"],"Asistencia", "El estudiante está presente.");
   res.status(201).json({ message: "Asistencia registrada exitósamente" });
 });
 
 //Obtiene la id de la asistencia diaria del dia de hoy, y cambia los valores correspondientes en la coleccion de asistencia diaria
-router.post("/retiro", checkAuthMiddleware,(req, res) => {
+router.post("/retiro", checkAuthMiddleware, (req, res) => {
   Inscripcion.findOne(
     { IdEstudiante: req.body.IdEstudiante, activa: true },
     { asistenciaDiaria: { $slice: -1 } }
@@ -384,17 +385,20 @@ router.post("/retiro", checkAuthMiddleware,(req, res) => {
 //Este metodo filtra las inscripciones por estudiante y retorna el contador de inasistencias
 //de dicho estudiante
 router.get("/asistenciaEstudiante", (req, res) => {
-  Inscripcion.findOne({ IdEstudiante: req.query.idEstudiante }).then(estudiante =>
-     {let contadorInasistencia = estudiante.contadorInasistencia;
+  Inscripcion.findOne({ IdEstudiante: req.query.idEstudiante }).then(
+    estudiante => {
+      let contadorInasistencia = estudiante.contadorInasistencia;
       res.status(200).json({
         message: "Operacion exitosa",
         exito: true,
-        contadorInasistencia : contadorInasistencia})}
-    );
+        contadorInasistencia: contadorInasistencia
+      });
+    }
+  );
 });
 
 //Vamos a recibir, un vector de los estudiantes a los que se le modificaron los documentos entregados.
-router.post("/documentos", checkAuthMiddleware,(req, res) => {
+router.post("/documentos", checkAuthMiddleware, (req, res) => {
   try {
     req.body.forEach(estudiante => {
       Inscripcion.findOneAndUpdate(
@@ -408,6 +412,17 @@ router.post("/documentos", checkAuthMiddleware,(req, res) => {
   } catch {
     res.status(201).json({ message: e, exito: false });
   }
+});
+
+//Prueba notif #resolve #borrar
+router.get("/notificacion", (req, res) => {
+  Suscripcion.notificar(
+    "5d7bfd1b93119f33f80819a3",
+    "Título de prueba",
+    "Contenido de prueba."
+  );
+  //Suscripcion.notificarAll(["5d7bfd1b93119f33f80819a1", "5d7bfd1b93119f33f80819a3"],"Título de prueba", "Contenido de prueba.");
+  res.status(200).json({ message: "Prueba de notificación" });
 });
 
 module.exports = router;

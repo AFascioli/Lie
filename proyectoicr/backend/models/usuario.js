@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 const usuarioSchema = mongoose.Schema({
   email: {type: String, required: true},
@@ -6,4 +6,4 @@ const usuarioSchema = mongoose.Schema({
   rol: {type: mongoose.Schema.Types.ObjectId, ref: 'rol', required: true}
 });
 
-module.exports= mongoose.model('usuarios', usuarioSchema,'usuarios');
+module.exports = mongoose.model("usuarios", usuarioSchema, "usuarios");
