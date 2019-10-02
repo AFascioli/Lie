@@ -102,23 +102,27 @@ export class RetiroPopupComponent {
         this.snackBar.open("Se registró correctamente el retiro anticipado para el estudiante seleccionado.", "", {
           panelClass:['snack-bar-exito'],
           duration: 4500,
+          panelClass: ['snack-bar-exito']
         });
       }else if (this.resultado == "retirado"){
         this.snackBar.open("Retiro no registrado. Ya se ha registrado un retiro anticipado para el estudiante seleccionado.", "", {
           panelClass:['snack-bar-fracaso'],
           duration: 4500,
+          panelClass: ['snack-bar-fracaso']
         });
       }
       else if (this.resultado == "ausente"){
         this.snackBar.open("Retiro no registrado. El estudiante esta ausente para el día de hoy.", "", {
           panelClass:['snack-bar-fracaso'],
           duration: 4500,
+          panelClass: ['snack-bar-fracaso'],
         });
       }
       else{
         this.snackBar.open("Retiro no registrado. El estudiante no tiene registrada la asistencia para el día de hoy.", "", {
           panelClass:['snack-bar-fracaso'],
           duration: 4500,
+          panelClass: ['snack-bar-fracaso'],
         });
       }
     });

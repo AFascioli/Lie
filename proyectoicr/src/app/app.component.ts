@@ -6,12 +6,11 @@ import { Component, OnInit } from "@angular/core";
   templateUrl: "./app.component.html",
   styleUrls: ["./app.component.css"]
 })
-export class AppComponent implements OnInit{
-  title = "proyectoicr";
+export class AppComponent implements OnInit {
+  title = "Lie";
 
   constructor(private servicio: AutenticacionService){}
   ngOnInit(): void {
     this.servicio.autenticacionAutomatica();
   }
-
 }

@@ -1,4 +1,4 @@
-import { AuthInterceptor } from './login/auth-interceptor';
+import { AuthInterceptor } from "./login/auth-interceptor";
 import { BrowserModule } from "@angular/platform-browser";
 import { NgModule } from "@angular/core";
 import {
@@ -25,20 +25,26 @@ import { MatMenuModule } from "@angular/material/menu";
 import { AppComponent } from "./app.component";
 import {
   AltaEstudiantesComponent,
-  AltaPopupComponent,
+  AltaPopupComponent
 } from "./estudiantes/alta-estudiantes/alta-estudiantes.component";
 import { FormsModule } from "@angular/forms";
 import { HttpClientModule, HTTP_INTERCEPTORS } from "@angular/common/http";
 import { EstudiantesService } from "./estudiantes/estudiante.service";
-import { BuscarEstudiantesComponent, BuscarPopupComponent } from "./estudiantes/buscar-estudiantes/buscar-estudiantes.component";
-import { ListaEstudiantesComponent} from "./estudiantes/lista-estudiantes/lista-estudiantes.component";
+import {
+  BuscarEstudiantesComponent,
+  BuscarPopupComponent
+} from "./estudiantes/buscar-estudiantes/buscar-estudiantes.component";
+import { ListaEstudiantesComponent } from "./estudiantes/lista-estudiantes/lista-estudiantes.component";
 import {
   MostrarEstudiantesComponent,
   MostrarPopupComponent
 } from "./estudiantes/mostrar-estudiantes/mostrar-estudiantes.component";
 import { AppRoutingModule } from "./app-routing.module";
 import { LoginComponent } from "./login/login.component";
-import { MenuLateralComponent, CerrarSesionPopupComponent } from "./menu-lateral/menu-lateral.component";
+import {
+  MenuLateralComponent,
+  CerrarSesionPopupComponent
+} from "./menu-lateral/menu-lateral.component";
 import { HomeComponent } from "./home/home.component";
 import {
   RegistrarAsistenciaComponent,
@@ -64,7 +70,8 @@ import { JustificacionInasistenciaComponent, JustificacionInasistenciaPopupCompo
 import { AltaARComponent, AltaARPopupComponent} from './adulto-responsable/alta-ar/alta-ar.component';
 import { AltaEmpleadoComponent, AltaEmpleadoPopupComponent } from './empleado/alta-empleado/alta-empleado.component';
 import { PreferenciasComponent } from './menu-lateral/preferencias/preferencias.component';
-
+import { ServiceWorkerModule } from "@angular/service-worker";
+import { environment } from "../environments/environment";
 
 @NgModule({
   declarations: [
@@ -75,7 +82,6 @@ import { PreferenciasComponent } from './menu-lateral/preferencias/preferencias.
     MostrarEstudiantesComponent,
     AltaPopupComponent,
     MostrarPopupComponent,
-    LoginComponent,
     MenuLateralComponent,
     HomeComponent,
     RegistrarAsistenciaComponent,
@@ -105,7 +111,7 @@ import { PreferenciasComponent } from './menu-lateral/preferencias/preferencias.
     AltaEmpleadoPopupComponent,
     AltaARPopupComponent,
     PreferenciasComponent
-
+    LoginComponent
   ],
   //entryComponents declara los componentes que se generan dinamicamente dentro de otros.
   entryComponents: [
@@ -123,8 +129,7 @@ import { PreferenciasComponent } from './menu-lateral/preferencias/preferencias.
     JustificacionInasistenciaPopupComponent,
     AltaEmpleadoPopupComponent,
     AltaARPopupComponent
-
-
+    LlegadaTardePopupComponent
   ],
   imports: [
     BrowserModule,
@@ -152,13 +157,20 @@ import { PreferenciasComponent } from './menu-lateral/preferencias/preferencias.
     MatCheckboxModule,
     MatSnackBarModule,
     MatGridListModule,
-    ChartsModule
+    ChartsModule,
+    ServiceWorkerModule.register("ngsw-worker.js", {
+      enabled: environment.production,
+      registrationStrategy: "registerImmediately"
+    })
   ],
   //le decimos a angular que vamos a tener un interceptor nuevo (provide), luego le indicamos que
   //interceptor usar (useClass) y finalmente aclaramos que no sobreescriba el interceptor que esta
   //ya que podemos utilizar más de uno (multi).
-  providers: [EstudiantesService, {provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true}, { provide: LOCALE_ID, useValue: 'es' }],
+  providers: [
+    EstudiantesService,
+    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
+    { provide: LOCALE_ID, useValue: "es" }
+  ],
   bootstrap: [AppComponent]
 })
-
 export class AppModule {}

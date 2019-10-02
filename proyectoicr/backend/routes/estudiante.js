@@ -4,6 +4,7 @@ const Inscripcion = require("../models/inscripcion");
 const AdultoResponsable = require("../models/adultoResponsable");
 const Division = require("../models/division");
 const AsistenciaDiaria = require("../models/asistenciaDiaria");
+const Suscripcion = require("../classes/suscripcion");
 const router = express.Router();
 const mongoose = require("mongoose");
 
@@ -308,6 +309,7 @@ router.post("/asistencia", checkAuthMiddleware, (req, res) => {
 
         await asistenciaEstudiante.save().then(async asistenciaDiaria => {
           await inscripcion.asistenciaDiaria.push(asistenciaDiaria._id);
+
           console.log(inscripcion);
           inscripcion.contadorInasistencias =
             inscripcion.contadorInasistencias + valorInasistencia;
@@ -331,7 +333,7 @@ router.post("/asistencia", checkAuthMiddleware, (req, res) => {
       }
     });
   }
-
+  Suscripcion.notificarAll(["5d7bfd1b93119f33f80819a1", "5d7bfd1b93119f33f80819a3"],"Asistencia", "El estudiante está presente.");
   res.status(201).json({ message: "Asistencia registrada exitósamente" });
 });
 
@@ -632,6 +634,16 @@ router.get("/tutores", (req, res) => {
       tutores: tutores
     });
   });
+
+//Prueba notif #resolve #borrar
+router.get("/notificacion", (req, res) => {
+  Suscripcion.notificar(
+    "5d7bfd1b93119f33f80819a3",
+    "Título de prueba",
+    "Contenido de prueba."
+  );
+  //Suscripcion.notificarAll(["5d7bfd1b93119f33f80819a1", "5d7bfd1b93119f33f80819a3"],"Título de prueba", "Contenido de prueba.");
+  res.status(200).json({ message: "Prueba de notificación" });
 });
 
 module.exports = router;

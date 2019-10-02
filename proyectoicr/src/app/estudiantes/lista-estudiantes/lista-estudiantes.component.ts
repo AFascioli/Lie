@@ -1,15 +1,14 @@
 import { AutenticacionService } from './../../login/autenticacionService.service';
 import { Component, OnInit } from "@angular/core";
-import { EstudiantesService } from '../estudiante.service';
-import { Estudiante } from '../estudiante.model';
-import { Router } from '@angular/router';
+import { EstudiantesService } from "../estudiante.service";
+import { Estudiante } from "../estudiante.model";
+import { Router } from "@angular/router";
 
 @Component({
   selector: "app-lista-estudiantes",
   templateUrl: "./lista-estudiantes.component.html",
   styleUrls: ["./lista-estudiantes.component.css"]
 })
-
 export class ListaEstudiantesComponent implements OnInit {
   dniSeleccionado: number;
   estudiantes: Estudiante[] = [];
@@ -28,41 +27,52 @@ export class ListaEstudiantesComponent implements OnInit {
   constructor(public servicio: EstudiantesService, public router: Router, public authService: AutenticacionService) {}
 
   ngOnInit() {
-    this.servicio.getEstudiantesListener().subscribe(estudiantesBuscados =>{
+    this.servicio.getEstudiantesListener().subscribe(estudiantesBuscados => {
       this.estudiantes = estudiantesBuscados;
     });
 
-    if(this.servicio.retornoDesdeAcciones)
-    {
-      this.servicio.retornoDesdeAcciones=false;
+    if (this.servicio.retornoDesdeAcciones) {
+      this.servicio.retornoDesdeAcciones = false;
     }
     this.authService.obtenerPermisosDeRol().subscribe(response=>{
       this.permisos=response.permisos;
     });
   }
 
-  onInscribir(indice){
-    this.servicio.estudianteSeleccionado = (this.estudiantes.find(estudiante => estudiante.numeroDocumento===this.estudiantes[indice].numeroDocumento));
+  onInscribir(indice) {
+    this.servicio.estudianteSeleccionado = this.estudiantes.find(
+      estudiante =>
+        estudiante.numeroDocumento === this.estudiantes[indice].numeroDocumento
+    );
     this.router.navigate(["./curso"]);
-    this.servicio.retornoDesdeAcciones=true;
+    this.servicio.retornoDesdeAcciones = true;
   }
 
-  onMostrar(indice){
-    this.servicio.estudianteSeleccionado = (this.estudiantes.find(estudiante => estudiante.numeroDocumento===this.estudiantes[indice].numeroDocumento));
+  onMostrar(indice) {
+    this.servicio.estudianteSeleccionado = this.estudiantes.find(
+      estudiante =>
+        estudiante.numeroDocumento === this.estudiantes[indice].numeroDocumento
+    );
     this.router.navigate(["./mostrar"]);
-    this.servicio.retornoDesdeAcciones=true;
+    this.servicio.retornoDesdeAcciones = true;
   }
 
-  onRetiro(indice){
-    this.servicio.estudianteSeleccionado = (this.estudiantes.find(estudiante => estudiante.numeroDocumento===this.estudiantes[indice].numeroDocumento));
+  onRetiro(indice) {
+    this.servicio.estudianteSeleccionado = this.estudiantes.find(
+      estudiante =>
+        estudiante.numeroDocumento === this.estudiantes[indice].numeroDocumento
+    );
     this.router.navigate(["./retiroAnticipado"]);
-    this.servicio.retornoDesdeAcciones=true;
+    this.servicio.retornoDesdeAcciones = true;
   }
 
-    onVisualizarPerfil(indice){
-    this.servicio.estudianteSeleccionado = (this.estudiantes.find(estudiante => estudiante.numeroDocumento===this.estudiantes[indice].numeroDocumento));
+  onVisualizarPerfil(indice) {
+    this.servicio.estudianteSeleccionado = this.estudiantes.find(
+      estudiante =>
+        estudiante.numeroDocumento === this.estudiantes[indice].numeroDocumento
+    );
     this.router.navigate(["./perfilEstudiante"]);
-    this.servicio.retornoDesdeAcciones=true;
+    this.servicio.retornoDesdeAcciones = true;
   }
 
   onJustificar(indice){
@@ -76,7 +86,4 @@ export class ListaEstudiantesComponent implements OnInit {
     this.router.navigate(["./altaAdultoResponsable"]);
     this.servicio.retornoDesdeAcciones=true;
   }
-
-
 }
-

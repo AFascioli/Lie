@@ -2,6 +2,7 @@ import { Injectable } from "@angular/core";
 import { HttpClient, HttpParams } from "@angular/common/http";
 import { Router } from "@angular/router";
 import { Subject } from "rxjs";
+import { environment } from "src/environments/environment";
 
 @Injectable({ providedIn: "root" })
 export class AutenticacionService {
@@ -37,7 +38,7 @@ export class AutenticacionService {
   crearUsuario(email: string, password: string, rol: string) {
     const authData = { email: email, password: password, rol: rol };
     return this.http.post<{ message: string; exito: string; id: string }>(
-      "http://localhost:3000/usuario/signup",
+      environment.apiUrl + "/usuario/signup",
       authData
     );
   }
@@ -56,9 +57,9 @@ export class AutenticacionService {
         exito: boolean;
         message: string;
         rol: string;
-      }>("http://localhost:3000/usuario/login", authData)
+      }>(environment.apiUrl + "/usuario/login", authData)
       .subscribe(response => {
-        respuesta = response;
+        respuesta = response.message;
         if (response.token) {
           this.usuarioAutenticado = email;
           this.token = response.token;
@@ -174,8 +175,25 @@ export class AutenticacionService {
       message: string;
       exito: boolean;
       permisos: any;
-    }>("http://localhost:3000/usuario/permisosDeRol", {
+    }>(environment.apiUrl + "/usuario/permisosDeRol", {
       params: params
+  }
+
+  addPushSubscriber(sus: any) {
+    return this.http.post<{message: string}>(environment.apiUrl + "/usuario/suscripcion", { sub: sus, email: this.usuarioAutenticado});
+  }
+
+  //#resolve #borrar
+  testNP(){
+    console.log('Envio de get a /estudiante/notificacion');
+    return this.http.get<{message: string}>(environment.apiUrl + "/estudiante/notificacion");
+
+  //Metodo sign up que crea un usuario segun un rol dado
+  signUp(mail: string, password: string, rol: string) {
+    return this.http.post("http://localhost:3000/usuario/signup", {
+      mail: mail,
+      password: password,
+      rol: rol
     });
   }
 }

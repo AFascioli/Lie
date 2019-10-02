@@ -64,7 +64,6 @@ export class MenuLateralComponent implements OnInit {
       sideNav.toggle();
     }
   }
-
 }
 
 @Component({

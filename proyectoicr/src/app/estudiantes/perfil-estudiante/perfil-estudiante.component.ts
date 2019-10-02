@@ -52,8 +52,6 @@ export class PerfilEstudianteComponent implements OnInit {
     this.servicio.getTutoresDeEstudiante();
   }
 
-
-
   onVisualizarCalificacionesEstudiante(){
     this.router.navigate(["./calificacionesEstudiante"]);
   }

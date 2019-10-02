@@ -32,6 +32,7 @@ export class LoginComponent implements OnInit {
       });
     } else {
       this.snackBar.open("Faltan campos por completar", "", {
+        panelClass: ['snack-bar-fracaso'],
         duration: 4000
       });
     }

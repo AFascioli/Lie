@@ -6,6 +6,7 @@ import { Provincia } from "./provincias.model";
 import { Subject } from "rxjs";
 import { Localidad } from "./localidades.model";
 import { Nacionalidad } from "./nacionalidades.model";
+import { environment } from "src/environments/environment";
 
 @Injectable({
   providedIn: "root"
@@ -76,7 +77,7 @@ export class EstudiantesService {
       adultoResponsable
     };
     this.http
-      .post<{ message: string }>("http://localhost:3000/estudiante", estudiante)
+      .post<{ message: string }>(environment.apiUrl + "/estudiante", estudiante)
       .subscribe(response => {
         console.log(response.message);
       });
@@ -85,7 +86,7 @@ export class EstudiantesService {
   borrarEstudiante(_id) {
     let params = new HttpParams().set("_id", _id);
     this.http
-      .delete<{ message: string }>("http://localhost:3000/estudiante/borrar", {
+      .delete<{ message: string }>(environment.apiUrl + "/estudiante/borrar", {
         params: params
       })
       .subscribe(response => {
@@ -109,7 +110,7 @@ export class EstudiantesService {
   // Obtenemos las provincias de la bd y actualizamos a los componentes con el observador
   getProvincias() {
     this.http
-      .get<{ provincias: Provincia[] }>("http://localhost:3000/provincia")
+      .get<{ provincias: Provincia[] }>(environment.apiUrl + "/provincia")
       .subscribe(response => {
         this.provincias = response.provincias;
         this.provinciasActualizadas.next([...this.provincias]);
@@ -122,7 +123,7 @@ export class EstudiantesService {
 
   getLocalidades() {
     this.http
-      .get<{ localidades: Localidad[] }>("http://localhost:3000/localidad")
+      .get<{ localidades: Localidad[] }>(environment.apiUrl + "/localidad")
       .subscribe(response => {
         this.localidades = response.localidades;
         this.localidadesActualizadas.next([...this.localidades]);
@@ -136,7 +137,7 @@ export class EstudiantesService {
   getNacionalidades() {
     this.http
       .get<{ nacionalidades: Nacionalidad[] }>(
-        "http://localhost:3000/nacionalidad"
+        environment.apiUrl + "/nacionalidad"
       )
       .subscribe(response => {
         this.nacionalidades = response.nacionalidades;
@@ -150,7 +151,7 @@ export class EstudiantesService {
       .set("numero", numero.toString());
     this.http
       .get<{ estudiantes: Estudiante[] }>(
-        "http://localhost:3000/estudiante/documento/",
+        environment.apiUrl + "/estudiante/documento/",
         { params: params }
       )
       .subscribe(response => {
@@ -165,7 +166,7 @@ export class EstudiantesService {
       .set("apellido", apellido);
     this.http
       .get<{ estudiantes: Estudiante[] }>(
-        "http://localhost:3000/estudiante/nombreyapellido",
+        environment.apiUrl + "/estudiante/nombreyapellido",
         { params: params }
       )
       .subscribe(response => {
@@ -218,7 +219,7 @@ export class EstudiantesService {
     };
     this.http
       .patch<{ message: string }>(
-        "http://localhost:3000/estudiante/modificar",
+        environment.apiUrl + "/estudiante/modificar",
         estudianteModificado
       )
       .subscribe(response => {
@@ -231,7 +232,7 @@ export class EstudiantesService {
     let params = new HttpParams().set("division", division);
     this.http
       .get<{ estudiantesXDivision: any }>(
-        "http://localhost:3000/estudiante/division",
+        environment.apiUrl + "/estudiante/division",
         { params: params }
       )
       .subscribe(response => {
@@ -247,9 +248,8 @@ export class EstudiantesService {
     let params = new HttpParams().set("asistenciaNueva", asistenciaNueva);
     this.http
       .post<{ message: string }>(
-        "http://localhost:3000/estudiante/asistencia",
-        estudiantesXDivision,
-        { params: params }
+        environment.apiUrl + "/estudiante/asistencia",
+        estudiantesXDivision,{params: params}
       )
       .subscribe(response => {});
   }
@@ -259,13 +259,13 @@ export class EstudiantesService {
   }
 
   obtenerCursos() {
-    return this.http.get<{ cursos: any[] }>("http://localhost:3000/curso");
+    return this.http.get<{ cursos: any[] }>(environment.apiUrl + "/curso");
   }
 
   obtenerMateriasXCurso(idcurso) {
     let params = new HttpParams().set("idcurso", idcurso);
     return this.http.get<{ materias: any[] }>(
-      "http://localhost:3000/curso/materias",
+      environment.apiUrl + "/curso/materias",
       { params: params }
     );
   }
@@ -276,7 +276,7 @@ export class EstudiantesService {
     documentosEntregados: any[]
   ) {
     return this.http.post<{ message: string; exito: boolean }>(
-      "http://localhost:3000/curso/inscripcion",
+      environment.apiUrl + "/curso/inscripcion",
       {
         IdEstudiante: IdEstudiante,
         division: division,
@@ -287,21 +287,21 @@ export class EstudiantesService {
 
   registrarRetiroAnticipado(IdEstudiante: string, antes10am: Boolean) {
     return this.http.post<{ message: string; exito: string }>(
-      "http://localhost:3000/estudiante/retiro",
+      environment.apiUrl + "/estudiante/retiro",
       { IdEstudiante: IdEstudiante, antes10am: antes10am }
     );
   }
 
   obtenerEstudiantesXCurso(curso: string) {
     let params = new HttpParams().set("curso", curso);
-    return this.http.get<any[]>("http://localhost:3000/curso/documentos", {
+    return this.http.get<any[]>(environment.apiUrl + "/curso/documentos", {
       params: params
     });
   }
 
   registrarDocumentosInscripcion(estudiantes: any[]) {
     return this.http.post<{ message: string; exito: boolean }>(
-      "http://localhost:3000/estudiante/documentos",
+      environment.apiUrl + "/estudiante/documentos",
       estudiantes
     );
   }
@@ -316,7 +316,7 @@ export class EstudiantesService {
       .set("idmateria", idmateria)
       .set("trimestre", trimestre);
     return this.http.get<{ estudiantes: any[] }>(
-      "http://localhost:3000/curso/estudiantes/materias/calificaciones",
+      environment.apiUrl + "/curso/estudiantes/materias/calificaciones",
       {
         params: params
       }
@@ -332,24 +332,22 @@ export class EstudiantesService {
       .set("idMateria", idMateria)
       .set("trimestre", trimestre);
     return this.http.post<{ message: string; exito: boolean }>(
-      "http://localhost:3000/curso/estudiantes/materias/calificaciones",
-      estudiantes,
-      { params: params }
+      environment.apiUrl + "/curso/estudiantes/materias/calificaciones",
+      estudiantes, {params: params}
     );
   }
 
   cargarAsistenciaBackend(curso: string) {
     let params = new HttpParams().set("curso", curso);
-    return this.http.get<{ estudiantes: any[]; asistenciaNueva: string }>(
-      "http://localhost:3000/estudiante/asistencia",
-      { params: params }
+    return this.http.get<{ estudiantes: any[], asistenciaNueva: string }>(
+      environment.apiUrl + "/estudiante/asistencia", {params: params}
     );
   }
 
-  obtenerInasistenciasDeEstudiante() {
-    let params = new HttpParams().set(
-      "idEstudiante",
-      this.estudianteSeleccionado._id
+  obtenerInasistenciasDeEstudiante(){
+    let params = new HttpParams().set("idEstudiante", this.estudianteSeleccionado._id);
+    return this.http.get<{message: string, exito: boolean, contadorInasistencia: number}> (
+      environment.apiUrl + "/estudiante/asistenciaEstudiante", {params: params}
     );
     return this.http.get<{
       message: string;
