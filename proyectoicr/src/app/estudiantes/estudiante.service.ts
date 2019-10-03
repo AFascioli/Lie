@@ -346,17 +346,13 @@ export class EstudiantesService {
 
   obtenerInasistenciasDeEstudiante(){
     let params = new HttpParams().set("idEstudiante", this.estudianteSeleccionado._id);
-    return this.http.get<{message: string, exito: boolean, contadorInasistencia: number}> (
-      environment.apiUrl + "/estudiante/asistenciaEstudiante", {params: params}
-    );
     return this.http.get<{
       message: string;
       exito: boolean;
       contadorInasistencias: number;
-      contadorInasistenciasJustificada: number;
-    }>("http://localhost:3000/estudiante/asistenciaEstudiante", {
-      params: params
-    });
+      contadorInasistenciasJustificada: number}> (
+      environment.apiUrl + "/estudiante/asistenciaEstudiante", {params: params}
+    );
   }
 
   //Con el id del estudiante y el trimestre seleccionado, obtiene las materias y sus calificaciones

@@ -100,15 +100,6 @@ export class CalificacionesEstudiantesComponent implements OnInit {
           panelClass: ['snack-bar-fracaso'],
           duration: 3000
         });
-      } else {
-        this.snackBar.open(
-          "Las calificaciones sólo pueden ser números entre 1 y 10.",
-          "",
-          {
-            panelClass: ['snack-bar-fracaso'],
-            duration: 3000
-          }
-        );
       }
     } else {
       this.servicio

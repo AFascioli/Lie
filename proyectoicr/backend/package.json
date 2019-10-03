@@ -8,6 +8,6 @@
     "express": "^4.17.1",
     "mongoose": "^5.5.11",
     "tslib": "^1.9.0",
-    "web-push": "^3.3.5"
+    "web-push": "^3.4.0"
   }
 }
