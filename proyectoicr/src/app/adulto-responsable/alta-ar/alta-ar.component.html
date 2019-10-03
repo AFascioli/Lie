@@ -9,7 +9,7 @@
       [expanded]="true"
     >
       <mat-expansion-panel-header
-        ><b>Datos Adulto Responsable de {{ apellidoEstudiante }}, {{ nombreEstudiante }}</b></mat-expansion-panel-header
+        ><b>Datos del adulto responsable de: {{ apellidoEstudiante }}, {{ nombreEstudiante }}</b></mat-expansion-panel-header
       >
       <div class="datos-AR">
       <mat-form-field [class.mat-form-field-mobile]="mobileQuery.matches">
@@ -134,9 +134,10 @@
           maxlength="20"
           ngModel
           #telefono="ngModel"
-          placeholder="Ingrese número de teléfono"
+          placeholder="Ingrese número de teléfono *"
           type="text"
           (keypress)="checkNumeros($event)"
+          required
         />
       </mat-form-field>
       <br />
@@ -146,8 +147,9 @@
           name="email"
           ngModel
           #Email="ngModel"
-          placeholder="Ingrese Email"
+          placeholder="Ingrese email"
           type="email"
+          required
         />
       </mat-form-field>
       <br />

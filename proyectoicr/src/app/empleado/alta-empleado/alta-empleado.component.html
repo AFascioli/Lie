@@ -8,7 +8,7 @@
     <mat-expansion-panel [class.mat-expansion-panel-mobile]="mobileQuery.matches"
     [expanded]="true">
       <mat-expansion-panel-header>
-        <b>Datos Empleado</b>
+        <b>Datos del empleado</b>
       </mat-expansion-panel-header>
       <mat-form-field [class.mat-form-field-mobile]="mobileQuery.matches">
         <input
@@ -23,6 +23,9 @@
           required
           (keypress)="checkLetras($event)"
         />
+        <mat-error *ngIf="apellido.invalid"
+        >Por favor ingrese un apellido válido</mat-error
+        >
       </mat-form-field>
       <br />
       <mat-form-field [class.mat-form-field-mobile]="mobileQuery.matches">
@@ -39,6 +42,9 @@
           required
           (keypress)="checkLetras($event)"
         />
+        <mat-error *ngIf="nombre.invalid"
+        >Por favor ingrese un nombre válido</mat-error
+        >
       </mat-form-field>
       <br />
 
@@ -75,6 +81,9 @@
           required
           (keypress)="checkNumeros($event)"
         />
+        <mat-error *ngIf="nroDocumento.invalid"
+        >Por favor ingrese un número de documento válido</mat-error
+        >
       </mat-form-field>
       <br />
       <mat-form-field [class.mat-form-field-mobile]="mobileQuery.matches">
@@ -138,9 +147,11 @@
           ngModel
           #telefono="ngModel"
           placeholder="Ingrese número de teléfono"
-          type="text"
           (keypress)="checkNumeros($event)"
         />
+        <mat-error *ngIf="telefono.invalid"
+        >Por favor ingrese un número de telefono válido</mat-error
+        >
       </mat-form-field>
       <br />
       <mat-form-field [class.mat-form-field-mobile]="mobileQuery.matches">
@@ -148,10 +159,15 @@
           matInput
           name="Email"
           ngModel
-          #Email="ngModel"
+          #email="ngModel"
           placeholder="Ingrese email"
           type="email"
-        />
+          required
+          email
+          />
+          <mat-error *ngIf="email.invalid"
+          >Por favor ingrese un email válido</mat-error
+          >
       </mat-form-field>
     </mat-expansion-panel>
     <br />
@@ -164,7 +180,9 @@
       >
         Guardar
       </button>
-      <button mat-raised-button (click)="popUpCancelar()" class="buttonWarn">
+      <button mat-raised-button
+      (click)="popUpCancelar()"
+      class="buttonWarn">
         Cancelar
       </button>
     </div>
