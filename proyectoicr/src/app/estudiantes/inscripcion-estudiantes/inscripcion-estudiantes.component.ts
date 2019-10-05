@@ -147,14 +147,6 @@ export class InscripcionPopupComponent {
             duration: 4500,
             panelClass: ['snack-bar-fracaso']
           });
-        } else {
-          this.snackBar.open(
-            "Inscripción no registrada. El estudiante selccionado ya se encuentra inscripto",
-            "",
-            {
-              duration: 4500
-            }
-          );
         }
         this.dialogRef.close();
       });

@@ -177,6 +177,7 @@ export class AutenticacionService {
       permisos: any;
     }>(environment.apiUrl + "/usuario/permisosDeRol", {
       params: params
+  });
   }
 
   addPushSubscriber(sus: any) {
@@ -187,6 +188,7 @@ export class AutenticacionService {
   testNP(){
     console.log('Envio de get a /estudiante/notificacion');
     return this.http.get<{message: string}>(environment.apiUrl + "/estudiante/notificacion");
+  }
 
   //Metodo sign up que crea un usuario segun un rol dado
   signUp(mail: string, password: string, rol: string) {
@@ -196,4 +198,5 @@ export class AutenticacionService {
       rol: rol
     });
   }
+
 }

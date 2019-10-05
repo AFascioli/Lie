@@ -110,7 +110,7 @@ import { environment } from "../environments/environment";
     JustificacionInasistenciaPopupComponent,
     AltaEmpleadoPopupComponent,
     AltaARPopupComponent,
-    PreferenciasComponent
+    PreferenciasComponent,
     LoginComponent
   ],
   //entryComponents declara los componentes que se generan dinamicamente dentro de otros.
@@ -128,7 +128,7 @@ import { environment } from "../environments/environment";
     CerrarSesionPopupComponent,
     JustificacionInasistenciaPopupComponent,
     AltaEmpleadoPopupComponent,
-    AltaARPopupComponent
+    AltaARPopupComponent,
     LlegadaTardePopupComponent
   ],
   imports: [

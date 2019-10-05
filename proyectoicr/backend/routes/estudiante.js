@@ -634,6 +634,7 @@ router.get("/tutores", (req, res) => {
       tutores: tutores
     });
   });
+});
 
 //Prueba notif #resolve #borrar
 router.get("/notificacion", (req, res) => {
