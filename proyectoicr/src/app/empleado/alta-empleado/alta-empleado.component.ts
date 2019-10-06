@@ -65,6 +65,7 @@ export class AltaEmpleadoComponent implements OnInit, OnDestroy {
         form.value.tipoEmpleado
       );
       form.resetForm();
+
     }
   }
 

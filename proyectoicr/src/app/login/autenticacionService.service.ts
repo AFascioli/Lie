@@ -59,7 +59,7 @@ export class AutenticacionService {
         rol: string;
       }>(environment.apiUrl + "/usuario/login", authData)
       .subscribe(response => {
-        respuesta = response.message;
+        respuesta = response;
         if (response.token) {
           this.usuarioAutenticado = email;
           this.token = response.token;

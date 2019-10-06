@@ -22,6 +22,7 @@ export class LoginComponent implements OnInit {
     if (this.password && this.email) {
       this.authService.login(this.email, this.password).subscribe(respuesta =>{
         let tipoSnackBar='snack-bar-fracaso';
+        console.log(respuesta);
           if(respuesta.exito){
             tipoSnackBar='snack-bar-exito';
           }
