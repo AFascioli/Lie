@@ -290,7 +290,6 @@ router.get("/asistencia", checkAuthMiddleware, (req, res) => {
 router.post("/asistencia", checkAuthMiddleware, (req, res) => {
   if (req.query.asistenciaNueva == "true") {
     req.body.forEach(estudiante => {
-      console.log(estudiante);
       var valorInasistencia = 0;
       if (!estudiante.presente) {
         valorInasistencia = 1;
@@ -309,8 +308,6 @@ router.post("/asistencia", checkAuthMiddleware, (req, res) => {
 
         await asistenciaEstudiante.save().then(async asistenciaDiaria => {
           await inscripcion.asistenciaDiaria.push(asistenciaDiaria._id);
-
-          console.log(inscripcion);
           inscripcion.contadorInasistencias =
             inscripcion.contadorInasistencias + valorInasistencia;
           inscripcion.save();
@@ -333,7 +330,11 @@ router.post("/asistencia", checkAuthMiddleware, (req, res) => {
       }
     });
   }
-  Suscripcion.notificarAll(["5d7bfd1b93119f33f80819a1", "5d7bfd1b93119f33f80819a3"],"Asistencia", "El estudiante está presente.");
+  Suscripcion.notificarAll(
+    ["5d7bfd1b93119f33f80819a1", "5d7bfd1b93119f33f80819a3"],
+    "Asistencia",
+    "El estudiante está presente."
+  );
   res.status(201).json({ message: "Asistencia registrada exitósamente" });
 });
 
@@ -535,7 +536,6 @@ router.get("/inasistencia/justificada", (req, res) => {
     }
   ]).then(resultado => {
     //5d2e30dd32a43405043e76c6 id de la asistencia que retorna
-    console.log(JSON.stringify(resultado));
     if (req.query.esMultiple == "true") {
       resultado[0].presentismo.forEach(async asistenciaDiaria => {
         if (
@@ -573,13 +573,77 @@ router.get("/inasistencia/justificada", (req, res) => {
         AsistenciaDiaria.findByIdAndUpdate(idAsistencia, {
           justificado: true
         }).then(() => {
-          res.json({
+          res.status(200).json({
             message: "Asistencia exitosamente justificada",
             exito: true
           });
         });
       }
     }
+  });
+});
+
+//Se obtienen las ultimas inasistencias dentro de un periodo de 5 dias antes
+router.get("/inasistencias", (req, res) => {
+  let ultimasInasistencias = [];
+  Inscripcion.aggregate([
+    {
+      $match: {
+        IdEstudiante: mongoose.Types.ObjectId(req.query.idEstudiante)
+      }
+    },
+    {
+      $project: {
+        asistenciaDiaria: {
+          $slice: ["$asistenciaDiaria", -5]
+        }
+      }
+    },
+    {
+      $unwind: {
+        path: "$asistenciaDiaria"
+      }
+    },
+    {
+      $lookup: {
+        from: "asistenciaDiaria",
+        localField: "asistenciaDiaria",
+        foreignField: "_id",
+        as: "presentismo"
+      }
+    },
+    {
+      $match: {
+        "presentismo.presente": false
+      }
+    },
+    {
+      $project: {
+        _id: 0,
+        "presentismo._id": 1,
+        "presentismo.fecha": 1
+      }
+    }
+  ]).then(response => {
+    if (response.length > 0) {
+      response.forEach(objeto => {
+        ultimasInasistencias.push({
+          idAsistencia: objeto.presentismo[0]._id,
+          fecha: objeto.presentismo[0].fecha
+        });
+      });
+      return res.status(200).json({
+        exito: true,
+        message: "Inasistencias obtenidas con éxito",
+        inasistencias: ultimasInasistencias
+      });
+    }
+    res.status(200).json({
+      exito: false,
+      message:
+        "El estudiante no tiene inasistencias dentro del periodo de 5 dias previos",
+      inasistencias: []
+    });
   });
 });
 

@@ -26,3 +26,13 @@
 .parrafo{
   text-align: center;
 }
+
+.p-inasistencias{
+  margin-bottom: 1%;
+}
+
+.card-inasistencias{
+  text-align: center;
+  width: 50%;
+  margin: auto;
+}

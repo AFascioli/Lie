@@ -16,6 +16,7 @@ export class JustificacionInasistenciaComponent implements OnInit {
   fechaInicio = new Date();
   fechaFin = new Date();
   esMultiple: boolean = false;
+  ultimasInasistencias=[];
 
   constructor(
     private servicio: EstudiantesService,
@@ -23,7 +24,11 @@ export class JustificacionInasistenciaComponent implements OnInit {
     public dialog: MatDialog,
   ) {}
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.servicio.obtenerUltimasInasistencias().subscribe(response=>{
+      this.ultimasInasistencias= response.inasistencias;
+    });
+  }
 
   //Envia al servicio un fecha inicio y una fecha fin (esta de esta manera por la consulta del backend)
   justificarInasistencia() {

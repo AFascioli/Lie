@@ -15,7 +15,10 @@
         >Múltiples días</mat-radio-button
       >
     </mat-radio-group>
-    <br />
+    <mat-card class="card-inasistencias" *ngIf="ultimasInasistencias">
+      <p class="p-inasistencias"><b>Ultimas Inasistencias</b></p>
+      <p class="p-inasistencias" *ngFor="let inasistencia of ultimasInasistencias"> {{inasistencia.fecha}}</p>
+    </mat-card>
     <div class="ubicacionDatePickers">
       <mat-form-field>
         <input

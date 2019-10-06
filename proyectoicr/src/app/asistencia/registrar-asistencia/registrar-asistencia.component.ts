@@ -15,7 +15,7 @@ export class RegistrarAsistenciaComponent implements OnInit {
   estudiantesXDivision: any[];
   displayedColumns: string[] = ["apellido", "nombre", "accion"];
   fechaActual: Date;
-  asistenciaNueva: string;
+  asistenciaNueva: string="true";
   agent: any;
 
   constructor(

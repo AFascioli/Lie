@@ -364,7 +364,7 @@ export class EstudiantesService {
       message: string;
       exito: boolean;
       vectorCalXMat: any[];
-    }>("http://localhost:3000/estudiante/calif/materia", {
+    }>(environment.apiUrl + "/estudiante/calif/materia", {
       params: params
     });
   }
@@ -383,11 +383,12 @@ export class EstudiantesService {
     return this.http.get<{
       message: string;
       exito: boolean;
-    }>("http://localhost:3000/estudiante/inasistencia/justificada", {
+    }>(environment.apiUrl + "/estudiante/inasistencia/justificada", {
       params: params
     });
   }
 
+//#resolve
   getTutoresDeEstudiante() {
     let params = new HttpParams().set(
       "idEstudiante",
@@ -398,11 +399,26 @@ export class EstudiantesService {
         message: string;
         exito: boolean;
         tutores: any[];
-      }>("http://localhost:3000/estudiante/tutores", {
+      }>(environment.apiUrl + "/estudiante/tutores", {
         params: params
       })
       .subscribe(tutores => {
         console.log(tutores);
+      });
+  }
+
+  obtenerUltimasInasistencias(){
+    let params = new HttpParams().set(
+      "idEstudiante",
+      this.estudianteSeleccionado._id
+    );
+    return this.http
+      .get<{
+        message: string;
+        exito: boolean;
+        inasistencias: any[];
+      }>(environment.apiUrl + "/estudiante/inasistencias", {
+        params: params
       });
   }
 }

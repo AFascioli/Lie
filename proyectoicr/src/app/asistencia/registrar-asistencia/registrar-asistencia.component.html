@@ -35,6 +35,7 @@
       {{ fechaActual | date: "dd/MM/yyyy" }}
     </mat-form-field>
   </div>
+  <p class="aviso" *ngIf="asistenciaNueva!='true'">Atención, ya existe una asistencia registrada para este curso el dia de hoy</p>
   <br />
   <div *ngIf="!cursoNotSelected">
     <table mat-table [dataSource]="estudiantesXDivision">
