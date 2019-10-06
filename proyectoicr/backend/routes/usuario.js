@@ -10,7 +10,7 @@ router.post("/signup", (req, res) => {
     if (usuario) {
       return res.status(200).json({
         message: "El usuario ya estaba registrado",
-        exito: true
+        exito: false
       });
     } else {
       Rol.findOne({ tipo: req.body.rol }).then(rol => {
@@ -22,7 +22,7 @@ router.post("/signup", (req, res) => {
           });
           usuario
             .save()
-            .then(result => {
+            .then(() => {
               res.status(201).json({
                 message: "Usuario creado exitosamente",
                 exito: true,

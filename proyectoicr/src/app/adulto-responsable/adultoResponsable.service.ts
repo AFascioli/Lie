@@ -2,18 +2,17 @@ import { AdultoResponsable } from "./adultoResponsable.model";
 import { HttpClient, HttpParams } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { AutenticacionService } from "../login/autenticacionService.service";
-
+import { Subject } from "rxjs";
 
 @Injectable({
   providedIn: "root"
 })
 export class AdultoResponsableService {
   adultoResponsableEstudiante: AdultoResponsable;
-  
+
   constructor(
     public http: HttpClient,
-    public authServicio: AutenticacionService,
-
+    public authServicio: AutenticacionService
   ) {}
 
   registrarAdultoResponsable(
@@ -29,8 +28,9 @@ export class AdultoResponsableService {
     tutor: boolean,
     idEstudiante: string
   ) {
+    var subject = new Subject<any>();
     this.authServicio
-      .crearUsuario(email, numeroDocumento.toString(), 'AdultoResponsable')
+      .crearUsuario(email, numeroDocumento.toString(), "AdultoResponsable")
       .subscribe(res => {
         if (res.exito) {
           let idUsuario = res.id;
@@ -47,18 +47,22 @@ export class AdultoResponsableService {
             tutor,
             idUsuario
           };
+          let datos= {
+            AR: adultoResponsable,
+            idEstudiante: idEstudiante
+          }
           this.http
             .post<{ message: string; exito: boolean }>(
               "http://localhost:3000/adultoResponsable",
-              {AR: adultoResponsable, idEstudiante: idEstudiante}
+              {  datos: datos }
             )
             .subscribe(response => {
-              console.log(response);
+              subject.next(response);
             });
         } else {
-          console.log(res.message);
+          subject.next(res);
         }
       });
+    return subject.asObservable();
   }
-
 }

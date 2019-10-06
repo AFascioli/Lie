@@ -7,39 +7,35 @@ const checkAuthMiddleware = require("../middleware/check-auth");
 //Registra un nuevo adulto responsable en la base de datos
 router.post("/", checkAuthMiddleware, (req, res) => {
   AdultoResponsable.findOne({
-    tipoDocumento: req.body.AR.tipoDocumento,
-    numeroDocumento: req.body.AR.numeroDocumento
+    tipoDocumento: req.body.datos.AR.tipoDocumento,
+    numeroDocumento: req.body.datos.AR.numeroDocumento
   }).then(AR => {
-    console.log(AR);
     if (AR) {
       return res.status(200).json({
         message: "El adulto responsable ya esta registrado",
-        exito: true
+        exito: false
       });
     } else {
       const adultoResponsable = new AdultoResponsable({
-        apellido: req.body.AR.apellido,
-        nombre: req.body.AR.nombre,
-        tipoDocumento: req.body.AR.tipoDocumento,
-        numeroDocumento: req.body.AR.numeroDocumento,
-        sexo: req.body.AR.sexo,
-        nacionalidad: req.body.AR.nacionalidad,
-        fechaNacimiento: req.body.AR.fechaNacimiento,
-        telefono: req.body.AR.telefono,
-        email: req.body.AR.email,
-        tutor: req.body.AR.tutor,
-        idUsuario: req.body.AR.idUsuario,
-        estudiantes: [req.body.idEstudiante]
+        apellido: req.body.datos.AR.apellido,
+        nombre: req.body.datos.AR.nombre,
+        tipoDocumento: req.body.datos.AR.tipoDocumento,
+        numeroDocumento: req.body.datos.AR.numeroDocumento,
+        sexo: req.body.datos.AR.sexo,
+        nacionalidad: req.body.datos.AR.nacionalidad,
+        fechaNacimiento: req.body.datos.AR.fechaNacimiento,
+        telefono: req.body.datos.AR.telefono,
+        email: req.body.datos.AR.email,
+        tutor: req.body.datos.AR.tutor,
+        idUsuario: req.body.datos.AR.idUsuario,
+        estudiantes: []
       });
+      adultoResponsable.estudiantes.push(req.body.datos.idEstudiante);
+      console.log(adultoResponsable);
       adultoResponsable
         .save()
         .then(ARGuardado => {
-          // Estudiante.findById(req.body.idEstudiante).then( estudiante => {
-          //   estudiante.adultoResponsable.push(ARGuardado._id);
-          //   estudiante.save().exec();
-          // });
-
-          Estudiante.findByIdAndUpdate(req.body.idEstudiante, {
+          Estudiante.findByIdAndUpdate(req.body.datos.idEstudiante, {
             $addToSet: { adultoResponsable: ARGuardado._id }
           }).then(() => {
             res.status(201).json({

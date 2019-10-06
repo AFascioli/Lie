@@ -57,8 +57,7 @@ export class AltaARComponent implements OnInit, OnDestroy {
   }
 
   onGuardar(form: NgForm) {
-    if (form.invalid) {
-    } else {
+    if (!form.invalid) {
       this.servicio.registrarAdultoResponsable(
         form.value.apellido,
         form.value.nombre,
@@ -70,27 +69,26 @@ export class AltaARComponent implements OnInit, OnDestroy {
         form.value.telefono,
         form.value.email,
         form.value.tutor,
-        form.value.idEstudiante
-      );
-      form.resetForm();
-    }
-  }
-
-  snackBarGuardar(form: NgForm): void {
-    if (form.invalid) {
+        this._idEstudiante
+      ).subscribe(response=>{
+        if(response.exito){
+          this.snackBar.open(response.message, "", {
+            panelClass: ["snack-bar-exito"],
+            duration: 4000
+          });
+          form.resetForm();
+        }else{
+          this.snackBar.open(response.message, "", {
+            panelClass: ["snack-bar-fracaso"],
+            duration: 4000
+          });
+        }
+      });
+    }else{
       this.snackBar.open("Faltan campos por completar", "", {
         panelClass: ["snack-bar-fracaso"],
         duration: 4000
       });
-    } else {
-      this.snackBar.open(
-        "El adulto responsable se ha registrado correctamente",
-        "",
-        {
-          panelClass: ["snack-bar-exito"],
-          duration: 4000
-        }
-      );
     }
   }
 
