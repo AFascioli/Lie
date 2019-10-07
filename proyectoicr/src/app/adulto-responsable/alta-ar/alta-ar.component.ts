@@ -24,6 +24,7 @@ export class AltaARComponent implements OnInit, OnDestroy {
   suscripcion: Subscription;
   _mobileQueryListener: () => void;
   mobileQuery: MediaQueryList;
+  tutor: boolean= false;
 
   constructor(
     public servicio: AdultoResponsableService,
@@ -58,32 +59,33 @@ export class AltaARComponent implements OnInit, OnDestroy {
 
   onGuardar(form: NgForm) {
     if (!form.invalid) {
-      this.servicio.registrarAdultoResponsable(
-        form.value.apellido,
-        form.value.nombre,
-        form.value.tipoDocumento,
-        form.value.nroDocumento,
-        form.value.sexo,
-        form.value.nacionalidad,
-        form.value.fechaNac,
-        form.value.telefono,
-        form.value.email,
-        form.value.tutor,
-        this._idEstudiante
-      ).subscribe(response=>{
-        if(response.exito){
-          this.snackBar.open(response.message, "", {
-            panelClass: ["snack-bar-exito"],
-            duration: 4000
-          });
-          form.resetForm();
-        }else{
-          this.snackBar.open(response.message, "", {
-            panelClass: ["snack-bar-fracaso"],
-            duration: 4000
-          });
-        }
-      });
+      console.log(this.tutor);
+      // this.servicio.registrarAdultoResponsable(
+      //   form.value.apellido,
+      //   form.value.nombre,
+      //   form.value.tipoDocumento,
+      //   form.value.nroDocumento,
+      //   form.value.sexo,
+      //   form.value.nacionalidad,
+      //   form.value.fechaNac,
+      //   form.value.telefono,
+      //   form.value.email,
+      //   this.tutor,
+      //   this._idEstudiante
+      // ).subscribe(response=>{
+      //   if(response.exito){
+      //     this.snackBar.open(response.message, "", {
+      //       panelClass: ["snack-bar-exito"],
+      //       duration: 4000
+      //     });
+      //     form.resetForm();
+      //   }else{
+      //     this.snackBar.open(response.message, "", {
+      //       panelClass: ["snack-bar-fracaso"],
+      //       duration: 4000
+      //     });
+      //   }
+      // });
     }else{
       this.snackBar.open("Faltan campos por completar", "", {
         panelClass: ["snack-bar-fracaso"],

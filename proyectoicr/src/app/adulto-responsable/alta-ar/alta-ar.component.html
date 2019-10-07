@@ -159,7 +159,7 @@
           />
         </mat-form-field>
         <br />
-        <mat-checkbox name="tutor" ngModel #tutor="ngModel">
+        <mat-checkbox [checked]="tutor" (change)="tutor=!tutor">
           Tutor
         </mat-checkbox>
       </div>

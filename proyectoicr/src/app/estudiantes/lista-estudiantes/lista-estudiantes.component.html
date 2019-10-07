@@ -1,6 +1,6 @@
 <mat-card *ngIf="estudiantes.length > 0">
   <div *ngFor="let estudiante of estudiantes; let i = index">
-    <mat-expansion-panel>
+    <mat-expansion-panel [expanded]="i==0">
       <mat-expansion-panel-header>
         <mat-panel-title>
           <b>
