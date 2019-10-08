@@ -1,9 +1,4 @@
-<mat-card class="card-body-componente">
-  <mat-card-title class="componente-titulo">
-    <p>{{ apellidoEstudiante }}, {{ nombreEstudiante }}</p>
-  </mat-card-title>
-
-  <mat-form-field class="selectTrimestre">
+ <mat-form-field>
     <mat-select
       name="trimestre"
       ngModel
@@ -205,14 +200,5 @@
     <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
   </table>
 
-  <div>
-    <button
-      class="button-volver"
-      mat-raised-button
-      class="buttonPrimary"
-      [routerLink]="['/perfilEstudiante']"
-    >
-      Volver
-    </button>
-  </div>
-</mat-card>
+
+

@@ -72,6 +72,8 @@ import { AltaEmpleadoComponent, AltaEmpleadoPopupComponent } from './empleado/al
 import { PreferenciasComponent } from './menu-lateral/preferencias/preferencias.component';
 import { ServiceWorkerModule } from "@angular/service-worker";
 import { environment } from "../environments/environment";
+import { InasistenciasEstudianteComponent } from './estudiantes/perfil-estudiante/inasistencias-estudiante/inasistencias-estudiante.component';
+import { TutoresEstudianteComponent } from './estudiantes/perfil-estudiante/tutores-estudiante/tutores-estudiante.component';
 
 @NgModule({
   declarations: [
@@ -111,7 +113,9 @@ import { environment } from "../environments/environment";
     AltaEmpleadoPopupComponent,
     AltaARPopupComponent,
     PreferenciasComponent,
-    LoginComponent
+    LoginComponent,
+    InasistenciasEstudianteComponent,
+    TutoresEstudianteComponent
   ],
   //entryComponents declara los componentes que se generan dinamicamente dentro de otros.
   entryComponents: [

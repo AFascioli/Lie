@@ -1,11 +1,18 @@
+<h1 class="componente-titulo">
+  Resumen académico de: {{ apellidoEstudiante }}, {{ nombreEstudiante }}
+</h1>
 <mat-card class="card-body-componente">
-  <mat-card-title class= "componente-titulo">
-    <p> {{ apellidoEstudiante }}, {{ nombreEstudiante }}</p>
-  </mat-card-title>
-<br>
-&nbsp;
+  <mat-toolbar class="fixed-header">
+    <mat-toolbar-row>
+      <button mat-button routerLink="./calificacionesEstudiante" >Calificaciones</button>
+      <button mat-button routerLink="./inasistenciasEstudiante">Inasistencias</button>
+      <button mat-button routerLink="./tutoresEstudiante">Tutores</button>
+    </mat-toolbar-row>
+  </mat-toolbar>
+  <router-outlet></router-outlet>
 
-<div>
+
+<!-- <div>
   <mat-card-subtitle >
       <b>CALIFICACIONES: </b>
   </mat-card-subtitle>
@@ -18,8 +25,6 @@
     </button>
 </div>
 <br>
-<br>
-&nbsp;
 
 <div>
   <mat-card-subtitle >
@@ -37,8 +42,6 @@
 
 </div>
 <br>
-<br>
-&nbsp;
 
 <div>
     <mat-card-subtitle >
@@ -68,8 +71,6 @@
       </table>
 </div>
 <br>
-<br>
-&nbsp;
 
 <div>
   <mat-card-subtitle >
@@ -84,8 +85,6 @@
 
   </div>
 <br>
-<br>
-&nbsp;
 
 <div>
   <mat-card-subtitle >
@@ -98,10 +97,9 @@
       <b>Teléfono: </b> 56665-1559886
   </mat-card-content>
 </div>
-<br />
+<br /> -->
 
-
-<div class="div-button">
+ <div class="div-button">
   <button
   mat-raised-button
   [routerLink]="['/buscar/lista']"
@@ -115,5 +113,4 @@
      Cancelar
   </button>
 </div>
-
 </mat-card>

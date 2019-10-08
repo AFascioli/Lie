@@ -1,15 +1,11 @@
-mat-card-subtitle{
+/* mat-card-subtitle{
   color: black;
 }
 
 mat-card-content{
   text-indent: 34%;
-}
+} */
 
-.button-volver{
-  text-align: right;
-  margin-left: 87% !important;
-}
 
 table {
   width: 95%;
@@ -29,6 +25,6 @@ th{
   font-size: 15px;
 }
 
-.selectTrimestre{
+.mat-form-field{
   margin-left: 5% !important;
 }
