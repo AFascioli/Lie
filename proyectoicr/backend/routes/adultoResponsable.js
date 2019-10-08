@@ -31,7 +31,6 @@ router.post("/", checkAuthMiddleware, (req, res) => {
         estudiantes: []
       });
       adultoResponsable.estudiantes.push(req.body.datos.idEstudiante);
-      console.log(req.body.datos.AR.tutor);
       adultoResponsable
         .save()
         .then(ARGuardado => {

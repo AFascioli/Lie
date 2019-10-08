@@ -9,7 +9,7 @@ router.post("/signup", (req, res) => {
   Usuario.findOne({ email: req.body.email }).then(usuario => {
     if (usuario) {
       return res.status(200).json({
-        message: "El usuario ya estaba registrado",
+        message: "Ya existe un usuario con el email ingresado",
         exito: false
       });
     } else {

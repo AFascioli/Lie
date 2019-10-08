@@ -4,9 +4,11 @@
 <mat-card class="card-body-componente">
   <meta charset="utf-8" />
 
-  <form #form="ngForm" (submit)="onGuardar(form)">
-    <mat-expansion-panel [class.mat-expansion-panel-mobile]="mobileQuery.matches"
-    [expanded]="true">
+  <form #form="ngForm">
+    <mat-expansion-panel
+      [class.mat-expansion-panel-mobile]="mobileQuery.matches"
+      [expanded]="true"
+    >
       <mat-expansion-panel-header>
         <b>Datos del empleado</b>
       </mat-expansion-panel-header>
@@ -24,13 +26,12 @@
           (keypress)="checkLetras($event)"
         />
         <mat-error *ngIf="apellido.invalid"
-        >Por favor ingrese un apellido válido</mat-error
+          >Por favor ingrese un apellido válido</mat-error
         >
       </mat-form-field>
       <br />
       <mat-form-field [class.mat-form-field-mobile]="mobileQuery.matches">
         <input
-          pattern="[A-Za-záéíóúÁÉÍÓÚñÑ ]+"
           name="nombre"
           minlength="2"
           maxlength="40"
@@ -43,7 +44,7 @@
           (keypress)="checkLetras($event)"
         />
         <mat-error *ngIf="nombre.invalid"
-        >Por favor ingrese un nombre válido</mat-error
+          >Por favor ingrese un nombre válido</mat-error
         >
       </mat-form-field>
       <br />
@@ -82,7 +83,7 @@
           (keypress)="checkNumeros($event)"
         />
         <mat-error *ngIf="nroDocumento.invalid"
-        >Por favor ingrese un número de documento válido</mat-error
+          >Por favor ingrese un número de documento válido</mat-error
         >
       </mat-form-field>
       <br />
@@ -100,45 +101,42 @@
         </mat-select>
       </mat-form-field>
       <br />
-        <mat-form-field [class.mat-form-field-mobile]="mobileQuery.matches">
-          <input
-            matInput
-            name="fechaNac"
-            ngModel
-            #fechaNac="ngModel"
-            [max]="maxDate"
-            [matDatepicker]="picker"
-            placeholder="Seleccione fecha de nacimiento"
-            required
-          />
-          <mat-datepicker-toggle
-            matSuffix
-            [for]="picker"
-          ></mat-datepicker-toggle>
-          <mat-datepicker
-            #picker
-            startView="multi-year"
-            disabled="false"
-          ></mat-datepicker>
-        </mat-form-field>
-        <br />
-        <mat-form-field [class.mat-form-field-mobile]="mobileQuery.matches">
-          <mat-select
-            placeholder="Seleccione nacionalidad"
-            name="nacionalidad"
-            ngModel
-            #nacionalidad="ngModel"
-            matNativeControl
+      <mat-form-field [class.mat-form-field-mobile]="mobileQuery.matches">
+        <input
+          matInput
+          name="fechaNac"
+          ngModel
+          #fechaNac="ngModel"
+          [max]="maxDate"
+          [matDatepicker]="picker"
+          placeholder="Seleccione fecha de nacimiento"
+          required
+        />
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker
+          #picker
+          startView="multi-year"
+          disabled="false"
+        ></mat-datepicker>
+      </mat-form-field>
+      <br />
+      <mat-form-field [class.mat-form-field-mobile]="mobileQuery.matches">
+        <mat-select
+          placeholder="Seleccione nacionalidad"
+          name="nacionalidad"
+          ngModel
+          #nacionalidad="ngModel"
+          matNativeControl
+        >
+          <mat-option
+            *ngFor="let nacionalidad of nacionalidades"
+            [value]="nacionalidad.name"
           >
-            <mat-option
-              *ngFor="let nacionalidad of nacionalidades"
-              [value]="nacionalidad.name"
-            >
-              {{ nacionalidad.name }}
-            </mat-option>
-          </mat-select>
-        </mat-form-field>
-        <br/>
+            {{ nacionalidad.name }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+      <br />
       <mat-form-field [class.mat-form-field-mobile]="mobileQuery.matches">
         <input
           matInput
@@ -150,39 +148,51 @@
           (keypress)="checkNumeros($event)"
         />
         <mat-error *ngIf="telefono.invalid"
-        >Por favor ingrese un número de telefono válido</mat-error
+          >Por favor ingrese un número de telefono válido</mat-error
         >
       </mat-form-field>
       <br />
       <mat-form-field [class.mat-form-field-mobile]="mobileQuery.matches">
         <input
           matInput
-          name="Email"
+          name="email"
           ngModel
           #email="ngModel"
           placeholder="Ingrese email"
           type="email"
           required
           email
-          />
-          <mat-error *ngIf="email.invalid"
+        />
+        <mat-error *ngIf="email.invalid"
           >Por favor ingrese un email válido</mat-error
-          >
+        >
+      </mat-form-field>
+      <br />
+      <mat-form-field [class.mat-form-field-mobile]="mobileQuery.matches">
+        <mat-select
+          placeholder="Seleccione tipo de empleado"
+          name="tipoEmpleado"
+          ngModel
+          #tipoEmpleado="ngModel"
+          matNativeControl
+          required
+        >
+          <mat-option value="Director">Director</mat-option>
+          <mat-option value="Preceptor">Preceptor</mat-option>
+          <mat-option value="Docente">Docente</mat-option>
+        </mat-select>
       </mat-form-field>
     </mat-expansion-panel>
     <br />
     <div class="div-button">
       <button
-        type="submit"
-        (click)="snackBarGuardar(form)"
+        (click)="onGuardar(form)"
         class="buttonPrimary"
         mat-raised-button
       >
         Guardar
       </button>
-      <button mat-raised-button
-      (click)="popUpCancelar()"
-      class="buttonWarn">
+      <button mat-raised-button (click)="popUpCancelar()" class="buttonWarn">
         Cancelar
       </button>
     </div>
