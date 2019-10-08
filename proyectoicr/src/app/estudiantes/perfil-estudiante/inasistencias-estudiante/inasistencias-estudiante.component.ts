@@ -11,7 +11,7 @@ export class InasistenciasEstudianteComponent implements OnInit {
   contadorInasistenciaJustificada: number;
   contadorInasistencia: number;
   pieChartLabels: string [];
-  pieChartData:number[];
+  pieChartData:any[];
   pieChartType:string;
 
   constructor(public servicio: EstudiantesService) { }
@@ -19,11 +19,10 @@ export class InasistenciasEstudianteComponent implements OnInit {
   ngOnInit() {
     this.servicio.obtenerInasistenciasDeEstudiante().subscribe( response => {
       this.contadorInasistencia = response.contadorInasistencias;
-      this.contadorInasistenciaJustificada= response.contadorInasistenciasJustificada;
-      this.pieChartLabels = ['Inasistencias', 'Inasistencias Justificadas'];
+     this.contadorInasistenciaJustificada= response.contadorInasistenciasJustificada;
+    this.pieChartLabels = ['Inasistencias', 'Inasistencias Justificadas'];
       this.pieChartData = [this.contadorInasistencia, this.contadorInasistenciaJustificada];
       this.pieChartType = 'pie';
-      });
-  }
-
+    });
+    }
 }

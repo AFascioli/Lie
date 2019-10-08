@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ElementRef, ViewChild } from '@angular/core';
 import { EstudiantesService } from "../estudiante.service";
 import { Estudiante } from '../estudiante.model';
 import { Router } from '@angular/router';
@@ -16,6 +16,8 @@ export class PerfilEstudianteComponent implements OnInit {
   estudiantes: Estudiante[] = [];
   _idEstudiante: string;
   idUsuario: string;
+  calificacionesSelected: boolean;
+
 
   constructor(
     public servicio: EstudiantesService,
@@ -26,12 +28,14 @@ export class PerfilEstudianteComponent implements OnInit {
     this.apellidoEstudiante = this.servicio.estudianteSeleccionado.apellido;
     this.nombreEstudiante = this.servicio.estudianteSeleccionado.nombre;
     this._idEstudiante = this.servicio.estudianteSeleccionado._id;
+    this.calificacionesSelected= true;
+    let botonCalificaciones = document.getElementById('calificaciones') as HTMLElement;
+    botonCalificaciones.click();
   }
 
-  onVisualizarCalificacionesEstudiante(){
-    this.router.navigate(["./calificacionesEstudiante"]);
+  onClickCalificaciones(){
+    this.router.navigate(["/perfilEstudiante/calificacionesEstudiante"]);
   }
-
 
   onCancelar(){
     this.popup.open(PerfilEstudiantePopupComponent);

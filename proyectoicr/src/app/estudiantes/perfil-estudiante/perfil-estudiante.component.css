@@ -33,10 +33,28 @@ th{
   text-align: right;
 }
 
+button{
+  color: white;
+}
+
 .mat-toolbar{
-  background: #b4d1ce !important;
+  background: #2f6483 !important;
   margin-bottom: 6%;
 }
 
+/* Cuando le pasas el cursor por arriba el fondo es blanco */
+ button:hover {
+  background-color: #b4d1ce;
+  color: black;
+}
 
+.mat-button.mat-accent{
+  background: #b4d1ce !important;
+  color: black;
+}
+
+.active{
+  background: #b4d1ce !important;
+  color: black;
+}
 

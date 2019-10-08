@@ -4,9 +4,10 @@
 <mat-card class="card-body-componente">
   <mat-toolbar class="fixed-header">
     <mat-toolbar-row>
-      <button mat-button routerLink="./calificacionesEstudiante" >Calificaciones</button>
-      <button mat-button routerLink="./inasistenciasEstudiante">Inasistencias</button>
-      <button mat-button routerLink="./tutoresEstudiante">Tutores</button>
+      <button id="calificaciones" mat-button routerLinkActive="mat-accent" (click)="onClickCalificaciones()" routerLink="./calificacionesEstudiante" >Calificaciones</button>
+      <button mat-button routerLinkActive="mat-accent" routerLink="./inasistenciasEstudiante">Inasistencias</button>
+      <button mat-button routerLinkActive="mat-accent" routerLink="./tutoresEstudiante">Tutores</button>
+      <button mat-button routerLinkActive="mat-accent" routerLink="./datosEstudiante" >Datos estudiante</button>
     </mat-toolbar-row>
   </mat-toolbar>
   <router-outlet></router-outlet>
@@ -106,11 +107,6 @@
   class="buttonPrimary" >
      Volver
   </button>
-  <button
-  mat-raised-button
-  (click)="onCancelar()"
-  class="buttonWarn" >
-     Cancelar
-  </button>
+
 </div>
 </mat-card>

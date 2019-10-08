@@ -401,7 +401,6 @@ export class EstudiantesService {
     );
   }
 
-  //#resolve
   getTutoresDeEstudiante() {
     let params = new HttpParams().set(
       "idEstudiante",
@@ -414,9 +413,6 @@ export class EstudiantesService {
         tutores: any[];
       }>(environment.apiUrl + "/estudiante/tutores", {
         params: params
-      })
-      .subscribe(tutores => {
-        console.log(tutores);
       });
   }
 

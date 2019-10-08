@@ -26,6 +26,8 @@ import { RouteGuard } from "./route.guard";
 import { JustificacionInasistenciaComponent } from "./asistencia/justificacion-inasistencia/justificacion-inasistencia.component";
 import { RoleGuard } from './role.guard';
 import { InasistenciasEstudianteComponent } from './estudiantes/perfil-estudiante/inasistencias-estudiante/inasistencias-estudiante.component';
+import { DatosEstudianteComponent } from './estudiantes/perfil-estudiante/datos-estudiante/datos-estudiante.component';
+import { TutoresEstudianteComponent } from './estudiantes/perfil-estudiante/tutores-estudiante/tutores-estudiante.component';
 
 const routes: Routes = [
   { path: "login", component: LoginComponent },
@@ -117,7 +119,13 @@ const routes: Routes = [
         data: { rolesValidos: ["Admin", "Preceptor", "Director", "Docente","AdultoResponsable"] }
       },  {
         path: "tutoresEstudiante",
-        component: InasistenciasEstudianteComponent,
+        component: TutoresEstudianteComponent,
+        canActivate: [RouteGuard, RoleGuard],
+        data: { rolesValidos: ["Admin", "Preceptor", "Director", "Docente","AdultoResponsable"] }
+      },
+      {
+        path: "datosEstudiante",
+        component: DatosEstudianteComponent,
         canActivate: [RouteGuard, RoleGuard],
         data: { rolesValidos: ["Admin", "Preceptor", "Director", "Docente","AdultoResponsable"] }
       }

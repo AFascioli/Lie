@@ -74,6 +74,7 @@ import { ServiceWorkerModule } from "@angular/service-worker";
 import { environment } from "../environments/environment";
 import { InasistenciasEstudianteComponent } from './estudiantes/perfil-estudiante/inasistencias-estudiante/inasistencias-estudiante.component';
 import { TutoresEstudianteComponent } from './estudiantes/perfil-estudiante/tutores-estudiante/tutores-estudiante.component';
+import { DatosEstudianteComponent } from './estudiantes/perfil-estudiante/datos-estudiante/datos-estudiante.component';
 
 @NgModule({
   declarations: [
@@ -115,7 +116,8 @@ import { TutoresEstudianteComponent } from './estudiantes/perfil-estudiante/tuto
     PreferenciasComponent,
     LoginComponent,
     InasistenciasEstudianteComponent,
-    TutoresEstudianteComponent
+    TutoresEstudianteComponent,
+    DatosEstudianteComponent
   ],
   //entryComponents declara los componentes que se generan dinamicamente dentro de otros.
   entryComponents: [
