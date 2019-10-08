@@ -66,7 +66,7 @@ export class RegistrarAsistenciaComponent implements OnInit {
       this.estudiantesXDivision,
       this.asistenciaNueva
     );
-    this.snackBar.open("Asistencia registrada exitósamente", "", {
+    this.snackBar.open("Asistencia registrada exitosamente", "", {
       panelClass: ['snack-bar-exito'],
       duration: 4500
     });
