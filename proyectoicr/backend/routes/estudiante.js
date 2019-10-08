@@ -639,9 +639,9 @@ router.get("/tutores", (req, res) => {
 //Prueba notif #resolve #borrar
 router.get("/notificacion", (req, res) => {
   Suscripcion.notificar(
-    "5d7bfd1b93119f33f80819a3",
-    "Título de prueba",
-    "Contenido de prueba."
+    "5d7bfd1b93119f33f80819a1",
+    "Titulo",
+    "Notificación de prueba."
   );
   //Suscripcion.notificarAll(["5d7bfd1b93119f33f80819a1", "5d7bfd1b93119f33f80819a3"],"Título de prueba", "Contenido de prueba.");
   res.status(200).json({ message: "Prueba de notificación" });
