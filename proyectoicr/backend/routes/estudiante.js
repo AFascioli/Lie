@@ -489,98 +489,25 @@ router.get("/calif/materia", (req, res) => {
   });
 });
 
-//Primero, las fechas del backend estan adelantadas por 3 hrs, se corrige eso. Luego se realiza
-//la consulta y segun sea multiple justificacion o no realiza las operaciones correspondientes
-//Nota: no deja justificar si el alumno estuvo presente para la fecha o si ya fue
-//justificada la asistencia para ese dia
-router.get("/inasistencia/justificada", (req, res) => {
-  let fechaInicio = new Date(req.query.fechaInicio);
-  let fechaFin = new Date(req.query.fechaFin);
-  fechaInicio.setHours(fechaInicio.getHours() - 3);
-  fechaFin.setHours(fechaFin.getHours() - 3);
-  //5d1a5a66941efc2e98b15c0e id del estudiante que tiene los datos bien
-  Inscripcion.aggregate([
-    {
-      $match: {
-        IdEstudiante: mongoose.Types.ObjectId(req.query.idEstudiante),
-        activa: true
-      }
-    },
-    {
-      $unwind: {
-        path: "$asistenciaDiaria"
-      }
-    },
-    {
-      $lookup: {
-        from: "asistenciaDiaria",
-        localField: "asistenciaDiaria",
-        foreignField: "_id",
-        as: "presentismo"
-      }
-    },
-    {
-      $match: {
-        "presentismo.fecha": {
-          $gte: fechaInicio,
-          $lt: fechaFin
-        }
-      }
-    },
-    {
-      $project: {
-        "presentismo._id": 1,
-        "presentismo.presente": 1,
-        "presentismo.justificado": 1
-      }
-    }
-  ]).then(resultado => {
-    //5d2e30dd32a43405043e76c6 id de la asistencia que retorna
-    if (req.query.esMultiple == "true") {
-      resultado[0].presentismo.forEach(async asistenciaDiaria => {
-        if (
-          !resultado[0].presentismo[0].presente &&
-          !resultado[0].presentismo[0].justificado
-        ) {
-          let idAsistencia = asistenciaDiaria._id;
-          await AsistenciaDiaria.findByIdAndUpdate(idAsistencia, {
-            justificado: true
-          }).exec();
-          Inscripcion.findByIdAndUpdate(resultado[0]._id, {
-            contadorInasistenciasJustificada:
-              contadorInasistenciasJustificada + 1,
-            contadorInasistencias: contadorInasistencias - 1
-          }).exec();
-        }
-      });
-      res.status(200).json({
-        message: "Inasistencias justificadas exitosamente",
-        exito: true
-      });
-    } else {
-      if (resultado[0].presentismo[0].presente) {
-        return res.status(200).json({
-          message: "El estudiante estuvo presente para la fecha ingresada",
-          exito: false
+//Recibe vector con inasistencias, cada una tiene su _id y si fue o no justificada
+router.post("/inasistencia/justificada", checkAuthMiddleware, (req, res) => {
+  console.log(req.body);
+  req.body.forEach(inasistencia => {
+    if (inasistencia.justificado) {
+      AsistenciaDiaria.findByIdAndUpdate(inasistencia.idAsistencia, {
+        justificado: true
+      })
+        .exec()
+        .catch(e => {
+          res
+            .status(200)
+            .json({ message: "Ocurrió un error: " + e, exito: false });
         });
-      } else if (resultado[0].presentismo[0].justificado) {
-        return res.status(200).json({
-          message: "El estudiante ya tiene justificada la inasistencia",
-          exito: false
-        });
-      } else {
-        let idAsistencia = resultado[0].presentismo[0]._id;
-        AsistenciaDiaria.findByIdAndUpdate(idAsistencia, {
-          justificado: true
-        }).then(() => {
-          res.status(200).json({
-            message: "Asistencia exitosamente justificada",
-            exito: true
-          });
-        });
-      }
     }
   });
+  res
+    .status(200)
+    .json({ message: "Inasistencias justificadas correctamente", exito: true });
 });
 
 //Se obtienen las ultimas inasistencias dentro de un periodo de 5 dias antes
@@ -614,14 +541,16 @@ router.get("/inasistencias", (req, res) => {
     },
     {
       $match: {
-        "presentismo.presente": false
+        "presentismo.presente": false,
+        "presentismo.justificado": false
       }
     },
     {
       $project: {
         _id: 0,
         "presentismo._id": 1,
-        "presentismo.fecha": 1
+        "presentismo.fecha": 1,
+        "presentismo.justificado": 1
       }
     }
   ]).then(response => {
@@ -629,7 +558,8 @@ router.get("/inasistencias", (req, res) => {
       response.forEach(objeto => {
         ultimasInasistencias.push({
           idAsistencia: objeto.presentismo[0]._id,
-          fecha: objeto.presentismo[0].fecha
+          fecha: objeto.presentismo[0].fecha,
+          justificado: objeto.presentismo[0].justificado
         });
       });
       return res.status(200).json({

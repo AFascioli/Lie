@@ -1,24 +1,3 @@
-.mat-form-field {
-  width: 58.5%;
-  margin-bottom: 1rem;
-  margin-top: 1rem;
-}
-
-.ubicacionDatePickers{
- margin-top: 1rem;
-}
-
-.mat-radio-button ~ .mat-radio-button {
-  margin-left: 20%;
-}
-.mat-radio-button  {
-  margin-bottom: 5%;
-}
-
-.mat-form-field, .mat-radio-button{
-  margin-left: 20%;
-}
-
 .div-button {
   text-align: right;
 }
@@ -31,8 +10,7 @@
   margin-bottom: 1%;
 }
 
-.card-inasistencias{
+.contenido{
   text-align: center;
-  width: 50%;
-  margin: auto;
+  margin-bottom: 4%;
 }

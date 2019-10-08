@@ -249,7 +249,8 @@ export class EstudiantesService {
     this.http
       .post<{ message: string }>(
         environment.apiUrl + "/estudiante/asistencia",
-        estudiantesXDivision,{params: params}
+        estudiantesXDivision,
+        { params: params }
       )
       .subscribe(response => {});
   }
@@ -333,26 +334,32 @@ export class EstudiantesService {
       .set("trimestre", trimestre);
     return this.http.post<{ message: string; exito: boolean }>(
       environment.apiUrl + "/curso/estudiantes/materias/calificaciones",
-      estudiantes, {params: params}
+      estudiantes,
+      { params: params }
     );
   }
 
   cargarAsistenciaBackend(curso: string) {
     let params = new HttpParams().set("curso", curso);
-    return this.http.get<{ estudiantes: any[], asistenciaNueva: string }>(
-      environment.apiUrl + "/estudiante/asistencia", {params: params}
+    return this.http.get<{ estudiantes: any[]; asistenciaNueva: string }>(
+      environment.apiUrl + "/estudiante/asistencia",
+      { params: params }
     );
   }
 
-  obtenerInasistenciasDeEstudiante(){
-    let params = new HttpParams().set("idEstudiante", this.estudianteSeleccionado._id);
+  obtenerInasistenciasDeEstudiante() {
+    let params = new HttpParams().set(
+      "idEstudiante",
+      this.estudianteSeleccionado._id
+    );
     return this.http.get<{
       message: string;
       exito: boolean;
       contadorInasistencias: number;
-      contadorInasistenciasJustificada: number}> (
-      environment.apiUrl + "/estudiante/asistenciaEstudiante", {params: params}
-    );
+      contadorInasistenciasJustificada: number;
+    }>(environment.apiUrl + "/estudiante/asistenciaEstudiante", {
+      params: params
+    });
   }
 
   //Con el id del estudiante y el trimestre seleccionado, obtiene las materias y sus calificaciones
@@ -370,25 +377,31 @@ export class EstudiantesService {
   }
 
   //Dada una fecha de inicio y una fecha fin, justifica cada asistencia diaria dentro de ese periodo
-  justificarInasistencia(
-    fechaInicio: string,
-    fechaFin: string,
-    esMultiple: boolean
-  ) {
-    let params = new HttpParams()
-      .set("fechaInicio", fechaInicio)
-      .set("fechaFin", fechaFin)
-      .set("idEstudiante", this.estudianteSeleccionado._id)
-      .set("esMultiple", esMultiple.toString());
-    return this.http.get<{
-      message: string;
-      exito: boolean;
-    }>(environment.apiUrl + "/estudiante/inasistencia/justificada", {
-      params: params
-    });
+  // justificarInasistencia(
+  //   fechaInicio: string,
+  //   fechaFin: string,
+  //   esMultiple: boolean
+  // ) {
+  //   let params = new HttpParams()
+  //     .set("fechaInicio", fechaInicio)
+  //     .set("fechaFin", fechaFin)
+  //     .set("idEstudiante", this.estudianteSeleccionado._id)
+  //     .set("esMultiple", esMultiple.toString());
+  //   return this.http.get<{
+  //     message: string;
+  //     exito: boolean;
+  //   }>(environment.apiUrl + "/estudiante/inasistencia/justificada", {
+  //     params: params
+  //   });
+  // }
+  justificarInasistencia(ultimasInasistencias: any[]) {
+    return this.http.post<{ message: string; exito: boolean }>(
+      environment.apiUrl + "/estudiante/inasistencia/justificada",
+      ultimasInasistencias
+    );
   }
 
-//#resolve
+  //#resolve
   getTutoresDeEstudiante() {
     let params = new HttpParams().set(
       "idEstudiante",
@@ -407,18 +420,17 @@ export class EstudiantesService {
       });
   }
 
-  obtenerUltimasInasistencias(){
+  obtenerUltimasInasistencias() {
     let params = new HttpParams().set(
       "idEstudiante",
       this.estudianteSeleccionado._id
     );
-    return this.http
-      .get<{
-        message: string;
-        exito: boolean;
-        inasistencias: any[];
-      }>(environment.apiUrl + "/estudiante/inasistencias", {
-        params: params
-      });
+    return this.http.get<{
+      message: string;
+      exito: boolean;
+      inasistencias: any[];
+    }>(environment.apiUrl + "/estudiante/inasistencias", {
+      params: params
+    });
   }
 }
