@@ -335,7 +335,7 @@ router.post("/asistencia", checkAuthMiddleware, (req, res) => {
     "Asistencia",
     "El estudiante está presente."
   );
-  res.status(201).json({ message: "Asistencia registrada exitósamente" });
+  res.status(201).json({ message: "Asistencia registrada exitosamente" });
 });
 
 //Obtiene la id de la asistencia diaria del dia de hoy, y cambia los valores correspondientes en la coleccion de asistencia diaria
@@ -379,7 +379,7 @@ router.post("/retiro", checkAuthMiddleware, (req, res) => {
                   }
                 ).then(() => {
                   res.status(200).json({
-                    message: "Retiro anticipado exitósamente registrado",
+                    message: "Retiro anticipado exitosamente registrado",
                     exito: "exito"
                   });
                 });

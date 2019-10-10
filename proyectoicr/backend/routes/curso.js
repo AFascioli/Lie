@@ -94,7 +94,7 @@ router.post("/inscripcion", checkAuthMiddleware,(req, res) => {
         });
         nuevaInscripcion.save().then(() => {
           res.status(201).json({
-            message: "Estudiante inscripto exitósamente",
+            message: "Estudiante inscripto exitosamente",
             exito: true
           });
         });
