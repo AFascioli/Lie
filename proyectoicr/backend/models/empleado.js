@@ -11,7 +11,7 @@ const empleadoSchema = mongoose.Schema({
     telefono: Number,
     email: String,
     tipoEmpleado: String,
-    idUsuario: { type: mongoose.Schema.Types.ObjectId, ref: "usuarios" }
+    idUsuario: { type: mongoose.Schema.Types.ObjectId, ref: "usuario" }
 });
 
 module.exports= mongoose.model('empleado', empleadoSchema, 'empleado');

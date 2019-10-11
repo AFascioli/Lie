@@ -1,8 +1,8 @@
 const express = require("express");
 const router = express.Router();
-const Division = require("../models/division");
+const Division = require("../models/curso");
 const Inscripcion = require("../models/inscripcion");
-const CalificacionesXMateria = require("../models/calificacionesXMateria");
+const CalificacionesXMateria = require("../models/calificacionesXTrimestre");
 const Calificacion = require("../models/calificacion");
 const mongoose = require("mongoose");
 const checkAuthMiddleware=  require("../middleware/check-auth");

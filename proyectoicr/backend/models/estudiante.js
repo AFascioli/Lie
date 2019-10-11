@@ -19,6 +19,7 @@ const estudianteSchema = mongoose.Schema({
     estadoCivil: String,
     telefonoFijo: Number,
     adultoResponsable: [{type: mongoose.Schema.Types.ObjectId, ref: "adultoResponsable"}],
-    activo: {type: Boolean, required: true}
+    activo: {type: Boolean, required: true},
+    estado: {type: mongoose.Schema.Types.ObjectId, ref: "estado"}
 });
-module.exports= mongoose.model('estudiantes', estudianteSchema);
+module.exports= mongoose.model('estudiante', estudianteSchema);

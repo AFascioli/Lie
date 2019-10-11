@@ -69,7 +69,7 @@ import localePy from '@angular/common/locales/es';
 import { JustificacionInasistenciaComponent, JustificacionInasistenciaPopupComponent } from './asistencia/justificacion-inasistencia/justificacion-inasistencia.component';
 import { AltaARComponent, AltaARPopupComponent} from './adulto-responsable/alta-ar/alta-ar.component';
 import { AltaEmpleadoComponent, AltaEmpleadoPopupComponent } from './empleado/alta-empleado/alta-empleado.component';
-import { PreferenciasComponent } from './menu-lateral/preferencias/preferencias.component';
+import { PreferenciasComponent, PreferenciasPopupComponent } from './menu-lateral/preferencias/preferencias.component';
 import { ServiceWorkerModule } from "@angular/service-worker";
 import { environment } from "../environments/environment";
 import { InasistenciasEstudianteComponent } from './estudiantes/perfil-estudiante/inasistencias-estudiante/inasistencias-estudiante.component';
@@ -85,6 +85,7 @@ import { DatosEstudianteComponent } from './estudiantes/perfil-estudiante/datos-
     MostrarEstudiantesComponent,
     AltaPopupComponent,
     MostrarPopupComponent,
+    PreferenciasPopupComponent,
     MenuLateralComponent,
     HomeComponent,
     RegistrarAsistenciaComponent,
@@ -133,6 +134,7 @@ import { DatosEstudianteComponent } from './estudiantes/perfil-estudiante/datos-
     CambiarPasswordPopupComponent,
     CerrarSesionPopupComponent,
     JustificacionInasistenciaPopupComponent,
+    PreferenciasPopupComponent,
     AltaEmpleadoPopupComponent,
     AltaARPopupComponent,
     LlegadaTardePopupComponent
