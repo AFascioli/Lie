@@ -1,8 +1,7 @@
 const express = require("express");
 const Estudiante = require("../models/estudiante");
+const Estado = require("../models/estado");
 const Inscripcion = require("../models/inscripcion");
-const AdultoResponsable = require("../models/adultoResponsable");
-const Division = require("../models/curso");
 const AsistenciaDiaria = require("../models/asistenciaDiaria");
 const Suscripcion = require("../classes/suscripcion");
 const router = express.Router();
@@ -10,37 +9,43 @@ const mongoose = require("mongoose");
 
 const checkAuthMiddleware = require("../middleware/check-auth");
 
-//Registra un nuevo estudiante en la base de datos
+//Registra un nuevo estudiante y pone su estado a registrado
 router.post("", checkAuthMiddleware, (req, res, next) => {
-  const estudiante = new Estudiante({
-    apellido: req.body.apellido,
-    nombre: req.body.nombre,
-    tipoDocumento: req.body.tipoDocumento,
-    numeroDocumento: req.body.numeroDocumento,
-    cuil: req.body.cuil,
-    sexo: req.body.sexo,
-    calle: req.body.calle,
-    numeroCalle: req.body.numeroCalle,
-    piso: req.body.piso,
-    departamento: req.body.departamento,
-    provincia: req.body.provincia,
-    localidad: req.body.localidad,
-    codigoPostal: req.body.codigoPostal,
-    nacionalidad: req.body.nacionalidad,
-    fechaNacimiento: req.body.fechaNacimiento,
-    estadoCivil: req.body.estadoCivil,
-    telefonoFijo: req.body.telefonoFijo,
-    adultoResponsable: "null",
-    activo: true
+  Estado.findOne({
+    ambito: "Inscripcion",
+    nombre: "Registrado"
+  }).then(estado => {
+    const estudiante = new Estudiante({
+      apellido: req.body.apellido,
+      nombre: req.body.nombre,
+      tipoDocumento: req.body.tipoDocumento,
+      numeroDocumento: req.body.numeroDocumento,
+      cuil: req.body.cuil,
+      sexo: req.body.sexo,
+      calle: req.body.calle,
+      numeroCalle: req.body.numeroCalle,
+      piso: req.body.piso,
+      departamento: req.body.departamento,
+      provincia: req.body.provincia,
+      localidad: req.body.localidad,
+      codigoPostal: req.body.codigoPostal,
+      nacionalidad: req.body.nacionalidad,
+      fechaNacimiento: req.body.fechaNacimiento,
+      estadoCivil: req.body.estadoCivil,
+      telefonoFijo: req.body.telefonoFijo,
+      adultoResponsable: "null",
+      activo: true,
+      estado: estado._id
+    });
+    estudiante
+      .save()
+      .then(() => {
+        res.status(201).json({
+          message: "Estudiante registrado correctamente!"
+        });
+      })
+      .catch(err => console.log("Error al meter en la bd estudiante" + err));
   });
-  estudiante
-    .save()
-    .then(() => {
-      res.status(201).json({
-        message: "Estudiante registrado correctamente!"
-      });
-    })
-    .catch(err => console.log("Error al meter en la bd estudiante" + err));
 });
 
 //Obtiene un estudiante dado un numero y tipo de documento
@@ -93,8 +98,7 @@ router.patch("/modificar", checkAuthMiddleware, (req, res, next) => {
     nacionalidad: req.body.nacionalidad,
     fechaNacimiento: req.body.fechaNacimiento,
     estadoCivil: req.body.estadoCivil,
-    telefonoFijo: req.body.telefonoFijo,
-    adultoResponsable: "null"
+    telefonoFijo: req.body.telefonoFijo
   }).then(() => {
     res.status(200).json({
       message: "Estudiante exitosamente modificado"
@@ -104,23 +108,30 @@ router.patch("/modificar", checkAuthMiddleware, (req, res, next) => {
 
 //Borrado logico de un estudiante
 router.delete("/borrar", checkAuthMiddleware, (req, res, next) => {
-  Estudiante.findOneAndUpdate({ _id: req.query._id }, { activo: false }).then(
-    () => {
+  Estado.findOne({
+    ambito: "Inscripcion",
+    nombre: "De baja"
+  }).then(estado => {
+    Estudiante.findOneAndUpdate(
+      { _id: req.query._id },
+      { activo: false, estado: estado._id }
+    ).then(() => {
       res.status(202).json({
         message: "Estudiante exitosamente borrado"
       });
-    }
-  );
+    });
+  });
 });
 
 //Retorna vector con datos de los estudiantes y presente. Si ya se registro una asistencia para
 //el dia de hoy se retorna ese valor de la asistencia, sino se "construye" una nueva
+//#resolve
 router.get("/asistencia", checkAuthMiddleware, (req, res) => {
   Inscripcion.aggregate([
     {
       $lookup: {
-        from: "divisiones",
-        localField: "IdDivision",
+        from: "curso",
+        localField: "idCurso",
         foreignField: "_id",
         as: "curso"
       }
@@ -132,6 +143,7 @@ router.get("/asistencia", checkAuthMiddleware, (req, res) => {
       }
     },
     {
+      //#resolve porque capaz no funciona si no tiene asistencias y salta error
       $project: {
         ultimaAsistencia: {
           $slice: ["$asistenciaDiaria", -1]
@@ -169,16 +181,16 @@ router.get("/asistencia", checkAuthMiddleware, (req, res) => {
       Inscripcion.aggregate([
         {
           $lookup: {
-            from: "divisiones",
-            localField: "IdDivision",
+            from: "curso",
+            localField: "idCurso",
             foreignField: "_id",
             as: "curso"
           }
         },
         {
           $lookup: {
-            from: "estudiantes",
-            localField: "IdEstudiante",
+            from: "estudiante",
+            localField: "idEstudiante",
             foreignField: "_id",
             as: "datosEstudiante"
           }
@@ -235,16 +247,16 @@ router.get("/asistencia", checkAuthMiddleware, (req, res) => {
       Inscripcion.aggregate([
         {
           $lookup: {
-            from: "divisiones",
-            localField: "IdDivision",
+            from: "curso",
+            localField: "idCurso",
             foreignField: "_id",
             as: "curso"
           }
         },
         {
           $lookup: {
-            from: "estudiantes",
-            localField: "IdEstudiante",
+            from: "estudiante",
+            localField: "idEstudiante",
             foreignField: "_id",
             as: "estudiante"
           }
@@ -295,11 +307,11 @@ router.post("/asistencia", checkAuthMiddleware, (req, res) => {
         valorInasistencia = 1;
       }
       Inscripcion.findOne({
-        IdEstudiante: estudiante._id,
+        idEstudiante: estudiante._id,
         activa: true
       }).then(async inscripcion => {
         var asistenciaEstudiante = new AsistenciaDiaria({
-          IdInscripcion: inscripcion._id,
+          idInscripcion: inscripcion._id,
           fecha: estudiante.fecha,
           presente: estudiante.presente,
           valorInasistencia: valorInasistencia,
@@ -308,8 +320,8 @@ router.post("/asistencia", checkAuthMiddleware, (req, res) => {
 
         await asistenciaEstudiante.save().then(async asistenciaDiaria => {
           await inscripcion.asistenciaDiaria.push(asistenciaDiaria._id);
-          inscripcion.contadorInasistencias =
-            inscripcion.contadorInasistencias + valorInasistencia;
+          inscripcion.contadorInasistenciasInjustificada =
+            inscripcion.contadorInasistenciasInjustificada + valorInasistencia;
           inscripcion.save();
         });
       });
@@ -322,26 +334,21 @@ router.post("/asistencia", checkAuthMiddleware, (req, res) => {
       if (!estudiante.presente) {
         Inscripcion.findOneAndUpdate(
           {
-            IdEstudiante: estudiante._id,
+            idEstudiante: estudiante._id,
             activa: true
           },
-          { contadorInasistencias: contadorInasistencias + 1 }
+          { $inc: { contadorInasistenciasInjustificada: 1 } }
         ).exec();
       }
     });
   }
-  Suscripcion.notificarAll(
-    ["5d7bfd1b93119f33f80819a1", "5d7bfd1b93119f33f80819a3"],
-    "Asistencia",
-    "El estudiante está presente."
-  );
   res.status(201).json({ message: "Asistencia registrada exitosamente" });
 });
 
-//Obtiene la id de la asistencia diaria del dia de hoy, y cambia los valores correspondientes en la coleccion de asistencia diaria
+//Obtiene la id de la asistencia diaria del dia de hoy, y cambia los valores de la inasistencia para indicar el retiro correspondiente
 router.post("/retiro", checkAuthMiddleware, (req, res) => {
   Inscripcion.findOne(
-    { IdEstudiante: req.body.IdEstudiante, activa: true },
+    { idEstudiante: req.body.idEstudiante, activa: true },
     { asistenciaDiaria: { $slice: -1 } }
   ).then(inscripcion => {
     if (!inscripcion) {
@@ -398,15 +405,15 @@ router.post("/retiro", checkAuthMiddleware, (req, res) => {
   });
 });
 
-//Este metodo filtra las inscripciones por estudiante y retorna el contador de inasistencias
-//de dicho estudiante
+//Este metodo filtra las inscripciones por estudiante y retorna el contador de inasistencias (injustificada y justificada)
 router.get("/asistenciaEstudiante", (req, res) => {
   Inscripcion.findOne({ IdEstudiante: req.query.idEstudiante }).then(
     estudiante => {
       res.status(200).json({
         message: "Operacion exitosa",
         exito: true,
-        contadorInasistencias: estudiante.contadorInasistencias,
+        contadorInasistenciasInjustificada:
+          estudiante.contadorInasistenciasInjustificada,
         contadorInasistenciasJustificada:
           estudiante.contadorInasistenciasJustificada
       });
@@ -414,12 +421,12 @@ router.get("/asistenciaEstudiante", (req, res) => {
   );
 });
 
-//Vamos a recibir, un vector de los estudiantes a los que se le modificaron los documentos entregados.
+//Recibe por parametros un vector de los estudiantes con los respectivos documentos entregados
 router.post("/documentos", checkAuthMiddleware, (req, res) => {
   try {
     req.body.forEach(estudiante => {
       Inscripcion.findOneAndUpdate(
-        { IdEstudiante: estudiante.IdEstudiante, activa: true },
+        { idEstudiante: estudiante.idEstudiante, activa: true },
         { $set: { documentosEntregados: estudiante.documentosEntregados } }
       ).exec();
     });
@@ -432,11 +439,11 @@ router.post("/documentos", checkAuthMiddleware, (req, res) => {
 });
 
 //Dado una id de estudiante y un trimestre obtiene todas las materias con sus respectivas calificaciones
-router.get("/calif/materia", (req, res) => {
+router.get("/materia/calificaciones", (req, res) => {
   Inscripcion.aggregate([
     {
       $match: {
-        IdEstudiante: mongoose.Types.ObjectId(req.query.idEstudiante),
+        idEstudiante: mongoose.Types.ObjectId(req.query.idEstudiante),
         activa: true
       }
     },
@@ -454,13 +461,21 @@ router.get("/calif/materia", (req, res) => {
       }
     },
     {
+      $lookup: {
+        from: "calificacionesXTrimestre",
+        localField: "cXM.calificacionesXTrimestre",
+        foreignField: "_id",
+        as: "cXT"
+      }
+    },
+    {
       $match: {
-        "cXM.trimestre": parseInt(req.query.trimestre, 10)
+        "cXT.trimestre": parseInt(req.query.trimestre, 10)
       }
     },
     {
       $lookup: {
-        from: "materias",
+        from: "materia",
         localField: "cXM.idMateria",
         foreignField: "_id",
         as: "materia"
@@ -468,7 +483,7 @@ router.get("/calif/materia", (req, res) => {
     },
     {
       $project: {
-        "cXM.calificaciones": 1,
+        "cXT.calificaciones": 1,
         "materia.nombre": 1
       }
     }
@@ -480,7 +495,6 @@ router.get("/calif/materia", (req, res) => {
         calificaciones: objEnResultado.cXM.calificaciones
       });
     });
-
     res.status(200).json({
       message: "Operación exitosa",
       exito: true,
@@ -491,7 +505,6 @@ router.get("/calif/materia", (req, res) => {
 
 //Recibe vector con inasistencias, cada una tiene su _id y si fue o no justificada
 router.post("/inasistencia/justificada", checkAuthMiddleware, (req, res) => {
-  console.log(req.body);
   req.body.forEach(inasistencia => {
     if (inasistencia.justificado) {
       AsistenciaDiaria.findByIdAndUpdate(inasistencia.idAsistencia, {
@@ -511,15 +524,17 @@ router.post("/inasistencia/justificada", checkAuthMiddleware, (req, res) => {
 });
 
 //Se obtienen las ultimas inasistencias dentro de un periodo de 5 dias antes
+//Se utiliza para la justificacion de inasistencias
 router.get("/inasistencias", (req, res) => {
   let ultimasInasistencias = [];
   Inscripcion.aggregate([
     {
       $match: {
-        IdEstudiante: mongoose.Types.ObjectId(req.query.idEstudiante)
+        idEstudiante: mongoose.Types.ObjectId(req.query.idEstudiante)
       }
     },
     {
+      //#resolve, revisar cuando no tiene 5 asistenciasdiarias
       $project: {
         asistenciaDiaria: {
           $slice: ["$asistenciaDiaria", -5]
@@ -571,12 +586,13 @@ router.get("/inasistencias", (req, res) => {
     res.status(200).json({
       exito: false,
       message:
-        "El estudiante no tiene inasistencias dentro del periodo de 5 dias previos",
+        "El estudiante no tiene inasistencias dentro del periodo de 5 días previos",
       inasistencias: []
     });
   });
 });
 
+//Obtiene los tutores de un estudiante
 router.get("/tutores", (req, res) => {
   Estudiante.aggregate([
     {
@@ -637,8 +653,7 @@ router.get("/notificacion", (req, res) => {
     "Título de prueba",
     "Contenido de prueba."
   );
-  //Suscripcion.notificarAll(["5d7bfd1b93119f33f80819a1", "5d7bfd1b93119f33f80819a3"],"Título de prueba", "Contenido de prueba.");
-  res.status(200).json({ message: "Prueba de notificación" });
+   res.status(200).json({ message: "Prueba de notificación" });
 });
 
 module.exports = router;

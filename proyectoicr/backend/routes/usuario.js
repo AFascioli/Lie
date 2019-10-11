@@ -111,7 +111,7 @@ router.get("/permisosDeRol", (req, res) => {
     },
     {
       $lookup: {
-        from: "permisos",
+        from: "permiso",
         localField: "permisos",
         foreignField: "_id",
         as: "permisosRol"
@@ -125,24 +125,28 @@ router.get("/permisosDeRol", (req, res) => {
       }
     }
   ]).then(permisos => {
-    return res
-      .status(200)
-      .json({
-        message: "Se obtuvo los permisos del rol exitosamente",
-        exito: true,
-        permisos: permisos[0].permisosRol[0]
-      });
+    return res.status(200).json({
+      message: "Se obtuvo los permisos del rol exitosamente",
+      exito: true,
+      permisos: permisos[0].permisosRol[0]
+    });
   });
 });
 
 router.post("/suscripcion", (req, res) => {
-  Usuario.findOneAndUpdate({email: req.body.email}, { $push: { suscripciones: req.body.sub }}).then((usuario) => {
-    usuario.save();
-    return res.status(201).json({message: "Suscripción registrada correctamente"});
-  }).catch((e) => {
-    console.log(e);
-  });
-
+  Usuario.findOneAndUpdate(
+    { email: req.body.email },
+    { $push: { suscripciones: req.body.sub } }
+  )
+    .then(usuario => {
+      usuario.save();
+      return res
+        .status(201)
+        .json({ message: "Suscripción registrada correctamente" });
+    })
+    .catch(e => {
+      console.log(e);
+    });
 });
 
 module.exports = router;

@@ -371,7 +371,7 @@ export class EstudiantesService {
       message: string;
       exito: boolean;
       vectorCalXMat: any[];
-    }>(environment.apiUrl + "/estudiante/calif/materia", {
+    }>(environment.apiUrl + "/estudiante/materia/calificaciones", {
       params: params
     });
   }
