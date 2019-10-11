@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 
 const cursoSchema= mongoose.Schema({
   curso: String,
-  agenda: [{type: mongoose.Schema.Types.ObjectId, ref: 'horariosMaterias'}]
+  materias: [{type: mongoose.Schema.Types.ObjectId, ref: 'materiasXCurso'}]
 });
 
 module.exports= mongoose.model('curso', cursoSchema, 'curso');

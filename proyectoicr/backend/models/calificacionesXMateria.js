@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 const calificacionesXMateriaSchema = mongoose.Schema({
-  idMateria: { type: mongoose.Schema.Types.ObjectId, ref: "materias" },
+  idMateria: { type: mongoose.Schema.Types.ObjectId, ref: "materia" },
   estado: { type: mongoose.Schema.Types.ObjectId, ref: "estado" },
   calificacionesXTrimestre: [{ type: mongoose.Schema.Types.ObjectId, ref: "calificacionesXTrimestre" }],
   promedio: Number

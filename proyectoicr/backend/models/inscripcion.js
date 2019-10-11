@@ -6,13 +6,13 @@ const documentosSchema = mongoose.Schema({
 });
 
 const inscripcionSchema = mongoose.Schema({
-  IdEstudiante: {type: mongoose.Schema.Types.ObjectId, ref: 'estudiante'},
-  IdDivision: {type: mongoose.Schema.Types.ObjectId, ref: 'curso'},
+  idEstudiante: {type: mongoose.Schema.Types.ObjectId, ref: 'estudiante'},
+  idCurso: {type: mongoose.Schema.Types.ObjectId, ref: 'curso'},
   asistenciaDiaria: [{type: mongoose.Schema.Types.ObjectId, ref: 'asistenciaDiaria'}],
   activa: {type: Boolean, require: true},
   documentosEntregados: [documentosSchema],
   calificacionesXMateria: [{type: mongoose.Schema.Types.ObjectId, ref: 'calificacionesXMateria'}],
-  contadorInasistencias: {type: Number},
+  contadorInasistenciasInjustificada: {type: Number},
   contadorInasistenciasJustificada: {type: Number},
   estado: {type: mongoose.Schema.Types.ObjectId, ref: "estado"}
 });
