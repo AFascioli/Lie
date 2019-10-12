@@ -148,8 +148,7 @@ export class MostrarEstudiantesComponent implements OnInit {
         this.nacionalidadEstudiante,
         this.fechaNacEstudiante,
         this.estadoCivilEstudiante,
-        this.telefonoEstudiante,
-        "adultoResponsable"
+        this.telefonoEstudiante
       );
       this.modoEditar=false;
     }

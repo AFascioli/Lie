@@ -47,7 +47,6 @@ export class AdultoResponsableService {
             tutor,
             idUsuario
           };
-          console.log(adultoResponsable);
           let datos= {
             AR: adultoResponsable,
             idEstudiante: idEstudiante

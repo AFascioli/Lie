@@ -3,6 +3,8 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const Usuario = require("../models/usuario");
 const Rol = require("../models/rol");
+const Empleado = require("../models/empleado");
+const AdultoResponsable = require("../models/adultoResponsable");
 const router = express.Router();
 
 router.post("/signup", (req, res) => {
@@ -66,13 +68,25 @@ router.post("/login", (req, res) => {
           { expiresIn: "12h" }
         );
         Rol.findById(usuarioEncontrado.rol).then(rol => {
-          res.status(200).json({
-            token: token,
-            duracionToken: 43200,
-            rol: rol.tipo,
-            message: "Bienvenido a Lié",
-            exito: true
-          });
+          let _id;
+          if(rol.tipo != "AdultoResponsable"){
+            Empleado.findOne({idUsuario: usuarioEncontrado._id}).then(empleado => {
+              _id = empleado._id;
+            });
+          }
+          else{
+            AdultoResponsable.findOne({idUsuario: usuarioEncontrado._id}).then(AR => {
+              _id = AR._id;
+            });
+          }
+              res.status(200).json({
+                token: token,
+                duracionToken: 43200,
+                rol: rol.tipo,
+                _id: _id,
+                message: "Bienvenido a Lié",
+                exito: true
+              });
         });
       }
     }

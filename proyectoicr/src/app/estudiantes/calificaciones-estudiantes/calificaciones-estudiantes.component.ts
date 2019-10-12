@@ -70,7 +70,7 @@ export class CalificacionesEstudiantesComponent implements OnInit {
   }
 
   onCursoSeleccionado(curso) {
-    this.servicio.obtenerMateriasXCurso(curso.value).subscribe(respuesta => {
+    this.servicio.obtenerMateriasXCurso(curso.value, this.servicioAutenticacion.getId).subscribe(respuesta => {
       this.materias = respuesta.materias;
     });
   }

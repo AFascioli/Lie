@@ -342,7 +342,7 @@ router.post("/asistencia", checkAuthMiddleware, (req, res) => {
       }
     });
   }
-  res.status(201).json({ message: "Asistencia registrada exitosamente" });
+  res.status(201).json({ message: "Asistencia registrada exitosamente", exito: true });
 });
 
 //Obtiene la id de la asistencia diaria del dia de hoy, y cambia los valores de la inasistencia para indicar el retiro correspondiente

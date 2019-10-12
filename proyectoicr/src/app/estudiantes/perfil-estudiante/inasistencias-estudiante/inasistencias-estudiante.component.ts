@@ -9,7 +9,7 @@ import { EstudiantesService } from '../../estudiante.service';
 export class InasistenciasEstudianteComponent implements OnInit {
   displayedColumns: string[] = ["tipo", "cantidad",];
   contadorInasistenciaJustificada: number;
-  contadorInasistencia: number;
+  contadorInasistenciaInjustificada: number;
   pieChartLabels: string [];
   pieChartData:any[];
   pieChartType:string;
@@ -18,10 +18,10 @@ export class InasistenciasEstudianteComponent implements OnInit {
 
   ngOnInit() {
     this.servicio.obtenerInasistenciasDeEstudiante().subscribe( response => {
-      this.contadorInasistencia = response.contadorInasistencias;
+      this.contadorInasistenciaInjustificada = response.contadorInasistenciasInjustificada;
      this.contadorInasistenciaJustificada= response.contadorInasistenciasJustificada;
-    this.pieChartLabels = ['Inasistencias', 'Inasistencias Justificadas'];
-      this.pieChartData = [this.contadorInasistencia, this.contadorInasistenciaJustificada];
+    this.pieChartLabels = ['Inasistencias injustificadas', 'Inasistencias justificadas'];
+      this.pieChartData = [this.contadorInasistenciaInjustificada, this.contadorInasistenciaJustificada];
       this.pieChartType = 'pie';
     });
     }

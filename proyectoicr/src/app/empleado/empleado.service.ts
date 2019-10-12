@@ -44,7 +44,6 @@ export class EmpleadoService {
             tipoEmpleado,
             idUsuario
           };
-          console.log(empleado);
           this.http
             .post<{ message: string; exito: boolean}>(
               "http://localhost:3000/empleado",

@@ -12,11 +12,16 @@ export class AutenticacionService {
   private authStatusListener = new Subject<boolean>();
   private usuarioAutenticado: string;
   private rol: string;
+  private id: string;
 
   constructor(private http: HttpClient, private router: Router) {}
 
   getToken() {
     return this.token;
+  }
+
+  getId() {
+    return this.id;
   }
 
   getRol() {
@@ -55,6 +60,7 @@ export class AutenticacionService {
         token: string;
         duracionToken: number;
         exito: boolean;
+        _id: string;
         message: string;
         rol: string;
       }>(environment.apiUrl + "/usuario/login", authData)
@@ -65,6 +71,7 @@ export class AutenticacionService {
           this.token = response.token;
           const duracionToken = response.duracionToken;
           this.rol = response.rol;
+          this.id= response._id;
           this.timerAutenticacion(duracionToken);
           this.estaAutenticado = true;
           this.authStatusListener.next(true);
@@ -76,7 +83,8 @@ export class AutenticacionService {
             response.token,
             vencimientoToken,
             this.usuarioAutenticado,
-            this.rol
+            this.rol,
+            this.id
           );
           this.router.navigate(["/"]);
         }
@@ -98,6 +106,7 @@ export class AutenticacionService {
       this.token = infoAutenticacion.token;
       this.usuarioAutenticado = infoAutenticacion.usuario;
       this.rol = infoAutenticacion.rol;
+      this.id = infoAutenticacion.id;
       this.estaAutenticado = true;
       this.timerAutenticacion(expiraEn / 1000);
       this.authStatusListener.next(true);
@@ -108,6 +117,8 @@ export class AutenticacionService {
   logout() {
     this.token = null;
     this.estaAutenticado = false;
+    this.rol= "";
+    this.id="";
     this.usuarioAutenticado = "";
     this.authStatusListener.next(false);
     clearTimeout(this.tokenTimer);
@@ -126,12 +137,14 @@ export class AutenticacionService {
     token: string,
     fechaVencimiento: Date,
     usuario: string,
-    rol: string
+    rol: string,
+    id: string
   ) {
     localStorage.setItem("token", token);
     localStorage.setItem("vencimiento", fechaVencimiento.toISOString());
     localStorage.setItem("usuario", usuario);
     localStorage.setItem("rol", rol);
+    localStorage.setItem("id", id);
   }
 
   private limpiarDatosAutenticacion() {
@@ -139,6 +152,7 @@ export class AutenticacionService {
     localStorage.removeItem("vencimiento");
     localStorage.removeItem("usuario");
     localStorage.removeItem("rol");
+    localStorage.removeItem("id");
   }
 
   private obtenerDatosAutenticacion() {
@@ -146,6 +160,7 @@ export class AutenticacionService {
     const fechaVencimiento = localStorage.getItem("vencimiento");
     const usuario = localStorage.getItem("usuario");
     const rol = localStorage.getItem("rol");
+    const id = localStorage.getItem("id");
     if (!token || !fechaVencimiento) {
       return;
     }
@@ -153,7 +168,8 @@ export class AutenticacionService {
       token: token,
       vencimientoToken: new Date(fechaVencimiento),
       usuario: usuario,
-      rol: rol
+      rol: rol,
+      id: id
     };
   }
 

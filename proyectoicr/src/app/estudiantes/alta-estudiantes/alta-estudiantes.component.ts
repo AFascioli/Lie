@@ -88,8 +88,7 @@ export class AltaEstudiantesComponent implements OnInit, OnDestroy {
         form.value.nacionalidad,
         form.value.fechaNac,
         form.value.estadoCivil,
-        form.value.telefono,
-        "AdultoTest"
+        form.value.telefono
       );
       form.resetForm();
     }

@@ -3,9 +3,8 @@ const router = express.Router();
 const Curso = require("../models/curso");
 const Estado = require("../models/estado");
 const Inscripcion = require("../models/inscripcion");
-const CalificacionesXMateria = require("../models/calificacionesXTrimestre");
-const CalificacionesXMateriaBien = require("../models/calificacionesXMateria");
-const Calificacion = require("../models/calificacion");
+const CalificacionesXTrimestre = require("../models/calificacionesXTrimestre");
+const CalificacionesXMateria = require("../models/calificacionesXMateria");
 const mongoose = require("mongoose");
 const checkAuthMiddleware = require("../middleware/check-auth");
 
@@ -33,7 +32,7 @@ router.get("/materias", checkAuthMiddleware, (req, res) => {
   Curso.aggregate([
     {
       $match: {
-        _id: mongoose.Types.ObjectId(req.query.idcurso)
+        _id: mongoose.Types.ObjectId(req.query.idCurso)
       }
     },
     {
@@ -150,7 +149,7 @@ router.post("/inscripcion", checkAuthMiddleware, (req, res) => {
 
             //vas a crear las calificacionesXTrimestre de cada materia
             for (let i = 0; i < 3; i++) {
-              let calificacionesXTrimestre = new CalificacionesXMateria({
+              let calificacionesXTrimestre = new CalificacionesXTrimestre({
                 calificaciones: [0, 0, 0, 0, 0, 0],
                 trimestre: i + 1
               });
@@ -159,7 +158,7 @@ router.post("/inscripcion", checkAuthMiddleware, (req, res) => {
               });
             }
             //creamos las calificacionesXMateria de cada materia
-            let califXMateriaNueva = new CalificacionesXMateriaBien({
+            let califXMateriaNueva = new CalificacionesXMateria({
               idMateria: materia,
               estado: estado._id,
               calificacionesXTrimestre: idsCalificacionMatXTrim
@@ -396,8 +395,7 @@ router.post(
           }
         }
       ]).then(resultado => {
-        //deberia ser calif por trimestre
-        CalificacionesXMateria.findByIdAndUpdate(
+        CalificacionesXTrimestre.findByIdAndUpdate(
           resultado[0].calXTrimestre._id,
           {
             $set: {
@@ -416,95 +414,4 @@ router.post(
   }
 );
 
-//#resolve logica que cuando se inscribe a un nuevo alumno
-// popula el array calificacionesXMateria teniendo las materias del curso.
-// Teniendo eso, por cada uno de esos objetos,
-// crearles 6 calificaciones con fecha y valor= "-", todo esto por trimestre.
-router.get("/scripts", (req, res) => {
-  var vectorMaterias = [];
-  var idInscripcion = "";
-  //AGREGAR ASYNC AWAIT PARA QUE SE TERMINE DE EJECUTAR EL AGGREGATE
-  Inscripcion.aggregate([
-    {
-      $match: {
-        IdDivision: mongoose.Types.ObjectId("5d27767eafa09407c479bdc3") //AAAAAAAAAAAAAAAA
-      }
-    },
-    {
-      $lookup: {
-        from: "divisiones",
-        localField: "IdDivision",
-        foreignField: "_id",
-        as: "curso"
-      }
-    },
-    {
-      $lookup: {
-        from: "horariosMaterias",
-        localField: "curso.agenda",
-        foreignField: "_id",
-        as: "horariosMaterias"
-      }
-    },
-    {
-      $lookup: {
-        from: "materias",
-        localField: "horariosMaterias.materia",
-        foreignField: "_id",
-        as: "materias"
-      }
-    },
-    {
-      $project: {
-        "materias._id": 1
-      }
-    }
-  ]).then(resultado => {
-    console.dir(+resultado);
-    idInscripcion = resultado._id;
-    resultado.materias.forEach(materia => {
-      vectorMaterias.push(materia._id);
-    });
-  });
-
-  //Por cada trimestre
-  for (let trimestre = 1; trimestre < 4; trimestre++) {
-    console.log("Empezo for trimestre " + trimestre);
-    //Por cada materia, se crea un objeto CalificacionesXMateria
-    vectorMaterias.forEach(materia => {
-      console.log("for materias");
-      var calificacionXMateria = new CalificacionesXMateria({
-        idMateria: materia,
-        calificaciones: [],
-        trimestre: trimestre
-      });
-
-      //Se guarda CalificacionesXMateria y se crean las calificaciones
-      calificacionXMateria.save().then(calXMatGuardada => {
-        for (let index = 0; index < 5; index++) {
-          console.log("for calificacion");
-          var calificacion = new Calificacion({
-            fecha: "-",
-            valor: "-"
-          });
-          //Agregar Calificacion al vector calificaciones de CalificacionesXMateria
-          calificacion.save().then(califGuardada => {
-            CalificacionesXMateria.findByIdAndUpdate(calXMatGuardada._id, {
-              $addToSet: {
-                calificaciones: mongoose.Types.ObjectId(califGuardada._id)
-              }
-            });
-          });
-        }
-        //Agregar CalificacionesXMateria a inscripcion
-        Inscripcion.findByIdAndUpdate(idInscripcion, {
-          $addToSet: {
-            calificacionesXMateria: mongoose.Types.ObjectId(calXMatGuardada._id)
-          }
-        });
-      });
-    });
-  }
-  res.json({ message: "Parece que esta todo bien" });
-});
 module.exports = router;

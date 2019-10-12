@@ -43,7 +43,7 @@ export class RegistrarAsistenciaComponent implements OnInit {
   //Busca los estudiantes segun el curso que se selecciono en pantalla. Los orden alfabeticamente
   onCursoSeleccionado(curso) {
     this.cursoNotSelected = false;
-    this.servicio.cargarAsistenciaBackend(curso.value).subscribe(respuesta => {
+    this.servicio.cargarAsistencia(curso.value).subscribe(respuesta => {
       this.asistenciaNueva = respuesta.asistenciaNueva;
       this.estudiantesXDivision = respuesta.estudiantes.sort((a, b) =>
         a.apellido > b.apellido ? 1 : b.apellido > a.apellido ? -1 : 0
@@ -65,10 +65,11 @@ export class RegistrarAsistenciaComponent implements OnInit {
     this.servicio.registrarAsistencia(
       this.estudiantesXDivision,
       this.asistenciaNueva
-    );
-    this.snackBar.open("Asistencia registrada exitosamente", "", {
-      panelClass: ['snack-bar-exito'],
-      duration: 4500
+    ).subscribe(response  => {
+      this.snackBar.open(response.message, "", {
+        panelClass: ['snack-bar-exito'],
+        duration: 4500
+      });
     });
   }
 
