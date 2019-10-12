@@ -22,4 +22,4 @@ const estudianteSchema = mongoose.Schema({
     activo: {type: Boolean, required: true},
     estado: {type: mongoose.Schema.Types.ObjectId, ref: "estado"}
 });
-module.exports= mongoose.model('estudiante', estudianteSchema);
+module.exports= mongoose.model('estudiante', estudianteSchema, "estudiante");

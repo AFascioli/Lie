@@ -68,26 +68,33 @@ router.post("/login", (req, res) => {
           { expiresIn: "12h" }
         );
         Rol.findById(usuarioEncontrado.rol).then(rol => {
-          let _id;
-          if(rol.tipo != "AdultoResponsable"){
-            Empleado.findOne({idUsuario: usuarioEncontrado._id}).then(empleado => {
-              _id = empleado._id;
-            });
-          }
-          else{
-            AdultoResponsable.findOne({idUsuario: usuarioEncontrado._id}).then(AR => {
-              _id = AR._id;
-            });
-          }
-              res.status(200).json({
+
+          if (rol.tipo == "Docente") {
+               Empleado.findOne({ idUsuario: usuarioEncontrado._id }).then(
+                empleado => {
+                  idPersona = empleado._id;
+                 return res.status(200).json({
+                    token: token,
+                    duracionToken: 43200,
+                    rol: rol.tipo,
+                    idPersona: idPersona,
+                    message: "Bienvenido a Lié",
+                    exito: true
+                  });
+                }
+              );
+            }
+            else{
+               res.status(200).json({
                 token: token,
                 duracionToken: 43200,
                 rol: rol.tipo,
-                _id: _id,
+                idPersona: idPersona,
                 message: "Bienvenido a Lié",
                 exito: true
               });
-        });
+            }
+          });
       }
     }
   });

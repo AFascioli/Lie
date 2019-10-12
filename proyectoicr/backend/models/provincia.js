@@ -5,4 +5,4 @@ const provinciaSchema = mongoose.Schema({
   nombre: String
 });
 
-module.exports= mongoose.model('provincia', provinciaSchema);
+module.exports= mongoose.model('provincia', provinciaSchema, "provincia");

@@ -60,7 +60,7 @@ export class AutenticacionService {
         token: string;
         duracionToken: number;
         exito: boolean;
-        _id: string;
+        idPersona: string;
         message: string;
         rol: string;
       }>(environment.apiUrl + "/usuario/login", authData)
@@ -71,7 +71,8 @@ export class AutenticacionService {
           this.token = response.token;
           const duracionToken = response.duracionToken;
           this.rol = response.rol;
-          this.id= response._id;
+          this.id= response.idPersona;
+          console.log(response);
           this.timerAutenticacion(duracionToken);
           this.estaAutenticado = true;
           this.authStatusListener.next(true);

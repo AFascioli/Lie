@@ -6,4 +6,4 @@ const localidadSchema = mongoose.Schema({
   nombre: String
 });
 
-module.exports= mongoose.model('localidad', localidadSchema);
+module.exports= mongoose.model('localidad', localidadSchema, "localidad");

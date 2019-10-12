@@ -46,14 +46,20 @@ router.get("/materias", checkAuthMiddleware, (req, res) => {
     {
       $project: {
         "materiasDeCurso.materia": 1,
+        "materiasDeCurso.idDocente": 1,
         _id: 0
+      }
+    },
+    {
+      $unwind: {
+        path: "$materiasDeCurso"
       }
     },
     {
       $match: {
         "materiasDeCurso.idDocente": mongoose.Types.ObjectId(
           req.query.idDocente
-        ) //#resolve
+        )
       }
     },
     {
@@ -69,18 +75,15 @@ router.get("/materias", checkAuthMiddleware, (req, res) => {
         materias: 1
       }
     }
-  ]).then(materias => {
+  ]).then(rtdoMaterias => {
     var respuesta = [];
-
-    materias[0].materias.forEach(materia => {
-      var elemento = {
-        id: materia._id,
-        nombre: materia.nombre
+    rtdoMaterias.forEach(materia => {
+      var datosMateria = {
+        id: materia.materias[0]._id,
+        nombre: materia.materias[0].nombre
       };
-
-      respuesta.push(elemento);
+      respuesta.push(datosMateria);
     });
-
     res.status(200).json({ materias: respuesta });
   });
 });
@@ -139,8 +142,8 @@ router.post("/inscripcion", checkAuthMiddleware, (req, res) => {
         }
       ]).then(materiasDelCurso => {
         Estado.findOne({
-          nombre: "Curso",
-          ambito: "MateriaXCurso"
+          nombre: "Cursando",
+          ambito: "CalificacionesXMateria"
         }).then(estado => {
           //#resolve puede que este mal la logica
           let idsCalXMateria = [];
@@ -184,9 +187,18 @@ router.post("/inscripcion", checkAuthMiddleware, (req, res) => {
                 calificacionesXMateria: idsCalXMateria
               });
               nuevaInscripcion.save().then(() => {
-                res.status(201).json({
-                  message: "Estudiante inscripto exitosamente",
-                  exito: true
+                //Le cambiamos el estado al estudiante
+                Estado.findOne({
+                  nombre: "Inscripto",
+                  ambito: "Estudiante"
+                }).then(estadoEstudiante => {
+                  estudiante.estado = estadoEstudiante._id;
+                  estudiante.save();
+
+                  res.status(201).json({
+                    message: "Estudiante inscripto exitosamente",
+                    exito: true
+                  });
                 });
               });
             });
