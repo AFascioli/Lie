@@ -6,6 +6,7 @@ const Inscripcion = require("../models/inscripcion");
 const CalificacionesXTrimestre = require("../models/calificacionesXTrimestre");
 const CalificacionesXMateria = require("../models/calificacionesXMateria");
 const mongoose = require("mongoose");
+const Estudiante= require("../models/estudiante");
 const checkAuthMiddleware = require("../middleware/check-auth");
 
 // Obtiene todos los cursos
@@ -135,11 +136,11 @@ router.post("/inscripcion", checkAuthMiddleware, (req, res) => {
     },
     {
       $match: {
-        "estadoEstudiante.nombre": "registrado"
+        "estadoEstudiante.nombre": "Registrado"
       }
     }
   ]).then(estudiante => {
-    if (estudiante == null) {
+    if (estudiante.length==0) {
       res
         .status(200)
         .json({ message: "El estudiante ya esta inscripto", exito: false });

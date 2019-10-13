@@ -408,7 +408,7 @@ router.post("/retiro", checkAuthMiddleware, (req, res) => {
 
 //Este metodo filtra las inscripciones por estudiante y retorna el contador de inasistencias (injustificada y justificada)
 router.get("/asistenciaEstudiante", (req, res) => {
-  Inscripcion.findOne({ IdEstudiante: req.query.idEstudiante }).then(
+  Inscripcion.findOne({ idEstudiante: req.query.idEstudiante }).then(
     estudiante => {
       res.status(200).json({
         message: "Operacion exitosa",
@@ -468,6 +468,10 @@ router.get("/materia/calificaciones", (req, res) => {
         foreignField: "_id",
         as: "cXT"
       }
+    },{
+      $unwind:{
+        path: "$cXT"
+      }
     },
     {
       $match: {
@@ -493,7 +497,7 @@ router.get("/materia/calificaciones", (req, res) => {
     resultado.forEach(objEnResultado => {
       vectorRespuesta.push({
         materia: objEnResultado.materia[0].nombre,
-        calificaciones: objEnResultado.cXM.calificaciones
+        calificaciones: objEnResultado.cXT.calificaciones
       });
     });
     res.status(200).json({
