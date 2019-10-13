@@ -18,7 +18,6 @@ router.post("/", checkAuthMiddleware,(req, res) => {
     tipoEmpleado: req.body.tipoEmpleado,
     idUsuario: req.body.idUsuario
   });
-  console.log(empleado);
   empleado
     .save()
     .then(() => {

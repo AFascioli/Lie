@@ -255,6 +255,11 @@ export class EstudiantesService {
     return this.divisionXCursoActualizada.asObservable();
   }
 
+  obtenerCursosDeDocente(idDocente:string) {
+    let params = new HttpParams().set("idDocente", idDocente);
+    return this.http.get<{ cursos: any[] }>(environment.apiUrl + "/curso/docente",{params: params});
+  }
+
   obtenerCursos() {
     return this.http.get<{ cursos: any[] }>(environment.apiUrl + "/curso");
   }

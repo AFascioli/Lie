@@ -21,7 +21,7 @@ export class ListaEstudiantesComponent implements OnInit {
     agendaCursos:0,
     inscribirEstudiante:0,
     registrarEmpleado:0,
-    registrarCuota:0
+    cuotas:0
   };
 
   constructor(public servicio: EstudiantesService, public router: Router, public authService: AutenticacionService) {}

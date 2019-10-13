@@ -15,6 +15,7 @@
           placeholder="Seleccione trimestre"
           name="trimestre"
           [(ngModel)]="trimestrePorDefecto"
+          (selectionChange)="obtenerNotas(form)"
         >
           <mat-option value="1">Primer</mat-option>
           <mat-option value="2">Segundo</mat-option>
@@ -45,7 +46,7 @@
           #materia="ngModel"
           matNativeControl
           required
-          (selectionChange)="onMateriaSeleccionada(form)"
+          (selectionChange)="obtenerNotas(form)"
         >
           <mat-option
             *ngFor="let objMateria of materias"

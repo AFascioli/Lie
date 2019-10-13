@@ -106,6 +106,7 @@ router.patch("/modificar", checkAuthMiddleware, (req, res, next) => {
   });
 });
 
+//#resolve deberia buscar la inscripcion del estudiante y poner en inactiva
 //Borrado logico de un estudiante
 router.delete("/borrar", checkAuthMiddleware, (req, res, next) => {
   Estado.findOne({

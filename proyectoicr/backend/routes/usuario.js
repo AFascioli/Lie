@@ -68,12 +68,12 @@ router.post("/login", (req, res) => {
           { expiresIn: "12h" }
         );
         Rol.findById(usuarioEncontrado.rol).then(rol => {
-
+          let idPersona="";
           if (rol.tipo == "Docente") {
                Empleado.findOne({ idUsuario: usuarioEncontrado._id }).then(
-                empleado => {
+                async empleado => {
                   idPersona = empleado._id;
-                 return res.status(200).json({
+                 await res.status(200).json({
                     token: token,
                     duracionToken: 43200,
                     rol: rol.tipo,

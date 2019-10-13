@@ -59,17 +59,17 @@
             >
               Tomar asistencia
             </a>
-            <mat-divider *ngIf="permisos.asistencia > 1 && permisos.registrarCuota > 1"></mat-divider>
+            <mat-divider *ngIf="permisos.asistencia > 1 && permisos.cuotas > 1"></mat-divider>
             <a
               mat-list-item
               class="opciones-expansion"
               routerLink="./"
-              *ngIf="permisos.registrarCuota > 1"
+              *ngIf="permisos.cuotas > 1"
               (click)="cerrarMenuLateral(sideNav)"
             >
               Registar pago de cuotas
             </a>
-            <mat-divider *ngIf="permisos.registrarCuota > 1 && permisos.inscribirEstudiante > 1"></mat-divider>
+            <mat-divider *ngIf="permisos.cuotas > 1 && permisos.inscribirEstudiante > 1"></mat-divider>
             <a
               mat-list-item
               class="opciones-expansion"

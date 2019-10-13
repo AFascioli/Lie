@@ -53,7 +53,7 @@ export class MostrarEstudiantesComponent implements OnInit {
     agendaCursos:0,
     inscribirEstudiante:0,
     registrarEmpleado:0,
-    registrarCuota:0
+    cuotas:0
   };
   _mobileQueryListener: () => void;
   mobileQuery: MediaQueryList;

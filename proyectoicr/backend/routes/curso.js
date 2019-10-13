@@ -8,13 +8,12 @@ const CalificacionesXMateria = require("../models/calificacionesXMateria");
 const mongoose = require("mongoose");
 const checkAuthMiddleware = require("../middleware/check-auth");
 
-// Obtiene todos los cursos de un año
+// Obtiene todos los cursos
 router.get("/", checkAuthMiddleware, (req, res) => {
   Curso.find()
     .select({ curso: 1, _id: 1 })
     .then(cursos => {
       var respuesta = [];
-
       cursos.forEach(curso => {
         var cursoConId = {
           id: curso._id,
@@ -22,9 +21,38 @@ router.get("/", checkAuthMiddleware, (req, res) => {
         };
         respuesta.push(cursoConId);
       });
-
       res.status(200).json({ cursos: respuesta });
     });
+});
+
+//Obtiene todos los cursos asignados a un docente
+router.get("/docente", checkAuthMiddleware, (req, res) => {
+  Curso.aggregate([
+    {
+      $lookup: {
+        from: "materiasXCurso",
+        localField: "materias",
+        foreignField: "_id",
+        as: "mxc"
+      }
+    },
+    {
+      $match: {
+        "mxc.idDocente": mongoose.Types.ObjectId(req.query.idDocente)
+      }
+    }
+  ]).then(cursos => {
+    var respuesta = [];
+    cursos.forEach(curso => {
+      var cursoConId = {
+        id: curso._id,
+        curso: curso.curso
+      };
+      respuesta.push(cursoConId);
+    });
+
+    res.status(200).json({ cursos: respuesta });
+  });
 });
 
 //Obtiene las materias de un curso que se pasa por parametro
@@ -254,88 +282,81 @@ router.get(
   (req, res) => {
     Inscripcion.aggregate([
       {
-        $lookup: {
-          from: "estudiante",
-          localField: "idEstudiante",
-          foreignField: "_id",
-          as: "datosEstudiante"
+        '$lookup': {
+          'from': 'estudiante',
+          'localField': 'idEstudiante',
+          'foreignField': '_id',
+          'as': 'datosEstudiante'
         }
-      },
-      {
-        $project: {
-          "datosEstudiante._id": 1,
-          "datosEstudiante.nombre": 1,
-          "datosEstudiante.apellido": 1,
-          activa: 1,
-          idCurso: 1,
-          CalificacionesXMateria: 1
+      }, {
+        '$project': {
+          'datosEstudiante._id': 1,
+          'datosEstudiante.nombre': 1,
+          'datosEstudiante.apellido': 1,
+          'activa': 1,
+          'idCurso': 1,
+          'calificacionesXMateria': 1
         }
-      },
-      {
-        $lookup: {
-          from: "curso",
-          localField: "idCurso",
-          foreignField: "_id",
-          as: "curso"
+      }, {
+        '$lookup': {
+          'from': 'curso',
+          'localField': 'idCurso',
+          'foreignField': '_id',
+          'as': 'curso'
         }
-      },
-      {
-        $match: {
-          "curso._id": mongoose.Types.ObjectId(req.query.idCurso),
-          activa: true
+      }, {
+        '$match': {
+          'curso._id': mongoose.Types.ObjectId(req.query.idCurso),
+          'activa': true
         }
-      },
-      {
-        $project: {
-          "datosEstudiante._id": 1,
-          "datosEstudiante.nombre": 1,
-          "datosEstudiante.apellido": 1,
-          "curso.curso": 1,
-          calificacionesXMateria: 1
+      }, {
+        '$project': {
+          'datosEstudiante._id': 1,
+          'datosEstudiante.nombre': 1,
+          'datosEstudiante.apellido': 1,
+          'curso.curso': 1,
+          'calificacionesXMateria': 1
         }
-      },
-      {
-        $unwind: {
-          path: "$calificacionesXMateria"
+      }, {
+        '$unwind': {
+          'path': '$calificacionesXMateria'
         }
-      },
-      {
-        $lookup: {
-          from: "calificacionesXMateria",
-          localField: "calificacionesXMateria",
-          foreignField: "_id",
-          as: "calXMateria"
+      }, {
+        '$lookup': {
+          'from': 'calificacionesXMateria',
+          'localField': 'calificacionesXMateria',
+          'foreignField': '_id',
+          'as': 'calXMateria'
         }
-      },
-      {
-        $match: {
-          "calXMateria.materia": mongoose.Types.ObjectId(req.query.idMateria)
+      }, {
+        '$match': {
+          'calXMateria.idMateria': mongoose.Types.ObjectId(req.query.idMateria)
         }
-      },
-      {
-        $unwind: {
-          path: "$calXMateria.calificacionesXTrimestre"
+      }, {
+        '$unwind': {
+          'path': '$calXMateria'
         }
-      },
-      {
-        $lookup: {
-          from: "calificacionesXTrimestre",
-          localField: "calXMateria.calificacionesXTrimestre",
-          foreignField: "_id",
-          as: "notasXTrimestre"
+      }, {
+        '$unwind': {
+          'path': '$calXMateria.calificacionesXTrimestre'
         }
-      },
-      {
-        $match: {
-          "notasXTrimestre.trimestre": parseInt(req.query.trimestre, 10)
+      }, {
+        '$lookup': {
+          'from': 'calificacionesXTrimestre',
+          'localField': 'calXMateria.calificacionesXTrimestre',
+          'foreignField': '_id',
+          'as': 'notasXTrimestre'
         }
-      },
-      {
-        $project: {
-          "datosEstudiante._id": 1,
-          "datosEstudiante.nombre": 1,
-          "datosEstudiante.apellido": 1,
-          "notasXTrimestre.calificaciones": 1
+      }, {
+        '$match': {
+          'notasXTrimestre.trimestre': parseInt(req.query.trimestre,10)
+        }
+      }, {
+        '$project': {
+          'datosEstudiante._id': 1,
+          'datosEstudiante.nombre': 1,
+          'datosEstudiante.apellido': 1,
+          'notasXTrimestre.calificaciones': 1
         }
       }
     ]).then(documentos => {
@@ -345,7 +366,7 @@ router.get(
           idEstudiante: califEst.datosEstudiante[0]._id,
           apellido: califEst.datosEstudiante[0].apellido,
           nombre: califEst.datosEstudiante[0].nombre,
-          calificaciones: califEst.notasXTrimestre.calificaciones
+          calificaciones: califEst.notasXTrimestre[0].calificaciones
         };
         respuesta.push(calificacionesEstudiante);
       });
@@ -363,47 +384,43 @@ router.post(
     req.body.forEach(estudiante => {
       Inscripcion.aggregate([
         {
-          $match: {
-            idEstudiante: mongoose.Types.ObjectId(estudiante.idEstudiante)
+          '$match': {
+            'idEstudiante': mongoose.Types.ObjectId(estudiante.idEstudiante)
           }
-        },
-        {
-          $lookup: {
-            from: "calificacionesXMateria",
-            localField: "calificacionesXMateria",
-            foreignField: "_id",
-            as: "calXMatEstudiante"
+        }, {
+          '$lookup': {
+            'from': 'calificacionesXMateria',
+            'localField': 'calificacionesXMateria',
+            'foreignField': '_id',
+            'as': 'calXMatEstudiante'
           }
-        },
-        {
-          $unwind: {
-            path: "$calXMatEstudiante"
+        }, {
+          '$unwind': {
+            'path': '$calXMatEstudiante'
           }
-        },
-        {
-          $match: {
-            "calXMatEstudiante.idMateria": mongoose.Types.ObjectId(
-              req.query.idMateria
-            )
+        }, {
+          '$match': {
+            'calXMatEstudiante.idMateria': mongoose.Types.ObjectId(req.query.idMateria)
           }
-        },
-        {
-          $lookup: {
-            from: "calificacionesXTrimestre",
-            localField: "calificacionesXTrimestre",
-            foreignField: "_id",
-            as: "calXTrimestre"
+        }, {
+          '$lookup': {
+            'from': 'calificacionesXTrimestre',
+            'localField': 'calXMatEstudiante.calificacionesXTrimestre',
+            'foreignField': '_id',
+            'as': 'calXTrimestre'
           }
-        },
-        {
-          $match: {
-            "calXTrimestre.trimestre": parseInt(req.query.trimestre, 10)
+        }, {
+          '$unwind': {
+            'path': '$calXTrimestre'
           }
-        },
-        {
-          $project: {
-            "calXTrimestre.calificaciones": 1,
-            "calXTrimestre._id": 1
+        }, {
+          '$match': {
+            'calXTrimestre.trimestre': parseInt(req.query.trimestre,10)
+          }
+        }, {
+          '$project': {
+            'calXTrimestre.calificaciones': 1,
+            'calXTrimestre._id': 1
           }
         }
       ]).then(resultado => {

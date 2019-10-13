@@ -72,7 +72,6 @@ export class AutenticacionService {
           const duracionToken = response.duracionToken;
           this.rol = response.rol;
           this.id= response.idPersona;
-          console.log(response);
           this.timerAutenticacion(duracionToken);
           this.estaAutenticado = true;
           this.authStatusListener.next(true);

@@ -36,7 +36,7 @@ export class CalificacionesEstudiantesComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.servicio.obtenerCursos().subscribe(response => {
+    this.servicio.obtenerCursosDeDocente(this.servicioAutenticacion.getId()).subscribe(response => {
       this.cursos = response.cursos;
       this.cursos.sort((a, b) =>
         a.curso.charAt(0) > b.curso.charAt(0)
@@ -75,16 +75,18 @@ export class CalificacionesEstudiantesComponent implements OnInit {
     });
   }
 
-  onMateriaSeleccionada(form: NgForm) {
-    this.servicio
+  obtenerNotas(form: NgForm) {
+    if(form.value.curso != "" || form.value.materia != ""){
+      this.servicio
       .obtenerEstudiantesXCursoXMateria(
         form.value.curso,
         form.value.materia,
         form.value.trimestre
-      )
-      .subscribe(respuesta => {
-        this.estudiantes = [...respuesta.estudiantes];
-      });
+        )
+        .subscribe(respuesta => {
+          this.estudiantes = [...respuesta.estudiantes];
+        });
+      }
   }
 
   onGuardar(form: NgForm) {
