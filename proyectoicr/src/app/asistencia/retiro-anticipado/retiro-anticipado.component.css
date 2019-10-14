@@ -19,19 +19,7 @@
 
 .div-button {
   text-align: right;
-}
-
-.contenido {
-  width: 41%;
-  margin-left: auto;
-  margin-right: auto;
-  margin-top: 1rem;
-}
-
-.card-datos{
-  margin: auto;
-  margin-top: 3rem !important;
-  width: 100%;
+  margin-top: 3%;
 }
 
 .contenido-mobile {
@@ -44,11 +32,6 @@
 
 .label-radio-button {
   white-space: normal !important;
-}
-
-.tituloTutores {
-  margin-top: 3% !important;
-  margin: auto;
 }
 
 table {
@@ -69,4 +52,9 @@ th {
 td,
 th {
   text-align: center;
+}
+
+.contenido{
+  text-align: center;
+  margin-top: 8%;
 }

@@ -20,6 +20,7 @@
   </div>
 
   <br />
+  <div class="contenido">
   <h3 class="tituloTutores">
     Tutores del estudiante: {{ apellidoEstudiante }}, {{ nombreEstudiante }}
   </h3>
@@ -51,7 +52,7 @@
     <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
     <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
   </table>
-
+</div>
   <br />
 
   <mat-radio-group aria-label="Select an option">
