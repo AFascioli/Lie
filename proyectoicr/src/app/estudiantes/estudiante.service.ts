@@ -7,6 +7,7 @@ import { Subject } from "rxjs";
 import { Localidad } from "./localidades.model";
 import { Nacionalidad } from "./nacionalidades.model";
 import { environment } from "src/environments/environment";
+import { stringify } from 'querystring';
 
 @Injectable({
   providedIn: "root"
@@ -281,6 +282,25 @@ export class EstudiantesService {
       .set("idCurso", idcurso);
     return this.http.get<{ materias: any[] }>(
       environment.apiUrl + "/curso/materiasDeCurso",
+      { params: params }
+    );
+  }
+
+  obtenerCapacidadCurso(idCurso: string){
+    let params = new HttpParams()
+      .set("idCurso", idCurso);
+    return this.http.get<{ message: string, exito: boolean, capacidad: number }>(
+      environment.apiUrl + "/curso/capacidad",
+      { params: params }
+    );
+  }
+
+  //Checkea si un estudiante esta o no inscripto en un curso
+  estudianteEstaInscripto(idEstudiante: string){
+    let params = new HttpParams()
+      .set("idEstudiante", idEstudiante);
+    return this.http.get<{ message: string, exito: boolean }>(
+      environment.apiUrl + "/estudiante/curso",
       { params: params }
     );
   }

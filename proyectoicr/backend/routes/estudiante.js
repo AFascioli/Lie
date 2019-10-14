@@ -12,7 +12,7 @@ const checkAuthMiddleware = require("../middleware/check-auth");
 //Registra un nuevo estudiante y pone su estado a registrado
 router.post("", checkAuthMiddleware, (req, res, next) => {
   Estado.findOne({
-    ambito: "Inscripcion",
+    ambito: "Estudiante",
     nombre: "Registrado"
   }).then(estado => {
     const estudiante = new Estudiante({
@@ -33,7 +33,7 @@ router.post("", checkAuthMiddleware, (req, res, next) => {
       fechaNacimiento: req.body.fechaNacimiento,
       estadoCivil: req.body.estadoCivil,
       telefonoFijo: req.body.telefonoFijo,
-      adultoResponsable: "null",
+      adultoResponsable: [],
       activo: true,
       estado: estado._id
     });
@@ -124,6 +124,28 @@ router.delete("/borrar", checkAuthMiddleware, (req, res, next) => {
   });
 });
 
+//Dada una id de estudiante, se fija si esta inscripto en un curso
+router.get("/curso", checkAuthMiddleware, (req, res) => {
+  Estudiante.findOne({ _id: req.query.idEstudiante, activo: true }).then(
+    estudiante => {
+      Estado.findById(estudiante.estado).then(estado => {
+        if (estado.nombre == "Inscripto") {
+          res.status(200).json({
+            message:
+              "El estudiante seleccionado ya se encuentra inscripto en un curso",
+            exito: true
+          });
+        } else {
+          res.status(200).json({
+            message: "El estudiante seleccionado no esta inscripto en un curso",
+            exito: false
+          });
+        }
+      });
+    }
+  );
+});
+
 //Retorna vector con datos de los estudiantes y presente. Si ya se registro una asistencia para
 //el dia de hoy se retorna ese valor de la asistencia, sino se "construye" una nueva
 //#resolve
@@ -171,6 +193,7 @@ router.get("/asistencia", checkAuthMiddleware, (req, res) => {
   ]).then(ultimaAsistencia => {
     var fechaHoy = new Date();
     fechaHoy.setHours(fechaHoy.getHours() - 3);
+    //Compara si la ultima asistencia fue el dia de hoy
     if (
       ultimaAsistencia[0].asistencia.length > 0 &&
       fechaHoy.getDate() == ultimaAsistencia[0].asistencia[0].fecha.getDate() &&
@@ -230,15 +253,15 @@ router.get("/asistencia", checkAuthMiddleware, (req, res) => {
       ]).then(asistenciaCurso => {
         var respuesta = [];
         asistenciaCurso.forEach(estudiante => {
-          var estudianteRefinado = {
-            _id: estudiante.datosEstudiante[0]._id,
-            nombre: estudiante.datosEstudiante[0].nombre,
-            apellido: estudiante.datosEstudiante[0].apellido,
-            idAsistencia: estudiante.asistencia[0]._id,
-            fecha: fechaHoy,
-            presente: estudiante.asistencia[0].presente
-          };
-          respuesta.push(estudianteRefinado);
+            var estudianteRefinado = {
+              _id: estudiante.datosEstudiante[0]._id,
+              nombre: estudiante.datosEstudiante[0].nombre,
+              apellido: estudiante.datosEstudiante[0].apellido,
+              idAsistencia: estudiante.asistencia[0]._id,
+              fecha: fechaHoy,
+              presente: estudiante.asistencia[0].presente
+            };
+            respuesta.push(estudianteRefinado);
         });
         res
           .status(200)
@@ -343,7 +366,9 @@ router.post("/asistencia", checkAuthMiddleware, (req, res) => {
       }
     });
   }
-  res.status(201).json({ message: "Asistencia registrada exitosamente", exito: true });
+  res
+    .status(201)
+    .json({ message: "Asistencia registrada exitosamente", exito: true });
 });
 
 //Obtiene la id de la asistencia diaria del dia de hoy, y cambia los valores de la inasistencia para indicar el retiro correspondiente
@@ -468,8 +493,9 @@ router.get("/materia/calificaciones", (req, res) => {
         foreignField: "_id",
         as: "cXT"
       }
-    },{
-      $unwind:{
+    },
+    {
+      $unwind: {
         path: "$cXT"
       }
     },
@@ -658,7 +684,7 @@ router.get("/notificacion", (req, res) => {
     "Título de prueba",
     "Contenido de prueba."
   );
-   res.status(200).json({ message: "Prueba de notificación" });
+  res.status(200).json({ message: "Prueba de notificación" });
 });
 
 module.exports = router;

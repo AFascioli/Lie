@@ -165,12 +165,18 @@ router.get("/materias", checkAuthMiddleware, (req, res) => {
   });
 });
 
+router.get("/capacidad", checkAuthMiddleware, (req, res) => {
+  Curso.findById(req.query.idCurso).then(curso => {
+    res.status(200).json({message: "Operación exitosa", exito: true, capacidad: curso.capacidad})
+  })
+});
+
 // Inscribe un estudiante seleccionado a un curso pasado por parametro
 router.post("/inscripcion", checkAuthMiddleware, (req, res) => {
   Estudiante.aggregate([
     {
       $match: {
-        _id: mongoose.Types.ObjectId(req.query.idEstudiante),
+        _id: mongoose.Types.ObjectId(req.body.idEstudiante),
         activo: true
       }
     },
@@ -248,14 +254,14 @@ router.post("/inscripcion", checkAuthMiddleware, (req, res) => {
             });
           });
           //se obtiene el id del estado y se registra la nueva inscripcion
-          Curso.findOne({ curso: req.body.curso }).then(cursoSeleccionado => {
+          Curso.findOne({ _id: req.body.idCurso }).then(cursoSeleccionado => {
             Estado.findOne({
               nombre: "Inscripto",
               ambito: "Inscripcion"
             }).then(estado => {
               const nuevaInscripcion = new Inscripcion({
-                IdEstudiante: req.body.IdEstudiante,
-                IdCurso: cursoSeleccionado._id,
+                idEstudiante: req.body.idEstudiante,
+                idCurso: cursoSeleccionado._id,
                 documentosEntregados: req.body.documentosEntregados,
                 activa: true,
                 estado: estado._id,
@@ -264,17 +270,18 @@ router.post("/inscripcion", checkAuthMiddleware, (req, res) => {
                 calificacionesXMateria: idsCalXMateria
               });
               nuevaInscripcion.save().then(() => {
+                cursoSeleccionado.capacidad=cursoSeleccionado.capacidad -1;
+                cursoSeleccionado.save();
                 //Le cambiamos el estado al estudiante
                 Estado.findOne({
                   nombre: "Inscripto",
                   ambito: "Estudiante"
                 }).then(estadoEstudiante => {
-                  estudiante.estado = estadoEstudiante._id;
-                  estudiante.save();
-
-                  res.status(201).json({
-                    message: "Estudiante inscripto exitosamente",
-                    exito: true
+                  Estudiante.findByIdAndUpdate(req.body.idEstudiante, {estado: estadoEstudiante._id}).then(() => {
+                    res.status(201).json({
+                      message: "Estudiante inscripto exitosamente",
+                      exito: true
+                    });
                   });
                 });
               });

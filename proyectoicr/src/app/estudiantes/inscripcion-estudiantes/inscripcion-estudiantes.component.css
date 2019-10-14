@@ -70,3 +70,10 @@
   text-align: center;
 }
 
+.capacidad{
+  text-align: center;
+}
+
+.mensajeAtencion{
+  color: red;
+}
