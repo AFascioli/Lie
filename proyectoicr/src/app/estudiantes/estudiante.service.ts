@@ -264,12 +264,23 @@ export class EstudiantesService {
     return this.http.get<{ cursos: any[] }>(environment.apiUrl + "/curso");
   }
 
+  //Cambiar nombre a obtenerMateriasXCursoXDocente
   obtenerMateriasXCurso(idcurso, idDocente) {
     let params = new HttpParams()
       .set("idCurso", idcurso)
       .set("idDocente", idDocente);
     return this.http.get<{ materias: any[] }>(
       environment.apiUrl + "/curso/materias",
+      { params: params }
+    );
+  }
+
+  //Obtiene todas las materias de un curso sin filtrar por docente
+  obtenerMateriasDeCurso(idcurso) {
+    let params = new HttpParams()
+      .set("idCurso", idcurso);
+    return this.http.get<{ materias: any[] }>(
+      environment.apiUrl + "/curso/materiasDeCurso",
       { params: params }
     );
   }

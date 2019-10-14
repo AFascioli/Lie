@@ -10,7 +10,7 @@
         <mat-icon aria-label="Side nav toggle icon">menu</mat-icon>
       </button>
       <!-- <h3 class="tituloMenu">Menú</h3> -->
-      <p class="titulo-row"> L I É</p>
+      <p class="titulo-row">L I É</p>
       <button mat-button class="homeButton" (click)="onClickHome()">
         <mat-icon>home </mat-icon>
       </button>
@@ -49,7 +49,9 @@
             >
               Registrar agenda de curso
             </a>
-            <mat-divider *ngIf="permisos.agendaCursos > 1 && permisos.asistencia > 1"></mat-divider>
+            <mat-divider
+              *ngIf="permisos.agendaCursos > 1 && permisos.asistencia > 1"
+            ></mat-divider>
             <a
               mat-list-item
               class="opciones-expansion"
@@ -59,7 +61,9 @@
             >
               Tomar asistencia
             </a>
-            <mat-divider *ngIf="permisos.asistencia > 1 && permisos.cuotas > 1"></mat-divider>
+            <mat-divider
+              *ngIf="permisos.asistencia > 1 && permisos.cuotas > 1"
+            ></mat-divider>
             <a
               mat-list-item
               class="opciones-expansion"
@@ -69,7 +73,9 @@
             >
               Registar pago de cuotas
             </a>
-            <mat-divider *ngIf="permisos.cuotas > 1 && permisos.inscribirEstudiante > 1"></mat-divider>
+            <mat-divider
+              *ngIf="permisos.cuotas > 1 && permisos.inscribirEstudiante > 1"
+            ></mat-divider>
             <a
               mat-list-item
               class="opciones-expansion"
@@ -79,16 +85,27 @@
             >
               Registrar documentos inscripción
             </a>
-            <mat-divider *ngIf="permisos.inscribirEstudiante > 1 && permisos.notas >= 1"></mat-divider>
+            <mat-divider
+              *ngIf="permisos.inscribirEstudiante > 1 && permisos.notas >= 1"
+            ></mat-divider>
             <a
-            mat-list-item
-            class="opciones-expansion"
-            routerLink="/calificacionesEstudiantes"
-            *ngIf="permisos.notas >= 1"
-            (click)="cerrarMenuLateral(sideNav)"
-          >
-            Registrar calificaciones
-          </a>
+              mat-list-item
+              class="opciones-expansion"
+              routerLink="/calificacionesEstudiantes"
+              *ngIf="permisos.notas > 1"
+              (click)="cerrarMenuLateral(sideNav)"
+            >
+              Registrar calificaciones
+            </a>
+            <a
+              mat-list-item
+              class="opciones-expansion"
+              routerLink="/calificacionesEstudiantes"
+              *ngIf="permisos.notas == 1"
+              (click)="cerrarMenuLateral(sideNav)"
+            >
+              Visualizar calificaciones
+            </a>
           </mat-expansion-panel>
           <mat-expansion-panel
             class="opcion"
@@ -103,24 +120,24 @@
                 </a>
               </mat-panel-title>
             </mat-expansion-panel-header>
-              <a
-                mat-list-item
-                class="opciones-expansion"
-                routerLink="/alta"
-                *ngIf="permisos.inscribirEstudiante > 1"
-                (click)="cerrarMenuLateral(sideNav)"
-              >
-                Registrar
-              </a>
-              <mat-divider *ngIf="permisos.inscribirEstudiante > 1"></mat-divider>
-              <a
-                mat-list-item
-                class="opciones-expansion"
-                routerLink="/buscar"
-                (click)="cerrarMenuLateral(sideNav)"
-              >
-                Buscar
-              </a>
+            <a
+              mat-list-item
+              class="opciones-expansion"
+              routerLink="/alta"
+              *ngIf="permisos.inscribirEstudiante > 1"
+              (click)="cerrarMenuLateral(sideNav)"
+            >
+              Registrar
+            </a>
+            <mat-divider *ngIf="permisos.inscribirEstudiante > 1"></mat-divider>
+            <a
+              mat-list-item
+              class="opciones-expansion"
+              routerLink="/buscar"
+              (click)="cerrarMenuLateral(sideNav)"
+            >
+              Buscar
+            </a>
           </mat-expansion-panel>
           <mat-expansion-panel
             class="opcion"
@@ -180,17 +197,20 @@
           </mat-expansion-panel>
         </mat-accordion>
       </mat-nav-list>
-        <button mat-button class="preferencias" routerLink="/preferencias" >
-          <mat-icon>settings</mat-icon>
-          Preferencias
-        </button>
-        <button mat-button class="cierreSesion" (click)="cierreSesion()">
-          <mat-icon>exit_to_app</mat-icon>
-          Cerrar sesión
-        </button>
+      <button mat-button class="preferencias" routerLink="/preferencias">
+        <mat-icon>settings</mat-icon>
+        Preferencias
+      </button>
+      <button mat-button class="cierreSesion" (click)="cierreSesion()">
+        <mat-icon>exit_to_app</mat-icon>
+        Cerrar sesión
+      </button>
     </mat-sidenav>
     <mat-sidenav-content>
-      <div class="body-contenido" [class.body-contenido-mobile]="mobileQuery.matches">
+      <div
+        class="body-contenido"
+        [class.body-contenido-mobile]="mobileQuery.matches"
+      >
         <router-outlet></router-outlet>
       </div>
     </mat-sidenav-content>

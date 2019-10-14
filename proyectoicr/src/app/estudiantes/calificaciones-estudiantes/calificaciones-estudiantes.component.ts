@@ -36,19 +36,9 @@ export class CalificacionesEstudiantesComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.servicio.obtenerCursosDeDocente(this.servicioAutenticacion.getId()).subscribe(response => {
-      this.cursos = response.cursos;
-      this.cursos.sort((a, b) =>
-        a.curso.charAt(0) > b.curso.charAt(0)
-          ? 1
-          : b.curso.charAt(0) > a.curso.charAt(0)
-          ? -1
-          : 0
-      );
-    });
-
     this.trimestrePorDefault();
     this.validarPermisos();
+    this.obtenerCursos();
   }
 
   validarPermisos() {
@@ -57,6 +47,32 @@ export class CalificacionesEstudiantesComponent implements OnInit {
         this.rolConPermisosEdicion = true;
       }
     });
+  }
+
+  obtenerCursos(){
+    if(this.rolConPermisosEdicion && this.servicioAutenticacion.getRol() !="Admin"){
+      this.servicio.obtenerCursosDeDocente(this.servicioAutenticacion.getId()).subscribe(response => {
+        this.cursos = response.cursos;
+        this.cursos.sort((a, b) =>
+          a.curso.charAt(0) > b.curso.charAt(0)
+            ? 1
+            : b.curso.charAt(0) > a.curso.charAt(0)
+            ? -1
+            : 0
+        );
+      });
+    }else{
+      this.servicio.obtenerCursos().subscribe(response => {
+        this.cursos = response.cursos;
+        this.cursos.sort((a, b) =>
+          a.curso.charAt(0) > b.curso.charAt(0)
+            ? 1
+            : b.curso.charAt(0) > a.curso.charAt(0)
+            ? -1
+            : 0
+        );
+      });
+    }
   }
 
   trimestrePorDefault() {
@@ -70,9 +86,16 @@ export class CalificacionesEstudiantesComponent implements OnInit {
   }
 
   onCursoSeleccionado(curso) {
-    this.servicio.obtenerMateriasXCurso(curso.value, this.servicioAutenticacion.getId()).subscribe(respuesta => {
-      this.materias = respuesta.materias;
-    });
+    if(this.rolConPermisosEdicion && this.servicioAutenticacion.getRol() !="Admin"){
+      this.servicio.obtenerMateriasXCurso(curso.value, this.servicioAutenticacion.getId()).subscribe(respuesta => {
+        this.materias = respuesta.materias;
+      });
+    }
+    else{
+      this.servicio.obtenerMateriasDeCurso(curso.value).subscribe(respuesta => {
+        this.materias = respuesta.materias;
+      });
+    }
   }
 
   obtenerNotas(form: NgForm) {

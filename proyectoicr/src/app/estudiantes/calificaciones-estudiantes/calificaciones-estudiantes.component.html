@@ -1,5 +1,8 @@
-<h1 class="componente-titulo">
+<h1 *ngIf="rolConPermisosEdicion" class="componente-titulo">
   Registrar calificaciones
+</h1>
+<h1 *ngIf="!rolConPermisosEdicion" class="componente-titulo">
+  Visualizar calificaciones
 </h1>
 
 <mat-card class="card-body-componente">

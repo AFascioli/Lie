@@ -12,7 +12,7 @@
   float: right;
 }
 
-.inputFecha{
+.inputFecha {
   width: 0%;
   color: black !important;
 }
@@ -38,10 +38,35 @@
   width: 100%;
 }
 
-.card-datos-mobile{
+.card-datos-mobile {
   width: 90%;
 }
 
-.label-radio-button{
+.label-radio-button {
   white-space: normal !important;
+}
+
+.tituloTutores {
+  margin-top: 3% !important;
+  margin: auto;
+}
+
+table {
+  width: 50%;
+  margin: auto;
+}
+
+.columnasNormales {
+  width: 22% !important;
+  text-align: center;
+}
+
+th {
+  font-weight: bold;
+  font-size: 15px;
+}
+
+td,
+th {
+  text-align: center;
 }

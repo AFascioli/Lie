@@ -9,7 +9,7 @@ const mongoose = require("mongoose");
 const Estudiante= require("../models/estudiante");
 const checkAuthMiddleware = require("../middleware/check-auth");
 
-// Obtiene todos los cursos
+// Obtiene todos los cursos sin filtrar
 router.get("/", checkAuthMiddleware, (req, res) => {
   Curso.find()
     .select({ curso: 1, _id: 1 })
@@ -56,7 +56,55 @@ router.get("/docente", checkAuthMiddleware, (req, res) => {
   });
 });
 
-//Obtiene las materias de un curso que se pasa por parametro
+//Obtiene las materias de un curso y un docente que se pasa por parametro
+router.get("/materiasDeCurso", checkAuthMiddleware, (req, res) => {
+  Curso.aggregate([
+    {
+      $match: {
+        _id: mongoose.Types.ObjectId(req.query.idCurso)
+      }
+    },
+    {
+      $lookup: {
+        from: "materiasXCurso",
+        localField: "materias",
+        foreignField: "_id",
+        as: "materiasDeCurso"
+      }
+    },
+    {
+      $project: {
+        "materiasDeCurso.materia": 1,
+        _id: 0
+      }
+    },
+    {
+      $lookup: {
+        from: "materia",
+        localField: "materiasDeCurso.materia",
+        foreignField: "_id",
+        as: "materias"
+      }
+    },
+    {
+      $project: {
+        materias: 1
+      }
+    }
+  ]).then(rtdoMaterias => {
+    var respuesta = [];
+    rtdoMaterias[0].materias.forEach(materia => {
+      var datosMateria = {
+        id: materia._id,
+        nombre: materia.nombre
+      };
+      respuesta.push(datosMateria);
+    });
+    res.status(200).json({ materias: respuesta });
+  });
+});
+
+//Obtiene las materias de un curso y un docente que se pasa por parametro
 router.get("/materias", checkAuthMiddleware, (req, res) => {
   Curso.aggregate([
     {
