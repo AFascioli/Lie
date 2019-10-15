@@ -24,7 +24,8 @@
   <h3 class="tituloTutores">
     Tutores del estudiante: {{ apellidoEstudiante }}, {{ nombreEstudiante }}
   </h3>
-  <table mat-table [dataSource]="tutores" *ngIf="tutores">
+  <p *ngIf="tutores.length==0">El estudiante seleccionado no tiene registrado ningun adulto responsable</p>
+  <table mat-table [dataSource]="tutores" *ngIf="tutores && tutores.length!=0">
     <ng-container matColumnDef="apellido">
       <th class="columnasNormales" mat-header-cell *matHeaderCellDef>
         Apellido/s

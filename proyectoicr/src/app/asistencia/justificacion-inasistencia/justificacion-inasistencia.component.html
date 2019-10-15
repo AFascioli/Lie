@@ -2,16 +2,17 @@
 <mat-card class="card-body-componente">
   <form #form="ngForm">
     <div class="contenido">
-    <p class="p-inasistencias"><b>Ultimas Inasistencias</b></p>
+      <p *ngIf="ultimasInasistencias.length==0">El estudiante seleccionado no presenta inasistencias en los últimos 5 días</p>
+      <p *ngIf="ultimasInasistencias.length!=0" class="p-inasistencias"><b>Últimas Inasistencias</b></p>
       <p
-      class="p-inasistencias"
-      *ngFor="let inasistencia of ultimasInasistencias; let i = index"
+        class="p-inasistencias"
+        *ngFor="let inasistencia of ultimasInasistencias; let i = index"
       >
-      <mat-checkbox (change)="onChecked(i)"></mat-checkbox>
-      {{ inasistencia.fecha | date: "EEEE" | titlecase }}
-      {{ inasistencia.fecha | date: "dd/MM/yyyy" }}
-    </p>
-  </div>
+        <mat-checkbox (change)="onChecked(i)"></mat-checkbox>
+        {{ inasistencia.fecha | date: "EEEE" | titlecase }}
+        {{ inasistencia.fecha | date: "dd/MM/yyyy" }}
+      </p>
+    </div>
     <div class="div-button">
       <button
         mat-raised-button
