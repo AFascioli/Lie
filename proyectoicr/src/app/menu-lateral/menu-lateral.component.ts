@@ -60,6 +60,7 @@ export class MenuLateralComponent implements OnInit {
 
 
   cerrarMenuLateral(sideNav: MatSidenav){
+    this.estudianteService.retornoDesdeAcciones=false;
     if(this.mobileQuery.matches){
       sideNav.toggle();
     }
