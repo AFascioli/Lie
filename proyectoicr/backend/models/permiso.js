@@ -11,4 +11,4 @@ const permisoSchema = mongoose.Schema({
   cuotas: Number
 });
 
-module.exports= mongoose.model('permisos', permisoSchema,'permisos');
+module.exports= mongoose.model('permiso', permisoSchema,'permiso');

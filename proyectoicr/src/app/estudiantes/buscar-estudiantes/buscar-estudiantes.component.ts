@@ -24,6 +24,11 @@ export class BuscarEstudiantesComponent implements OnInit {
   constructor(public servicio: EstudiantesService, public dialog: MatDialog, public servicioAR: AdultoResponsableService) {   }
 
   ngOnInit() {
+    console.log(this.servicio.retornoDesdeAcciones);
+  if(!this.servicio.retornoDesdeAcciones){
+    this.nombreEstSelec="";
+    this.apellidoEstSelec="";
+  }
    if(this.servicio.retornoDesdeAcciones && this.servicio.busquedaEstudianteXNombre)
    {
     this.servicio.buscarEstudiantesNombreApellido(this.servicio.estudianteSeleccionado.nombre, this.servicio.estudianteSeleccionado.apellido);

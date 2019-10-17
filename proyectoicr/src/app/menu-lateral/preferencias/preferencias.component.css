@@ -1,6 +1,6 @@
 .div-button {
   margin-top: 6%;
-  margin-bottom: 3% !important;
+  margin-bottom: 5% !important;
   text-align: right;
   margin-right: 15% !important;
 }
@@ -8,4 +8,9 @@
 .botones-preferencias{
   text-align: center;
   margin-top: 3%;
+  margin-bottom: 7%;
+}
+
+.buttonPrimary{
+  margin-bottom: 3% !important;
 }

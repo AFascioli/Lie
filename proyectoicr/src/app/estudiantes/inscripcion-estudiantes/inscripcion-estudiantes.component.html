@@ -26,11 +26,11 @@
         <b>Apellido/s: </b> {{ apellidoEstudiante }}
         <br />
         <b>Nombre/s: </b> {{ nombreEstudiante }}
+        <p class="mensajeAtencion" *ngIf="estudianteEstaInscripto"><b>Atención, el estudiante seleccionado ya esta inscripto en un curso </b></p>
       </mat-card-subtitle>
     </mat-card>
   </div>
   <br />
-
   <br />
   <form #form="ngForm">
     <div class="div-selects">
@@ -42,16 +42,18 @@
           #curso="ngModel"
           matNativeControl
           required
+          (selectionChange)="onCursoSeleccionado(curso)"
         >
           <mat-option
             *ngFor="let objCurso of cursos"
-            [value]="objCurso.curso"
+            [value]="objCurso.id"
           >
             {{ objCurso.curso }}
           </mat-option>
         </mat-select>
       </mat-form-field>
     </div>
+    <p class="capacidad" *ngIf="capacidadCurso>=0"><b>Cupos disponibles: </b>{{capacidadCurso}}</p>
     <br />
     <mat-accordion>
       <mat-expansion-panel [class.mat-expansion-panel-mobile]="mobileQuery.matches">

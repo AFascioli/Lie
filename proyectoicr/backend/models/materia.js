@@ -4,4 +4,4 @@ const materiaSchema = mongoose.Schema({
   nombre: String
 });
 
-module.exports= mongoose.model('materias', materiaSchema);
+module.exports= mongoose.model('materia', materiaSchema, "materia");

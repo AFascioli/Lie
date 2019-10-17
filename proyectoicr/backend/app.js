@@ -20,7 +20,7 @@ const app = express(); // Creo la app express
 mongoose
   .connect(
     "mongodb+srv://ComandanteJr:SNcjNuPBMG42lOh1@cluster0-qvosw.mongodb.net/icrdev?retryWrites=true",
-    { useNewUrlParser: true }
+    { useNewUrlParser: true, useUnifiedTopology: true  }
   )
   .then(() => {
     console.log("Conexión a base de datos de producción exitosa");
@@ -50,7 +50,7 @@ app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader(
     "Access-Control-Allow-Headers",
-    "Origin, X-Requested-With, Content-Type, Accept, Authorization"
+    "Origin, X-Requested-With, Content-Type, Accept, Authorization, Access-Control-Allow-Headers"
   );
   res.setHeader(
     "Access-Control-Allow-Methods",

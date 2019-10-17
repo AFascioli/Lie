@@ -3,14 +3,16 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const Usuario = require("../models/usuario");
 const Rol = require("../models/rol");
+const Empleado = require("../models/empleado");
+const AdultoResponsable = require("../models/adultoResponsable");
 const router = express.Router();
 
 router.post("/signup", (req, res) => {
   Usuario.findOne({ email: req.body.email }).then(usuario => {
     if (usuario) {
       return res.status(200).json({
-        message: "El usuario ya estaba registrado",
-        exito: true
+        message: "Ya existe un usuario con el email ingresado",
+        exito: false
       });
     } else {
       Rol.findOne({ tipo: req.body.rol }).then(rol => {
@@ -22,7 +24,7 @@ router.post("/signup", (req, res) => {
           });
           usuario
             .save()
-            .then(result => {
+            .then(() => {
               res.status(201).json({
                 message: "Usuario creado exitosamente",
                 exito: true,
@@ -66,14 +68,33 @@ router.post("/login", (req, res) => {
           { expiresIn: "12h" }
         );
         Rol.findById(usuarioEncontrado.rol).then(rol => {
-          res.status(200).json({
-            token: token,
-            duracionToken: 43200,
-            rol: rol.tipo,
-            message: "Bienvenido a Lié",
-            exito: true
+          let idPersona="";
+          if (rol.tipo == "Docente") {
+               Empleado.findOne({ idUsuario: usuarioEncontrado._id }).then(
+                async empleado => {
+                  idPersona = empleado._id;
+                 await res.status(200).json({
+                    token: token,
+                    duracionToken: 43200,
+                    rol: rol.tipo,
+                    idPersona: idPersona,
+                    message: "Bienvenido a Lié",
+                    exito: true
+                  });
+                }
+              );
+            }
+            else{
+               res.status(200).json({
+                token: token,
+                duracionToken: 43200,
+                rol: rol.tipo,
+                idPersona: idPersona,
+                message: "Bienvenido a Lié",
+                exito: true
+              });
+            }
           });
-        });
       }
     }
   });
@@ -111,7 +132,7 @@ router.get("/permisosDeRol", (req, res) => {
     },
     {
       $lookup: {
-        from: "permisos",
+        from: "permiso",
         localField: "permisos",
         foreignField: "_id",
         as: "permisosRol"
@@ -125,23 +146,18 @@ router.get("/permisosDeRol", (req, res) => {
       }
     }
   ]).then(permisos => {
-    return res
-      .status(200)
-      .json({
-        message: "Se obtuvo los permisos del rol exitosamente",
-        exito: true,
-        permisos: permisos[0].permisosRol[0]
-      });
+    return res.status(200).json({
+      message: "Se obtuvo los permisos del rol exitosamente",
+      exito: true,
+      permisos: permisos[0].permisosRol[0]
+    });
   });
 });
 
 router.post("/suscripcion", (req, res) => {
   Usuario.findOneAndUpdate({email: req.body.email}, { $push: { suscripciones: req.body.sub }}).then((usuario) => {
-    console.log("[Usuario.suscripciones]: ");
-    console.dir(usuario.suscripciones);
     usuario.save().then(() => {
-      console.log('Suscripción registrada.');
-      return res.status(201).json({message: "Suscripción registrada correctamente"});
+      res.status(201).json({message: "Suscripción registrada correctamente"});
     });
   }).catch((e) => {
     console.log(e);

@@ -18,5 +18,5 @@ export interface Estudiante {
   fechaNacimiento: string;
   estadoCivil: string;
   telefonoFijo: number;
-  adultoResponsable: string;
+  //adultoResponsable: string;
 }

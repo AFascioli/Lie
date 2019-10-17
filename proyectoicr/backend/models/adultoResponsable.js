@@ -11,8 +11,8 @@ const adultoResponsableSchema = mongoose.Schema({
     telefono: Number,
     email: String,
     tutor: Boolean,
-    idUsuario: { type: mongoose.Schema.Types.ObjectId, ref: "usuarios" },
-    estudiantes: [{type: mongoose.Schema.Types.ObjectId, ref: "estudiantes"}]
+    idUsuario: { type: mongoose.Schema.Types.ObjectId, ref: "usuario" },
+    estudiantes: [{type: mongoose.Schema.Types.ObjectId, ref: "estudiante"}]
 });
 
 module.exports= mongoose.model('adultoResponsable', adultoResponsableSchema, 'adultoResponsable');

@@ -50,8 +50,8 @@ export class AltaEmpleadoComponent implements OnInit, OnDestroy {
   }
 
   onGuardar(form: NgForm) {
-    if (form.invalid) {
-    } else {
+    if(!form.invalid) {
+      console.log(form.value.email);
       this.servicio.registrarEmpleado(
         form.value.apellido,
         form.value.nombre,
@@ -63,20 +63,24 @@ export class AltaEmpleadoComponent implements OnInit, OnDestroy {
         form.value.telefono,
         form.value.email,
         form.value.tipoEmpleado
-      );
-      form.resetForm();
-    }
-  }
-
-snackBarGuardar(form: NgForm): void {
-    if (form.invalid) {
-      this.snackBar.open("Faltan campos por completar", "", {
-        panelClass: ['snack-bar-fracaso'],
-        duration: 4000
+        ).subscribe(response=>{
+          console.log(response);
+        if(response.exito){
+          this.snackBar.open(response.message, "", {
+            panelClass: ["snack-bar-exito"],
+            duration: 4000
+          });
+          form.resetForm();
+        }else{
+          this.snackBar.open(response.message, "", {
+            panelClass: ["snack-bar-fracaso"],
+            duration: 4000
+          });
+        }
       });
-    } else {
-      this.snackBar.open("El empleado se ha registrado correctamente", "", {
-        panelClass: ['snack-bar-exito'],
+    }else{
+      this.snackBar.open("Faltan campos por completar", "", {
+        panelClass: ["snack-bar-fracaso"],
         duration: 4000
       });
     }

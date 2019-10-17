@@ -19,12 +19,14 @@ import { MediaMatcher } from "@angular/cdk/layout";
 export class InscripcionEstudianteComponent implements OnInit {
   cursos: any[];
   diaActual: string;
+  capacidadCurso: number;
   apellidoEstudiante: string;
   nombreEstudiante: string;
   _idEstudiante: string;
   matConfig = new MatDialogConfig();
   seleccionDeAnio: boolean = false;
   fechaActual: Date;
+  estudianteEstaInscripto: boolean;
   documentosEntregados = [
     { nombre: "Fotocopia documento", entregado: false },
     { nombre: "Ficha medica", entregado: false },
@@ -50,6 +52,9 @@ export class InscripcionEstudianteComponent implements OnInit {
     this.apellidoEstudiante = this.servicio.estudianteSeleccionado.apellido;
     this.nombreEstudiante = this.servicio.estudianteSeleccionado.nombre;
     this._idEstudiante = this.servicio.estudianteSeleccionado._id;
+    this.servicio.estudianteEstaInscripto(this._idEstudiante).subscribe(response => {
+       this.estudianteEstaInscripto= response.exito;
+    })
     this.servicio.obtenerCursos().subscribe(response => {
       this.cursos = response.cursos;
       this.cursos.sort((a, b) =>
@@ -62,6 +67,14 @@ export class InscripcionEstudianteComponent implements OnInit {
     });
   }
 
+  //Obtiene la capacidad del curso seleccionado
+  onCursoSeleccionado(curso){
+    this.servicio.obtenerCapacidadCurso(curso.value).subscribe(response => {
+       this.capacidadCurso= response.capacidad;
+       console.log(this.capacidadCurso);
+    });
+  }
+
   //Cambia el valor de entregado del documento seleccionado por el usuario
   registrarDocumento(indexDoc: number) {
     this.documentosEntregados[indexDoc].entregado = !this.documentosEntregados[
@@ -71,21 +84,29 @@ export class InscripcionEstudianteComponent implements OnInit {
 
   openDialogo(tipo: string, form: NgForm, curso) {
     if (form.invalid) {
-      this.snackBar.open("No se ha seleccionado un curso.", "", {
+      this.snackBar.open("No se ha seleccionado un curso", "", {
         panelClass: ['snack-bar-fracaso'],
         duration: 4500,
       });
     } else {
-      this.matConfig.data = {
-        tipoPopup: tipo,
-        formValido: form.valid,
-        IdEstudiante: this._idEstudiante,
-        curso: curso.value,
-        documentosEntregados: this.documentosEntregados
-      };
-      this.matConfig.width = "250px";
-      this.dialog.open(InscripcionPopupComponent, this.matConfig);
-    }
+      if(this.capacidadCurso==0){
+        this.snackBar.open("El curso seleccionado no tiene mas cupos dispobiles", "", {
+          panelClass: ['snack-bar-fracaso'],
+          duration: 4500,
+        });
+      }else{
+
+        this.matConfig.data = {
+          tipoPopup: tipo,
+          formValido: form.valid,
+          IdEstudiante: this._idEstudiante,
+          curso: curso.value,
+          documentosEntregados: this.documentosEntregados
+        };
+        this.matConfig.width = "250px";
+        this.dialog.open(InscripcionPopupComponent, this.matConfig);
+      }
+      }
   }
 }
 
@@ -143,7 +164,7 @@ export class InscripcionPopupComponent {
             duration: 4500,
           });
         }else{
-          this.snackBar.open("Inscripción no registrada. El estudiante selccionado ya se encuentra inscripto", "", {
+          this.snackBar.open("Inscripción no registrada. El estudiante seleccionado ya se encuentra inscripto", "", {
             duration: 4500,
             panelClass: ['snack-bar-fracaso']
           });

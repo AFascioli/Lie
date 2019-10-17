@@ -78,7 +78,7 @@
               #nroDocumento="ngModel"
               matInput
               placeholder="Ingrese número de documento"
-              type="number"
+              type="text"
               required
               (keypress)="checkNumeros($event)"
             />
@@ -94,7 +94,7 @@
               ngModel
               #cuil="ngModel"
               matInput
-              type="number"
+              type="text"
               placeholder="Ingrese número de CUIL"
               (keypress)="checkNumeros($event)"
             />
@@ -220,7 +220,7 @@
               ngModel
               #nroCalle="ngModel"
               matInput
-              type="number"
+              type="text"
               placeholder="Ingrese altura"
               required
               (keypress)="checkNumeros($event)"
@@ -298,7 +298,7 @@
               #codigoPostal="ngModel"
               matInput
               placeholder="Ingrese código postal"
-              type="number"
+              type="text"
               (keypress)="checkNumeros($event)"
             />
           </mat-form-field>
@@ -310,13 +310,13 @@
     <br />
 
     <div class="div-button">
-      <button
+      <!-- <button
         mat-raised-button
         class="buttonPrimary"
         routerLink="/altaAdultoResponsable"
       >
         Registrar Adulto Responsable
-      </button>
+      </button> -->
       <button
         type="submit"
         (click)="snackBarGuardar(form)"

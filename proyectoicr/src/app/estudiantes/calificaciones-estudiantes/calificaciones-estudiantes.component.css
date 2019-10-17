@@ -52,3 +52,7 @@ input:focus{
 .promedio{
   text-align: center !important;
 }
+
+.mat-cell{
+  font-size: medium !important;
+}

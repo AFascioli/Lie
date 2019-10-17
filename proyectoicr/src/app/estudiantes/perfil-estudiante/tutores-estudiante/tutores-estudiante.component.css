@@ -1,0 +1,17 @@
+table {
+  width: 95%;
+  margin: 2rem;
+}
+
+.columnasNormales{
+  width:22% !important;
+}
+
+th{
+  font-weight: bold;
+  font-size: 15px;
+}
+
+td, th{
+  text-align: center;
+}

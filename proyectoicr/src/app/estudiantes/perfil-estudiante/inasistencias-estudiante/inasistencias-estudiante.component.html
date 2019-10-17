@@ -1,0 +1,9 @@
+
+     <div *ngIf="contadorInasistenciaInjustificada && contadorInasistenciaInjustificada!=0" style="display: block">
+      <canvas baseChart
+              [data]="pieChartData"
+              [labels]="pieChartLabels"
+              [chartType]="pieChartType"
+              ></canvas>
+    </div>
+    <p *ngIf="contadorInasistenciaInjustificada==0">El estudiante no presenta ninguna inasistencia</p>

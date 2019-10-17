@@ -1,8 +1,13 @@
 import { EstudiantesService } from "./../../estudiantes/estudiante.service";
-import { Component, OnInit, Inject} from "@angular/core";
+import { Component, OnInit, Inject } from "@angular/core";
 import { DateAdapter, MatSnackBar } from "@angular/material";
 import { NgForm } from "@angular/forms";
-import { MatDialogRef, MatDialog, MAT_DIALOG_DATA, MatDialogConfig } from "@angular/material";
+import {
+  MatDialogRef,
+  MatDialog,
+  MAT_DIALOG_DATA,
+  MatDialogConfig
+} from "@angular/material";
 import { Router } from "@angular/router";
 
 @Component({
@@ -16,72 +21,69 @@ export class JustificacionInasistenciaComponent implements OnInit {
   fechaInicio = new Date();
   fechaFin = new Date();
   esMultiple: boolean = false;
+  ultimasInasistencias = [];
+  inasistenciasAJustificar = [];
 
   constructor(
     private servicio: EstudiantesService,
     public snackBar: MatSnackBar,
-    public dialog: MatDialog,
+    public dialog: MatDialog
   ) {}
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.servicio.obtenerUltimasInasistencias().subscribe(response => {
+      this.ultimasInasistencias = response.inasistencias;
+    });
+  }
 
-  //Envia al servicio un fecha inicio y una fecha fin (esta de esta manera por la consulta del backend)
   justificarInasistencia() {
-    var fechaInicio;
-    var fechaFin;
-    if (this.esMultiple) {
-      fechaInicio = new Date(this.fechaInicio.setHours(0, 0, 0));
-      fechaFin = new Date(this.fechaFin.setHours(23, 59, 59));
-    } else {
-      fechaInicio = new Date(this.fechaUnica.setHours(0, 0, 0));
-      fechaFin = new Date(this.fechaUnica.setHours(23, 59, 59));
-    }
     this.servicio
-      .justificarInasistencia(fechaInicio.toString(), fechaFin.toString(),this.esMultiple)
-      .subscribe(respuesta => {
-        let tipoSnackBar='snack-bar-fracaso';
-        if(respuesta.exito){
-          tipoSnackBar='snack-bar-exito';
+      .justificarInasistencia(this.ultimasInasistencias)
+      .subscribe(response => {
+        let tipoSnackBar = "snack-bar-fracaso";
+        if (response.exito) {
+          tipoSnackBar = "snack-bar-exito";
         }
-        this.snackBar.open(respuesta.message, "", {
+        this.snackBar.open(response.message, "", {
           panelClass: [tipoSnackBar],
           duration: 4500
         });
+        this.ngOnInit();
       });
   }
 
-  //Deshabilita los inputs y los pickers
-  deshabilitarPickers(form: NgForm) {
-    this.esMultiple = !this.esMultiple;
+  //Con el indice, cambia el valor del campo justificado de la inasistencia
+  onChecked(index: number) {
+    this.ultimasInasistencias[index].justificado = !this.ultimasInasistencias[
+      index
+    ].justificado;
   }
 
-  onCancelar(){
+  onCancelar() {
     this.dialog.open(JustificacionInasistenciaPopupComponent, {
-        width: "250px"
-      });
-    }
+      width: "250px"
+    });
+  }
 }
 
 @Component({
   selector: "app-justificacion-inasistencia-popup",
   templateUrl: "./justificacion-inasistencia-popup.component.html",
-  styleUrls: ['./justificacion-inasistencia.component.css']
+  styleUrls: ["./justificacion-inasistencia.component.css"]
 })
 export class JustificacionInasistenciaPopupComponent {
-  formInvalido : Boolean;
-      tipoPopup :  string;
+  formInvalido: Boolean;
+  tipoPopup: string;
   constructor(
-        public dialogRef: MatDialogRef<JustificacionInasistenciaPopupComponent>, public router: Router,
-      ) {}
+    public dialogRef: MatDialogRef<JustificacionInasistenciaPopupComponent>,
+    public router: Router
+  ) {}
 
-      onYesClick():void{
-        this.router.navigate(['./home']);
-        this.dialogRef.close();
-      }
-      onNoClick(): void {
-        this.dialogRef.close();
-      }
-
-
-    }
-
+  onYesClick(): void {
+    this.router.navigate(["./home"]);
+    this.dialogRef.close();
+  }
+  onNoClick(): void {
+    this.dialogRef.close();
+  }
+}

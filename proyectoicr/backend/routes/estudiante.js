@@ -1,8 +1,7 @@
 const express = require("express");
 const Estudiante = require("../models/estudiante");
+const Estado = require("../models/estado");
 const Inscripcion = require("../models/inscripcion");
-const AdultoResponsable = require("../models/adultoResponsable");
-const Division = require("../models/division");
 const AsistenciaDiaria = require("../models/asistenciaDiaria");
 const Suscripcion = require("../classes/suscripcion");
 const router = express.Router();
@@ -10,37 +9,43 @@ const mongoose = require("mongoose");
 
 const checkAuthMiddleware = require("../middleware/check-auth");
 
-//Registra un nuevo estudiante en la base de datos
+//Registra un nuevo estudiante y pone su estado a registrado
 router.post("", checkAuthMiddleware, (req, res, next) => {
-  const estudiante = new Estudiante({
-    apellido: req.body.apellido,
-    nombre: req.body.nombre,
-    tipoDocumento: req.body.tipoDocumento,
-    numeroDocumento: req.body.numeroDocumento,
-    cuil: req.body.cuil,
-    sexo: req.body.sexo,
-    calle: req.body.calle,
-    numeroCalle: req.body.numeroCalle,
-    piso: req.body.piso,
-    departamento: req.body.departamento,
-    provincia: req.body.provincia,
-    localidad: req.body.localidad,
-    codigoPostal: req.body.codigoPostal,
-    nacionalidad: req.body.nacionalidad,
-    fechaNacimiento: req.body.fechaNacimiento,
-    estadoCivil: req.body.estadoCivil,
-    telefonoFijo: req.body.telefonoFijo,
-    adultoResponsable: "null",
-    activo: true
+  Estado.findOne({
+    ambito: "Estudiante",
+    nombre: "Registrado"
+  }).then(estado => {
+    const estudiante = new Estudiante({
+      apellido: req.body.apellido,
+      nombre: req.body.nombre,
+      tipoDocumento: req.body.tipoDocumento,
+      numeroDocumento: req.body.numeroDocumento,
+      cuil: req.body.cuil,
+      sexo: req.body.sexo,
+      calle: req.body.calle,
+      numeroCalle: req.body.numeroCalle,
+      piso: req.body.piso,
+      departamento: req.body.departamento,
+      provincia: req.body.provincia,
+      localidad: req.body.localidad,
+      codigoPostal: req.body.codigoPostal,
+      nacionalidad: req.body.nacionalidad,
+      fechaNacimiento: req.body.fechaNacimiento,
+      estadoCivil: req.body.estadoCivil,
+      telefonoFijo: req.body.telefonoFijo,
+      adultoResponsable: [],
+      activo: true,
+      estado: estado._id
+    });
+    estudiante
+      .save()
+      .then(() => {
+        res.status(201).json({
+          message: "Estudiante registrado correctamente!"
+        });
+      })
+      .catch(err => console.log("Error al meter en la bd estudiante" + err));
   });
-  estudiante
-    .save()
-    .then(() => {
-      res.status(201).json({
-        message: "Estudiante registrado correctamente!"
-      });
-    })
-    .catch(err => console.log("Error al meter en la bd estudiante" + err));
 });
 
 //Obtiene un estudiante dado un numero y tipo de documento
@@ -93,8 +98,7 @@ router.patch("/modificar", checkAuthMiddleware, (req, res, next) => {
     nacionalidad: req.body.nacionalidad,
     fechaNacimiento: req.body.fechaNacimiento,
     estadoCivil: req.body.estadoCivil,
-    telefonoFijo: req.body.telefonoFijo,
-    adultoResponsable: "null"
+    telefonoFijo: req.body.telefonoFijo
   }).then(() => {
     res.status(200).json({
       message: "Estudiante exitosamente modificado"
@@ -102,12 +106,41 @@ router.patch("/modificar", checkAuthMiddleware, (req, res, next) => {
   });
 });
 
+//#resolve deberia buscar la inscripcion del estudiante y poner en inactiva
 //Borrado logico de un estudiante
 router.delete("/borrar", checkAuthMiddleware, (req, res, next) => {
-  Estudiante.findOneAndUpdate({ _id: req.query._id }, { activo: false }).then(
-    () => {
+  Estado.findOne({
+    ambito: "Inscripcion",
+    nombre: "De baja"
+  }).then(estado => {
+    Estudiante.findOneAndUpdate(
+      { _id: req.query._id },
+      { activo: false, estado: estado._id }
+    ).then(() => {
       res.status(202).json({
         message: "Estudiante exitosamente borrado"
+      });
+    });
+  });
+});
+
+//Dada una id de estudiante, se fija si esta inscripto en un curso
+router.get("/curso", checkAuthMiddleware, (req, res) => {
+  Estudiante.findOne({ _id: req.query.idEstudiante, activo: true }).then(
+    estudiante => {
+      Estado.findById(estudiante.estado).then(estado => {
+        if (estado.nombre == "Inscripto") {
+          res.status(200).json({
+            message:
+              "El estudiante seleccionado ya se encuentra inscripto en un curso",
+            exito: true
+          });
+        } else {
+          res.status(200).json({
+            message: "El estudiante seleccionado no esta inscripto en un curso",
+            exito: false
+          });
+        }
       });
     }
   );
@@ -115,12 +148,13 @@ router.delete("/borrar", checkAuthMiddleware, (req, res, next) => {
 
 //Retorna vector con datos de los estudiantes y presente. Si ya se registro una asistencia para
 //el dia de hoy se retorna ese valor de la asistencia, sino se "construye" una nueva
+//#resolve
 router.get("/asistencia", checkAuthMiddleware, (req, res) => {
   Inscripcion.aggregate([
     {
       $lookup: {
-        from: "divisiones",
-        localField: "IdDivision",
+        from: "curso",
+        localField: "idCurso",
         foreignField: "_id",
         as: "curso"
       }
@@ -132,6 +166,7 @@ router.get("/asistencia", checkAuthMiddleware, (req, res) => {
       }
     },
     {
+      //#resolve porque capaz no funciona si no tiene asistencias y salta error
       $project: {
         ultimaAsistencia: {
           $slice: ["$asistenciaDiaria", -1]
@@ -158,6 +193,7 @@ router.get("/asistencia", checkAuthMiddleware, (req, res) => {
   ]).then(ultimaAsistencia => {
     var fechaHoy = new Date();
     fechaHoy.setHours(fechaHoy.getHours() - 3);
+    //Compara si la ultima asistencia fue el dia de hoy
     if (
       ultimaAsistencia[0].asistencia.length > 0 &&
       fechaHoy.getDate() == ultimaAsistencia[0].asistencia[0].fecha.getDate() &&
@@ -169,16 +205,16 @@ router.get("/asistencia", checkAuthMiddleware, (req, res) => {
       Inscripcion.aggregate([
         {
           $lookup: {
-            from: "divisiones",
-            localField: "IdDivision",
+            from: "curso",
+            localField: "idCurso",
             foreignField: "_id",
             as: "curso"
           }
         },
         {
           $lookup: {
-            from: "estudiantes",
-            localField: "IdEstudiante",
+            from: "estudiante",
+            localField: "idEstudiante",
             foreignField: "_id",
             as: "datosEstudiante"
           }
@@ -217,15 +253,15 @@ router.get("/asistencia", checkAuthMiddleware, (req, res) => {
       ]).then(asistenciaCurso => {
         var respuesta = [];
         asistenciaCurso.forEach(estudiante => {
-          var estudianteRefinado = {
-            _id: estudiante.datosEstudiante[0]._id,
-            nombre: estudiante.datosEstudiante[0].nombre,
-            apellido: estudiante.datosEstudiante[0].apellido,
-            idAsistencia: estudiante.asistencia[0]._id,
-            fecha: fechaHoy,
-            presente: estudiante.asistencia[0].presente
-          };
-          respuesta.push(estudianteRefinado);
+            var estudianteRefinado = {
+              _id: estudiante.datosEstudiante[0]._id,
+              nombre: estudiante.datosEstudiante[0].nombre,
+              apellido: estudiante.datosEstudiante[0].apellido,
+              idAsistencia: estudiante.asistencia[0]._id,
+              fecha: fechaHoy,
+              presente: estudiante.asistencia[0].presente
+            };
+            respuesta.push(estudianteRefinado);
         });
         res
           .status(200)
@@ -235,16 +271,16 @@ router.get("/asistencia", checkAuthMiddleware, (req, res) => {
       Inscripcion.aggregate([
         {
           $lookup: {
-            from: "divisiones",
-            localField: "IdDivision",
+            from: "curso",
+            localField: "idCurso",
             foreignField: "_id",
             as: "curso"
           }
         },
         {
           $lookup: {
-            from: "estudiantes",
-            localField: "IdEstudiante",
+            from: "estudiante",
+            localField: "idEstudiante",
             foreignField: "_id",
             as: "estudiante"
           }
@@ -290,17 +326,16 @@ router.get("/asistencia", checkAuthMiddleware, (req, res) => {
 router.post("/asistencia", checkAuthMiddleware, (req, res) => {
   if (req.query.asistenciaNueva == "true") {
     req.body.forEach(estudiante => {
-      console.log(estudiante);
       var valorInasistencia = 0;
       if (!estudiante.presente) {
         valorInasistencia = 1;
       }
       Inscripcion.findOne({
-        IdEstudiante: estudiante._id,
+        idEstudiante: estudiante._id,
         activa: true
       }).then(async inscripcion => {
         var asistenciaEstudiante = new AsistenciaDiaria({
-          IdInscripcion: inscripcion._id,
+          idInscripcion: inscripcion._id,
           fecha: estudiante.fecha,
           presente: estudiante.presente,
           valorInasistencia: valorInasistencia,
@@ -309,10 +344,8 @@ router.post("/asistencia", checkAuthMiddleware, (req, res) => {
 
         await asistenciaEstudiante.save().then(async asistenciaDiaria => {
           await inscripcion.asistenciaDiaria.push(asistenciaDiaria._id);
-
-          console.log(inscripcion);
-          inscripcion.contadorInasistencias =
-            inscripcion.contadorInasistencias + valorInasistencia;
+          inscripcion.contadorInasistenciasInjustificada =
+            inscripcion.contadorInasistenciasInjustificada + valorInasistencia;
           inscripcion.save();
         });
       });
@@ -325,22 +358,23 @@ router.post("/asistencia", checkAuthMiddleware, (req, res) => {
       if (!estudiante.presente) {
         Inscripcion.findOneAndUpdate(
           {
-            IdEstudiante: estudiante._id,
+            idEstudiante: estudiante._id,
             activa: true
           },
-          { contadorInasistencias: contadorInasistencias + 1 }
+          { $inc: { contadorInasistenciasInjustificada: 1 } }
         ).exec();
       }
     });
   }
-  Suscripcion.notificarAll(["5d7bfd1b93119f33f80819a1", "5d7bfd1b93119f33f80819a3"],"Asistencia", "El estudiante está presente.");
-  res.status(201).json({ message: "Asistencia registrada exitósamente" });
+  res
+    .status(201)
+    .json({ message: "Asistencia registrada exitosamente", exito: true });
 });
 
-//Obtiene la id de la asistencia diaria del dia de hoy, y cambia los valores correspondientes en la coleccion de asistencia diaria
+//Obtiene la id de la asistencia diaria del dia de hoy, y cambia los valores de la inasistencia para indicar el retiro correspondiente
 router.post("/retiro", checkAuthMiddleware, (req, res) => {
   Inscripcion.findOne(
-    { IdEstudiante: req.body.IdEstudiante, activa: true },
+    { idEstudiante: req.body.idEstudiante, activa: true },
     { asistenciaDiaria: { $slice: -1 } }
   ).then(inscripcion => {
     if (!inscripcion) {
@@ -378,7 +412,7 @@ router.post("/retiro", checkAuthMiddleware, (req, res) => {
                   }
                 ).then(() => {
                   res.status(200).json({
-                    message: "Retiro anticipado exitósamente registrado",
+                    message: "Retiro anticipado exitosamente registrado",
                     exito: "exito"
                   });
                 });
@@ -397,15 +431,15 @@ router.post("/retiro", checkAuthMiddleware, (req, res) => {
   });
 });
 
-//Este metodo filtra las inscripciones por estudiante y retorna el contador de inasistencias
-//de dicho estudiante
+//Este metodo filtra las inscripciones por estudiante y retorna el contador de inasistencias (injustificada y justificada)
 router.get("/asistenciaEstudiante", (req, res) => {
-  Inscripcion.findOne({ IdEstudiante: req.query.idEstudiante }).then(
+  Inscripcion.findOne({ idEstudiante: req.query.idEstudiante }).then(
     estudiante => {
       res.status(200).json({
         message: "Operacion exitosa",
         exito: true,
-        contadorInasistencias: estudiante.contadorInasistencias,
+        contadorInasistenciasInjustificada:
+          estudiante.contadorInasistenciasInjustificada,
         contadorInasistenciasJustificada:
           estudiante.contadorInasistenciasJustificada
       });
@@ -413,12 +447,12 @@ router.get("/asistenciaEstudiante", (req, res) => {
   );
 });
 
-//Vamos a recibir, un vector de los estudiantes a los que se le modificaron los documentos entregados.
+//Recibe por parametros un vector de los estudiantes con los respectivos documentos entregados
 router.post("/documentos", checkAuthMiddleware, (req, res) => {
   try {
     req.body.forEach(estudiante => {
       Inscripcion.findOneAndUpdate(
-        { IdEstudiante: estudiante.IdEstudiante, activa: true },
+        { idEstudiante: estudiante.idEstudiante, activa: true },
         { $set: { documentosEntregados: estudiante.documentosEntregados } }
       ).exec();
     });
@@ -431,11 +465,11 @@ router.post("/documentos", checkAuthMiddleware, (req, res) => {
 });
 
 //Dado una id de estudiante y un trimestre obtiene todas las materias con sus respectivas calificaciones
-router.get("/calif/materia", (req, res) => {
+router.get("/materia/calificaciones", (req, res) => {
   Inscripcion.aggregate([
     {
       $match: {
-        IdEstudiante: mongoose.Types.ObjectId(req.query.idEstudiante),
+        idEstudiante: mongoose.Types.ObjectId(req.query.idEstudiante),
         activa: true
       }
     },
@@ -453,13 +487,26 @@ router.get("/calif/materia", (req, res) => {
       }
     },
     {
+      $lookup: {
+        from: "calificacionesXTrimestre",
+        localField: "cXM.calificacionesXTrimestre",
+        foreignField: "_id",
+        as: "cXT"
+      }
+    },
+    {
+      $unwind: {
+        path: "$cXT"
+      }
+    },
+    {
       $match: {
-        "cXM.trimestre": parseInt(req.query.trimestre, 10)
+        "cXT.trimestre": parseInt(req.query.trimestre, 10)
       }
     },
     {
       $lookup: {
-        from: "materias",
+        from: "materia",
         localField: "cXM.idMateria",
         foreignField: "_id",
         as: "materia"
@@ -467,7 +514,7 @@ router.get("/calif/materia", (req, res) => {
     },
     {
       $project: {
-        "cXM.calificaciones": 1,
+        "cXT.calificaciones": 1,
         "materia.nombre": 1
       }
     }
@@ -476,10 +523,9 @@ router.get("/calif/materia", (req, res) => {
     resultado.forEach(objEnResultado => {
       vectorRespuesta.push({
         materia: objEnResultado.materia[0].nombre,
-        calificaciones: objEnResultado.cXM.calificaciones
+        calificaciones: objEnResultado.cXT.calificaciones
       });
     });
-
     res.status(200).json({
       message: "Operación exitosa",
       exito: true,
@@ -488,21 +534,42 @@ router.get("/calif/materia", (req, res) => {
   });
 });
 
-//Primero, las fechas del backend estan adelantadas por 3 hrs, se corrige eso. Luego se realiza
-//la consulta y segun sea multiple justificacion o no realiza las operaciones correspondientes
-//Nota: no deja justificar si el alumno estuvo presente para la fecha o si ya fue
-//justificada la asistencia para ese dia
-router.get("/inasistencia/justificada", (req, res) => {
-  let fechaInicio = new Date(req.query.fechaInicio);
-  let fechaFin = new Date(req.query.fechaFin);
-  fechaInicio.setHours(fechaInicio.getHours() - 3);
-  fechaFin.setHours(fechaFin.getHours() - 3);
-  //5d1a5a66941efc2e98b15c0e id del estudiante que tiene los datos bien
+//Recibe vector con inasistencias, cada una tiene su _id y si fue o no justificada
+router.post("/inasistencia/justificada", checkAuthMiddleware, (req, res) => {
+  req.body.forEach(inasistencia => {
+    if (inasistencia.justificado) {
+      AsistenciaDiaria.findByIdAndUpdate(inasistencia.idAsistencia, {
+        justificado: true
+      })
+        .exec()
+        .catch(e => {
+          res
+            .status(200)
+            .json({ message: "Ocurrió un error: " + e, exito: false });
+        });
+    }
+  });
+  res
+    .status(200)
+    .json({ message: "Inasistencias justificadas correctamente", exito: true });
+});
+
+//Se obtienen las ultimas inasistencias dentro de un periodo de 5 dias antes
+//Se utiliza para la justificacion de inasistencias
+router.get("/inasistencias", (req, res) => {
+  let ultimasInasistencias = [];
   Inscripcion.aggregate([
     {
       $match: {
-        IdEstudiante: mongoose.Types.ObjectId(req.query.idEstudiante),
-        activa: true
+        idEstudiante: mongoose.Types.ObjectId(req.query.idEstudiante)
+      }
+    },
+    {
+      //#resolve, revisar cuando no tiene 5 asistenciasdiarias
+      $project: {
+        asistenciaDiaria: {
+          $slice: ["$asistenciaDiaria", -5]
+        }
       }
     },
     {
@@ -520,74 +587,48 @@ router.get("/inasistencia/justificada", (req, res) => {
     },
     {
       $match: {
-        "presentismo.fecha": {
-          $gte: fechaInicio,
-          $lt: fechaFin
-        }
+        "presentismo.presente": false,
+        "presentismo.justificado": false
       }
     },
     {
       $project: {
+        _id: 0,
         "presentismo._id": 1,
-        "presentismo.presente": 1,
+        "presentismo.fecha": 1,
         "presentismo.justificado": 1
       }
     }
-  ]).then(resultado => {
-    //5d2e30dd32a43405043e76c6 id de la asistencia que retorna
-    console.log(JSON.stringify(resultado));
-    if (req.query.esMultiple == "true") {
-      resultado[0].presentismo.forEach(async asistenciaDiaria => {
-        if (
-          !resultado[0].presentismo[0].presente &&
-          !resultado[0].presentismo[0].justificado
-        ) {
-          let idAsistencia = asistenciaDiaria._id;
-          await AsistenciaDiaria.findByIdAndUpdate(idAsistencia, {
-            justificado: true
-          }).exec();
-          Inscripcion.findByIdAndUpdate(resultado[0]._id, {
-            contadorInasistenciasJustificada:
-              contadorInasistenciasJustificada + 1,
-            contadorInasistencias: contadorInasistencias - 1
-          }).exec();
-        }
+  ]).then(response => {
+    if (response.length > 0) {
+      response.forEach(objeto => {
+        ultimasInasistencias.push({
+          idAsistencia: objeto.presentismo[0]._id,
+          fecha: objeto.presentismo[0].fecha,
+          justificado: objeto.presentismo[0].justificado
+        });
       });
-      res.status(200).json({
-        message: "Inasistencias justificadas exitosamente",
-        exito: true
+      return res.status(200).json({
+        exito: true,
+        message: "Inasistencias obtenidas con éxito",
+        inasistencias: ultimasInasistencias
       });
-    } else {
-      if (resultado[0].presentismo[0].presente) {
-        return res.status(200).json({
-          message: "El estudiante estuvo presente para la fecha ingresada",
-          exito: false
-        });
-      } else if (resultado[0].presentismo[0].justificado) {
-        return res.status(200).json({
-          message: "El estudiante ya tiene justificada la inasistencia",
-          exito: false
-        });
-      } else {
-        let idAsistencia = resultado[0].presentismo[0]._id;
-        AsistenciaDiaria.findByIdAndUpdate(idAsistencia, {
-          justificado: true
-        }).then(() => {
-          res.json({
-            message: "Asistencia exitosamente justificada",
-            exito: true
-          });
-        });
-      }
     }
+    res.status(200).json({
+      exito: false,
+      message:
+        "El estudiante no tiene inasistencias dentro del periodo de 5 días previos",
+      inasistencias: []
+    });
   });
 });
 
+//Obtiene los tutores de un estudiante
 router.get("/tutores", (req, res) => {
   Estudiante.aggregate([
     {
       $match: {
-        _id: mongoose.Types.ObjectId("5d0ee07c489bdd0830bd1d0d"),
+        _id: mongoose.Types.ObjectId(req.query.idEstudiante),
         activo: true
       }
     },
@@ -643,7 +684,6 @@ router.get("/notificacion", (req, res) => {
     "Titulo",
     "Notificación de prueba."
   );
-  //Suscripcion.notificarAll(["5d7bfd1b93119f33f80819a1", "5d7bfd1b93119f33f80819a3"],"Título de prueba", "Contenido de prueba.");
   res.status(200).json({ message: "Prueba de notificación" });
 });
 

@@ -1,0 +1,28 @@
+<table mat-table [dataSource]="tutores" *ngIf="tutores">
+  <ng-container matColumnDef="apellido">
+    <th class="columnasNormales" mat-header-cell *matHeaderCellDef>
+      Apellido/s
+    </th>
+    <td class="columnasNormales" mat-cell *matCellDef="let tutor">
+      {{ tutor.apellido }}
+    </td>
+  </ng-container>
+  <ng-container matColumnDef="nombre">
+    <th class="columnasNormales" mat-header-cell *matHeaderCellDef>
+      Nombre/s
+    </th>
+    <td class="columnasNormales" mat-cell *matCellDef="let tutor">
+      {{ tutor.nombre }}
+    </td>
+  </ng-container>
+  <ng-container matColumnDef="telefono">
+    <th class="columnasNormales" mat-header-cell *matHeaderCellDef>
+      Telefono
+    </th>
+    <td class="columnasNormales" mat-cell *matCellDef="let tutor">
+      {{ tutor.telefono }}
+    </td>
+  </ng-container>
+  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+  <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+</table>

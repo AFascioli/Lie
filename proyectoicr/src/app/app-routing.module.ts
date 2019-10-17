@@ -25,6 +25,9 @@ import { CambiarPassword } from "./login/cambiar-password.component";
 import { RouteGuard } from "./route.guard";
 import { JustificacionInasistenciaComponent } from "./asistencia/justificacion-inasistencia/justificacion-inasistencia.component";
 import { RoleGuard } from './role.guard';
+import { InasistenciasEstudianteComponent } from './estudiantes/perfil-estudiante/inasistencias-estudiante/inasistencias-estudiante.component';
+import { DatosEstudianteComponent } from './estudiantes/perfil-estudiante/datos-estudiante/datos-estudiante.component';
+import { TutoresEstudianteComponent } from './estudiantes/perfil-estudiante/tutores-estudiante/tutores-estudiante.component';
 
 const routes: Routes = [
   { path: "login", component: LoginComponent },
@@ -50,7 +53,10 @@ const routes: Routes = [
         component: BuscarEstudiantesComponent,
         canActivate: [RoleGuard],
         data: { rolesValidos: ["Admin", "Preceptor", "Director", "Docente"] },
-        children: [{ path: "lista", component: ListaEstudiantesComponent }]
+        children: [{ path: "lista",
+        component: ListaEstudiantesComponent,
+        canActivate: [RoleGuard],
+        data: { rolesValidos: ["Admin", "Preceptor", "Director", "Docente"] } }]
       },
       {
         path: "mostrar",
@@ -100,7 +106,30 @@ const routes: Routes = [
         path: "perfilEstudiante",
         component: PerfilEstudianteComponent,
         canActivate: [RouteGuard,RoleGuard],
-        data: { rolesValidos: ["Admin", "Preceptor", "Director", "Docente"] }
+        data: { rolesValidos: ["Admin", "Preceptor", "Director", "Docente","AdultoResponsable"] },
+        children: [{
+        path: "calificacionesEstudiante",
+        component: CalificacionesPerfilEstudianteComponent,
+        canActivate: [RouteGuard, RoleGuard],
+        data: { rolesValidos: ["Admin", "Preceptor", "Director", "Docente","AdultoResponsable"] }},
+         {
+        path: "inasistenciasEstudiante",
+        component: InasistenciasEstudianteComponent,
+        canActivate: [RouteGuard, RoleGuard],
+        data: { rolesValidos: ["Admin", "Preceptor", "Director", "Docente","AdultoResponsable"] }
+      },  {
+        path: "tutoresEstudiante",
+        component: TutoresEstudianteComponent,
+        canActivate: [RouteGuard, RoleGuard],
+        data: { rolesValidos: ["Admin", "Preceptor", "Director", "Docente","AdultoResponsable"] }
+      },
+      {
+        path: "datosEstudiante",
+        component: DatosEstudianteComponent,
+        canActivate: [RouteGuard, RoleGuard],
+        data: { rolesValidos: ["Admin", "Preceptor", "Director", "Docente","AdultoResponsable"] }
+      }
+      ]
       },
       {
         path: "justificarInasistencia",
@@ -108,13 +137,7 @@ const routes: Routes = [
         canActivate: [RouteGuard, RoleGuard],
         data: { rolesValidos: ["Admin", "Preceptor", "Director"] }
       },
-      {
-        path: "calificacionesEstudiante",
-        component: CalificacionesPerfilEstudianteComponent,
-        canActivate: [RouteGuard, RoleGuard],
-        data: { rolesValidos: ["Admin", "Preceptor", "Director", "Docente"] }
 
-      },
       {
         path: "altaEmpleado",
         component: AltaEmpleadoComponent,

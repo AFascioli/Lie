@@ -5,12 +5,23 @@
     <button mat-button class="buttonPrimary" (click)="cambiarPassword()">
       Cambiar contraseña
     </button>
-  </div>
+    <br>
+ <button mat-button class="buttonPrimary">
+ Notificaciones de prueba
+</button>
+<br>
+<mat-slide-toggle
+[checked]="notificaciones"
+(change)="onCambioPreferenciaSuscripcion()"
+>
+Deseo recibir las notificaciones
+</mat-slide-toggle>
+</div>
   <div class="div-button">
-    <button type="submit" class="buttonPrimary" mat-raised-button>
+    <button type="submit" (click)="onGuardar()" class="buttonPrimary" mat-raised-button>
       Guardar
     </button>
-    <button mat-raised-button class="buttonWarn">
+    <button mat-raised-button (click)="onCancelar()" class="buttonWarn">
       Cancelar
     </button>
   </div>

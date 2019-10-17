@@ -14,23 +14,46 @@
         required
         class="inputFecha"
       />
-      {{ fechaActual | date: "EEEE" | titlecase  }}
+      {{ fechaActual | date: "EEEE" | titlecase }}
       {{ fechaActual | date: "dd/MM/yyyy" }}
     </mat-form-field>
   </div>
+
   <br />
-
-  <div class="contenido" [class.contenido-mobile]="mobileQuery.matches">
-    <mat-card class="card-datos" [class.card-datos-mobile]="mobileQuery.matches">
-      <h3>Datos del estudiante</h3>
-      <mat-card-subtitle>
-        <b>Apellido/s: </b> {{ apellidoEstudiante }}
-        <br />
-        <b>Nombre/s: </b> {{ nombreEstudiante }}
-      </mat-card-subtitle>
-    </mat-card>
-  </div>
-
+  <div class="contenido">
+  <h3 class="tituloTutores">
+    Tutores del estudiante: {{ apellidoEstudiante }}, {{ nombreEstudiante }}
+  </h3>
+  <p *ngIf="tutores.length==0">El estudiante seleccionado no tiene registrado ningun adulto responsable</p>
+  <table mat-table [dataSource]="tutores" *ngIf="tutores && tutores.length!=0">
+    <ng-container matColumnDef="apellido">
+      <th class="columnasNormales" mat-header-cell *matHeaderCellDef>
+        Apellido/s
+      </th>
+      <td class="columnasNormales" mat-cell *matCellDef="let tutor">
+        {{ tutor.apellido }}
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="nombre">
+      <th class="columnasNormales" mat-header-cell *matHeaderCellDef>
+        Nombre/s
+      </th>
+      <td class="columnasNormales" mat-cell *matCellDef="let tutor">
+        {{ tutor.nombre }}
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="telefono">
+      <th class="columnasNormales" mat-header-cell *matHeaderCellDef>
+        Telefono
+      </th>
+      <td class="columnasNormales" mat-cell *matCellDef="let tutor">
+        {{ tutor.telefono }}
+      </td>
+    </ng-container>
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+  </table>
+</div>
   <br />
 
   <mat-radio-group aria-label="Select an option">
@@ -38,21 +61,28 @@
       (change)="CambiarTipoRetiro()"
       [checked]="antes10am"
       value="1"
-      ><span class="label-radio-button">Antes de las 10:00 de la mañana</span></mat-radio-button
+      ><span class="label-radio-button"
+        >Antes de las 10:00 de la mañana</span
+      ></mat-radio-button
     >
     <mat-radio-button
       (change)="CambiarTipoRetiro()"
       [checked]="!antes10am"
       value="2"
-      ><span class="label-radio-button">Después de las 10:00 de la mañana</span></mat-radio-button
+      ><span class="label-radio-button"
+        >Después de las 10:00 de la mañana</span
+      ></mat-radio-button
     >
   </mat-radio-group>
 
   <br />
-  <br />
 
   <div class="div-button">
-    <button class="buttonPrimary" (click)="openPopup('confirmar')" mat-raised-button>
+    <button
+      class="buttonPrimary"
+      (click)="openPopup('confirmar')"
+      mat-raised-button
+    >
       Guardar
     </button>
 

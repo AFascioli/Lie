@@ -19,6 +19,12 @@ export class RetiroAnticipadoComponent implements OnInit {
   matConfig = new MatDialogConfig();
   _mobileQueryListener: () => void;
   mobileQuery: MediaQueryList;
+  displayedColumns: string[] = [
+    "apellido",
+    "nombre",
+    "telefono"
+  ];
+  tutores: any[];
 
   constructor(public servicio: EstudiantesService, public dialog: MatDialog,
     public changeDetectorRef: ChangeDetectorRef,
@@ -26,6 +32,7 @@ export class RetiroAnticipadoComponent implements OnInit {
       this.mobileQuery = media.matchMedia('(max-width: 1000px)');
         this._mobileQueryListener = () => changeDetectorRef.detectChanges();
         this.mobileQuery.addListener(this._mobileQueryListener);
+
   }
 
   ngOnInit() {
@@ -34,7 +41,12 @@ export class RetiroAnticipadoComponent implements OnInit {
     this.nombreEstudiante= this.servicio.estudianteSeleccionado.nombre;
     this._idEstudiante= this.servicio.estudianteSeleccionado._id;
     this.validarHora();
+    this.servicio.getTutoresDeEstudiante().subscribe(respuesta =>
+      {
+        this.tutores= respuesta.tutores;
+      });
   }
+
 
   //Segun que hora sea, cambia el valor de antes10am y cambia que radio button esta seleccionado
   validarHora(){

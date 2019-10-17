@@ -37,3 +37,9 @@ th{
 .parrafo{
   text-align: center;
 }
+
+.aviso{
+  margin-bottom: 0;
+  text-align: center;
+  font-size: 19px;
+}
