@@ -186,7 +186,6 @@ export class AutenticacionService {
 
   //#resolve #borrar
   testNP(){
-    console.log('Envio de get a /estudiante/notificacion');
     return this.http.get<{message: string}>(environment.apiUrl + "/estudiante/notificacion");
   }
 

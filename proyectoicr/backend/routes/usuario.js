@@ -137,8 +137,12 @@ router.get("/permisosDeRol", (req, res) => {
 
 router.post("/suscripcion", (req, res) => {
   Usuario.findOneAndUpdate({email: req.body.email}, { $push: { suscripciones: req.body.sub }}).then((usuario) => {
-    usuario.save();
-    return res.status(201).json({message: "Suscripción registrada correctamente"});
+    console.log("[Usuario.suscripciones]: ");
+    console.dir(usuario.suscripciones);
+    usuario.save().then(() => {
+      console.log('Suscripción registrada.');
+      return res.status(201).json({message: "Suscripción registrada correctamente"});
+    });
   }).catch((e) => {
     console.log(e);
   });
