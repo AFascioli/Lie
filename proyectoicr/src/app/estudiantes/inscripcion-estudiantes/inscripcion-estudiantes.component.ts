@@ -82,7 +82,7 @@ export class InscripcionEstudianteComponent implements OnInit {
     ].entregado;
   }
 
-  openDialogo(tipo: string, form: NgForm, curso) {
+  openDialogo( form: NgForm, curso) {
     if (form.invalid) {
       this.snackBar.open("No se ha seleccionado un curso", "", {
         panelClass: ['snack-bar-fracaso'],
@@ -97,7 +97,6 @@ export class InscripcionEstudianteComponent implements OnInit {
       }else{
 
         this.matConfig.data = {
-          tipoPopup: tipo,
           formValido: form.valid,
           IdEstudiante: this._idEstudiante,
           curso: curso.value,
@@ -133,17 +132,12 @@ export class InscripcionPopupComponent {
     public snackBar: MatSnackBar,
     @Inject(MAT_DIALOG_DATA) data
   ) {
-    this.tipoPopup = data.tipoPopup;
     this.formValido = data.formValido;
     this.IdEstudiante = data.IdEstudiante;
     this.curso = data.curso;
     this.documentosEntregados = data.documentosEntregados;
   }
 
-  onYesCancelarClick(): void {
-    this.router.navigate(["./home"]);
-    this.dialogRef.close();
-  }
 
   onNoCancelarConfirmarClick(): void {
     this.dialogRef.close();
@@ -159,12 +153,12 @@ export class InscripcionPopupComponent {
       .subscribe(response => {
         this.exito = response.exito;
         if (this.exito) {
-          this.snackBar.open("Estudiante inscripto correctamente", "", {
+          this.snackBar.open(response.message, "", {
             panelClass: ['snack-bar-exito'],
             duration: 4500,
           });
         }else{
-          this.snackBar.open("Inscripción no registrada. El estudiante seleccionado ya se encuentra inscripto", "", {
+          this.snackBar.open(response.message, "", {
             duration: 4500,
             panelClass: ['snack-bar-fracaso']
           });

@@ -136,7 +136,7 @@ export class AltaARPopupComponent {
   ) {}
 
   onYesClick(): void {
-    this.router.navigate(["./home"]);
+    this.router.navigate(["./buscar/lista"]);
     this.dialogRef.close();
   }
   onNoClick(): void {

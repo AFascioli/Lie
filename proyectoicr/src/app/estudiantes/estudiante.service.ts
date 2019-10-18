@@ -419,7 +419,7 @@ export class EstudiantesService {
       message: string;
       exito: boolean;
       tutores: any[];
-    }>(environment.apiUrl + "/estudiante/tutores", {
+    }>(environment.apiUrl + "/estudiante/adultosResponsables", {
       params: params
     });
   }

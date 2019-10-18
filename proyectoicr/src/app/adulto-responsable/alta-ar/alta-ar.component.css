@@ -1,11 +1,12 @@
-.mat-expansion-panel{
+/* .mat-expansion-panel{
   width: 70%;
   margin: auto;
-}
+} */
 
 .mat-expansion-panel{
   width: 80%;
   margin: auto;
+  margin-bottom: 3%;
 }
 
 .mat-expansion-panel-mobile{

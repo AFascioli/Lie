@@ -197,7 +197,7 @@ router.post("/inscripcion", checkAuthMiddleware, (req, res) => {
     if (estudiante.length==0) {
       res
         .status(200)
-        .json({ message: "El estudiante ya esta inscripto", exito: false });
+        .json({ message: "El estudiante ya esta inscripto en un curso", exito: false });
     } else {
       //#metodo: Obtener materias de curso con id de curso
       Curso.aggregate([

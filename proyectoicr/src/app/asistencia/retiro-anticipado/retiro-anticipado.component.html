@@ -44,7 +44,7 @@
     </ng-container>
     <ng-container matColumnDef="telefono">
       <th class="columnasNormales" mat-header-cell *matHeaderCellDef>
-        Telefono
+        Teléfono
       </th>
       <td class="columnasNormales" mat-cell *matCellDef="let tutor">
         {{ tutor.telefono }}
@@ -85,18 +85,10 @@
     >
       Guardar
     </button>
-
-    <button
-      mat-raised-button
-      (click)="openPopup('cancelar')"
-      class="buttonWarn"
-    >
-      Cancelar
-    </button>
     <button
       mat-raised-button
       [routerLink]="['/buscar/lista']"
-      class="buttonPrimary"
+      class="buttonWarn"
     >
       Volver
     </button>

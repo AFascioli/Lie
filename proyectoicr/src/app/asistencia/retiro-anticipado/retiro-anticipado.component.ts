@@ -24,7 +24,7 @@ export class RetiroAnticipadoComponent implements OnInit {
     "nombre",
     "telefono"
   ];
-  tutores: any[];
+  tutores: any[] = [];
 
   constructor(public servicio: EstudiantesService, public dialog: MatDialog,
     public changeDetectorRef: ChangeDetectorRef,

@@ -684,6 +684,52 @@ router.get("/tutores", (req, res) => {
   });
 });
 
+//Obtiene los adultos responsable de un estudiante
+router.get("/adultosResponsables", (req, res) => {
+  Estudiante.aggregate([
+    {
+      $match: {
+        _id: mongoose.Types.ObjectId(req.query.idEstudiante),
+        activo: true
+      }
+    },
+    {
+      $lookup: {
+        from: "adultoResponsable",
+        localField: "adultoResponsable",
+        foreignField: "_id",
+        as: "datosAR"
+      }
+    },
+    {
+      $project: {
+        "datosAR._id": 1,
+        "datosAR.apellido": 1,
+        "datosAR.nombre": 1,
+        "datosAR.telefono": 1,
+        "datosAR.email": 1
+      }
+    }
+  ]).then(datosAdResp => {
+    console.log(JSON.stringify(datosAdResp));
+    if (!datosAdResp) {
+      return res.status(200).json({
+        message: "El estudiante no tiene adultos responsables a su cargo",
+        exito: false
+      });
+    }
+    let AR = [];
+    datosAdResp[0].datosAR.forEach(AdResp => {
+      AR.push(AdResp);
+    });
+    return res.status(200).json({
+      message: "Se obtuvieron los adultos responsables exitosamente",
+      exito: true,
+      tutores: AR
+    });
+  });
+});
+
 //Prueba notif #resolve #borrar
 router.get("/notificacion", (req, res) => {
   Suscripcion.notificar(
