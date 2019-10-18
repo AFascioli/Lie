@@ -70,8 +70,6 @@ export class DocumentosInscripcionComponent implements OnInit {
       .registrarDocumentosInscripcion(this.estudiantesConDocumentos)
       .subscribe(response => {
         if (response.exito) {
-          curso.reset();
-          this.estudiantesConDocumentos = [];
           this.snackBar.open(
             "Se registró correctamente la documentación de los estudiantes",
             "",
@@ -90,7 +88,9 @@ export class DocumentosInscripcionComponent implements OnInit {
   }
 
   onCancelar() {
-    this.popup.open(DocumentosInscripcionPopupComponent);
+    this.popup.open(DocumentosInscripcionPopupComponent, {
+      width: "250px"
+    });
   }
 }
 

@@ -75,11 +75,8 @@ export class EstudiantesService {
       estadoCivil,
       telefonoFijo
     };
-    this.http
-      .post<{ message: string }>(environment.apiUrl + "/estudiante", estudiante)
-      .subscribe(response => {
-        console.log(response.message);
-      });
+    return this.http
+      .post<{ message: string, exito: boolean }>(environment.apiUrl + "/estudiante", estudiante);
   }
 
   borrarEstudiante(_id) {
@@ -193,7 +190,6 @@ export class EstudiantesService {
     fechaNacimiento: string,
     estadoCivil: string,
     telefonoFijo: number
-    // adultoResponsable: string
   ) {
     const estudianteModificado: Estudiante = {
       _id,
@@ -215,14 +211,11 @@ export class EstudiantesService {
       estadoCivil,
       telefonoFijo
     };
-    this.http
-      .patch<{ message: string }>(
+    return this.http
+      .patch<{ message: string, exito: boolean }>(
         environment.apiUrl + "/estudiante/modificar",
         estudianteModificado
-      )
-      .subscribe(response => {
-        console.log(response.message);
-      });
+      );
   }
 
   //Parece que este metodo no se usa

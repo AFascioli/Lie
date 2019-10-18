@@ -41,10 +41,11 @@ router.post("", checkAuthMiddleware, (req, res, next) => {
       .save()
       .then(() => {
         res.status(201).json({
-          message: "Estudiante registrado correctamente!"
+          message: "Estudiante registrado correctamente!",
+          exito: true
         });
       })
-      .catch(err => console.log("Error al meter en la bd estudiante" + err));
+      .catch(err => res.status(200).json({message: "Ocurrió un error al meter en la base de datos a un estudiante", exito: false }));
   });
 });
 
@@ -101,7 +102,13 @@ router.patch("/modificar", checkAuthMiddleware, (req, res, next) => {
     telefonoFijo: req.body.telefonoFijo
   }).then(() => {
     res.status(200).json({
-      message: "Estudiante exitosamente modificado"
+      message: "Estudiante modificado exitosamente",
+      exito: true
+    });
+  }).catch(err => {
+    res.status(200).json({
+      message: "Ocurrió un problema al intentar modificar el estudiante",
+      exito: false
     });
   });
 });

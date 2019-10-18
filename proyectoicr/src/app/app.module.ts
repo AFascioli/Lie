@@ -66,7 +66,7 @@ import { registerLocaleData } from '@angular/common';
 import { ChartsModule } from 'ng2-charts';
 registerLocaleData(localePy, 'es');
 import localePy from '@angular/common/locales/es';
-import { JustificacionInasistenciaComponent, JustificacionInasistenciaPopupComponent } from './asistencia/justificacion-inasistencia/justificacion-inasistencia.component';
+import { JustificacionInasistenciaComponent} from './asistencia/justificacion-inasistencia/justificacion-inasistencia.component';
 import { AltaARComponent, AltaARPopupComponent} from './adulto-responsable/alta-ar/alta-ar.component';
 import { AltaEmpleadoComponent, AltaEmpleadoPopupComponent } from './empleado/alta-empleado/alta-empleado.component';
 import { PreferenciasComponent, PreferenciasPopupComponent } from './menu-lateral/preferencias/preferencias.component';
@@ -111,7 +111,6 @@ import { DatosEstudianteComponent } from './estudiantes/perfil-estudiante/datos-
     JustificacionInasistenciaComponent,
     AltaARComponent,
     AltaEmpleadoComponent,
-    JustificacionInasistenciaPopupComponent,
     AltaEmpleadoPopupComponent,
     AltaARPopupComponent,
     PreferenciasComponent,
@@ -133,7 +132,6 @@ import { DatosEstudianteComponent } from './estudiantes/perfil-estudiante/datos-
     CalificacionesEstudiantePopupComponent,
     CambiarPasswordPopupComponent,
     CerrarSesionPopupComponent,
-    JustificacionInasistenciaPopupComponent,
     PreferenciasPopupComponent,
     AltaEmpleadoPopupComponent,
     AltaARPopupComponent,

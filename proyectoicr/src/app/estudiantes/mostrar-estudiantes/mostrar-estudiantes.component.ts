@@ -1,4 +1,4 @@
-import { AutenticacionService } from './../../login/autenticacionService.service';
+import { AutenticacionService } from "./../../login/autenticacionService.service";
 import { Component, OnInit, Input, ChangeDetectorRef } from "@angular/core";
 import { EstudiantesService } from "../estudiante.service";
 import { Subscription } from "rxjs";
@@ -9,7 +9,7 @@ import { Nacionalidad } from "../nacionalidades.model";
 import { Localidad } from "../localidades.model";
 import { MatDialog, MatDialogRef, MatSnackBar } from "@angular/material";
 import { Router } from "@angular/router";
-import { MediaMatcher } from '@angular/cdk/layout';
+import { MediaMatcher } from "@angular/cdk/layout";
 
 @Component({
   selector: "app-mostrar-estudiantes",
@@ -45,23 +45,28 @@ export class MostrarEstudiantesComponent implements OnInit {
   nacionalidadEstudiante: string;
   estadoCivilEstudiante: string;
   telefonoEstudiante: number;
-  permisos={
-    notas:0,
-    asistencia:0,
-    eventos:0,
-    sanciones:0,
-    agendaCursos:0,
-    inscribirEstudiante:0,
-    registrarEmpleado:0,
-    cuotas:0
+  permisos = {
+    notas: 0,
+    asistencia: 0,
+    eventos: 0,
+    sanciones: 0,
+    agendaCursos: 0,
+    inscribirEstudiante: 0,
+    registrarEmpleado: 0,
+    cuotas: 0
   };
   _mobileQueryListener: () => void;
   mobileQuery: MediaQueryList;
 
-  constructor(public servicio: EstudiantesService, public dialog: MatDialog,
-    private snackBar: MatSnackBar, public authService: AutenticacionService,
+  constructor(
+    public servicio: EstudiantesService,
+    public dialog: MatDialog,
+    private snackBar: MatSnackBar,
+    public authService: AutenticacionService,
     public changeDetectorRef: ChangeDetectorRef,
-    public media: MediaMatcher) {
+    public router: Router,
+    public media: MediaMatcher
+  ) {
     this.apellidoEstudiante = this.servicio.estudianteSeleccionado.apellido;
     this.nombreEstudiante = this.servicio.estudianteSeleccionado.nombre;
     this.tipoDocEstudiante = this.servicio.estudianteSeleccionado.tipoDocumento;
@@ -79,14 +84,14 @@ export class MostrarEstudiantesComponent implements OnInit {
     this.nacionalidadEstudiante = this.servicio.estudianteSeleccionado.nacionalidad;
     this.estadoCivilEstudiante = this.servicio.estudianteSeleccionado.estadoCivil;
     this.telefonoEstudiante = this.servicio.estudianteSeleccionado.telefonoFijo;
-    this.mobileQuery = media.matchMedia('(max-width: 1000px)');
-      this._mobileQueryListener = () => changeDetectorRef.detectChanges();
-      this.mobileQuery.addListener(this._mobileQueryListener);
+    this.mobileQuery = media.matchMedia("(max-width: 1000px)");
+    this._mobileQueryListener = () => changeDetectorRef.detectChanges();
+    this.mobileQuery.addListener(this._mobileQueryListener);
   }
 
   ngOnInit() {
     this.servicio.formInvalidoEstudiante = true;
-    this.servicio.formEstudianteModificada= false;
+    this.servicio.formEstudianteModificada = false;
     this.servicio.getProvincias();
     this.suscripcion = this.servicio
       .getProvinciasListener()
@@ -106,13 +111,15 @@ export class MostrarEstudiantesComponent implements OnInit {
       .subscribe(nacionalidadesActualizadas => {
         this.nacionalidades = nacionalidadesActualizadas;
       });
-      this.authService.obtenerPermisosDeRol().subscribe(response=>{
-        this.permisos=response.permisos;
-      });
+    this.authService.obtenerPermisosDeRol().subscribe(response => {
+      this.permisos = response.permisos;
+    });
   }
 
   FiltrarLocalidades() {
-    const idProvinciaSeleccionada = this.provincias.find(provincia => provincia.nombre===this.provinciaEstudiante).id;
+    const idProvinciaSeleccionada = this.provincias.find(
+      provincia => provincia.nombre === this.provinciaEstudiante
+    ).id;
     this.localidadesFiltradas = [...this.localidades];
     this.localidadesFiltradas = this.localidadesFiltradas.filter(
       localidad => localidad.id_provincia == idProvinciaSeleccionada
@@ -130,63 +137,74 @@ export class MostrarEstudiantesComponent implements OnInit {
 
   onGuardar(form: NgForm) {
     if (!form.invalid && form.dirty) {
-      this.servicio.modificarEstudiante(
-        this.servicio.estudianteSeleccionado._id,
-        this.apellidoEstudiante,
-        this.nombreEstudiante,
-        this.tipoDocEstudiante,
-        this.nroDocEstudiante,
-        this.cuilEstudiante,
-        this.sexoEstudiante,
-        this.calleEstudiante,
-        this.nroCalleEstudiante,
-        this.pisoEstudiante,
-        this.departamentoEstudiante,
-        this.provinciaEstudiante,
-        this.localidadEstudiante,
-        this.CPEstudiante,
-        this.nacionalidadEstudiante,
-        this.fechaNacEstudiante,
-        this.estadoCivilEstudiante,
-        this.telefonoEstudiante
-      );
-      this.modoEditar=false;
-    }
-  }
-
-  openDialogo(tipo: string, form: NgForm): void {
-    this.servicio.tipoPopUp = tipo;
-    if (form.invalid) {
-      this.servicio.formInvalidoEstudiante = true;
-    } else {
-      this.servicio.formInvalidoEstudiante = false;
-      this.servicio.formEstudianteModificada = form.dirty;
-    }
-    this.dialog.open(MostrarPopupComponent, {
-      width: "250px"
-    });
-  }
-
-  snackBarGuardar(form: NgForm): void {
-    if(form.dirty){
-      if(form.invalid){
-        this.snackBar.open("Faltan campos por completar", "", {
-          panelClass: ['snack-bar-fracaso'],
-          duration: 4000
+      this.servicio
+        .modificarEstudiante(
+          this.servicio.estudianteSeleccionado._id,
+          this.apellidoEstudiante,
+          this.nombreEstudiante,
+          this.tipoDocEstudiante,
+          this.nroDocEstudiante,
+          this.cuilEstudiante,
+          this.sexoEstudiante,
+          this.calleEstudiante,
+          this.nroCalleEstudiante,
+          this.pisoEstudiante,
+          this.departamentoEstudiante,
+          this.provinciaEstudiante,
+          this.localidadEstudiante,
+          this.CPEstudiante,
+          this.nacionalidadEstudiante,
+          this.fechaNacEstudiante,
+          this.estadoCivilEstudiante,
+          this.telefonoEstudiante
+        )
+        .subscribe(resultado => {
+          if (resultado.exito) {
+            this.modoEditar = false;
+            this.snackBar.open(resultado.message, "", {
+              panelClass: ["snack-bar-exito"],
+              duration: 4000
+            });
+          } else {
+            this.snackBar.open(resultado.message, "", {
+              panelClass: ["snack-bar-fracaso"],
+              duration: 4000
+            });
+          }
         });
-      }else{
-        this.snackBar.open("Se han registrado los cambios correctamente", "", {
-          panelClass: ['snack-bar-exito'],
+    } else{
+      if (form.invalid){
+        this.snackBar.open("Faltan campos por completar", "", {
+          panelClass: ["snack-bar-fracaso"],
           duration: 4000
         });
       }
-    }else{
-      this.snackBar.open("No se han realizado cambios", "", {
-        panelClass: ['snack-bar-fracaso'],
-        duration: 4000
+      else{
+        this.snackBar.open("No se han realizado cambios en el formulario", "", {
+          panelClass: ["snack-bar-fracaso"],
+          duration: 4000
+        });
+      }
+    }
+  }
+
+  onBorrarVolver(tipo: string, form: NgForm): void {
+    if (tipo == "volver" && !this.modoEditar) {
+      this.router.navigate(["./buscar/lista"]);
+    } else {
+      this.servicio.tipoPopUp = tipo;
+      if (form.invalid) {
+        this.servicio.formInvalidoEstudiante = true;
+      } else {
+        this.servicio.formInvalidoEstudiante = false;
+        this.servicio.formEstudianteModificada = form.dirty;
+      }
+      this.dialog.open(MostrarPopupComponent, {
+        width: "250px"
       });
     }
   }
+
 }
 
 @Component({
@@ -208,11 +226,11 @@ export class MostrarPopupComponent {
     this.tipoPopup = this.servicio.tipoPopUp;
     this.formInvalido = servicio.formInvalidoEstudiante;
     this.borrar = "¿Está seguro que desea borrar el estudiante?";
-    this.formModificada= this.servicio.formEstudianteModificada;
+    this.formModificada = this.servicio.formEstudianteModificada;
   }
 
   onYesClick(): void {
-    this.router.navigate(["./home"]);
+    this.router.navigate(["./buscar/lista"]);
     this.dialogRef.close();
   }
 
@@ -227,7 +245,7 @@ export class MostrarPopupComponent {
 
   onOkClickBorrar(): void {
     this.dialogRef.close();
-    this.router.navigate(["./buscar"]);
+    this.router.navigate(["./buscar/lista"]);
   }
 
   onYesDeleteClick() {

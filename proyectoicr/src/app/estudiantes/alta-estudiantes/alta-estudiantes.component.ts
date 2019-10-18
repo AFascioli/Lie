@@ -8,7 +8,7 @@ import { Subscription } from "rxjs";
 import { DateAdapter, MatSnackBar } from "@angular/material";
 import { MatDialog, MatDialogRef } from "@angular/material/dialog";
 import { Router } from "@angular/router";
-import { MediaMatcher } from '@angular/cdk/layout';
+import { MediaMatcher } from "@angular/cdk/layout";
 
 @Component({
   selector: "app-alta-estudiantes",
@@ -34,8 +34,8 @@ export class AltaEstudiantesComponent implements OnInit, OnDestroy {
     public changeDetectorRef: ChangeDetectorRef,
     public media: MediaMatcher
   ) {
-//    this.dateAdapter.setLocale("es");
-  this.mobileQuery = media.matchMedia('(max-width: 1000px)');
+    //    this.dateAdapter.setLocale("es");
+    this.mobileQuery = media.matchMedia("(max-width: 1000px)");
     this._mobileQueryListener = () => changeDetectorRef.detectChanges();
     this.mobileQuery.addListener(this._mobileQueryListener);
   }
@@ -70,27 +70,45 @@ export class AltaEstudiantesComponent implements OnInit, OnDestroy {
 
   onGuardar(form: NgForm) {
     if (form.invalid) {
+      this.snackBar.open("Faltan campos por completar", "", {
+        panelClass: ["snack-bar-fracaso"],
+        duration: 4000
+      });
     } else {
-      this.servicio.altaEstudiante(
-        form.value.apellido,
-        form.value.nombre,
-        form.value.tipoDocumento,
-        form.value.nroDocumento,
-        form.value.cuil,
-        form.value.sexo,
-        form.value.calle,
-        form.value.nroCalle,
-        form.value.piso,
-        form.value.departamento,
-        form.value.provincia,
-        form.value.localidad,
-        form.value.codigoPostal,
-        form.value.nacionalidad,
-        form.value.fechaNac,
-        form.value.estadoCivil,
-        form.value.telefono
-      );
-      form.resetForm();
+      this.servicio
+        .altaEstudiante(
+          form.value.apellido,
+          form.value.nombre,
+          form.value.tipoDocumento,
+          form.value.nroDocumento,
+          form.value.cuil,
+          form.value.sexo,
+          form.value.calle,
+          form.value.nroCalle,
+          form.value.piso,
+          form.value.departamento,
+          form.value.provincia,
+          form.value.localidad,
+          form.value.codigoPostal,
+          form.value.nacionalidad,
+          form.value.fechaNac,
+          form.value.estadoCivil,
+          form.value.telefono
+        )
+        .subscribe(respuesta => {
+          if (respuesta.exito) {
+            this.snackBar.open(respuesta.message, "", {
+              panelClass: ["snack-bar-exito"],
+              duration: 4000
+            });
+            form.resetForm();
+          } else {
+            this.snackBar.open(respuesta.message, "", {
+              panelClass: ["snack-bar-fracaso"],
+              duration: 4000
+            });
+          }
+        });
     }
   }
 
@@ -104,20 +122,19 @@ export class AltaEstudiantesComponent implements OnInit, OnDestroy {
     );
   }
 
-  snackBarGuardar(form: NgForm): void {
-    if (form.invalid) {
-      this.snackBar.open("Faltan campos por completar", "", {
-        panelClass: ['snack-bar-fracaso'],
-        duration: 4000
-      });
-    } else {
-      this.snackBar.open("El estudiante se ha registrado correctamente", "", {
-        panelClass: ['snack-bar-exito'],
-        duration: 4000
-      });
-    }
-  }
-
+  // snackBarGuardar(form: NgForm): void {
+  //   if (form.invalid) {
+  //     this.snackBar.open("Faltan campos por completar", "", {
+  //       panelClass: ['snack-bar-fracaso'],
+  //       duration: 4000
+  //     });
+  //   } else {
+  //     this.snackBar.open("El estudiante se ha registrado correctamente", "", {
+  //       panelClass: ['snack-bar-exito'],
+  //       duration: 4000
+  //     });
+  //   }
+  // }
 
   popUpCancelar() {
     this.dialog.open(AltaPopupComponent, {
@@ -129,7 +146,10 @@ export class AltaEstudiantesComponent implements OnInit, OnDestroy {
   checkLetras(event) {
     var inputValue = event.which;
     if (
-      !(inputValue >= 65 && inputValue <= 122 || (inputValue == 209 ||  inputValue == 241)) &&
+      !(
+        (inputValue >= 65 && inputValue <= 122) ||
+        (inputValue == 209 || inputValue == 241)
+      ) &&
       (inputValue != 32 && inputValue != 0)
     ) {
       event.preventDefault();
@@ -166,5 +186,4 @@ export class AltaPopupComponent {
   onNoClick(): void {
     this.dialogRef.close();
   }
-
 }

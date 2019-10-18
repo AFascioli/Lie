@@ -4,7 +4,7 @@
 <mat-card class="card-body-componente">
   <meta charset="utf-8" />
 
-  <form #form="ngForm" (submit)="onGuardar(form)">
+  <form #form="ngForm" >
     <mat-accordion>
       <mat-expansion-panel
         [class.mat-expansion-panel-mobile]="mobileQuery.matches"
@@ -73,7 +73,6 @@
             <input
               name="nroDocumento"
               maxlength="8"
-              pattern="[0-9]+"
               ngModel
               #nroDocumento="ngModel"
               matInput
@@ -89,7 +88,6 @@
           <mat-form-field [class.mat-form-field-mobile]="mobileQuery.matches">
             <input
               name="cuil"
-              pattern="[0-9]+"
               maxlength="11"
               ngModel
               #cuil="ngModel"
@@ -198,7 +196,6 @@
           <mat-form-field [class.mat-form-field-mobile]="mobileQuery.matches">
             <input
               name="calle"
-              pattern="[A-Za-záéíóúÁÉÍÓÚñÑ. ]+"
               minlength="2"
               maxlength="30"
               ngModel
@@ -215,7 +212,6 @@
           <mat-form-field [class.mat-form-field-mobile]="mobileQuery.matches">
             <input
               name="nroCalle"
-              pattern="[0-9]+"
               maxlength="5"
               ngModel
               #nroCalle="ngModel"
@@ -230,7 +226,6 @@
           <mat-form-field [class.mat-form-field-mobile]="mobileQuery.matches">
             <input
               name="piso"
-              pattern="[\w]+"
               ngModel
               #piso="ngModel"
               matInput
@@ -245,7 +240,6 @@
               ngModel
               #departamento="ngModel"
               matInput
-              pattern="[A-Za-záéíóúÁÉÍÓÚ]+"
               placeholder="Ingrese departamento"
               type="text"
             />
@@ -310,17 +304,9 @@
     <br />
 
     <div class="div-button">
-      <!-- <button
-        mat-raised-button
-        class="buttonPrimary"
-        routerLink="/altaAdultoResponsable"
-      >
-        Registrar Adulto Responsable
-      </button> -->
       <button
-        type="submit"
-        (click)="snackBarGuardar(form)"
         class="buttonPrimary"
+        (click)="onGuardar(form)"
         mat-raised-button
       >
         Guardar

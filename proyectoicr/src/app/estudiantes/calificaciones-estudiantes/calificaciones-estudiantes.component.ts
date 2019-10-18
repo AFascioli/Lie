@@ -28,6 +28,7 @@ export class CalificacionesEstudiantesComponent implements OnInit {
   trimestrePorDefecto: string;
   rolConPermisosEdicion = false;
 
+
   constructor(
     public servicio: EstudiantesService,
     public popup: MatDialog,
@@ -86,6 +87,7 @@ export class CalificacionesEstudiantesComponent implements OnInit {
   }
 
   onCursoSeleccionado(curso) {
+    this.estudiantes= null;
     if(this.rolConPermisosEdicion && this.servicioAutenticacion.getRol() !="Admin"){
       this.servicio.obtenerMateriasXCurso(curso.value, this.servicioAutenticacion.getId()).subscribe(respuesta => {
         this.materias = respuesta.materias;
