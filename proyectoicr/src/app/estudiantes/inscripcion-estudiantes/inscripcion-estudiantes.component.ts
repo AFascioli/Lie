@@ -71,7 +71,6 @@ export class InscripcionEstudianteComponent implements OnInit {
   onCursoSeleccionado(curso){
     this.servicio.obtenerCapacidadCurso(curso.value).subscribe(response => {
        this.capacidadCurso= response.capacidad;
-       console.log(this.capacidadCurso);
     });
   }
 

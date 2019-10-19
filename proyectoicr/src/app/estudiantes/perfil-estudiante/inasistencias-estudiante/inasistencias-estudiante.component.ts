@@ -18,7 +18,6 @@ export class InasistenciasEstudianteComponent implements OnInit {
 
   ngOnInit() {
     this.servicio.obtenerInasistenciasDeEstudiante().subscribe( response => {
-      console.log(response);
       this.contadorInasistenciaInjustificada = response.contadorInasistenciasInjustificada;
      this.contadorInasistenciaJustificada= response.contadorInasistenciasJustificada;
     this.pieChartLabels = ['Inasistencias injustificadas', 'Inasistencias justificadas'];

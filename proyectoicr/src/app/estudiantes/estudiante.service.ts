@@ -86,7 +86,6 @@ export class EstudiantesService {
         params: params
       })
       .subscribe(response => {
-        console.log(response.message);
       });
   }
 

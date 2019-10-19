@@ -109,7 +109,6 @@ export class RetiroPopupComponent {
     this.servicio.registrarRetiroAnticipado(this.IdEstudiante, this.antes10am).subscribe(response =>{
       this.resultado = response.exito;
       this.dialogRef.close();
-      console.log(response);
       if(this.resultado == "exito"){
         this.snackBar.open("Se registró correctamente el retiro anticipado para el estudiante seleccionado.", "", {
           panelClass:['snack-bar-exito'],
