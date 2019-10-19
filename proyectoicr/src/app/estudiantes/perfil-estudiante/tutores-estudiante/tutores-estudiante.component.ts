@@ -8,11 +8,12 @@ import { AdultoResponsable } from 'src/app/adulto-responsable/adultoResponsable.
   styleUrls: ['./tutores-estudiante.component.css']
 })
 export class TutoresEstudianteComponent implements OnInit {
-  tutores: any[];
+  tutores: any[]= [];
   displayedColumns: string[] = [
     "apellido",
     "nombre",
-    "telefono"
+    "telefono",
+    "email"
   ];
 
   constructor(public servicio: EstudiantesService) { }

@@ -543,7 +543,9 @@ router.get("/materia/calificaciones", (req, res) => {
 
 //Recibe vector con inasistencias, cada una tiene su _id y si fue o no justificada
 router.post("/inasistencia/justificada", checkAuthMiddleware, (req, res) => {
-  req.body.forEach(inasistencia => {
+  let contador = 0;
+  req.body.ultimasInasistencias.forEach(inasistencia => {
+    contador = contador+1;
     if (inasistencia.justificado) {
       AsistenciaDiaria.findByIdAndUpdate(inasistencia.idAsistencia, {
         justificado: true
@@ -556,9 +558,14 @@ router.post("/inasistencia/justificada", checkAuthMiddleware, (req, res) => {
         });
     }
   });
-  res
-    .status(200)
-    .json({ message: "Inasistencias justificadas correctamente", exito: true });
+  Inscripcion.findOneAndUpdate(
+    {idEstudiante: req.body.idEstudiante, activa: true},{
+    $inc : { contadorInasistenciasJustificada : contador}
+  }).then( () => {
+    res
+      .status(200)
+      .json({ message: "Inasistencias justificadas correctamente", exito: true });
+  });
 });
 
 //Se obtienen las ultimas inasistencias dentro de un periodo de 5 dias antes

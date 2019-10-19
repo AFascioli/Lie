@@ -432,6 +432,42 @@ router.get(
   }
 );
 
+router.get("/estudiante", checkAuthMiddleware, (req,res)=>{
+Inscripcion.aggregate(
+  [
+    {
+      '$match': {
+        'idEstudiante': mongoose.Types.ObjectId(req.query.idEstudiante),
+        'activa': true
+      }
+    }, {
+      '$lookup': {
+        'from': 'curso',
+        'localField': 'idCurso',
+        'foreignField': '_id',
+        'as': 'cursosDeEstudiante'
+      }
+    }, {
+      '$project': {
+        '_id': 0,
+        'cursosDeEstudiante.curso': 1
+      }
+    }
+  ]
+).then(cursoDeEstudiante=> {
+  return res.status(200).json({
+    message: "Se obtuvo el curso del estudiante exitosamente",
+    exito: true,
+    curso: cursoDeEstudiante[0].cursosDeEstudiante[0].curso
+  });
+}).catch( err => {
+  res.status(200).json({
+  message: "Ocurrieron errores al querer obtener el curso del estudiante",
+  exito: false
+});
+});
+});
+
 //Registra las calificaciones por alumno de un curso y materia determinada
 router.post(
   "/estudiantes/materias/calificaciones",

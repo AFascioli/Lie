@@ -1,4 +1,6 @@
+ <h1 class="titulo">El estudiante se encuentra cursando en: {{curso}}</h1>
  <mat-form-field>
+
     <mat-select
       name="trimestre"
       ngModel
@@ -173,9 +175,9 @@
     </ng-container>
 
     <ng-container matColumnDef="prom">
-      <th class="columnasChicas" mat-header-cell *matHeaderCellDef>Promedio</th>
+      <th class="columnasChicas promedio" mat-header-cell *matHeaderCellDef>Promedio</th>
       <td
-        class="columnasChicas"
+        class="columnasChicas promedio"
         mat-cell
         *matCellDef="let estudiante; let i = index"
       >

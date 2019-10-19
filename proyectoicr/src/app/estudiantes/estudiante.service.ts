@@ -403,10 +403,24 @@ export class EstudiantesService {
     });
   }
 
+  //Dada una id del estudiante me devuelve el curso al cual está inscripto
+  obtenerCursoDeEstudiante(){
+    let params = new HttpParams()
+    .set("idEstudiante", this.estudianteSeleccionado._id);
+    return this.http.get<{
+      message: string;
+      exito: boolean;
+      curso: string;
+    }>(environment.apiUrl + "/curso/estudiante", {
+      params: params
+    });
+  }
+
   justificarInasistencia(ultimasInasistencias: any[]) {
+    let datosInasistencia= {ultimasInasistencias: ultimasInasistencias, idEstudiante: this.estudianteSeleccionado._id  }
     return this.http.post<{ message: string; exito: boolean }>(
       environment.apiUrl + "/estudiante/inasistencia/justificada",
-      ultimasInasistencias
+      datosInasistencia
     );
   }
 

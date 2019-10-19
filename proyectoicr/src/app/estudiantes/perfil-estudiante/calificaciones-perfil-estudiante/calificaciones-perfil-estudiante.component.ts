@@ -11,6 +11,7 @@ import { Router } from "@angular/router";
 export class CalificacionesPerfilEstudianteComponent implements OnInit {
   apellidoEstudiante: string;
   nombreEstudiante: string;
+  curso: string;
   calificacionesXMateria: any[];
   trimestre: string;
   displayedColumns: string[] = [
@@ -26,6 +27,9 @@ export class CalificacionesPerfilEstudianteComponent implements OnInit {
   constructor(public servicio: EstudiantesService, public router: Router) {}
 
   ngOnInit() {
+    this.servicio.obtenerCursoDeEstudiante().subscribe(response=> {
+      this.curso = response.curso;
+    });
     this.apellidoEstudiante = this.servicio.estudianteSeleccionado.apellido;
     this.nombreEstudiante = this.servicio.estudianteSeleccionado.nombre;
     this.obtenerTrimestrePorDefecto();
@@ -34,6 +38,7 @@ export class CalificacionesPerfilEstudianteComponent implements OnInit {
       .subscribe(res => {
         this.calificacionesXMateria = res.vectorCalXMat;
       });
+
   }
 
   onChangeTrimestre() {
