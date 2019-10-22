@@ -49,7 +49,7 @@ export class HomeComponent implements OnInit {
   }
 
   testNP() {
-    this.servicio.testNP().subscribe(res => {
+    this.servicio.pruebaNotificacion().subscribe(res => {
       console.log(res);
     });
   }

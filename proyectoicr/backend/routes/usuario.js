@@ -165,4 +165,14 @@ router.post("/suscripcion", (req, res) => {
 
 });
 
+// Envía una notificación de prueba
+router.get("/notificacion", (req, res) => {
+  Suscripcion.notificar(
+    "5d7bfd1b93119f33f80819a1",
+    "Titulo",
+    "Notificación de prueba."
+  );
+  res.status(200).json({ message: "Prueba de notificación" });
+});
+
 module.exports = router;

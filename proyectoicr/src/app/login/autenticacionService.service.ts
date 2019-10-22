@@ -201,8 +201,8 @@ export class AutenticacionService {
   }
 
   //#resolve #borrar
-  testNP(){
-    return this.http.get<{message: string}>(environment.apiUrl + "/estudiante/notificacion");
+  pruebaNotificacion(){
+    return this.http.get<{message: string}>(environment.apiUrl + "/usuario/notificacion");
   }
 
   //Metodo sign up que crea un usuario segun un rol dado

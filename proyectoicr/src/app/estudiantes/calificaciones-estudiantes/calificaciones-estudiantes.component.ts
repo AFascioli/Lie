@@ -51,7 +51,7 @@ export class CalificacionesEstudiantesComponent implements OnInit {
   }
 
   obtenerCursos(){
-    if(this.rolConPermisosEdicion && this.servicioAutenticacion.getRol() !="Admin"){
+    if(this.servicioAutenticacion.getRol() =="Docente"){
       this.servicio.obtenerCursosDeDocente(this.servicioAutenticacion.getId()).subscribe(response => {
         this.cursos = response.cursos;
         this.cursos.sort((a, b) =>
@@ -110,6 +110,9 @@ export class CalificacionesEstudiantesComponent implements OnInit {
         )
         .subscribe(respuesta => {
           this.estudiantes = [...respuesta.estudiantes];
+          this.estudiantes = this.estudiantes.sort((a, b) =>
+          a.apellido > b.apellido ? 1 : b.apellido > a.apellido ? -1 : 0
+        );
         });
       }
   }

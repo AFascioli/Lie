@@ -1,3 +1,4 @@
+import { AutenticacionService } from './../../login/autenticacionService.service';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { MatDialog, MatDialogRef, MatSnackBar } from '@angular/material';
@@ -12,7 +13,8 @@ export class PreferenciasComponent implements OnInit {
 
   constructor(public router: Router,
       public popup: MatDialog,
-      public snackBar: MatSnackBar) { }
+      public snackBar: MatSnackBar,
+      public servicio: AutenticacionService) { }
 
   //#resolve, este valor lo tiene que buscar de la bd
   ngOnInit() {
@@ -36,6 +38,12 @@ export class PreferenciasComponent implements OnInit {
     this.snackBar.open("Se han guardado las configuraciones de manera exitosa", "", {
       panelClass: ['snack-bar-exito'],
       duration: 4500,
+    });
+  }
+
+  pruebaNotificacion() {
+    this.servicio.pruebaNotificacion().subscribe(res => {
+      console.log(res);
     });
   }
 
