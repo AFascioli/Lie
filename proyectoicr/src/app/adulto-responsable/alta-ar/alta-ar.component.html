@@ -70,7 +70,6 @@
           <input
             name="nroDocumento"
             maxlength="8"
-            pattern="[0-9]+"
             ngModel
             #nroDocumento="ngModel"
             matInput
@@ -173,7 +172,7 @@
       >
         Guardar
       </button>
-      <button mat-raised-button (click)="popUpCancelar()" class="buttonWarn">
+      <button mat-raised-button [routerLink]="['/buscar/lista']" class="buttonWarn">
         Volver
       </button>
     </div>
