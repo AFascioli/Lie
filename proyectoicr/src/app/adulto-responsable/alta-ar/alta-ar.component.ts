@@ -93,7 +93,7 @@ export class AltaARComponent implements OnInit, OnDestroy {
     }
   }
 
-  popUpCancelar() {
+  popUpVolver() {
     this.dialog.open(AltaARPopupComponent, {
       width: "250px"
     });

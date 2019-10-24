@@ -4,7 +4,7 @@ const jwt = require("jsonwebtoken");
 const Usuario = require("../models/usuario");
 const Rol = require("../models/rol");
 const Empleado = require("../models/empleado");
-const AdultoResponsable = require("../models/adultoResponsable");
+const Suscripcion = require("../classes/suscripcion");
 const router = express.Router();
 
 router.post("/signup", (req, res) => {
