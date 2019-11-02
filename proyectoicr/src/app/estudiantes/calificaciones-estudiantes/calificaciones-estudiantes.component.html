@@ -86,7 +86,7 @@
             *ngIf="rolConPermisosEdicion"
             [(ngModel)]="estudiante.calificaciones[0]"
             name="nota1{{ estudiante.calificaciones[0] }}"
-            type="text"
+            type="number"
             pattern="([0-9]|10)"
           />
           <p *ngIf="!rolConPermisosEdicion">
@@ -100,7 +100,7 @@
           <input
             *ngIf="rolConPermisosEdicion"
             [(ngModel)]="estudiante.calificaciones[1]"
-            type="text"
+            type="number"
             name="nota2{{ estudiante.calificaciones[1] }}"
             pattern="([0-9]|10)"
           />
@@ -115,7 +115,7 @@
           <input
             *ngIf="rolConPermisosEdicion"
             [(ngModel)]="estudiante.calificaciones[2]"
-            type="text"
+            type="number"
             name="nota3{{ estudiante.calificaciones[2] }}"
             pattern="([0-9]|10)"
           />
@@ -130,7 +130,7 @@
           <input
             *ngIf="rolConPermisosEdicion"
             [(ngModel)]="estudiante.calificaciones[3]"
-            type="text"
+            type="number"
             name="nota4{{ estudiante.calificaciones[3] }}"
             pattern="([0-9]|10)"
           />
@@ -145,7 +145,7 @@
           <input
             *ngIf="rolConPermisosEdicion"
             [(ngModel)]="estudiante.calificaciones[4]"
-            type="text"
+            type="number"
             name="nota5{{ estudiante.calificaciones[4] }}"
             pattern="([0-9]|10)"
           />
@@ -160,7 +160,7 @@
           <input
             *ngIf="rolConPermisosEdicion"
             [(ngModel)]="estudiante.calificaciones[5]"
-            type="text"
+            type="number"
             name="nota6{{ estudiante.calificaciones[5] }}"
             pattern="([0-9]|10)"
           />
