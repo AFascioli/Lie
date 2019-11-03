@@ -52,9 +52,11 @@ export class InscripcionEstudianteComponent implements OnInit {
     this.apellidoEstudiante = this.servicio.estudianteSeleccionado.apellido;
     this.nombreEstudiante = this.servicio.estudianteSeleccionado.nombre;
     this._idEstudiante = this.servicio.estudianteSeleccionado._id;
-    this.servicio.estudianteEstaInscripto(this._idEstudiante).subscribe(response => {
-       this.estudianteEstaInscripto= response.exito;
-    })
+    this.servicio
+      .estudianteEstaInscripto(this._idEstudiante)
+      .subscribe(response => {
+        this.estudianteEstaInscripto = response.exito;
+      });
     this.servicio.obtenerCursos().subscribe(response => {
       this.cursos = response.cursos;
       this.cursos.sort((a, b) =>
@@ -68,9 +70,9 @@ export class InscripcionEstudianteComponent implements OnInit {
   }
 
   //Obtiene la capacidad del curso seleccionado
-  onCursoSeleccionado(curso){
+  onCursoSeleccionado(curso) {
     this.servicio.obtenerCapacidadCurso(curso.value).subscribe(response => {
-       this.capacidadCurso= response.capacidad;
+      this.capacidadCurso = response.capacidad;
     });
   }
 
@@ -81,20 +83,24 @@ export class InscripcionEstudianteComponent implements OnInit {
     ].entregado;
   }
 
-  openDialogo( form: NgForm, curso) {
+
+  openDialogo(form: NgForm, curso) {
     if (form.invalid) {
       this.snackBar.open("No se ha seleccionado un curso", "", {
-        panelClass: ['snack-bar-fracaso'],
-        duration: 4500,
+        panelClass: ["snack-bar-fracaso"],
+        duration: 4500
       });
     } else {
-      if(this.capacidadCurso==0){
-        this.snackBar.open("El curso seleccionado no tiene más cupos disponibles", "", {
-          panelClass: ['snack-bar-fracaso'],
-          duration: 4500,
-        });
-      }else{
-
+      if (this.capacidadCurso == 0) {
+        this.snackBar.open(
+          "El curso seleccionado no tiene más cupos disponibles",
+          "",
+          {
+            panelClass: ["snack-bar-fracaso"],
+            duration: 4500
+          }
+        );
+      } else {
         this.matConfig.data = {
           formValido: form.valid,
           IdEstudiante: this._idEstudiante,
@@ -104,7 +110,7 @@ export class InscripcionEstudianteComponent implements OnInit {
         this.matConfig.width = "250px";
         this.dialog.open(InscripcionPopupComponent, this.matConfig);
       }
-      }
+    }
   }
 }
 
@@ -137,7 +143,6 @@ export class InscripcionPopupComponent {
     this.documentosEntregados = data.documentosEntregados;
   }
 
-
   onNoCancelarConfirmarClick(): void {
     this.dialogRef.close();
   }
@@ -154,16 +159,15 @@ export class InscripcionPopupComponent {
         this.exito = response.exito;
         if (this.exito) {
           this.snackBar.open(response.message, "", {
-            panelClass: ['snack-bar-exito'],
-            duration: 4500,
+            panelClass: ["snack-bar-exito"],
+            duration: 4500
           });
-        }else{
+        } else {
           this.snackBar.open(response.message, "", {
             duration: 4500,
-            panelClass: ['snack-bar-fracaso']
+            panelClass: ["snack-bar-fracaso"]
           });
         }
-
       });
   }
 }

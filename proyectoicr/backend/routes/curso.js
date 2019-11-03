@@ -384,8 +384,6 @@ router.post("/inscripcion", checkAuthMiddleware, (req, res) => {
                 idsCalXMateria.push(califXMateriaNueva._id);
                 califXMateriaNueva.calificacionesXTrimestre = idsCalificacionMatXTrim;
                 califXMateriaNueva.save();
-                console.log("Calificacion por materia:");
-                console.log(califXMateriaNueva);
               }, 2000);
             });
           })
