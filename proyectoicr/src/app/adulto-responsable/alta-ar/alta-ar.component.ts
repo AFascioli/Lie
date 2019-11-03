@@ -78,6 +78,7 @@ export class AltaARComponent implements OnInit, OnDestroy {
             duration: 4000
           });
           form.resetForm();
+          this.tutor=false;
         }else{
           this.snackBar.open(response.message, "", {
             panelClass: ["snack-bar-fracaso"],

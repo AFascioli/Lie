@@ -41,7 +41,7 @@ router.post("", checkAuthMiddleware, (req, res, next) => {
       .save()
       .then(() => {
         res.status(201).json({
-          message: "Estudiante registrado correctamente!",
+          message: "Estudiante registrado correctamente",
           exito: true
         });
       })

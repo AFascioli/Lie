@@ -89,7 +89,7 @@ export class InscripcionEstudianteComponent implements OnInit {
       });
     } else {
       if(this.capacidadCurso==0){
-        this.snackBar.open("El curso seleccionado no tiene mas cupos dispobiles", "", {
+        this.snackBar.open("El curso seleccionado no tiene más cupos disponibles", "", {
           panelClass: ['snack-bar-fracaso'],
           duration: 4500,
         });
