@@ -143,6 +143,7 @@ export class InscripcionPopupComponent {
   }
 
   onYesConfirmarClick(): void {
+    this.dialogRef.close();
     this.servicio
       .inscribirEstudiante(
         this.IdEstudiante,
@@ -162,7 +163,7 @@ export class InscripcionPopupComponent {
             panelClass: ['snack-bar-fracaso']
           });
         }
-        this.dialogRef.close();
+
       });
   }
 }
