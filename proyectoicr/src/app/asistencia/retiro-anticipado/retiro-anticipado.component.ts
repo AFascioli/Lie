@@ -22,7 +22,9 @@ export class RetiroAnticipadoComponent implements OnInit {
   displayedColumns: string[] = [
     "apellido",
     "nombre",
-    "telefono"
+    "telefono",
+    "tipoDocumento",
+    "nroDocumento"
   ];
   tutores: any[] = [];
 

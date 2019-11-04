@@ -11,50 +11,59 @@ const checkAuthMiddleware = require("../middleware/check-auth");
 
 //Registra un nuevo estudiante y pone su estado a registrado
 router.post("", checkAuthMiddleware, (req, res, next) => {
-  Estado.findOne({
-    ambito: "Estudiante",
-    nombre: "Registrado"
-  }).then(estado => {
-    const estudiante = new Estudiante({
-      apellido: req.body.apellido,
-      nombre: req.body.nombre,
-      tipoDocumento: req.body.tipoDocumento,
-      numeroDocumento: req.body.numeroDocumento,
-      cuil: req.body.cuil,
-      sexo: req.body.sexo,
-      calle: req.body.calle,
-      numeroCalle: req.body.numeroCalle,
-      piso: req.body.piso,
-      departamento: req.body.departamento,
-      provincia: req.body.provincia,
-      localidad: req.body.localidad,
-      codigoPostal: req.body.codigoPostal,
-      nacionalidad: req.body.nacionalidad,
-      fechaNacimiento: req.body.fechaNacimiento,
-      estadoCivil: req.body.estadoCivil,
-      telefonoFijo: req.body.telefonoFijo,
-      adultoResponsable: [],
-      activo: true,
-      estado: estado._id
-    });
-    estudiante
-      .save()
-      .then(() => {
-        res.status(201).json({
-          message: "Estudiante registrado correctamente",
-          exito: true
+  Estudiante.findOne({tipoDocumento: req.body.tipoDocumento, numeroDocumento: req.body.numeroDocumento }).then(estudiante=>{
+    if(estudiante){
+      res.status(200).json({
+        message: "El estudiante ya se encuentra registrado",
+        exito: false
+      });
+    }else{
+      Estado.findOne({
+        ambito: "Estudiante",
+        nombre: "Registrado"
+      }).then(estado => {
+        const estudiante = new Estudiante({
+          apellido: req.body.apellido,
+          nombre: req.body.nombre,
+          tipoDocumento: req.body.tipoDocumento,
+          numeroDocumento: req.body.numeroDocumento,
+          cuil: req.body.cuil,
+          sexo: req.body.sexo,
+          calle: req.body.calle,
+          numeroCalle: req.body.numeroCalle,
+          piso: req.body.piso,
+          departamento: req.body.departamento,
+          provincia: req.body.provincia,
+          localidad: req.body.localidad,
+          codigoPostal: req.body.codigoPostal,
+          nacionalidad: req.body.nacionalidad,
+          fechaNacimiento: req.body.fechaNacimiento,
+          estadoCivil: req.body.estadoCivil,
+          telefonoFijo: req.body.telefonoFijo,
+          adultoResponsable: [],
+          activo: true,
+          estado: estado._id
         });
-      })
-      .catch(err =>
-        res
-          .status(200)
-          .json({
-            message:
-              "Ocurrió un error al meter en la base de datos a un estudiante",
-            exito: false
+        estudiante
+          .save()
+          .then(() => {
+            res.status(201).json({
+              message: "Estudiante registrado correctamente",
+              exito: true
+            });
           })
-      );
-  });
+          .catch(err =>
+            res
+              .status(200)
+              .json({
+                message:
+                  "Ocurrió un error al meter en la base de datos a un estudiante",
+                exito: false
+              })
+          );
+      });
+    }
+  })
 });
 
 //Obtiene un estudiante dado un numero y tipo de documento
@@ -747,7 +756,9 @@ router.get("/adultosResponsables", (req, res) => {
         "datosAR.apellido": 1,
         "datosAR.nombre": 1,
         "datosAR.telefono": 1,
-        "datosAR.email": 1
+        "datosAR.email": 1,
+        "datosAR.tipoDocumento": 1,
+        "datosAR.numeroDocumento": 1
       }
     }
   ]).then(datosAdResp => {

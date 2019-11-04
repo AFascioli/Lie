@@ -28,7 +28,7 @@
   <table mat-table [dataSource]="tutores" *ngIf="tutores && tutores.length!=0">
     <ng-container matColumnDef="apellido">
       <th class="columnasNormales" mat-header-cell *matHeaderCellDef>
-        Apellido/s
+        Apellido
       </th>
       <td class="columnasNormales" mat-cell *matCellDef="let tutor">
         {{ tutor.apellido }}
@@ -36,7 +36,7 @@
     </ng-container>
     <ng-container matColumnDef="nombre">
       <th class="columnasNormales" mat-header-cell *matHeaderCellDef>
-        Nombre/s
+        Nombre
       </th>
       <td class="columnasNormales" mat-cell *matCellDef="let tutor">
         {{ tutor.nombre }}
@@ -50,6 +50,22 @@
         {{ tutor.telefono }}
       </td>
     </ng-container>
+    <ng-container matColumnDef="tipoDocumento">
+        <th class="columnasNormales" mat-header-cell *matHeaderCellDef>
+          Tipo
+        </th>
+        <td class="columnasNormales" mat-cell *matCellDef="let tutor">
+          {{ tutor.tipoDocumento }}
+        </td>
+      </ng-container>
+    <ng-container matColumnDef="nroDocumento">
+        <th class="columnasNormales" mat-header-cell *matHeaderCellDef>
+          Número
+        </th>
+        <td class="columnasNormales" mat-cell *matCellDef="let tutor">
+          {{ tutor.numeroDocumento }}
+        </td>
+      </ng-container>
     <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
     <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
   </table>
