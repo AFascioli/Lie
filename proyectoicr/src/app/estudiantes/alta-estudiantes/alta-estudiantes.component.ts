@@ -22,9 +22,15 @@ export class AltaEstudiantesComponent implements OnInit, OnDestroy {
   localidades: Localidad[] = [];
   localidadesFiltradas: Localidad[] = [];
   suscripcion: Subscription;
-  nombreProvinciaSeleccionada: string;
   _mobileQueryListener: () => void;
   mobileQuery: MediaQueryList;
+
+  //para asignar valores por defecto
+  nombreProvinciaSeleccionada: string;
+  codigoPostalEstudiante: string;
+  localidadEstudiante: string;
+  estadoCivilEstudiante: string;
+  nacionalidadEstudiante:string;
 
   constructor(
     public servicio: EstudiantesService,
@@ -42,6 +48,8 @@ export class AltaEstudiantesComponent implements OnInit, OnDestroy {
 
   // Cuando se inicializa el componente se cargar las provincias.
   ngOnInit() {
+    this.codigoPostalEstudiante = "2421";
+    this.nacionalidadEstudiante= "Argentina";
     this.servicio.formInvalidoEstudiante = true;
     this.servicio.getProvincias();
     this.suscripcion = this.servicio
@@ -70,6 +78,7 @@ export class AltaEstudiantesComponent implements OnInit, OnDestroy {
 
   onGuardar(form: NgForm) {
     if (form.invalid) {
+      console.log(form.value.localidad);
       this.snackBar.open("Faltan campos por completar", "", {
         panelClass: ["snack-bar-fracaso"],
         duration: 4000
