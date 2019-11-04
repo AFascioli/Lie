@@ -1,3 +1,4 @@
+import { PreferenciasComponent } from './../../menu-lateral/preferencias/preferencias.component';
 import { AutenticacionService } from "./../../login/autenticacionService.service";
 import { EstudiantesService } from "src/app/estudiantes/estudiante.service";
 import { Component, OnInit } from "@angular/core";
@@ -160,6 +161,14 @@ export class CalificacionesEstudiantesComponent implements OnInit {
   onCancelar() {
     this.servicio.tipoPopUp = "cancelar";
     this.popup.open(CalificacionesEstudiantePopupComponent);
+  }
+  checkNotas(event, cal) {
+    var inputValue = event.which;
+    var concat = cal + String.fromCharCode(inputValue);
+    if (!(inputValue >= 48 && inputValue <= 57) && (inputValue != 32 && inputValue != 0))
+      event.preventDefault();
+    else if(cal != "" && Number(concat)>10)
+    event.preventDefault();
   }
 }
 

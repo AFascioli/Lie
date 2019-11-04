@@ -86,8 +86,9 @@
             *ngIf="rolConPermisosEdicion"
             [(ngModel)]="estudiante.calificaciones[0]"
             name="nota1{{ estudiante.calificaciones[0] }}"
-            type="number"
+            type="text"
             pattern="([0-9]|10)"
+            (keypress)="checkNotas($event,estudiante.calificaciones[0])"
           />
           <p *ngIf="!rolConPermisosEdicion">
             {{ estudiante.calificaciones[0] }}
@@ -100,9 +101,10 @@
           <input
             *ngIf="rolConPermisosEdicion"
             [(ngModel)]="estudiante.calificaciones[1]"
-            type="number"
             name="nota2{{ estudiante.calificaciones[1] }}"
+            type="text"
             pattern="([0-9]|10)"
+            (keypress)="checkNotas($event,estudiante.calificaciones[1])"
           />
           <p *ngIf="!rolConPermisosEdicion">
             {{ estudiante.calificaciones[1] }}
@@ -115,9 +117,10 @@
           <input
             *ngIf="rolConPermisosEdicion"
             [(ngModel)]="estudiante.calificaciones[2]"
-            type="number"
             name="nota3{{ estudiante.calificaciones[2] }}"
+            type="text"
             pattern="([0-9]|10)"
+            (keypress)="checkNotas($event,estudiante.calificaciones[2])"
           />
           <p *ngIf="!rolConPermisosEdicion">
             {{ estudiante.calificaciones[2] }}
@@ -130,9 +133,10 @@
           <input
             *ngIf="rolConPermisosEdicion"
             [(ngModel)]="estudiante.calificaciones[3]"
-            type="number"
             name="nota4{{ estudiante.calificaciones[3] }}"
+            type="text"
             pattern="([0-9]|10)"
+            (keypress)="checkNotas($event,estudiante.calificaciones[3])"
           />
           <p *ngIf="!rolConPermisosEdicion">
             {{ estudiante.calificaciones[3] }}
@@ -145,9 +149,10 @@
           <input
             *ngIf="rolConPermisosEdicion"
             [(ngModel)]="estudiante.calificaciones[4]"
-            type="number"
             name="nota5{{ estudiante.calificaciones[4] }}"
+            type="text"
             pattern="([0-9]|10)"
+            (keypress)="checkNotas($event,estudiante.calificaciones[4])"
           />
           <p *ngIf="!rolConPermisosEdicion">
             {{ estudiante.calificaciones[4] }}
@@ -160,12 +165,13 @@
           <input
             *ngIf="rolConPermisosEdicion"
             [(ngModel)]="estudiante.calificaciones[5]"
-            type="number"
-            name="nota6{{ estudiante.calificaciones[5] }}"
+            type="text"
             pattern="([0-9]|10)"
+            name="nota6{{ estudiante.calificaciones[5] }}"
+            (keypress)="checkNotas($event,estudiante.calificaciones[5])"
           />
           <p *ngIf="!rolConPermisosEdicion">
-            {{ estudiante.calificaciones[4] }}
+            {{ estudiante.calificaciones[5] }}
           </p>
         </td>
       </ng-container>
