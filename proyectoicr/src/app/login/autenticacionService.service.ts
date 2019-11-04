@@ -71,7 +71,7 @@ export class AutenticacionService {
           this.token = response.token;
           const duracionToken = response.duracionToken;
           this.rol = response.rol;
-          this.id= response.idPersona;
+          this.id = response.idPersona;
           this.timerAutenticacion(duracionToken);
           this.estaAutenticado = true;
           this.authStatusListener.next(true);
@@ -117,8 +117,8 @@ export class AutenticacionService {
   logout() {
     this.token = null;
     this.estaAutenticado = false;
-    this.rol= "";
-    this.id="";
+    this.rol = "";
+    this.id = "";
     this.usuarioAutenticado = "";
     this.authStatusListener.next(false);
     clearTimeout(this.tokenTimer);
@@ -193,16 +193,22 @@ export class AutenticacionService {
       permisos: any;
     }>(environment.apiUrl + "/usuario/permisosDeRol", {
       params: params
-  });
+    });
   }
 
   addPushSubscriber(sus: any) {
-    return this.http.post<{message: string}>(environment.apiUrl + "/usuario/suscripcion", { sub: sus, email: this.usuarioAutenticado});
+    return this.http.post<{ message: string }>(
+      environment.apiUrl + "/usuario/suscripcion",
+      { sub: sus, email: this.usuarioAutenticado }
+    );
   }
 
-  //#resolve #borrar
-  pruebaNotificacion(){
-    return this.http.get<{message: string}>(environment.apiUrl + "/usuario/notificacion");
+  pruebaNotificacion() {
+    let params = new HttpParams().set("email", this.usuarioAutenticado);
+    return this.http.get<{ message: string }>(
+      environment.apiUrl + "/usuario/notificacion",
+      { params: params }
+    );
   }
 
   //Metodo sign up que crea un usuario segun un rol dado
@@ -213,5 +219,4 @@ export class AutenticacionService {
       rol: rol
     });
   }
-
 }

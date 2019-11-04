@@ -157,6 +157,7 @@ router.get("/permisosDeRol", (req, res) => {
 router.post("/suscripcion", (req, res) => {
   Usuario.findOneAndUpdate({email: req.body.email}, { $push: { suscripciones: req.body.sub }}).then((usuario) => {
     usuario.save().then(() => {
+      console.log('Suscripción guardada correctamente.');
       res.status(201).json({message: "Suscripción registrada correctamente"});
     });
   }).catch((e) => {
@@ -167,12 +168,17 @@ router.post("/suscripcion", (req, res) => {
 
 // Envía una notificación de prueba
 router.get("/notificacion", (req, res) => {
-  Suscripcion.notificar(
-    "5d7bfd1b93119f33f80819a1",
-    "Titulo",
-    "Notificación de prueba."
-  );
-  res.status(200).json({ message: "Prueba de notificación" });
+  Usuario.findOne({email: req.query.email}).then(usuario => {
+    console.log("Envio de notificación a "+usuario.email);
+     Suscripcion.notificar(
+      usuario._id,
+      "Titulo",
+      "Notificación de prueba."
+    );
+    res.status(200).json({ message: "Prueba de notificación" });
+  })
+
+
 });
 
 module.exports = router;

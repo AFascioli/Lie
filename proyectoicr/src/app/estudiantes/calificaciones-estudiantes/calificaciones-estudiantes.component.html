@@ -87,7 +87,7 @@
             [(ngModel)]="estudiante.calificaciones[0]"
             name="nota1{{ estudiante.calificaciones[0] }}"
             type="number"
-            pattern="([0-9]|10)"
+            pattern="([1-9]|0[1-9]|10)"
             (keypress)="checkNotas($event,estudiante.calificaciones[0])"
           />
           <p *ngIf="!rolConPermisosEdicion">
@@ -103,7 +103,7 @@
             [(ngModel)]="estudiante.calificaciones[1]"
             name="nota2{{ estudiante.calificaciones[1] }}"
             type="number"
-            pattern="([0-9]|10)"
+            pattern="([1-9]|0[1-9]|10)"
             (keypress)="checkNotas($event,estudiante.calificaciones[1])"
           />
           <p *ngIf="!rolConPermisosEdicion">
@@ -119,7 +119,7 @@
             [(ngModel)]="estudiante.calificaciones[2]"
             name="nota3{{ estudiante.calificaciones[2] }}"
             type="number"
-            pattern="([0-9]|10)"
+            pattern="([1-9]|0[1-9]|10)"
             (keypress)="checkNotas($event,estudiante.calificaciones[2])"
           />
           <p *ngIf="!rolConPermisosEdicion">
@@ -135,7 +135,7 @@
             [(ngModel)]="estudiante.calificaciones[3]"
             name="nota4{{ estudiante.calificaciones[3] }}"
             type="number"
-            pattern="([0-9]|10)"
+            pattern="([1-9]|0[1-9]|10)"
             (keypress)="checkNotas($event,estudiante.calificaciones[3])"
           />
           <p *ngIf="!rolConPermisosEdicion">
@@ -151,7 +151,7 @@
             [(ngModel)]="estudiante.calificaciones[4]"
             name="nota5{{ estudiante.calificaciones[4] }}"
             type="number"
-            pattern="([0-9]|10)"
+            pattern="([1-9]|0[1-9]|10)"
             (keypress)="checkNotas($event,estudiante.calificaciones[4])"
           />
           <p *ngIf="!rolConPermisosEdicion">
@@ -166,7 +166,7 @@
             *ngIf="rolConPermisosEdicion"
             [(ngModel)]="estudiante.calificaciones[5]"
             type="number"
-            pattern="([0-9]|10)"
+            pattern="([1-9]|0[1-9]|10)"
             name="nota6{{ estudiante.calificaciones[5] }}"
             (keypress)="checkNotas($event,estudiante.calificaciones[5])"
           />
