@@ -111,7 +111,6 @@ export class CalificacionesEstudiantesComponent implements OnInit {
         )
         .subscribe(respuesta => {
           this.estudiantes = [...respuesta.estudiantes];
-          console.log(this.estudiantes);
           this.estudiantes = this.estudiantes.sort((a, b) =>
           a.apellido > b.apellido ? 1 : b.apellido > a.apellido ? -1 : 0
         );

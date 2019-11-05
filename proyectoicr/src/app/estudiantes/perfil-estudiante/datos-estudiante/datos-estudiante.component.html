@@ -7,10 +7,19 @@
       <p><b> Nombre: </b> {{ estudiante.nombre }}</p>
     </li>
     <li>
-      <p><b> Tipo documento: </b> {{ estudiante.tipoDocumento }}</p>
+      <p><b> Tipo de documento: </b> {{ estudiante.tipoDocumento }}</p>
     </li>
     <li>
-      <p><b> Número documento: </b> {{ estudiante.numeroDocumento }}</p>
+      <p><b> Número de documento: </b> {{ estudiante.numeroDocumento }}</p>
+    </li>
+    <li>
+      <p><b> Calle: </b> {{ estudiante.calle }}</p>
+    </li>
+    <li>
+      <p><b> Número: </b> {{ estudiante.numeroCalle }}</p>
+    </li>
+    <li>
+      <p><b> Fecha de nacimiento: </b>   {{ fechaNacimiento | date: "dd/MM/yyyy" }}</p>
     </li>
   </ul>
 </div>

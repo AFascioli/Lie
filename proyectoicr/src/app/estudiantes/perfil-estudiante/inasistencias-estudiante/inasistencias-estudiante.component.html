@@ -5,5 +5,7 @@
               [labels]="pieChartLabels"
               [chartType]="pieChartType"
               ></canvas>
+              <p class="parrafoReincorporacion" *ngIf="contadorInasistenciaInjustificada<15"><b>Le quedan {{ (15-contadorInasistenciaInjustificada)}} inasistencias para la reincorporación</b></p>
+              <p *ngIf="contadorInasistenciaInjustificada==15"><b>Necesita ser reincorporado por acumulación de faltas</b></p>
     </div>
     <p *ngIf="contadorInasistenciaInjustificada==0">El estudiante no presenta ninguna inasistencia</p>

@@ -161,6 +161,7 @@
               ngModel
               #estadoCivil="ngModel"
               matNativeControl
+              [(ngModel)]="defaultEstadoCivil"
             >
               <mat-option value="soltero">Soltero/a</mat-option>
               <mat-option value="casado">Casado/a</mat-option>
@@ -275,6 +276,7 @@
               #localidad="ngModel"
               matNativeControl
               required
+              [(ngModel)]="nombreLocalidadSeleccionada"
             >
               <mat-option
                 *ngFor="let localidad of localidadesFiltradas"

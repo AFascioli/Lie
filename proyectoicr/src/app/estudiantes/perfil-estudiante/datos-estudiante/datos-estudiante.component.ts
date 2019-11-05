@@ -8,10 +8,12 @@ import { Estudiante } from '../../estudiante.model';
   styleUrls: ['./datos-estudiante.component.css']
 })
 export class DatosEstudianteComponent implements OnInit {
+  fechaNacimiento: String;
   estudiante: Estudiante;
 
   constructor(public servicio: EstudiantesService) {
     this.estudiante = this.servicio.estudianteSeleccionado;
+    this.fechaNacimiento = this.estudiante.fechaNacimiento;
    }
 
   ngOnInit() {

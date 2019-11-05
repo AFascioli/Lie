@@ -27,8 +27,9 @@ export class AltaEstudiantesComponent implements OnInit, OnDestroy {
 
   //para asignar valores por defecto
   nombreProvinciaSeleccionada: string;
+  nombreLocalidadSeleccionada: string;
+  defaultEstadoCivil="soltero";
   codigoPostalEstudiante: string;
-  localidadEstudiante: string;
   estadoCivilEstudiante: string;
   nacionalidadEstudiante:string;
 
@@ -62,13 +63,20 @@ export class AltaEstudiantesComponent implements OnInit, OnDestroy {
       .getLocalidadesListener()
       .subscribe(localidadesActualizadas => {
         this.localidades = localidadesActualizadas;
+        this.nombreProvinciaSeleccionada="Cordoba";
+        this.FiltrarLocalidades();
+        this.nombreLocalidadSeleccionada="Morteros"
       });
     this.servicio.getNacionalidades();
     this.suscripcion = this.servicio
       .getNacionalidadesListener()
       .subscribe(nacionalidadesActualizadas => {
         this.nacionalidades = nacionalidadesActualizadas;
+        this.nacionalidades.sort((a, b) =>
+        a.name > b.name ? 1 : b.name > a.name ? -1 : 0
+      );
       });
+
   }
 
   // Cuando se destruye el componente se eliminan las suscripciones.
