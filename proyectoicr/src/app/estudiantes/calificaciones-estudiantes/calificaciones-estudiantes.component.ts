@@ -4,7 +4,7 @@ import { EstudiantesService } from "src/app/estudiantes/estudiante.service";
 import { Component, OnInit } from "@angular/core";
 import { MatDialogRef, MatDialog, MatSnackBar } from "@angular/material";
 import { Router } from "@angular/router";
-import { NgForm } from "@angular/forms";
+import { NgForm, NgModel } from "@angular/forms";
 
 @Component({
   selector: "app-calificaciones-estudiantes",
@@ -87,8 +87,10 @@ export class CalificacionesEstudiantesComponent implements OnInit {
     else this.trimestrePorDefecto = "2";
   }
 
-  onCursoSeleccionado(curso) {
+  onCursoSeleccionado(curso,materia:NgModel) {
     this.estudiantes= null;
+    this.materias=null;
+    materia.reset();
     if(this.rolConPermisosEdicion && this.servicioAutenticacion.getRol() !="Admin"){
       this.servicio.obtenerMateriasXCurso(curso.value, this.servicioAutenticacion.getId()).subscribe(respuesta => {
         this.materias = respuesta.materias;

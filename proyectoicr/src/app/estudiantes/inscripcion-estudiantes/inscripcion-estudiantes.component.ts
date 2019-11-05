@@ -109,6 +109,9 @@ export class InscripcionEstudianteComponent implements OnInit {
         };
         this.matConfig.width = "250px";
         this.dialog.open(InscripcionPopupComponent, this.matConfig);
+        this.dialog.afterAllClosed.subscribe(()=>{
+          this.estudianteEstaInscripto=true;
+        })
       }
     }
   }

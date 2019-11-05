@@ -34,7 +34,7 @@
           #curso="ngModel"
           matNativeControl
           required
-          (selectionChange)="onCursoSeleccionado(curso)"
+          (selectionChange)="onCursoSeleccionado(curso,materia)"
         >
           <mat-option *ngFor="let objCurso of cursos" [value]="objCurso.id">
             {{ objCurso.curso }}
