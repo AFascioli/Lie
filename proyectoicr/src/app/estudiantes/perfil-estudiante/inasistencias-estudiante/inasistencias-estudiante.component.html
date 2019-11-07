@@ -1,9 +1,8 @@
-<div>
-  <div>
-    <div style="display: block">
-      <canvas baseChart [datasets]="barChartData" [labels]="barChartLabels" [options]="barChartOptions"
+    <div *ngIf="contadorInasistenciaInjustificada && contadorInasistenciaInjustificada!=0" style="display: block">
+      <canvas baseChart [data]="barChartData" [labels]="barChartLabels" [options]="barChartOptions"
       [plugins]="barChartPlugins" [legend]="barChartLegend" [chartType]="barChartType"
       ></canvas>
+      <p *ngIf="contadorInasistenciaInjustificada<15" class="mensajeReincorporacion"> <b>Le quedan {{(15-contadorInasistenciaInjustificada)}} inasistencias injustificadas para la reincorporación </b></p>
     </div>
-  </div>
-</div>
+    <p *ngIf="contadorInasistenciaInjustificada==0"> <b> El estudiante no presenta ninguna inasistencia </b></p>
+

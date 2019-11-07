@@ -13,7 +13,8 @@ export class InasistenciasEstudianteComponent implements OnInit {
   displayedColumns: string[] = ["tipo", "cantidad"];
   contadorInasistenciaJustificada: number;
   contadorInasistenciaInjustificada: number;
-  //barChartData: ChartDataSets[];
+  barChartData: any[];
+barChartLabels: Label[]
 
   constructor(public servicio: EstudiantesService) {}
 
@@ -24,9 +25,10 @@ export class InasistenciasEstudianteComponent implements OnInit {
       this.contadorInasistenciaJustificada =
         response.contadorInasistenciasJustificada;
 
-        // this.barChartData= [
-        //   { data: [this.contadorInasistenciaInjustificada,this.contadorInasistenciaJustificada], label: 'Series A' }
-        // ];
+        this.barChartData= [
+          this.contadorInasistenciaInjustificada,this.contadorInasistenciaJustificada
+        ];
+        this.barChartLabels= ['Inasistencias injustificadas', 'Inasistencias justificadas'];
     });
   }
 
@@ -36,18 +38,14 @@ export class InasistenciasEstudianteComponent implements OnInit {
       datalabels: {
         font: {
           size: 20,
+          weight: "bold"
         }
       }
     }
   };
-  public barChartLabels: Label[] = ['Inasistencias injustificadas', 'Inasistencias justificadas'];
+
   public barChartType: ChartType = 'pie';
   public barChartPlugins = [pluginDataLabels];
-
-//no acepta variables #resolve
-  public barChartData: ChartDataSets[] = [
-    { data: [2,4], label: 'Series A' }
-  ];
 
 
 }
