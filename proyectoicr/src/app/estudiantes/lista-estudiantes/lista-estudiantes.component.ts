@@ -66,6 +66,15 @@ export class ListaEstudiantesComponent implements OnInit {
     this.servicio.retornoDesdeAcciones = true;
   }
 
+  onLlegadaTarde(indice) {
+    this.servicio.estudianteSeleccionado = this.estudiantes.find(
+      estudiante =>
+        estudiante.numeroDocumento === this.estudiantes[indice].numeroDocumento
+    );
+    this.router.navigate(["./llegadaTarde"]);
+    this.servicio.retornoDesdeAcciones = true;
+  }
+
   onVisualizarPerfil(indice) {
     this.servicio.estudianteSeleccionado = this.estudiantes.find(
       estudiante =>

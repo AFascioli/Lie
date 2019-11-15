@@ -1,15 +1,28 @@
 <h1 class="componente-titulo">Registrar llegada tarde</h1>
 <mat-card class="card-body-componente">
-  <p class="fecha">
+  <div class="ubicacionfecha">
     <b>Fecha: </b>
-    <br />
-    {{ fechaActual | date: "EEEE" }} {{ fechaActual | date: "dd/MM/yyyy" }}
-  </p>
-  <br />
+    &nbsp;
+    <mat-form-field>
+      <input
+        [disabled]="true"
+        ngModel
+        #diaFecha="ngModel"
+        matInput
+        name="diaFecha"
+        [(ngModel)]="diaActual"
+        required
+        class="inputFecha"
+      />
+      {{ fechaActual | date: "EEEE" | titlecase }}
+      {{ fechaActual | date: "dd/MM/yyyy" }}
+    </mat-form-field>
+  </div>
 
-  <div class="contenido">
-    <mat-card class="card-body-componente">
-      <h3>Datos del estudiante seleccionado</h3>
+  <br />
+  <div class="contenido" >
+    <mat-card >
+      <p class="titulo-datos-est">Datos del estudiante</p>
       <mat-card-subtitle>
         <b>Apellido/s: </b> {{ apellidoEstudiante }}
         <br />
@@ -47,9 +60,12 @@
     <button class="buttonPrimary" mat-raised-button>
       Guardar
     </button>
-
-    <button mat-raised-button class="buttonWarn">
-      Cancelar
+    <button
+      mat-raised-button
+      [routerLink]="['/buscar/lista']"
+      class="buttonWarn"
+    >
+      Volver
     </button>
   </div>
 </mat-card>
