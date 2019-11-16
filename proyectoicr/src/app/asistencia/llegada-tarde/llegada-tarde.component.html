@@ -18,10 +18,9 @@
       {{ fechaActual | date: "dd/MM/yyyy" }}
     </mat-form-field>
   </div>
-
   <br />
-  <div class="contenido" >
-    <mat-card >
+  <div class="contenido">
+    <mat-card>
       <p class="titulo-datos-est">Datos del estudiante</p>
       <mat-card-subtitle>
         <b>Apellido/s: </b> {{ apellidoEstudiante }}
@@ -30,42 +29,25 @@
       </mat-card-subtitle>
     </mat-card>
   </div>
-
   <br />
-
-  <mat-radio-group  aria-label="Select an option">
+    <mat-radio-group aria-label="Selecciona una de las opciones">
     <mat-radio-button
-      (change)="cambiarTipoRetiro()"
-      [checked]="hasta10min"
+      [checked]="antes8am"
       value="1"
       ><span class="label-radio-button"
-      >Hasta 10 min tarde</span
-    ></mat-radio-button
-    >
-    <mat-radio-button
-      (change)="cambiarTipoRetiro()"
-      [checked]=" "
-      value="2"
+        >Antes de las 8</span
+      ></mat-radio-button>
+    <mat-radio-button [checked]="despues8am" value="2"
       ><span class="label-radio-button"
-      >Hasta 20 min tarde</span
-    ></mat-radio-button
-    >
-    <mat-radio-button
-      (change)="cambiarTipoRetiro()"
-      [checked]=" "
-      value="3"
-      ><span class="label-radio-button"
-      >Pasado 20 min</span
-    ></mat-radio-button
+        >Después de las 8</span
+      ></mat-radio-button
     >
   </mat-radio-group>
-
   <br />
-  
   <div class="div-button">
     <button
       class="buttonPrimary"
-      (click)="openPopup('confirmar')"
+      (click)="onGuardar()"
       mat-raised-button
     >
       Guardar

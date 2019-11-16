@@ -63,7 +63,6 @@ export class BuscarEstudiantesComponent implements OnInit {
 
   // Si el formulario no es valido no hace nada, luego controla que tipo de busqueda es
   OnBuscar(form: NgForm) {
-    console.log(browserRefresh);
     if (!form.invalid) {
       if (this.buscarPorNomYAp) {
         this.servicio.busquedaEstudianteXNombre = true;

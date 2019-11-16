@@ -1,10 +1,14 @@
 .mat-radio-button ~ .mat-radio-button {
-  margin-left: 10%;
+  margin-left: 6%;
 }
 
 .mat-radio-group {
-  margin-left: 10%;
-  margin-right: 10%;
+  margin-left: 25%;
+  margin-top: 10%;
+}
+
+.label-radio-button {
+  white-space: normal !important;
 }
 
 .ubicacionfecha {
@@ -46,7 +50,10 @@
   text-align: center;
 }
 
-
+.inputFecha{
+  width: 0%;
+  color: black !important;
+}
 
 
 
