@@ -1,11 +1,6 @@
 import { Component, OnInit, Inject } from "@angular/core";
 import { EstudiantesService } from "src/app/estudiantes/estudiante.service";
-import {
-  MatDialogRef,
-  MatDialog,
-  MAT_DIALOG_DATA,
-  MatDialogConfig
-} from "@angular/material";
+import { MatDialogRef, MatDialog, MAT_DIALOG_DATA, MatDialogConfig, MatSnackBar} from "@angular/material";
 import { Router } from "@angular/router";
 import { DateAdapter } from "@angular/material";
 
@@ -20,10 +15,8 @@ export class LlegadaTardeComponent implements OnInit {
   nombreEstudiante: string;
   _idEstudiante: string;
   matConfig = new MatDialogConfig();
-  
-  constructor(
-    private servicio: EstudiantesService,
-    public popup: MatDialog,
+
+  constructor( private servicio: EstudiantesService, public dialog: MatDialog,
     private dateAdapter: DateAdapter<Date>
   ) {
     this.dateAdapter.setLocale("es");
@@ -37,6 +30,15 @@ export class LlegadaTardeComponent implements OnInit {
   }
 
   cambiarTipoRetiro(){}
+
+  openPopup(tipoPopup: string){
+    this.matConfig.data={
+      IdEstudiante: this._idEstudiante,
+
+      tipoPopup: tipoPopup
+    }
+    this.dialog.open(LlegadaTardePopupComponent,this.matConfig);
+  }
 }
 
 @Component({
@@ -49,21 +51,17 @@ export class LlegadaTardePopupComponent {
   tipoPopup: string;
   IdEstudiante: string;
   exito: boolean = false;
+  resultado: string;
 
   constructor(
     public dialogRef: MatDialogRef<LlegadaTardePopupComponent>,
     public router: Router,
     public servicio: EstudiantesService,
+    public snackBar: MatSnackBar,
     @Inject(MAT_DIALOG_DATA) data
   ) {
     this.tipoPopup = data.tipoPopup;
     this.IdEstudiante = data.IdEstudiante;
-  }
-
-  //Vuelve al menu principal
-  onYesCancelarClick(): void {
-    this.router.navigate(["menuLateral/home"]);
-    this.dialogRef.close();
   }
 
   //Cierra el popup y vuelve a la interfaz de retiro
@@ -71,12 +69,8 @@ export class LlegadaTardePopupComponent {
     this.dialogRef.close();
   }
 
-  //Si fue exitosa la operacion vuelve al menu principal, sino vuelve a la interfaz de retiro
-  onOkConfirmarClick() {
-    if (this.exito) {
-      this.router.navigate(["menuLateral/home"]);
-      this.dialogRef.close();
-    }
-    this.dialogRef.close();
+  //Confirma el retiro anticipado para el estudiante
+  onYesConfirmarClick(): void {
+
   }
 }

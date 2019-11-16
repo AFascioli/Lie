@@ -1,15 +1,28 @@
-.mat-radio-button {
-  margin: 1rem;
+.mat-radio-button ~ .mat-radio-button {
+  margin-left: 10%;
 }
 
 .mat-radio-group {
-  margin-left: 18%;
-  margin-right: 18%;
+  margin-left: 10%;
+  margin-right: 10%;
 }
 
 .ubicacionfecha {
   margin-top: 0.5rem;
   float: right;
+}
+
+.div-button {
+  text-align: right;
+  margin-top: 3%;
+}
+
+.contenido-mobile {
+  width: 100%;
+}
+
+.card-datos-mobile {
+  width: 90%;
 }
 
 .contenido {
@@ -19,15 +32,22 @@
   margin-top: 3rem !important;
 }
 
+.label-radio-button {
+  white-space: normal !important;
+}
+
 .titulo-datos-est{
   font-size: 20px;
   font-weight: bold;
   text-align: center;
 }
 
-.div-button {
-  text-align: right;
+.parrafo{
+  text-align: center;
 }
+
+
+
 
 
 

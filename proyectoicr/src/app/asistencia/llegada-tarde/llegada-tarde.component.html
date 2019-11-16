@@ -36,28 +36,38 @@
   <mat-radio-group  aria-label="Select an option">
     <mat-radio-button
       (change)="cambiarTipoRetiro()"
-      [checked]=" "
+      [checked]="hasta10min"
       value="1"
-      >Hasta 10 min</mat-radio-button
+      ><span class="label-radio-button"
+      >Hasta 10 min tarde</span
+    ></mat-radio-button
     >
     <mat-radio-button
       (change)="cambiarTipoRetiro()"
       [checked]=" "
       value="2"
-      >Entre 10 y 20 min</mat-radio-button
+      ><span class="label-radio-button"
+      >Hasta 20 min tarde</span
+    ></mat-radio-button
     >
     <mat-radio-button
       (change)="cambiarTipoRetiro()"
-      [checked]=""
+      [checked]=" "
       value="3"
-      >Luego de 20 min</mat-radio-button
+      ><span class="label-radio-button"
+      >Pasado 20 min</span
+    ></mat-radio-button
     >
   </mat-radio-group>
 
   <br />
-
+  
   <div class="div-button">
-    <button class="buttonPrimary" mat-raised-button>
+    <button
+      class="buttonPrimary"
+      (click)="openPopup('confirmar')"
+      mat-raised-button
+    >
       Guardar
     </button>
     <button
