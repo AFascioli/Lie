@@ -23,12 +23,15 @@ export class ListaEstudiantesComponent implements OnInit {
     registrarEmpleado:0,
     cuotas:0
   };
-  isLoading= true;
+  isLoading: boolean;
 
   constructor(public servicio: EstudiantesService, public router: Router, public authService: AutenticacionService) {}
 
   ngOnInit() {
-    this.servicio.getEstudiantesListener().subscribe(estudiantesBuscados => {
+    if(this.servicio.retornoDesdeAcciones= false){
+      this.isLoading=true;
+    }else{
+       this.servicio.getEstudiantesListener().subscribe(estudiantesBuscados => {
       this.estudiantes = estudiantesBuscados;
       this.isLoading= false;
     });
@@ -39,6 +42,8 @@ export class ListaEstudiantesComponent implements OnInit {
     this.authService.obtenerPermisosDeRol().subscribe(response=>{
       this.permisos=response.permisos;
     });
+    }
+
   }
 
   onInscribir(indice) {

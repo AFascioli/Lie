@@ -5,6 +5,7 @@ import { EstudiantesService } from "../estudiante.service";
 import { Estudiante } from "../estudiante.model";
 import { MatDialog, MatDialogRef } from "@angular/material";
 import { Router } from "@angular/router";
+import { browserRefresh } from 'src/app/app.component';
 
 @Component({
   selector: "app-buscar-estudiantes",
@@ -22,10 +23,20 @@ export class BuscarEstudiantesComponent implements OnInit {
   constructor(
     public servicio: EstudiantesService,
     public dialog: MatDialog,
-    public servicioAR: AdultoResponsableService
-  ) {}
+    public servicioAR: AdultoResponsableService,
+    private router: Router
+  ) {
+
+  }
 
   ngOnInit() {
+    //Para que al recargar la pagina se actualice correctamente
+    if(browserRefresh )
+    {
+       this.router.navigate(["/buscar"]);
+      this.servicio.estudianteSeleccionado=null;
+      this.servicio.retornoDesdeAcciones= false;
+    }
     if (!this.servicio.retornoDesdeAcciones) {
       this.nombreEstSelec = "";
       this.apellidoEstSelec = "";
@@ -47,10 +58,12 @@ export class BuscarEstudiantesComponent implements OnInit {
       this.tipoDocEstSelec = this.servicio.estudianteSeleccionado.tipoDocumento;
       this.buscarPorNomYAp = false;
     }
+
   }
 
   // Si el formulario no es valido no hace nada, luego controla que tipo de busqueda es
   OnBuscar(form: NgForm) {
+    console.log(browserRefresh);
     if (!form.invalid) {
       if (this.buscarPorNomYAp) {
         this.servicio.busquedaEstudianteXNombre = true;

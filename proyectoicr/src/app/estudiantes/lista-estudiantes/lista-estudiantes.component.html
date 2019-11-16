@@ -47,19 +47,19 @@
           mat-raised-button
           class="button"
           class="buttonPrimary"
-          (click)="onRetiro(i)"
+          (click)="onLlegadaTarde(i)"
           *ngIf="permisos.asistencia > 1"
         >
-          Registrar retiro anticipado
+          Registrar llegada tarde
         </button>
         <button
           mat-raised-button
           class="button"
           class="buttonPrimary"
-          (click)="onLlegadaTarde(i)"
+          (click)="onRetiro(i)"
           *ngIf="permisos.asistencia > 1"
         >
-          Registrar llegada tarde
+          Registrar retiro anticipado
         </button>
         <button
           mat-raised-button
