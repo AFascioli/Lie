@@ -36,6 +36,7 @@
     </mat-form-field>
   </div>
   <p class="aviso" *ngIf="asistenciaNueva!='true'">Atención, ya existe una asistencia registrada para este curso el día de hoy</p>
+  <p class="aviso" *ngIf="estudiantesXDivision.length==0">No exiten alumnos inscriptos a este curso</p>
   <br />
   <div *ngIf="!cursoNotSelected">
     <table mat-table [dataSource]="estudiantesXDivision">

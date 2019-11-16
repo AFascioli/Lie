@@ -16,6 +16,7 @@ import {
   MatIconModule,
   MatListModule,
   MatSlideToggleModule,
+  MatProgressSpinnerModule,
   MatCheckboxModule,
   MatSnackBarModule
 } from "@angular/material";
@@ -151,6 +152,7 @@ import { DatosEstudianteComponent } from './estudiantes/perfil-estudiante/datos-
     MatDatepickerModule,
     MatNativeDateModule,
     MatAutocompleteModule,
+    MatProgressSpinnerModule,
     MatRadioModule,
     MatSidenavModule,
     AppRoutingModule,

@@ -28,7 +28,7 @@ export class CalificacionesEstudiantesComponent implements OnInit {
   ];
   trimestrePorDefecto: string;
   rolConPermisosEdicion = false;
-
+  isLoading= true;
 
   constructor(
     public servicio: EstudiantesService,
@@ -48,6 +48,7 @@ export class CalificacionesEstudiantesComponent implements OnInit {
       if (res.permisos.notas == 2) {
         this.rolConPermisosEdicion = true;
       }
+    this.isLoading = false;
     });
   }
 

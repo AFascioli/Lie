@@ -23,12 +23,14 @@ export class ListaEstudiantesComponent implements OnInit {
     registrarEmpleado:0,
     cuotas:0
   };
+  isLoading= true;
 
   constructor(public servicio: EstudiantesService, public router: Router, public authService: AutenticacionService) {}
 
   ngOnInit() {
     this.servicio.getEstudiantesListener().subscribe(estudiantesBuscados => {
       this.estudiantes = estudiantesBuscados;
+      this.isLoading= false;
     });
 
     if (this.servicio.retornoDesdeAcciones) {
