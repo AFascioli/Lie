@@ -93,6 +93,7 @@
             type="number"
             pattern="([0-9]|0[1-9]|10)"
             (keypress)="checkNotas($event,estudiante.calificaciones[0])"
+            (change)="onCalificacionChange()"
           />
           <p *ngIf="!rolConPermisosEdicion">
             {{ estudiante.calificaciones[0] }}
@@ -109,6 +110,7 @@
             type="number"
             pattern="([0-9]|0[1-9]|10)"
             (keypress)="checkNotas($event,estudiante.calificaciones[1])"
+            (change)="onCalificacionChange()"
           />
           <p *ngIf="!rolConPermisosEdicion">
             {{ estudiante.calificaciones[1] }}
@@ -125,6 +127,7 @@
             type="number"
             pattern="([0-9]|0[1-9]|10)"
             (keypress)="checkNotas($event,estudiante.calificaciones[2])"
+            (change)="onCalificacionChange()"
           />
           <p *ngIf="!rolConPermisosEdicion">
             {{ estudiante.calificaciones[2] }}
@@ -141,6 +144,7 @@
             type="number"
             pattern="([0-9]|0[1-9]|10)"
             (keypress)="checkNotas($event,estudiante.calificaciones[3])"
+            (change)="onCalificacionChange()"
           />
           <p *ngIf="!rolConPermisosEdicion">
             {{ estudiante.calificaciones[3] }}
@@ -157,6 +161,7 @@
             type="number"
             pattern="([0-9]|0[1-9]|10)"
             (keypress)="checkNotas($event,estudiante.calificaciones[4])"
+            (change)="onCalificacionChange()"
           />
           <p *ngIf="!rolConPermisosEdicion">
             {{ estudiante.calificaciones[4] }}
@@ -173,6 +178,7 @@
             pattern="([0-9]|0[1-9]|10)"
             name="nota6{{ estudiante.calificaciones[5] }}"
             (keypress)="checkNotas($event,estudiante.calificaciones[5])"
+            (change)="onCalificacionChange()"
           />
           <p *ngIf="!rolConPermisosEdicion">
             {{ estudiante.calificaciones[5] }}
@@ -212,7 +218,7 @@
 
     <div class="div-button">
       <button
-        [disabled]="!estudiantes"
+        [disabled]="!estudiantes || !calificacionesChange"
         mat-raised-button
         class="button"
         (click)="onGuardar(form)"

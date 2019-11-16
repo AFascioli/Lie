@@ -25,6 +25,7 @@ export class DocumentosInscripcionComponent implements OnInit {
     "informeAnt"
   ];
   matConfig = new MatDialogConfig();
+  documentosEntregadosOnChange= false;
 
   constructor(
     public servicio: EstudiantesService,
@@ -60,16 +61,18 @@ export class DocumentosInscripcionComponent implements OnInit {
         a.datosEstudiante[0].apellido > b.datosEstudiante[0].apellido ? 1 : b.datosEstudiante[0].apellido > a.datosEstudiante[0].apellido ? -1 : 0
       );
       });
+    this.documentosEntregadosOnChange = false;
   }
 
   //Cambia el valor del atributo documentoEntregado.entregado del documento seleccionado
   registrarCambioDocumento(estudiante: any, indiceDoc: number) {
     estudiante.documentosEntregados[indiceDoc].entregado = !estudiante
       .documentosEntregados[indiceDoc].entregado;
+    this.documentosEntregadosOnChange= true;
   }
 
   //Guardar los estudiantes con los cambios, resetea los selects y abre snackBar
-  onGuardar(curso) {
+  onGuardar() {
     this.servicio
       .registrarDocumentosInscripcion(this.estudiantesConDocumentos)
       .subscribe(response => {

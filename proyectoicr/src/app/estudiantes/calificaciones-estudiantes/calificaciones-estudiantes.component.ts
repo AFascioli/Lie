@@ -29,6 +29,7 @@ export class CalificacionesEstudiantesComponent implements OnInit {
   trimestrePorDefecto: string;
   rolConPermisosEdicion = false;
   isLoading= true;
+  calificacionesChange = false;
 
   constructor(
     public servicio: EstudiantesService,
@@ -121,7 +122,12 @@ export class CalificacionesEstudiantesComponent implements OnInit {
       }
   }
 
+  onCalificacionChange(){
+    this.calificacionesChange= true;
+  }
+
   onGuardar(form: NgForm) {
+
     if (form.invalid) {
       if (form.value.curso == "" || form.value.materia == "") {
         this.snackBar.open("Faltan campos por seleccionar", "", {
@@ -135,7 +141,7 @@ export class CalificacionesEstudiantesComponent implements OnInit {
           duration: 3000
         });
       }
-    } else {
+    } else if (form.valueChanges) {
       this.servicio
         .registrarCalificaciones(
           this.estudiantes,

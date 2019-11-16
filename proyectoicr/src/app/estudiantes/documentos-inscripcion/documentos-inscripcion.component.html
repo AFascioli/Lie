@@ -86,9 +86,9 @@
   <div class="div-button">
     <button
       class="buttonPrimary"
-      (click)="onGuardar(curso)"
+      (click)="onGuardar()"
       mat-raised-button
-      [disabled]="!cursoSeleccionado"
+      [disabled]="!cursoSeleccionado || !documentosEntregadosOnChange"
     >
       Guardar
     </button>
