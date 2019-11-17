@@ -437,6 +437,14 @@ export class EstudiantesService {
     });
   }
 
+  registrarLlegadaTarde(antes8am){
+    let datosLlegadaTarde= {antes8am: antes8am, idEstudiante: this.estudianteSeleccionado._id  }
+    return this.http.post<{ message: string; exito: boolean }>(
+      environment.apiUrl + "/estudiante/llegadaTarde",
+      datosLlegadaTarde
+    );
+  }
+
   obtenerUltimasInasistencias() {
     let params = new HttpParams().set(
       "idEstudiante",

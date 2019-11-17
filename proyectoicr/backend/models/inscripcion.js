@@ -14,6 +14,7 @@ const inscripcionSchema = mongoose.Schema({
   calificacionesXMateria: [{type: mongoose.Schema.Types.ObjectId, ref: 'calificacionesXMateria'}],
   contadorInasistenciasInjustificada: {type: Number},
   contadorInasistenciasJustificada: {type: Number},
+  contadorLlegadasTarde: {type: Number},
   estado: {type: mongoose.Schema.Types.ObjectId, ref: "estado"}
 });
 

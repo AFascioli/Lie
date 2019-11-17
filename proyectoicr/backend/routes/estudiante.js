@@ -11,13 +11,16 @@ const checkAuthMiddleware = require("../middleware/check-auth");
 
 //Registra un nuevo estudiante y pone su estado a registrado
 router.post("", checkAuthMiddleware, (req, res, next) => {
-  Estudiante.findOne({tipoDocumento: req.body.tipoDocumento, numeroDocumento: req.body.numeroDocumento }).then(estudiante=>{
-    if(estudiante){
+  Estudiante.findOne({
+    tipoDocumento: req.body.tipoDocumento,
+    numeroDocumento: req.body.numeroDocumento
+  }).then(estudiante => {
+    if (estudiante) {
       res.status(200).json({
         message: "El estudiante ya se encuentra registrado",
         exito: false
       });
-    }else{
+    } else {
       Estado.findOne({
         ambito: "Estudiante",
         nombre: "Registrado"
@@ -53,17 +56,15 @@ router.post("", checkAuthMiddleware, (req, res, next) => {
             });
           })
           .catch(err =>
-            res
-              .status(200)
-              .json({
-                message:
-                  "Ocurrió un error al meter en la base de datos a un estudiante",
-                exito: false
-              })
+            res.status(200).json({
+              message:
+                "Ocurrió un error al meter en la base de datos a un estudiante",
+              exito: false
+            })
           );
       });
     }
-  })
+  });
 });
 
 //Obtiene un estudiante dado un numero y tipo de documento
@@ -383,7 +384,7 @@ router.post("/asistencia", checkAuthMiddleware, (req, res) => {
         if (asistencia.presente && !estudiante.presente) {
           AsistenciaDiaria.findByIdAndUpdate(estudiante.idAsistencia, {
             presente: estudiante.presente
-          }).then(()=>{
+          }).then(() => {
             Inscripcion.findOneAndUpdate(
               {
                 idEstudiante: estudiante._id,
@@ -394,10 +395,10 @@ router.post("/asistencia", checkAuthMiddleware, (req, res) => {
           });
         }
         //si estaba ausente y lo pasaron a presente decrementa contador inasistencia
-        else if(!asistencia.presente && estudiante.presente){
+        else if (!asistencia.presente && estudiante.presente) {
           AsistenciaDiaria.findByIdAndUpdate(estudiante.idAsistencia, {
             presente: estudiante.presente
-          }).then(()=>{
+          }).then(() => {
             Inscripcion.findOneAndUpdate(
               {
                 idEstudiante: estudiante._id,
@@ -601,13 +602,96 @@ router.post("/inasistencia/justificada", checkAuthMiddleware, (req, res) => {
       $inc: { contadorInasistenciasJustificada: contador }
     }
   ).then(() => {
-    res
-      .status(200)
-      .json({
-        message: "Inasistencias justificadas correctamente",
+    res.status(200).json({
+      message: "Inasistencias justificadas correctamente",
+      exito: true
+    });
+  });
+});
+
+router.post("/llegadaTarde", checkAuthMiddleware, (req, res) => {
+  console.log(req.body);
+  if (req.body.antes8am) {
+    Inscripcion.findOne({
+      idEstudiante: req.body.idEstudiante
+    }).then(inscripcion => {
+      if (inscripcion.contadorLlegadasTarde < 4) {
+        inscripcion.contadorLlegadasTarde =
+          inscripcion.contadorLlegadasTarde + 1;
+        inscripcion.save();
+        return res.status(201).json({
+          message: "Llegada tarde antes de las 8 am registrada exitosamente",
+          exito: true
+        });
+      } else {
+        Inscripcion.aggregate([
+          {
+            $match: {
+              idEstudiante: mongoose.Types.ObjectId(req.body.idEstudiante)
+            }
+          },
+          {
+            $lookup: {
+              from: "asistenciaDiaria",
+              localField: "asistenciaDiaria",
+              foreignField: "_id",
+              as: "asistenciaEstudiante"
+            }
+          },
+          {
+            $project: {
+              asistenciaEstudiante: {
+                $slice: ["$asistenciaEstudiante", -1]
+              }
+            }
+          }
+        ]).then(asistenciaDiaria => {
+          inscripcion.contadorLlegadasTarde = 0;
+          inscripcion.save();
+          AsistenciaDiaria.findById(asistenciaDiaria[0].asistenciaEstudiante[0]._id).then(AD =>{
+            AD.valorInasistencia = AD.valorInasistencia + 1;
+            AD.save();
+          });
+          return res.status(201).json({
+            message: "Llegada tarde antes de las 8 am registrada exitosamente",
+            exito: true
+          });
+        });
+      }
+    });
+  }else{
+    Inscripcion.aggregate([
+      {
+        $match: {
+          idEstudiante: mongoose.Types.ObjectId("5d0ee07c489bdd0830bd1d0d")
+        }
+      },
+      {
+        $lookup: {
+          from: "asistenciaDiaria",
+          localField: "asistenciaDiaria",
+          foreignField: "_id",
+          as: "asistenciaEstudiante"
+        }
+      },
+      {
+        $project: {
+          asistenciaEstudiante: {
+            $slice: ["$asistenciaEstudiante", -1]
+          }
+        }
+      }
+    ]).then( asistenciaDiaria => {
+      AsistenciaDiaria.findById(asistenciaDiaria[0].asistenciaEstudiante[0]._id).then(AD =>{
+        AD.valorInasistencia = AD.valorInasistencia + 0.5;
+        AD.save();
+      });
+      return res.status(201).json({
+        message: "Llegada tarde después de las 8 am registrada exitosamente",
         exito: true
       });
-  });
+    });
+  }
 });
 
 //Se obtienen las ultimas inasistencias dentro de un periodo de 5 dias antes

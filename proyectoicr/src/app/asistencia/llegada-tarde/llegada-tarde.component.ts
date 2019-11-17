@@ -34,11 +34,26 @@ export class LlegadaTardeComponent implements OnInit {
     this.nombreEstudiante = this.servicio.estudianteSeleccionado.nombre;
   }
 
+  radioButtonChange(){
+    this.antes8am= !this.antes8am;
+    this.despues8am= !this.despues8am;
+  }
+
   onGuardar() {
-    this.snackBar.open("", "", {
-      panelClass: ['snack-bar-exito'],
-      duration: 4500
-    });
+    this.servicio.registrarLlegadaTarde(this.antes8am).subscribe(result =>{
+    if(result.exito){
+      this.snackBar.open(result.message, "", {
+        panelClass: ['snack-bar-exito'],
+        duration: 4500
+      });
+    }
+    else{
+      this.snackBar.open(result.message, "", {
+        panelClass: ['snack-bar-fracaso'],
+        duration: 4500
+      });
+    }
+    })
   }
 }
 
