@@ -663,7 +663,7 @@ router.post("/llegadaTarde", checkAuthMiddleware, (req, res) => {
     Inscripcion.aggregate([
       {
         $match: {
-          idEstudiante: mongoose.Types.ObjectId("5d0ee07c489bdd0830bd1d0d")
+          idEstudiante: mongoose.Types.ObjectId(req.body.idEstudiante)
         }
       },
       {
