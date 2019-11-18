@@ -609,89 +609,98 @@ router.post("/inasistencia/justificada", checkAuthMiddleware, (req, res) => {
   });
 });
 
+/* Se fija si al estudiante ya le crearon una asistencia el dia de hoy, si no le tomaron le crea una asistencia.
+  Para cualquiera de los casos se le asigna presente al estudiante para ese dia. La llegada tarde puede ser antes de las 8 am o despues de ese horario. Si es antes de las 8 am y tiene acumuladas 4 llegadas tardes
+ de ese tipo le asigna una falta injustificada. Si es despues de las 8 am se le asigna media falta injustificada.  */
 router.post("/llegadaTarde", checkAuthMiddleware, (req, res) => {
-  console.log(req.body);
-  if (req.body.antes8am) {
-    Inscripcion.findOne({
-      idEstudiante: req.body.idEstudiante
-    }).then(inscripcion => {
-      if (inscripcion.contadorLlegadasTarde < 4) {
-        inscripcion.contadorLlegadasTarde =
-          inscripcion.contadorLlegadasTarde + 1;
-        inscripcion.save();
-        return res.status(201).json({
-          message: "Llegada tarde antes de las 8 am registrada exitosamente",
-          exito: true
-        });
-      } else {
-        Inscripcion.aggregate([
-          {
-            $match: {
-              idEstudiante: mongoose.Types.ObjectId(req.body.idEstudiante)
-            }
-          },
-          {
-            $lookup: {
-              from: "asistenciaDiaria",
-              localField: "asistenciaDiaria",
-              foreignField: "_id",
-              as: "asistenciaEstudiante"
-            }
-          },
-          {
-            $project: {
-              asistenciaEstudiante: {
-                $slice: ["$asistenciaEstudiante", -1]
-              }
-            }
-          }
-        ]).then(asistenciaDiaria => {
-          inscripcion.contadorLlegadasTarde = 0;
-          inscripcion.save();
-          AsistenciaDiaria.findById(asistenciaDiaria[0].asistenciaEstudiante[0]._id).then(AD =>{
-            AD.valorInasistencia = AD.valorInasistencia + 1;
-            AD.save();
+  Inscripcion.findOne({
+    idEstudiante: req.body.idEstudiante
+  })
+    .then(inscripcion => {
+      AsistenciaDiaria.findById(
+        inscripcion.asistenciaDiaria[inscripcion.asistenciaDiaria.length - 1]
+      ).then(async ultimaAD => {
+        var ADcreada = null;
+        var fechaHoy = new Date();
+        fechaHoy.setHours(fechaHoy.getHours() - 3);
+        //Compara si la ultima asistencia fue el dia de hoy
+        if (
+          !(
+            fechaHoy.getDate() == ultimaAD.fecha.getDate() &&
+            fechaHoy.getMonth() == ultimaAD.fecha.getMonth() &&
+            fechaHoy.getFullYear() == ultimaAD.fecha.getFullYear()
+          )
+        ) {
+          var nuevaAsistencia = new AsistenciaDiaria({
+            idInscripcion: inscripcion._id,
+            fecha: fechaHoy,
+            presente: true,
+            retiroAnticipado: false,
+            valorInasistencia: 0,
+            justificado: false
           });
+          await nuevaAsistencia.save().then(ADultima => {
+            ADcreada = ADultima;
+            ultimaAD = ADultima;
+          });
+        } else {
+          ultimaAD.presente = true;
+          ultimaAD.save();
+        }
+
+        if (req.body.antes8am && inscripcion.contadorLlegadasTarde < 4) {
+          inscripcion.contadorLlegadasTarde =
+            inscripcion.contadorLlegadasTarde + 1;
+          if (ADcreada != null) {
+            inscripcion.asistenciaDiaria.push(ADcreada._id);
+          }
+          inscripcion.save();
           return res.status(201).json({
             message: "Llegada tarde antes de las 8 am registrada exitosamente",
             exito: true
           });
-        });
-      }
-    });
-  }else{
-    Inscripcion.aggregate([
-      {
-        $match: {
-          idEstudiante: mongoose.Types.ObjectId(req.body.idEstudiante)
-        }
-      },
-      {
-        $lookup: {
-          from: "asistenciaDiaria",
-          localField: "asistenciaDiaria",
-          foreignField: "_id",
-          as: "asistenciaEstudiante"
-        }
-      },
-      {
-        $project: {
-          asistenciaEstudiante: {
-            $slice: ["$asistenciaEstudiante", -1]
+        } else {
+          if (req.body.antes8am && inscripcion.contadorLlegadasTarde == 4) {
+            inscripcion.contadorLlegadasTarde = 0;
+            inscripcion.inscripcion.contadorInasistenciasInjustificada =
+              inscripcion.contadorInasistenciasInjustificada + 1;
+            if (ADcreada != null) {
+              inscripcion.asistenciaDiaria.push(ADcreada._id);
+            }
+            inscripcion.save();
+            ultimaAD.valorInasistencia = ultimaAD.valorInasistencia + 1;
+            ultimaAD.save().then(() => {
+              return res.status(201).json({
+                message:
+                  "Llegada tarde antes de las 8 am registrada exitosamente",
+                exito: true
+              });
+            });
+          } else {
+            inscripcion.contadorInasistenciasInjustificada =
+              inscripcion.contadorInasistenciasInjustificada + 0.5;
+            if (ADcreada != null) {
+              inscripcion.asistenciaDiaria.push(ADcreada._id);
+            }
+            inscripcion.save();
+            ultimaAD.valorInasistencia = ultimaAD.valorInasistencia + 0.5;
+            ultimaAD.save().then(() => {
+              return res.status(201).json({
+                message:
+                  "Llegada tarde después de las 8 am registrada exitosamente",
+                exito: true
+              });
+            });
           }
         }
-      }
-    ]).then( asistenciaDiaria => {
-      AsistenciaDiaria.findById(asistenciaDiaria[0].asistenciaEstudiante[0]._id).then(AD =>{
-        AD.valorInasistencia = AD.valorInasistencia + 0.5;
-        AD.save();
       });
-      return res.status(201).json({
-        message: "Llegada tarde después de las 8 am registrada exitosamente",
-        exito: true
+    })
+    .catch(e => {
+      res.status(201).json({
+        message: "No se pudo asignar la llegada tarde",
+        exito: false
       });
     });
-  }
 });
 
 //Se obtienen las ultimas inasistencias dentro de un periodo de 5 dias antes
