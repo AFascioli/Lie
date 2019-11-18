@@ -456,10 +456,13 @@ router.post("/retiro", checkAuthMiddleware, (req, res) => {
                     $inc: { valorInasistencia: actualizacionInasistencia }
                   }
                 ).then(() => {
-                  res.status(200).json({
-                    message: "Retiro anticipado exitosamente registrado",
-                    exito: "exito"
-                  });
+                  inscripcion.contadorInasistenciasInjustificada = inscripcion.contadorInasistenciasInjustificada + actualizacionInasistencia;
+                  inscripcion.save().then( () =>{
+                    res.status(200).json({
+                      message: "Retiro anticipado exitosamente registrado",
+                      exito: "exito"
+                    });
+                  })
                 });
               }
             }
