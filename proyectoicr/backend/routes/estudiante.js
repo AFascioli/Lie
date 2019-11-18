@@ -647,8 +647,16 @@ router.post("/llegadaTarde", checkAuthMiddleware, (req, res) => {
             ultimaAD = ADultima;
           });
         } else {
-          ultimaAD.presente = true;
-          ultimaAD.save();
+          if(!ultimaAD.llegadaTarde){
+            ultimaAD.presente = true;
+            ultimaAD.save();
+          }else {
+            return res.status(201).json({
+              message:
+                "Ya exite una llegada tarde registrada para el estudiante seleccionado",
+              exito: false
+            });
+          }
         }
 
         if (req.body.antes8am && inscripcion.contadorLlegadasTarde < 4) {
@@ -658,10 +666,13 @@ router.post("/llegadaTarde", checkAuthMiddleware, (req, res) => {
             inscripcion.asistenciaDiaria.push(ADcreada._id);
           }
           inscripcion.save();
-          return res.status(201).json({
-            message: "Llegada tarde antes de las 8 am registrada exitosamente",
-            exito: true
-          });
+          ultimaAD.llegadaTarde=true;
+          ultimaAD.save().then(()=>{
+            return res.status(201).json({
+              message: "Llegada tarde antes de las 8 am registrada exitosamente",
+              exito: true
+            });
+            });
         } else {
           if (req.body.antes8am && inscripcion.contadorLlegadasTarde == 4) {
             inscripcion.contadorLlegadasTarde = 0;
@@ -672,6 +683,7 @@ router.post("/llegadaTarde", checkAuthMiddleware, (req, res) => {
             }
             inscripcion.save();
             ultimaAD.valorInasistencia = ultimaAD.valorInasistencia + 1;
+            ultimaAD.llegadaTarde=true;
             ultimaAD.save().then(() => {
               return res.status(201).json({
                 message:
@@ -687,6 +699,7 @@ router.post("/llegadaTarde", checkAuthMiddleware, (req, res) => {
             }
             inscripcion.save();
             ultimaAD.valorInasistencia = ultimaAD.valorInasistencia + 0.5;
+            ultimaAD.llegadaTarde=true;
             ultimaAD.save().then(() => {
               return res.status(201).json({
                 message:
