@@ -1,13 +1,20 @@
-import { Component, OnInit, Inject, ChangeDetectorRef } from '@angular/core';
-import { EstudiantesService } from 'src/app/estudiantes/estudiante.service';
-import { MatDialog, MatDialogRef, MAT_DIALOG_DATA, MatDialogConfig, MatSnackBar } from '@angular/material';
-import { Router } from '@angular/router';
-import { MediaMatcher } from '@angular/cdk/layout';
+import { AutenticacionService } from './../../login/autenticacionService.service';
+import { Component, OnInit, Inject, ChangeDetectorRef } from "@angular/core";
+import { EstudiantesService } from "src/app/estudiantes/estudiante.service";
+import {
+  MatDialog,
+  MatDialogRef,
+  MAT_DIALOG_DATA,
+  MatDialogConfig,
+  MatSnackBar
+} from "@angular/material";
+import { Router } from "@angular/router";
+import { MediaMatcher } from "@angular/cdk/layout";
 
 @Component({
-  selector: 'app-retiro-anticipado',
-  templateUrl: './retiro-anticipado.component.html',
-  styleUrls: ['./retiro-anticipado.component.css']
+  selector: "app-retiro-anticipado",
+  templateUrl: "./retiro-anticipado.component.html",
+  styleUrls: ["./retiro-anticipado.component.css"]
 })
 export class RetiroAnticipadoComponent implements OnInit {
   fechaActual = new Date();
@@ -27,55 +34,89 @@ export class RetiroAnticipadoComponent implements OnInit {
     "nroDocumento"
   ];
   tutores: any[] = [];
+  fueraPeriodoCicloLectivo = false;
 
-  constructor(public servicio: EstudiantesService, public dialog: MatDialog,
+  constructor(
+    public snackBar: MatSnackBar,
+    public servicio: EstudiantesService,
+    public dialog: MatDialog,
     public changeDetectorRef: ChangeDetectorRef,
-    public media: MediaMatcher) {
-      this.mobileQuery = media.matchMedia('(max-width: 1000px)');
-        this._mobileQueryListener = () => changeDetectorRef.detectChanges();
-        this.mobileQuery.addListener(this._mobileQueryListener);
-
+    public autenticacionService: AutenticacionService,
+    public media: MediaMatcher
+  ) {
+    this.mobileQuery = media.matchMedia("(max-width: 1000px)");
+    this._mobileQueryListener = () => changeDetectorRef.detectChanges();
+    this.mobileQuery.addListener(this._mobileQueryListener);
   }
 
   ngOnInit() {
     this.fechaActual = new Date();
-    this.apellidoEstudiante= this.servicio.estudianteSeleccionado.apellido;
-    this.nombreEstudiante= this.servicio.estudianteSeleccionado.nombre;
-    this._idEstudiante= this.servicio.estudianteSeleccionado._id;
-    this.validarHora();
-    this.servicio.getTutoresDeEstudiante().subscribe(respuesta =>
-      {
-        this.tutores= respuesta.tutores;
+    if (
+      this.fechaActual.toString().substring(0, 3) == "Sat" ||
+      this.fechaActual.toString().substring(0, 3) == "Sun"
+    ) {
+      this.snackBar.open(
+        "Considere que está queriendo registrar un retiro anticipado en un fin de semana",
+        "",
+        {
+          panelClass: ["snack-bar-aviso"],
+          duration: 8000
+        }
+      );
+    }
+    if(this.fechaActualEnCicloLectivo()){
+      this.apellidoEstudiante = this.servicio.estudianteSeleccionado.apellido;
+      this.nombreEstudiante = this.servicio.estudianteSeleccionado.nombre;
+      this._idEstudiante = this.servicio.estudianteSeleccionado._id;
+      this.validarHora();
+      this.servicio.getTutoresDeEstudiante().subscribe(respuesta => {
+        this.tutores = respuesta.tutores;
       });
+    }else{
+      this.fueraPeriodoCicloLectivo=true;
+    }
+
   }
 
+  fechaActualEnCicloLectivo() {
+    let fechaInicioPrimerTrimestre = new Date(
+      this.autenticacionService.getFechasCicloLectivo().fechaInicioPrimerTrimestre
+    );
+    let fechaFinTercerTrimestre = new Date(
+      this.autenticacionService.getFechasCicloLectivo().fechaFinTercerTrimestre
+    );
+
+    return (
+      this.fechaActual.getTime() > fechaInicioPrimerTrimestre.getTime() &&
+      this.fechaActual.getTime() < fechaFinTercerTrimestre.getTime()
+    );
+  }
 
   //Segun que hora sea, cambia el valor de antes10am y cambia que radio button esta seleccionado
-  validarHora(){
-    if(this.fechaActual.getHours()>=10){
-      this.antes10am= false;
+  validarHora() {
+    if (this.fechaActual.getHours() >= 10) {
+      this.antes10am = false;
     }
   }
 
-
-  CambiarTipoRetiro(){
-    this.antes10am= !this.antes10am;
+  CambiarTipoRetiro() {
+    this.antes10am = !this.antes10am;
   }
 
-  openPopup(tipoPopup: string){
-    this.matConfig.data={
+  openPopup(tipoPopup: string) {
+    this.matConfig.data = {
       IdEstudiante: this._idEstudiante,
       antes10am: this.antes10am,
       tipoPopup: tipoPopup
-    }
-    this.dialog.open(RetiroPopupComponent,this.matConfig);
+    };
+    this.dialog.open(RetiroPopupComponent, this.matConfig);
   }
 }
 
 @Component({
   selector: "app-retiro-popup",
   templateUrl: "./retiro-popup.component.html",
-  styleUrls: ['./retiro-anticipado.component.css']
+  styleUrls: ["./retiro-anticipado.component.css"]
 })
 export class RetiroPopupComponent {
   tipoPopup: string;
@@ -91,8 +132,8 @@ export class RetiroPopupComponent {
     @Inject(MAT_DIALOG_DATA) data
   ) {
     this.tipoPopup = data.tipoPopup;
-    this.IdEstudiante= data.IdEstudiante;
-    this.antes10am= data.antes10am;
+    this.IdEstudiante = data.IdEstudiante;
+    this.antes10am = data.antes10am;
   }
 
   //Vuelve al menu principal
@@ -108,32 +149,48 @@ export class RetiroPopupComponent {
 
   //Confirma el retiro anticipado para el estudiante
   onYesConfirmarClick(): void {
-    this.servicio.registrarRetiroAnticipado(this.IdEstudiante, this.antes10am).subscribe(response =>{
-      this.resultado = response.exito;
-      this.dialogRef.close();
-      if(this.resultado == "exito"){
-        this.snackBar.open("Se registró correctamente el retiro anticipado para el estudiante seleccionado.", "", {
-          panelClass:['snack-bar-exito'],
-          duration: 4500
-        });
-      }else if (this.resultado == "retirado"){
-        this.snackBar.open("Retiro no registrado. Ya se ha registrado un retiro anticipado para el estudiante seleccionado.", "", {
-          panelClass:['snack-bar-fracaso'],
-          duration: 4500
-        });
-      }
-      else if (this.resultado == "ausente"){
-        this.snackBar.open("Retiro no registrado. El estudiante esta ausente para el día de hoy.", "", {
-          panelClass:['snack-bar-fracaso'],
-          duration: 4500
-        });
-      }
-      else{
-        this.snackBar.open("Retiro no registrado. El estudiante no tiene registrada la asistencia para el día de hoy.", "", {
-          panelClass:['snack-bar-fracaso'],
-          duration: 4500
-        });
-      }
-    });
+    this.servicio
+      .registrarRetiroAnticipado(this.IdEstudiante, this.antes10am)
+      .subscribe(response => {
+        this.resultado = response.exito;
+        this.dialogRef.close();
+        if (this.resultado == "exito") {
+          this.snackBar.open(
+            "Se registró correctamente el retiro anticipado para el estudiante seleccionado.",
+            "",
+            {
+              panelClass: ["snack-bar-exito"],
+              duration: 4500
+            }
+          );
+        } else if (this.resultado == "retirado") {
+          this.snackBar.open(
+            "Retiro no registrado. Ya se ha registrado un retiro anticipado para el estudiante seleccionado.",
+            "",
+            {
+              panelClass: ["snack-bar-fracaso"],
+              duration: 4500
+            }
+          );
+        } else if (this.resultado == "ausente") {
+          this.snackBar.open(
+            "Retiro no registrado. El estudiante esta ausente para el día de hoy.",
+            "",
+            {
+              panelClass: ["snack-bar-fracaso"],
+              duration: 4500
+            }
+          );
+        } else {
+          this.snackBar.open(
+            "Retiro no registrado. El estudiante no tiene registrada la asistencia para el día de hoy.",
+            "",
+            {
+              panelClass: ["snack-bar-fracaso"],
+              duration: 4500
+            }
+          );
+        }
+      });
   }
 }

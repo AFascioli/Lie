@@ -97,7 +97,7 @@ const routes: Routes = [
       {
         path: "llegadaTarde",
         component: LlegadaTardeComponent,
-        canActivate: [RoleGuard],
+        canActivate: [RoleGuard, RouteGuard],
         data: { rolesValidos: ["Admin", "Preceptor", "Director"] }
       },
       { path: "cambiarContraseña",

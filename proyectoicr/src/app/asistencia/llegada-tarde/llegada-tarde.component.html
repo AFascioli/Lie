@@ -1,5 +1,7 @@
 <h1 class="componente-titulo">Registrar llegada tarde</h1>
 <mat-card class="card-body-componente">
+  <p class="aviso" *ngIf="fueraPeriodoCicloLectivo">Atención, no se puede registrar la llegada tarde debido a que estamos fuera del ciclo lectivo </p>
+  <div *ngIf="!fueraPeriodoCicloLectivo" >
   <div class="ubicacionfecha">
     <b>Fecha: </b>
     &nbsp;
@@ -45,11 +47,13 @@
     >
   </mat-radio-group>
   <br />
+</div>
   <div class="div-button">
     <button
       class="buttonPrimary"
       (click)="onGuardar()"
       mat-raised-button
+      [disabled]="fueraPeriodoCicloLectivo"
     >
       Guardar
     </button>

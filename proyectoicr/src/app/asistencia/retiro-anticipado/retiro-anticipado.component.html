@@ -1,103 +1,111 @@
 <h1 class="componente-titulo">Registrar retiro anticipado</h1>
 <mat-card class="card-body-componente">
-  <div class="ubicacionfecha">
-    <b>Fecha: </b>
-    &nbsp;
-    <mat-form-field>
-      <input
-        [disabled]="true"
-        ngModel
-        #diaFecha="ngModel"
-        matInput
-        name="diaFecha"
-        [(ngModel)]="diaActual"
-        required
-        class="inputFecha"
-      />
-      {{ fechaActual | date: "EEEE" | titlecase }}
-      {{ fechaActual | date: "dd/MM/yyyy" }}
-    </mat-form-field>
+  <p class="aviso" *ngIf="fueraPeriodoCicloLectivo">Atención, no se puede registrar el retiro anticipado debido a que estamos fuera del ciclo lectivo </p>
+  <div  *ngIf="!fueraPeriodoCicloLectivo">
+    <div class="ubicacionfecha">
+      <b>Fecha: </b>
+      &nbsp;
+      <mat-form-field>
+        <input
+          [disabled]="true"
+          ngModel
+          #diaFecha="ngModel"
+          matInput
+          name="diaFecha"
+          [(ngModel)]="diaActual"
+          required
+          class="inputFecha"
+        />
+        {{ fechaActual | date: "EEEE" | titlecase }}
+        {{ fechaActual | date: "dd/MM/yyyy" }}
+      </mat-form-field>
+    </div>
+
+    <br />
+    <div class="contenido">
+      <h3 class="tituloTutores">
+        Tutores del estudiante: {{ apellidoEstudiante }}, {{ nombreEstudiante }}
+      </h3>
+      <p *ngIf="tutores.length == 0">
+        El estudiante seleccionado no tiene registrado ningún tutor
+      </p>
+      <table
+        mat-table
+        [dataSource]="tutores"
+        *ngIf="tutores && tutores.length != 0"
+      >
+        <ng-container matColumnDef="apellido">
+          <th class="columnasNormales" mat-header-cell *matHeaderCellDef>
+            Apellido
+          </th>
+          <td class="columnasNormales" mat-cell *matCellDef="let tutor">
+            {{ tutor.apellido }}
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="nombre">
+          <th class="columnasNormales" mat-header-cell *matHeaderCellDef>
+            Nombre
+          </th>
+          <td class="columnasNormales" mat-cell *matCellDef="let tutor">
+            {{ tutor.nombre }}
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="telefono">
+          <th class="columnasNormales" mat-header-cell *matHeaderCellDef>
+            Teléfono
+          </th>
+          <td class="columnasNormales" mat-cell *matCellDef="let tutor">
+            {{ tutor.telefono }}
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="tipoDocumento">
+          <th class="columnasNormales" mat-header-cell *matHeaderCellDef>
+            Tipo
+          </th>
+          <td class="columnasNormales" mat-cell *matCellDef="let tutor">
+            {{ tutor.tipoDocumento }}
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="nroDocumento">
+          <th class="columnasNormales" mat-header-cell *matHeaderCellDef>
+            Número
+          </th>
+          <td class="columnasNormales" mat-cell *matCellDef="let tutor">
+            {{ tutor.numeroDocumento }}
+          </td>
+        </ng-container>
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+      </table>
+    </div>
+    <br />
+
+    <mat-radio-group aria-label="Select an option">
+      <mat-radio-button
+        (change)="CambiarTipoRetiro()"
+        [checked]="antes10am"
+        value="1"
+        ><span class="label-radio-button"
+          >Antes de las 10:00 de la mañana</span
+        ></mat-radio-button
+      >
+      <mat-radio-button
+        (change)="CambiarTipoRetiro()"
+        [checked]="!antes10am"
+        value="2"
+        ><span class="label-radio-button"
+          >Después de las 10:00 de la mañana</span
+        ></mat-radio-button
+      >
+    </mat-radio-group>
+    <br />
   </div>
-
-  <br />
-  <div class="contenido">
-  <h3 class="tituloTutores">
-    Tutores del estudiante: {{ apellidoEstudiante }}, {{ nombreEstudiante }}
-  </h3>
-  <p *ngIf="tutores.length==0">El estudiante seleccionado no tiene registrado ningún tutor</p>
-  <table mat-table [dataSource]="tutores" *ngIf="tutores && tutores.length!=0">
-    <ng-container matColumnDef="apellido">
-      <th class="columnasNormales" mat-header-cell *matHeaderCellDef>
-        Apellido
-      </th>
-      <td class="columnasNormales" mat-cell *matCellDef="let tutor">
-        {{ tutor.apellido }}
-      </td>
-    </ng-container>
-    <ng-container matColumnDef="nombre">
-      <th class="columnasNormales" mat-header-cell *matHeaderCellDef>
-        Nombre
-      </th>
-      <td class="columnasNormales" mat-cell *matCellDef="let tutor">
-        {{ tutor.nombre }}
-      </td>
-    </ng-container>
-    <ng-container matColumnDef="telefono">
-      <th class="columnasNormales" mat-header-cell *matHeaderCellDef>
-        Teléfono
-      </th>
-      <td class="columnasNormales" mat-cell *matCellDef="let tutor">
-        {{ tutor.telefono }}
-      </td>
-    </ng-container>
-    <ng-container matColumnDef="tipoDocumento">
-        <th class="columnasNormales" mat-header-cell *matHeaderCellDef>
-          Tipo
-        </th>
-        <td class="columnasNormales" mat-cell *matCellDef="let tutor">
-          {{ tutor.tipoDocumento }}
-        </td>
-      </ng-container>
-    <ng-container matColumnDef="nroDocumento">
-        <th class="columnasNormales" mat-header-cell *matHeaderCellDef>
-          Número
-        </th>
-        <td class="columnasNormales" mat-cell *matCellDef="let tutor">
-          {{ tutor.numeroDocumento }}
-        </td>
-      </ng-container>
-    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-    <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
-  </table>
-</div>
-  <br />
-
-  <mat-radio-group aria-label="Select an option">
-    <mat-radio-button
-      (change)="CambiarTipoRetiro()"
-      [checked]="antes10am"
-      value="1"
-      ><span class="label-radio-button"
-        >Antes de las 10:00 de la mañana</span
-      ></mat-radio-button
-    >
-    <mat-radio-button
-      (change)="CambiarTipoRetiro()"
-      [checked]="!antes10am"
-      value="2"
-      ><span class="label-radio-button"
-        >Después de las 10:00 de la mañana</span
-      ></mat-radio-button
-    >
-  </mat-radio-group>
-
-  <br />
-
   <div class="div-button">
     <button
       class="buttonPrimary"
       (click)="openPopup('confirmar')"
       mat-raised-button
+      [disabled]="fueraPeriodoCicloLectivo"
     >
       Guardar
     </button>
