@@ -13,8 +13,13 @@ export class AutenticacionService {
   private usuarioAutenticado: string;
   private rol: string;
   private id: string;
+  private fechasCicloLectivo: any;
 
   constructor(private http: HttpClient, private router: Router) {}
+
+  getFechasCicloLectivo(){
+    return this.fechasCicloLectivo;
+  }
 
   getToken() {
     return this.token;
@@ -86,10 +91,19 @@ export class AutenticacionService {
             this.rol,
             this.id
           );
+          if(response.rol != "Adulto Responsable"){
+            this.getCicloLectivo().subscribe( response => {
+              console.log(response);
+              this.limpiarFechasCicloLectivo();
+              this.guardarFechasCicloLectivo(response.cicloLectivo);
+              this.fechasCicloLectivo = response.cicloLectivo;
+            });
+          }
           this.router.navigate(["/"]);
         }
         subject.next(respuesta);
       });
+
     return subject.asObservable();
   }
 
@@ -113,6 +127,15 @@ export class AutenticacionService {
     }
   }
 
+  asignarFechasAutomaticamente(){
+    const infoFechasCicloLectivo = this.obtenerFechasCicloLectivo();
+    if(!infoFechasCicloLectivo){
+      return;
+    }else{
+      this.fechasCicloLectivo = infoFechasCicloLectivo;
+    }
+  }
+
   //Limpia el token y limpia el local storage
   logout() {
     this.token = null;
@@ -123,6 +146,7 @@ export class AutenticacionService {
     this.authStatusListener.next(false);
     clearTimeout(this.tokenTimer);
     this.limpiarDatosAutenticacion();
+    this.limpiarFechasCicloLectivo();
     this.router.navigate(["/login"]);
   }
 
@@ -218,5 +242,58 @@ export class AutenticacionService {
       password: password,
       rol: rol
     });
+  }
+
+  guardarFechasCicloLectivo(cicloLectivo)
+  {
+    localStorage.setItem("fechaInicioInscripcion", cicloLectivo.fechaInicioInscripcion);
+    localStorage.setItem("fechaFinInscripcion", cicloLectivo.fechaFinInscripcion);
+    localStorage.setItem("fechaInicioPrimerTrimestre", cicloLectivo.fechaInicioPrimerTrimestre);
+    localStorage.setItem("fechaFinPrimerTrimestre", cicloLectivo.fechaFinPrimerTrimestre);
+    localStorage.setItem("fechaInicioSegundoTrimestre", cicloLectivo.fechaInicioSegundoTrimestre);
+    localStorage.setItem("fechaFinSegundoTrimestre", cicloLectivo.fechaFinSegundoTrimestre);
+    localStorage.setItem("fechaInicioTercerTrimestre", cicloLectivo.fechaInicioTercerTrimestre);
+    localStorage.setItem("fechaFinTercerTrimestre", cicloLectivo.fechaFinTercerTrimestre);
+    localStorage.setItem("fechaInicioExamenes", cicloLectivo.fechaInicioExamenes);
+    localStorage.setItem("fechaFinExamenes", cicloLectivo.fechaFinExamenes);
+  }
+
+  private limpiarFechasCicloLectivo() {
+    localStorage.removeItem("fechaInicioInscripcion");
+    localStorage.removeItem("fechaFinInscripcion");
+    localStorage.removeItem("fechaInicioPrimerTrimestre");
+    localStorage.removeItem("fechaFinPrimerTrimestre");
+    localStorage.removeItem("fechaInicioSegundoTrimestre");
+    localStorage.removeItem("fechaFinSegundoTrimestre");
+    localStorage.removeItem("fechaInicioTercerTrimestre");
+    localStorage.removeItem("fechaFinTercerTrimestre");
+    localStorage.removeItem("fechaInicioExamenes");
+    localStorage.removeItem("fechaFinExamenes");
+  }
+
+  private obtenerFechasCicloLectivo(){
+    const fechaInicioInscripcion = localStorage.getItem("fechaInicioInscripcion");
+    const fechaFinInscripcion = localStorage.getItem("fechaFinInscripcion");
+    const fechaInicioPrimerTrimestre = localStorage.getItem("fechaInicioPrimerTrimestre");
+    const fechaFinPrimerTrimestre = localStorage.getItem("fechaFinPrimerTrimestre");
+    const fechaInicioSegundoTrimestre = localStorage.getItem("fechaInicioSegundoTrimestre");
+    const fechaFinSegundoTrimestre = localStorage.getItem("fechaFinSegundoTrimestre");
+    const fechaInicioTercerTrimestre = localStorage.getItem("fechaInicioTercerTrimestre");
+    const fechaFinTercerTrimestre = localStorage.getItem("fechaFinTercerTrimestre");
+    const fechaInicioExamenes = localStorage.getItem("fechaInicioExamenes");
+    const fechaFinExamenes = localStorage.getItem("fechaFinExamenes");
+
+    return {fechaInicioInscripcion: fechaInicioInscripcion, fechaFinInscripcion: fechaFinInscripcion,
+      fechaInicioPrimerTrimestre: fechaInicioPrimerTrimestre, fechaFinPrimerTrimestre: fechaFinPrimerTrimestre,
+      fechaInicioSegundoTrimestre: fechaInicioSegundoTrimestre, fechaFinSegundoTrimestre: fechaFinSegundoTrimestre,
+      fechaInicioTercerTrimestre: fechaInicioTercerTrimestre, fechaFinTercerTrimestre: fechaFinTercerTrimestre,
+      fechaInicioExamenes: fechaInicioExamenes, fechaFinExamenes: fechaFinExamenes }
+  }
+
+  //Me devuelve un objeto de ciclo lectivo con todas las fechas importantes para limitar los procesos
+  getCicloLectivo(){
+    return this.http.get<{ cicloLectivo: any , message: string, exito: boolean }>(
+      environment.apiUrl + "/cicloLectivo"
+    );
   }
 }

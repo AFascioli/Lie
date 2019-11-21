@@ -1,3 +1,4 @@
+import { AutenticacionService } from "./../../login/autenticacionService.service";
 import { Component, OnInit } from "@angular/core";
 import { EstudiantesService } from "src/app/estudiantes/estudiante.service";
 import { MatDialogRef, MatDialog, MatSnackBar } from "@angular/material";
@@ -15,29 +16,57 @@ export class RegistrarAsistenciaComponent implements OnInit {
   estudiantesXDivision: any[];
   displayedColumns: string[] = ["apellido", "nombre", "accion"];
   fechaActual: Date;
-  asistenciaNueva: string="true";
+  asistenciaNueva: string = "true";
   agent: any;
+  fueraPeriodoCicloLectivo= false;
 
   constructor(
     private servicio: EstudiantesService,
+    private autenticacionService: AutenticacionService,
     public popup: MatDialog,
     public snackBar: MatSnackBar
-  ) {
-  }
+  ) {}
 
   ngOnInit() {
     this.cursoNotSelected = true;
     this.fechaActual = new Date();
-    this.servicio.obtenerCursos().subscribe(response => {
-      this.cursos = response.cursos;
-      this.cursos.sort((a, b) =>
-        a.curso.charAt(0) > b.curso.charAt(0)
-          ? 1
-          : b.curso.charAt(0) > a.curso.charAt(0)
-          ? -1
-          : 0
+    if (
+      this.fechaActual.toString().substring(0, 3) == "Sat" ||
+      this.fechaActual.toString().substring(0, 3) == "Sun"
+    ) {
+      this.snackBar.open(
+        "Considere que está queriendo registrar una asistencia en un fin de semana",
+        "",
+        {
+          panelClass: ["snack-bar-aviso"],
+          duration: 8000
+        }
       );
-    });
+    }
+
+    if (this.fechaActualEnCicloLectivo()) {
+      this.servicio.obtenerCursos().subscribe(response => {
+        this.cursos = response.cursos;
+        this.cursos.sort((a, b) =>
+          a.curso.charAt(0) > b.curso.charAt(0)
+            ? 1
+            : b.curso.charAt(0) > a.curso.charAt(0)
+            ? -1
+            : 0
+        );
+      });
+    } else {
+      this.fueraPeriodoCicloLectivo= true;
+    }
+  }
+
+  //Devuelve true si la fecha actual se encuentra dentro del ciclo lectivo, y false caso contrario.
+  fechaActualEnCicloLectivo() {
+  let fechaInicioPrimerTrimestre = new Date(this.autenticacionService.getFechasCicloLectivo().fechaInicioPrimerTrimestre);
+  let fechaFinTercerTrimestre = new Date(this.autenticacionService.getFechasCicloLectivo().fechaFinTercerTrimestre);
+
+  return this.fechaActual.getTime() > fechaInicioPrimerTrimestre.getTime() &&
+      this.fechaActual.getTime() < fechaFinTercerTrimestre.getTime();
   }
 
   //Busca los estudiantes segun el curso que se selecciono en pantalla. Los orden alfabeticamente
@@ -62,15 +91,14 @@ export class RegistrarAsistenciaComponent implements OnInit {
 
   //Envia al servicio el vector con los datos de los estudiantes y el presentismo
   onGuardar() {
-    this.servicio.registrarAsistencia(
-      this.estudiantesXDivision,
-      this.asistenciaNueva
-    ).subscribe(response  => {
-      this.snackBar.open(response.message, "", {
-        panelClass: ['snack-bar-exito'],
-        duration: 4500
+    this.servicio
+      .registrarAsistencia(this.estudiantesXDivision, this.asistenciaNueva)
+      .subscribe(response => {
+        this.snackBar.open(response.message, "", {
+          panelClass: ["snack-bar-exito"],
+          duration: 4500
+        });
       });
-    });
   }
 
   onCancelar() {

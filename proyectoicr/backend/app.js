@@ -9,6 +9,7 @@ const cursoRoutes = require("./routes/curso");
 const usuarioRoutes= require("./routes/usuario");
 const adultoResponsableRoutes= require("./routes/adultoResponsable");
 const empleadoRoutes= require("./routes/empleado");
+const cicloLectivoRoutes= require("./routes/cicloLectivo");
 
 const app = express(); // Creo la app express
 
@@ -74,5 +75,7 @@ app.use("/usuario", usuarioRoutes);
 app.use("/adultoResponsable", adultoResponsableRoutes);
 
 app.use("/empleado", empleadoRoutes);
+
+app.use("/cicloLectivo", cicloLectivoRoutes);
 
 module.exports = app;

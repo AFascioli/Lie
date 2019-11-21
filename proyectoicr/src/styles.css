@@ -71,6 +71,11 @@ input[type="number"] {
   background-color: #f02626;
 }
 
+.snack-bar-aviso {
+  background-color: rgb(47, 100, 131);
+  color: white;
+}
+
 .mat-drawer-inner-container {
   background-color: #eef0f1;
 }

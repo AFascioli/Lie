@@ -26,6 +26,7 @@ export class AppComponent implements OnInit {
 
   ngOnInit(): void {
     this.servicio.autenticacionAutomatica();
+    this.servicio.asignarFechasAutomaticamente();
     // #resolve
     this.swPush.notificationClicks.subscribe(({ action, notification }) => {
       switch (action) {
