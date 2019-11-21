@@ -4,6 +4,7 @@ const Estado = require("../models/estado");
 const Inscripcion = require("../models/inscripcion");
 const AsistenciaDiaria = require("../models/asistenciaDiaria");
 const Suscripcion = require("../classes/suscripcion");
+const CicloLectivo = require("../models/cicloLectivo");
 const router = express.Router();
 const mongoose = require("mongoose");
 
@@ -721,7 +722,32 @@ router.post("/llegadaTarde", checkAuthMiddleware, (req, res) => {
 
 //Se obtienen las ultimas inasistencias dentro de un periodo de 5 dias antes
 //Se utiliza para la justificacion de inasistencias
+//Se valida que solo se pueda justificar inasistencias para el trimestre actual
 router.get("/inasistencias", (req, res) => {
+  let fechaActual = new Date();
+  let fechaLimiteInferior;
+  let fechaLimiteSuperior;
+
+  CicloLectivo.findOne({ año: fechaActual.getFullYear() }).then(
+    cicloLectivo => {
+      if(fechaActual >= cicloLectivo.fechaInicioPrimerTrimestre && fechaActual <= cicloLectivo.fechaFinPrimerTrimestre){
+        fechaLimiteInferior= cicloLectivo.fechaInicioPrimerTrimestre;
+        fechaLimiteSuperior= cicloLectivo.fechaFinPrimerTrimestre;
+      }else if(fechaActual >= cicloLectivo.fechaInicioSegundoTrimestre && fechaActual <= cicloLectivo.fechaFinSegundoTrimestre){
+        fechaLimiteInferior= cicloLectivo.fechaInicioSegundoTrimestre;
+        fechaLimiteSuperior= cicloLectivo.fechaFinSegundoTrimestre;
+      }else if(fechaActual >= cicloLectivo.fechaInicioTercerTrimestre && fechaActual <= cicloLectivo.fechaFinTercerTrimestre){
+        fechaLimiteInferior= cicloLectivo.fechaInicioTercerTrimestre;
+        fechaLimiteSuperior= cicloLectivo.fechaFinTercerTrimestre;
+      }else{
+        return res.status(200).json({
+          exito: false,
+          message:
+            "La fecha actual no se encuentra dentro de las fechas permitidas para justificar inasistencias"
+        });
+      }
+    });
+
   let ultimasInasistencias = [];
   Inscripcion.aggregate([
     {
@@ -767,11 +793,13 @@ router.get("/inasistencias", (req, res) => {
   ]).then(response => {
     if (response.length > 0) {
       response.forEach(objeto => {
-        ultimasInasistencias.push({
-          idAsistencia: objeto.presentismo[0]._id,
-          fecha: objeto.presentismo[0].fecha,
-          justificado: objeto.presentismo[0].justificado
-        });
+        if(objeto.presentismo[0].fecha>fechaLimiteInferior && objeto.presentismo[0].fecha<fechaLimiteSuperior){
+          ultimasInasistencias.push({
+            idAsistencia: objeto.presentismo[0]._id,
+            fecha: objeto.presentismo[0].fecha,
+            justificado: objeto.presentismo[0].justificado
+          });
+        }
       });
       return res.status(200).json({
         exito: true,
@@ -782,7 +810,7 @@ router.get("/inasistencias", (req, res) => {
     res.status(200).json({
       exito: false,
       message:
-        "El estudiante no tiene inasistencias dentro del periodo de 5 días previos",
+        "El estudiante no tiene inasistencias en los últimos 5 días",
       inasistencias: []
     });
   });

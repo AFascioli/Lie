@@ -1,3 +1,4 @@
+import { AutenticacionService } from './../../login/autenticacionService.service';
 import { EstudiantesService } from "./../../estudiantes/estudiante.service";
 import { Component, OnInit } from "@angular/core";
 import {  MatSnackBar } from "@angular/material";
@@ -18,17 +19,23 @@ export class JustificacionInasistenciaComponent implements OnInit {
   esMultiple: boolean = false;
   ultimasInasistencias = [];
   inasistenciasAJustificar = [];
+  fueraDeCursado=false;
 
   constructor(
     private servicio: EstudiantesService,
     public snackBar: MatSnackBar,
-    public dialog: MatDialog
+    public dialog: MatDialog,
+    public autenticacionService: AutenticacionService
   ) {}
 
   ngOnInit() {
-    this.servicio.obtenerUltimasInasistencias().subscribe(response => {
+    if(this.fechaActualEnPeriodoCursado){
+      this.servicio.obtenerUltimasInasistencias().subscribe(response => {
       this.ultimasInasistencias = response.inasistencias;
     });
+    }else{
+      this.fueraDeCursado=true;
+    }
   }
 
   justificarInasistencia() {
@@ -45,6 +52,14 @@ export class JustificacionInasistenciaComponent implements OnInit {
         });
         this.ngOnInit();
       });
+  }
+
+  fechaActualEnPeriodoCursado() {
+    let fechaInicioPrimerTrimestre = new Date(this.autenticacionService.getFechasCicloLectivo().fechaInicioPrimerTrimestre);
+  let fechaFinTercerTrimestre = new Date(this.autenticacionService.getFechasCicloLectivo().fechaFinTercerTrimestre);
+
+  return this.fechaActual.getTime() > fechaInicioPrimerTrimestre.getTime() &&
+      this.fechaActual.getTime() < fechaFinTercerTrimestre.getTime();
   }
 
   //Con el indice, cambia el valor del campo justificado de la inasistencia

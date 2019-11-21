@@ -1,3 +1,4 @@
+import { AutenticacionService } from './../../login/autenticacionService.service';
 import { EstudiantesService } from "src/app/estudiantes/estudiante.service";
 import { Component, OnInit } from "@angular/core";
 import {
@@ -26,9 +27,12 @@ export class DocumentosInscripcionComponent implements OnInit {
   ];
   matConfig = new MatDialogConfig();
   documentosEntregadosOnChange= false;
+  fueraPeriodoCicloLectivo= false;
+  fechaActual: Date;
 
   constructor(
     public servicio: EstudiantesService,
+    public autenticacionService: AutenticacionService,
     public popup: MatDialog,
     private snackBar: MatSnackBar
   ) {}
@@ -37,17 +41,30 @@ export class DocumentosInscripcionComponent implements OnInit {
   //tomar de a dos cursos y ordenarlos alfabeticamente, de esa forma quedan ordenados por año y
   //division
   ngOnInit() {
-    this.servicio.obtenerCursos().subscribe(response => {
-      this.cursos = response.cursos;
-      this.cursos.sort((a, b) =>
-        a.curso.charAt(0) > b.curso.charAt(0)
-          ? 1
-          : b.curso.charAt(0) > a.curso.charAt(0)
-          ? -1
-          : 0
-      );
-    });
+    this.fechaActual = new Date();
+    if (this.fechaActualEnCicloLectivo()) {
+      this.servicio.obtenerCursos().subscribe(response => {
+        this.cursos = response.cursos;
+        this.cursos.sort((a, b) =>
+          a.curso.charAt(0) > b.curso.charAt(0)
+            ? 1
+            : b.curso.charAt(0) > a.curso.charAt(0)
+            ? -1
+            : 0
+        );
+      });
+    } else {
+      this.fueraPeriodoCicloLectivo= true;
+    }
   }
+  fechaActualEnCicloLectivo() {
+    let fechaInicioInscripcion = new Date(this.autenticacionService.getFechasCicloLectivo().fechaInicioInscripcion);
+  let fechaFinTercerTrimestre = new Date(this.autenticacionService.getFechasCicloLectivo().fechaFinTercerTrimestre);
+
+  return this.fechaActual.getTime() > fechaInicioInscripcion.getTime() &&
+      this.fechaActual.getTime() < fechaFinTercerTrimestre.getTime();
+  }
+
 
   //Cuando el usuario selecciona una division, se obtienen los datos del estudiantes necesarios
   onCursoSeleccionado(curso) {
