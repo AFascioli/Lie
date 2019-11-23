@@ -51,10 +51,10 @@
             placeholder="Seleccione curso"
             name="curso"
             ngModel
-            #curso="ngModel"
+            #cursoSeleccionado="ngModel"
             matNativeControl
             required
-            (selectionChange)="onCursoSeleccionado(curso)"
+            (selectionChange)="onCursoSeleccionado(cursoSeleccionado)"
           >
             <mat-option *ngFor="let objCurso of cursos" [value]="objCurso.id">
               {{ objCurso.curso }}
@@ -98,7 +98,7 @@
       <button
         mat-raised-button
         class="buttonPrimary"
-        (click)="openDialogo(form, curso)"
+        (click)="openDialogo(form, cursoSeleccionado)"
         mat-raised-button
         [disabled]="!fechaDentroDeRangoInscripcion"
       >

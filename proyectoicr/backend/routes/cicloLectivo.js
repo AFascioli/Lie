@@ -29,4 +29,12 @@ router.get("/", checkAuthMiddleware, (req, res) => {
   );
 });
 
+router.use("/procesosAutomaticos", (req,res) =>{
+
+});
+
+function procesosAutomaticos(){
+
+}
+
 module.exports = router;

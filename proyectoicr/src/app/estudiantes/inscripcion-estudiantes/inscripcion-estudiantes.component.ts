@@ -52,7 +52,7 @@ export class InscripcionEstudianteComponent implements OnInit {
 
   ngOnInit() {
     this.fechaActual= new Date();
-    this.fechaDentroDeRangoInscripcion = !this.fechaActualEnRangoFechasInscripcion()
+    this.fechaDentroDeRangoInscripcion = this.fechaActualEnRangoFechasInscripcion()
     this.authService.getFechasCicloLectivo();
     this.apellidoEstudiante = this.servicio.estudianteSeleccionado.apellido;
     this.nombreEstudiante = this.servicio.estudianteSeleccionado.nombre;
