@@ -5,6 +5,7 @@ import { Component, OnInit } from "@angular/core";
 import { MatDialogRef, MatDialog, MatSnackBar } from "@angular/material";
 import { Router } from "@angular/router";
 import { NgForm, NgModel } from "@angular/forms";
+import { IfStmt } from '@angular/compiler';
 
 @Component({
   selector: "app-calificaciones-estudiantes",
@@ -26,10 +27,13 @@ export class CalificacionesEstudiantesComponent implements OnInit {
     "cal6",
     "prom"
   ];
-  trimestrePorDefecto: string;
+  trimestreSeleccionado: string;
+  trimestreActual: string = "fuera";
   rolConPermisosEdicion = false;
   isLoading= true;
+  fechaActual: Date;
   calificacionesChange = false;
+  puedeEditarCalificaciones= false;
 
   constructor(
     public servicio: EstudiantesService,
@@ -39,7 +43,10 @@ export class CalificacionesEstudiantesComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.trimestrePorDefault();
+    this.fechaActual = new Date();
+    this.obtenerTrimestreActual();
+    console.log(this.trimestreActual);
+    console.log(this.trimestreSeleccionado);
     this.validarPermisos();
     this.obtenerCursos();
   }
@@ -79,14 +86,42 @@ export class CalificacionesEstudiantesComponent implements OnInit {
     }
   }
 
-  trimestrePorDefault() {
-    var today = new Date();
-    var t1 = new Date(2019, 4, 31);
-    var t2 = new Date(2019, 8, 15);
+  obtenerTrimestreActual() {
+    console.log('entro a trimestre actual');
+    let fechas = this.servicioAutenticacion.getFechasCicloLectivo();
+    let fechaInicioPrimerTrimestre= new Date(fechas.fechaInicioPrimerTrimestre);
+    let fechaFinPrimerTrimestre= new Date(fechas.fechaFinPrimerTrimestre);
+    let fechaInicioSegundoTrimestre= new Date(fechas.fechaInicioSegundoTrimestre);
+    let fechaFinSegundoTrimestre= new Date(fechas.fechaFinSegundoTrimestre);
+    let fechaInicioTercerTrimestre= new Date(fechas.fechaInicioTercerTrimestre);
+    let fechaFinTercerTrimestre= new Date(fechas.fechaFinTercerTrimestre);
 
-    if (today < t1) this.trimestrePorDefecto = "1";
-    else if (today > t2) this.trimestrePorDefecto = "3";
-    else this.trimestrePorDefecto = "2";
+   if(this.fechaActual.getTime() >= fechaInicioPrimerTrimestre.getTime() &&
+    this.fechaActual.getTime()<= fechaFinPrimerTrimestre.getTime()){
+      this.trimestreActual = "1";
+    }else if(this.fechaActual.getTime()>= fechaInicioSegundoTrimestre.getTime() &&
+      this.fechaActual.getTime()<= fechaFinSegundoTrimestre.getTime()) {
+        this.trimestreActual = "2";
+    }else if(this.fechaActual.getTime()>= fechaInicioTercerTrimestre.getTime() &&
+      this.fechaActual.getTime()<= fechaFinTercerTrimestre.getTime()){
+        this.trimestreActual = "3";
+    }else{
+      this.trimestreSeleccionado="3";
+      this.puedeEditarCalificaciones= false;
+      return;
+    }
+    this.trimestreSeleccionado = this.trimestreActual;
+    this.puedeEditarCalificaciones=true;
+  }
+
+  onTrimestreChange(form: NgForm){
+    this.obtenerNotas(form);
+    if(this.trimestreSeleccionado == this.trimestreActual){
+      this.puedeEditarCalificaciones= true;
+    }else {
+
+      this.puedeEditarCalificaciones= false;
+    }
   }
 
   onCursoSeleccionado(curso,materia:NgModel) {
@@ -121,6 +156,7 @@ export class CalificacionesEstudiantesComponent implements OnInit {
         });
       }
   }
+
 
   onCalificacionChange(){
     this.calificacionesChange= true;

@@ -25,6 +25,7 @@ export class ListaEstudiantesComponent implements OnInit {
   };
   isLoading: boolean = true;
 
+
   constructor(public servicio: EstudiantesService, public router: Router, public authService: AutenticacionService) {}
 
   ngOnInit() {
@@ -45,6 +46,8 @@ export class ListaEstudiantesComponent implements OnInit {
     }
 
   }
+
+
 
   onInscribir(indice) {
     this.servicio.estudianteSeleccionado = this.estudiantes.find(

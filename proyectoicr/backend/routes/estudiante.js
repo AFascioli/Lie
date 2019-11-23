@@ -134,19 +134,27 @@ router.patch("/modificar", checkAuthMiddleware, (req, res, next) => {
     });
 });
 
-//#resolve deberia buscar la inscripcion del estudiante y poner en inactiva
 //Borrado logico de un estudiante
 router.delete("/borrar", checkAuthMiddleware, (req, res, next) => {
   Estado.findOne({
-    ambito: "Inscripcion",
+    ambito: "Estudiante",
     nombre: "De baja"
   }).then(estado => {
     Estudiante.findOneAndUpdate(
       { _id: req.query._id },
       { activo: false, estado: estado._id }
     ).then(() => {
-      res.status(202).json({
-        message: "Estudiante exitosamente borrado"
+      Inscripcion.findOne({
+        idEstudiante: req.query._id,
+        activa: true
+      }).then(inscripcion => {
+        if (inscripcion) {
+          inscripcion.activa = false;
+          inscripcion.save();
+        }
+        res.status(202).json({
+          message: "Estudiante exitosamente borrado"
+        });
       });
     });
   });
@@ -457,13 +465,15 @@ router.post("/retiro", checkAuthMiddleware, (req, res) => {
                     $inc: { valorInasistencia: actualizacionInasistencia }
                   }
                 ).then(() => {
-                  inscripcion.contadorInasistenciasInjustificada = inscripcion.contadorInasistenciasInjustificada + actualizacionInasistencia;
-                  inscripcion.save().then( () =>{
+                  inscripcion.contadorInasistenciasInjustificada =
+                    inscripcion.contadorInasistenciasInjustificada +
+                    actualizacionInasistencia;
+                  inscripcion.save().then(() => {
                     res.status(200).json({
                       message: "Retiro anticipado exitosamente registrado",
                       exito: "exito"
                     });
-                  })
+                  });
                 });
               }
             }
@@ -587,8 +597,8 @@ router.get("/materia/calificaciones", (req, res) => {
 router.post("/inasistencia/justificada", checkAuthMiddleware, (req, res) => {
   let contador = 0;
   req.body.ultimasInasistencias.forEach(inasistencia => {
-    contador = contador + 1;
     if (inasistencia.justificado) {
+      contador = contador + 1;
       AsistenciaDiaria.findByIdAndUpdate(inasistencia.idAsistencia, {
         justificado: true
       })
@@ -603,7 +613,10 @@ router.post("/inasistencia/justificada", checkAuthMiddleware, (req, res) => {
   Inscripcion.findOneAndUpdate(
     { idEstudiante: req.body.idEstudiante, activa: true },
     {
-      $inc: { contadorInasistenciasJustificada: contador }
+      $inc: {
+        contadorInasistenciasJustificada: contador,
+        contadorInasistenciasInjustificada: contador * -1
+      }
     }
   ).then(() => {
     res.status(200).json({
@@ -648,10 +661,10 @@ router.post("/llegadaTarde", checkAuthMiddleware, (req, res) => {
             ultimaAD = ADultima;
           });
         } else {
-          if(!ultimaAD.llegadaTarde){
+          if (!ultimaAD.llegadaTarde) {
             ultimaAD.presente = true;
             ultimaAD.save();
-          }else {
+          } else {
             return res.status(201).json({
               message:
                 "Ya exite una llegada tarde registrada para el estudiante seleccionado",
@@ -667,13 +680,14 @@ router.post("/llegadaTarde", checkAuthMiddleware, (req, res) => {
             inscripcion.asistenciaDiaria.push(ADcreada._id);
           }
           inscripcion.save();
-          ultimaAD.llegadaTarde=true;
-          ultimaAD.save().then(()=>{
+          ultimaAD.llegadaTarde = true;
+          ultimaAD.save().then(() => {
             return res.status(201).json({
-              message: "Llegada tarde antes de las 8 am registrada exitosamente",
+              message:
+                "Llegada tarde antes de las 8 am registrada exitosamente",
               exito: true
             });
-            });
+          });
         } else {
           if (req.body.antes8am && inscripcion.contadorLlegadasTarde == 4) {
             inscripcion.contadorLlegadasTarde = 0;
@@ -684,7 +698,7 @@ router.post("/llegadaTarde", checkAuthMiddleware, (req, res) => {
             }
             inscripcion.save();
             ultimaAD.valorInasistencia = ultimaAD.valorInasistencia + 1;
-            ultimaAD.llegadaTarde=true;
+            ultimaAD.llegadaTarde = true;
             ultimaAD.save().then(() => {
               return res.status(201).json({
                 message:
@@ -700,7 +714,7 @@ router.post("/llegadaTarde", checkAuthMiddleware, (req, res) => {
             }
             inscripcion.save();
             ultimaAD.valorInasistencia = ultimaAD.valorInasistencia + 0.5;
-            ultimaAD.llegadaTarde=true;
+            ultimaAD.llegadaTarde = true;
             ultimaAD.save().then(() => {
               return res.status(201).json({
                 message:
@@ -730,23 +744,33 @@ router.get("/inasistencias", (req, res) => {
 
   CicloLectivo.findOne({ año: fechaActual.getFullYear() }).then(
     cicloLectivo => {
-      if(fechaActual >= cicloLectivo.fechaInicioPrimerTrimestre && fechaActual <= cicloLectivo.fechaFinPrimerTrimestre){
-        fechaLimiteInferior= cicloLectivo.fechaInicioPrimerTrimestre;
-        fechaLimiteSuperior= cicloLectivo.fechaFinPrimerTrimestre;
-      }else if(fechaActual >= cicloLectivo.fechaInicioSegundoTrimestre && fechaActual <= cicloLectivo.fechaFinSegundoTrimestre){
-        fechaLimiteInferior= cicloLectivo.fechaInicioSegundoTrimestre;
-        fechaLimiteSuperior= cicloLectivo.fechaFinSegundoTrimestre;
-      }else if(fechaActual >= cicloLectivo.fechaInicioTercerTrimestre && fechaActual <= cicloLectivo.fechaFinTercerTrimestre){
-        fechaLimiteInferior= cicloLectivo.fechaInicioTercerTrimestre;
-        fechaLimiteSuperior= cicloLectivo.fechaFinTercerTrimestre;
-      }else{
+      if (
+        fechaActual >= cicloLectivo.fechaInicioPrimerTrimestre &&
+        fechaActual <= cicloLectivo.fechaFinPrimerTrimestre
+      ) {
+        fechaLimiteInferior = cicloLectivo.fechaInicioPrimerTrimestre;
+        fechaLimiteSuperior = cicloLectivo.fechaFinPrimerTrimestre;
+      } else if (
+        fechaActual >= cicloLectivo.fechaInicioSegundoTrimestre &&
+        fechaActual <= cicloLectivo.fechaFinSegundoTrimestre
+      ) {
+        fechaLimiteInferior = cicloLectivo.fechaInicioSegundoTrimestre;
+        fechaLimiteSuperior = cicloLectivo.fechaFinSegundoTrimestre;
+      } else if (
+        fechaActual >= cicloLectivo.fechaInicioTercerTrimestre &&
+        fechaActual <= cicloLectivo.fechaFinTercerTrimestre
+      ) {
+        fechaLimiteInferior = cicloLectivo.fechaInicioTercerTrimestre;
+        fechaLimiteSuperior = cicloLectivo.fechaFinTercerTrimestre;
+      } else {
         return res.status(200).json({
           exito: false,
           message:
             "La fecha actual no se encuentra dentro de las fechas permitidas para justificar inasistencias"
         });
       }
-    });
+    }
+  );
 
   let ultimasInasistencias = [];
   Inscripcion.aggregate([
@@ -793,7 +817,10 @@ router.get("/inasistencias", (req, res) => {
   ]).then(response => {
     if (response.length > 0) {
       response.forEach(objeto => {
-        if(objeto.presentismo[0].fecha>fechaLimiteInferior && objeto.presentismo[0].fecha<fechaLimiteSuperior){
+        if (
+          objeto.presentismo[0].fecha > fechaLimiteInferior &&
+          objeto.presentismo[0].fecha < fechaLimiteSuperior
+        ) {
           ultimasInasistencias.push({
             idAsistencia: objeto.presentismo[0]._id,
             fecha: objeto.presentismo[0].fecha,
@@ -809,8 +836,7 @@ router.get("/inasistencias", (req, res) => {
     }
     res.status(200).json({
       exito: false,
-      message:
-        "El estudiante no tiene inasistencias en los últimos 5 días",
+      message: "El estudiante no tiene inasistencias en los últimos 5 días",
       inasistencias: []
     });
   });

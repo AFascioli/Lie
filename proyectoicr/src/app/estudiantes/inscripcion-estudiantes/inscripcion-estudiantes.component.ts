@@ -10,6 +10,7 @@ import {
 } from "@angular/material";
 import { NgForm } from "@angular/forms";
 import { MediaMatcher } from "@angular/cdk/layout";
+import { AutenticacionService } from 'src/app/login/autenticacionService.service';
 
 @Component({
   selector: "app-inscripcion-estudiantes",
@@ -34,12 +35,14 @@ export class InscripcionEstudianteComponent implements OnInit {
   ];
   _mobileQueryListener: () => void;
   mobileQuery: MediaQueryList;
+  fechaDentroDeRangoInscripcion : boolean = true;
 
   constructor(
     public servicio: EstudiantesService,
     public dialog: MatDialog,
     public snackBar: MatSnackBar,
     public changeDetectorRef: ChangeDetectorRef,
+    public authService: AutenticacionService,
     public media: MediaMatcher
   ) {
     this.mobileQuery = media.matchMedia("(max-width: 1000px)");
@@ -48,7 +51,9 @@ export class InscripcionEstudianteComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.fechaActual = new Date();
+    this.fechaActual= new Date();
+    this.fechaDentroDeRangoInscripcion = !this.fechaActualEnRangoFechasInscripcion()
+    this.authService.getFechasCicloLectivo();
     this.apellidoEstudiante = this.servicio.estudianteSeleccionado.apellido;
     this.nombreEstudiante = this.servicio.estudianteSeleccionado.nombre;
     this._idEstudiante = this.servicio.estudianteSeleccionado._id;
@@ -68,6 +73,14 @@ export class InscripcionEstudianteComponent implements OnInit {
       );
     });
   }
+
+  fechaActualEnRangoFechasInscripcion() {
+    let fechaInicioInscripcion = new Date(this.authService.getFechasCicloLectivo().fechaInicioInscripcion);
+    let fechaFinInscripcion = new Date(this.authService.getFechasCicloLectivo().fechaFinInscripcion);
+
+    return this.fechaActual.getTime() > fechaInicioInscripcion.getTime() &&
+        this.fechaActual.getTime() < fechaFinInscripcion.getTime();
+    }
 
   //Obtiene la capacidad del curso seleccionado
   onCursoSeleccionado(curso) {

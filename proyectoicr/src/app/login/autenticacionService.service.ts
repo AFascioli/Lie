@@ -93,7 +93,6 @@ export class AutenticacionService {
           );
           if(response.rol != "Adulto Responsable"){
             this.getCicloLectivo().subscribe( response => {
-              console.log(response);
               this.limpiarFechasCicloLectivo();
               this.guardarFechasCicloLectivo(response.cicloLectivo);
               this.fechasCicloLectivo = response.cicloLectivo;

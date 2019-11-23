@@ -21,8 +21,8 @@
           required
           placeholder="Seleccione trimestre"
           name="trimestre"
-          [(ngModel)]="trimestrePorDefecto"
-          (selectionChange)="obtenerNotas(form)"
+          [(ngModel)]="trimestreSeleccionado"
+          (selectionChange)="onTrimestreChange(form)"
         >
           <mat-option value="1">Primer</mat-option>
           <mat-option value="2">Segundo</mat-option>
@@ -87,7 +87,7 @@
         <th class="columnasChicas" mat-header-cell *matHeaderCellDef>1°</th>
         <td class="columnasChicas" mat-cell *matCellDef="let estudiante">
           <input
-            *ngIf="rolConPermisosEdicion"
+            *ngIf="rolConPermisosEdicion && puedeEditarCalificaciones"
             [(ngModel)]="estudiante.calificaciones[0]"
             name="nota1{{ estudiante.calificaciones[0] }}"
             type="number"
@@ -95,7 +95,7 @@
             (keypress)="checkNotas($event,estudiante.calificaciones[0])"
             (change)="onCalificacionChange()"
           />
-          <p *ngIf="!rolConPermisosEdicion">
+          <p *ngIf="!rolConPermisosEdicion || !puedeEditarCalificaciones">
             {{ estudiante.calificaciones[0] }}
           </p>
         </td>
@@ -104,7 +104,7 @@
         <th class="columnasChicas" mat-header-cell *matHeaderCellDef>2°</th>
         <td class="columnasChicas" mat-cell *matCellDef="let estudiante">
           <input
-            *ngIf="rolConPermisosEdicion"
+            *ngIf="rolConPermisosEdicion && puedeEditarCalificaciones"
             [(ngModel)]="estudiante.calificaciones[1]"
             name="nota2{{ estudiante.calificaciones[1] }}"
             type="number"
@@ -112,7 +112,7 @@
             (keypress)="checkNotas($event,estudiante.calificaciones[1])"
             (change)="onCalificacionChange()"
           />
-          <p *ngIf="!rolConPermisosEdicion">
+          <p *ngIf="!rolConPermisosEdicion || !puedeEditarCalificaciones">
             {{ estudiante.calificaciones[1] }}
           </p>
         </td>
@@ -121,7 +121,7 @@
         <th class="columnasChicas" mat-header-cell *matHeaderCellDef>3°</th>
         <td class="columnasChicas" mat-cell *matCellDef="let estudiante">
           <input
-            *ngIf="rolConPermisosEdicion"
+            *ngIf="rolConPermisosEdicion && puedeEditarCalificaciones"
             [(ngModel)]="estudiante.calificaciones[2]"
             name="nota3{{ estudiante.calificaciones[2] }}"
             type="number"
@@ -129,7 +129,7 @@
             (keypress)="checkNotas($event,estudiante.calificaciones[2])"
             (change)="onCalificacionChange()"
           />
-          <p *ngIf="!rolConPermisosEdicion">
+          <p *ngIf="!rolConPermisosEdicion || !puedeEditarCalificaciones">
             {{ estudiante.calificaciones[2] }}
           </p>
         </td>
@@ -138,7 +138,7 @@
         <th class="columnasChicas" mat-header-cell *matHeaderCellDef>4°</th>
         <td class="columnasChicas" mat-cell *matCellDef="let estudiante">
           <input
-            *ngIf="rolConPermisosEdicion"
+            *ngIf="rolConPermisosEdicion && puedeEditarCalificaciones"
             [(ngModel)]="estudiante.calificaciones[3]"
             name="nota4{{ estudiante.calificaciones[3] }}"
             type="number"
@@ -146,7 +146,7 @@
             (keypress)="checkNotas($event,estudiante.calificaciones[3])"
             (change)="onCalificacionChange()"
           />
-          <p *ngIf="!rolConPermisosEdicion">
+          <p *ngIf="!rolConPermisosEdicion || !puedeEditarCalificaciones">
             {{ estudiante.calificaciones[3] }}
           </p>
         </td>
@@ -155,7 +155,7 @@
         <th class="columnasChicas" mat-header-cell *matHeaderCellDef>5°</th>
         <td class="columnasChicas" mat-cell *matCellDef="let estudiante">
           <input
-            *ngIf="rolConPermisosEdicion"
+            *ngIf="rolConPermisosEdicion && puedeEditarCalificaciones"
             [(ngModel)]="estudiante.calificaciones[4]"
             name="nota5{{ estudiante.calificaciones[4] }}"
             type="number"
@@ -163,7 +163,7 @@
             (keypress)="checkNotas($event,estudiante.calificaciones[4])"
             (change)="onCalificacionChange()"
           />
-          <p *ngIf="!rolConPermisosEdicion">
+          <p *ngIf="!rolConPermisosEdicion || !puedeEditarCalificaciones">
             {{ estudiante.calificaciones[4] }}
           </p>
         </td>
@@ -172,7 +172,7 @@
         <th class="columnasChicas" mat-header-cell *matHeaderCellDef>6°</th>
         <td class="columnasChicas" mat-cell *matCellDef="let estudiante">
           <input
-            *ngIf="rolConPermisosEdicion"
+            *ngIf="rolConPermisosEdicion && puedeEditarCalificaciones"
             [(ngModel)]="estudiante.calificaciones[5]"
             type="number"
             pattern="([0-9]|0[1-9]|10)"
@@ -180,7 +180,7 @@
             (keypress)="checkNotas($event,estudiante.calificaciones[5])"
             (change)="onCalificacionChange()"
           />
-          <p *ngIf="!rolConPermisosEdicion">
+          <p *ngIf="!rolConPermisosEdicion || !puedeEditarCalificaciones">
             {{ estudiante.calificaciones[5] }}
           </p>
         </td>
@@ -218,7 +218,7 @@
 
     <div class="div-button">
       <button
-        [disabled]="!estudiantes || !calificacionesChange"
+        [disabled]="!estudiantes || !calificacionesChange || !puedeEditarCalificaciones"
         mat-raised-button
         class="button"
         (click)="onGuardar(form)"
