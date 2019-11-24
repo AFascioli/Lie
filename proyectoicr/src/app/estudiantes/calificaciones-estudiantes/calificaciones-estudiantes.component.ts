@@ -45,8 +45,6 @@ export class CalificacionesEstudiantesComponent implements OnInit {
   ngOnInit() {
     this.fechaActual = new Date();
     this.obtenerTrimestreActual();
-    console.log(this.trimestreActual);
-    console.log(this.trimestreSeleccionado);
     this.validarPermisos();
     this.obtenerCursos();
   }
@@ -87,7 +85,6 @@ export class CalificacionesEstudiantesComponent implements OnInit {
   }
 
   obtenerTrimestreActual() {
-    console.log('entro a trimestre actual');
     let fechas = this.servicioAutenticacion.getFechasCicloLectivo();
     let fechaInicioPrimerTrimestre= new Date(fechas.fechaInicioPrimerTrimestre);
     let fechaFinPrimerTrimestre= new Date(fechas.fechaFinPrimerTrimestre);

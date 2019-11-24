@@ -18,7 +18,6 @@ export class PerfilEstudianteComponent implements OnInit {
   idUsuario: string;
   calificacionesSelected: boolean;
 
-
   constructor(
     public servicio: EstudiantesService,
     public router: Router,
@@ -28,10 +27,12 @@ export class PerfilEstudianteComponent implements OnInit {
     this.apellidoEstudiante = this.servicio.estudianteSeleccionado.apellido;
     this.nombreEstudiante = this.servicio.estudianteSeleccionado.nombre;
     this._idEstudiante = this.servicio.estudianteSeleccionado._id;
+
     this.calificacionesSelected= true;
     let botonCalificaciones = document.getElementById('calificaciones') as HTMLElement;
     botonCalificaciones.click();
   }
+
 
   onClickCalificaciones(){
     this.router.navigate(["/perfilEstudiante/calificacionesEstudiante"]);

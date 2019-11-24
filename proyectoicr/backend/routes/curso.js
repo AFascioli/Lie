@@ -585,6 +585,13 @@ router.get(
 );
 
 router.get("/estudiante", checkAuthMiddleware, (req, res) => {
+  let fechaActual = new Date();
+  console.log(fechaActual);
+  console.log('dia'+ fechaActual.getDate());
+  console.log('mes'+ fechaActual.getMonth());
+  console.log('year'+ fechaActual.getFullYear());
+  console.log('hour'+ fechaActual.getHours());
+
   Inscripcion.aggregate([
     {
       $match: {

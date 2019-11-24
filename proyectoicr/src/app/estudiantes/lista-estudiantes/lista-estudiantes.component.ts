@@ -10,9 +10,7 @@ import { Router } from "@angular/router";
   styleUrls: ["./lista-estudiantes.component.css"]
 })
 export class ListaEstudiantesComponent implements OnInit {
-  dniSeleccionado: number;
   estudiantes: Estudiante[] = [];
-  displayedColumns: string[] = ["apellido", "nombre", "tipo", "numero", "accion"];
   permisos={
     notas:0,
     asistencia:0,
@@ -47,62 +45,46 @@ export class ListaEstudiantesComponent implements OnInit {
 
   }
 
-
-
-  onInscribir(indice) {
+  asignarEstudianteSeleccionado(indice){
     this.servicio.estudianteSeleccionado = this.estudiantes.find(
       estudiante =>
         estudiante.numeroDocumento === this.estudiantes[indice].numeroDocumento
     );
-    this.router.navigate(["./curso"]);
     this.servicio.retornoDesdeAcciones = true;
+  }
+
+  onInscribir(indice) {
+    this.asignarEstudianteSeleccionado(indice);
+    this.router.navigate(["./curso"]);
   }
 
   onMostrar(indice) {
-    this.servicio.estudianteSeleccionado = this.estudiantes.find(
-      estudiante =>
-        estudiante.numeroDocumento === this.estudiantes[indice].numeroDocumento
-    );
+    this.asignarEstudianteSeleccionado(indice);
     this.router.navigate(["./mostrar"]);
-    this.servicio.retornoDesdeAcciones = true;
   }
 
   onRetiro(indice) {
-    this.servicio.estudianteSeleccionado = this.estudiantes.find(
-      estudiante =>
-        estudiante.numeroDocumento === this.estudiantes[indice].numeroDocumento
-    );
+    this.asignarEstudianteSeleccionado(indice);
     this.router.navigate(["./retiroAnticipado"]);
-    this.servicio.retornoDesdeAcciones = true;
   }
 
   onLlegadaTarde(indice) {
-    this.servicio.estudianteSeleccionado = this.estudiantes.find(
-      estudiante =>
-        estudiante.numeroDocumento === this.estudiantes[indice].numeroDocumento
-    );
+    this.asignarEstudianteSeleccionado(indice);
     this.router.navigate(["./llegadaTarde"]);
-    this.servicio.retornoDesdeAcciones = true;
   }
 
   onVisualizarPerfil(indice) {
-    this.servicio.estudianteSeleccionado = this.estudiantes.find(
-      estudiante =>
-        estudiante.numeroDocumento === this.estudiantes[indice].numeroDocumento
-    );
+    this.asignarEstudianteSeleccionado(indice);
     this.router.navigate(["./perfilEstudiante"]);
-    this.servicio.retornoDesdeAcciones = true;
   }
 
   onJustificar(indice){
-    this.servicio.estudianteSeleccionado = (this.estudiantes.find(estudiante => estudiante.numeroDocumento===this.estudiantes[indice].numeroDocumento));
+    this.asignarEstudianteSeleccionado(indice);
     this.router.navigate(["./justificarInasistencia"]);
-    this.servicio.retornoDesdeAcciones=true;
   }
 
   onVRegistrarAR(indice){
-    this.servicio.estudianteSeleccionado = (this.estudiantes.find(estudiante => estudiante.numeroDocumento===this.estudiantes[indice].numeroDocumento));
+    this.asignarEstudianteSeleccionado(indice);
     this.router.navigate(["./altaAdultoResponsable"]);
-    this.servicio.retornoDesdeAcciones=true;
   }
 }
