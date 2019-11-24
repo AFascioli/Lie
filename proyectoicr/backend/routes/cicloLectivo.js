@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const checkAuthMiddleware = require("../middleware/check-auth");
 const CicloLectivo = require("../models/cicloLectivo");
-var schedule = require("node-schedule");
+var  CronJob  = require ('cron') . CronJob
 
 router.get("/", checkAuthMiddleware, (req, res) => {
   let fechaActual = new Date();
@@ -40,7 +40,7 @@ function procesosAutomaticos() {
     //   //cicloLectivoActual.fechaFinTercerTrimestre.getMonth();
     //   rule.year = 2019;
     //   //cicloLectivoActual.fechaFinTercerTrimestre.getFullYear();
-      var j = schedule.scheduleJob('5 16 24 11 *', function() {
+      new CronJob('5 16 24 11 *', function() {
         Inscripcion.aggregate([
           {
             $match: {
@@ -155,7 +155,7 @@ function procesosAutomaticos() {
             }
           });
         });
-      });
+      }, null, true, 'America/Argentina/Cordoba');
     }
   );
 }
