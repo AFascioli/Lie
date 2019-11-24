@@ -8,6 +8,7 @@
     "cron": "^1.7.2",
     "express": "^4.17.1",
     "mongoose": "^5.5.11",
+    "node-cron": "^2.0.3",
     "tslib": "^1.9.0",
     "web-push": "^3.4.0"
   }
