@@ -1,11 +1,11 @@
-import { PreferenciasComponent } from './../../menu-lateral/preferencias/preferencias.component';
 import { AutenticacionService } from "./../../login/autenticacionService.service";
 import { EstudiantesService } from "src/app/estudiantes/estudiante.service";
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, ViewChild } from "@angular/core";
 import { MatDialogRef, MatDialog, MatSnackBar } from "@angular/material";
 import { Router } from "@angular/router";
 import { NgForm, NgModel } from "@angular/forms";
-import { IfStmt } from '@angular/compiler';
+import { MatPaginator, PageEvent } from "@angular/material/paginator";
+import { MatTableDataSource } from "@angular/material/table";
 
 @Component({
   selector: "app-calificaciones-estudiantes",
@@ -30,10 +30,15 @@ export class CalificacionesEstudiantesComponent implements OnInit {
   trimestreSeleccionado: string;
   trimestreActual: string = "fuera";
   rolConPermisosEdicion = false;
-  isLoading= true;
+  isLoading = true;
   fechaActual: Date;
   calificacionesChange = false;
-  puedeEditarCalificaciones= false;
+  puedeEditarCalificaciones = false;
+  promedio = 0;
+  dataSource: MatTableDataSource<any>;
+  indexEst = 0;
+
+  @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
 
   constructor(
     public servicio: EstudiantesService,
@@ -54,23 +59,25 @@ export class CalificacionesEstudiantesComponent implements OnInit {
       if (res.permisos.notas == 2) {
         this.rolConPermisosEdicion = true;
       }
-    this.isLoading = false;
+      this.isLoading = false;
     });
   }
 
-  obtenerCursos(){
-    if(this.servicioAutenticacion.getRol() =="Docente"){
-      this.servicio.obtenerCursosDeDocente(this.servicioAutenticacion.getId()).subscribe(response => {
-        this.cursos = response.cursos;
-        this.cursos.sort((a, b) =>
-          a.curso.charAt(0) > b.curso.charAt(0)
-            ? 1
-            : b.curso.charAt(0) > a.curso.charAt(0)
-            ? -1
-            : 0
-        );
-      });
-    }else{
+  obtenerCursos() {
+    if (this.servicioAutenticacion.getRol() == "Docente") {
+      this.servicio
+        .obtenerCursosDeDocente(this.servicioAutenticacion.getId())
+        .subscribe(response => {
+          this.cursos = response.cursos;
+          this.cursos.sort((a, b) =>
+            a.curso.charAt(0) > b.curso.charAt(0)
+              ? 1
+              : b.curso.charAt(0) > a.curso.charAt(0)
+              ? -1
+              : 0
+          );
+        });
+    } else {
       this.servicio.obtenerCursos().subscribe(response => {
         this.cursos = response.cursos;
         this.cursos.sort((a, b) =>
@@ -86,51 +93,66 @@ export class CalificacionesEstudiantesComponent implements OnInit {
 
   obtenerTrimestreActual() {
     let fechas = this.servicioAutenticacion.getFechasCicloLectivo();
-    let fechaInicioPrimerTrimestre= new Date(fechas.fechaInicioPrimerTrimestre);
-    let fechaFinPrimerTrimestre= new Date(fechas.fechaFinPrimerTrimestre);
-    let fechaInicioSegundoTrimestre= new Date(fechas.fechaInicioSegundoTrimestre);
-    let fechaFinSegundoTrimestre= new Date(fechas.fechaFinSegundoTrimestre);
-    let fechaInicioTercerTrimestre= new Date(fechas.fechaInicioTercerTrimestre);
-    let fechaFinTercerTrimestre= new Date(fechas.fechaFinTercerTrimestre);
+    let fechaInicioPrimerTrimestre = new Date(
+      fechas.fechaInicioPrimerTrimestre
+    );
+    let fechaFinPrimerTrimestre = new Date(fechas.fechaFinPrimerTrimestre);
+    let fechaInicioSegundoTrimestre = new Date(
+      fechas.fechaInicioSegundoTrimestre
+    );
+    let fechaFinSegundoTrimestre = new Date(fechas.fechaFinSegundoTrimestre);
+    let fechaInicioTercerTrimestre = new Date(
+      fechas.fechaInicioTercerTrimestre
+    );
+    let fechaFinTercerTrimestre = new Date(fechas.fechaFinTercerTrimestre);
 
-   if(this.fechaActual.getTime() >= fechaInicioPrimerTrimestre.getTime() &&
-    this.fechaActual.getTime()<= fechaFinPrimerTrimestre.getTime()){
+    if (
+      this.fechaActual.getTime() >= fechaInicioPrimerTrimestre.getTime() &&
+      this.fechaActual.getTime() <= fechaFinPrimerTrimestre.getTime()
+    ) {
       this.trimestreActual = "1";
-    }else if(this.fechaActual.getTime()>= fechaInicioSegundoTrimestre.getTime() &&
-      this.fechaActual.getTime()<= fechaFinSegundoTrimestre.getTime()) {
-        this.trimestreActual = "2";
-    }else if(this.fechaActual.getTime()>= fechaInicioTercerTrimestre.getTime() &&
-      this.fechaActual.getTime()<= fechaFinTercerTrimestre.getTime()){
-        this.trimestreActual = "3";
-    }else{
-      this.trimestreSeleccionado="3";
-      this.puedeEditarCalificaciones= false;
+    } else if (
+      this.fechaActual.getTime() >= fechaInicioSegundoTrimestre.getTime() &&
+      this.fechaActual.getTime() <= fechaFinSegundoTrimestre.getTime()
+    ) {
+      this.trimestreActual = "2";
+    } else if (
+      this.fechaActual.getTime() >= fechaInicioTercerTrimestre.getTime() &&
+      this.fechaActual.getTime() <= fechaFinTercerTrimestre.getTime()
+    ) {
+      this.trimestreActual = "3";
+    } else {
+      this.trimestreSeleccionado = "3";
+      this.puedeEditarCalificaciones = false;
       return;
     }
     this.trimestreSeleccionado = this.trimestreActual;
-    this.puedeEditarCalificaciones=true;
+    this.puedeEditarCalificaciones = true;
   }
 
-  onTrimestreChange(form: NgForm){
+  onTrimestreChange(form: NgForm) {
     this.obtenerNotas(form);
-    if(this.trimestreSeleccionado == this.trimestreActual){
-      this.puedeEditarCalificaciones= true;
-    }else {
-
-      this.puedeEditarCalificaciones= false;
+    if (this.trimestreSeleccionado == this.trimestreActual) {
+      this.puedeEditarCalificaciones = true;
+    } else {
+      this.puedeEditarCalificaciones = false;
     }
   }
 
-  onCursoSeleccionado(curso,materia:NgModel) {
-    this.estudiantes= null;
-    this.materias=null;
+  onCursoSeleccionado(curso, materia: NgModel) {
+    this.estudiantes = null;
+    this.materias = null;
     materia.reset();
-    if(this.rolConPermisosEdicion && this.servicioAutenticacion.getRol() !="Admin"){
-      this.servicio.obtenerMateriasXCurso(curso.value, this.servicioAutenticacion.getId()).subscribe(respuesta => {
-        this.materias = respuesta.materias;
-      });
-    }
-    else{
+    if (
+      this.rolConPermisosEdicion &&
+      this.servicioAutenticacion.getRol() != "Admin"
+    ) {
+      this.servicio
+        .obtenerMateriasXCurso(curso.value, this.servicioAutenticacion.getId())
+        .subscribe(respuesta => {
+          this.materias = respuesta.materias;
+        });
+    } else {
       this.servicio.obtenerMateriasDeCurso(curso.value).subscribe(respuesta => {
         this.materias = respuesta.materias;
       });
@@ -138,41 +160,58 @@ export class CalificacionesEstudiantesComponent implements OnInit {
   }
 
   obtenerNotas(form: NgForm) {
-    if(form.value.curso != "" || form.value.materia != ""){
+    if (form.value.curso != "" || form.value.materia != "") {
       this.servicio
-      .obtenerEstudiantesXCursoXMateria(
-        form.value.curso,
-        form.value.materia,
-        form.value.trimestre
+        .obtenerEstudiantesXCursoXMateria(
+          form.value.curso,
+          form.value.materia,
+          form.value.trimestre
         )
         .subscribe(respuesta => {
           this.estudiantes = [...respuesta.estudiantes];
           this.estudiantes = this.estudiantes.sort((a, b) =>
-          a.apellido > b.apellido ? 1 : b.apellido > a.apellido ? -1 : 0
-        );
+            a.apellido > b.apellido ? 1 : b.apellido > a.apellido ? -1 : 0
+          );
+          this.dataSource = new MatTableDataSource(this.estudiantes);
+          this.dataSource.paginator = this.paginator;
+          this.dataSource.paginator.firstPage();
         });
-      }
+    }
   }
 
+  indexEstudiante() {
+    this.indexEst = this.paginator.pageIndex * this.paginator.pageSize;
+  }
 
-  onCalificacionChange(){
-    this.calificacionesChange= true;
+  calcularPromedio(index, cantidad) {
+    var notas: number = 0;
+    this.estudiantes[index].calificaciones.forEach(nota => {
+      if (nota != 0 && nota != null) notas = notas + nota;
+    });
+    this.promedio = notas / cantidad;
+    return this.promedio;
+  }
+
+  onCalificacionChange() {
+    this.calificacionesChange = true;
   }
 
   onGuardar(form: NgForm) {
-
     if (form.invalid) {
       if (form.value.curso == "" || form.value.materia == "") {
         this.snackBar.open("Faltan campos por seleccionar", "", {
-        panelClass: ['snack-bar-fracaso'],
-        duration: 3000
-      });
-      }
-      else{
-        this.snackBar.open("Las calificaciones sólo pueden ser números entre 1 y 10.", "", {
-          panelClass: ['snack-bar-fracaso'],
+          panelClass: ["snack-bar-fracaso"],
           duration: 3000
         });
+      } else {
+        this.snackBar.open(
+          "Las calificaciones sólo pueden ser números entre 1 y 10.",
+          "",
+          {
+            panelClass: ["snack-bar-fracaso"],
+            duration: 3000
+          }
+        );
       }
     } else if (form.valueChanges) {
       this.servicio
@@ -184,7 +223,7 @@ export class CalificacionesEstudiantesComponent implements OnInit {
         .subscribe(respuesta => {
           if (respuesta.exito) {
             this.snackBar.open(respuesta.message, "", {
-              panelClass: ['snack-bar-exito'],
+              panelClass: ["snack-bar-exito"],
               duration: 3000
             });
           }
@@ -206,10 +245,13 @@ export class CalificacionesEstudiantesComponent implements OnInit {
   checkNotas(event, cal) {
     var inputValue = event.which;
     var concat = cal + String.fromCharCode(inputValue);
-    if (!(inputValue >= 48 && inputValue <= 57) && (inputValue != 32 && inputValue != 0))
+    if (
+      !(inputValue >= 48 && inputValue <= 57) &&
+      inputValue != 32 &&
+      inputValue != 0
+    )
       event.preventDefault();
-    else if(cal != "" && Number(concat)>10)
-    event.preventDefault();
+    else if (cal != "" && Number(concat) > 10) event.preventDefault();
   }
 }
 
