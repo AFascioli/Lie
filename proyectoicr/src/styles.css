@@ -146,3 +146,8 @@ input[type="number"] {
 .spinner {
   margin: 0 auto;
 }
+
+/* Para que se muestre bien el dropdown menu */
+.mat-menu-content:not(:empty) {
+  padding-right: 8px;
+}
