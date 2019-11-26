@@ -75,4 +75,10 @@ app.use("/adultoResponsable", adultoResponsableRoutes);
 
 app.use("/empleado", empleadoRoutes);
 
+router.get("", (req, res, next) => {
+    res.status(200).json({
+      message: "Servidor Node.js Lie®"
+    });
+});
+
 module.exports = app;
