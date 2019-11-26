@@ -2,7 +2,7 @@ import { Estudiante } from "src/app/estudiantes/estudiante.model";
 import { EstudiantesService } from "src/app/estudiantes/estudiante.service";
 import { Component, OnInit } from "@angular/core";
 import { Router } from "@angular/router";
-import { AutenticacionService } from 'src/app/login/autenticacionService.service';
+import { AutenticacionService } from "src/app/login/autenticacionService.service";
 
 @Component({
   selector: "app-calificaciones-perfil-estudiante",
@@ -26,13 +26,17 @@ export class CalificacionesPerfilEstudianteComponent implements OnInit {
   ];
   trimestreActual: string;
   fechaActual: Date;
+  promedio = 0;
 
-  constructor(public servicio: EstudiantesService, public router: Router,
-    public servicioAutenticacion: AutenticacionService) {}
+  constructor(
+    public servicio: EstudiantesService,
+    public router: Router,
+    public servicioAutenticacion: AutenticacionService
+  ) {}
 
   ngOnInit() {
-    this.fechaActual= new Date();
-    this.servicio.obtenerCursoDeEstudiante().subscribe(response=> {
+    this.fechaActual = new Date();
+    this.servicio.obtenerCursoDeEstudiante().subscribe(response => {
       this.curso = response.curso;
     });
     this.apellidoEstudiante = this.servicio.estudianteSeleccionado.apellido;
@@ -43,7 +47,6 @@ export class CalificacionesPerfilEstudianteComponent implements OnInit {
       .subscribe(res => {
         this.calificacionesXMateria = res.vectorCalXMat;
       });
-
   }
 
   onChangeTrimestre() {
@@ -54,22 +57,39 @@ export class CalificacionesPerfilEstudianteComponent implements OnInit {
       });
   }
 
+  calcularPromedio(index, cantidad) {
+    var notas: number = 0;
+    this.calificacionesXMateria[index].calificaciones.forEach(nota => {
+      if (nota != 0 && nota != null) notas = notas + nota;
+    });
+    this.promedio = notas / cantidad;
+    return this.promedio;
+  }
+
   //Segun la fecha actual selecciona por defecto el trimestre
   obtenerTrimestrePorDefecto() {
     let fechas = this.servicioAutenticacion.getFechasCicloLectivo();
-    let fechaInicioPrimerTrimestre= new Date(fechas.fechaInicioPrimerTrimestre);
-    let fechaFinPrimerTrimestre= new Date(fechas.fechaFinPrimerTrimestre);
-    let fechaInicioSegundoTrimestre= new Date(fechas.fechaInicioSegundoTrimestre);
-    let fechaFinSegundoTrimestre= new Date(fechas.fechaFinSegundoTrimestre);
+    let fechaInicioPrimerTrimestre = new Date(
+      fechas.fechaInicioPrimerTrimestre
+    );
+    let fechaFinPrimerTrimestre = new Date(fechas.fechaFinPrimerTrimestre);
+    let fechaInicioSegundoTrimestre = new Date(
+      fechas.fechaInicioSegundoTrimestre
+    );
+    let fechaFinSegundoTrimestre = new Date(fechas.fechaFinSegundoTrimestre);
 
-   if(this.fechaActual.getTime() >= fechaInicioPrimerTrimestre.getTime() &&
-    this.fechaActual.getTime()<= fechaFinPrimerTrimestre.getTime()){
+    if (
+      this.fechaActual.getTime() >= fechaInicioPrimerTrimestre.getTime() &&
+      this.fechaActual.getTime() <= fechaFinPrimerTrimestre.getTime()
+    ) {
       this.trimestreActual = "1";
-    }else if(this.fechaActual.getTime()>= fechaInicioSegundoTrimestre.getTime() &&
-      this.fechaActual.getTime()<= fechaFinSegundoTrimestre.getTime()) {
-        this.trimestreActual = "2";
-    }else {
-      this.trimestreActual="3";
+    } else if (
+      this.fechaActual.getTime() >= fechaInicioSegundoTrimestre.getTime() &&
+      this.fechaActual.getTime() <= fechaFinSegundoTrimestre.getTime()
+    ) {
+      this.trimestreActual = "2";
+    } else {
+      this.trimestreActual = "3";
       return;
     }
   }

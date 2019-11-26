@@ -247,7 +247,8 @@ export class CalificacionesEstudiantesComponent implements OnInit {
     var concat = cal + String.fromCharCode(inputValue);
     if (
       !(inputValue >= 48 && inputValue <= 57) &&
-      inputValue != 32 && inputValue != 0
+      inputValue != 32 &&
+      inputValue != 0
     )
       event.preventDefault();
     else if (cal != "" && Number(concat) > 10) event.preventDefault();
