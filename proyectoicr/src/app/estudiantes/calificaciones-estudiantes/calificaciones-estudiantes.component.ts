@@ -48,6 +48,7 @@ export class CalificacionesEstudiantesComponent implements OnInit {
   ) {}
 
   ngOnInit() {
+    this.puedeEditarCalificaciones = true;
     this.fechaActual = new Date();
     this.obtenerTrimestreActual();
     this.validarPermisos();
@@ -137,6 +138,7 @@ export class CalificacionesEstudiantesComponent implements OnInit {
     } else {
       this.puedeEditarCalificaciones = false;
     }
+    this.puedeEditarCalificaciones = true;
   }
 
   onCursoSeleccionado(curso, materia: NgModel) {
