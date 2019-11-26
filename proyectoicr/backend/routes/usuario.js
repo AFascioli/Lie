@@ -172,8 +172,9 @@ router.get("/notificacion", (req, res) => {
     console.log("Envio de notificación a "+usuario.email);
      Suscripcion.notificar(
       usuario._id,
-      "Titulo",
-      "Notificación de prueba."
+      // "5da233f0a4331d3824ed41f3",
+      "Titulo de la notificación de prueba",
+      "Cuerpo de la notificación de prueba."
     );
     res.status(200).json({ message: "Prueba de notificación" });
   })
