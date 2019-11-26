@@ -145,3 +145,14 @@
 .parrafo{
   text-align: center;
 }
+
+.iconUsuario {
+  font-size: 80px;
+  margin: auto;
+  margin-top:8px;
+  display: table;
+}
+.usuario{
+  text-align: center;
+  margin: 8px 0px;
+}

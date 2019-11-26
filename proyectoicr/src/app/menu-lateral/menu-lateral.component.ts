@@ -12,6 +12,8 @@ import { MediaMatcher } from '@angular/cdk/layout';
   styleUrls: ["./menu-lateral.component.css"]
 })
 export class MenuLateralComponent implements OnInit {
+  rol:string;
+  usuario:string;
   //Lo inicializo porque sino salta error en la consola del browser
   permisos={
     notas:0,
@@ -44,6 +46,8 @@ export class MenuLateralComponent implements OnInit {
     this.authService.obtenerPermisosDeRol().subscribe(response=>{
       this.permisos=response.permisos;
     });
+    this.rol= this.authService.getRol();
+    this.usuario = this.authService.getUsuarioAutenticado();
   }
 
   onClickHome() {

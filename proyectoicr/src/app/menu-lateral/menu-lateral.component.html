@@ -31,6 +31,11 @@
     >
       <mat-nav-list>
         <mat-accordion>
+          <mat-icon class="iconUsuario">account_circle</mat-icon>
+          <p class="usuario">
+            <b>{{ rol }}</b>
+          </p>
+          <p class="usuario">{{ usuario }}</p>
           <mat-expansion-panel class="opcion">
             <mat-expansion-panel-header>
               <mat-panel-title>
@@ -107,9 +112,7 @@
               Visualizar calificaciones
             </a>
           </mat-expansion-panel>
-          <mat-expansion-panel
-            class="opcion"
-            >
+          <mat-expansion-panel class="opcion">
             <!-- (opened)="panelOpenState = true"
             (closed)="panelOpenState = false" -->
             <mat-expansion-panel-header>
@@ -139,9 +142,7 @@
               Buscar
             </a>
           </mat-expansion-panel>
-          <mat-expansion-panel
-            class="opcion"
-          >
+          <mat-expansion-panel class="opcion">
             <mat-expansion-panel-header>
               <mat-panel-title>
                 <a mat-list-item ng-Focus="onSelected(this)">
