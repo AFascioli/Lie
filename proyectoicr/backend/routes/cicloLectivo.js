@@ -30,6 +30,10 @@ router.get("/", checkAuthMiddleware, (req, res) => {
   );
 });
 
+/* Se calculan los promedios de los trimestre y se asignan los estados de
+acuerdo a si la materia esta aprobada o desaprobada y el promedio final en
+caso de aprobada*/
+
 let date = new Date();
 console.log(date);
 console.log("Hora: " + date.getHours());
@@ -94,102 +98,220 @@ cron.scheduleJob(
       let promedioTrim3 = 0;
       let promedioGral = 0;
       let contador = 0;
+      //El objeto materia tiene: CXT y CXM de una materia dada
 
-      calificacionesDeInscripciones.forEach(materia => {
-        console.log("materia" + materia._id);
-        promedioTrim1 = 0;
-        promedioTrim2 = 0;
-        promedioTrim3 = 0;
-        promedioGral = 0;
-        contador = 0;
-        materia.CXT[2].calificaciones.forEach(calificacion => {
-          // console.log("calificacion " + calificacion);
-          if (calificacion != 0) {
-            contador = contador + 1;
-            promedioTrim3 = promedioTrim3 + calificacion;
-          }
+      async function forEachAsincrono(array, callback){
+        array.forEach(async (materia, index) => {
+          await callback(materia, index, array);
         });
-        // console.log("contador " + contador);
-        // console.log("sumaTotal " + promedioTrim3);
-        if (contador != 0) {
-          promedioTrim3 = promedioTrim3 / contador;
-        }
-        console.log("promedio" + promedioTrim3);
-        if (promedioTrim3 < 6) {
-          Estado.findOne({
-            ambito: "CalificacionesXMateria",
-            nombre: "Desaprobada"
-          }).then(estado => {
-            CalificacionesXMateria.findById({ _id: materia.CXM._id }).then(
-              async CXMEncontrada => {
+      }
+
+      for(let materia of calificacionesDeInscripciones) {
+        //Se busca la CXM que estamos recorriendo
+        CalificacionesXMateria.findById({ _id: materia.CXM._id }).then(
+          CXMEncontrada => {
+            promedioTrim1 = 0;
+            promedioTrim2 = 0;
+            promedioTrim3 = 0;
+            promedioGral = 0;
+            contador = 0; //Cuenta la cantidad de notas que tiene la materia en ese trimestre
+
+            //Calculamos el promedio del trimestre 3
+            materia.CXT[2].calificaciones.forEach(calificacion => {
+              if (calificacion != 0) {
+                contador = contador + 1;
+                promedioTrim3 = promedioTrim3 + calificacion;
+              }
+            });
+            if (contador != 0) {
+              promedioTrim3 = promedioTrim3 / contador;
+            }
+
+            if (promedioTrim3 < 6) {
+              Estado.findOne({
+                ambito: "CalificacionesXMateria",
+                nombre: "Desaprobada"
+              }).then(async estado => {
                 CXMEncontrada.estado = estado._id;
                 CXMEncontrada.promedio = 0;
-                await CXMEncontrada.save().then(() => {});
+                await CXMEncontrada.save();
+              });
+            } else {
+              //Promedio trimestre 3 mayor a 6
+              contador = 0;
+              //Se calcula el promedio del primer trimestre
+              materia.CXT[0].calificaciones.forEach(calificacion => {
+                if (calificacion != 0) {
+                  contador = contador + 1;
+                  promedioTrim1 = promedioTrim1 + calificacion;
+                }
+              });
+              if (contador != 0) {
+                promedioTrim1 = promedioTrim1 / contador;
               }
-            );
-          });
-        } else {
-          contador = 0;
-          materia.CXT[0].calificaciones.forEach(calificacion => {
-            if (calificacion != 0) {
-              contador = contador + 1;
-              promedioTrim1 = promedioTrim1 + calificacion;
-            }
-          });
-          if (contador != 0) {
-            promedioTrim1 = promedioTrim1 / contador;
-          }
-          contador = 0;
-          materia.CXT[1].calificaciones.forEach(calificacion => {
-            if (calificacion != 0) {
-              contador = contador + 1;
-              promedioTrim2 = promedioTrim2 + calificacion;
-            }
-          });
-          if (contador != 0) {
-            promedioTrim2 = promedioTrim2 / contador;
-          }
-          promedioGral = (promedioTrim1 + promedioTrim2 + promedioTrim3) / 3;
-          console.log("calculo promgral " + promedioGral);
-          console.log("t1 " + promedioTrim1);
-          console.log("t2 " + promedioTrim2);
-          console.log("t3 " + promedioTrim3);
-          if (promedioGral >= 6) {
-            Estado.findOne({
-              ambito: "CalificacionesXMateria",
-              nombre: "Aprobada"
-            }).then(async estadoAprobado => {
-              CalificacionesXMateria.findById({ _id: materia.CXM._id }).then(
-                async CXMEncontrada => {
-                  console.log("t1 " + promedioTrim1);
-                  console.log("t2 " + promedioTrim2);
-                  console.log("t3 " + promedioTrim3);
+              contador = 0;
+              //Se calcula el promedio del segundo trimestre
+              materia.CXT[1].calificaciones.forEach(calificacion => {
+                if (calificacion != 0) {
+                  contador = contador + 1;
+                  promedioTrim2 = promedioTrim2 + calificacion;
+                }
+              });
+              if (contador != 0) {
+                promedioTrim2 = promedioTrim2 / contador;
+              }
+              promedioGral =
+                (promedioTrim1 + promedioTrim2 + promedioTrim3) / 3;
+              console.log("calculo promgral " + promedioGral);
+              console.log("t1 " + promedioTrim1);
+              console.log("t2 " + promedioTrim2);
+              console.log("t3 " + promedioTrim3);
+              if (promedioGral >= 6) {
+                console.log("entroIF");
+                Estado.findOne({
+                  ambito: "CalificacionesXMateria",
+                  nombre: "Aprobada"
+                }).then(async estadoAprobado => {
                   CXMEncontrada.estado = estadoAprobado._id;
-                  CXMEncontrada.promedio =
-                    (await (promedioTrim1 + promedioTrim2 + promedioTrim3)) / 3;
+                  CXMEncontrada.promedio = promedioGral;
                   await CXMEncontrada.save().then(() => {
                     console.log(CXMEncontrada);
-                    console.log(promedioGral);
                   });
-                }
-              );
-            });
-          } else {
-            Estado.findOne({
-              ambito: "CalificacionesXMateria",
-              nombre: "Desaprobada"
-            }).then(estadoDesaprobado => {
-              CalificacionesXMateria.findById({ _id: materia.CXM._id }).then(
-                async CXMEncontrada => {
+                });
+              } else {
+                Estado.findOne({
+                  ambito: "CalificacionesXMateria",
+                  nombre: "Desaprobada"
+                }).then(async estadoDesaprobado => {
                   CXMEncontrada.estado = estadoDesaprobado._id;
                   CXMEncontrada.promedio = 0;
-                  await CXMEncontrada.save().then(() => {});
-                }
-              );
-            });
+                  await CXMEncontrada.save();
+                });
+              }
+            }
           }
-        }
-      });
+        );
+      };
+
+      // calificacionesDeInscripciones.forEach(materia => {
+      //   //Se busca la CXM que estamos recorriendo
+      //   CalificacionesXMateria.findById({ _id: materia.CXM._id }).then(
+      //     CXMEncontrada => {
+      //       promedioTrim1 = 0;
+      //       promedioTrim2 = 0;
+      //       promedioTrim3 = 0;
+      //       promedioGral = 0;
+      //       contador = 0; //Cuenta la cantidad de notas que tiene la materia en ese trimestre
+
+      //       //Calculamos el promedio del trimestre 3
+      //       materia.CXT[2].calificaciones.forEach(calificacion => {
+      //         if (calificacion != 0) {
+      //           contador = contador + 1;
+      //           promedioTrim3 = promedioTrim3 + calificacion;
+      //         }
+      //       });
+      //       if (contador != 0) {
+      //         promedioTrim3 = promedioTrim3 / contador;
+      //       }
+
+      //       if (promedioTrim3 < 6) {
+      //         Estado.findOne({
+      //           ambito: "CalificacionesXMateria",
+      //           nombre: "Desaprobada"
+      //         }).then(estado => {
+      //           CXMEncontrada.estado = estado._id;
+      //           CXMEncontrada.promedio = 0;
+      //           CXMEncontrada.save();
+      //         });
+      //       } else {
+      //         //Promedio trimestre 3 mayor a 6
+      //         contador = 0;
+      //         //Se calcula el promedio del primer trimestre
+      //         materia.CXT[0].calificaciones.forEach(calificacion => {
+      //           if (calificacion != 0) {
+      //             contador = contador + 1;
+      //             promedioTrim1 = promedioTrim1 + calificacion;
+      //           }
+      //         });
+      //         if (contador != 0) {
+      //           promedioTrim1 = promedioTrim1 / contador;
+      //         }
+      //         contador = 0;
+      //         //Se calcula el promedio del segundo trimestre
+      //         materia.CXT[1].calificaciones.forEach(calificacion => {
+      //           if (calificacion != 0) {
+      //             contador = contador + 1;
+      //             promedioTrim2 = promedioTrim2 + calificacion;
+      //           }
+      //         });
+      //         if (contador != 0) {
+      //           promedioTrim2 = promedioTrim2 / contador;
+      //         }
+      //         promedioGral =
+      //           (promedioTrim1 + promedioTrim2 + promedioTrim3) / 3;
+      //         console.log("calculo promgral " + promedioGral);
+      //         console.log("t1 " + promedioTrim1);
+      //         console.log("t2 " + promedioTrim2);
+      //         console.log("t3 " + promedioTrim3);
+      //         if (promedioGral >= 6) {
+      //           console.log("entroIF");
+      //           // try{
+      //           //   Estado.findOne({
+      //           //     ambito: "CalificacionesXMateria",
+      //           //     nombre: "Aprobada"
+      //           //   }).then(async estadoAprobado => {
+      //           //     CXMEncontrada.estado = estadoAprobado._id;
+      //           //     CXMEncontrada.promedio = promedioGral;
+      //           //     var rtdo= await CXMEncontrada.save();
+      //           //     console.log(rtdo);
+      //           //   });
+      //           // }catch(err) {
+      //           //   console.log(err);
+      //           // }
+
+      //           var promesa = async () => {
+      //             var rtdo = await Estado.findOne({
+      //               ambito: "CalificacionesXMateria",
+      //               nombre: "Aprobada"
+      //             });
+      //             return rtdo;
+      //           };
+      //           var promesa2 = async (estado,promedioGral) => {
+      //             CXMEncontrada.estado = estado._id;
+      //             CXMEncontrada.promedio = promedioGral;
+      //             return await CXMEncontrada.save();
+      //           };
+      //           promesa().then(estado => {
+      //             console.log(promedioGral);
+      //             promesa2(estado, promedioGral).then(CXM=>{
+      //               console.log(CXM);
+      //             });
+      //           });
+
+      //           // Estado.findOne({
+      //           //   ambito: "CalificacionesXMateria",
+      //           //   nombre: "Aprobada"
+      //           // }).then(async estadoAprobado => {
+      //           //   CXMEncontrada.estado = estadoAprobado._id;
+      //           //   CXMEncontrada.promedio = promedioGral;
+      //           //   await CXMEncontrada.save().then(() => {
+      //           //     console.log(CXMEncontrada);
+      //           //   });
+      //           // });
+      //         } else {
+      //           Estado.findOne({
+      //             ambito: "CalificacionesXMateria",
+      //             nombre: "Desaprobada"
+      //           }).then(estadoDesaprobado => {
+      //             CXMEncontrada.estado = estadoDesaprobado._id;
+      //             CXMEncontrada.promedio = 0;
+      //             CXMEncontrada.save();
+      //           });
+      //         }
+      //       }
+      //     }
+      //   );
+      // });
     });
   }
 );
