@@ -54,6 +54,7 @@ cron.scheduleJob(
     year: date.getFullYear()
   },
   () => {
+    console.log("Se ejecuto");
     Inscripcion.aggregate([
       {
         $match: {
@@ -94,33 +95,36 @@ cron.scheduleJob(
       let promedioGral = 0;
       let contador = 0;
 
-      calificacionesDeInscripciones.forEach( materia => {
+      calificacionesDeInscripciones.forEach(materia => {
+        console.log("materia" + materia._id);
+        promedioTrim1 = 0;
+        promedioTrim2 = 0;
+        promedioTrim3 = 0;
+        promedioGral = 0;
+        contador = 0;
         materia.CXT[2].calificaciones.forEach(calificacion => {
+          // console.log("calificacion " + calificacion);
           if (calificacion != 0) {
             contador = contador + 1;
             promedioTrim3 = promedioTrim3 + calificacion;
           }
         });
-
+        // console.log("contador " + contador);
+        // console.log("sumaTotal " + promedioTrim3);
         if (contador != 0) {
           promedioTrim3 = promedioTrim3 / contador;
         }
+        console.log("promedio" + promedioTrim3);
         if (promedioTrim3 < 6) {
           Estado.findOne({
             ambito: "CalificacionesXMateria",
             nombre: "Desaprobada"
           }).then(estado => {
             CalificacionesXMateria.findById({ _id: materia.CXM._id }).then(
-              CXMEncontrada => {
+              async CXMEncontrada => {
                 CXMEncontrada.estado = estado._id;
-                CXMEncontrada.promedio = 3;
-                CXMEncontrada.save().then(()=>{
-                  promedioTrim1 = 0;
-                  promedioTrim2 = 0;
-                  promedioTrim3 = 0;
-                  promedioGral = 0;
-                  contador = 0;
-                });
+                CXMEncontrada.promedio = 0;
+                await CXMEncontrada.save().then(() => {});
               }
             );
           });
@@ -154,17 +158,18 @@ cron.scheduleJob(
             Estado.findOne({
               ambito: "CalificacionesXMateria",
               nombre: "Aprobada"
-            }).then(estadoAprobado => {
+            }).then(async estadoAprobado => {
               CalificacionesXMateria.findById({ _id: materia.CXM._id }).then(
-                 CXMEncontrada => {
+                async CXMEncontrada => {
+                  console.log("t1 " + promedioTrim1);
+                  console.log("t2 " + promedioTrim2);
+                  console.log("t3 " + promedioTrim3);
                   CXMEncontrada.estado = estadoAprobado._id;
-                  CXMEncontrada.promedio = 8;
-                   CXMEncontrada.save().then(() => {
-                    promedioTrim1 = 0;
-                    promedioTrim2 = 0;
-                    promedioTrim3 = 0;
-                    promedioGral = 0;
-                    contador = 0;
+                  CXMEncontrada.promedio =
+                    (await (promedioTrim1 + promedioTrim2 + promedioTrim3)) / 3;
+                  await CXMEncontrada.save().then(() => {
+                    console.log(CXMEncontrada);
+                    console.log(promedioGral);
                   });
                 }
               );
@@ -175,16 +180,10 @@ cron.scheduleJob(
               nombre: "Desaprobada"
             }).then(estadoDesaprobado => {
               CalificacionesXMateria.findById({ _id: materia.CXM._id }).then(
-                 CXMEncontrada => {
+                async CXMEncontrada => {
                   CXMEncontrada.estado = estadoDesaprobado._id;
-                  CXMEncontrada.promedio = 3;
-                   CXMEncontrada.save().then(() => {
-                    promedioTrim1 = 0;
-                    promedioTrim2 = 0;
-                    promedioTrim3 = 0;
-                    promedioGral = 0;
-                    contador = 0;
-                  });
+                  CXMEncontrada.promedio = 0;
+                  await CXMEncontrada.save().then(() => {});
                 }
               );
             });
