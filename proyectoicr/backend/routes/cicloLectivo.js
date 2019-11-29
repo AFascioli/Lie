@@ -93,6 +93,12 @@ cron.scheduleJob(
         }
       }
     ]).then(calificacionesDeInscripciones => {
+      let estadoAprobado;
+       Estado.findOne({
+        ambito: "CalificacionesXMateria",
+        nombre: "Aprobada"
+      }).then(estado =>{
+        estadoAprobado = estado;} );
       let promedioTrim1 = 0;
       let promedioTrim2 = 0;
       let promedioTrim3 = 0;
@@ -167,17 +173,10 @@ cron.scheduleJob(
               console.log("t2 " + promedioTrim2);
               console.log("t3 " + promedioTrim3);
               if (promedioGral >= 6) {
-                console.log("entroIF");
-                Estado.findOne({
-                  ambito: "CalificacionesXMateria",
-                  nombre: "Aprobada"
-                }).then(async estadoAprobado => {
-                  CXMEncontrada.estado = estadoAprobado._id;
-                  CXMEncontrada.promedio = promedioGral;
-                  await CXMEncontrada.save().then(() => {
-                    console.log(CXMEncontrada);
-                  });
-                });
+                console.log("entroIF" +promedioGral);
+
+                 saveAprobada(CXMEncontrada,estadoAprobado, promedioGral);
+
               } else {
                 Estado.findOne({
                   ambito: "CalificacionesXMateria",
@@ -315,5 +314,14 @@ cron.scheduleJob(
     });
   }
 );
+
+async function saveAprobada(CXMEncontrada, estadoAprobado, promedioGral){
+  console.log('promediogral'+promedioGral);
+  CXMEncontrada.estado = estadoAprobado._id;
+  CXMEncontrada.promedio = promedioGral;
+  await CXMEncontrada.save().then(() => {
+    console.log(CXMEncontrada);
+  });
+}
 
 module.exports = router;
