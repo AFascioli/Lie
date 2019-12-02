@@ -1,3 +1,4 @@
+import { CalificacionesExamenesComponent } from './estudiantes/calificaciones-examenes/calificaciones-examenes.component';
 import { PreferenciasComponent } from './menu-lateral/preferencias/preferencias.component';
 
 import { AltaARComponent } from './adulto-responsable/alta-ar/alta-ar.component';
@@ -92,6 +93,12 @@ const routes: Routes = [
         path: "calificacionesEstudiantes",
         component: CalificacionesEstudiantesComponent,
         canActivate: [RoleGuard],
+        data: { rolesValidos: ["Admin", "Preceptor", "Director", "Docente"] }
+      },
+      {
+        path: "calificacionesExamenes",
+        component: CalificacionesExamenesComponent,
+        canActivate: [RoleGuard, RouteGuard],
         data: { rolesValidos: ["Admin", "Preceptor", "Director", "Docente"] }
       },
       {

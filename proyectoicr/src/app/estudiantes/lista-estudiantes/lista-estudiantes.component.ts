@@ -23,7 +23,6 @@ export class ListaEstudiantesComponent implements OnInit {
   };
   isLoading: boolean = true;
 
-
   constructor(public servicio: EstudiantesService, public router: Router, public authService: AutenticacionService) {}
 
   ngOnInit() {
@@ -83,8 +82,13 @@ export class ListaEstudiantesComponent implements OnInit {
     this.router.navigate(["./justificarInasistencia"]);
   }
 
-  onVRegistrarAR(indice){
+  onRegistrarAR(indice){
     this.asignarEstudianteSeleccionado(indice);
     this.router.navigate(["./altaAdultoResponsable"]);
+  }
+
+  onRegistrarExamenes(indice){
+    this.asignarEstudianteSeleccionado(indice);
+    this.router.navigate(["./calificacionesExamenes"]);
   }
 }

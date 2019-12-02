@@ -1,0 +1,80 @@
+<h1 class="componente-titulo">
+ Registrar calificación examen ciclo lectivo 2019
+</h1>
+<mat-card class="card-body-componente">
+  <form #form="ngForm">
+    <p class="aviso" *ngIf="!fechaDentroDeRangoExamen">
+      Atención, no se puede registrar calificaciones de examen debido a que nos encontramos
+      fuera de las fechas habilitadas para ese fin
+    </p>
+    <div *ngIf="fechaDentroDeRangoExamen">
+      <div class="ubicacionfecha">
+        <b>Fecha: </b>
+        &nbsp;
+        <mat-form-field>
+          <input
+            [disabled]="true"
+            ngModel
+            #diaFecha="ngModel"
+            matInput
+            name="diaFecha"
+            required
+            class="inputFecha"
+          />
+          {{ fechaActual | date: "EEEE" | titlecase }}
+          {{ fechaActual | date: "dd/MM/yyyy" }}
+        </mat-form-field>
+      </div>
+      <br />
+      <div class="contenido" [class.contenido-mobile]="mobileQuery.matches">
+        <mat-card>
+          <p class="titulo-datos-est">Datos del estudiante</p>
+          <mat-card-subtitle>
+            <b>Apellido/s: </b> {{ apellidoEstudiante }}
+            <br />
+            <b>Nombre/s: </b> {{ nombreEstudiante }}
+          </mat-card-subtitle>
+        </mat-card>
+      </div>
+      <br />
+      <br />
+      <div class="div-selects">
+        <mat-form-field >
+          <mat-select
+            placeholder="Seleccione materia rendida"
+            name="materiaRendida"
+            ngModel
+            #materiaRendida="ngModel"
+            matNativeControl
+            required
+          >
+            <!-- <mat-option *ngFor="let objMateriaPendiente of materiasPendientes" [value]="objMateriaPendiente.id">
+              {{ objMateriaPendiente.nombre }}
+            </mat-option> -->
+          </mat-select>
+        </mat-form-field>
+      </div>
+      <br />
+
+      <br />
+    </div>
+    <div class="div-button">
+      <button
+        mat-raised-button
+        class="buttonPrimary"
+        (click)="guardar()"
+        mat-raised-button
+        [disabled]="!fechaDentroDeRangoExamen"
+      >
+        Guardar
+      </button>
+      <button
+        mat-raised-button
+        [routerLink]="['/buscar/lista']"
+        class="buttonWarn"
+      >
+        Volver
+      </button>
+    </div>
+  </form>
+</mat-card>
