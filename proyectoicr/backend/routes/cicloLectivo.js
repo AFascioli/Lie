@@ -47,7 +47,7 @@ CicloLectivo.findOne({ año: date.getFullYear() }).then(cicloLectivoActual => {
 
 cron.scheduleJob(
   // {
-    //Son fechas para testear metodo
+  //Son fechas para testear metodo
   //   // second: date.getSeconds() + 10,
   //   // hour: date.getHours(),
   //   // minute: date.getMinutes(),
@@ -76,9 +76,8 @@ cron.scheduleJob(
       },
       {
         $project: {
-          CXM: 1
-          //,
-          //materiasPendientes: 1
+          CXM: 1,
+          materiasPendientes: 1
         }
       },
       {
@@ -106,7 +105,6 @@ cron.scheduleJob(
       let promedioTrim2 = 0;
       let promedioTrim3 = 0;
       let promedioGral = 0;
-      let contadorMateriasDesaprobadas = 0;
 
       //El objeto materia tiene: CXT y CXM de una materia dada
       for (let materia of calificacionesDeInscripciones) {
@@ -131,7 +129,7 @@ cron.scheduleJob(
                 CXMEncontrada.estado = estado._id;
                 CXMEncontrada.promedio = 0;
                 await CXMEncontrada.save();
-                contadorMateriasDesaprobadas++;
+                // contadorMateriasDesaprobadas++;
               });
             } else {
               //Promedio trimestre 3 mayor a 6
@@ -162,38 +160,64 @@ cron.scheduleJob(
                   CXMEncontrada.estado = estadoDesaprobado._id;
                   CXMEncontrada.promedio = 0;
                   await CXMEncontrada.save();
-                  contadorMateriasDesaprobadas++;
+                  // contadorMateriasDesaprobadas++;
                 });
               }
             }
           }
         );
       }
-      //#resolve: Falta manejar materias pendientes
+    });
+
+    Inscripcion.aggregate([
+      {
+        $lookup: {
+          from: "calificacionesXMateria",
+          localField: "calificacionesXMateria",
+          foreignField: "_id",
+          as: "CXM"
+        }
+      },
+      {
+        $project: {
+          materiasPendientes: 1,
+          CXM: 1
+        }
+      }
+    ]).then(materiasDeInscripcion => {
       //Se actualiza el estado de la inscripción según los estados de las diferentes CXM
       //y la cantidad de materias pendientes
-      if (
-        contadorMateriasDesaprobadas +
-          calificacionesDeInscripciones.materiasPendientes.length >
-        3
-      ) {
-        Estado.findOne({
-          ambito: "Inscripcion",
-          nombre: "Examenes pendientes"
-        }).then(estado => {
-          Inscripcion.findByIdAndUpdate(calificacionesDeInscripciones._id, {
-            estado: estado._id
-          }).exec();
-        });
-      } else {
-        Estado.findOne({ ambito: "Inscripcion", nombre: "Promovido" }).then(
-          estado => {
+      materiasDeInscripcion.forEach(inscripcion => {
+
+        inscripcion.CXM.forEach(materia => {
+          if(materia.promedio < 6){
+            contadorMateriasDesaprobadas += 1;
+          }
+        })
+
+        contadorMateriasDesaprobadas += inscripcion.materiasPendientes.length+1;
+
+        if (
+          contadorMateriasDesaprobadas > 3
+        ) {
+          Estado.findOne({
+            ambito: "Inscripcion",
+            nombre: "Examenes pendientes"
+          }).then(estado => {
             Inscripcion.findByIdAndUpdate(calificacionesDeInscripciones._id, {
               estado: estado._id
             }).exec();
-          }
-        );
-      }
+          });
+        } else {
+          Estado.findOne({ ambito: "Inscripcion", nombre: "Promovido" }).then(
+            estado => {
+              Inscripcion.findByIdAndUpdate(calificacionesDeInscripciones._id, {
+                estado: estado._id
+              }).exec();
+            }
+          );
+        }
+      });
     });
   }
 );

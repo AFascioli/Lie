@@ -578,7 +578,7 @@ router.get("/materiasDesaprobadas", (req, res) => {
       materiasDesaprobadas.push(materias[0].materiasPendientesNombres);
     }
     for (i = 0; i < materias[0].CXM.length - 1; i++) {
-      if (materias[0].CXM[i].promedio == 0) {
+      if (materias[0].CXM[i].promedio != 0) {
         materiasDesaprobadas.push(materias[0].nombreCXM[i]);
       }
     }
@@ -744,10 +744,12 @@ router.post("/registrarCalificacionExamen", (req, res) => {
     }
 
   if(materias[0].materiasPendientesArray.length != 0){
-    // recorremos las materias de este año para ver si coincide con la rendida
+    let indiceMateriaRendida;
+    // recorremos las materias pendientes para ver si coincide con la rendida
       // y le asignamos el promedio y estado
       for (i = 0; i < materias[0].materiasPendientesArray.length - 1; i++) {
         if (materias[0].materiasPendientesArray[i].idMateria == req.body.idMateria) {
+          indiceMateriaRendida = i;
           Estado.findOne({
             ambito: "CalificacionesXMateria",
             nombre: "Aprobada"
@@ -766,6 +768,8 @@ router.post("/registrarCalificacionExamen", (req, res) => {
               });
             });
           });
+          //Sacamos la materia aprobada del array de materias pendientes
+          materias[0].materiasPendientesArray.splice(indiceMateriaRendida,1);
           return;
         }
       }
