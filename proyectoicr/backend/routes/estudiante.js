@@ -523,6 +523,82 @@ router.post("/documentos", checkAuthMiddleware, (req, res) => {
   }
 });
 
+//Dado un id de estudiante obtiene todas las materias desaprobadas
+router.get("/materiasDesaprobadas", (req, res) => {
+  Inscripcion.aggregate([
+    {
+      $match: {
+        idEstudiante: mongoose.Types.ObjectId(req.query.idEstudiante)
+      }
+    },
+    {
+      $lookup: {
+        from: "calificacionesXMateria",
+        localField: "calificacionesXMateria",
+        foreignField: "_id",
+        as: "CXM"
+      }
+    },
+    {
+      $lookup: {
+        from: "materia",
+        localField: "CXM.idMateria",
+        foreignField: "_id",
+        as: "nombreCXM"
+      }
+    },
+    {
+      $lookup: {
+        from: "calificacionesXMateria",
+        localField: "materiasPendientes",
+        foreignField: "_id",
+        as: "materiasPendientesArray"
+      }
+    },
+    {
+      $lookup: {
+        from: "materia",
+        localField: "materiasPendientesArray.idMateria",
+        foreignField: "_id",
+        as: "materiasPendientesNombres"
+      }
+    },
+    {
+      $project: {
+        materiasPendientesNombres: 1,
+        nombreCXM: 1,
+        CXM: 1
+      }
+    }
+  ]).then(materias => {
+    materiasDesaprobadas = [];
+    if(materias[0].materiasPendientesNombres.length != 0 ){
+      materiasDesaprobadas.push(materias[0].materiasPendientesNombres);
+    }
+    for(i=0;i<(materias[0].CXM.length)-1; i++ )
+    {
+      if(materias[0].CXM[i].promedio== 0){
+        materiasDesaprobadas.push(materias[0].nombreCXM[i]);
+      }
+    }
+
+    if(materiasDesaprobadas){
+      res.status(200).json({
+        message: "Materias desaprobadas obtenidas correctamente",
+        exito: true,
+        materiasDesaprobadas: materiasDesaprobadas
+      });
+    }
+    else{
+      res.status(200).json({
+        message: "El alumno seleccionado no tiene materias desaprobadas",
+        exito: true,
+        materiasDesaprobadas: []
+      });
+    }
+  });
+});
+
 //Dado una id de estudiante y un trimestre obtiene todas las materias con sus respectivas calificaciones
 router.get("/materia/calificaciones", (req, res) => {
   Inscripcion.aggregate([

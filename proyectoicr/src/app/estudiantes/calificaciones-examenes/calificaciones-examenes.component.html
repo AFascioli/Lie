@@ -1,11 +1,11 @@
 <h1 class="componente-titulo">
- Registrar calificación examen ciclo lectivo 2019
+  Registrar calificación examen ciclo lectivo 2019
 </h1>
 <mat-card class="card-body-componente">
   <form #form="ngForm">
     <p class="aviso" *ngIf="!fechaDentroDeRangoExamen">
-      Atención, no se puede registrar calificaciones de examen debido a que nos encontramos
-      fuera de las fechas habilitadas para ese fin
+      Atención, no se puede registrar calificaciones de examen debido a que nos
+      encontramos fuera de las fechas habilitadas para ese fin
     </p>
     <div *ngIf="fechaDentroDeRangoExamen">
       <div class="ubicacionfecha">
@@ -38,24 +38,40 @@
       </div>
       <br />
       <br />
-      <div class="div-selects">
-        <mat-form-field >
+      <p class="aviso" *ngIf="!tieneMateriasDesaprobadas">
+        El estudiante seleccionado no tiene materias desaprobadas
+      </p>
+      <div class="div-selects" *ngIf="tieneMateriasDesaprobadas">
+        <mat-form-field>
           <mat-select
-            placeholder="Seleccione materia rendida"
+            placeholder="Seleccione materia"
             name="materiaRendida"
             ngModel
             #materiaRendida="ngModel"
             matNativeControl
+            (selectionChange)="onMateriaChange()"
             required
           >
-            <!-- <mat-option *ngFor="let objMateriaPendiente of materiasPendientes" [value]="objMateriaPendiente.id">
-              {{ objMateriaPendiente.nombre }}
-            </mat-option> -->
+            <mat-option *ngFor="let materiaDesaprobada of materiasDesaprobadas" [value]="materiaDesaprobada._id">
+              {{ materiaDesaprobada.nombre }}
+            </mat-option>
           </mat-select>
         </mat-form-field>
+        <br />
+        <mat-form-field>
+          <input
+            ngModel
+            #notaMateria="ngModel"
+            [disabled]="!materiaSeleccionada"
+            matInput
+            name="notaMateria"
+            [(ngModel)]="notaExamen"
+            placeholder="Ingrese nota"
+            required
+            (keypress)="checkNotas($event)"
+          />
+        </mat-form-field>
       </div>
-      <br />
-
       <br />
     </div>
     <div class="div-button">
@@ -64,7 +80,7 @@
         class="buttonPrimary"
         (click)="guardar()"
         mat-raised-button
-        [disabled]="!fechaDentroDeRangoExamen"
+        [disabled]="!fechaDentroDeRangoExamen || !tieneMateriasDesaprobadas"
       >
         Guardar
       </button>

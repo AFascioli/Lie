@@ -28,6 +28,22 @@ export class LlegadaTardeComponent implements OnInit {
 
   ngOnInit() {
     this.fechaActual = new Date();
+    this.fechaActualFinDeSemana();
+    if(this.fechaActualEnCicloLectivo){
+      if(this.fechaActual.getHours()<8){
+        this.antes8am=true;
+      }else{
+        this.despues8am=true;
+      }
+      this.apellidoEstudiante = this.servicio.estudianteSeleccionado.apellido;
+      this.nombreEstudiante = this.servicio.estudianteSeleccionado.nombre;
+    }else{
+      this.fueraPeriodoCicloLectivo=true;
+    }
+
+  }
+
+  fechaActualFinDeSemana(){
     if (
       this.fechaActual.toString().substring(0, 3) == "Sat" ||
       this.fechaActual.toString().substring(0, 3) == "Sun"
@@ -41,18 +57,6 @@ export class LlegadaTardeComponent implements OnInit {
         }
       );
     }
-    if(this.fechaActualEnCicloLectivo){
-      if(this.fechaActual.getHours()<8){
-        this.antes8am=true;
-      }else{
-        this.despues8am=true;
-      }
-      this.apellidoEstudiante = this.servicio.estudianteSeleccionado.apellido;
-      this.nombreEstudiante = this.servicio.estudianteSeleccionado.nombre;
-    }else{
-      this.fueraPeriodoCicloLectivo=true;
-    }
-
   }
 
   fechaActualEnCicloLectivo() {

@@ -459,5 +459,19 @@ export class EstudiantesService {
     });
   }
 
+  //dado un id del estudiante obtenemos las materias desaprobadas
+  obtenerMateriasDesaprobadasEstudiante(){
+    let params = new HttpParams().set(
+      "idEstudiante",
+      this.estudianteSeleccionado._id
+    );
+    return this.http.get<{
+      message: string;
+      exito: boolean;
+      materiasDesaprobadas: any[];
+    }>(environment.apiUrl + "/estudiante/materiasDesaprobadas", {
+      params: params
+    });
+  }
 
 }

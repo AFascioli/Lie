@@ -1,3 +1,4 @@
+import { MatSnackBar } from "@angular/material";
 import { AutenticacionService } from "./../../login/autenticacionService.service";
 import { EstudiantesService } from "src/app/estudiantes/estudiante.service";
 import { Component, OnInit, ChangeDetectorRef } from "@angular/core";
@@ -15,12 +16,17 @@ export class CalificacionesExamenesComponent implements OnInit {
   mobileQuery: MediaQueryList;
   fechaActual: Date;
   fechaDentroDeRangoExamen: boolean = false;
+  materiasDesaprobadas: any[];
+  materiaSeleccionada: boolean = false;
+  tieneMateriasDesaprobadas: boolean = false;
+  notaExamen: string;
 
   constructor(
     public estudianteService: EstudiantesService,
     public changeDetectorRef: ChangeDetectorRef,
     public media: MediaMatcher,
-    public authService: AutenticacionService
+    public authService: AutenticacionService,
+    public snackBar: MatSnackBar
   ) {
     this.mobileQuery = media.matchMedia("(max-width: 1000px)");
     this._mobileQueryListener = () => changeDetectorRef.detectChanges();
@@ -30,10 +36,48 @@ export class CalificacionesExamenesComponent implements OnInit {
   ngOnInit() {
     this.apellidoEstudiante = this.estudianteService.estudianteSeleccionado.apellido;
     this.nombreEstudiante = this.estudianteService.estudianteSeleccionado.nombre;
+    this.estudianteService.obtenerMateriasDesaprobadasEstudiante().subscribe(materias =>{
+      if(materias.materiasDesaprobadas.length != 0){
+        this.materiasDesaprobadas= materias.materiasDesaprobadas;
+        this.tieneMateriasDesaprobadas = true;
+      }
+    });
     this.fechaActual = new Date();
-    this.fechaDentroDeRangoExamen = true;
     if (this.fechaActualEnRangoFechasExamenes()) {
       this.fechaDentroDeRangoExamen = true;
+      this.fechaActualFinDeSemana();
+    }
+  }
+
+  onMateriaChange(){
+    this.materiaSeleccionada= true;
+  }
+
+  checkNotas(event) {
+    var inputValue = event.which;
+    var concat = this.notaExamen + String.fromCharCode(inputValue);
+    if (
+      !(inputValue >= 48 && inputValue <= 57) &&
+      inputValue != 32 &&
+      inputValue != 0
+    )
+      event.preventDefault();
+    else if (this.notaExamen!= "" && Number(concat) > 10) event.preventDefault();
+  }
+
+  fechaActualFinDeSemana() {
+    if (
+      this.fechaActual.toString().substring(0, 3) == "Sat" ||
+      this.fechaActual.toString().substring(0, 3) == "Sun"
+    ) {
+      this.snackBar.open(
+        "Considere que está queriendo registrar una calificación de examen en un fin de semana",
+        "",
+        {
+          panelClass: ["snack-bar-aviso"],
+          duration: 8000
+        }
+      );
     }
   }
 
@@ -51,7 +95,6 @@ export class CalificacionesExamenesComponent implements OnInit {
     );
   }
 
-  guardar() {
+  guardar() {}
 
-  }
 }
