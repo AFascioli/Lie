@@ -17,9 +17,9 @@ export class CalificacionesExamenesComponent implements OnInit {
   fechaActual: Date;
   fechaDentroDeRangoExamen: boolean = false;
   materiasDesaprobadas: any[];
-  materiaSeleccionada: boolean = false;
+  idMateriaSeleccionada: string;
   tieneMateriasDesaprobadas: boolean = false;
-  notaExamen: string;
+  notaExamen: any;
 
   constructor(
     public estudianteService: EstudiantesService,
@@ -43,14 +43,16 @@ export class CalificacionesExamenesComponent implements OnInit {
       }
     });
     this.fechaActual = new Date();
+    this.fechaDentroDeRangoExamen = true;
     if (this.fechaActualEnRangoFechasExamenes()) {
       this.fechaDentroDeRangoExamen = true;
       this.fechaActualFinDeSemana();
     }
   }
 
-  onMateriaChange(){
-    this.materiaSeleccionada= true;
+  onMateriaChange(idMateria){
+    this.idMateriaSeleccionada= idMateria;
+    console.log(idMateria);
   }
 
   checkNotas(event) {
@@ -95,6 +97,22 @@ export class CalificacionesExamenesComponent implements OnInit {
     );
   }
 
-  guardar() {}
+  guardar() {
+    if(this.notaExamen>6){
+      this.estudianteService.registrarCalificacionExamen(this.idMateriaSeleccionada, this.notaExamen).subscribe(rtdo => {
+        if (rtdo.exito) {
+          this.snackBar.open(rtdo.message, "", {
+            panelClass: ["snack-bar-exito"],
+            duration: 3000
+          });
+        }else{
+          this.snackBar.open(rtdo.message, "", {
+            panelClass: ["snack-bar-fracaso"],
+            duration: 3000
+          });
+        }
+      });
+    }
+  }
 
 }

@@ -49,7 +49,7 @@
             ngModel
             #materiaRendida="ngModel"
             matNativeControl
-            (selectionChange)="onMateriaChange()"
+            (selectionChange)="onMateriaChange(materiaRendida.value)"
             required
           >
             <mat-option *ngFor="let materiaDesaprobada of materiasDesaprobadas" [value]="materiaDesaprobada._id">
@@ -62,7 +62,7 @@
           <input
             ngModel
             #notaMateria="ngModel"
-            [disabled]="!materiaSeleccionada"
+            [disabled]="!idMateriaSeleccionada"
             matInput
             name="notaMateria"
             [(ngModel)]="notaExamen"

@@ -474,4 +474,12 @@ export class EstudiantesService {
     });
   }
 
+  registrarCalificacionExamen(idMateria, calificacion){
+    let datosExamen= {idMateria: idMateria, idEstudiante: this.estudianteSeleccionado._id, calificacion: calificacion  }
+    return this.http.post<{ message: string; exito: boolean }>(
+      environment.apiUrl + "/estudiante/registrarCalificacionExamen",
+      datosExamen
+    );
+  }
+
 }

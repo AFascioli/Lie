@@ -5,6 +5,7 @@ const Inscripcion = require("../models/inscripcion");
 const AsistenciaDiaria = require("../models/asistenciaDiaria");
 const Suscripcion = require("../classes/suscripcion");
 const CicloLectivo = require("../models/cicloLectivo");
+const CalificacionesXMateria = require("../models/calificacionesXMateria");
 const router = express.Router();
 const mongoose = require("mongoose");
 
@@ -567,7 +568,8 @@ router.get("/materiasDesaprobadas", (req, res) => {
       $project: {
         materiasPendientesNombres: 1,
         nombreCXM: 1,
-        CXM: 1
+        CXM: 1,
+        materiasPendientesArray:1
       }
     }
   ]).then(materias => {
@@ -665,6 +667,90 @@ router.get("/materia/calificaciones", (req, res) => {
       message: "Operación exitosa",
       exito: true,
       vectorCalXMat: vectorRespuesta
+    });
+  });
+});
+
+router.post("/registrarCalificacionExamen", (req,res)=> {
+  console.log(req.body);
+  Inscripcion.aggregate([
+    {
+      $match: {
+        idEstudiante: mongoose.Types.ObjectId(req.body.idEstudiante)
+      }
+    },
+    {
+      $lookup: {
+        from: "calificacionesXMateria",
+        localField: "calificacionesXMateria",
+        foreignField: "_id",
+        as: "CXM"
+      }
+    },
+    {
+      $lookup: {
+        from: "materia",
+        localField: "CXM.idMateria",
+        foreignField: "_id",
+        as: "nombreCXM"
+      }
+    },
+    {
+      $lookup: {
+        from: "calificacionesXMateria",
+        localField: "materiasPendientes",
+        foreignField: "_id",
+        as: "materiasPendientesArray"
+      }
+    },
+    {
+      $lookup: {
+        from: "materia",
+        localField: "materiasPendientesArray.idMateria",
+        foreignField: "_id",
+        as: "materiasPendientesNombres"
+      }
+    },
+    {
+      $project: {
+        CXM: 1,
+        materiasPendientesArray:1
+      }
+    }
+  ]).then(materias => {
+    let idEstadoAprobada;
+    Estado.findOne({ambito:"CalificacionesXMateria", nombre: "Aprobada" }).then(estado=>{
+      idEstadoAprobada = estado._id;
+    });
+    // recorremos las materias de este año para ver si coincide con la rendida y le asignamos el promedio y estado
+    materias[0].CXM.forEach( materia =>{
+      console.log(req.body.idMateria);
+      console.log(materia.idMateria);
+      if(materia.idMateria == req.body.idMateria){
+        console.log('entro');
+        CalificacionesXMateria.findOneAndUpdate({idMateria:  req.body.idMateria}, {promedio: req.body.calificacion, estado: idEstadoAprobada} ).exec().then(()=>{
+          console.log('entro2');
+          return res.status(200).json({
+            message: "Se asigno la calificacion de examen correctamente",
+            exito: true
+          });
+        });
+      }
+      return;
+    });
+    let indiceBorrar;
+    // recorremos las materias pendientes para ver si coincide con la rendida y le asignamos el promedio y estado
+    // materias[0].materiasPendientesArray.forEach( materia, index =>{
+    //   if(materia._id == req.body.idMateria){
+    //     CalificacionesXMateria.findByIdAndUpdate(materia._id, {promedio: req.body.calificacion, estado: idEstadoAprobada} ).exec();
+    //     indiceBorrar = index;
+    //   }
+    // });
+    // materias[0].materiasPendientesArray.splice(indiceBorrar, 1);
+
+    return res.status(200).json({
+      message: " ",
+      exito: false
     });
   });
 });
