@@ -578,7 +578,10 @@ router.get("/materiasDesaprobadas", (req, res) => {
       materiasDesaprobadas.push(materias[0].materiasPendientesNombres);
     }
     for (i = 0; i < materias[0].CXM.length - 1; i++) {
-      if (materias[0].CXM[i].promedio != 0) {
+      console.log(materias[0].nombreCXM[i]);
+      console.log(materias[0].CXM[i]);
+      if (materias[0].CXM[i].promedio == 0) {
+        console.log("entro");
         materiasDesaprobadas.push(materias[0].nombreCXM[i]);
       }
     }

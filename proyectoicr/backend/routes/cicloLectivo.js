@@ -46,15 +46,15 @@ CicloLectivo.findOne({ año: date.getFullYear() }).then(cicloLectivoActual => {
 });
 
 cron.scheduleJob(
-  // {
+  //  {
   //Son fechas para testear metodo
-  //   // second: date.getSeconds() + 10,
-  //   // hour: date.getHours(),
-  //   // minute: date.getMinutes(),
-  //   // date: date.getDate(),
-  //   // month: date.getMonth(),
-  //   // year: date.getFullYear()
-  // }
+  //   second: date.getSeconds() + 10,
+  //   hour: date.getHours(),
+  //   minute: date.getMinutes(),
+  //   date: date.getDate(),
+  //   month: date.getMonth(),
+  //   year: date.getFullYear()
+  // },
   fechas,
   () => {
     //Obtenemos todas las materias de las inscripciones activas y de este año
@@ -168,8 +168,13 @@ cron.scheduleJob(
         );
       }
     });
-
+    let contadorMateriasDesaprobadas=0;
     Inscripcion.aggregate([
+      {
+        $match: {
+          activa: true
+        }
+      },
       {
         $lookup: {
           from: "calificacionesXMateria",
@@ -195,7 +200,9 @@ cron.scheduleJob(
           }
         })
 
-        contadorMateriasDesaprobadas += inscripcion.materiasPendientes.length+1;
+        if(inscripcion.materiasPendientes.length !=0){
+           contadorMateriasDesaprobadas += inscripcion.materiasPendientes.length+1;
+        }
 
         if (
           contadorMateriasDesaprobadas > 3
@@ -204,14 +211,14 @@ cron.scheduleJob(
             ambito: "Inscripcion",
             nombre: "Examenes pendientes"
           }).then(estado => {
-            Inscripcion.findByIdAndUpdate(calificacionesDeInscripciones._id, {
+            Inscripcion.findByIdAndUpdate(inscripcion._id, {
               estado: estado._id
             }).exec();
           });
         } else {
           Estado.findOne({ ambito: "Inscripcion", nombre: "Promovido" }).then(
             estado => {
-              Inscripcion.findByIdAndUpdate(calificacionesDeInscripciones._id, {
+              Inscripcion.findByIdAndUpdate(inscripcion._id, {
                 estado: estado._id
               }).exec();
             }
