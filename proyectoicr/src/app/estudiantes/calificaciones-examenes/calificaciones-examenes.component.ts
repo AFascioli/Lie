@@ -98,7 +98,7 @@ export class CalificacionesExamenesComponent implements OnInit {
   }
 
   guardar() {
-    if(this.notaExamen>6){
+    if(this.notaExamen>5){
       this.estudianteService.registrarCalificacionExamen(this.idMateriaSeleccionada, this.notaExamen).subscribe(rtdo => {
         if (rtdo.exito) {
           this.snackBar.open(rtdo.message, "", {

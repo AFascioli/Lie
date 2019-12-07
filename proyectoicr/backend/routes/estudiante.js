@@ -569,29 +569,27 @@ router.get("/materiasDesaprobadas", (req, res) => {
         materiasPendientesNombres: 1,
         nombreCXM: 1,
         CXM: 1,
-        materiasPendientesArray:1
+        materiasPendientesArray: 1
       }
     }
   ]).then(materias => {
     materiasDesaprobadas = [];
-    if(materias[0].materiasPendientesNombres.length != 0 ){
+    if (materias[0].materiasPendientesNombres.length != 0) {
       materiasDesaprobadas.push(materias[0].materiasPendientesNombres);
     }
-    for(i=0;i<(materias[0].CXM.length)-1; i++ )
-    {
-      if(materias[0].CXM[i].promedio== 0){
+    for (i = 0; i < materias[0].CXM.length - 1; i++) {
+      if (materias[0].CXM[i].promedio == 0) {
         materiasDesaprobadas.push(materias[0].nombreCXM[i]);
       }
     }
 
-    if(materiasDesaprobadas){
+    if (materiasDesaprobadas) {
       res.status(200).json({
         message: "Materias desaprobadas obtenidas correctamente",
         exito: true,
         materiasDesaprobadas: materiasDesaprobadas
       });
-    }
-    else{
+    } else {
       res.status(200).json({
         message: "El alumno seleccionado no tiene materias desaprobadas",
         exito: true,
@@ -671,7 +669,7 @@ router.get("/materia/calificaciones", (req, res) => {
   });
 });
 
-router.post("/registrarCalificacionExamen", (req,res)=> {
+router.post("/registrarCalificacionExamen", (req, res) => {
   console.log(req.body);
   Inscripcion.aggregate([
     {
@@ -714,42 +712,67 @@ router.post("/registrarCalificacionExamen", (req,res)=> {
     {
       $project: {
         CXM: 1,
-        materiasPendientesArray:1
+        materiasPendientesArray: 1
       }
     }
   ]).then(materias => {
-    let idEstadoAprobada;
-    Estado.findOne({ambito:"CalificacionesXMateria", nombre: "Aprobada" }).then(estado=>{
-      idEstadoAprobada = estado._id;
-    });
-    // recorremos las materias de este año para ver si coincide con la rendida y le asignamos el promedio y estado
-    materias[0].CXM.forEach( materia =>{
-      console.log(req.body.idMateria);
-      console.log(materia.idMateria);
-      if(materia.idMateria == req.body.idMateria){
-        console.log('entro');
-        CalificacionesXMateria.findOneAndUpdate({idMateria:  req.body.idMateria}, {promedio: req.body.calificacion, estado: idEstadoAprobada} ).exec().then(()=>{
-          console.log('entro2');
-          return res.status(200).json({
-            message: "Se asigno la calificacion de examen correctamente",
-            exito: true
+
+    // recorremos las materias de este año para ver si coincide con la rendida
+    // y le asignamos el promedio y estado
+    for (i = 0; i < materias[0].CXM.length - 1; i++) {
+      if (materias[0].CXM[i].idMateria == req.body.idMateria) {
+        Estado.findOne({
+          ambito: "CalificacionesXMateria",
+          nombre: "Aprobada"
+        }).then(async estado => {
+          await CalificacionesXMateria.findOne({
+            idMateria: req.body.idMateria,
+            _id: materias[0].CXM[i]._id
+          }).then(async CXMateria => {
+            CXMateria.promedio = req.body.calificacion;
+            CXMateria.estado = estado._id;
+            await CXMateria.save().then(() => {
+              return res.status(200).json({
+                message: "Se asignó la calificacion del examen exitosamente",
+                exito: true
+              });
+            });
           });
         });
+        return;
       }
-      return;
-    });
-    let indiceBorrar;
-    // recorremos las materias pendientes para ver si coincide con la rendida y le asignamos el promedio y estado
-    // materias[0].materiasPendientesArray.forEach( materia, index =>{
-    //   if(materia._id == req.body.idMateria){
-    //     CalificacionesXMateria.findByIdAndUpdate(materia._id, {promedio: req.body.calificacion, estado: idEstadoAprobada} ).exec();
-    //     indiceBorrar = index;
-    //   }
-    // });
-    // materias[0].materiasPendientesArray.splice(indiceBorrar, 1);
+    }
+
+  if(materias[0].materiasPendientesArray.length != 0){
+    // recorremos las materias de este año para ver si coincide con la rendida
+      // y le asignamos el promedio y estado
+      for (i = 0; i < materias[0].materiasPendientesArray.length - 1; i++) {
+        if (materias[0].materiasPendientesArray[i].idMateria == req.body.idMateria) {
+          Estado.findOne({
+            ambito: "CalificacionesXMateria",
+            nombre: "Aprobada"
+          }).then(async estado => {
+            await CalificacionesXMateria.findOne({
+              idMateria: req.body.idMateria,
+              _id: materias[0].materiasPendientesArray[i]._id
+            }).then(async CXMateria => {
+              CXMateria.promedio = req.body.calificacion;
+              CXMateria.estado = estado._id;
+              await CXMateria.save().then( () => {
+                return res.status(200).json({
+                  message: "Se asignó la calificacion del examen exitosamente",
+                  exito: true
+                });
+              });
+            });
+          });
+          return;
+        }
+      }
+  }
 
     return res.status(200).json({
-      message: " ",
+      message: "No se logró asignar la calificacion del examen",
       exito: false
     });
   });
