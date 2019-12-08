@@ -8,7 +8,7 @@ const CicloLectivo = require("../models/cicloLectivo");
 const CalificacionesXMateria = require("../models/calificacionesXMateria");
 const router = express.Router();
 const mongoose = require("mongoose");
-
+const ClaseCXM = require("../classes/calificacionXMateria");
 const checkAuthMiddleware = require("../middleware/check-auth");
 
 //Registra un nuevo estudiante y pone su estado a registrado
@@ -573,32 +573,25 @@ router.get("/materiasDesaprobadas", (req, res) => {
       }
     }
   ]).then(materias => {
-    materiasDesaprobadas = [];
-    if (materias[0].materiasPendientesNombres.length != 0) {
-      materiasDesaprobadas.push(materias[0].materiasPendientesNombres);
-    }
-    for (i = 0; i < materias[0].CXM.length - 1; i++) {
-      console.log(materias[0].nombreCXM[i]);
-      console.log(materias[0].CXM[i]);
-      if (materias[0].CXM[i].promedio == 0) {
-        console.log("entro");
-        materiasDesaprobadas.push(materias[0].nombreCXM[i]);
+    ClaseCXM.obtenerMateriasDesaprobadas(
+      materias[0].materiasPendientesNombres,
+      materias[0].CXM,
+      materias[0].nombreCXM
+    ).then(materiasDesaprobadas => {
+      if (materiasDesaprobadas.length !=0) {
+        res.status(200).json({
+          message: "Materias desaprobadas obtenidas correctamente",
+          exito: true,
+          materiasDesaprobadas: materiasDesaprobadas
+        });
+      } else {
+        res.status(200).json({
+          message: "El alumno seleccionado no tiene materias desaprobadas",
+          exito: true,
+          materiasDesaprobadas: []
+        });
       }
-    }
-
-    if (materiasDesaprobadas) {
-      res.status(200).json({
-        message: "Materias desaprobadas obtenidas correctamente",
-        exito: true,
-        materiasDesaprobadas: materiasDesaprobadas
-      });
-    } else {
-      res.status(200).json({
-        message: "El alumno seleccionado no tiene materias desaprobadas",
-        exito: true,
-        materiasDesaprobadas: []
-      });
-    }
+    });
   });
 });
 
@@ -719,7 +712,6 @@ router.post("/registrarCalificacionExamen", (req, res) => {
       }
     }
   ]).then(materias => {
-
     // recorremos las materias de este año para ver si coincide con la rendida
     // y le asignamos el promedio y estado
     for (i = 0; i < materias[0].CXM.length - 1; i++) {
@@ -746,12 +738,14 @@ router.post("/registrarCalificacionExamen", (req, res) => {
       }
     }
 
-  if(materias[0].materiasPendientesArray.length != 0){
-    let indiceMateriaRendida;
-    // recorremos las materias pendientes para ver si coincide con la rendida
+    if (materias[0].materiasPendientesArray.length != 0) {
+      let indiceMateriaRendida;
+      // recorremos las materias pendientes para ver si coincide con la rendida
       // y le asignamos el promedio y estado
       for (i = 0; i < materias[0].materiasPendientesArray.length - 1; i++) {
-        if (materias[0].materiasPendientesArray[i].idMateria == req.body.idMateria) {
+        if (
+          materias[0].materiasPendientesArray[i].idMateria == req.body.idMateria
+        ) {
           indiceMateriaRendida = i;
           Estado.findOne({
             ambito: "CalificacionesXMateria",
@@ -763,7 +757,7 @@ router.post("/registrarCalificacionExamen", (req, res) => {
             }).then(async CXMateria => {
               CXMateria.promedio = req.body.calificacion;
               CXMateria.estado = estado._id;
-              await CXMateria.save().then( () => {
+              await CXMateria.save().then(() => {
                 return res.status(200).json({
                   message: "Se asignó la calificacion del examen exitosamente",
                   exito: true
@@ -772,11 +766,11 @@ router.post("/registrarCalificacionExamen", (req, res) => {
             });
           });
           //Sacamos la materia aprobada del array de materias pendientes
-          materias[0].materiasPendientesArray.splice(indiceMateriaRendida,1);
+          materias[0].materiasPendientesArray.splice(indiceMateriaRendida, 1);
           return;
         }
       }
-  }
+    }
 
     return res.status(200).json({
       message: "No se logró asignar la calificacion del examen",
