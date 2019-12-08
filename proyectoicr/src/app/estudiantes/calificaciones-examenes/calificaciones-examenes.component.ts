@@ -37,14 +37,12 @@ export class CalificacionesExamenesComponent implements OnInit {
     this.apellidoEstudiante = this.estudianteService.estudianteSeleccionado.apellido;
     this.nombreEstudiante = this.estudianteService.estudianteSeleccionado.nombre;
     this.estudianteService.obtenerMateriasDesaprobadasEstudiante().subscribe(materias =>{
-      console.log(materias);
       if(materias.materiasDesaprobadas.length != 0){
         this.materiasDesaprobadas= materias.materiasDesaprobadas;
         this.tieneMateriasDesaprobadas = true;
       }
     });
     this.fechaActual = new Date();
-    this.fechaDentroDeRangoExamen = true;
     if (this.fechaActualEnRangoFechasExamenes()) {
       this.fechaDentroDeRangoExamen = true;
       this.fechaActualFinDeSemana();

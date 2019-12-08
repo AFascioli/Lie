@@ -229,4 +229,33 @@ cron.scheduleJob(
   }
 );
 
+//El metodo siguiente se fija la cantidad de materias desaprobadas del año lectivo y la
+//cantidad de materias pendientes y de acuerdo a eso le cambia el estado a la inscripcion
+let date = new Date();
+let fechas;
+CicloLectivo.findOne({ año: date.getFullYear() }).then(cicloLectivoActual => {
+  fechas = {
+    date: cicloLectivoActual.fechaFinTercerTrimestre.getDate(),
+    month: cicloLectivoActual.fechaFinTercerTrimestre.getMonth(),
+    year: cicloLectivoActual.fechaFinTercerTrimestre.getFullYear()
+  };
+});
+
+cron.scheduleJob(
+  //  {
+  //Son fechas para testear metodo
+  //   second: date.getSeconds() + 10,
+  //   hour: date.getHours(),
+  //   minute: date.getMinutes(),
+  //   date: date.getDate(),
+  //   month: date.getMonth(),
+  //   year: date.getFullYear()
+  // },
+  fechas,
+  () => {
+
+  });
+
+
+
 module.exports = router;

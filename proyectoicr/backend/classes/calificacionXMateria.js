@@ -34,7 +34,5 @@ exports.obtenerMateriasDesaprobadas = async function(arrayPendientes, arrayCXMTo
     }
   }
 
-  console.log(materiasDesaprobadas);
-
   return materiasDesaprobadas;
 }
