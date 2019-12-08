@@ -235,9 +235,9 @@ let date = new Date();
 let fechas;
 CicloLectivo.findOne({ año: date.getFullYear() }).then(cicloLectivoActual => {
   fechas = {
-    date: cicloLectivoActual.fechaFinTercerTrimestre.getDate(),
-    month: cicloLectivoActual.fechaFinTercerTrimestre.getMonth(),
-    year: cicloLectivoActual.fechaFinTercerTrimestre.getFullYear()
+    date: cicloLectivoActual.fechaFinExamenes.getDate(),
+    month: cicloLectivoActual.fechaFinExamenes.getMonth(),
+    year: cicloLectivoActual.fechaFinExamenes.getFullYear()
   };
 });
 
@@ -253,9 +253,64 @@ cron.scheduleJob(
   // },
   fechas,
   () => {
+    let contadorMateriasDesaprobadas=0;
+    Inscripcion.aggregate([
+      {
+        $match: {
+          activa: true
+        }
+      },
+      {
+        $lookup: {
+          from: "calificacionesXMateria",
+          localField: "calificacionesXMateria",
+          foreignField: "_id",
+          as: "CXM"
+        }
+      },
+      {
+        $project: {
+          materiasPendientes: 1,
+          CXM: 1
+        }
+      }
+    ]).then(materiasDeInscripcion => {
+      //Se actualiza el estado de la inscripción según los estados de las diferentes CXM
+      //y la cantidad de materias pendientes
+      materiasDeInscripcion.forEach(inscripcion => {
 
+        inscripcion.CXM.forEach(materia => {
+          if(materia.promedio < 6){
+            contadorMateriasDesaprobadas += 1;
+          }
+        })
+
+        if(inscripcion.materiasPendientes.length !=0){
+           contadorMateriasDesaprobadas += inscripcion.materiasPendientes.length+1;
+        }
+
+        if (
+          contadorMateriasDesaprobadas > 3
+        ) {
+          Estado.findOne({
+            ambito: "Inscripcion",
+            nombre: "Libre"
+          }).then(estado => {
+            Inscripcion.findByIdAndUpdate(inscripcion._id, {
+              estado: estado._id
+            }).exec();
+          });
+        } else {
+          Estado.findOne({ ambito: "Inscripcion", nombre: "Promovido" }).then(
+            estado => {
+              Inscripcion.findByIdAndUpdate(inscripcion._id, {
+                estado: estado._id
+              }).exec();
+            }
+          );
+        }
+      });
+    });
   });
-
-
 
 module.exports = router;
