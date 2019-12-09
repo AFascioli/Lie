@@ -150,7 +150,6 @@ cron.scheduleJob(
                 CXMEncontrada.estado = estadoAprobado._id;
                 CXMEncontrada.promedio = promedioGral;
                 CXMEncontrada.save().then(() => {
-                  console.log(CXMEncontrada);
                 });
               } else {
                 Estado.findOne({
@@ -231,10 +230,10 @@ cron.scheduleJob(
 
 //El metodo siguiente se fija la cantidad de materias desaprobadas del año lectivo y la
 //cantidad de materias pendientes y de acuerdo a eso le cambia el estado a la inscripcion
-let date = new Date();
-let fechas;
-CicloLectivo.findOne({ año: date.getFullYear() }).then(cicloLectivoActual => {
-  fechas = {
+let fechaActual = new Date();
+let fechaFinExamenes;
+CicloLectivo.findOne({ año: fechaActual.getFullYear() }).then(cicloLectivoActual => {
+  fechaFinExamenes = {
     date: cicloLectivoActual.fechaFinExamenes.getDate(),
     month: cicloLectivoActual.fechaFinExamenes.getMonth(),
     year: cicloLectivoActual.fechaFinExamenes.getFullYear()
@@ -251,7 +250,7 @@ cron.scheduleJob(
   //   month: date.getMonth(),
   //   year: date.getFullYear()
   // },
-  fechas,
+  fechaFinExamenes,
   () => {
     let contadorMateriasDesaprobadas=0;
     Inscripcion.aggregate([

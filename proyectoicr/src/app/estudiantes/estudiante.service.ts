@@ -7,7 +7,7 @@ import { Subject } from "rxjs";
 import { Localidad } from "./localidades.model";
 import { Nacionalidad } from "./nacionalidades.model";
 import { environment } from "src/environments/environment";
-import { stringify } from 'querystring';
+import { stringify } from "querystring";
 
 @Injectable({
   providedIn: "root"
@@ -75,8 +75,10 @@ export class EstudiantesService {
       estadoCivil,
       telefonoFijo
     };
-    return this.http
-      .post<{ message: string, exito: boolean }>(environment.apiUrl + "/estudiante", estudiante);
+    return this.http.post<{ message: string; exito: boolean }>(
+      environment.apiUrl + "/estudiante",
+      estudiante
+    );
   }
 
   borrarEstudiante(_id) {
@@ -85,8 +87,7 @@ export class EstudiantesService {
       .delete<{ message: string }>(environment.apiUrl + "/estudiante/borrar", {
         params: params
       })
-      .subscribe(response => {
-      });
+      .subscribe(response => {});
   }
 
   getEstudiantesListener() {
@@ -210,11 +211,10 @@ export class EstudiantesService {
       estadoCivil,
       telefonoFijo
     };
-    return this.http
-      .patch<{ message: string, exito: boolean }>(
-        environment.apiUrl + "/estudiante/modificar",
-        estudianteModificado
-      );
+    return this.http.patch<{ message: string; exito: boolean }>(
+      environment.apiUrl + "/estudiante/modificar",
+      estudianteModificado
+    );
   }
 
   //Parece que este metodo no se usa
@@ -248,9 +248,23 @@ export class EstudiantesService {
     return this.divisionXCursoActualizada.asObservable();
   }
 
-  obtenerCursosDeDocente(idDocente:string) {
+  obtenerCursosDeDocente(idDocente: string) {
     let params = new HttpParams().set("idDocente", idDocente);
-    return this.http.get<{ cursos: any[] }>(environment.apiUrl + "/curso/docente",{params: params});
+    return this.http.get<{ cursos: any[] }>(
+      environment.apiUrl + "/curso/docente",
+      { params: params }
+    );
+  }
+
+  obtenerCursosInscripcionEstudiante() {
+    let params = new HttpParams().set(
+      "idEstudiante",
+      this.estudianteSeleccionado._id
+    );
+    return this.http.get<{ message: string; exito: boolean; cursos: any[] }>(
+      environment.apiUrl + "/curso/cursosDeEstudiante",
+      { params: params }
+    );
   }
 
   obtenerCursos() {
@@ -270,28 +284,26 @@ export class EstudiantesService {
 
   //Obtiene todas las materias de un curso sin filtrar por docente
   obtenerMateriasDeCurso(idcurso) {
-    let params = new HttpParams()
-      .set("idCurso", idcurso);
+    let params = new HttpParams().set("idCurso", idcurso);
     return this.http.get<{ materias: any[] }>(
       environment.apiUrl + "/curso/materiasDeCurso",
       { params: params }
     );
   }
 
-  obtenerCapacidadCurso(idCurso: string){
-    let params = new HttpParams()
-      .set("idCurso", idCurso);
-    return this.http.get<{ message: string, exito: boolean, capacidad: number }>(
-      environment.apiUrl + "/curso/capacidad",
-      { params: params }
-    );
+  obtenerCapacidadCurso(idCurso: string) {
+    let params = new HttpParams().set("idCurso", idCurso);
+    return this.http.get<{
+      message: string;
+      exito: boolean;
+      capacidad: number;
+    }>(environment.apiUrl + "/curso/capacidad", { params: params });
   }
 
   //Checkea si un estudiante esta o no inscripto en un curso
-  estudianteEstaInscripto(idEstudiante: string){
-    let params = new HttpParams()
-      .set("idEstudiante", idEstudiante);
-    return this.http.get<{ message: string, exito: boolean }>(
+  estudianteEstaInscripto(idEstudiante: string) {
+    let params = new HttpParams().set("idEstudiante", idEstudiante);
+    return this.http.get<{ message: string; exito: boolean }>(
       environment.apiUrl + "/estudiante/curso",
       { params: params }
     );
@@ -403,9 +415,11 @@ export class EstudiantesService {
   }
 
   //Dada una id del estudiante me devuelve el curso al cual está inscripto
-  obtenerCursoDeEstudiante(){
-    let params = new HttpParams()
-    .set("idEstudiante", this.estudianteSeleccionado._id);
+  obtenerCursoDeEstudiante() {
+    let params = new HttpParams().set(
+      "idEstudiante",
+      this.estudianteSeleccionado._id
+    );
     return this.http.get<{
       message: string;
       exito: boolean;
@@ -416,7 +430,10 @@ export class EstudiantesService {
   }
 
   justificarInasistencia(ultimasInasistencias: any[]) {
-    let datosInasistencia= {ultimasInasistencias: ultimasInasistencias, idEstudiante: this.estudianteSeleccionado._id  }
+    let datosInasistencia = {
+      ultimasInasistencias: ultimasInasistencias,
+      idEstudiante: this.estudianteSeleccionado._id
+    };
     return this.http.post<{ message: string; exito: boolean }>(
       environment.apiUrl + "/estudiante/inasistencia/justificada",
       datosInasistencia
@@ -437,8 +454,11 @@ export class EstudiantesService {
     });
   }
 
-  registrarLlegadaTarde(antes8am){
-    let datosLlegadaTarde= {antes8am: antes8am, idEstudiante: this.estudianteSeleccionado._id  }
+  registrarLlegadaTarde(antes8am) {
+    let datosLlegadaTarde = {
+      antes8am: antes8am,
+      idEstudiante: this.estudianteSeleccionado._id
+    };
     return this.http.post<{ message: string; exito: boolean }>(
       environment.apiUrl + "/estudiante/llegadaTarde",
       datosLlegadaTarde
@@ -460,7 +480,7 @@ export class EstudiantesService {
   }
 
   //dado un id del estudiante obtenemos las materias desaprobadas
-  obtenerMateriasDesaprobadasEstudiante(){
+  obtenerMateriasDesaprobadasEstudiante() {
     let params = new HttpParams().set(
       "idEstudiante",
       this.estudianteSeleccionado._id
@@ -474,12 +494,15 @@ export class EstudiantesService {
     });
   }
 
-  registrarCalificacionExamen(idMateria, calificacion){
-    let datosExamen= {idMateria: idMateria, idEstudiante: this.estudianteSeleccionado._id, calificacion: calificacion  }
+  registrarCalificacionExamen(idMateria, calificacion) {
+    let datosExamen = {
+      idMateria: idMateria,
+      idEstudiante: this.estudianteSeleccionado._id,
+      calificacion: calificacion
+    };
     return this.http.post<{ message: string; exito: boolean }>(
       environment.apiUrl + "/estudiante/registrarCalificacionExamen",
       datosExamen
     );
   }
-
 }

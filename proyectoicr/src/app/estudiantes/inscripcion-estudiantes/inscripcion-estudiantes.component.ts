@@ -20,6 +20,7 @@ import { AutenticacionService } from 'src/app/login/autenticacionService.service
 export class InscripcionEstudianteComponent implements OnInit {
   cursos: any[];
   diaActual: string;
+  cursoSeleccionado: string;
   capacidadCurso: number;
   apellidoEstudiante: string;
   nombreEstudiante: string;
@@ -52,7 +53,8 @@ export class InscripcionEstudianteComponent implements OnInit {
 
   ngOnInit() {
     this.fechaActual= new Date();
-    this.fechaDentroDeRangoInscripcion = this.fechaActualEnRangoFechasInscripcion()
+    //this.fechaDentroDeRangoInscripcion = this.fechaActualEnRangoFechasInscripcion();
+    this.fechaDentroDeRangoInscripcion = true;
     this.authService.getFechasCicloLectivo();
     this.apellidoEstudiante = this.servicio.estudianteSeleccionado.apellido;
     this.nombreEstudiante = this.servicio.estudianteSeleccionado.nombre;
@@ -62,15 +64,25 @@ export class InscripcionEstudianteComponent implements OnInit {
       .subscribe(response => {
         this.estudianteEstaInscripto = response.exito;
       });
-    this.servicio.obtenerCursos().subscribe(response => {
+    // this.servicio.obtenerCursos().subscribe(response => {
+    //   this.cursos = response.cursos;
+    //   this.cursos.sort((a, b) =>
+    //     a.curso.charAt(0) > b.curso.charAt(0)
+    //       ? 1
+    //       : b.curso.charAt(0) > a.curso.charAt(0)
+    //       ? -1
+    //       : 0
+    //   );
+    // });
+    this.servicio.obtenerCursosInscripcionEstudiante().subscribe(response => {
       this.cursos = response.cursos;
       this.cursos.sort((a, b) =>
-        a.curso.charAt(0) > b.curso.charAt(0)
-          ? 1
-          : b.curso.charAt(0) > a.curso.charAt(0)
-          ? -1
-          : 0
-      );
+          a.curso.charAt(0) > b.curso.charAt(0)
+            ? 1
+            : b.curso.charAt(0) > a.curso.charAt(0)
+            ? -1
+            : 0
+        );
     });
   }
 
@@ -84,6 +96,7 @@ export class InscripcionEstudianteComponent implements OnInit {
 
   //Obtiene la capacidad del curso seleccionado
   onCursoSeleccionado(curso) {
+    this.cursoSeleccionado = curso.value;
     this.servicio.obtenerCapacidadCurso(curso.value).subscribe(response => {
       this.capacidadCurso = response.capacidad;
     });
@@ -97,7 +110,7 @@ export class InscripcionEstudianteComponent implements OnInit {
   }
 
 
-  openDialogo(form: NgForm, curso) {
+  openDialogo(form: NgForm) {
     if (form.invalid) {
       this.snackBar.open("No se ha seleccionado un curso", "", {
         panelClass: ["snack-bar-fracaso"],
@@ -117,7 +130,7 @@ export class InscripcionEstudianteComponent implements OnInit {
         this.matConfig.data = {
           formValido: form.valid,
           IdEstudiante: this._idEstudiante,
-          curso: curso.value,
+          curso: this.cursoSeleccionado,
           documentosEntregados: this.documentosEntregados
         };
         this.matConfig.width = "250px";
