@@ -182,7 +182,7 @@ export class AutenticacionService {
     return this.http.post<{
       exito: boolean;
       message: string;
-    }>("http://localhost:3000/usuario/cambiarPassword", datosContraseña);
+    }>(environment.apiUrl+"/usuario/cambiarPassword", datosContraseña);
   }
 
   obtenerPermisosDeRol() {
@@ -213,7 +213,7 @@ export class AutenticacionService {
 
   //Metodo sign up que crea un usuario segun un rol dado
   signUp(mail: string, password: string, rol: string) {
-    return this.http.post("http://localhost:3000/usuario/signup", {
+    return this.http.post(environment.apiUrl+"/usuario/signup", {
       mail: mail,
       password: password,
       rol: rol
