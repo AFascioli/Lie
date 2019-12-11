@@ -6,6 +6,7 @@ const cron = require("node-schedule");
 const Inscripcion = require("../models/inscripcion");
 const mongoose = require("mongoose");
 const Estado = require("../models/estado");
+const Estudiante = require("../models/estudiante");
 const ClaseCXM = require("../classes/calificacionXMateria");
 const CalificacionesXTrimestre = require("../models/calificacionesXTrimestre");
 const CalificacionesXMateria = require("../models/calificacionesXMateria");
@@ -46,16 +47,16 @@ CicloLectivo.findOne({ año: date.getFullYear() }).then(cicloLectivoActual => {
 });
 
 cron.scheduleJob(
-  //  {
+   {
   //Son fechas para testear metodo
-  //   second: date.getSeconds() + 10,
-  //   hour: date.getHours(),
-  //   minute: date.getMinutes(),
-  //   date: date.getDate(),
-  //   month: date.getMonth(),
-  //   year: date.getFullYear()
-  // },
-  fechas,
+    second: date.getSeconds() + 10,
+    hour: date.getHours(),
+    minute: date.getMinutes(),
+    date: date.getDate(),
+    month: date.getMonth(),
+    year: date.getFullYear()
+   },
+  //fechas,
   () => {
     //Obtenemos todas las materias de las inscripciones activas y de este año
     //para cambiar el estado en el que se encuentran
@@ -63,7 +64,8 @@ cron.scheduleJob(
       {
         $match: {
           activa: true,
-          año: date.getFullYear()
+          año: date.getFullYear(),
+          idEstudiante: mongoose.Types.ObjectId("5d0ee07c489bdd0830bd1d0d")
         }
       },
       {
@@ -171,7 +173,8 @@ cron.scheduleJob(
     Inscripcion.aggregate([
       {
         $match: {
-          activa: true
+          activa: true,
+          idEstudiante: mongoose.Types.ObjectId("5d0ee07c489bdd0830bd1d0d")
         }
       },
       {
@@ -241,22 +244,23 @@ CicloLectivo.findOne({ año: fechaActual.getFullYear() }).then(cicloLectivoActua
 });
 
 cron.scheduleJob(
-  //  {
-  //Son fechas para testear metodo
-  //   second: date.getSeconds() + 10,
-  //   hour: date.getHours(),
-  //   minute: date.getMinutes(),
-  //   date: date.getDate(),
-  //   month: date.getMonth(),
-  //   year: date.getFullYear()
-  // },
-  fechaFinExamenes,
+   {
+ // Son fechas para testear metodo
+    second: date.getSeconds() + 10,
+    hour: date.getHours(),
+    minute: date.getMinutes(),
+    date: date.getDate(),
+    month: date.getMonth(),
+    year: date.getFullYear()
+  },
+  //fechaFinExamenes,
   () => {
     let contadorMateriasDesaprobadas=0;
     Inscripcion.aggregate([
       {
         $match: {
-          activa: true
+          activa: true,
+          idEstudiante: mongoose.Types.ObjectId("5d0ee07c489bdd0830bd1d0d")
         }
       },
       {
@@ -270,12 +274,20 @@ cron.scheduleJob(
       {
         $project: {
           materiasPendientes: 1,
-          CXM: 1
+          CXM: 1,
+          idEstudiante:1
         }
       }
     ]).then(materiasDeInscripcion => {
       //Se actualiza el estado de la inscripción según los estados de las diferentes CXM
       //y la cantidad de materias pendientes
+      let estadoEstudiante;
+      Estado.findOne({
+        ambito: "Estudiante",
+        nombre: "Registrado"
+      }).then(estadoEstudiante=>{
+        estadoEstudiante = estadoEstudiante;
+      })
       materiasDeInscripcion.forEach(inscripcion => {
 
         inscripcion.CXM.forEach(materia => {
@@ -287,6 +299,12 @@ cron.scheduleJob(
         if(inscripcion.materiasPendientes.length !=0){
            contadorMateriasDesaprobadas += inscripcion.materiasPendientes.length+1;
         }
+        console.log(inscripcion);
+        Estudiante.findById(inscripcion.idEstudiante).then(estudiante=>{
+          console.log(inscripcion.idEstudiante);
+          estudiante.estado = estadoEstudiante;
+          estudiante.save();
+        })
 
         if (
           contadorMateriasDesaprobadas > 3
@@ -309,6 +327,7 @@ cron.scheduleJob(
           );
         }
       });
+      console.log('Terminó');
     });
   });
 
