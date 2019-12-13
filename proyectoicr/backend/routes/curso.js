@@ -306,7 +306,6 @@ router.get("/capacidad", checkAuthMiddleware, (req, res) => {
 //           nombre: "Cursando",
 //           ambito: "CalificacionesXMateria"
 //         }).then(estado => {
-//           //#resolve puede que este mal la logica
 //           let idsCalXMateria = [];
 //           materiasDelCurso.forEach(materia => {
 //             let idsCalificacionMatXTrim = [];
@@ -433,7 +432,6 @@ router.get("/capacidad", checkAuthMiddleware, (req, res) => {
 //           ambito: "CalificacionesXMateria"
 //         })
 //           .then(estado => {
-//             //#resolve puede que este mal la logica
 //             materiasDelCurso.forEach(elemento => {
 //               let idsCalificacionMatXTrim = [];
 //               //vas a crear las calificacionesXTrimestre de cada materia
