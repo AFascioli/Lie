@@ -185,7 +185,7 @@ export class AutenticacionService {
     localStorage.removeItem("fechaFinExamenes");
   }
 
-  //Manda al backend email y contraseña y si devuelve un token, autentica al usuario y guarda
+  //Manda al backend email y contraseña y si devuelve un token autentica al usuario y guarda
   //en el local storage el token y el vencimiento del token (para auto loguearlo).
   //Se retorna un obsevable para que el componente pueda leer el mensaje del backend.
   public login(email: string, password: string) {

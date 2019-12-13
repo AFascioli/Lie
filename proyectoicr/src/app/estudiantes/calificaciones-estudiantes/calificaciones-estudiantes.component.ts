@@ -148,7 +148,7 @@ export class CalificacionesEstudiantesComponent implements OnInit {
       this.servicioAutenticacion.getRol() != "Admin"
     ) {
       this.servicio
-        .obtenerMateriasXCurso(curso.value, this.servicioAutenticacion.getId())
+        .obtenerMateriasXCursoXDocente(curso.value, this.servicioAutenticacion.getId())
         .subscribe(respuesta => {
           this.materias = respuesta.materias;
         });
@@ -162,7 +162,7 @@ export class CalificacionesEstudiantesComponent implements OnInit {
   obtenerNotas(form: NgForm) {
     if (form.value.curso != "" || form.value.materia != "") {
       this.servicio
-        .obtenerEstudiantesXCursoXMateria(
+        .obtenerCalificacionesEstudiantesXCursoXMateria(
           form.value.curso,
           form.value.materia,
           form.value.trimestre
