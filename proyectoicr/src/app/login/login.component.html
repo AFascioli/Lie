@@ -1,17 +1,17 @@
 <mat-toolbar class="fixed-header">
-    <mat-toolbar-row>
-        <h1 class="titulo-login">
-            L I É
-        </h1>
-    </mat-toolbar-row>
-  </mat-toolbar>
+  <mat-toolbar-row>
+    <h1 class="titulo-login">
+      L I É
+    </h1>
+  </mat-toolbar-row>
+</mat-toolbar>
 <div class="fondo"></div>
-  <div class="contenedor">
-    <mat-card class="card-body-componente">
-      <meta charset="utf-8" />
-      <form>
-        <!-- <hr width="1" size="500"> -->
-        <div class="inputs">
+<div class="contenedor">
+  <mat-card class="card-body-componente">
+    <meta charset="utf-8" />
+    <form>
+      <h1 class="titulo">Instituto Cristo Rey</h1>
+      <div>
         <mat-form-field>
           <input
             class="emailInput"
@@ -26,7 +26,7 @@
             email
           />
           <mat-error *ngIf="emailInput.invalid"
-          >Por favor ingrese un e-mail válido</mat-error
+            >Por favor ingrese un e-mail válido</mat-error
           >
         </mat-form-field>
         <br />
@@ -43,22 +43,20 @@
             required
           />
           <mat-error *ngIf="passwordInput.invalid"
-          >Por favor ingrese una contraseña válida</mat-error
+            >Por favor ingrese una contraseña válida</mat-error
           >
         </mat-form-field>
       </div>
-        <div class="div-button">
-          <button
-            class="buttonPrimary"
-            mat-raised-button
-            class="buttonPrimary"
-            routerLink="/home"
-            (click)="iniciarSesion()"
-          >
-           Iniciar Sesión
-          </button>
-        </div>
-      </form>
-    </mat-card>
-  </div>
-
+      <div class="div-button">
+        <button
+          class="buttonPrimary"
+          mat-raised-button
+          routerLink="/home"
+          (click)="iniciarSesion()"
+        >
+          Ingresar
+        </button>
+      </div>
+    </form>
+  </mat-card>
+</div>
