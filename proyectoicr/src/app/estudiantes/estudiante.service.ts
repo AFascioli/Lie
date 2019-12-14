@@ -133,7 +133,7 @@ export class EstudiantesService {
   public cargarAsistencia(curso: string) {
     let params = new HttpParams().set("curso", curso);
     return this.http.get<{ estudiantes: any[]; asistenciaNueva: string }>(
-      environment.apiUrl + "/estudiante/asistencia",
+      environment.apiUrl + "/asistencia",
       { params: params }
     );
   }
@@ -248,7 +248,7 @@ export class EstudiantesService {
       idEstudiante: this.estudianteSeleccionado._id
     };
     return this.http.post<{ message: string; exito: boolean }>(
-      environment.apiUrl + "/estudiante/inasistencia/justificada",
+      environment.apiUrl + "/asistencia/inasistencia/justificada",
       datosInasistencia
     );
   }
@@ -364,7 +364,7 @@ export class EstudiantesService {
       message: string;
       exito: boolean;
       vectorCalXMat: any[];
-    }>(environment.apiUrl + "/estudiante/materia/calificaciones", {
+    }>(environment.apiUrl + "/calificacion/materia/calificaciones", {
       params: params
     });
   }
@@ -440,7 +440,7 @@ export class EstudiantesService {
       exito: boolean;
       contadorInasistenciasInjustificada: number;
       contadorInasistenciasJustificada: number;
-    }>(environment.apiUrl + "/estudiante/asistenciaEstudiante", {
+    }>(environment.apiUrl + "/asistencia/asistenciaEstudiante", {
       params: params
     });
   }
@@ -456,7 +456,7 @@ export class EstudiantesService {
       message: string;
       exito: boolean;
       materiasDesaprobadas: any[];
-    }>(environment.apiUrl + "/estudiante/materiasDesaprobadas", {
+    }>(environment.apiUrl + "/calificacion/materiasDesaprobadas", {
       params: params
     });
   }
@@ -472,7 +472,7 @@ export class EstudiantesService {
       message: string;
       exito: boolean;
       inasistencias: any[];
-    }>(environment.apiUrl + "/estudiante/inasistencias", {
+    }>(environment.apiUrl + "/asistencia/inasistencias", {
       params: params
     });
   }
@@ -486,7 +486,7 @@ export class EstudiantesService {
   ) {
     let params = new HttpParams().set("asistenciaNueva", asistenciaNueva);
     return this.http.post<{ message: string; exito: boolean }>(
-      environment.apiUrl + "/estudiante/asistencia",
+      environment.apiUrl + "/asistencia",
       estudiantesXDivision,
       { params: params }
     );
@@ -522,7 +522,7 @@ export class EstudiantesService {
       calificacion: calificacion
     };
     return this.http.post<{ message: string; exito: boolean }>(
-      environment.apiUrl + "/estudiante/registrarCalificacionExamen",
+      environment.apiUrl + "/calificacion/registrarCalificacionExamen",
       datosExamen
     );
   }
@@ -536,7 +536,7 @@ export class EstudiantesService {
       idEstudiante: this.estudianteSeleccionado._id
     };
     return this.http.post<{ message: string; exito: boolean }>(
-      environment.apiUrl + "/estudiante/llegadaTarde",
+      environment.apiUrl + "/asistencia/llegadaTarde",
       datosLlegadaTarde
     );
   }
@@ -546,7 +546,7 @@ export class EstudiantesService {
   //@params: id del estudiante
   public registrarRetiroAnticipado(idEstudiante: string, antes10am: Boolean) {
     return this.http.post<{ message: string; exito: string }>(
-      environment.apiUrl + "/estudiante/retiro",
+      environment.apiUrl + "/asistencia/retiro",
       { idEstudiante: idEstudiante, antes10am: antes10am }
     );
   }

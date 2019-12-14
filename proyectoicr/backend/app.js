@@ -11,6 +11,8 @@ const usuarioRoutes = require("./routes/usuario");
 const adultoResponsableRoutes = require("./routes/adultoResponsable");
 const empleadoRoutes = require("./routes/empleado");
 const cicloLectivoRoutes = require("./routes/cicloLectivo");
+const asistenciaRoutes = require("./routes/asistencia");
+const calificacionesRoutes = require("./routes/calificacion");
 
 const app = express(); // Creo la app express
 
@@ -79,26 +81,8 @@ app.use("/empleado", empleadoRoutes);
 
 app.use("/cicloLectivo", cicloLectivoRoutes);
 
-// let date = new Date();
-// console.log(date);
-// console.log("Hora: " + date.getHours());
-// console.log("Minuto: " + date.getMinutes());
-// console.log("Dia: " + date.getDate());
-// console.log("Mes: " + date.getMonth());
-// console.log("Año: " + date.getFullYear());
+app.use("/asistencia", asistenciaRoutes);
 
-// cron.scheduleJob(
-//   {
-//     hour: date.getHours(),
-//     minute: date.getMinutes()+1,
-//     date: date.getDate(),
-//     month: date.getMonth(),
-//     year: date.getFullYear()
-//   },
-//   () => {
-//     console.log("Se ejecuto la tarea bien");
-//   }
-// );
-
+app.use("/calificacion", calificacionesRoutes);
 
 module.exports = app;
