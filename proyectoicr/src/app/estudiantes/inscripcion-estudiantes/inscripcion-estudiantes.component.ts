@@ -76,6 +76,7 @@ export class InscripcionEstudianteComponent implements OnInit {
     // });
     this.servicio.obtenerCursosInscripcionEstudiante().subscribe(response => {
       this.cursos = response.cursos;
+      console.log(this.cursos);
       this.cursos.sort((a, b) =>
           a.curso.charAt(0) > b.curso.charAt(0)
             ? 1
@@ -97,6 +98,7 @@ export class InscripcionEstudianteComponent implements OnInit {
   //Obtiene la capacidad del curso seleccionado
   onCursoSeleccionado(curso) {
     this.cursoSeleccionado = curso.value;
+    console.log(curso.value);
     this.servicio.obtenerCapacidadCurso(curso.value).subscribe(response => {
       this.capacidadCurso = response.capacidad;
     });

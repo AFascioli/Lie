@@ -7,9 +7,10 @@ const CalificacionesXTrimestre = require("../models/calificacionesXTrimestre");
 const CalificacionesXMateria = require("../models/calificacionesXMateria");
 const mongoose = require("mongoose");
 const Estudiante = require("../models/estudiante");
+const ClaseInscripcion = require("../classes/inscripcion");
 const checkAuthMiddleware = require("../middleware/check-auth");
 
-// Obtiene todos los cursos sin filtrar
+// Obtiene todos los cursos que están almacenados en la base de datos
 router.get("/", checkAuthMiddleware, (req, res) => {
   Curso.find()
     .select({ curso: 1, _id: 1 })
@@ -26,9 +27,22 @@ router.get("/", checkAuthMiddleware, (req, res) => {
     });
 });
 
-//Obtiene los cursos a los que se puede inscribir un estudiante
+// Obtiene la capacidad de un curso pasado por parámetro
+// @params: id del curso
+router.get("/capacidad", checkAuthMiddleware, (req, res) => {
+  Curso.findById(req.query.idCurso).then(curso => {
+    res.status(200).json({
+      message: "Operación exitosa",
+      exito: true,
+      capacidad: curso.capacidad
+    });
+  });
+});
+
+//Obtiene los cursos a los que se puede inscribir un estudiante de acuerdo al estado actual (promovido o libre)
+// o devuelve todos en el caso de que no este inscripto a ningun curso
+// @params: id del estudiante
 router.get("/cursosDeEstudiante", checkAuthMiddleware, (req, res) => {
-  //reemplazar id
   Inscripcion.aggregate([
     {
       $match: {
@@ -59,18 +73,12 @@ router.get("/cursosDeEstudiante", checkAuthMiddleware, (req, res) => {
     }
   ]).then(inscripcion => {
     if (inscripcion.length != 0) {
-      let añoActual;
-      añoActual = parseInt(inscripcion[0].cursoActual[0].curso, 10);
+      //El estudiante está inscripto a un curso y por ende se fija al curso al que se puede inscribir
       let siguiente;
-      if (inscripcion[0].estadoInscripcion[0].nombre == "Promovido") {
-        siguiente = añoActual + 1;
-      } else {
-        siguiente = añoActual;
-      }
+      siguiente = ClaseInscripcion.obtenerAñoHabilitado(inscripcion);
 
       //Buscamos los cursos que corresponden al que se puede inscribir el estudiante
       Curso.find({ curso: { $regex: siguiente } }).then(cursos => {
-        console.log(cursos);
         return res.status(200).json({
           message: "Devolvio los cursos correctamente",
           exito: true,
@@ -78,6 +86,7 @@ router.get("/cursosDeEstudiante", checkAuthMiddleware, (req, res) => {
         });
       });
     } else {
+      //El estudiante no está inscripto a ningun curso, devuelve todos los cursos almacenados
       Curso.find()
         .select({ curso: 1, _id: 1 })
         .then(cursos => {
@@ -100,6 +109,7 @@ router.get("/cursosDeEstudiante", checkAuthMiddleware, (req, res) => {
 });
 
 //Obtiene todos los cursos asignados a un docente
+//@params: id de la docente
 router.get("/docente", checkAuthMiddleware, (req, res) => {
   Curso.aggregate([
     {
@@ -125,8 +135,224 @@ router.get("/docente", checkAuthMiddleware, (req, res) => {
       respuesta.push(cursoConId);
     });
 
-    res.status(200).json({ cursos: respuesta });
+    res.status(200).json({
+      cursos: respuesta,
+      message: "Se devolvio los cursos que dicta la docente correctamente",
+      exito: true
+    });
   });
+});
+
+//Obtiene los documentos con su estado de entrega (true en el caso de que fue entregado) de los estudiantes de un curso dado
+//@params: id del curso
+router.get("/documentos", checkAuthMiddleware, (req, res) => {
+  Inscripcion.aggregate([
+    {
+      $lookup: {
+        from: "curso",
+        localField: "idCurso",
+        foreignField: "_id",
+        as: "cursos"
+      }
+    },
+    {
+      $lookup: {
+        from: "estudiante",
+        localField: "idEstudiante",
+        foreignField: "_id",
+        as: "datosEstudiante"
+      }
+    },
+    {
+      $match: {
+        "cursos.curso": req.query.curso
+      }
+    },
+    {
+      $project: {
+        _id: 0,
+        idEstudiante: 1,
+        documentosEntregados: 1,
+        "datosEstudiante.apellido": 1,
+        "datosEstudiante.nombre": 1
+      }
+    }
+  ]).then(estudiantes => {
+    res.status(200).json({
+      documentos: estudiantes,
+      message:
+        "Se devolvieron los documentos junto con su estado de entrega correctamente",
+      exito: true
+    });
+  });
+});
+
+//obtiene las calificaciones de los estudiantes para un trimestre dado un curso y una materia
+//@params: id del curso
+//@params: id de la materia
+//@params: trimestre
+router.get(
+  "/estudiantes/materias/calificaciones",
+  checkAuthMiddleware,
+  (req, res) => {
+    Inscripcion.aggregate([
+      {
+        $lookup: {
+          from: "estudiante",
+          localField: "idEstudiante",
+          foreignField: "_id",
+          as: "datosEstudiante"
+        }
+      },
+      {
+        $project: {
+          "datosEstudiante._id": 1,
+          "datosEstudiante.nombre": 1,
+          "datosEstudiante.apellido": 1,
+          activa: 1,
+          idCurso: 1,
+          calificacionesXMateria: 1
+        }
+      },
+      {
+        $lookup: {
+          from: "curso",
+          localField: "idCurso",
+          foreignField: "_id",
+          as: "curso"
+        }
+      },
+      {
+        $match: {
+          "curso._id": mongoose.Types.ObjectId(req.query.idCurso),
+          activa: true
+        }
+      },
+      {
+        $project: {
+          "datosEstudiante._id": 1,
+          "datosEstudiante.nombre": 1,
+          "datosEstudiante.apellido": 1,
+          "curso.curso": 1,
+          calificacionesXMateria: 1
+        }
+      },
+      {
+        $unwind: {
+          path: "$calificacionesXMateria"
+        }
+      },
+      {
+        $lookup: {
+          from: "calificacionesXMateria",
+          localField: "calificacionesXMateria",
+          foreignField: "_id",
+          as: "calXMateria"
+        }
+      },
+      {
+        $match: {
+          "calXMateria.idMateria": mongoose.Types.ObjectId(req.query.idMateria)
+        }
+      },
+      {
+        $unwind: {
+          path: "$calXMateria"
+        }
+      },
+      {
+        $unwind: {
+          path: "$calXMateria.calificacionesXTrimestre"
+        }
+      },
+      {
+        $lookup: {
+          from: "calificacionesXTrimestre",
+          localField: "calXMateria.calificacionesXTrimestre",
+          foreignField: "_id",
+          as: "notasXTrimestre"
+        }
+      },
+      {
+        $match: {
+          "notasXTrimestre.trimestre": parseInt(req.query.trimestre, 10)
+        }
+      },
+      {
+        $project: {
+          "datosEstudiante._id": 1,
+          "datosEstudiante.nombre": 1,
+          "datosEstudiante.apellido": 1,
+          "notasXTrimestre.calificaciones": 1
+        }
+      }
+    ]).then(documentos => {
+      var respuesta = [];
+      documentos.forEach(califEst => {
+        var calificacionesEstudiante = {
+          idEstudiante: califEst.datosEstudiante[0]._id,
+          apellido: califEst.datosEstudiante[0].apellido,
+          nombre: califEst.datosEstudiante[0].nombre,
+          calificaciones: califEst.notasXTrimestre[0].calificaciones
+        };
+        respuesta.push(calificacionesEstudiante);
+      });
+
+      res
+        .status(200)
+        .json({
+          estudiantes: respuesta,
+          message:
+            "Se obtuvieron las calificaciones para una materia, un curso y un trimestre determinado correctamente",
+          exito: true
+        });
+    });
+  }
+);
+
+router.get("/estudiante", checkAuthMiddleware, (req, res) => {
+  let fechaActual = new Date();
+  console.log(fechaActual);
+  console.log("dia" + fechaActual.getDate());
+  console.log("mes" + fechaActual.getMonth());
+  console.log("year" + fechaActual.getFullYear());
+  console.log("hour" + fechaActual.getHours());
+
+  Inscripcion.aggregate([
+    {
+      $match: {
+        idEstudiante: mongoose.Types.ObjectId(req.query.idEstudiante),
+        activa: true
+      }
+    },
+    {
+      $lookup: {
+        from: "curso",
+        localField: "idCurso",
+        foreignField: "_id",
+        as: "cursosDeEstudiante"
+      }
+    },
+    {
+      $project: {
+        _id: 0,
+        "cursosDeEstudiante.curso": 1
+      }
+    }
+  ])
+    .then(cursoDeEstudiante => {
+      return res.status(200).json({
+        message: "Se obtuvo el curso del estudiante exitosamente",
+        exito: true,
+        curso: cursoDeEstudiante[0].cursosDeEstudiante[0].curso
+      });
+    })
+    .catch(err => {
+      res.status(200).json({
+        message: "Ocurrieron errores al querer obtener el curso del estudiante",
+        exito: false
+      });
+    });
 });
 
 //Obtiene las materias de un curso y un docente que se pasa por parametro
@@ -235,16 +461,6 @@ router.get("/materias", checkAuthMiddleware, (req, res) => {
       respuesta.push(datosMateria);
     });
     res.status(200).json({ materias: respuesta });
-  });
-});
-
-router.get("/capacidad", checkAuthMiddleware, (req, res) => {
-  Curso.findById(req.query.idCurso).then(curso => {
-    res.status(200).json({
-      message: "Operación exitosa",
-      exito: true,
-      capacidad: curso.capacidad
-    });
   });
 });
 
@@ -659,202 +875,6 @@ router.post("/inscripcion", checkAuthMiddleware, (req, res) => {
         });
     });
   });
-});
-
-//Obtiene los documentos entregados de los estudiantes de un curso dado
-router.get("/documentos", checkAuthMiddleware, (req, res) => {
-  Inscripcion.aggregate([
-    {
-      $lookup: {
-        from: "curso",
-        localField: "idCurso",
-        foreignField: "_id",
-        as: "cursos"
-      }
-    },
-    {
-      $lookup: {
-        from: "estudiante",
-        localField: "idEstudiante",
-        foreignField: "_id",
-        as: "datosEstudiante"
-      }
-    },
-    {
-      $match: {
-        "cursos.curso": req.query.curso
-      }
-    },
-    {
-      $project: {
-        _id: 0,
-        idEstudiante: 1,
-        documentosEntregados: 1,
-        "datosEstudiante.apellido": 1,
-        "datosEstudiante.nombre": 1
-      }
-    }
-  ]).then(estudiantes => {
-    res.status(200).json(estudiantes);
-  });
-});
-
-//obtiene las calificaciones de los estudiantes dado un curso y una materia
-router.get(
-  "/estudiantes/materias/calificaciones",
-  checkAuthMiddleware,
-  (req, res) => {
-    Inscripcion.aggregate([
-      {
-        $lookup: {
-          from: "estudiante",
-          localField: "idEstudiante",
-          foreignField: "_id",
-          as: "datosEstudiante"
-        }
-      },
-      {
-        $project: {
-          "datosEstudiante._id": 1,
-          "datosEstudiante.nombre": 1,
-          "datosEstudiante.apellido": 1,
-          activa: 1,
-          idCurso: 1,
-          calificacionesXMateria: 1
-        }
-      },
-      {
-        $lookup: {
-          from: "curso",
-          localField: "idCurso",
-          foreignField: "_id",
-          as: "curso"
-        }
-      },
-      {
-        $match: {
-          "curso._id": mongoose.Types.ObjectId(req.query.idCurso),
-          activa: true
-        }
-      },
-      {
-        $project: {
-          "datosEstudiante._id": 1,
-          "datosEstudiante.nombre": 1,
-          "datosEstudiante.apellido": 1,
-          "curso.curso": 1,
-          calificacionesXMateria: 1
-        }
-      },
-      {
-        $unwind: {
-          path: "$calificacionesXMateria"
-        }
-      },
-      {
-        $lookup: {
-          from: "calificacionesXMateria",
-          localField: "calificacionesXMateria",
-          foreignField: "_id",
-          as: "calXMateria"
-        }
-      },
-      {
-        $match: {
-          "calXMateria.idMateria": mongoose.Types.ObjectId(req.query.idMateria)
-        }
-      },
-      {
-        $unwind: {
-          path: "$calXMateria"
-        }
-      },
-      {
-        $unwind: {
-          path: "$calXMateria.calificacionesXTrimestre"
-        }
-      },
-      {
-        $lookup: {
-          from: "calificacionesXTrimestre",
-          localField: "calXMateria.calificacionesXTrimestre",
-          foreignField: "_id",
-          as: "notasXTrimestre"
-        }
-      },
-      {
-        $match: {
-          "notasXTrimestre.trimestre": parseInt(req.query.trimestre, 10)
-        }
-      },
-      {
-        $project: {
-          "datosEstudiante._id": 1,
-          "datosEstudiante.nombre": 1,
-          "datosEstudiante.apellido": 1,
-          "notasXTrimestre.calificaciones": 1
-        }
-      }
-    ]).then(documentos => {
-      var respuesta = [];
-      documentos.forEach(califEst => {
-        var calificacionesEstudiante = {
-          idEstudiante: califEst.datosEstudiante[0]._id,
-          apellido: califEst.datosEstudiante[0].apellido,
-          nombre: califEst.datosEstudiante[0].nombre,
-          calificaciones: califEst.notasXTrimestre[0].calificaciones
-        };
-        respuesta.push(calificacionesEstudiante);
-      });
-
-      res.status(200).json({ estudiantes: respuesta });
-    });
-  }
-);
-
-router.get("/estudiante", checkAuthMiddleware, (req, res) => {
-  let fechaActual = new Date();
-  console.log(fechaActual);
-  console.log("dia" + fechaActual.getDate());
-  console.log("mes" + fechaActual.getMonth());
-  console.log("year" + fechaActual.getFullYear());
-  console.log("hour" + fechaActual.getHours());
-
-  Inscripcion.aggregate([
-    {
-      $match: {
-        idEstudiante: mongoose.Types.ObjectId(req.query.idEstudiante),
-        activa: true
-      }
-    },
-    {
-      $lookup: {
-        from: "curso",
-        localField: "idCurso",
-        foreignField: "_id",
-        as: "cursosDeEstudiante"
-      }
-    },
-    {
-      $project: {
-        _id: 0,
-        "cursosDeEstudiante.curso": 1
-      }
-    }
-  ])
-    .then(cursoDeEstudiante => {
-      return res.status(200).json({
-        message: "Se obtuvo el curso del estudiante exitosamente",
-        exito: true,
-        curso: cursoDeEstudiante[0].cursosDeEstudiante[0].curso
-      });
-    })
-    .catch(err => {
-      res.status(200).json({
-        message: "Ocurrieron errores al querer obtener el curso del estudiante",
-        exito: false
-      });
-    });
 });
 
 //Registra las calificaciones por alumno de un curso y materia determinada

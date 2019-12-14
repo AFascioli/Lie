@@ -310,7 +310,7 @@ export class EstudiantesService {
   //@params: id de la docente
   public obtenerCursosDeDocente(idDocente: string) {
     let params = new HttpParams().set("idDocente", idDocente);
-    return this.http.get<{ cursos: any[] }>(
+    return this.http.get<{ cursos: any[], message: string, exito: boolean }>(
       environment.apiUrl + "/curso/docente",
       { params: params }
     );
@@ -401,7 +401,7 @@ export class EstudiantesService {
   //@params: id del curso
   public obtenerDocumentosDeEstudiantesXCurso(curso: string) {
     let params = new HttpParams().set("curso", curso);
-    return this.http.get<any[]>(environment.apiUrl + "/curso/documentos", {
+    return this.http.get<{documentos: any[], message: string, exito: boolean}>(environment.apiUrl + "/curso/documentos", {
       params: params
     });
   }
@@ -420,7 +420,7 @@ export class EstudiantesService {
       .set("idCurso", idCurso)
       .set("idMateria", idMateria)
       .set("trimestre", trimestre);
-    return this.http.get<{ estudiantes: any[] }>(
+    return this.http.get<{ estudiantes: any[], message: string, exito: boolean}>(
       environment.apiUrl + "/curso/estudiantes/materias/calificaciones",
       {
         params: params
