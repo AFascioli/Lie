@@ -17,8 +17,9 @@ export class AutenticacionService {
 
   constructor(private http: HttpClient, private router: Router) {}
 
+  //El usuario habilita la suscripcion para poder recibir las notificaciones
   public addPushSubscriber(sus: any) {
-    return this.http.post<{ message: string }>(
+    return this.http.post<{ message: string; exito: boolean }>(
       environment.apiUrl + "/usuario/suscripcion",
       { sub: sus, email: this.usuarioAutenticado }
     );
@@ -53,6 +54,8 @@ export class AutenticacionService {
     }
   }
 
+  //Compara la contraseña ingresada por el usuario con la contraseña pasada por parametro
+  //si coinciden entonces le permite cambiar la contraseña, sino se lo deniega
   public cambiarPassword(passwordVieja, passwordNueva) {
     const datosContraseña = {
       passwordVieja: passwordVieja,
@@ -65,6 +68,9 @@ export class AutenticacionService {
     }>("http://localhost:3000/usuario/cambiarPassword", datosContraseña);
   }
 
+  //Registra a un usuario con el rol, contraseña e email
+  //@params: email del usuario
+  //@params: contraseña del usuario
   public crearUsuario(email: string, password: string, rol: string) {
     const authData = { email: email, password: password, rol: rol };
     return this.http.post<{ message: string; exito: string; id: string }>(
@@ -192,6 +198,7 @@ export class AutenticacionService {
     const authData = { email: email, password: password };
     let respuesta: any;
     var subject = new Subject<any>();
+    //Genera el token y registra el rol que ingreso sesion
     this.http
       .post<{
         token: string;
@@ -270,6 +277,11 @@ export class AutenticacionService {
     };
   }
 
+  //Obtiene todos los permisos del rol que se envía por parámetro
+  //En el caso de que el permiso para la funcionalidad sea:
+  //2: tiene permiso de lectura y edición
+  //1: tiene permiso de lectura
+  //0: no posee permisos
   public obtenerPermisosDeRol() {
     let params = new HttpParams().set("rol", this.getRol());
     return this.http.get<{
@@ -321,6 +333,8 @@ export class AutenticacionService {
     };
   }
 
+  //Envía una notificación de prueba a un email que se envia por parametro
+  //@params: email del usuario
   public pruebaNotificacion() {
     let params = new HttpParams().set("email", this.usuarioAutenticado);
     return this.http.get<{ message: string }>(
@@ -343,5 +357,4 @@ export class AutenticacionService {
       this.logout();
     }, duration * 1000);
   }
-
 }
