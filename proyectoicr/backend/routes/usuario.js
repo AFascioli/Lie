@@ -68,33 +68,32 @@ router.post("/login", (req, res) => {
           { expiresIn: "12h" }
         );
         Rol.findById(usuarioEncontrado.rol).then(rol => {
-          let idPersona="";
+          let idPersona = "";
           if (rol.tipo == "Docente") {
-               Empleado.findOne({ idUsuario: usuarioEncontrado._id }).then(
-                async empleado => {
-                  idPersona = empleado._id;
-                 await res.status(200).json({
-                    token: token,
-                    duracionToken: 43200,
-                    rol: rol.tipo,
-                    idPersona: idPersona,
-                    message: "Bienvenido a Lié",
-                    exito: true
-                  });
-                }
-              );
-            }
-            else{
-               res.status(200).json({
-                token: token,
-                duracionToken: 43200,
-                rol: rol.tipo,
-                idPersona: idPersona,
-                message: "Bienvenido a Lié",
-                exito: true
-              });
-            }
-          });
+            Empleado.findOne({ idUsuario: usuarioEncontrado._id }).then(
+              async empleado => {
+                idPersona = empleado._id;
+                await res.status(200).json({
+                  token: token,
+                  duracionToken: 43200,
+                  rol: rol.tipo,
+                  idPersona: idPersona,
+                  message: "Bienvenido a Lié",
+                  exito: true
+                });
+              }
+            );
+          } else {
+            res.status(200).json({
+              token: token,
+              duracionToken: 43200,
+              rol: rol.tipo,
+              idPersona: idPersona,
+              message: "Bienvenido a Lié",
+              exito: true
+            });
+          }
+        });
       }
     }
   });
@@ -155,31 +154,39 @@ router.get("/permisosDeRol", (req, res) => {
 });
 
 router.post("/suscripcion", (req, res) => {
-  Usuario.findOneAndUpdate({email: req.body.email}, { $push: { suscripciones: req.body.sub }}).then((usuario) => {
-    usuario.save().then(() => {
-      console.log('Suscripción guardada correctamente.');
-      res.status(201).json({message: "Suscripción registrada correctamente"});
+  Usuario.findOneAndUpdate(
+    { email: req.body.email },
+    { $push: { suscripciones: req.body.sub } }
+  )
+    .then(usuario => {
+      usuario.save().then(() => {
+        console.log("Suscripción guardada correctamente.");
+        res
+          .status(201)
+          .json({ message: "Suscripción registrada correctamente" });
+      });
+    })
+    .catch(e => {
+      console.log(e);
     });
-  }).catch((e) => {
-    console.log(e);
-  });
-
 });
 
 // Envía una notificación de prueba
 router.get("/notificacion", (req, res) => {
-  Usuario.findOne({email: req.query.email}).then(usuario => {
-    console.log("Envio de notificación a "+usuario.email);
-     Suscripcion.notificar(
+  Usuario.findOne({ email: req.query.email }).then(usuario => {
+    console.log("Envio de notificación a " + usuario.email);
+    Suscripcion.notificar(
       usuario._id,
       // "5da233f0a4331d3824ed41f3",
       "Titulo de la notificación de prueba",
       "Cuerpo de la notificación de prueba."
     );
-    res.status(200).json({ message: "Prueba de notificación" });
-  })
-
-
+    res
+      .status(200)
+      .json({
+        message: "Prueba de notificación"
+      });
+  });
 });
 
 module.exports = router;
