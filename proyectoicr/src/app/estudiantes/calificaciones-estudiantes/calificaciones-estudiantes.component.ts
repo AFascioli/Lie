@@ -38,7 +38,7 @@ export class CalificacionesEstudiantesComponent implements OnInit {
   dataSource: MatTableDataSource<any>;
   indexEst = 0;
 
-  @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
+  @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
 
   constructor(
     public servicio: EstudiantesService,
@@ -184,11 +184,14 @@ export class CalificacionesEstudiantesComponent implements OnInit {
   }
 
   calcularPromedio(index, cantidad) {
-    var notas: number = 0;
+    if (cantidad!=0)
+    {var notas: number = 0;
     this.estudiantes[index].calificaciones.forEach(nota => {
       if (nota != 0 && nota != null) notas = notas + nota;
     });
     this.promedio = notas / cantidad;
+    }
+    else  this.promedio = 0;
     return this.promedio;
   }
 
