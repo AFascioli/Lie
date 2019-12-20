@@ -1,13 +1,11 @@
-
 const express = require("express");
-const Estado = require("../models/estado");
 const Inscripcion = require("../models/inscripcion");
 const AsistenciaDiaria = require("../models/asistenciaDiaria");
 const CicloLectivo = require("../models/cicloLectivo");
-const CalificacionesXMateria = require("../models/calificacionesXMateria");
 const router = express.Router();
 const mongoose = require("mongoose");
 const checkAuthMiddleware = require("../middleware/check-auth");
+const ClaseAsistencia = require("../classes/asistencia");
 
 //Retorna vector con datos de los estudiantes y presente. Si ya se registro una asistencia para
 //el dia de hoy se retorna ese valor de la asistencia, sino se "construye" una nueva
@@ -59,11 +57,7 @@ router.get("", checkAuthMiddleware, (req, res) => {
     //Compara si la ultima asistencia fue el dia de hoy
     if (
       ultimaAsistencia[0].asistencia.length > 0 &&
-      fechaHoy.getDate() == ultimaAsistencia[0].asistencia[0].fecha.getDate() &&
-      fechaHoy.getMonth() ==
-        ultimaAsistencia[0].asistencia[0].fecha.getMonth() &&
-      fechaHoy.getFullYear() ==
-        ultimaAsistencia[0].asistencia[0].fecha.getFullYear()
+      ClaseAsistencia.esFechaActual(ultimaAsistencia[0].asistencia[0].fecha)
     ) {
       Inscripcion.aggregate([
         {
@@ -116,14 +110,7 @@ router.get("", checkAuthMiddleware, (req, res) => {
       ]).then(asistenciaCurso => {
         var respuesta = [];
         asistenciaCurso.forEach(estudiante => {
-          var estudianteRefinado = {
-            _id: estudiante.datosEstudiante[0]._id,
-            nombre: estudiante.datosEstudiante[0].nombre,
-            apellido: estudiante.datosEstudiante[0].apellido,
-            idAsistencia: estudiante.asistencia[0]._id,
-            fecha: fechaHoy,
-            presente: estudiante.asistencia[0].presente
-          };
+          var estudianteRefinado = ClaseAsistencia.crearAsistenciaDiaria(estudiante);
           respuesta.push(estudianteRefinado);
         });
         res
@@ -251,7 +238,6 @@ router.post("", checkAuthMiddleware, (req, res) => {
     .status(201)
     .json({ message: "Asistencia registrada exitosamente", exito: true });
 });
-
 
 //Este metodo filtra las inscripciones por estudiante y retorna el contador de inasistencias (injustificada y justificada)
 router.get("/asistenciaEstudiante", (req, res) => {

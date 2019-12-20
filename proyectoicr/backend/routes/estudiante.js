@@ -2,14 +2,11 @@ const express = require("express");
 const Estudiante = require("../models/estudiante");
 const Estado = require("../models/estado");
 const Inscripcion = require("../models/inscripcion");
-const AsistenciaDiaria = require("../models/asistenciaDiaria");
 const Suscripcion = require("../classes/suscripcion");
-const CicloLectivo = require("../models/cicloLectivo");
-const CalificacionesXMateria = require("../models/calificacionesXMateria");
 const router = express.Router();
 const mongoose = require("mongoose");
-const ClaseCXM = require("../classes/calificacionXMateria");
 const checkAuthMiddleware = require("../middleware/check-auth");
+const ClaseEstudiante = require("../classes/estudiante");
 
 //Registra un nuevo estudiante y pone su estado a registrado
 router.post("", checkAuthMiddleware, (req, res, next) => {
@@ -27,43 +24,44 @@ router.post("", checkAuthMiddleware, (req, res, next) => {
         ambito: "Estudiante",
         nombre: "Registrado"
       }).then(estado => {
-        const estudiante = new Estudiante({
-          apellido: req.body.apellido,
-          nombre: req.body.nombre,
-          tipoDocumento: req.body.tipoDocumento,
-          numeroDocumento: req.body.numeroDocumento,
-          cuil: req.body.cuil,
-          sexo: req.body.sexo,
-          calle: req.body.calle,
-          numeroCalle: req.body.numeroCalle,
-          piso: req.body.piso,
-          departamento: req.body.departamento,
-          provincia: req.body.provincia,
-          localidad: req.body.localidad,
-          codigoPostal: req.body.codigoPostal,
-          nacionalidad: req.body.nacionalidad,
-          fechaNacimiento: req.body.fechaNacimiento,
-          estadoCivil: req.body.estadoCivil,
-          telefonoFijo: req.body.telefonoFijo,
-          adultoResponsable: [],
-          activo: true,
-          estado: estado._id
-        });
-        estudiante
-          .save()
-          .then(() => {
-            res.status(201).json({
-              message: "Estudiante registrado correctamente",
-              exito: true
-            });
-          })
-          .catch(err =>
-            res.status(200).json({
-              message:
-                "Ocurrió un error al meter en la base de datos a un estudiante",
-              exito: false
+        ClaseEstudiante.CrearEstudiante(
+          req.body.apellido,
+          req.body.nombre,
+          req.body.tipoDocumento,
+          req.body.numeroDocumento,
+          req.body.cuil,
+          req.body.sexo,
+          req.body.calle,
+          req.body.numeroCalle,
+          req.body.piso,
+          req.body.departamento,
+          req.body.provincia,
+          req.body.localidad,
+          req.body.codigoPostal,
+          req.body.nacionalidad,
+          req.body.fechaNacimiento,
+          req.body.estadoCivil,
+          req.body.telefonoFijo,
+          [],
+          true,
+          estado._id
+        ).then(estudiante => {
+          estudiante
+            .save()
+            .then(() => {
+              res.status(201).json({
+                message: "Estudiante registrado correctamente",
+                exito: true
+              });
             })
-          );
+            .catch(() =>
+              res.status(200).json({
+                message:
+                  "Ocurrió un error al meter en la base de datos a un estudiante",
+                exito: false
+              })
+            );
+        });
       });
     }
   });
