@@ -10,30 +10,35 @@ exports.esFechaActual = async function(fecha) {
    return true;
   else return false;
 };
-exports.actualizarAsistenciaDiaria = async function(estudiante) {
-  fechaHoy = new Date();
-  const asistenciaDiaria = new AsistenciaDiaria({
-    _id: estudiante.datosEstudiante[0]._id,
-    nombre: estudiante.datosEstudiante[0].nombre,
-    apellido: estudiante.datosEstudiante[0].apellido,
-    idAsistencia: estudiante.asistencia[0]._id,
-    fecha: fechaHoy,
-    presente: estudiante.asistencia[0].presente
-  });
-  return asistenciaDiaria;
-};
 
-exports.crearAsistenciaDiaria = async function(estudiante) {
-  fechaHoy = new Date();
-  const asistenciaDiaria = new AsistenciaDiaria({
-    _id: estudiante.estudiante[0]._id,
-    nombre: estudiante.estudiante[0].nombre,
-    apellido: estudiante.estudiante[0].apellido,
-    fecha: fechaHoy,
-    presente: true
-  });
-  return asistenciaDiaria;
-};
+// exports.actualizarAsistenciaDiaria = async function(estudiante) {
+//   console.log(estudiante);
+//   fechaHoy = new Date();
+//   let asistenciaDiaria = new AsistenciaDiaria({
+//     _id: estudiante.datosEstudiante[0]._id,
+//     nombre: estudiante.datosEstudiante[0].nombre,
+//     apellido: estudiante.datosEstudiante[0].apellido,
+//     idAsistencia: estudiante.asistencia[0]._id,
+//     fecha: fechaHoy,
+//     presente: estudiante.asistencia[0].presente
+//   })
+//   console.log('muestra asistencia');
+//   console.log(asistenciaDiaria);
+//   return asistenciaDiaria;
+
+// };
+
+// exports.crearAsistenciaDiaria = async function(estudiante) {
+//   fechaHoy = new Date();
+//   let asistenciaDiaria = new AsistenciaDiaria({
+//     _id: estudiante.estudiante[0]._id,
+//     nombre: estudiante.estudiante[0].nombre,
+//     apellido: estudiante.estudiante[0].apellido,
+//     fecha: fechaHoy,
+//     presente: true
+//   });
+//   return asistenciaDiaria;
+// };
 
 exports.validarFechasJustificar = function(cicloLectivo){
   let fechaActual = new Date();

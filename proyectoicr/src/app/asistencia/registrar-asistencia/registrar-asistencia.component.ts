@@ -125,7 +125,6 @@ export class AsistenciaPopupComponent {
     this.tipoPopup = this.servicio.tipoPopUp;
   }
 
-  // Se cierra el popup
   onOkClick(): void {
     this.dialogRef.close();
   }

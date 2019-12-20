@@ -58,8 +58,12 @@ router.get("", checkAuthMiddleware, (req, res) => {
     if (
       ultimaAsistencia[0].asistencia.length > 0 &&
       ClaseAsistencia.esFechaActual(ultimaAsistencia[0].asistencia[0].fecha)
+      // fechaHoy.getDate() == ultimaAsistencia[0].asistencia[0].fecha.getDate() &&
+      // fechaHoy.getMonth() ==
+      //   ultimaAsistencia[0].asistencia[0].fecha.getMonth() &&
+      // fechaHoy.getFullYear() ==
+      //   ultimaAsistencia[0].asistencia[0].fecha.getFullYear()
     ) {
-      //La asistencia corresponde al dia actual y por ende no se debe crear nueva asistencia
       Inscripcion.aggregate([
         {
           $lookup: {
@@ -111,11 +115,15 @@ router.get("", checkAuthMiddleware, (req, res) => {
       ]).then(asistenciaCurso => {
         var respuesta = [];
         asistenciaCurso.forEach(estudiante => {
-          ClaseAsistencia.actualizarAsistenciaDiaria(estudiante).then(
-            estudianteRefinado => {
-              respuesta.push(estudianteRefinado);
-            }
-          );
+            var estudianteRefinado = {
+              _id: estudiante.datosEstudiante[0]._id,
+              nombre: estudiante.datosEstudiante[0].nombre,
+              apellido: estudiante.datosEstudiante[0].apellido,
+              idAsistencia: estudiante.asistencia[0]._id,
+              fecha: fechaHoy,
+              presente: estudiante.asistencia[0].presente
+            };
+            respuesta.push(estudianteRefinado);
         });
         res
           .status(200)
@@ -155,11 +163,14 @@ router.get("", checkAuthMiddleware, (req, res) => {
         fechaActual.setHours(fechaActual.getHours());
         var estudiantesRedux = [];
         documents.forEach(objConEstudiante => {
-          ClaseAsistencia.crearAsistenciaDiaria(objConEstudiante).then(
-            estudianteRedux => {
-              estudiantesRedux.push(estudianteRedux);
-            }
-          );
+          let estudianteRedux = {
+            _id: objConEstudiante.estudiante[0]._id,
+            nombre: objConEstudiante.estudiante[0].nombre,
+            apellido: objConEstudiante.estudiante[0].apellido,
+            fecha: fechaHoy,
+            presente: true
+          };
+          estudiantesRedux.push(estudianteRedux);
         });
         res.status(200).json({
           estudiantes: estudiantesRedux,
