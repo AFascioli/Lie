@@ -29,7 +29,7 @@ export class JustificacionInasistenciaComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    if(this.fechaActualEnPeriodoCursado){
+    if(this.fechaActualEnPeriodoCursado || this.autenticacionService.getRol()=="Admin"){
       this.servicio.obtenerUltimasInasistencias().subscribe(response => {
       this.ultimasInasistencias = response.inasistencias;
     });

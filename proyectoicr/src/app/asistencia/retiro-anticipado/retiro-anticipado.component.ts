@@ -64,7 +64,7 @@ export class RetiroAnticipadoComponent implements OnInit {
         }
       );
     }
-    if(this.fechaActualEnCicloLectivo()){
+    if(this.fechaActualEnCicloLectivo() || this.autenticacionService.getRol()=="Admin"){
       this.apellidoEstudiante = this.servicio.estudianteSeleccionado.apellido;
       this.nombreEstudiante = this.servicio.estudianteSeleccionado.nombre;
       this._idEstudiante = this.servicio.estudianteSeleccionado._id;

@@ -29,7 +29,7 @@ export class LlegadaTardeComponent implements OnInit {
   ngOnInit() {
     this.fechaActual = new Date();
     this.fechaActualFinDeSemana();
-    if(this.fechaActualEnCicloLectivo){
+    if(this.fechaActualEnCicloLectivo || this.autenticacionService.getRol()=="Admin"){
       if(this.fechaActual.getHours()<8){
         this.antes8am=true;
       }else{

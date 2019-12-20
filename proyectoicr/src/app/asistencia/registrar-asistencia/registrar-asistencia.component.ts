@@ -44,7 +44,7 @@ export class RegistrarAsistenciaComponent implements OnInit {
       );
     }
 
-    if (this.fechaActualEnCicloLectivo()) {
+    if (this.fechaActualEnCicloLectivo() || this.autenticacionService.getRol()=="Admin") {
       this.servicio.obtenerCursos().subscribe(response => {
         this.cursos = response.cursos;
         this.cursos.sort((a, b) =>

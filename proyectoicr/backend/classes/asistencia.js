@@ -1,4 +1,5 @@
-const asistenciaDiaria = require("../models/asistenciaDiaria");
+const AsistenciaDiaria = require("../models/asistenciaDiaria");
+
 exports.esFechaActual = async function(fecha) {
   fechaHoy = new Date();
   if (
@@ -11,7 +12,7 @@ exports.esFechaActual = async function(fecha) {
 };
 exports.actualizarAsistenciaDiaria = async function(estudiante) {
   fechaHoy = new Date();
-  let asistenciaDiaria = new asistenciaDiaria({
+  const asistenciaDiaria = new AsistenciaDiaria({
     _id: estudiante.datosEstudiante[0]._id,
     nombre: estudiante.datosEstudiante[0].nombre,
     apellido: estudiante.datosEstudiante[0].apellido,
@@ -19,17 +20,19 @@ exports.actualizarAsistenciaDiaria = async function(estudiante) {
     fecha: fechaHoy,
     presente: estudiante.asistencia[0].presente
   });
+  return asistenciaDiaria;
 };
 
 exports.crearAsistenciaDiaria = async function(estudiante) {
   fechaHoy = new Date();
-  let asistenciaDiaria = new asistenciaDiaria({
+  const asistenciaDiaria = new AsistenciaDiaria({
     _id: estudiante.estudiante[0]._id,
     nombre: estudiante.estudiante[0].nombre,
     apellido: estudiante.estudiante[0].apellido,
     fecha: fechaHoy,
     presente: true
   });
+  return asistenciaDiaria;
 };
 
 exports.validarFechasJustificar = function(cicloLectivo){

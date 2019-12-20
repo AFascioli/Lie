@@ -43,7 +43,7 @@ export class CalificacionesExamenesComponent implements OnInit {
       }
     });
     this.fechaActual = new Date();
-    if (this.fechaActualEnRangoFechasExamenes()) {
+    if (this.fechaActualEnRangoFechasExamenes() || this.authService.getRol()=="Admin") {
       this.fechaDentroDeRangoExamen = true;
       this.fechaActualFinDeSemana();
     }

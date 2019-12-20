@@ -53,8 +53,9 @@ export class InscripcionEstudianteComponent implements OnInit {
 
   ngOnInit() {
     this.fechaActual= new Date();
-    //this.fechaDentroDeRangoInscripcion = this.fechaActualEnRangoFechasInscripcion();
-    this.fechaDentroDeRangoInscripcion = true;
+    if(this.fechaActualEnRangoFechasInscripcion() || this.authService.getRol()=="Admin"){
+      this.fechaDentroDeRangoInscripcion = true;
+    }
     this.authService.getFechasCicloLectivo();
     this.apellidoEstudiante = this.servicio.estudianteSeleccionado.apellido;
     this.nombreEstudiante = this.servicio.estudianteSeleccionado.nombre;
@@ -64,19 +65,8 @@ export class InscripcionEstudianteComponent implements OnInit {
       .subscribe(response => {
         this.estudianteEstaInscripto = response.exito;
       });
-    // this.servicio.obtenerCursos().subscribe(response => {
-    //   this.cursos = response.cursos;
-    //   this.cursos.sort((a, b) =>
-    //     a.curso.charAt(0) > b.curso.charAt(0)
-    //       ? 1
-    //       : b.curso.charAt(0) > a.curso.charAt(0)
-    //       ? -1
-    //       : 0
-    //   );
-    // });
     this.servicio.obtenerCursosInscripcionEstudiante().subscribe(response => {
       this.cursos = response.cursos;
-      console.log(this.cursos);
       this.cursos.sort((a, b) =>
           a.curso.charAt(0) > b.curso.charAt(0)
             ? 1
@@ -98,7 +88,6 @@ export class InscripcionEstudianteComponent implements OnInit {
   //Obtiene la capacidad del curso seleccionado
   onCursoSeleccionado(curso) {
     this.cursoSeleccionado = curso.value;
-    console.log(curso.value);
     this.servicio.obtenerCapacidadCurso(curso.value).subscribe(response => {
       this.capacidadCurso = response.capacidad;
     });
