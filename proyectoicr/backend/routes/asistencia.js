@@ -59,6 +59,7 @@ router.get("", checkAuthMiddleware, (req, res) => {
       ultimaAsistencia[0].asistencia.length > 0 &&
       ClaseAsistencia.esFechaActual(ultimaAsistencia[0].asistencia[0].fecha)
     ) {
+      //La asistencia corresponde al dia actual y por ende no se debe crear nueva asistencia
       Inscripcion.aggregate([
         {
           $lookup: {
@@ -110,8 +111,11 @@ router.get("", checkAuthMiddleware, (req, res) => {
       ]).then(asistenciaCurso => {
         var respuesta = [];
         asistenciaCurso.forEach(estudiante => {
-          var estudianteRefinado = ClaseAsistencia.crearAsistenciaDiaria(estudiante);
-          respuesta.push(estudianteRefinado);
+          ClaseAsistencia.actualizarAsistenciaDiaria(estudiante).then(
+            estudianteRefinado => {
+              respuesta.push(estudianteRefinado);
+            }
+          );
         });
         res
           .status(200)
@@ -151,14 +155,11 @@ router.get("", checkAuthMiddleware, (req, res) => {
         fechaActual.setHours(fechaActual.getHours());
         var estudiantesRedux = [];
         documents.forEach(objConEstudiante => {
-          let estudianteRedux = {
-            _id: objConEstudiante.estudiante[0]._id,
-            nombre: objConEstudiante.estudiante[0].nombre,
-            apellido: objConEstudiante.estudiante[0].apellido,
-            fecha: fechaHoy,
-            presente: true
-          };
-          estudiantesRedux.push(estudianteRedux);
+          ClaseAsistencia.crearAsistenciaDiaria(objConEstudiante).then(
+            estudianteRedux => {
+              estudiantesRedux.push(estudianteRedux);
+            }
+          );
         });
         res.status(200).json({
           estudiantes: estudiantesRedux,
@@ -265,10 +266,13 @@ router.post("/inasistencia/justificada", checkAuthMiddleware, (req, res) => {
         justificado: true
       })
         .exec()
-        .catch(e => {
+        .catch(() => {
           res
             .status(200)
-            .json({ message: "Ocurrió un error: " + e, exito: false });
+            .json({
+              message: "Ocurrió un error al querer justificar la inasistencia ",
+              exito: false
+            });
         });
     }
   });
@@ -293,29 +297,15 @@ router.post("/inasistencia/justificada", checkAuthMiddleware, (req, res) => {
 //Se valida que solo se pueda justificar inasistencias para el trimestre actual
 router.get("/inasistencias", (req, res) => {
   let fechaActual = new Date();
-  let fechaLimiteInferior;
-  let fechaLimiteSuperior;
 
   CicloLectivo.findOne({ año: fechaActual.getFullYear() }).then(
     cicloLectivo => {
-      if (
-        fechaActual >= cicloLectivo.fechaInicioPrimerTrimestre &&
-        fechaActual <= cicloLectivo.fechaFinPrimerTrimestre
-      ) {
-        fechaLimiteInferior = cicloLectivo.fechaInicioPrimerTrimestre;
-        fechaLimiteSuperior = cicloLectivo.fechaFinPrimerTrimestre;
-      } else if (
-        fechaActual >= cicloLectivo.fechaInicioSegundoTrimestre &&
-        fechaActual <= cicloLectivo.fechaFinSegundoTrimestre
-      ) {
-        fechaLimiteInferior = cicloLectivo.fechaInicioSegundoTrimestre;
-        fechaLimiteSuperior = cicloLectivo.fechaFinSegundoTrimestre;
-      } else if (
-        fechaActual >= cicloLectivo.fechaInicioTercerTrimestre &&
-        fechaActual <= cicloLectivo.fechaFinTercerTrimestre
-      ) {
-        fechaLimiteInferior = cicloLectivo.fechaInicioTercerTrimestre;
-        fechaLimiteSuperior = cicloLectivo.fechaFinTercerTrimestre;
+      if (ClaseAsistencia.validarFechasJustificar(cicloLectivo)) {
+        return res.status(200).json({
+          exito: true,
+          message:
+            "La fecha actual se encuentra dentro de las fechas permitidas para justificar inasistencias"
+        });
       } else {
         return res.status(200).json({
           exito: false,
@@ -411,13 +401,7 @@ router.post("/llegadaTarde", checkAuthMiddleware, (req, res) => {
         var fechaHoy = new Date();
         fechaHoy.setHours(fechaHoy.getHours() - 3);
         //Compara si la ultima asistencia fue el dia de hoy
-        if (
-          !(
-            fechaHoy.getDate() == ultimaAD.fecha.getDate() &&
-            fechaHoy.getMonth() == ultimaAD.fecha.getMonth() &&
-            fechaHoy.getFullYear() == ultimaAD.fecha.getFullYear()
-          )
-        ) {
+        if (!ClaseAsistencia.esFechaActual(ultimaAD)) {
           var nuevaAsistencia = new AsistenciaDiaria({
             idInscripcion: inscripcion._id,
             fecha: fechaHoy,

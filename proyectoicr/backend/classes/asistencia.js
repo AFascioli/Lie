@@ -6,10 +6,10 @@ exports.esFechaActual = async function(fecha) {
     fechaHoy.getMonth() == fecha.getMonth() &&
     fechaHoy.getFullYear() == fecha.getFullYear()
   )
-    true;
-  else false;
+   return true;
+  else return false;
 };
-exports.crearAsistenciaDiaria = async function(estudiante) {
+exports.actualizarAsistenciaDiaria = async function(estudiante) {
   fechaHoy = new Date();
   let asistenciaDiaria = new asistenciaDiaria({
     _id: estudiante.datosEstudiante[0]._id,
@@ -21,3 +21,35 @@ exports.crearAsistenciaDiaria = async function(estudiante) {
   });
 };
 
+exports.crearAsistenciaDiaria = async function(estudiante) {
+  fechaHoy = new Date();
+  let asistenciaDiaria = new asistenciaDiaria({
+    _id: estudiante.estudiante[0]._id,
+    nombre: estudiante.estudiante[0].nombre,
+    apellido: estudiante.estudiante[0].apellido,
+    fecha: fechaHoy,
+    presente: true
+  });
+};
+
+exports.validarFechasJustificar = function(cicloLectivo){
+  let fechaActual = new Date();
+
+  if (
+    fechaActual >= cicloLectivo.fechaInicioPrimerTrimestre &&
+    fechaActual <= cicloLectivo.fechaFinPrimerTrimestre
+  ) {
+    return true;
+  } else if (
+    fechaActual >= cicloLectivo.fechaInicioSegundoTrimestre &&
+    fechaActual <= cicloLectivo.fechaFinSegundoTrimestre
+  ) {
+    return true;
+  } else if (
+    fechaActual >= cicloLectivo.fechaInicioTercerTrimestre &&
+    fechaActual <= cicloLectivo.fechaFinTercerTrimestre
+  ) {
+    return true;
+  }
+  return false;
+}

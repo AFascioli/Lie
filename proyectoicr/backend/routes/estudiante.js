@@ -223,7 +223,7 @@ router.patch("/modificar", checkAuthMiddleware, (req, res, next) => {
         exito: true
       });
     })
-    .catch(err => {
+    .catch(() => {
       res.status(200).json({
         message: "Ocurrió un problema al intentar modificar el estudiante",
         exito: false
