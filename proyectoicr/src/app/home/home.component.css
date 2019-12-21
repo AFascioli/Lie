@@ -1,4 +1,10 @@
-.mat-card-title, .mat-card-subtitle{
+.mat-card-title {
+  text-align:center;
+  font-size:35px;
+
+}
+
+.mat-card-subtitle{
   text-align:center;
 }
 
@@ -9,4 +15,5 @@ button:hover {
 .parrafo{
   text-align: center;
   white-space: normal !important;
+  font-size:17px;
 }

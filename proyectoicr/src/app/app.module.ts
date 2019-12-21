@@ -78,6 +78,7 @@ import { InasistenciasEstudianteComponent } from './estudiantes/perfil-estudiant
 import { TutoresEstudianteComponent } from './estudiantes/perfil-estudiante/tutores-estudiante/tutores-estudiante.component';
 import { DatosEstudianteComponent } from './estudiantes/perfil-estudiante/datos-estudiante/datos-estudiante.component';
 import { CalificacionesExamenesComponent } from './estudiantes/calificaciones-examenes/calificaciones-examenes.component';
+import { RegistrarEventoComponent } from './eventos/registrar-evento/registrar-evento.component';
 
 @NgModule({
   declarations: [
@@ -120,7 +121,8 @@ import { CalificacionesExamenesComponent } from './estudiantes/calificaciones-ex
     InasistenciasEstudianteComponent,
     TutoresEstudianteComponent,
     DatosEstudianteComponent,
-    CalificacionesExamenesComponent
+    CalificacionesExamenesComponent,
+    RegistrarEventoComponent
   ],
   //entryComponents declara los componentes que se generan dinamicamente dentro de otros.
   entryComponents: [

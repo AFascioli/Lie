@@ -11,6 +11,7 @@ import { Router } from "@angular/router";
 })
 export class ListaEstudiantesComponent implements OnInit {
   estudiantes: Estudiante[] = [];
+  curso: string;
   permisos={
     notas:0,
     asistencia:0,
@@ -26,14 +27,16 @@ export class ListaEstudiantesComponent implements OnInit {
   constructor(public servicio: EstudiantesService, public router: Router, public authService: AutenticacionService) {}
 
   ngOnInit() {
+
     if(this.servicio.retornoDesdeAcciones= false){
       this.isLoading=true;
     }else{
+
        this.servicio.getEstudiantesListener().subscribe(estudiantesBuscados => {
       this.estudiantes = estudiantesBuscados;
       this.isLoading= false;
     });
-
+    
     if (this.servicio.retornoDesdeAcciones) {
       this.servicio.retornoDesdeAcciones = false;
     }
@@ -41,6 +44,7 @@ export class ListaEstudiantesComponent implements OnInit {
       this.permisos=response.permisos;
     });
     }
+
 
   }
 
