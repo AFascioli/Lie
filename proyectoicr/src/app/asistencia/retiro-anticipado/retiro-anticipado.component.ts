@@ -1,6 +1,7 @@
-import { AutenticacionService } from './../../login/autenticacionService.service';
+import { AutenticacionService } from "./../../login/autenticacionService.service";
 import { Component, OnInit, Inject, ChangeDetectorRef } from "@angular/core";
 import { EstudiantesService } from "src/app/estudiantes/estudiante.service";
+import { AsistenciaService } from "src/app/asistencia/asistencia.service";
 import {
   MatDialog,
   MatDialogRef,
@@ -38,7 +39,8 @@ export class RetiroAnticipadoComponent implements OnInit {
 
   constructor(
     public snackBar: MatSnackBar,
-    public servicio: EstudiantesService,
+    public servicioEstudiante: EstudiantesService,
+    public servicioAsistencia: AsistenciaService,
     public dialog: MatDialog,
     public changeDetectorRef: ChangeDetectorRef,
     public autenticacionService: AutenticacionService,
@@ -64,18 +66,20 @@ export class RetiroAnticipadoComponent implements OnInit {
         }
       );
     }
-    if(this.fechaActualEnCicloLectivo() || this.autenticacionService.getRol()=="Admin"){
-      this.apellidoEstudiante = this.servicio.estudianteSeleccionado.apellido;
-      this.nombreEstudiante = this.servicio.estudianteSeleccionado.nombre;
-      this._idEstudiante = this.servicio.estudianteSeleccionado._id;
+    if (
+      this.fechaActualEnCicloLectivo() ||
+      this.autenticacionService.getRol() == "Admin"
+    ) {
+      this.apellidoEstudiante = this.servicioEstudiante.estudianteSeleccionado.apellido;
+      this.nombreEstudiante = this.servicioEstudiante.estudianteSeleccionado.nombre;
+      this._idEstudiante = this.servicioEstudiante.estudianteSeleccionado._id;
       this.validarHora();
-      this.servicio.getTutoresDeEstudiante().subscribe(respuesta => {
+      this.servicioEstudiante.getTutoresDeEstudiante().subscribe(respuesta => {
         this.tutores = respuesta.tutores;
       });
-    }else{
-      this.fueraPeriodoCicloLectivo=true;
+    } else {
+      this.fueraPeriodoCicloLectivo = true;
     }
-
   }
 
   fechaActualEnCicloLectivo() {
@@ -127,7 +131,7 @@ export class RetiroPopupComponent {
   constructor(
     public dialogRef: MatDialogRef<RetiroPopupComponent>,
     public router: Router,
-    public servicio: EstudiantesService,
+    public servicioAsistencia: AsistenciaService,
     public snackBar: MatSnackBar,
     @Inject(MAT_DIALOG_DATA) data
   ) {
@@ -149,7 +153,7 @@ export class RetiroPopupComponent {
 
   //Confirma el retiro anticipado para el estudiante
   onYesConfirmarClick(): void {
-    this.servicio
+    this.servicioAsistencia
       .registrarRetiroAnticipado(this.IdEstudiante, this.antes10am)
       .subscribe(response => {
         this.resultado = response.exito;

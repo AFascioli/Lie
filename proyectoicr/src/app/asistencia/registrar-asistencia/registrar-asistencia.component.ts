@@ -1,6 +1,7 @@
 import { AutenticacionService } from "./../../login/autenticacionService.service";
 import { Component, OnInit } from "@angular/core";
 import { EstudiantesService } from "src/app/estudiantes/estudiante.service";
+import { AsistenciaService } from "src/app/asistencia/asistencia.service";
 import { MatDialogRef, MatDialog, MatSnackBar } from "@angular/material";
 import { Router } from "@angular/router";
 
@@ -18,10 +19,11 @@ export class RegistrarAsistenciaComponent implements OnInit {
   fechaActual: Date;
   asistenciaNueva: string = "true";
   agent: any;
-  fueraPeriodoCicloLectivo= false;
+  fueraPeriodoCicloLectivo = false;
 
   constructor(
-    private servicio: EstudiantesService,
+    private servicioEstudiante: EstudiantesService,
+    private servicioAsistencia: AsistenciaService,
     private autenticacionService: AutenticacionService,
     public popup: MatDialog,
     public snackBar: MatSnackBar
@@ -44,8 +46,11 @@ export class RegistrarAsistenciaComponent implements OnInit {
       );
     }
 
-    if (this.fechaActualEnCicloLectivo() || this.autenticacionService.getRol()=="Admin") {
-      this.servicio.obtenerCursos().subscribe(response => {
+    if (
+      this.fechaActualEnCicloLectivo() ||
+      this.autenticacionService.getRol() == "Admin"
+    ) {
+      this.servicioEstudiante.obtenerCursos().subscribe(response => {
         this.cursos = response.cursos;
         this.cursos.sort((a, b) =>
           a.curso.charAt(0) > b.curso.charAt(0)
@@ -56,28 +61,36 @@ export class RegistrarAsistenciaComponent implements OnInit {
         );
       });
     } else {
-      this.fueraPeriodoCicloLectivo= true;
+      this.fueraPeriodoCicloLectivo = true;
     }
   }
 
   //Devuelve true si la fecha actual se encuentra dentro del ciclo lectivo, y false caso contrario.
   fechaActualEnCicloLectivo() {
-  let fechaInicioPrimerTrimestre = new Date(this.autenticacionService.getFechasCicloLectivo().fechaInicioPrimerTrimestre);
-  let fechaFinTercerTrimestre = new Date(this.autenticacionService.getFechasCicloLectivo().fechaFinTercerTrimestre);
+    let fechaInicioPrimerTrimestre = new Date(
+      this.autenticacionService.getFechasCicloLectivo().fechaInicioPrimerTrimestre
+    );
+    let fechaFinTercerTrimestre = new Date(
+      this.autenticacionService.getFechasCicloLectivo().fechaFinTercerTrimestre
+    );
 
-  return this.fechaActual.getTime() > fechaInicioPrimerTrimestre.getTime() &&
-      this.fechaActual.getTime() < fechaFinTercerTrimestre.getTime();
+    return (
+      this.fechaActual.getTime() > fechaInicioPrimerTrimestre.getTime() &&
+      this.fechaActual.getTime() < fechaFinTercerTrimestre.getTime()
+    );
   }
 
   //Busca los estudiantes segun el curso que se selecciono en pantalla. Los orden alfabeticamente
   onCursoSeleccionado(curso) {
     this.cursoNotSelected = false;
-    this.servicio.cargarAsistencia(curso.value).subscribe(respuesta => {
-      this.asistenciaNueva = respuesta.asistenciaNueva;
-      this.estudiantesXDivision = respuesta.estudiantes.sort((a, b) =>
-        a.apellido > b.apellido ? 1 : b.apellido > a.apellido ? -1 : 0
-      );
-    });
+    this.servicioAsistencia
+      .cargarAsistencia(curso.value)
+      .subscribe(respuesta => {
+        this.asistenciaNueva = respuesta.asistenciaNueva;
+        this.estudiantesXDivision = respuesta.estudiantes.sort((a, b) =>
+          a.apellido > b.apellido ? 1 : b.apellido > a.apellido ? -1 : 0
+        );
+      });
   }
 
   //Cambia el atributo presente del estudiante cuando se cambia de valor el toggle
@@ -89,9 +102,9 @@ export class RegistrarAsistenciaComponent implements OnInit {
       .estudiantesXDivision[indexEstudiante].presente;
   }
 
-  //Envia al servicio el vector con los datos de los estudiantes y el presentismo
+  //Envia al servicioEstudiante el vector con los datos de los estudiantes y el presentismo
   onGuardar() {
-    this.servicio
+    this.servicioAsistencia
       .registrarAsistencia(this.estudiantesXDivision, this.asistenciaNueva)
       .subscribe(response => {
         this.snackBar.open(response.message, "", {
@@ -102,7 +115,7 @@ export class RegistrarAsistenciaComponent implements OnInit {
   }
 
   onCancelar() {
-    this.servicio.tipoPopUp = "cancelar";
+    this.servicioEstudiante.tipoPopUp = "cancelar";
     this.popup.open(AsistenciaPopupComponent, {
       width: "250px"
     });
@@ -120,9 +133,9 @@ export class AsistenciaPopupComponent {
   constructor(
     public dialogRef: MatDialogRef<AsistenciaPopupComponent>,
     public router: Router,
-    public servicio: EstudiantesService
+    public servicioEstudiante: EstudiantesService
   ) {
-    this.tipoPopup = this.servicio.tipoPopUp;
+    this.tipoPopup = this.servicioEstudiante.tipoPopUp;
   }
 
   onOkClick(): void {

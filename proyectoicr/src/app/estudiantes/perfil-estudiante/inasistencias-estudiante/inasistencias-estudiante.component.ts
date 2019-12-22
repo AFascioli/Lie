@@ -1,7 +1,7 @@
 import { Component, OnInit } from "@angular/core";
-import { EstudiantesService } from "../../estudiante.service";
+import { AsistenciaService } from "src/app/asistencia/asistencia.service";
 import { Label } from "ng2-charts";
-import { ChartDataSets, ChartOptions, ChartType } from "chart.js";
+import { ChartOptions, ChartType } from "chart.js";
 import * as pluginDataLabels from "chartjs-plugin-datalabels";
 
 @Component({
@@ -14,22 +14,31 @@ export class InasistenciasEstudianteComponent implements OnInit {
   contadorInasistenciaJustificada: number;
   contadorInasistenciaInjustificada: number;
   barChartData: any[];
-barChartLabels: Label[]
+  barChartLabels: Label[];
 
-  constructor(public servicio: EstudiantesService) {}
+  constructor(
+    public servicioAsistencia: AsistenciaService
+  ) {}
 
   ngOnInit() {
-    this.servicio.obtenerInasistenciasDeEstudiante().subscribe(response => {
-      this.contadorInasistenciaInjustificada =
-        response.contadorInasistenciasInjustificada;
-      this.contadorInasistenciaJustificada =
-        response.contadorInasistenciasJustificada;
+    this.servicioAsistencia
+      .obtenerInasistenciasDeEstudiante()
+      .subscribe(response => {
+        // this.servicioAsistencia.obtenerInasistenciasDeEstudiante().subscribe(response => {
+        this.contadorInasistenciaInjustificada =
+          response.contadorInasistenciasInjustificada;
+        this.contadorInasistenciaJustificada =
+          response.contadorInasistenciasJustificada;
 
-        this.barChartData= [
-          this.contadorInasistenciaInjustificada,this.contadorInasistenciaJustificada
+        this.barChartData = [
+          this.contadorInasistenciaInjustificada,
+          this.contadorInasistenciaJustificada
         ];
-        this.barChartLabels= ['Inasistencias injustificadas', 'Inasistencias justificadas'];
-    });
+        this.barChartLabels = [
+          "Inasistencias injustificadas",
+          "Inasistencias justificadas"
+        ];
+      });
   }
 
   public barChartOptions: ChartOptions = {
@@ -44,8 +53,6 @@ barChartLabels: Label[]
     }
   };
 
-  public barChartType: ChartType = 'pie';
+  public barChartType: ChartType = "pie";
   public barChartPlugins = [pluginDataLabels];
-
-
 }

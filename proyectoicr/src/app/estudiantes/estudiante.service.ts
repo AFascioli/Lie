@@ -128,16 +128,6 @@ export class EstudiantesService {
       });
   }
 
-  //Obtiene la asistencia para el dia actual de todos los estudiantes de un curso en la base de datos
-  //@params: id del curso
-  public cargarAsistencia(curso: string) {
-    let params = new HttpParams().set("curso", curso);
-    return this.http.get<{ estudiantes: any[]; asistenciaNueva: string }>(
-      environment.apiUrl + "/asistencia",
-      { params: params }
-    );
-  }
-
   //Devuelve un booleano que resulta verdadero en el caso de que el estudiante ya se encuentra inscripto a un curso
   //@params: id del estudiante
   public estudianteEstaInscripto(idEstudiante: string) {
@@ -239,20 +229,6 @@ export class EstudiantesService {
     );
   }
 
-  //Justifica las inasistencias de un estudiante seleccionado
-  //@params: id del estudiante
-  //@params: ultimas 5 inasistencias, cuyo valor va a ser true en caso de haber sido justificadas
-  public justificarInasistencia(ultimasInasistencias: any[]) {
-    let datosInasistencia = {
-      ultimasInasistencias: ultimasInasistencias,
-      idEstudiante: this.estudianteSeleccionado._id
-    };
-    return this.http.post<{ message: string; exito: boolean }>(
-      environment.apiUrl + "/asistencia/inasistencia/justificada",
-      datosInasistencia
-    );
-  }
-
   //Modifica en la base de datos los datos de un estudiante seleccionado
   //@params: datos del estudiante
   public modificarEstudiante(
@@ -310,7 +286,7 @@ export class EstudiantesService {
   //@params: id de la docente
   public obtenerCursosDeDocente(idDocente: string) {
     let params = new HttpParams().set("idDocente", idDocente);
-    return this.http.get<{ cursos: any[], message: string, exito: boolean }>(
+    return this.http.get<{ cursos: any[]; message: string; exito: boolean }>(
       environment.apiUrl + "/curso/docente",
       { params: params }
     );
@@ -337,7 +313,7 @@ export class EstudiantesService {
     let params = new HttpParams()
       .set("idCurso", idcurso)
       .set("idDocente", idDocente);
-    return this.http.get<{ materias: any[], message: string, exito:true }>(
+    return this.http.get<{ materias: any[]; message: string; exito: true }>(
       environment.apiUrl + "/curso/materias",
       { params: params }
     );
@@ -347,7 +323,7 @@ export class EstudiantesService {
   //@params: id del curso
   public obtenerMateriasDeCurso(idcurso) {
     let params = new HttpParams().set("idCurso", idcurso);
-    return this.http.get<{ materias: any[], exito: boolean, message:string }>(
+    return this.http.get<{ materias: any[]; exito: boolean; message: string }>(
       environment.apiUrl + "/curso/materiasDeCurso",
       { params: params }
     );
@@ -401,7 +377,11 @@ export class EstudiantesService {
   //@params: id del curso
   public obtenerDocumentosDeEstudiantesXCurso(curso: string) {
     let params = new HttpParams().set("curso", curso);
-    return this.http.get<{documentos: any[], message: string, exito: boolean}>(environment.apiUrl + "/curso/documentos", {
+    return this.http.get<{
+      documentos: any[];
+      message: string;
+      exito: boolean;
+    }>(environment.apiUrl + "/curso/documentos", {
       params: params
     });
   }
@@ -420,27 +400,11 @@ export class EstudiantesService {
       .set("idCurso", idCurso)
       .set("idMateria", idMateria)
       .set("trimestre", trimestre);
-    return this.http.get<{ estudiantes: any[], message: string, exito: boolean}>(
-      environment.apiUrl + "/curso/estudiantes/materias/calificaciones",
-      {
-        params: params
-      }
-    );
-  }
-
-  //Obtiene la cantidad de inasistencias injustificadas y justificadas de un estudiante determinado
-  //@params: id del estudiante
-  public obtenerInasistenciasDeEstudiante() {
-    let params = new HttpParams().set(
-      "idEstudiante",
-      this.estudianteSeleccionado._id
-    );
     return this.http.get<{
+      estudiantes: any[];
       message: string;
       exito: boolean;
-      contadorInasistenciasInjustificada: number;
-      contadorInasistenciasJustificada: number;
-    }>(environment.apiUrl + "/asistencia/asistenciaEstudiante", {
+    }>(environment.apiUrl + "/curso/estudiantes/materias/calificaciones", {
       params: params
     });
   }
@@ -459,37 +423,6 @@ export class EstudiantesService {
     }>(environment.apiUrl + "/calificacion/materiasDesaprobadas", {
       params: params
     });
-  }
-
-  //Obtiene las ultimas 5 inasistencias de un estudiante determinado
-  //@params: id del estudiante
-  public obtenerUltimasInasistencias() {
-    let params = new HttpParams().set(
-      "idEstudiante",
-      this.estudianteSeleccionado._id
-    );
-    return this.http.get<{
-      message: string;
-      exito: boolean;
-      inasistencias: any[];
-    }>(environment.apiUrl + "/asistencia/inasistencias", {
-      params: params
-    });
-  }
-
-  //Registra la asistencia diaria de todos los estudiantes de un curso en la base de datos
-  //@params: los estudiantes que pertenecen al curso seleccionado
-  //@params: presentismo del dia actual, true en caso de que el estudiante haya ido a clases ese dia
-  public registrarAsistencia(
-    estudiantesXDivision: any[],
-    asistenciaNueva: string
-  ) {
-    let params = new HttpParams().set("asistenciaNueva", asistenciaNueva);
-    return this.http.post<{ message: string; exito: boolean }>(
-      environment.apiUrl + "/asistencia",
-      estudiantesXDivision,
-      { params: params }
-    );
   }
 
   //Registra las calificaciones todos los estudiantes de un curso para una materia
@@ -527,30 +460,6 @@ export class EstudiantesService {
     );
   }
 
-   //Registra la llegada tarde y el tipo para que se aplique la inasistencia correspondiente
-  //@params: booleano: si es true el estudiante llegó tarde pero antes de las 8 am
-  //@params: id del estudiante
-  public registrarLlegadaTarde(antes8am) {
-    let datosLlegadaTarde = {
-      antes8am: antes8am,
-      idEstudiante: this.estudianteSeleccionado._id
-    };
-    return this.http.post<{ message: string; exito: boolean }>(
-      environment.apiUrl + "/asistencia/llegadaTarde",
-      datosLlegadaTarde
-    );
-  }
-
-  //Registra el retiro anticipado y el tipo para que se aplique la inasistencia correspondiente
-  //@params: booleano: si es true el estudiante se retiró antes de las 10 am
-  //@params: id del estudiante
-  public registrarRetiroAnticipado(idEstudiante: string, antes10am: Boolean) {
-    return this.http.post<{ message: string; exito: string }>(
-      environment.apiUrl + "/asistencia/retiro",
-      { idEstudiante: idEstudiante, antes10am: antes10am }
-    );
-  }
-
   //Registra si los documentos fueron entregados o no por los estudiantes de un curso
   //@params: array que contiene los datos del estudiante (apellido, nombre e id), los documentos
   //entregados (entregado: true, en el caso de que se haya entregado)
@@ -560,5 +469,4 @@ export class EstudiantesService {
       estudiantes
     );
   }
-
 }
