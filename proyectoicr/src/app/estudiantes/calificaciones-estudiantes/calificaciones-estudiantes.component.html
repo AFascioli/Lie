@@ -259,11 +259,14 @@
       <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
     </table>
 
+    <div [hidden]="!estudiantes">
     <mat-paginator
       (page)="pageEvent = indexEstudiante()"
       [pageSizeOptions]="[5, 15, 25, 35]"
+      class="paginator"
     >
     </mat-paginator>
+  </div>
     <div class="div-button">
       <button
         [disabled]="

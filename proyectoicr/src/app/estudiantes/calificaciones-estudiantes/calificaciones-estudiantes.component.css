@@ -64,3 +64,9 @@ input:focus {
 .bajoPromedio {
   background-color: #fc7978;
 }
+
+.paginator
+{
+  display:flex;
+  justify-content: center;
+}
