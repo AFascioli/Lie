@@ -476,6 +476,17 @@ router.get("/materias", checkAuthMiddleware, (req, res) => {
 //@params: id curso al que se lo quiere inscribir
 //@params: array documentos entregados en inscripcion: true si se entregó ese documente
 router.post("/inscripcion", checkAuthMiddleware, (req, res) => {
+  let cursoSeleccionado;
+  let inscripcionEstadoInscripto;
+  Curso.findOne({ _id: req.body.idCurso }).then(async cursoSel => {
+    cursoSeleccionado = await cursoSel;
+    Estado.findOne({
+      nombre: "Inscripto",
+      ambito: "Inscripcion"
+    }).then(async estado => {
+      inscripcionEstadoInscripto = await estado;
+    });
+  });
   let materiasPendientes = [];
   Inscripcion.findOne({
     idEstudiante: req.body.idEstudiante,
@@ -555,53 +566,56 @@ router.post("/inscripcion", checkAuthMiddleware, (req, res) => {
         }
       }
     ]).then(materiasDelCurso => {
+
+
+      let estudianteEstadoInscripto;
+
       let idsCalXMateria = [];
       Estado.findOne({
         nombre: "Cursando",
         ambito: "CalificacionesXMateria"
       }).then(estado => {
-        ClaseCalifXMateria.crearDocsCalif(materiasDelCurso, estado).then(async idsCalXMateria => {
-          idsCalXMateria = await idsCalXMateria;
-          //se obtiene el id del estado y se registra la nueva inscripcion
-          Curso.findOne({ _id: req.body.idCurso }).then(
-            async cursoSeleccionado => {
+        ClaseCalifXMateria.crearDocsCalif(materiasDelCurso, estado).then(
+          async idsCalXMat => {
+            idsCalXMateria = await idsCalXMat;
+            //se obtiene el id del estado y se registra la nueva inscripcion
+            console.log('ids CalXMat');
+            console.log(idsCalXMateria);
+            const nuevaInscripcion = new Inscripcion({
+              idEstudiante: req.body.idEstudiante,
+              idCurso: cursoSeleccionado._id,
+              documentosEntregados: req.body.documentosEntregados,
+              activa: true,
+              estado: inscripcionEstadoInscripto._id,
+              contadorInasistenciasInjustificada: 0,
+              contadorInasistenciasJustificada: 0,
+              calificacionesXMateria: await idsCalXMateria,
+              materiasPendientes: materiasPendientes
+            });
+
+            await nuevaInscripcion.save().then(() => {
+              cursoSeleccionado.capacidad = cursoSeleccionado.capacidad - 1;
+              cursoSeleccionado.save();
+              //Le cambiamos el estado al estudiante
               Estado.findOne({
                 nombre: "Inscripto",
-                ambito: "Inscripcion"
-              }).then(async estado => {
-                const nuevaInscripcion = new Inscripcion({
-                  idEstudiante: req.body.idEstudiante,
-                  idCurso: cursoSeleccionado._id,
-                  documentosEntregados: req.body.documentosEntregados,
-                  activa: true,
-                  estado: estado._id,
-                  contadorInasistenciasInjustificada: 0,
-                  contadorInasistenciasJustificada: 0,
-                  calificacionesXMateria: idsCalXMateria,
-                  materiasPendientes: materiasPendientes
-                });
-                await nuevaInscripcion.save().then(() => {
-                  cursoSeleccionado.capacidad = cursoSeleccionado.capacidad - 1;
-                  cursoSeleccionado.save();
-                  //Le cambiamos el estado al estudiante
-                  Estado.findOne({
-                    nombre: "Inscripto",
-                    ambito: "Estudiante"
-                  }).then(async estadoEstudiante => {
-                    await Estudiante.findByIdAndUpdate(req.body.idEstudiante, {
-                      estado: estadoEstudiante._id
-                    }).then(async () => {
-                      await res.status(201).json({
-                        message: "Estudiante inscripto exitosamente",
-                        exito: true
-                      });
-                    });
+                ambito: "Estudiante"
+              }).then(async estadoEstudiante => {
+                await Estudiante.findByIdAndUpdate(req.body.idEstudiante, {
+                  estado: estadoEstudiante._id
+                }).then(async () => {
+                  await res.status(201).json({
+                    message: "Estudiante inscripto exitosamente",
+                    exito: true
                   });
                 });
               });
-            }
-          );
-        });
+            });
+            //     });
+            //   }
+            // );
+          }
+        );
       });
     });
   });

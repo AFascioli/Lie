@@ -47,8 +47,8 @@ exports.obtenerMateriasDesaprobadas = async function(
   return materiasDesaprobadas;
 };
 
-exports.crearCalifXTrimestre = async function() {
-  console.log('se ejecuto');
+exports.crearCalifXTrimestre = async function(califXMateriaNueva) {
+  let idsCalXMateria = [];
   let idsCalificacionMatXTrim = [];
   //vas a crear las calificacionesXTrimestre de cada materia
   for (let i = 0; i < 3; i++) {
@@ -58,31 +58,35 @@ exports.crearCalifXTrimestre = async function() {
     });
     calificacionesXTrim.save().then(async calXMateriaXTrimestre => {
       await idsCalificacionMatXTrim.push(calXMateriaXTrimestre._id);
+      califXMateriaNueva.calificacionesXTrimestre = idsCalificacionMatXTrim;
+      califXMateriaNueva.save();
       console.log('lo pusheo');
     });
+    if(i = 3){
+      console.log('ahora se ejecuto');
+     idsCalXMateria.push(califXMateriaNueva._id);
+
+      return idsCalXMateria;
+    }
   }
-  console.log('idsCXT antes');
-  console.log(idsCalificacionMatXTrim);
-  return idsCalificacionMatXTrim;
 };
 
 exports.crearDocsCalif = async function(materiasDelCurso, estado) {
   let idsCalXMateria = [];
   materiasDelCurso.forEach(elemento => {
-    //Creamos las califXMateria
-    this.crearCalifXTrimestre().then(async idsCalificacionMatXTrim => {
-      console.log('idCXT');
-      console.log(idsCalificacionMatXTrim);
-      //creamos las calificacionesXMateria de cada materia
-      let califXMateriaNueva = await new CalificacionesXMateria({
+ let califXMateriaNueva = new CalificacionesXMateria({
         idMateria: elemento.materiasDelCurso[0].materia,
         estado: estado._id,
-        calificacionesXTrimestre: idsCalificacionMatXTrim
+        calificacionesXTrimestre: idsCalXMateria
       });
 
-      await idsCalXMateria.push(califXMateriaNueva._id);
-      await califXMateriaNueva.save();
+    //Creamos las califXMateria
+    this.crearCalifXTrimestre(califXMateriaNueva).then(async idsCalificacionMat => {
+      console.log('se ejecuto');
+      console.log(idsCalificacionMat);
+    return await idsCalificacionMat;
+
     });
   });
-return idsCalXMateria;
+
 };
