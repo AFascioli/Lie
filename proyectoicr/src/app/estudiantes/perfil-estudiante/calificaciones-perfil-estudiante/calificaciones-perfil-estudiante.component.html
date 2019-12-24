@@ -172,6 +172,9 @@
       class="columnasChicas promedio"
       mat-cell
       *matCellDef="let estudiante; let i = index"
+      [ngClass]="{
+        bajoPromedio: calcularPromedio(i, contadorNotasValidas(i)) < 6
+      }"
     >
       <p *ngIf="!(contadorNotasValidas(i) == 0); else sinNotas">
         {{ this.promedio.toFixed(2) }}

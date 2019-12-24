@@ -1,4 +1,4 @@
-import { EstudiantesService } from 'src/app/estudiantes/estudiante.service';
+import { EstudiantesService } from "src/app/estudiantes/estudiante.service";
 import { Injectable } from "@angular/core";
 import { Estudiante } from "./estudiante.model";
 import { HttpClient, HttpParams } from "@angular/common/http";
@@ -7,13 +7,10 @@ import { environment } from "src/environments/environment";
 @Injectable({
   providedIn: "root"
 })
-
 export class CalificacionesService {
   estudianteSeleccionado: Estudiante;
 
-  constructor(public http: HttpClient, servicioEstudiante: EstudiantesService) {
-    this.estudianteSeleccionado = servicioEstudiante.estudianteSeleccionado;
-  }
+  constructor(public http: HttpClient) {}
 
   //Obtiene las calificaciones de un estudiante para una materia y un trimestre determinado
   //@params: id del estudiante
@@ -31,7 +28,7 @@ export class CalificacionesService {
     });
   }
 
-    //Obtiene todas las calificaciones de los estudiantes de un curso determinado
+  //Obtiene todas las calificaciones de los estudiantes de un curso determinado
   //para un trimestre dado
   //@params: id del curso
   //@params: id de la materia
@@ -57,7 +54,7 @@ export class CalificacionesService {
   //Obtiene las materias desaprobadas de un estudiante determinado
   //@params: id del estudiante
   public obtenerMateriasDesaprobadasEstudiante() {
-    console.log('est ' + this.estudianteSeleccionado);
+    console.log("est " + this.estudianteSeleccionado);
     let params = new HttpParams().set(
       "idEstudiante",
       this.estudianteSeleccionado._id
