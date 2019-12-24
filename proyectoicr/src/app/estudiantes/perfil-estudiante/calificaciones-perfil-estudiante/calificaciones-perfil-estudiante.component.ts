@@ -1,3 +1,4 @@
+import { CalificacionesService } from "./../../calificaciones.service";
 import { Estudiante } from "src/app/estudiantes/estudiante.model";
 import { EstudiantesService } from "src/app/estudiantes/estudiante.service";
 import { Component, OnInit } from "@angular/core";
@@ -29,20 +30,21 @@ export class CalificacionesPerfilEstudianteComponent implements OnInit {
   promedio = 0;
 
   constructor(
-    public servicio: EstudiantesService,
+    public servicioEstudiante: EstudiantesService,
+    public servicioCalificaciones: CalificacionesService,
     public router: Router,
-    public servicioAutenticacion: AutenticacionService
+    public servicioEstudianteAutenticacion: AutenticacionService
   ) {}
 
   ngOnInit() {
     this.fechaActual = new Date();
-    this.servicio.obtenerCursoDeEstudiante().subscribe(response => {
+    this.servicioEstudiante.obtenerCursoDeEstudiante().subscribe(response => {
       this.curso = response.curso;
     });
-    this.apellidoEstudiante = this.servicio.estudianteSeleccionado.apellido;
-    this.nombreEstudiante = this.servicio.estudianteSeleccionado.nombre;
+    this.apellidoEstudiante = this.servicioEstudiante.estudianteSeleccionado.apellido;
+    this.nombreEstudiante = this.servicioEstudiante.estudianteSeleccionado.nombre;
     this.obtenerTrimestrePorDefecto();
-    this.servicio
+   this.servicioCalificaciones
       .obtenerCalificacionesXMateriaXEstudiante(this.trimestreActual)
       .subscribe(res => {
         this.calificacionesXMateria = res.vectorCalXMat;
@@ -50,7 +52,7 @@ export class CalificacionesPerfilEstudianteComponent implements OnInit {
   }
 
   onChangeTrimestre() {
-    this.servicio
+   this.servicioCalificaciones
       .obtenerCalificacionesXMateriaXEstudiante(this.trimestreActual)
       .subscribe(res => {
         this.calificacionesXMateria = res.vectorCalXMat;
@@ -68,7 +70,7 @@ export class CalificacionesPerfilEstudianteComponent implements OnInit {
 
   //Segun la fecha actual selecciona por defecto el trimestre
   obtenerTrimestrePorDefecto() {
-    let fechas = this.servicioAutenticacion.getFechasCicloLectivo();
+    let fechas = this.servicioEstudianteAutenticacion.getFechasCicloLectivo();
     let fechaInicioPrimerTrimestre = new Date(
       fechas.fechaInicioPrimerTrimestre
     );

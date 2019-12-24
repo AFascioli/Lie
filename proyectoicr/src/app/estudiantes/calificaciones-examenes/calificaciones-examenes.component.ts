@@ -1,3 +1,4 @@
+import { CalificacionesService } from "./../calificaciones.service";
 import { MatSnackBar } from "@angular/material";
 import { AutenticacionService } from "./../../login/autenticacionService.service";
 import { EstudiantesService } from "src/app/estudiantes/estudiante.service";
@@ -23,6 +24,7 @@ export class CalificacionesExamenesComponent implements OnInit {
 
   constructor(
     public estudianteService: EstudiantesService,
+    public servicioCalificaciones: CalificacionesService,
     public changeDetectorRef: ChangeDetectorRef,
     public media: MediaMatcher,
     public authService: AutenticacionService,
@@ -36,22 +38,26 @@ export class CalificacionesExamenesComponent implements OnInit {
   ngOnInit() {
     this.apellidoEstudiante = this.estudianteService.estudianteSeleccionado.apellido;
     this.nombreEstudiante = this.estudianteService.estudianteSeleccionado.nombre;
-    this.estudianteService.obtenerMateriasDesaprobadasEstudiante().subscribe(materias =>{
-      if(materias.materiasDesaprobadas.length != 0){
-        this.materiasDesaprobadas= materias.materiasDesaprobadas;
-        this.tieneMateriasDesaprobadas = true;
-      }
-    });
+    this.servicioCalificaciones
+      .obtenerMateriasDesaprobadasEstudiante()
+      .subscribe(materias => {
+        if (materias.materiasDesaprobadas.length != 0) {
+          this.materiasDesaprobadas = materias.materiasDesaprobadas;
+          this.tieneMateriasDesaprobadas = true;
+        }
+      });
     this.fechaActual = new Date();
-    if (this.fechaActualEnRangoFechasExamenes() || this.authService.getRol()=="Admin") {
+    if (
+      this.fechaActualEnRangoFechasExamenes() ||
+      this.authService.getRol() == "Admin"
+    ) {
       this.fechaDentroDeRangoExamen = true;
       this.fechaActualFinDeSemana();
     }
   }
 
-  onMateriaChange(idMateria){
-    this.idMateriaSeleccionada= idMateria;
-    console.log(idMateria);
+  onMateriaChange(idMateria) {
+    this.idMateriaSeleccionada = idMateria;
   }
 
   checkNotas(event) {
@@ -63,7 +69,8 @@ export class CalificacionesExamenesComponent implements OnInit {
       inputValue != 0
     )
       event.preventDefault();
-    else if (this.notaExamen!= "" && Number(concat) > 10) event.preventDefault();
+    else if (this.notaExamen != "" && Number(concat) > 10)
+      event.preventDefault();
   }
 
   fechaActualFinDeSemana() {
@@ -97,21 +104,25 @@ export class CalificacionesExamenesComponent implements OnInit {
   }
 
   guardar() {
-    if(this.notaExamen>5){
-      this.estudianteService.registrarCalificacionExamen(this.idMateriaSeleccionada, this.notaExamen).subscribe(rtdo => {
-        if (rtdo.exito) {
-          this.snackBar.open(rtdo.message, "", {
-            panelClass: ["snack-bar-exito"],
-            duration: 3000
-          });
-        }else{
-          this.snackBar.open(rtdo.message, "", {
-            panelClass: ["snack-bar-fracaso"],
-            duration: 3000
-          });
-        }
-      });
+    if (this.notaExamen > 5) {
+     this.servicioCalificaciones
+        .registrarCalificacionExamen(
+          this.idMateriaSeleccionada,
+          this.notaExamen
+        )
+        .subscribe(rtdo => {
+          if (rtdo.exito) {
+            this.snackBar.open(rtdo.message, "", {
+              panelClass: ["snack-bar-exito"],
+              duration: 3000
+            });
+          } else {
+            this.snackBar.open(rtdo.message, "", {
+              panelClass: ["snack-bar-fracaso"],
+              duration: 3000
+            });
+          }
+        });
     }
   }
-
 }

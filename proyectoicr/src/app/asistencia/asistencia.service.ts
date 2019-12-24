@@ -2,6 +2,7 @@ import { Injectable } from "@angular/core";
 import { Estudiante } from "src/app/estudiantes/estudiante.model";
 import { HttpClient, HttpParams } from "@angular/common/http";
 import { environment } from "src/environments/environment";
+import { EstudiantesService } from '../estudiantes/estudiante.service';
 
 @Injectable({
   providedIn: "root"
@@ -9,7 +10,9 @@ import { environment } from "src/environments/environment";
 export class AsistenciaService {
   estudianteSeleccionado: Estudiante;
 
-  constructor(public http: HttpClient) {}
+  constructor(public http: HttpClient, servicioEstudiante: EstudiantesService) {
+    this.estudianteSeleccionado = servicioEstudiante.estudianteSeleccionado;
+  }
 
   //Obtiene la asistencia para el dia actual de todos los estudiantes de un curso en la base de datos
   //@params: id del curso

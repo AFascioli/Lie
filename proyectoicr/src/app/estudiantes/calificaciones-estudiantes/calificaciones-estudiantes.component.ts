@@ -6,6 +6,7 @@ import { Router } from "@angular/router";
 import { NgForm, NgModel } from "@angular/forms";
 import { MatPaginator, PageEvent } from "@angular/material/paginator";
 import { MatTableDataSource } from "@angular/material/table";
+import { CalificacionesService } from '../calificaciones.service';
 
 @Component({
   selector: "app-calificaciones-estudiantes",
@@ -41,10 +42,11 @@ export class CalificacionesEstudiantesComponent implements OnInit {
   @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
 
   constructor(
-    public servicio: EstudiantesService,
+    public servicioEstudiante: EstudiantesService,
+    public servicioCalificaciones: CalificacionesService,
     public popup: MatDialog,
     private snackBar: MatSnackBar,
-    public servicioAutenticacion: AutenticacionService
+    public servicioEstudianteAutenticacion: AutenticacionService
   ) {}
 
   ngOnInit() {
@@ -55,7 +57,7 @@ export class CalificacionesEstudiantesComponent implements OnInit {
   }
 
   validarPermisos() {
-    this.servicioAutenticacion.obtenerPermisosDeRol().subscribe(res => {
+    this.servicioEstudianteAutenticacion.obtenerPermisosDeRol().subscribe(res => {
       if (res.permisos.notas == 2) {
         this.rolConPermisosEdicion = true;
       }
@@ -64,9 +66,9 @@ export class CalificacionesEstudiantesComponent implements OnInit {
   }
 
   obtenerCursos() {
-    if (this.servicioAutenticacion.getRol() == "Docente") {
-      this.servicio
-        .obtenerCursosDeDocente(this.servicioAutenticacion.getId())
+    if (this.servicioEstudianteAutenticacion.getRol() == "Docente") {
+      this.servicioEstudiante
+        .obtenerCursosDeDocente(this.servicioEstudianteAutenticacion.getId())
         .subscribe(response => {
           this.cursos = response.cursos;
           this.cursos.sort((a, b) =>
@@ -78,7 +80,7 @@ export class CalificacionesEstudiantesComponent implements OnInit {
           );
         });
     } else {
-      this.servicio.obtenerCursos().subscribe(response => {
+      this.servicioEstudiante.obtenerCursos().subscribe(response => {
         this.cursos = response.cursos;
         this.cursos.sort((a, b) =>
           a.curso.charAt(0) > b.curso.charAt(0)
@@ -92,7 +94,7 @@ export class CalificacionesEstudiantesComponent implements OnInit {
   }
 
   obtenerTrimestreActual() {
-    let fechas = this.servicioAutenticacion.getFechasCicloLectivo();
+    let fechas = this.servicioEstudianteAutenticacion.getFechasCicloLectivo();
     let fechaInicioPrimerTrimestre = new Date(
       fechas.fechaInicioPrimerTrimestre
     );
@@ -145,15 +147,15 @@ export class CalificacionesEstudiantesComponent implements OnInit {
     materia.reset();
     if (
       this.rolConPermisosEdicion &&
-      this.servicioAutenticacion.getRol() != "Admin"
+      this.servicioEstudianteAutenticacion.getRol() != "Admin"
     ) {
-      this.servicio
-        .obtenerMateriasXCursoXDocente(curso.value, this.servicioAutenticacion.getId())
+      this.servicioEstudiante
+        .obtenerMateriasXCursoXDocente(curso.value, this.servicioEstudianteAutenticacion.getId())
         .subscribe(respuesta => {
           this.materias = respuesta.materias;
         });
     } else {
-      this.servicio.obtenerMateriasDeCurso(curso.value).subscribe(respuesta => {
+      this.servicioEstudiante.obtenerMateriasDeCurso(curso.value).subscribe(respuesta => {
         this.materias = respuesta.materias;
       });
     }
@@ -161,7 +163,8 @@ export class CalificacionesEstudiantesComponent implements OnInit {
 
   obtenerNotas(form: NgForm) {
     if (form.value.curso != "" || form.value.materia != "") {
-      this.servicio
+      this.servicioCalificaciones
+    //this.servicioEstudiante
         .obtenerCalificacionesEstudiantesXCursoXMateria(
           form.value.curso,
           form.value.materia,
@@ -217,7 +220,8 @@ export class CalificacionesEstudiantesComponent implements OnInit {
         );
       }
     } else if (form.valueChanges) {
-      this.servicio
+      this.servicioCalificaciones
+    //this.servicioEstudiante
         .registrarCalificaciones(
           this.estudiantes,
           form.value.materia,
@@ -242,7 +246,7 @@ export class CalificacionesEstudiantesComponent implements OnInit {
   }
 
   onCancelar() {
-    this.servicio.tipoPopUp = "cancelar";
+    this.servicioEstudiante.tipoPopUp = "cancelar";
     this.popup.open(CalificacionesEstudiantePopupComponent);
   }
   checkNotas(event, cal) {
