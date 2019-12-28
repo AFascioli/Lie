@@ -2,7 +2,6 @@ import { AuthInterceptor } from "./login/auth-interceptor";
 import { BrowserModule } from "@angular/platform-browser";
 import { NgModule } from "@angular/core";
 import {
-  MatInputModule,
   MatSelectModule,
   MatButtonModule,
   MatCardModule,
@@ -18,10 +17,12 @@ import {
   MatSlideToggleModule,
   MatProgressSpinnerModule,
   MatCheckboxModule,
-  MatSnackBarModule
+  MatSnackBarModule,
+  MatChipsModule,
+  MatInputModule
 } from "@angular/material";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
-import {MatPaginatorModule} from '@angular/material/paginator';
+import { MatPaginatorModule } from "@angular/material/paginator";
 import { MatDatepickerModule } from "@angular/material/datepicker";
 import { MatMenuModule } from "@angular/material/menu";
 import { AppComponent } from "./app.component";
@@ -29,7 +30,7 @@ import {
   AltaEstudiantesComponent,
   AltaPopupComponent
 } from "./estudiantes/alta-estudiantes/alta-estudiantes.component";
-import { FormsModule } from "@angular/forms";
+import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { HttpClientModule, HTTP_INTERCEPTORS } from "@angular/common/http";
 import { EstudiantesService } from "./estudiantes/estudiante.service";
 import {
@@ -53,32 +54,59 @@ import {
   AsistenciaPopupComponent
 } from "./asistencia/registrar-asistencia/registrar-asistencia.component";
 import { MatExpansionModule } from "@angular/material/expansion";
-import { InscripcionEstudianteComponent, InscripcionPopupComponent } from './estudiantes/inscripcion-estudiantes/inscripcion-estudiantes.component';
-import { RetiroAnticipadoComponent, RetiroPopupComponent } from './asistencia/retiro-anticipado/retiro-anticipado.component';
-import { DocumentosInscripcionComponent, DocumentosInscripcionPopupComponent } from './estudiantes/documentos-inscripcion/documentos-inscripcion.component';
-import {MatGridListModule} from '@angular/material/grid-list';
-import { CalificacionesEstudiantesComponent, CalificacionesEstudiantePopupComponent } from './estudiantes/calificaciones-estudiantes/calificaciones-estudiantes.component';
-import { LlegadaTardeComponent } from './asistencia/llegada-tarde/llegada-tarde.component';
-import { CambiarPassword, CambiarPasswordPopupComponent } from './login/cambiar-password.component';
-import { PerfilEstudianteComponent, PerfilEstudiantePopupComponent } from './estudiantes/perfil-estudiante/perfil-estudiante.component';
-import { CalificacionesPerfilEstudianteComponent } from './estudiantes/perfil-estudiante/calificaciones-perfil-estudiante/calificaciones-perfil-estudiante.component';
-import { AgendaCursoPerfilEstudianteComponent } from './estudiantes/perfil-estudiante/agenda-curso-perfil-estudiante/agenda-curso-perfil-estudiante.component';
-import { LOCALE_ID } from '@angular/core';
-import { registerLocaleData } from '@angular/common';
-import { ChartsModule } from 'ng2-charts';
-registerLocaleData(localePy, 'es');
-import localePy from '@angular/common/locales/es';
-import { JustificacionInasistenciaComponent} from './asistencia/justificacion-inasistencia/justificacion-inasistencia.component';
-import { AltaARComponent, AltaARPopupComponent} from './adulto-responsable/alta-ar/alta-ar.component';
-import { AltaEmpleadoComponent, AltaEmpleadoPopupComponent } from './empleado/alta-empleado/alta-empleado.component';
-import { PreferenciasComponent, PreferenciasPopupComponent } from './menu-lateral/preferencias/preferencias.component';
+import {
+  InscripcionEstudianteComponent,
+  InscripcionPopupComponent
+} from "./estudiantes/inscripcion-estudiantes/inscripcion-estudiantes.component";
+import {
+  RetiroAnticipadoComponent,
+  RetiroPopupComponent
+} from "./asistencia/retiro-anticipado/retiro-anticipado.component";
+import {
+  DocumentosInscripcionComponent,
+  DocumentosInscripcionPopupComponent
+} from "./estudiantes/documentos-inscripcion/documentos-inscripcion.component";
+import { MatGridListModule } from "@angular/material/grid-list";
+import {
+  CalificacionesEstudiantesComponent,
+  CalificacionesEstudiantePopupComponent
+} from "./estudiantes/calificaciones-estudiantes/calificaciones-estudiantes.component";
+import { LlegadaTardeComponent } from "./asistencia/llegada-tarde/llegada-tarde.component";
+import {
+  CambiarPassword,
+  CambiarPasswordPopupComponent
+} from "./login/cambiar-password.component";
+import {
+  PerfilEstudianteComponent,
+  PerfilEstudiantePopupComponent
+} from "./estudiantes/perfil-estudiante/perfil-estudiante.component";
+import { CalificacionesPerfilEstudianteComponent } from "./estudiantes/perfil-estudiante/calificaciones-perfil-estudiante/calificaciones-perfil-estudiante.component";
+import { AgendaCursoPerfilEstudianteComponent } from "./estudiantes/perfil-estudiante/agenda-curso-perfil-estudiante/agenda-curso-perfil-estudiante.component";
+import { LOCALE_ID } from "@angular/core";
+import { registerLocaleData } from "@angular/common";
+import { ChartsModule } from "ng2-charts";
+registerLocaleData(localePy, "es");
+import localePy from "@angular/common/locales/es";
+import { JustificacionInasistenciaComponent } from "./asistencia/justificacion-inasistencia/justificacion-inasistencia.component";
+import {
+  AltaARComponent,
+  AltaARPopupComponent
+} from "./adulto-responsable/alta-ar/alta-ar.component";
+import {
+  AltaEmpleadoComponent,
+  AltaEmpleadoPopupComponent
+} from "./empleado/alta-empleado/alta-empleado.component";
+import {
+  PreferenciasComponent,
+  PreferenciasPopupComponent
+} from "./menu-lateral/preferencias/preferencias.component";
 import { ServiceWorkerModule } from "@angular/service-worker";
 import { environment } from "../environments/environment";
-import { InasistenciasEstudianteComponent } from './estudiantes/perfil-estudiante/inasistencias-estudiante/inasistencias-estudiante.component';
-import { TutoresEstudianteComponent } from './estudiantes/perfil-estudiante/tutores-estudiante/tutores-estudiante.component';
-import { DatosEstudianteComponent } from './estudiantes/perfil-estudiante/datos-estudiante/datos-estudiante.component';
-import { CalificacionesExamenesComponent } from './estudiantes/calificaciones-examenes/calificaciones-examenes.component';
-import { RegistrarEventoComponent } from './eventos/registrar-evento/registrar-evento.component';
+import { InasistenciasEstudianteComponent } from "./estudiantes/perfil-estudiante/inasistencias-estudiante/inasistencias-estudiante.component";
+import { TutoresEstudianteComponent } from "./estudiantes/perfil-estudiante/tutores-estudiante/tutores-estudiante.component";
+import { DatosEstudianteComponent } from "./estudiantes/perfil-estudiante/datos-estudiante/datos-estudiante.component";
+import { CalificacionesExamenesComponent } from "./estudiantes/calificaciones-examenes/calificaciones-examenes.component";
+import { RegistrarEventoComponent } from "./eventos/registrar-evento/registrar-evento.component";
 
 @NgModule({
   declarations: [
@@ -142,7 +170,10 @@ import { RegistrarEventoComponent } from './eventos/registrar-evento/registrar-e
     AltaARPopupComponent
   ],
   imports: [
+    MatChipsModule,
     BrowserModule,
+    MatInputModule,
+    ReactiveFormsModule,
     BrowserAnimationsModule,
     MatInputModule,
     MatSelectModule,
