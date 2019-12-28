@@ -1,6 +1,6 @@
 import { Component, OnInit, ElementRef, ViewChild } from "@angular/core";
 import { COMMA, ENTER } from "@angular/cdk/keycodes";
-import { FormControl } from "@angular/forms";
+import { FormControl, NgForm } from "@angular/forms";
 import {
   MatAutocompleteSelectedEvent,
   MatAutocomplete
