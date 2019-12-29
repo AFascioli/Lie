@@ -220,7 +220,7 @@ export class EstudiantesService {
     documentosEntregados: any[]
   ) {
     return this.http.post<{ message: string; exito: boolean }>(
-      environment.apiUrl + "/curso/inscripcion",
+      environment.apiUrl + "/curso/inscripciontest",
       {
         idEstudiante: idEstudiante,
         idCurso: idCurso,
