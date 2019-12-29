@@ -8,6 +8,7 @@ import {
 import { MatChipInputEvent } from "@angular/material/chips";
 import { Observable } from "rxjs";
 import { map, startWith } from "rxjs/operators";
+import { EventosService } from "../eventos.service";
 
 @Component({
   selector: "app-registrar-evento",
@@ -20,6 +21,9 @@ export class RegistrarEventoComponent implements OnInit {
   >;
   @ViewChild("auto", { static: false }) matAutocomplete: MatAutocomplete;
   fechaActual: Date;
+  imagePath;
+  imgURL: any;
+  message: string;
   selectable = true;
   removable = true;
   addOnBlur = true;
@@ -29,12 +33,13 @@ export class RegistrarEventoComponent implements OnInit {
   chips: string[] = ["Todos los cursos"];
   allChips: string[] = ["1A", "2A", "3A", "4A", "5A", "6A", "Todos los cursos"];
 
-  constructor() {
+  constructor(public eventoService: EventosService) {
     //Hace que funcione el autocomplete, filtra
+
     this.filteredChips = this.chipsCtrl.valueChanges.pipe(
       startWith(null),
       map((chip: string | null) =>
-      chip ? this._filter(chip) : this.allChips.slice()
+        chip ? this._filter(chip) : this.allChips.slice()
       )
     );
   }
@@ -78,7 +83,37 @@ export class RegistrarEventoComponent implements OnInit {
     const filterValue = value.toLowerCase();
 
     return this.allChips.filter(
-      fruit => fruit.toLowerCase().indexOf(filterValue) === 0
+      chip => chip.toLowerCase().indexOf(filterValue) === 0
+    );
+  }
+
+  preview(files) {
+    if (files.length === 0) return;
+
+    var mimeType = files[0].type;
+    if (mimeType.match(/image\/*/) == null) {
+      this.message = "Solo se admiten archivos de imagen";
+      return;
+    }
+
+    var reader = new FileReader();
+    this.imagePath = files;
+    reader.readAsDataURL(files[0]);
+    reader.onload = _event => {
+      this.imgURL = reader.result;
+    };
+
+  }
+
+  onGuardarEvento(form: NgForm) {
+    this.eventoService.registrarEvento(
+      form.value.titulo,
+      form.value.descripcion,
+      form.value.fechaEvento,
+      form.value.horaInicio,
+      form.value.horaFin,
+      this.chips,
+      this.imagePath
     );
   }
 }
