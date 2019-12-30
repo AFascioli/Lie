@@ -5,5 +5,7 @@ export interface Evento {
   fechaEvento: Date;
   horaInicio: string;
   horaFin: string;
+  tags: string[];
+  autor: string;
   imgUrl: any;
 }

@@ -10,6 +10,7 @@ import { Observable } from "rxjs";
 import { map, startWith } from "rxjs/operators";
 import { EventosService } from "../eventos.service";
 import {NgxMaterialTimepickerModule} from 'ngx-material-timepicker';
+import { MatSnackBar } from '@angular/material';
 
 @Component({
   selector: "app-registrar-evento",
@@ -34,7 +35,7 @@ export class RegistrarEventoComponent implements OnInit {
   chips: string[] = ["Todos los cursos"];
   allChips: string[] = ["1A", "2A", "3A", "4A", "5A", "6A", "Todos los cursos"];
 
-  constructor(public eventoService: EventosService) {
+  constructor(public eventoService: EventosService, public snackBar: MatSnackBar) {
     //Hace que funcione el autocomplete, filtra
 
     this.filteredChips = this.chipsCtrl.valueChanges.pipe(
@@ -107,6 +108,7 @@ export class RegistrarEventoComponent implements OnInit {
   }
 
   onGuardarEvento(form: NgForm) {
+    console.log('se ejecuta');
     this.eventoService.registrarEvento(
       form.value.titulo,
       form.value.descripcion,
@@ -115,6 +117,19 @@ export class RegistrarEventoComponent implements OnInit {
       form.value.horaFin,
       this.chips,
       this.imagePath
-    );
+    ).subscribe(rtdo=> {
+      if (rtdo.exito) {
+        this.snackBar.open(rtdo.message, "", {
+          panelClass: ["snack-bar-exito"],
+          duration: 4500
+        });
+      } else {
+        this.snackBar.open(rtdo.message, "", {
+          duration: 4500,
+          panelClass: ["snack-bar-fracaso"]
+        });
+      }
+      console.log(rtdo);
+    });
   }
 }
