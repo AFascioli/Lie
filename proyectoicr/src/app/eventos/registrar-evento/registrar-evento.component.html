@@ -118,7 +118,7 @@
       <img [src]="imgURL" class="image-preview" *ngIf="imgURL" />
     </div>
     <div class="div-button">
-      <button class="buttonPrimary" mat-raised-button>
+      <button class="buttonPrimary" (click)="onGuardarEvento(form)" mat-raised-button>
         Guardar
       </button>
     </div>

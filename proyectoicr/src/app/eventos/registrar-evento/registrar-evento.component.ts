@@ -23,7 +23,7 @@ export class RegistrarEventoComponent implements OnInit {
   >;
   @ViewChild("auto", { static: false }) matAutocomplete: MatAutocomplete;
   fechaActual: Date;
-  imagePath;
+  imagePath: File;
   imgURL: any;
   message: string;
   selectable = true;
@@ -108,7 +108,7 @@ export class RegistrarEventoComponent implements OnInit {
   }
 
   onGuardarEvento(form: NgForm) {
-    console.log('se ejecuta');
+    console.log(form.value.titulo);
     this.eventoService.registrarEvento(
       form.value.titulo,
       form.value.descripcion,

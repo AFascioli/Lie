@@ -1,4 +1,4 @@
-import { AutenticacionService } from 'src/app/login/autenticacionService.service';
+import { AutenticacionService } from "src/app/login/autenticacionService.service";
 import { HttpClient, HttpParams } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { environment } from "src/environments/environment";
@@ -8,7 +8,10 @@ import { Evento } from "./registrar-evento/evento.model";
   providedIn: "root"
 })
 export class EventosService {
-  constructor(public http: HttpClient, public authService: AutenticacionService) {}
+  constructor(
+    public http: HttpClient,
+    public authService: AutenticacionService
+  ) {}
 
   //Registra el evento en la base de datos
   //@params: evento a publicar
@@ -21,7 +24,13 @@ export class EventosService {
     tags: any[],
     imgUrl: any
   ) {
-    console.log('se llamo al servicio');
+    let imgName = imgUrl[0].name
+    console.log("img name");
+    console.log(imgName);
+    const imagen = new FormData();
+    console.log(imgUrl[0]);
+    imagen.append("imagen", imgUrl[0], "esteEsElTitulo");
+    console.log("se llamo al servicio");
     const autor = this.authService.getUsuarioAutenticado();
     const evento: Evento = {
       _id: null,
@@ -32,12 +41,12 @@ export class EventosService {
       horaFin,
       tags,
       autor,
-      imgUrl
+      imgUrl: imgName
     };
 
     return this.http.post<{ message: string; exito: boolean }>(
       environment.apiUrl + "/evento/registrar",
-      evento
+      { imagen, evento }
     );
   }
 }

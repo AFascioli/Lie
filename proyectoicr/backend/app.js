@@ -13,7 +13,7 @@ const empleadoRoutes = require("./routes/empleado");
 const cicloLectivoRoutes = require("./routes/cicloLectivo");
 const asistenciaRoutes = require("./routes/asistencia");
 const calificacionesRoutes = require("./routes/calificacion");
-const eventoRoutes = require("./routes/calificacion");
+const eventoRoutes = require("./routes/evento");
 
 const app = express(); // Creo la app express
 

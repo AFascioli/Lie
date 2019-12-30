@@ -3,12 +3,9 @@ const Estudiante = require("../models/estudiante");
 const router = express.Router();
 const mongoose = require("mongoose");
 const checkAuthMiddleware = require("../middleware/check-auth");
-const express = require("express");
 const multer = require("multer");
-
-const Post = require("../models/post");
-
-const router = express.Router();
+const Evento = require("../models/evento");
+const Usuario = require("../models/usuario");
 
 const MIME_TYPE_MAPA = {
   "image/png": "png",
@@ -39,26 +36,33 @@ const storage = multer.diskStorage({
 //@params: evento a publicar
 router.post(
   "/registrar",
-  multer({ storage: storage }).single(req.body.evento.imgUrl),
+  multer({ storage: storage }).single("imagen"),
   checkAuthMiddleware,
   (req, res, next) => {
-    const url = req.protocol + "://" + req.get("host");
-    const evento = new Evento({
-      titulo: req.body.evento.titulo,
-      descripcion: req.body.evento.descripcion,
-      fechaEvento: req.body.eventso.fechaEvento,
-      horaInicio: req.body.evento.horaInicio,
-      horaFin: req.body.evento.horaFin,
-      tags: req.body.evento.tags,
-      imgUrl: url + "/imagenesBackend/" + req.file.filename,
-      autor: req.body.evento.autor
-    });
-    evento.save().then(() => {
-      res.status(201).json({
-        message: "evento creado existosamente",
-        exito:true
-      });
-    });
+    console.log(req.body.imagen);
+    Usuario.findOne({email: req.body.evento.autor}).then(
+
+      usuario => {
+        const url = req.protocol + "://" + req.get("host");
+        const evento = new Evento({
+          titulo: req.body.evento.titulo,
+          descripcion: req.body.evento.descripcion,
+          fechaEvento: req.body.evento.fechaEvento,
+          horaInicio: req.body.evento.horaInicio,
+          horaFin: req.body.evento.horaFin,
+          tags: req.body.evento.tags,
+          imgUrl: "http://localhost:4200"+ "/imagenesBackend/" + req.body.evento.imgUrl,
+          autor: usuario._id
+        });
+        evento.save().then(() => {
+          res.status(201).json({
+            message: "evento creado existosamente",
+            exito: true
+          });
+        });
+      }
+    )
+
   }
 );
 
