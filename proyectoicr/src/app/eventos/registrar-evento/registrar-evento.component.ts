@@ -9,6 +9,7 @@ import { MatChipInputEvent } from "@angular/material/chips";
 import { Observable } from "rxjs";
 import { map, startWith } from "rxjs/operators";
 import { EventosService } from "../eventos.service";
+import {NgxMaterialTimepickerModule} from 'ngx-material-timepicker';
 
 @Component({
   selector: "app-registrar-evento",

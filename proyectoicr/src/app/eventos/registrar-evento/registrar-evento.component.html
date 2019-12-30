@@ -2,7 +2,7 @@
   Registrar eventos
 </h1>
 
-<mat-card>
+<mat-card class="card-body-componente">
   <form #form="ngForm">
     <mat-form-field>
       <input
@@ -10,7 +10,7 @@
         ngModel
         #titulo="ngModel"
         matInput
-        placeholder="Ingrese titulo"
+        placeholder="Ingrese título"
         type="text"
         required
       />
@@ -23,7 +23,7 @@
         ngModel
         #descripcion="ngModel"
         rows="3"
-        placeholder="Ingrese descripcion"
+        placeholder="Ingrese descripción"
         type="text"
         required
       >
@@ -35,79 +35,42 @@
         matInput
         [min]="fechaActual"
         [matDatepicker]="picker"
-        placeholder="Sel. fecha de evento"
+        placeholder="Seleccione fecha de evento"
       />
       <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
       <mat-datepicker touchUi #picker></mat-datepicker>
     </mat-form-field>
-    <br />
-    <mat-select
-      placeholder="Seleccione hora inicio evento"
-      name="horaInicio"
-      ngModel
-      #horaInicio="ngModel"
-      matNativeControl
-    >
-      <!-- Esto deberia recorrer un vector con todas las horas -->
-      <mat-option value="01">01</mat-option>
-      <mat-option value="02">02</mat-option>
-      <mat-option value="03">03</mat-option>
-      <mat-option value="04">04</mat-option>
-      <mat-option value="05">05</mat-option>
-      <mat-option value="06">06</mat-option>
-      <mat-option value="07">07</mat-option>
-      <mat-option value="08">08</mat-option>
-      <mat-option value="09">09</mat-option>
-      <mat-option value="10">10</mat-option>
-      <mat-option value="11">11</mat-option>
-      <mat-option value="12">12</mat-option>
-      <mat-option value="13">13</mat-option>
-      <mat-option value="14">14</mat-option>
-      <mat-option value="15">15</mat-option>
-      <mat-option value="16">16</mat-option>
-      <mat-option value="17">17</mat-option>
-      <mat-option value="18">18</mat-option>
-      <mat-option value="19">19</mat-option>
-      <mat-option value="20">20</mat-option>
-      <mat-option value="21">21</mat-option>
-      <mat-option value="22">22</mat-option>
-      <mat-option value="23">23</mat-option>
-      <mat-option value="24">24</mat-option>
-    </mat-select>
-    <br />
-    <mat-select
-      placeholder="Seleccione hora fin evento"
-      name="horaInicio"
-      ngModel
-      #horaFin="ngModel"
-      matNativeControl
-    >
-      <mat-option value="01">01</mat-option>
-      <mat-option value="02">02</mat-option>
-      <mat-option value="03">03</mat-option>
-      <mat-option value="04">04</mat-option>
-      <mat-option value="05">05</mat-option>
-      <mat-option value="06">06</mat-option>
-      <mat-option value="07">07</mat-option>
-      <mat-option value="08">08</mat-option>
-      <mat-option value="09">09</mat-option>
-      <mat-option value="10">10</mat-option>
-      <mat-option value="11">11</mat-option>
-      <mat-option value="12">12</mat-option>
-      <mat-option value="13">13</mat-option>
-      <mat-option value="14">14</mat-option>
-      <mat-option value="15">15</mat-option>
-      <mat-option value="16">16</mat-option>
-      <mat-option value="17">17</mat-option>
-      <mat-option value="18">18</mat-option>
-      <mat-option value="19">19</mat-option>
-      <mat-option value="20">20</mat-option>
-      <mat-option value="21">21</mat-option>
-      <mat-option value="22">22</mat-option>
-      <mat-option value="23">23</mat-option>
-      <mat-option value="24">24</mat-option>
-    </mat-select>
-    <br />
+    &nbsp;
+    <div>
+      <mat-form-field class="matFormHora">
+        <div class="hora">
+          <input
+            matInput
+            [ngxTimepicker]="starTime"
+            placeholder="Hora inicio"
+            [disableClick]="true"
+          />
+          <ngx-material-timepicker-toggle matSuffix [for]="starTime">
+          </ngx-material-timepicker-toggle>
+        </div>
+      </mat-form-field>
+      <ngx-material-timepicker #starTime></ngx-material-timepicker>
+      &nbsp;
+      <mat-form-field class="matFormHora">
+        <div class="hora">
+          <input
+            matInput
+            [ngxTimepicker]="endTime"
+            placeholder="Hora fin"
+            [disableClick]="true"
+          />
+          <ngx-material-timepicker-toggle matSuffix [for]="endTime">
+          </ngx-material-timepicker-toggle>
+        </div>
+      </mat-form-field>
+      <ngx-material-timepicker #endTime></ngx-material-timepicker>
+    </div>
+
     <mat-form-field class="chip-list">
       <mat-chip-list #chipList aria-label="Seleccion de chips">
         <mat-chip
@@ -154,8 +117,10 @@
       />
       <img [src]="imgURL" class="image-preview" *ngIf="imgURL" />
     </div>
-    <button class="buttonPrimary" (click)="onGuardarEvento(form)" mat-raised-button>
-      Guardar
-    </button>
+    <div class="div-button">
+      <button class="buttonPrimary" mat-raised-button>
+        Guardar
+      </button>
+    </div>
   </form>
 </mat-card>

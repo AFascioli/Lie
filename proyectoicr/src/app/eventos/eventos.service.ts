@@ -22,7 +22,7 @@ export class EventosService {
       descripcion,
       fechaEvento,
       horaInicio,
-      horaFin
+      horaFin,
       imgUrl
     };
 
