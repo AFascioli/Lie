@@ -66,7 +66,6 @@ export class InscripcionEstudianteComponent implements OnInit {
         this.estudianteEstaInscripto = response.exito;
       });
     this.servicio.obtenerCursosInscripcionEstudiante().subscribe(response => {
-      console.log(response.cursos);
       this.cursos = response.cursos;
       this.cursos.sort((a, b) =>
           a.curso.charAt(0) > b.curso.charAt(0)
@@ -88,7 +87,6 @@ export class InscripcionEstudianteComponent implements OnInit {
 
   //Obtiene la capacidad del curso seleccionado
   onCursoSeleccionado(curso) {
-    console.log(curso.value);
     this.cursoSeleccionado = curso.value;
     this.servicio.obtenerCapacidadCurso(curso.value).subscribe(response => {
       this.capacidadCurso = response.capacidad;
@@ -127,9 +125,11 @@ export class InscripcionEstudianteComponent implements OnInit {
           documentosEntregados: this.documentosEntregados
         };
         this.matConfig.width = "250px";
-        this.dialog.open(InscripcionPopupComponent, this.matConfig);
-        this.dialog.afterAllClosed.subscribe(()=>{
-          this.estudianteEstaInscripto=true;
+        const dialogRef = this.dialog.open(InscripcionPopupComponent, this.matConfig);
+        dialogRef.afterClosed().subscribe((result)=>{
+          if(result.data){
+            this.estudianteEstaInscripto=true;
+          }
         })
       }
     }
@@ -151,6 +151,7 @@ export class InscripcionPopupComponent {
   curso: string;
   exito: boolean = false;
   documentosEntregados: any[];
+  isLoading: Boolean=false;
 
   constructor(
     public dialogRef: MatDialogRef<InscripcionPopupComponent>,
@@ -170,7 +171,7 @@ export class InscripcionPopupComponent {
   }
 
   onYesConfirmarClick(): void {
-    this.dialogRef.close();
+    this.isLoading=true;
     this.servicio
       .inscribirEstudiante(
         this.IdEstudiante,
@@ -184,12 +185,17 @@ export class InscripcionPopupComponent {
             panelClass: ["snack-bar-exito"],
             duration: 4500
           });
+          this.isLoading=false;
+          this.dialogRef.close({event:'close',data:this.exito});
         } else {
           this.snackBar.open(response.message, "", {
             duration: 4500,
             panelClass: ["snack-bar-fracaso"]
           });
+          this.isLoading=false;
+          this.dialogRef.close({event:'close',data:this.exito});
         }
       });
+
   }
 }
