@@ -145,7 +145,6 @@ router.get("/curso", checkAuthMiddleware, (req, res) => {
   Estudiante.findOne({ _id: req.query.idEstudiante, activo: true }).then(
     estudiante => {
       Estado.findById(estudiante.estado).then(estado => {
-        console.log(estado);
         if (estado.nombre == "Inscripto") {
           res.status(200).json({
             message:

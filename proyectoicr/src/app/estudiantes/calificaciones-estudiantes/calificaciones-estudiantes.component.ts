@@ -175,6 +175,7 @@ export class CalificacionesEstudiantesComponent implements OnInit {
           this.estudiantes = this.estudiantes.sort((a, b) =>
             a.apellido > b.apellido ? 1 : b.apellido > a.apellido ? -1 : 0
           );
+          console.log(this.estudiantes);
           this.dataSource = new MatTableDataSource(this.estudiantes);
           this.dataSource.paginator = this.paginator;
           this.dataSource.paginator.firstPage();

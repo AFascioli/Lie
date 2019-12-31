@@ -91,8 +91,11 @@ exports.crearDocsCalif = async function(materiasDelCurso, estado) {
   });
 };
 
-exports.crearCXM = async function(materiasDelCurso, estado){
-  var obtenerCXT = (trimestre) => {
+//Crear todas las CalificacionXMateria necesarias con sus respectivas CalificacionesXTrimestre
+//@param: Array con ids de las materias de un curso
+//@param: Id del estado Cursando de CalificacionXMateria
+exports.crearCXM = async function(materiasDelCurso, estado) {
+  var obtenerCXT = trimestre => {
     return new Promise((resolve, reject) => {
       let calificacionesXTrim = new CalificacionesXTrimestre({
         calificaciones: [0, 0, 0, 0, 0, 0],
@@ -104,15 +107,12 @@ exports.crearCXM = async function(materiasDelCurso, estado){
     });
   };
 
-  var obtenerCXMParaInscripcion = (
-    idMateria,
-    estado
-  ) => {
+  var obtenerCXMParaInscripcion = (idMateria, estado) => {
     return new Promise(async (resolve, reject) => {
-      let idsCXT= [];
+      let idsCXT = [];
       //Se crean las CXT
       for (let i = 0; i < 3; i++) {
-        var idCXT= await obtenerCXT(i+1);
+        var idCXT = await obtenerCXT(i + 1);
         idsCXT.push(idCXT);
       }
       let califXMateriaNueva = new CalificacionesXMateria({
@@ -123,17 +123,22 @@ exports.crearCXM = async function(materiasDelCurso, estado){
 
       //Se guarda la CXM y se devuelve la id
       califXMateriaNueva.save().then(cxmNueva => {
-         resolve(cxmNueva._id);
-      })
+        resolve(cxmNueva._id);
+      });
     });
   };
- var idsCalXMateria = [];
-  materiasDelCurso.forEach(async elemento => {
-    var idCXM= await obtenerCXMParaInscripcion(elemento.materiasDelCurso[0].materia,estado._id);
+
+  var idsCalXMateria = [];
+  for (const materia of materiasDelCurso) {
+    var idCXM = await obtenerCXMParaInscripcion(
+      materia.materiasDelCurso[0].materia,
+      estado._id
+    );
     idsCalXMateria.push(idCXM);
-  });
+  }
   return idsCalXMateria;
-}
+};
+
 //Obtiene las CalificacionesXMateria desaprobadas. Retorna las ids de las CXM desaprobadas
 //@param: array con las ids de las CalificacionesXMateria
 //@param: id del estado Desaprobada
@@ -142,14 +147,14 @@ exports.obtenerMateriasDesaprobadasv2 = async function(
   idEstado
 ) {
   var idsCXMDesaprobadas = [];
-  idsCalificacionesXMateria.forEach(cxm => {
-    CalificacionesXMateria.findOne({ _id: cxm, estado: idEstado }).then(
+  for (const cxm of idsCalificacionesXMateria){
+    await CalificacionesXMateria.findOne({ _id: cxm, estado: idEstado }).then(
       cxmEncontrada => {
         if (cxmEncontrada != null) {
           idsCXMDesaprobadas.push(cxm);
         }
       }
     );
-  });
+  }
   return idsCXMDesaprobadas;
 };
