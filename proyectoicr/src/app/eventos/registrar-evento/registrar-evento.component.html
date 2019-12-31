@@ -33,6 +33,9 @@
     <mat-form-field>
       <input
         matInput
+        name="fechaEvento"
+        ngModel
+        #fechaEvento="ngModel"
         [min]="fechaActual"
         [matDatepicker]="picker"
         placeholder="Seleccione fecha de evento"

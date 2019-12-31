@@ -108,11 +108,11 @@ export class RegistrarEventoComponent implements OnInit {
   }
 
   onGuardarEvento(form: NgForm) {
-    console.log(form.value.titulo);
+    const fechaEvento = form.value.fechaEvento.toString();
     this.eventoService.registrarEvento(
       form.value.titulo,
       form.value.descripcion,
-      form.value.fechaEvento,
+      fechaEvento,
       form.value.horaInicio,
       form.value.horaFin,
       this.chips,

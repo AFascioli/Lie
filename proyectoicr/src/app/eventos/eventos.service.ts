@@ -18,35 +18,29 @@ export class EventosService {
   public registrarEvento(
     titulo: string,
     descripcion: string,
-    fechaEvento: Date,
+    fechaEvento: string,
     horaInicio: string,
     horaFin: string,
     tags: any[],
-    imgUrl: any
+    image: File
   ) {
-    let imgName = imgUrl[0].name
-    console.log("img name");
-    console.log(imgName);
-    const imagen = new FormData();
-    console.log(imgUrl[0]);
-    imagen.append("imagen", imgUrl[0], "esteEsElTitulo");
-    console.log("se llamo al servicio");
+    let imgName = image[0].name
+    const datosEvento = new FormData();
+    datosEvento.append("image", image[0], imgName);
+    datosEvento.append("titulo", titulo);
+    datosEvento.append("descripcion", descripcion);
+    datosEvento.append("fechaEvento", fechaEvento);
+    datosEvento.append("horaInicio", horaInicio);
+    datosEvento.append("horaFin", horaFin);
+    for (var i = 0; i < tags.length; i++) {
+      datosEvento.append("tags", tags[i]);
+    }
     const autor = this.authService.getUsuarioAutenticado();
-    const evento: Evento = {
-      _id: null,
-      titulo,
-      descripcion,
-      fechaEvento,
-      horaInicio,
-      horaFin,
-      tags,
-      autor,
-      imgUrl: imgName
-    };
+    datosEvento.append("autor", autor);
 
     return this.http.post<{ message: string; exito: boolean }>(
       environment.apiUrl + "/evento/registrar",
-      { imagen, evento }
+      datosEvento
     );
   }
 }

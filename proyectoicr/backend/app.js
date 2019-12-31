@@ -1,6 +1,7 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
+const path = require("path");
 const cron = require("node-schedule");
 const estudiantesRoutes = require("./routes/estudiante");
 const provinciasRoutes = require("./routes/provincia");
@@ -16,6 +17,8 @@ const calificacionesRoutes = require("./routes/calificacion");
 const eventoRoutes = require("./routes/evento");
 
 const app = express(); // Creo la app express
+
+app.use("/images", express.static(path.join("backend/images")));
 
 // Mongodb password: SNcjNuPBMG42lOh1
 /* Conectamos a la bd y segun lo que responda ese metodo (la promesa) imprimimos en consola
