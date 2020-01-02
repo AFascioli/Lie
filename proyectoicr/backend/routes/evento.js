@@ -62,7 +62,7 @@ router.post("/registrar", upload, (req, res, next) => {
     });
     evento.save().then(() => {
       res.status(201).json({
-        message: "evento creado existosamente",
+        message: "Evento creado existosamente",
         exito: true
       });
     });

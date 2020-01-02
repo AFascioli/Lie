@@ -39,8 +39,14 @@
         [min]="fechaActual"
         [matDatepicker]="picker"
         placeholder="Seleccione fecha de evento"
+        (click)="mostrarTooltip(tooltip1)"
       />
-      <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+      <mat-datepicker-toggle
+        matTooltip="Presione aqui para seleccionar una fecha"
+        #tooltip1="matTooltip"
+        matSuffix
+        [for]="picker"
+      ></mat-datepicker-toggle>
       <mat-datepicker touchUi #picker></mat-datepicker>
     </mat-form-field>
     &nbsp;
@@ -121,7 +127,11 @@
       <img [src]="imgURL" class="image-preview" *ngIf="imgURL" />
     </div>
     <div class="div-button">
-      <button class="buttonPrimary" (click)="onGuardarEvento(form)" mat-raised-button>
+      <button
+        class="buttonPrimary"
+        (click)="onGuardarEvento(form)"
+        mat-raised-button
+      >
         Guardar
       </button>
     </div>

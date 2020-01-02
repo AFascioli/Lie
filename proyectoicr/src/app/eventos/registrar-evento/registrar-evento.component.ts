@@ -10,7 +10,7 @@ import { Observable } from "rxjs";
 import { map, startWith } from "rxjs/operators";
 import { EventosService } from "../eventos.service";
 import {NgxMaterialTimepickerModule} from 'ngx-material-timepicker';
-import { MatSnackBar } from '@angular/material';
+import { MatSnackBar, MatTooltip } from '@angular/material';
 
 @Component({
   selector: "app-registrar-evento",
@@ -48,6 +48,10 @@ export class RegistrarEventoComponent implements OnInit {
 
   ngOnInit() {
     this.fechaActual = new Date();
+  }
+
+  mostrarTooltip(tooltip: MatTooltip){
+    tooltip.show();
   }
 
   add(event: MatChipInputEvent): void {
