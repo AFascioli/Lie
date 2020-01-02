@@ -1,6 +1,6 @@
 const AsistenciaDiaria = require("../models/asistenciaDiaria");
 
-exports.esFechaActual = async function(fecha) {
+exports.esFechaActual = function(fecha) {
   fechaHoy = new Date();
   if (
     fechaHoy.getDate() == fecha.getDate() &&
