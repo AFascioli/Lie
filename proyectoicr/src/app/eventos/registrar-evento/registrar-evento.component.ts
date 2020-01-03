@@ -32,7 +32,7 @@ export class RegistrarEventoComponent implements OnInit {
   separatorKeysCodes: number[] = [ENTER, COMMA];
   chipsCtrl = new FormControl();
   filteredChips: Observable<string[]>;
-  chips: string[] = ["Todos los cursos"];
+  chips: string[] = [];
   allChips: string[] = ["1A", "2A", "3A", "4A", "5A", "6A", "Todos los cursos"];
 
   constructor(public eventoService: EventosService, public snackBar: MatSnackBar) {
@@ -48,10 +48,6 @@ export class RegistrarEventoComponent implements OnInit {
 
   ngOnInit() {
     this.fechaActual = new Date();
-  }
-
-  mostrarTooltip(tooltip: MatTooltip){
-    tooltip.show();
   }
 
   add(event: MatChipInputEvent): void {
@@ -113,6 +109,7 @@ export class RegistrarEventoComponent implements OnInit {
 
   onGuardarEvento(form: NgForm) {
     const fechaEvento = form.value.fechaEvento.toString();
+    this.validarHoraEvento(form.value.horaInicio, form.value.horaFin);
     this.eventoService.registrarEvento(
       form.value.titulo,
       form.value.descripcion,
@@ -135,5 +132,13 @@ export class RegistrarEventoComponent implements OnInit {
       }
       console.log(rtdo);
     });
+  }
+
+  validarHoraEvento(horaInicio: string, horaFin: string){
+    console.log(horaInicio);
+    console.log(horaFin);
+    if(horaInicio){
+
+    }
   }
 }

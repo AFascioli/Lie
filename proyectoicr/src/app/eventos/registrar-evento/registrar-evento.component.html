@@ -31,6 +31,8 @@
     </mat-form-field>
     <br />
     <mat-form-field>
+      <div class="fecha-evento">
+
       <input
         matInput
         name="fechaEvento"
@@ -39,15 +41,15 @@
         [min]="fechaActual"
         [matDatepicker]="picker"
         placeholder="Seleccione fecha de evento"
-        (click)="mostrarTooltip(tooltip1)"
+        (click)="picker.open()"
+        readonly
       />
       <mat-datepicker-toggle
-        matTooltip="Presione aqui para seleccionar una fecha"
-        #tooltip1="matTooltip"
         matSuffix
         [for]="picker"
       ></mat-datepicker-toggle>
       <mat-datepicker touchUi #picker></mat-datepicker>
+    </div>
     </mat-form-field>
     &nbsp;
     <div>
@@ -55,33 +57,37 @@
         <div class="hora">
           <input
             matInput
+            name="horaInicio"
+            ngModel
+            #horaInicio="ngModel"
             [ngxTimepicker]="starTime"
             placeholder="Hora inicio"
-            [disableClick]="true"
+            [value]="'08:00 AM'"
+            readonly
           />
-          <ngx-material-timepicker-toggle matSuffix [for]="starTime">
-          </ngx-material-timepicker-toggle>
+          <ngx-material-timepicker #starTime></ngx-material-timepicker>
         </div>
       </mat-form-field>
-      <ngx-material-timepicker #starTime></ngx-material-timepicker>
       &nbsp;
       <mat-form-field class="matFormHora">
         <div class="hora">
           <input
             matInput
+            name="horaFin"
+            ngModel
+            #horaFin="ngModel"
             [ngxTimepicker]="endTime"
             placeholder="Hora fin"
-            [disableClick]="true"
+            [value]="'08:00 AM'"
+            readonly
           />
-          <ngx-material-timepicker-toggle matSuffix [for]="endTime">
-          </ngx-material-timepicker-toggle>
+          <ngx-material-timepicker #endTime></ngx-material-timepicker>
         </div>
       </mat-form-field>
-      <ngx-material-timepicker #endTime></ngx-material-timepicker>
     </div>
 
     <mat-form-field class="chip-list">
-      <mat-chip-list #chipList aria-label="Seleccion de chips">
+      <mat-chip-list required #chipList aria-label="Seleccion de chips">
         <mat-chip
           *ngFor="let chip of chips"
           [selectable]="selectable"
@@ -112,7 +118,8 @@
       </mat-autocomplete>
     </mat-form-field>
     <div>
-      <button mat-stroked-button type="button" (click)="file.click()">
+      <img [src]="imgURL" class="image-preview" *ngIf="imgURL" />
+      <button mat-stroked-button class="boton-seleccionar" type="button" (click)="file.click()">
         Seleccionar imagen
       </button>
       <br />
@@ -124,7 +131,6 @@
         accept="image/*"
         (change)="preview(file.files)"
       />
-      <img [src]="imgURL" class="image-preview" *ngIf="imgURL" />
     </div>
     <div class="div-button">
       <button

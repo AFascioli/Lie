@@ -1,5 +1,13 @@
+.boton-seleccionar{
+  border-color: black;
+}
+
 .chip-list {
   width: 100%;
+}
+
+form{
+  text-align: center;
 }
 
 input[type="file"] {
@@ -15,22 +23,30 @@ textarea {
   height: 20rem;
   margin: auto;
   display: flex;
+  border: 3px solid black;
+  padding: 5px;
+  margin-bottom: 20px !important;
+}
+
+mat-datepicker-toggle{
+  display: none;
 }
 
 .mensaje{
   color: red;
 }
-.mat-expansion-panel{
+
+/* .mat-expansion-panel{
   width: 80%;
   margin: auto;
 }
 
 .mat-expansion-panel-mobile{
   width: 100%;
-}
+} */
 
 .mat-form-field{
-   width: 47%;
+   width: 60%;
 }
 
 .mat-form-field-mobile{
