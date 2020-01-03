@@ -31,8 +31,6 @@
     </mat-form-field>
     <br />
     <mat-form-field>
-      <div class="fecha-evento">
-
       <input
         matInput
         name="fechaEvento"
@@ -44,14 +42,9 @@
         (click)="picker.open()"
         readonly
       />
-      <mat-datepicker-toggle
-        matSuffix
-        [for]="picker"
-      ></mat-datepicker-toggle>
+      <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
       <mat-datepicker touchUi #picker></mat-datepicker>
-    </div>
     </mat-form-field>
-    &nbsp;
     <div>
       <mat-form-field class="matFormHora">
         <div class="hora">
@@ -119,7 +112,12 @@
     </mat-form-field>
     <div>
       <img [src]="imgURL" class="image-preview" *ngIf="imgURL" />
-      <button mat-stroked-button class="boton-seleccionar" type="button" (click)="file.click()">
+      <button
+        mat-stroked-button
+        class="boton-seleccionar"
+        type="button"
+        (click)="file.click()"
+      >
         Seleccionar imagen
       </button>
       <br />
