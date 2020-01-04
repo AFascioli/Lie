@@ -3,9 +3,9 @@ import { CalificacionesExamenesComponent } from "./calificaciones/calificaciones
 import { PreferenciasComponent } from "./menu-lateral/preferencias/preferencias.component";
 import { AltaARComponent } from "./adulto-responsable/alta-ar/alta-ar.component";
 import { AltaEmpleadoComponent } from "./empleado/alta-empleado/alta-empleado.component";
-import { AgendaCursoPerfilEstudianteComponent } from "./estudiantes/perfil-estudiante/agenda-curso-perfil-estudiante/agenda-curso-perfil-estudiante.component";
-import { CalificacionesPerfilEstudianteComponent } from "./estudiantes/perfil-estudiante/calificaciones-perfil-estudiante/calificaciones-perfil-estudiante.component";
-import { PerfilEstudianteComponent } from "./estudiantes/perfil-estudiante/perfil-estudiante.component";
+import { AgendaCursoPerfilEstudianteComponent } from "./perfil-estudiante/agenda-curso-perfil-estudiante/agenda-curso-perfil-estudiante.component";
+import { CalificacionesPerfilEstudianteComponent } from "./perfil-estudiante/calificaciones-perfil-estudiante/calificaciones-perfil-estudiante.component";
+import { PerfilEstudianteComponent } from "./perfil-estudiante/perfil-estudiante.component";
 import { HomeComponent } from "./home/home.component";
 import { NgModule } from "@angular/core";
 import { RouterModule, Routes } from "@angular/router";
@@ -26,9 +26,9 @@ import { CambiarPassword } from "./login/cambiar-password.component";
 import { RouteGuard } from "./route.guard";
 import { JustificacionInasistenciaComponent } from "./asistencia/justificacion-inasistencia/justificacion-inasistencia.component";
 import { RoleGuard } from "./role.guard";
-import { InasistenciasEstudianteComponent } from "./estudiantes/perfil-estudiante/inasistencias-estudiante/inasistencias-estudiante.component";
-import { DatosEstudianteComponent } from "./estudiantes/perfil-estudiante/datos-estudiante/datos-estudiante.component";
-import { TutoresEstudianteComponent } from "./estudiantes/perfil-estudiante/tutores-estudiante/tutores-estudiante.component";
+import { InasistenciasEstudianteComponent } from "./perfil-estudiante/inasistencias-estudiante/inasistencias-estudiante.component";
+import { DatosEstudianteComponent } from "./perfil-estudiante/datos-estudiante/datos-estudiante.component";
+import { TutoresEstudianteComponent } from "./perfil-estudiante/tutores-estudiante/tutores-estudiante.component";
 
 const routes: Routes = [
   { path: "login", component: LoginComponent },

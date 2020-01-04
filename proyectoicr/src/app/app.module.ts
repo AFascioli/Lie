@@ -81,9 +81,9 @@ import {
 import {
   PerfilEstudianteComponent,
   PerfilEstudiantePopupComponent
-} from "./estudiantes/perfil-estudiante/perfil-estudiante.component";
-import { CalificacionesPerfilEstudianteComponent } from "./estudiantes/perfil-estudiante/calificaciones-perfil-estudiante/calificaciones-perfil-estudiante.component";
-import { AgendaCursoPerfilEstudianteComponent } from "./estudiantes/perfil-estudiante/agenda-curso-perfil-estudiante/agenda-curso-perfil-estudiante.component";
+} from "./perfil-estudiante/perfil-estudiante.component";
+import { CalificacionesPerfilEstudianteComponent } from "./perfil-estudiante/calificaciones-perfil-estudiante/calificaciones-perfil-estudiante.component";
+import { AgendaCursoPerfilEstudianteComponent } from "./perfil-estudiante/agenda-curso-perfil-estudiante/agenda-curso-perfil-estudiante.component";
 import { LOCALE_ID } from "@angular/core";
 import { registerLocaleData } from "@angular/common";
 import { ChartsModule } from "ng2-charts";
@@ -104,9 +104,9 @@ import {
 } from "./menu-lateral/preferencias/preferencias.component";
 import { ServiceWorkerModule } from "@angular/service-worker";
 import { environment } from "../environments/environment";
-import { InasistenciasEstudianteComponent } from "./estudiantes/perfil-estudiante/inasistencias-estudiante/inasistencias-estudiante.component";
-import { TutoresEstudianteComponent } from "./estudiantes/perfil-estudiante/tutores-estudiante/tutores-estudiante.component";
-import { DatosEstudianteComponent } from "./estudiantes/perfil-estudiante/datos-estudiante/datos-estudiante.component";
+import { InasistenciasEstudianteComponent } from "./perfil-estudiante/inasistencias-estudiante/inasistencias-estudiante.component";
+import { TutoresEstudianteComponent } from "./perfil-estudiante/tutores-estudiante/tutores-estudiante.component";
+import { DatosEstudianteComponent } from "./perfil-estudiante/datos-estudiante/datos-estudiante.component";
 import { CalificacionesExamenesComponent } from "./calificaciones/calificaciones-examenes/calificaciones-examenes.component";
 import { RegistrarEventoComponent } from "./eventos/registrar-evento/registrar-evento.component";
 

@@ -1,4 +1,4 @@
-import { EstudiantesService } from './../../estudiante.service';
+import { EstudiantesService } from '../../estudiantes/estudiante.service';
 import { Component, OnInit } from '@angular/core';
 import { AdultoResponsable } from 'src/app/adulto-responsable/adultoResponsable.model';
 
