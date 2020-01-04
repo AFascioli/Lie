@@ -80,7 +80,7 @@ export class DocumentosInscripcionComponent implements OnInit {
   //Cuando el usuario selecciona una division, se obtienen los datos del estudiantes necesarios
   onCursoSeleccionado(curso) {
     this.cursoSeleccionado = true;
-    this.servicioEstudiante
+    this.servicioInscripcion
       .obtenerDocumentosDeEstudiantesXCurso(curso.value)
       .subscribe(estudiantes => {
         this.estudiantesConDocumentos = estudiantes.documentos;

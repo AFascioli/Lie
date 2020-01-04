@@ -1,25 +1,19 @@
 import { Injectable } from "@angular/core";
 import { Estudiante } from "./estudiante.model";
 import { HttpClient, HttpParams } from "@angular/common/http";
-import { Provincia } from "./provincias.model";
+import { Provincia } from "../ubicacion/provincias.model";
 import { Subject } from "rxjs";
-import { Localidad } from "./localidades.model";
-import { Nacionalidad } from "./nacionalidades.model";
+import { Localidad } from "../ubicacion/localidades.model";
+import { Nacionalidad } from "../ubicacion/nacionalidades.model";
 import { environment } from "src/environments/environment";
 
 @Injectable({
   providedIn: "root"
 })
 export class EstudiantesService {
-  provincias: Provincia[] = [];
-  localidades: Localidad[] = [];
   estudiantes: Estudiante[] = [];
-  nacionalidades: Nacionalidad[] = [];
   divisionesXAño: any[];
   estudiantesXDivision: any[];
-  private provinciasActualizadas = new Subject<Provincia[]>();
-  private localidadesActualizadas = new Subject<Localidad[]>();
-  private nacionalidadesActualizadas = new Subject<Nacionalidad[]>();
   private estudiantesXDivisionActualizados = new Subject<any[]>();
   estudiantesBuscados = new Subject<Estudiante[]>();
   private divisionXCursoActualizada = new Subject<any[]>();
@@ -150,50 +144,6 @@ export class EstudiantesService {
     return this.estudiantesXDivisionActualizados.asObservable();
   }
 
-  public getLocalidadesListener() {
-    return this.localidadesActualizadas.asObservable();
-  }
-
-  //Obtiene todas las localidades almacenadas en la base de datos
-  public getLocalidades() {
-    this.http
-      .get<{ localidades: Localidad[] }>(environment.apiUrl + "/localidad")
-      .subscribe(response => {
-        this.localidades = response.localidades;
-        this.localidadesActualizadas.next([...this.localidades]);
-      });
-  }
-
-  public getNacionalidadesListener() {
-    return this.nacionalidadesActualizadas.asObservable();
-  }
-
-  //Obtiene todas las nacionalidades almacenadas en la base de datos
-  public getNacionalidades() {
-    this.http
-      .get<{ nacionalidades: Nacionalidad[] }>(
-        environment.apiUrl + "/nacionalidad"
-      )
-      .subscribe(response => {
-        this.nacionalidades = response.nacionalidades;
-        this.nacionalidadesActualizadas.next([...this.nacionalidades]);
-      });
-  }
-
-  //Obtiene todas las provincias almacenadas en la base de datos
-  public getProvincias() {
-    this.http
-      .get<{ provincias: Provincia[] }>(environment.apiUrl + "/provincia")
-      .subscribe(response => {
-        this.provincias = response.provincias;
-        this.provinciasActualizadas.next([...this.provincias]);
-      });
-  }
-
-  public getProvinciasListener() {
-    return this.provinciasActualizadas.asObservable();
-  }
-
   //Obtiene todos los tutores (tutores y adultos responsables) de un estudiante pasado por parámetro
   //@params: id del estudiante
   public getTutoresDeEstudiante() {
@@ -308,20 +258,6 @@ export class EstudiantesService {
       exito: boolean;
       curso: string;
     }>(environment.apiUrl + "/curso/estudiante", {
-      params: params
-    });
-  }
-
-  //Obtiene el estado de los documentos de los estudiantes de un curso determinado
-  //el estado es true en el caso de que el documento haya sido entregado
-  //@params: id del curso
-  public obtenerDocumentosDeEstudiantesXCurso(curso: string) {
-    let params = new HttpParams().set("curso", curso);
-    return this.http.get<{
-      documentos: any[];
-      message: string;
-      exito: boolean;
-    }>(environment.apiUrl + "/curso/documentos", {
       params: params
     });
   }

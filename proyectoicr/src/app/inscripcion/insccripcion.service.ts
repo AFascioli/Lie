@@ -54,7 +54,19 @@ export class InscripcionService {
       { params: params }
     );
   }
-
+  //Obtiene el estado de los documentos de los estudiantes de un curso determinado
+  //el estado es true en el caso de que el documento haya sido entregado
+  //@params: id del curso
+  public obtenerDocumentosDeEstudiantesXCurso(curso: string) {
+    let params = new HttpParams().set("curso", curso);
+    return this.http.get<{
+      documentos: any[];
+      message: string;
+      exito: boolean;
+    }>(environment.apiUrl + "/curso/documentos", {
+      params: params
+    });
+  }
   //Registra si los documentos fueron entregados o no por los estudiantes de un curso
   //@params: array que contiene los datos del estudiante (apellido, nombre e id), los documentos
   //entregados (entregado: true, en el caso de que se haya entregado)
