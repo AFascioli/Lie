@@ -59,7 +59,7 @@ import { MatExpansionModule } from "@angular/material/expansion";
 import {
   InscripcionEstudianteComponent,
   InscripcionPopupComponent
-} from "./estudiantes/inscripcion-estudiantes/inscripcion-estudiantes.component";
+} from "./inscripcion/inscripcion-estudiantes/inscripcion-estudiantes.component";
 import {
   RetiroAnticipadoComponent,
   RetiroPopupComponent
@@ -67,7 +67,7 @@ import {
 import {
   DocumentosInscripcionComponent,
   DocumentosInscripcionPopupComponent
-} from "./estudiantes/documentos-inscripcion/documentos-inscripcion.component";
+} from "./inscripcion/documentos-inscripcion/documentos-inscripcion.component";
 import { MatGridListModule } from "@angular/material/grid-list";
 import {
   CalificacionesEstudiantesComponent,

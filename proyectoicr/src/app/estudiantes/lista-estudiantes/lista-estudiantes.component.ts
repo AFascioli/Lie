@@ -1,6 +1,6 @@
 import { AsistenciaService } from 'src/app/asistencia/asistencia.service';
 import { CalificacionesService } from '../../calificaciones/calificaciones.service';
-import { InscripcionService } from './../insccripcion.service';
+import { InscripcionService } from '../../inscripcion/insccripcion.service';
 import { AutenticacionService } from "./../../login/autenticacionService.service";
 import { Component, OnInit } from "@angular/core";
 import { EstudiantesService } from "../estudiante.service";

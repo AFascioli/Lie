@@ -1,5 +1,5 @@
-import { InscripcionService } from "./../insccripcion.service";
-import { EstudiantesService } from "../estudiante.service";
+import { InscripcionService } from "../insccripcion.service";
+import { EstudiantesService } from "../../estudiantes/estudiante.service";
 import { OnInit, Component, Inject, ChangeDetectorRef } from "@angular/core";
 import { Router } from "@angular/router";
 import {

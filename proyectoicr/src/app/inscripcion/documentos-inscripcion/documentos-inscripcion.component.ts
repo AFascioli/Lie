@@ -1,4 +1,4 @@
-import { InscripcionService } from "./../insccripcion.service";
+import { InscripcionService } from "../insccripcion.service";
 import { AutenticacionService } from "src/app/login/autenticacionService.service";
 import { EstudiantesService } from "src/app/estudiantes/estudiante.service";
 import { Component, OnInit } from "@angular/core";

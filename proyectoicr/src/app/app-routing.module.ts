@@ -16,9 +16,9 @@ import { MostrarEstudiantesComponent } from "./estudiantes/mostrar-estudiantes/m
 import { MenuLateralComponent } from "./menu-lateral/menu-lateral.component";
 import { LoginComponent } from "./login/login.component";
 import { RegistrarAsistenciaComponent } from "./asistencia/registrar-asistencia/registrar-asistencia.component";
-import { InscripcionEstudianteComponent } from "./estudiantes/inscripcion-estudiantes/inscripcion-estudiantes.component";
+import { InscripcionEstudianteComponent } from "./inscripcion/inscripcion-estudiantes/inscripcion-estudiantes.component";
 import { RetiroAnticipadoComponent } from "./asistencia/retiro-anticipado/retiro-anticipado.component";
-import { DocumentosInscripcionComponent } from "./estudiantes/documentos-inscripcion/documentos-inscripcion.component";
+import { DocumentosInscripcionComponent } from "./inscripcion/documentos-inscripcion/documentos-inscripcion.component";
 import { CalificacionesEstudiantesComponent } from "./calificaciones/calificaciones-estudiantes/calificaciones-estudiantes.component";
 import { LlegadaTardeComponent } from "./asistencia/llegada-tarde/llegada-tarde.component";
 import { AuthGuard } from "./login/auth.guard";
