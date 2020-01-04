@@ -1,4 +1,5 @@
-import { AutenticacionService } from 'src/app/login/autenticacionService.service';
+import { InscripcionService } from "./../insccripcion.service";
+import { AutenticacionService } from "src/app/login/autenticacionService.service";
 import { EstudiantesService } from "src/app/estudiantes/estudiante.service";
 import { Component, OnInit } from "@angular/core";
 import {
@@ -31,7 +32,8 @@ export class DocumentosInscripcionComponent implements OnInit {
   fechaActual: Date;
 
   constructor(
-    public servicio: EstudiantesService,
+    public servicioEstudiante: EstudiantesService,
+    public servicioInscripcion: InscripcionService,
     public autenticacionService: AutenticacionService,
     public popup: MatDialog,
     private snackBar: MatSnackBar
@@ -42,22 +44,23 @@ export class DocumentosInscripcionComponent implements OnInit {
   //division
   ngOnInit() {
     this.fechaActual = new Date();
-      if (this.fechaActualEnCicloLectivo() || this.autenticacionService.getRol()=="Admin") {
-        this.servicio.obtenerCursos().subscribe(response => {
-          this.cursos = response.cursos;
-          this.cursos.sort((a, b) =>
-            a.curso.charAt(0) > b.curso.charAt(0)
-              ? 1
-              : b.curso.charAt(0) > a.curso.charAt(0)
-              ? -1
-              : 0
-          );
-        });
-      } else {
-        this.fueraPeriodoCicloLectivo = true;
-
-      }
-
+    if (
+      this.fechaActualEnCicloLectivo() ||
+      this.autenticacionService.getRol() == "Admin"
+    ) {
+      this.servicioEstudiante.obtenerCursos().subscribe(response => {
+        this.cursos = response.cursos;
+        this.cursos.sort((a, b) =>
+          a.curso.charAt(0) > b.curso.charAt(0)
+            ? 1
+            : b.curso.charAt(0) > a.curso.charAt(0)
+            ? -1
+            : 0
+        );
+      });
+    } else {
+      this.fueraPeriodoCicloLectivo = true;
+    }
   }
 
   fechaActualEnCicloLectivo() {
@@ -77,7 +80,7 @@ export class DocumentosInscripcionComponent implements OnInit {
   //Cuando el usuario selecciona una division, se obtienen los datos del estudiantes necesarios
   onCursoSeleccionado(curso) {
     this.cursoSeleccionado = true;
-    this.servicio
+    this.servicioEstudiante
       .obtenerDocumentosDeEstudiantesXCurso(curso.value)
       .subscribe(estudiantes => {
         this.estudiantesConDocumentos = estudiantes.documentos;
@@ -102,7 +105,7 @@ export class DocumentosInscripcionComponent implements OnInit {
 
   //Guardar los estudiantes con los cambios, resetea los selects y abre snackBar
   onGuardar() {
-    this.servicio
+    this.servicioInscripcion
       .registrarDocumentosInscripcion(this.estudiantesConDocumentos)
       .subscribe(response => {
         if (response.exito) {
@@ -139,7 +142,7 @@ export class DocumentosInscripcionPopupComponent {
   constructor(
     public dialogRef: MatDialogRef<DocumentosInscripcionPopupComponent>,
     public router: Router,
-    public servicio: EstudiantesService
+    public servicioEstudiante: EstudiantesService
   ) {}
 
   onYesCancelarClick(): void {
