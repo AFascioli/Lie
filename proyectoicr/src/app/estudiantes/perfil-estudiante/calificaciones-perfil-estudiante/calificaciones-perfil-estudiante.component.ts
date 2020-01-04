@@ -1,5 +1,5 @@
-import { CalificacionesService } from "./../../calificaciones.service";
-import { Estudiante } from "src/app/estudiantes/estudiante.model";
+import { CalificacionesService } from "../../../calificaciones/calificaciones.service";
+//import { Estudiante } from "src/app/estudiantes/estudiante.model";
 import { EstudiantesService } from "src/app/estudiantes/estudiante.service";
 import { Component, OnInit } from "@angular/core";
 import { Router } from "@angular/router";

@@ -1,4 +1,4 @@
-import { AutenticacionService } from "./../../login/autenticacionService.service";
+import { AutenticacionService } from "../../login/autenticacionService.service";
 import { EstudiantesService } from "src/app/estudiantes/estudiante.service";
 import { Component, OnInit, ViewChild } from "@angular/core";
 import { MatDialogRef, MatDialog, MatSnackBar } from "@angular/material";

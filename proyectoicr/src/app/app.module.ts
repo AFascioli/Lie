@@ -21,8 +21,8 @@ import {
   MatChipsModule,
   MatInputModule
 } from "@angular/material";
-import {MatTooltipModule} from '@angular/material/tooltip';
-import {NgxMaterialTimepickerModule} from 'ngx-material-timepicker';
+import { MatTooltipModule } from "@angular/material/tooltip";
+import { NgxMaterialTimepickerModule } from "ngx-material-timepicker";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { MatPaginatorModule } from "@angular/material/paginator";
 import { MatDatepickerModule } from "@angular/material/datepicker";
@@ -72,7 +72,7 @@ import { MatGridListModule } from "@angular/material/grid-list";
 import {
   CalificacionesEstudiantesComponent,
   CalificacionesEstudiantePopupComponent
-} from "./estudiantes/calificaciones-estudiantes/calificaciones-estudiantes.component";
+} from "./calificaciones/calificaciones-estudiantes/calificaciones-estudiantes.component";
 import { LlegadaTardeComponent } from "./asistencia/llegada-tarde/llegada-tarde.component";
 import {
   CambiarPassword,
@@ -107,7 +107,7 @@ import { environment } from "../environments/environment";
 import { InasistenciasEstudianteComponent } from "./estudiantes/perfil-estudiante/inasistencias-estudiante/inasistencias-estudiante.component";
 import { TutoresEstudianteComponent } from "./estudiantes/perfil-estudiante/tutores-estudiante/tutores-estudiante.component";
 import { DatosEstudianteComponent } from "./estudiantes/perfil-estudiante/datos-estudiante/datos-estudiante.component";
-import { CalificacionesExamenesComponent } from "./estudiantes/calificaciones-examenes/calificaciones-examenes.component";
+import { CalificacionesExamenesComponent } from "./calificaciones/calificaciones-examenes/calificaciones-examenes.component";
 import { RegistrarEventoComponent } from "./eventos/registrar-evento/registrar-evento.component";
 
 @NgModule({
