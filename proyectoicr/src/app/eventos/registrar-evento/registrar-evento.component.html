@@ -25,7 +25,6 @@
         rows="3"
         placeholder="Ingrese descripción"
         type="text"
-        required
       >
       </textarea>
     </mat-form-field>
@@ -40,6 +39,7 @@
         [matDatepicker]="picker"
         placeholder="Seleccione fecha de evento"
         (click)="picker.open()"
+        required
         readonly
       />
       <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
@@ -80,7 +80,7 @@
     </div>
 
     <mat-form-field class="chip-list">
-      <mat-chip-list required #chipList aria-label="Seleccion de chips">
+      <mat-chip-list #chipList aria-label="Seleccion de chips">
         <mat-chip
           *ngFor="let chip of chips"
           [selectable]="selectable"
@@ -99,9 +99,11 @@
           [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
           [matChipInputAddOnBlur]="addOnBlur"
           (matChipInputTokenEnd)="add($event)"
+          required
         />
       </mat-chip-list>
       <mat-autocomplete
+      required
         #auto="matAutocomplete"
         (optionSelected)="selected($event)"
       >

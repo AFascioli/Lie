@@ -9,8 +9,8 @@ import { MatChipInputEvent } from "@angular/material/chips";
 import { Observable } from "rxjs";
 import { map, startWith } from "rxjs/operators";
 import { EventosService } from "../eventos.service";
-import {NgxMaterialTimepickerModule} from 'ngx-material-timepicker';
-import { MatSnackBar, MatTooltip } from '@angular/material';
+import { NgxMaterialTimepickerModule } from "ngx-material-timepicker";
+import { MatSnackBar, MatTooltip } from "@angular/material";
 
 @Component({
   selector: "app-registrar-evento",
@@ -35,7 +35,10 @@ export class RegistrarEventoComponent implements OnInit {
   chips: string[] = [];
   allChips: string[] = ["1A", "2A", "3A", "4A", "5A", "6A", "Todos los cursos"];
 
-  constructor(public eventoService: EventosService, public snackBar: MatSnackBar) {
+  constructor(
+    public eventoService: EventosService,
+    public snackBar: MatSnackBar
+  ) {
     //Hace que funcione el autocomplete, filtra
 
     this.filteredChips = this.chipsCtrl.valueChanges.pipe(
@@ -48,6 +51,7 @@ export class RegistrarEventoComponent implements OnInit {
 
   ngOnInit() {
     this.fechaActual = new Date();
+
   }
 
   add(event: MatChipInputEvent): void {
@@ -104,41 +108,81 @@ export class RegistrarEventoComponent implements OnInit {
     reader.onload = _event => {
       this.imgURL = reader.result;
     };
-
   }
 
   onGuardarEvento(form: NgForm) {
-    const fechaEvento = form.value.fechaEvento.toString();
-    this.validarHoraEvento(form.value.horaInicio, form.value.horaFin);
-    this.eventoService.registrarEvento(
-      form.value.titulo,
-      form.value.descripcion,
-      fechaEvento,
-      form.value.horaInicio,
-      form.value.horaFin,
-      this.chips,
-      this.imagePath
-    ).subscribe(rtdo=> {
-      if (rtdo.exito) {
-        this.snackBar.open(rtdo.message, "", {
-          panelClass: ["snack-bar-exito"],
-          duration: 4500
-        });
-      } else {
-        this.snackBar.open(rtdo.message, "", {
+    if(form.valid && this.chips.length!=0){
+      const fechaEvento = form.value.fechaEvento.toString();
+      if(form.value.horaInicio=="" && form.value.horaFin==""){
+        // this.eventoService
+        // .registrarEvento(
+        //   form.value.titulo,
+        //   form.value.descripcion,
+        //   fechaEvento,
+        //   form.value.horaInicio,
+        //   form.value.horaFin,
+        //   this.chips,
+        //   this.imagePath
+        // )
+        // .subscribe(rtdo => {
+        //   if (rtdo.exito) {
+        //     this.snackBar.open(rtdo.message, "", {
+        //       panelClass: ["snack-bar-exito"],
+        //       duration: 4500
+        //     });
+        //   } else {
+        //     this.snackBar.open(rtdo.message, "", {
+        //       duration: 4500,
+        //       panelClass: ["snack-bar-fracaso"]
+        //     });
+        //   }
+        // });
+        console.log('If primero');
+      }else if(this.horaEventoEsValido(form.value.horaInicio, form.value.horaFin)){
+        // this.eventoService
+        //   .registrarEvento(
+        //     form.value.titulo,
+        //     form.value.descripcion,
+        //     fechaEvento,
+        //     form.value.horaInicio,
+        //     form.value.horaFin,
+        //     this.chips,
+        //     this.imagePath
+        //   )
+        //   .subscribe(rtdo => {
+        //     if (rtdo.exito) {
+        //       this.snackBar.open(rtdo.message, "", {
+        //         panelClass: ["snack-bar-exito"],
+        //         duration: 4500
+        //       });
+        //     } else {
+        //       this.snackBar.open(rtdo.message, "", {
+        //         duration: 4500,
+        //         panelClass: ["snack-bar-fracaso"]
+        //       });
+        //     }
+        //   });
+        console.log('Exito');
+      }else{
+        this.snackBar.open("La hora de finalización del evento es menor que la hora de inicio", "", {
           duration: 4500,
           panelClass: ["snack-bar-fracaso"]
         });
       }
-      console.log(rtdo);
-    });
+    }else{
+      this.snackBar.open("Faltan campos por completar", "", {
+        duration: 4500,
+        panelClass: ["snack-bar-fracaso"]
+      });
+    }
   }
 
-  validarHoraEvento(horaInicio: string, horaFin: string){
-    console.log(horaInicio);
-    console.log(horaFin);
-    if(horaInicio){
-
-    }
+  //Valida que la hora inicio sea menor que la hora fin.
+  horaEventoEsValido(horaInicio: string, horaFin: string) {
+    var variableDateInicio = new Date("01/01/2020 " + horaInicio);
+    var variableDateFin = new Date("01/01/2020 " + horaFin);
+    console.log(variableDateInicio);
+    console.log(variableDateFin);
+    return variableDateInicio < variableDateFin;
   }
 }
