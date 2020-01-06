@@ -22,7 +22,6 @@ import {
   MatInputModule
 } from "@angular/material";
 import { MatTooltipModule } from "@angular/material/tooltip";
-import { NgxMaterialTimepickerModule } from "ngx-material-timepicker";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { MatPaginatorModule } from "@angular/material/paginator";
 import { MatDatepickerModule } from "@angular/material/datepicker";
@@ -203,7 +202,6 @@ import { RegistrarEventoComponent } from "./eventos/registrar-evento/registrar-e
     MatGridListModule,
     ChartsModule,
     MatPaginatorModule,
-    NgxMaterialTimepickerModule,
     MatTooltipModule,
     ServiceWorkerModule.register("ngsw-worker.js", {
       enabled: environment.production,
