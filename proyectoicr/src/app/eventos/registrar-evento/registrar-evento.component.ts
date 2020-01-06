@@ -9,9 +9,8 @@ import { MatChipInputEvent } from "@angular/material/chips";
 import { Observable } from "rxjs";
 import { map, startWith } from "rxjs/operators";
 import { EventosService } from "../eventos.service";
-import { NgxMaterialTimepickerModule } from "ngx-material-timepicker";
-import { MatSnackBar, MatTooltip } from "@angular/material";
-import Rolldate from "../../../assets/rolldate-master";
+import { MatSnackBar } from "@angular/material";
+import Rolldate from "../../../assets/rolldate.min.js";
 
 @Component({
   selector: "app-registrar-evento",
@@ -54,24 +53,7 @@ export class RegistrarEventoComponent implements OnInit {
 
   ngOnInit() {
     this.fechaActual = new Date();
-    new Rolldate({
-      el: "#pickerInicio",
-      format: "hh:mm",
-      minStep: 15,
-      lang: { title: "Seleccione hora de inicio del evento", hour: "", min: "" },
-      confirm: (date)=> {
-        this.horaInicio=date;
-      }
-    });
-    new Rolldate({
-      el: "#pickerFin",
-      format: "hh:mm",
-      minStep: 15,
-      lang: { title: "Seleccione hora de fin del evento", hour: "", min: "" },
-      confirm: (date)=> {
-        this.horaFin=date;
-      }
-    });
+    this.inicializarPickers();
   }
 
   add(event: MatChipInputEvent): void {
@@ -91,6 +73,26 @@ export class RegistrarEventoComponent implements OnInit {
     }
   }
 
+  inicializarPickers(){
+    new Rolldate({
+      el: "#pickerInicio",
+      format: "hh:mm",
+      minStep: 15,
+      lang: { title: "Seleccione hora de inicio del evento", hour: "", min: "" },
+      confirm: (date)=> {
+        this.horaInicio=date;
+      }
+    });
+    new Rolldate({
+      el: "#pickerFin",
+      format: "hh:mm",
+      minStep: 15,
+      lang: { title: "Seleccione hora de fin del evento", hour: "", min: "" },
+      confirm: (date)=> {
+        this.horaFin=date;
+      }
+    });
+  }
   remove(fruit: string): void {
     const index = this.chips.indexOf(fruit);
 
@@ -134,57 +136,55 @@ export class RegistrarEventoComponent implements OnInit {
     if (form.valid && this.chips.length != 0) {
       const fechaEvento = form.value.fechaEvento.toString();
       if (this.horaInicio == "" && this.horaFin == "") {
-        // this.eventoService
-        // .registrarEvento(
-        //   form.value.titulo,
-        //   form.value.descripcion,
-        //   fechaEvento,
-        //   form.value.horaInicio,
-        //   form.value.horaFin,
-        //   this.chips,
-        //   this.imagePath
-        // )
-        // .subscribe(rtdo => {
-        //   if (rtdo.exito) {
-        //     this.snackBar.open(rtdo.message, "", {
-        //       panelClass: ["snack-bar-exito"],
-        //       duration: 4500
-        //     });
-        //   } else {
-        //     this.snackBar.open(rtdo.message, "", {
-        //       duration: 4500,
-        //       panelClass: ["snack-bar-fracaso"]
-        //     });
-        //   }
-        // });
-        console.log("If primero");
+        this.eventoService
+        .registrarEvento(
+          form.value.titulo,
+          form.value.descripcion,
+          fechaEvento,
+          this.horaInicio,
+          this.horaFin,
+          this.chips,
+          this.imagePath
+        )
+        .subscribe(rtdo => {
+          if (rtdo.exito) {
+            this.snackBar.open(rtdo.message, "", {
+              panelClass: ["snack-bar-exito"],
+              duration: 4500
+            });
+          } else {
+            this.snackBar.open(rtdo.message, "", {
+              duration: 4500,
+              panelClass: ["snack-bar-fracaso"]
+            });
+          }
+        });
       } else if (
         this.horaEventoEsValido(this.horaInicio, this.horaFin)
       ) {
-        // this.eventoService
-        //   .registrarEvento(
-        //     form.value.titulo,
-        //     form.value.descripcion,
-        //     fechaEvento,
-        //     form.value.horaInicio,
-        //     form.value.horaFin,
-        //     this.chips,
-        //     this.imagePath
-        //   )
-        //   .subscribe(rtdo => {
-        //     if (rtdo.exito) {
-        //       this.snackBar.open(rtdo.message, "", {
-        //         panelClass: ["snack-bar-exito"],
-        //         duration: 4500
-        //       });
-        //     } else {
-        //       this.snackBar.open(rtdo.message, "", {
-        //         duration: 4500,
-        //         panelClass: ["snack-bar-fracaso"]
-        //       });
-        //     }
-        //   });
-        console.log("Exito");
+        this.eventoService
+          .registrarEvento(
+            form.value.titulo,
+            form.value.descripcion,
+            fechaEvento,
+            this.horaInicio,
+            this.horaFin,
+            this.chips,
+            this.imagePath
+          )
+          .subscribe(rtdo => {
+            if (rtdo.exito) {
+              this.snackBar.open(rtdo.message, "", {
+                panelClass: ["snack-bar-exito"],
+                duration: 4500
+              });
+            } else {
+              this.snackBar.open(rtdo.message, "", {
+                duration: 4500,
+                panelClass: ["snack-bar-fracaso"]
+              });
+            }
+          });
       } else {
         this.snackBar.open(
           "La hora de finalización del evento es menor que la hora de inicio",
@@ -207,8 +207,6 @@ export class RegistrarEventoComponent implements OnInit {
   horaEventoEsValido(horaInicio: string, horaFin: string) {
     var variableDateInicio = new Date("01/01/2020 " + horaInicio);
     var variableDateFin = new Date("01/01/2020 " + horaFin);
-    console.log(variableDateInicio);
-    console.log(variableDateFin);
     return variableDateInicio < variableDateFin;
   }
 }
