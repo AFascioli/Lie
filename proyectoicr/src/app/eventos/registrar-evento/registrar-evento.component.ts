@@ -11,6 +11,7 @@ import { map, startWith } from "rxjs/operators";
 import { EventosService } from "../eventos.service";
 import { NgxMaterialTimepickerModule } from "ngx-material-timepicker";
 import { MatSnackBar, MatTooltip } from "@angular/material";
+import Rolldate from "../../../assets/rolldate-master";
 
 @Component({
   selector: "app-registrar-evento",
@@ -34,6 +35,8 @@ export class RegistrarEventoComponent implements OnInit {
   filteredChips: Observable<string[]>;
   chips: string[] = [];
   allChips: string[] = ["1A", "2A", "3A", "4A", "5A", "6A", "Todos los cursos"];
+  horaInicio="";
+  horaFin="";
 
   constructor(
     public eventoService: EventosService,
@@ -51,7 +54,24 @@ export class RegistrarEventoComponent implements OnInit {
 
   ngOnInit() {
     this.fechaActual = new Date();
-
+    new Rolldate({
+      el: "#pickerInicio",
+      format: "hh:mm",
+      minStep: 15,
+      lang: { title: "Seleccione hora de inicio del evento", hour: "", min: "" },
+      confirm: (date)=> {
+        this.horaInicio=date;
+      }
+    });
+    new Rolldate({
+      el: "#pickerFin",
+      format: "hh:mm",
+      minStep: 15,
+      lang: { title: "Seleccione hora de fin del evento", hour: "", min: "" },
+      confirm: (date)=> {
+        this.horaFin=date;
+      }
+    });
   }
 
   add(event: MatChipInputEvent): void {
@@ -111,9 +131,9 @@ export class RegistrarEventoComponent implements OnInit {
   }
 
   onGuardarEvento(form: NgForm) {
-    if(form.valid && this.chips.length!=0){
+    if (form.valid && this.chips.length != 0) {
       const fechaEvento = form.value.fechaEvento.toString();
-      if(form.value.horaInicio=="" && form.value.horaFin==""){
+      if (this.horaInicio == "" && this.horaFin == "") {
         // this.eventoService
         // .registrarEvento(
         //   form.value.titulo,
@@ -137,8 +157,10 @@ export class RegistrarEventoComponent implements OnInit {
         //     });
         //   }
         // });
-        console.log('If primero');
-      }else if(this.horaEventoEsValido(form.value.horaInicio, form.value.horaFin)){
+        console.log("If primero");
+      } else if (
+        this.horaEventoEsValido(this.horaInicio, this.horaFin)
+      ) {
         // this.eventoService
         //   .registrarEvento(
         //     form.value.titulo,
@@ -162,14 +184,18 @@ export class RegistrarEventoComponent implements OnInit {
         //       });
         //     }
         //   });
-        console.log('Exito');
-      }else{
-        this.snackBar.open("La hora de finalización del evento es menor que la hora de inicio", "", {
-          duration: 4500,
-          panelClass: ["snack-bar-fracaso"]
-        });
+        console.log("Exito");
+      } else {
+        this.snackBar.open(
+          "La hora de finalización del evento es menor que la hora de inicio",
+          "",
+          {
+            duration: 4500,
+            panelClass: ["snack-bar-fracaso"]
+          }
+        );
       }
-    }else{
+    } else {
       this.snackBar.open("Faltan campos por completar", "", {
         duration: 4500,
         panelClass: ["snack-bar-fracaso"]

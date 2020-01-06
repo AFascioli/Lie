@@ -53,12 +53,10 @@
             name="horaInicio"
             ngModel
             #horaInicio="ngModel"
-            [ngxTimepicker]="starTime"
             placeholder="Hora inicio"
-            [value]="'08:00 AM'"
+            id="pickerInicio"
             readonly
           />
-          <ngx-material-timepicker #starTime></ngx-material-timepicker>
         </div>
       </mat-form-field>
       &nbsp;
@@ -69,12 +67,10 @@
             name="horaFin"
             ngModel
             #horaFin="ngModel"
-            [ngxTimepicker]="endTime"
             placeholder="Hora fin"
-            [value]="'08:00 AM'"
+            id="pickerFin"
             readonly
           />
-          <ngx-material-timepicker #endTime></ngx-material-timepicker>
         </div>
       </mat-form-field>
     </div>
