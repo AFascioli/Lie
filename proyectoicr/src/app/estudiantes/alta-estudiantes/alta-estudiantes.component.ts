@@ -9,7 +9,7 @@ import { Subscription } from "rxjs";
 import { MatSnackBar } from "@angular/material";
 import { MatDialog, MatDialogRef } from "@angular/material/dialog";
 import { MediaMatcher } from "@angular/cdk/layout";
-import { AltaPopupComponent } from "src/app/popup-genericos/alta-popup.component"
+import { CancelPopupComponent } from "src/app/popup-genericos/cancel-popup.component";
 
 @Component({
   selector: "app-alta-estudiantes",
@@ -154,7 +154,7 @@ export class AltaEstudiantesComponent implements OnInit, OnDestroy {
   // }
 
   popUpCancelar() {
-    this.dialog.open(AltaPopupComponent, {
+    this.dialog.open(CancelPopupComponent, {
       width: "250px"
     });
   }
@@ -165,9 +165,11 @@ export class AltaEstudiantesComponent implements OnInit, OnDestroy {
     if (
       !(
         (inputValue >= 65 && inputValue <= 122) ||
-        inputValue == 209 || inputValue == 241
+        inputValue == 209 ||
+        inputValue == 241
       ) &&
-      inputValue != 32 && inputValue != 0
+      inputValue != 32 &&
+      inputValue != 0
     ) {
       event.preventDefault();
     }
@@ -178,10 +180,10 @@ export class AltaEstudiantesComponent implements OnInit, OnDestroy {
     var inputValue = event.which;
     if (
       !(inputValue >= 48 && inputValue <= 57) &&
-      inputValue != 32 && inputValue != 0
+      inputValue != 32 &&
+      inputValue != 0
     ) {
       event.preventDefault();
     }
   }
 }
-

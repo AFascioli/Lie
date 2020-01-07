@@ -1,14 +1,9 @@
+import { CancelPopupComponent } from "src/app/popup-genericos/cancel-popup.component";
 import { InscripcionService } from "../insccripcion.service";
 import { AutenticacionService } from "src/app/login/autenticacionService.service";
 import { EstudiantesService } from "src/app/estudiantes/estudiante.service";
 import { Component, OnInit } from "@angular/core";
-import {
-  MatDialogRef,
-  MatDialog,
-  MatDialogConfig,
-  MatSnackBar
-} from "@angular/material";
-import { Router } from "@angular/router";
+import { MatDialog, MatDialogConfig, MatSnackBar } from "@angular/material";
 
 @Component({
   selector: "app-documentos-inscripcion",
@@ -127,30 +122,8 @@ export class DocumentosInscripcionComponent implements OnInit {
   }
 
   onCancelar() {
-    this.popup.open(DocumentosInscripcionPopupComponent, {
+    this.popup.open(CancelPopupComponent, {
       width: "250px"
     });
-  }
-}
-
-@Component({
-  selector: "app-documentos-inscripcion-popup",
-  templateUrl: "./documentos-inscripcion-popup.component.html",
-  styleUrls: ["./documentos-inscripcion.component.css"]
-})
-export class DocumentosInscripcionPopupComponent {
-  constructor(
-    public dialogRef: MatDialogRef<DocumentosInscripcionPopupComponent>,
-    public router: Router,
-    public servicioEstudiante: EstudiantesService
-  ) {}
-
-  onYesCancelarClick(): void {
-    this.router.navigate(["./home"]);
-    this.dialogRef.close();
-  }
-
-  onNoCancelarClick(): void {
-    this.dialogRef.close();
   }
 }

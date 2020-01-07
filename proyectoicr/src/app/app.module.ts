@@ -1,4 +1,4 @@
-import { Evento } from './eventos/evento.model';
+import { Evento } from "./eventos/evento.model";
 import { AuthInterceptor } from "./login/auth-interceptor";
 import { BrowserModule } from "@angular/platform-browser";
 import { NgModule } from "@angular/core";
@@ -28,12 +28,8 @@ import { MatPaginatorModule } from "@angular/material/paginator";
 import { MatDatepickerModule } from "@angular/material/datepicker";
 import { MatMenuModule } from "@angular/material/menu";
 import { AppComponent } from "./app.component";
-import {
-  AltaEstudiantesComponent
-} from "./estudiantes/alta-estudiantes/alta-estudiantes.component";
-import {
-    AltaPopupComponent
-} from "./popup-genericos/alta-popup.component";
+import { AltaEstudiantesComponent } from "./estudiantes/alta-estudiantes/alta-estudiantes.component";
+import { CancelPopupComponent } from "./popup-genericos/cancel-popup.component";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { HttpClientModule, HTTP_INTERCEPTORS } from "@angular/common/http";
 import { EstudiantesService } from "./estudiantes/estudiante.service";
@@ -66,15 +62,9 @@ import {
   RetiroAnticipadoComponent,
   RetiroPopupComponent
 } from "./asistencia/retiro-anticipado/retiro-anticipado.component";
-import {
-  DocumentosInscripcionComponent,
-  DocumentosInscripcionPopupComponent
-} from "./inscripcion/documentos-inscripcion/documentos-inscripcion.component";
+import { DocumentosInscripcionComponent } from "./inscripcion/documentos-inscripcion/documentos-inscripcion.component";
 import { MatGridListModule } from "@angular/material/grid-list";
-import {
-  CalificacionesEstudiantesComponent,
-  CalificacionesEstudiantePopupComponent
-} from "./calificaciones/calificaciones-estudiantes/calificaciones-estudiantes.component";
+import { CalificacionesEstudiantesComponent } from "./calificaciones/calificaciones-estudiantes/calificaciones-estudiantes.component";
 import { LlegadaTardeComponent } from "./asistencia/llegada-tarde/llegada-tarde.component";
 import {
   CambiarPassword,
@@ -119,7 +109,7 @@ import { RegistrarEventoComponent } from "./eventos/registrar-evento/registrar-e
     BuscarEstudiantesComponent,
     ListaEstudiantesComponent,
     MostrarEstudiantesComponent,
-    AltaPopupComponent,
+    CancelPopupComponent,
     MostrarPopupComponent,
     PreferenciasPopupComponent,
     MenuLateralComponent,
@@ -133,9 +123,7 @@ import { RegistrarEventoComponent } from "./eventos/registrar-evento/registrar-e
     RetiroAnticipadoComponent,
     RetiroPopupComponent,
     DocumentosInscripcionComponent,
-    DocumentosInscripcionPopupComponent,
     CalificacionesEstudiantesComponent,
-    CalificacionesEstudiantePopupComponent,
     LlegadaTardeComponent,
     CambiarPassword,
     CambiarPasswordPopupComponent,
@@ -158,15 +146,13 @@ import { RegistrarEventoComponent } from "./eventos/registrar-evento/registrar-e
   ],
   //entryComponents declara los componentes que se generan dinamicamente dentro de otros.
   entryComponents: [
-    AltaPopupComponent,
+    CancelPopupComponent,
     MostrarPopupComponent,
     AsistenciaPopupComponent,
     PerfilEstudiantePopupComponent,
     BuscarPopupComponent,
     InscripcionPopupComponent,
     RetiroPopupComponent,
-    DocumentosInscripcionPopupComponent,
-    CalificacionesEstudiantePopupComponent,
     CambiarPasswordPopupComponent,
     CerrarSesionPopupComponent,
     PreferenciasPopupComponent,

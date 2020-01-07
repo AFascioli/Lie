@@ -11,7 +11,7 @@ import { map, startWith } from "rxjs/operators";
 import { EventosService } from "../eventos.service";
 import { MatSnackBar, MatDialog } from "@angular/material";
 import Rolldate from "../../../assets/rolldate.min.js";
-import { AltaPopupComponent } from "src/app/popup-genericos/alta-popup.component"
+import { CancelPopupComponent } from "src/app/popup-genericos/cancel-popup.component";
 
 @Component({
   selector: "app-registrar-evento",
@@ -35,8 +35,8 @@ export class RegistrarEventoComponent implements OnInit {
   filteredChips: Observable<string[]>;
   chips: string[] = [];
   allChips: string[] = ["1A", "2A", "3A", "4A", "5A", "6A", "Todos los cursos"];
-  horaInicio="";
-  horaFin="";
+  horaInicio = "";
+  horaFin = "";
 
   constructor(
     public eventoService: EventosService,
@@ -75,14 +75,18 @@ export class RegistrarEventoComponent implements OnInit {
     }
   }
 
-  inicializarPickers(){
+  inicializarPickers() {
     new Rolldate({
       el: "#pickerInicio",
       format: "hh:mm",
       minStep: 15,
-      lang: { title: "Seleccione hora de inicio del evento", hour: "", min: "" },
-      confirm: (date)=> {
-        this.horaInicio=date;
+      lang: {
+        title: "Seleccione hora de inicio del evento",
+        hour: "",
+        min: ""
+      },
+      confirm: date => {
+        this.horaInicio = date;
       }
     });
     new Rolldate({
@@ -90,8 +94,8 @@ export class RegistrarEventoComponent implements OnInit {
       format: "hh:mm",
       minStep: 15,
       lang: { title: "Seleccione hora de fin del evento", hour: "", min: "" },
-      confirm: (date)=> {
-        this.horaFin=date;
+      confirm: date => {
+        this.horaFin = date;
       }
     });
   }
@@ -139,31 +143,29 @@ export class RegistrarEventoComponent implements OnInit {
       const fechaEvento = form.value.fechaEvento.toString();
       if (this.horaInicio == "" && this.horaFin == "") {
         this.eventoService
-        .registrarEvento(
-          form.value.titulo,
-          form.value.descripcion,
-          fechaEvento,
-          this.horaInicio,
-          this.horaFin,
-          this.chips,
-          this.imagePath
-        )
-        .subscribe(rtdo => {
-          if (rtdo.exito) {
-            this.snackBar.open(rtdo.message, "", {
-              panelClass: ["snack-bar-exito"],
-              duration: 4500
-            });
-          } else {
-            this.snackBar.open(rtdo.message, "", {
-              duration: 4500,
-              panelClass: ["snack-bar-fracaso"]
-            });
-          }
-        });
-      } else if (
-        this.horaEventoEsValido(this.horaInicio, this.horaFin)
-      ) {
+          .registrarEvento(
+            form.value.titulo,
+            form.value.descripcion,
+            fechaEvento,
+            this.horaInicio,
+            this.horaFin,
+            this.chips,
+            this.imagePath
+          )
+          .subscribe(rtdo => {
+            if (rtdo.exito) {
+              this.snackBar.open(rtdo.message, "", {
+                panelClass: ["snack-bar-exito"],
+                duration: 4500
+              });
+            } else {
+              this.snackBar.open(rtdo.message, "", {
+                duration: 4500,
+                panelClass: ["snack-bar-fracaso"]
+              });
+            }
+          });
+      } else if (this.horaEventoEsValido(this.horaInicio, this.horaFin)) {
         this.eventoService
           .registrarEvento(
             form.value.titulo,
@@ -213,7 +215,7 @@ export class RegistrarEventoComponent implements OnInit {
   }
 
   popUpCancelar() {
-    this.dialog.open(AltaPopupComponent, {
+    this.dialog.open(CancelPopupComponent, {
       width: "250px"
     });
   }
