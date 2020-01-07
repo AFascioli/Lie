@@ -9,8 +9,9 @@ import { MatChipInputEvent } from "@angular/material/chips";
 import { Observable } from "rxjs";
 import { map, startWith } from "rxjs/operators";
 import { EventosService } from "../eventos.service";
-import { MatSnackBar } from "@angular/material";
+import { MatSnackBar, MatDialog } from "@angular/material";
 import Rolldate from "../../../assets/rolldate.min.js";
+import { AltaPopupComponent } from "src/app/popup-genericos/alta-popup.component"
 
 @Component({
   selector: "app-registrar-evento",
@@ -39,6 +40,7 @@ export class RegistrarEventoComponent implements OnInit {
 
   constructor(
     public eventoService: EventosService,
+    public dialog: MatDialog,
     public snackBar: MatSnackBar
   ) {
     //Hace que funcione el autocomplete, filtra
@@ -208,5 +210,11 @@ export class RegistrarEventoComponent implements OnInit {
     var variableDateInicio = new Date("01/01/2020 " + horaInicio);
     var variableDateFin = new Date("01/01/2020 " + horaFin);
     return variableDateInicio < variableDateFin;
+  }
+
+  popUpCancelar() {
+    this.dialog.open(AltaPopupComponent, {
+      width: "250px"
+    });
   }
 }

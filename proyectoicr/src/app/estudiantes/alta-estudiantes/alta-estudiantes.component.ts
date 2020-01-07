@@ -8,8 +8,8 @@ import { Localidad } from "../../ubicacion/localidades.model";
 import { Subscription } from "rxjs";
 import { MatSnackBar } from "@angular/material";
 import { MatDialog, MatDialogRef } from "@angular/material/dialog";
-import { Router } from "@angular/router";
 import { MediaMatcher } from "@angular/cdk/layout";
+import { AltaPopupComponent } from "src/app/popup-genericos/alta-popup.component"
 
 @Component({
   selector: "app-alta-estudiantes",
@@ -185,22 +185,3 @@ export class AltaEstudiantesComponent implements OnInit, OnDestroy {
   }
 }
 
-@Component({
-  selector: "app-alta-popup",
-  templateUrl: "./alta-popup.component.html",
-  styleUrls: ["./alta-estudiantes.component.css"]
-})
-export class AltaPopupComponent {
-  constructor(
-    public dialogRef: MatDialogRef<AltaPopupComponent>,
-    public router: Router
-  ) {}
-
-  onYesClick(): void {
-    this.router.navigate(["./home"]);
-    this.dialogRef.close();
-  }
-  onNoClick(): void {
-    this.dialogRef.close();
-  }
-}

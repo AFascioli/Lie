@@ -1,3 +1,4 @@
+import { Evento } from './eventos/evento.model';
 import { AuthInterceptor } from "./login/auth-interceptor";
 import { BrowserModule } from "@angular/platform-browser";
 import { NgModule } from "@angular/core";
@@ -28,9 +29,11 @@ import { MatDatepickerModule } from "@angular/material/datepicker";
 import { MatMenuModule } from "@angular/material/menu";
 import { AppComponent } from "./app.component";
 import {
-  AltaEstudiantesComponent,
-  AltaPopupComponent
+  AltaEstudiantesComponent
 } from "./estudiantes/alta-estudiantes/alta-estudiantes.component";
+import {
+    AltaPopupComponent
+} from "./popup-genericos/alta-popup.component";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { HttpClientModule, HTTP_INTERCEPTORS } from "@angular/common/http";
 import { EstudiantesService } from "./estudiantes/estudiante.service";
