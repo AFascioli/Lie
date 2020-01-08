@@ -22,9 +22,11 @@ export class RetiroAnticipadoComponent implements OnInit {
   displayedColumns: string[] = [
     "apellido",
     "nombre",
-    "telefono"
+    "telefono",
+    "tipoDocumento",
+    "nroDocumento"
   ];
-  tutores: any[];
+  tutores: any[] = [];
 
   constructor(public servicio: EstudiantesService, public dialog: MatDialog,
     public changeDetectorRef: ChangeDetectorRef,
@@ -109,7 +111,6 @@ export class RetiroPopupComponent {
     this.servicio.registrarRetiroAnticipado(this.IdEstudiante, this.antes10am).subscribe(response =>{
       this.resultado = response.exito;
       this.dialogRef.close();
-      console.log(response);
       if(this.resultado == "exito"){
         this.snackBar.open("Se registró correctamente el retiro anticipado para el estudiante seleccionado.", "", {
           panelClass:['snack-bar-exito'],

@@ -28,3 +28,11 @@ th{
 .mat-form-field{
   margin-left: 5% !important;
 }
+
+.titulo{
+  text-align: center;
+}
+
+.promedio{
+  text-align: center;
+}

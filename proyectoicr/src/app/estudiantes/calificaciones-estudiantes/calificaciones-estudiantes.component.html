@@ -1,8 +1,8 @@
 <h1 *ngIf="rolConPermisosEdicion" class="componente-titulo">
-  Registrar calificaciones
+  Registrar calificaciones ciclo lectivo 2019
 </h1>
 <h1 *ngIf="!rolConPermisosEdicion" class="componente-titulo">
-  Visualizar calificaciones
+  Visualizar calificaciones ciclo lectivo 2019
 </h1>
 
 <mat-card class="card-body-componente">
@@ -34,7 +34,7 @@
           #curso="ngModel"
           matNativeControl
           required
-          (selectionChange)="onCursoSeleccionado(curso)"
+          (selectionChange)="onCursoSeleccionado(curso,materia)"
         >
           <mat-option *ngFor="let objCurso of cursos" [value]="objCurso.id">
             {{ objCurso.curso }}
@@ -87,7 +87,8 @@
             [(ngModel)]="estudiante.calificaciones[0]"
             name="nota1{{ estudiante.calificaciones[0] }}"
             type="number"
-            pattern="([0-9]|10)"
+            pattern="([0-9]|0[1-9]|10)"
+            (keypress)="checkNotas($event,estudiante.calificaciones[0])"
           />
           <p *ngIf="!rolConPermisosEdicion">
             {{ estudiante.calificaciones[0] }}
@@ -100,9 +101,10 @@
           <input
             *ngIf="rolConPermisosEdicion"
             [(ngModel)]="estudiante.calificaciones[1]"
-            type="number"
             name="nota2{{ estudiante.calificaciones[1] }}"
-            pattern="([0-9]|10)"
+            type="number"
+            pattern="([0-9]|0[1-9]|10)"
+            (keypress)="checkNotas($event,estudiante.calificaciones[1])"
           />
           <p *ngIf="!rolConPermisosEdicion">
             {{ estudiante.calificaciones[1] }}
@@ -115,9 +117,10 @@
           <input
             *ngIf="rolConPermisosEdicion"
             [(ngModel)]="estudiante.calificaciones[2]"
-            type="number"
             name="nota3{{ estudiante.calificaciones[2] }}"
-            pattern="([0-9]|10)"
+            type="number"
+            pattern="([0-9]|0[1-9]|10)"
+            (keypress)="checkNotas($event,estudiante.calificaciones[2])"
           />
           <p *ngIf="!rolConPermisosEdicion">
             {{ estudiante.calificaciones[2] }}
@@ -130,9 +133,10 @@
           <input
             *ngIf="rolConPermisosEdicion"
             [(ngModel)]="estudiante.calificaciones[3]"
-            type="number"
             name="nota4{{ estudiante.calificaciones[3] }}"
-            pattern="([0-9]|10)"
+            type="number"
+            pattern="([0-9]|0[1-9]|10)"
+            (keypress)="checkNotas($event,estudiante.calificaciones[3])"
           />
           <p *ngIf="!rolConPermisosEdicion">
             {{ estudiante.calificaciones[3] }}
@@ -145,9 +149,10 @@
           <input
             *ngIf="rolConPermisosEdicion"
             [(ngModel)]="estudiante.calificaciones[4]"
-            type="number"
             name="nota5{{ estudiante.calificaciones[4] }}"
-            pattern="([0-9]|10)"
+            type="number"
+            pattern="([0-9]|0[1-9]|10)"
+            (keypress)="checkNotas($event,estudiante.calificaciones[4])"
           />
           <p *ngIf="!rolConPermisosEdicion">
             {{ estudiante.calificaciones[4] }}
@@ -161,11 +166,12 @@
             *ngIf="rolConPermisosEdicion"
             [(ngModel)]="estudiante.calificaciones[5]"
             type="number"
+            pattern="([0-9]|0[1-9]|10)"
             name="nota6{{ estudiante.calificaciones[5] }}"
-            pattern="([0-9]|10)"
+            (keypress)="checkNotas($event,estudiante.calificaciones[5])"
           />
           <p *ngIf="!rolConPermisosEdicion">
-            {{ estudiante.calificaciones[4] }}
+            {{ estudiante.calificaciones[5] }}
           </p>
         </td>
       </ng-container>
@@ -202,12 +208,11 @@
 
     <div class="div-button">
       <button
-        [hidden]="!rolConPermisosEdicion"
+        [disabled]="!estudiantes"
         mat-raised-button
         class="button"
         (click)="onGuardar(form)"
         class="buttonPrimary"
-        *ngIf= "estudiantes"
       >
         Guardar
       </button>

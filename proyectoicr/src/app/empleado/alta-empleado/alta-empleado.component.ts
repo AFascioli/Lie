@@ -51,7 +51,6 @@ export class AltaEmpleadoComponent implements OnInit, OnDestroy {
 
   onGuardar(form: NgForm) {
     if(!form.invalid) {
-      console.log(form.value.email);
       this.servicio.registrarEmpleado(
         form.value.apellido,
         form.value.nombre,
@@ -64,7 +63,6 @@ export class AltaEmpleadoComponent implements OnInit, OnDestroy {
         form.value.email,
         form.value.tipoEmpleado
         ).subscribe(response=>{
-          console.log(response);
         if(response.exito){
           this.snackBar.open(response.message, "", {
             panelClass: ["snack-bar-exito"],

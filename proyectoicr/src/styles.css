@@ -19,6 +19,17 @@ button {
   font-size: medium;
 }
 
+/* Oculta flechas en Mozilla. */
+input[type=number]::-webkit-outer-spin-button,
+input[type=number]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+input[type=number] {
+    -moz-appearance:textfield;
+}
+
 .componente-titulo {
   text-align: center;
   color: #2f6483;

@@ -55,6 +55,10 @@ export class DocumentosInscripcionComponent implements OnInit {
       .obtenerDocumentosDeEstudiantesXCurso(curso.value)
       .subscribe(estudiantes => {
         this.estudiantesConDocumentos = estudiantes;
+        console.log(this.estudiantesConDocumentos);
+        this.estudiantesConDocumentos = this.estudiantesConDocumentos.sort((a, b) =>
+        a.datosEstudiante[0].apellido > b.datosEstudiante[0].apellido ? 1 : b.datosEstudiante[0].apellido > a.datosEstudiante[0].apellido ? -1 : 0
+      );
       });
   }
 
@@ -70,8 +74,6 @@ export class DocumentosInscripcionComponent implements OnInit {
       .registrarDocumentosInscripcion(this.estudiantesConDocumentos)
       .subscribe(response => {
         if (response.exito) {
-          curso.reset();
-          this.estudiantesConDocumentos = [];
           this.snackBar.open(
             "Se registró correctamente la documentación de los estudiantes",
             "",
@@ -90,7 +92,9 @@ export class DocumentosInscripcionComponent implements OnInit {
   }
 
   onCancelar() {
-    this.popup.open(DocumentosInscripcionPopupComponent);
+    this.popup.open(DocumentosInscripcionPopupComponent, {
+      width: "250px"
+    });
   }
 }
 

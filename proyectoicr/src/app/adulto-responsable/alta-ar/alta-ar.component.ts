@@ -78,6 +78,7 @@ export class AltaARComponent implements OnInit, OnDestroy {
             duration: 4000
           });
           form.resetForm();
+          this.tutor=false;
         }else{
           this.snackBar.open(response.message, "", {
             panelClass: ["snack-bar-fracaso"],
@@ -93,7 +94,7 @@ export class AltaARComponent implements OnInit, OnDestroy {
     }
   }
 
-  popUpCancelar() {
+  popUpVolver() {
     this.dialog.open(AltaARPopupComponent, {
       width: "250px"
     });
@@ -136,7 +137,7 @@ export class AltaARPopupComponent {
   ) {}
 
   onYesClick(): void {
-    this.router.navigate(["./home"]);
+    this.router.navigate(["./buscar/lista"]);
     this.dialogRef.close();
   }
   onNoClick(): void {

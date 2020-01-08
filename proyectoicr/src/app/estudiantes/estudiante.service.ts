@@ -75,11 +75,8 @@ export class EstudiantesService {
       estadoCivil,
       telefonoFijo
     };
-    this.http
-      .post<{ message: string }>(environment.apiUrl + "/estudiante", estudiante)
-      .subscribe(response => {
-        console.log(response.message);
-      });
+    return this.http
+      .post<{ message: string, exito: boolean }>(environment.apiUrl + "/estudiante", estudiante);
   }
 
   borrarEstudiante(_id) {
@@ -89,7 +86,6 @@ export class EstudiantesService {
         params: params
       })
       .subscribe(response => {
-        console.log(response.message);
       });
   }
 
@@ -193,7 +189,6 @@ export class EstudiantesService {
     fechaNacimiento: string,
     estadoCivil: string,
     telefonoFijo: number
-    // adultoResponsable: string
   ) {
     const estudianteModificado: Estudiante = {
       _id,
@@ -215,14 +210,11 @@ export class EstudiantesService {
       estadoCivil,
       telefonoFijo
     };
-    this.http
-      .patch<{ message: string }>(
+    return this.http
+      .patch<{ message: string, exito: boolean }>(
         environment.apiUrl + "/estudiante/modificar",
         estudianteModificado
-      )
-      .subscribe(response => {
-        console.log(response.message);
-      });
+      );
   }
 
   //Parece que este metodo no se usa
@@ -410,10 +402,24 @@ export class EstudiantesService {
     });
   }
 
+  //Dada una id del estudiante me devuelve el curso al cual está inscripto
+  obtenerCursoDeEstudiante(){
+    let params = new HttpParams()
+    .set("idEstudiante", this.estudianteSeleccionado._id);
+    return this.http.get<{
+      message: string;
+      exito: boolean;
+      curso: string;
+    }>(environment.apiUrl + "/curso/estudiante", {
+      params: params
+    });
+  }
+
   justificarInasistencia(ultimasInasistencias: any[]) {
+    let datosInasistencia= {ultimasInasistencias: ultimasInasistencias, idEstudiante: this.estudianteSeleccionado._id  }
     return this.http.post<{ message: string; exito: boolean }>(
       environment.apiUrl + "/estudiante/inasistencia/justificada",
-      ultimasInasistencias
+      datosInasistencia
     );
   }
 
@@ -426,7 +432,7 @@ export class EstudiantesService {
       message: string;
       exito: boolean;
       tutores: any[];
-    }>(environment.apiUrl + "/estudiante/tutores", {
+    }>(environment.apiUrl + "/estudiante/adultosResponsables", {
       params: params
     });
   }

@@ -47,10 +47,4 @@ export class HomeComponent implements OnInit {
         );
     }
   }
-
-  testNP() {
-    this.servicio.testNP().subscribe(res => {
-      console.log(res);
-    });
-  }
 }

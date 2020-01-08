@@ -1,5 +1,5 @@
 <h1 class="componente-titulo">
-  Tomar asistencia
+  Tomar asistencia ciclo lectivo 2019
 </h1>
 <mat-card class="card-body-componente">
   <mat-form-field class="curso">
@@ -35,7 +35,7 @@
       {{ fechaActual | date: "dd/MM/yyyy" }}
     </mat-form-field>
   </div>
-  <p class="aviso" *ngIf="asistenciaNueva!='true'">Atención, ya existe una asistencia registrada para este curso el dia de hoy</p>
+  <p class="aviso" *ngIf="asistenciaNueva!='true'">Atención, ya existe una asistencia registrada para este curso el día de hoy</p>
   <br />
   <div *ngIf="!cursoNotSelected">
     <table mat-table [dataSource]="estudiantesXDivision">

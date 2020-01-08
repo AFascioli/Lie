@@ -52,9 +52,11 @@ export class InscripcionEstudianteComponent implements OnInit {
     this.apellidoEstudiante = this.servicio.estudianteSeleccionado.apellido;
     this.nombreEstudiante = this.servicio.estudianteSeleccionado.nombre;
     this._idEstudiante = this.servicio.estudianteSeleccionado._id;
-    this.servicio.estudianteEstaInscripto(this._idEstudiante).subscribe(response => {
-       this.estudianteEstaInscripto= response.exito;
-    })
+    this.servicio
+      .estudianteEstaInscripto(this._idEstudiante)
+      .subscribe(response => {
+        this.estudianteEstaInscripto = response.exito;
+      });
     this.servicio.obtenerCursos().subscribe(response => {
       this.cursos = response.cursos;
       this.cursos.sort((a, b) =>
@@ -68,10 +70,9 @@ export class InscripcionEstudianteComponent implements OnInit {
   }
 
   //Obtiene la capacidad del curso seleccionado
-  onCursoSeleccionado(curso){
+  onCursoSeleccionado(curso) {
     this.servicio.obtenerCapacidadCurso(curso.value).subscribe(response => {
-       this.capacidadCurso= response.capacidad;
-       console.log(this.capacidadCurso);
+      this.capacidadCurso = response.capacidad;
     });
   }
 
@@ -82,22 +83,25 @@ export class InscripcionEstudianteComponent implements OnInit {
     ].entregado;
   }
 
-  openDialogo(tipo: string, form: NgForm, curso) {
+
+  openDialogo(form: NgForm, curso) {
     if (form.invalid) {
       this.snackBar.open("No se ha seleccionado un curso", "", {
-        panelClass: ['snack-bar-fracaso'],
-        duration: 4500,
+        panelClass: ["snack-bar-fracaso"],
+        duration: 4500
       });
     } else {
-      if(this.capacidadCurso==0){
-        this.snackBar.open("El curso seleccionado no tiene mas cupos dispobiles", "", {
-          panelClass: ['snack-bar-fracaso'],
-          duration: 4500,
-        });
-      }else{
-
+      if (this.capacidadCurso == 0) {
+        this.snackBar.open(
+          "El curso seleccionado no tiene más cupos disponibles",
+          "",
+          {
+            panelClass: ["snack-bar-fracaso"],
+            duration: 4500
+          }
+        );
+      } else {
         this.matConfig.data = {
-          tipoPopup: tipo,
           formValido: form.valid,
           IdEstudiante: this._idEstudiante,
           curso: curso.value,
@@ -105,8 +109,11 @@ export class InscripcionEstudianteComponent implements OnInit {
         };
         this.matConfig.width = "250px";
         this.dialog.open(InscripcionPopupComponent, this.matConfig);
+        this.dialog.afterAllClosed.subscribe(()=>{
+          this.estudianteEstaInscripto=true;
+        })
       }
-      }
+    }
   }
 }
 
@@ -133,16 +140,10 @@ export class InscripcionPopupComponent {
     public snackBar: MatSnackBar,
     @Inject(MAT_DIALOG_DATA) data
   ) {
-    this.tipoPopup = data.tipoPopup;
     this.formValido = data.formValido;
     this.IdEstudiante = data.IdEstudiante;
     this.curso = data.curso;
     this.documentosEntregados = data.documentosEntregados;
-  }
-
-  onYesCancelarClick(): void {
-    this.router.navigate(["./home"]);
-    this.dialogRef.close();
   }
 
   onNoCancelarConfirmarClick(): void {
@@ -150,6 +151,7 @@ export class InscripcionPopupComponent {
   }
 
   onYesConfirmarClick(): void {
+    this.dialogRef.close();
     this.servicio
       .inscribirEstudiante(
         this.IdEstudiante,
@@ -159,17 +161,16 @@ export class InscripcionPopupComponent {
       .subscribe(response => {
         this.exito = response.exito;
         if (this.exito) {
-          this.snackBar.open("Estudiante inscripto correctamente", "", {
-            panelClass: ['snack-bar-exito'],
-            duration: 4500,
+          this.snackBar.open(response.message, "", {
+            panelClass: ["snack-bar-exito"],
+            duration: 4500
           });
-        }else{
-          this.snackBar.open("Inscripción no registrada. El estudiante seleccionado ya se encuentra inscripto", "", {
+        } else {
+          this.snackBar.open(response.message, "", {
             duration: 4500,
-            panelClass: ['snack-bar-fracaso']
+            panelClass: ["snack-bar-fracaso"]
           });
         }
-        this.dialogRef.close();
       });
   }
 }

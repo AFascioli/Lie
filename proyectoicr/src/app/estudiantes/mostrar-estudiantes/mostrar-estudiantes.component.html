@@ -14,7 +14,6 @@
             [disabled]="!modoEditar"
             name="apellido"
             [(ngModel)]="apellidoEstudiante"
-            pattern="[A-Za-záéíóúÁÉÍÓÚñÑ ]+"
             minlength="2"
             maxlength="40"
             ngModel
@@ -31,7 +30,6 @@
             [disabled]="!modoEditar"
             [(ngModel)]="nombreEstudiante"
             name="nombre"
-            pattern="[A-Za-záéíóúÁÉÍÓÚñÑ ]+"
             minlength="2"
             maxlength="40"
             ngModel
@@ -71,13 +69,12 @@
             [disabled]="!modoEditar"
             [(ngModel)]="nroDocEstudiante"
             name="nroDocumento"
-            pattern="[0-9]+"
             maxlength="8"
             ngModel
             #nroDocumento="ngModel"
             matInput
             placeholder="Ingrese el número de documento"
-            type="number"
+            type="text"
             required
           />
         </mat-form-field>
@@ -87,13 +84,12 @@
             [disabled]="!modoEditar"
             [(ngModel)]="cuilEstudiante"
             name="cuil"
-            pattern="[0-9]+"
             maxlength="11"
             ngModel
             #cuil="ngModel"
             matInput
             placeholder="Ingrese el número de CUIL"
-            type="number"
+            type="text"
           />
         </mat-form-field>
         <br />
@@ -180,11 +176,10 @@
             [(ngModel)]="telefonoEstudiante"
             matInput
             name="telefono"
-            pattern="[0-9]{10}"
             ngModel
             #telefono="ngModel"
             placeholder="Ingrese número de teléfono"
-            type="number"
+            type="text"
           />
         </mat-form-field>
       </div>
@@ -204,7 +199,6 @@
               [disabled]="!modoEditar"
               [(ngModel)]="calleEstudiante"
               name="calle"
-              pattern="[A-Za-záéíóúÁÉÍÓÚñÑ ]+"
               minlength="2"
               maxlength="30"
               ngModel
@@ -221,7 +215,6 @@
               [disabled]="!modoEditar"
               [(ngModel)]="nroCalleEstudiante"
               name="nroCalle"
-              pattern="[0-9]+"
               maxlength="5"
               ngModel
               #nroCalle="ngModel"
@@ -235,7 +228,6 @@
             <input
               [disabled]="!modoEditar"
               [(ngModel)]="pisoEstudiante"
-              pattern="[\w]+"
               name="piso"
               ngModel
               #piso="ngModel"
@@ -252,7 +244,6 @@
               name="departamento"
               ngModel
               #departamento="ngModel"
-              pattern="[A-Za-záéíóúÁÉÍÓÚ]+"
               matInput
               placeholder="Ingrese departamento"
               type="text"
@@ -309,7 +300,7 @@
               #codigoPostal="ngModel"
               matInput
               placeholder="Ingrese código postal"
-              type="number"
+              type="text"
             />
           </mat-form-field>
           <br />
@@ -320,36 +311,28 @@
     <br />
     <div class="div-button">
       <button
-        *ngIf="modoEditar"
+        [disabled]="!modoEditar"
         (click)="onGuardar(form)"
-        (click)="snackBarGuardar(form)"
         mat-raised-button
-        color="primary"
+        class="buttonPrimary"
       >
         Guardar
       </button>
-      <button (click)="onEditar()" mat-raised-button color="primary" *ngIf="permisos.inscribirEstudiante > 1">
+      <button (click)="onEditar()" mat-raised-button class="buttonPrimary" *ngIf="permisos.inscribirEstudiante > 1">
         Editar
       </button>
       <button
         mat-raised-button
-        (click)="openDialogo('borrar', form)"
+        (click)="onBorrarVolver('borrar', form)"
         class="buttonPrimary"
         *ngIf="permisos.inscribirEstudiante > 1"
       >
         Borrar
       </button>
       <button
-        mat-raised-button
-        (click)="openDialogo('cancelar', form)"
-        class="buttonWarn"
-      >
-        Cancelar
-      </button>
-      <button
       mat-raised-button
-      [routerLink]="['/buscar/lista']"
-      class="buttonPrimary"
+      (click)="onBorrarVolver('volver', form)"
+      class="buttonWarn"
     >
      Volver
     </button>

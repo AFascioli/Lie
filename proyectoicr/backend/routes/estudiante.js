@@ -11,41 +11,59 @@ const checkAuthMiddleware = require("../middleware/check-auth");
 
 //Registra un nuevo estudiante y pone su estado a registrado
 router.post("", checkAuthMiddleware, (req, res, next) => {
-  Estado.findOne({
-    ambito: "Estudiante",
-    nombre: "Registrado"
-  }).then(estado => {
-    const estudiante = new Estudiante({
-      apellido: req.body.apellido,
-      nombre: req.body.nombre,
-      tipoDocumento: req.body.tipoDocumento,
-      numeroDocumento: req.body.numeroDocumento,
-      cuil: req.body.cuil,
-      sexo: req.body.sexo,
-      calle: req.body.calle,
-      numeroCalle: req.body.numeroCalle,
-      piso: req.body.piso,
-      departamento: req.body.departamento,
-      provincia: req.body.provincia,
-      localidad: req.body.localidad,
-      codigoPostal: req.body.codigoPostal,
-      nacionalidad: req.body.nacionalidad,
-      fechaNacimiento: req.body.fechaNacimiento,
-      estadoCivil: req.body.estadoCivil,
-      telefonoFijo: req.body.telefonoFijo,
-      adultoResponsable: [],
-      activo: true,
-      estado: estado._id
-    });
-    estudiante
-      .save()
-      .then(() => {
-        res.status(201).json({
-          message: "Estudiante registrado correctamente!"
+  Estudiante.findOne({tipoDocumento: req.body.tipoDocumento, numeroDocumento: req.body.numeroDocumento }).then(estudiante=>{
+    if(estudiante){
+      res.status(200).json({
+        message: "El estudiante ya se encuentra registrado",
+        exito: false
+      });
+    }else{
+      Estado.findOne({
+        ambito: "Estudiante",
+        nombre: "Registrado"
+      }).then(estado => {
+        const estudiante = new Estudiante({
+          apellido: req.body.apellido,
+          nombre: req.body.nombre,
+          tipoDocumento: req.body.tipoDocumento,
+          numeroDocumento: req.body.numeroDocumento,
+          cuil: req.body.cuil,
+          sexo: req.body.sexo,
+          calle: req.body.calle,
+          numeroCalle: req.body.numeroCalle,
+          piso: req.body.piso,
+          departamento: req.body.departamento,
+          provincia: req.body.provincia,
+          localidad: req.body.localidad,
+          codigoPostal: req.body.codigoPostal,
+          nacionalidad: req.body.nacionalidad,
+          fechaNacimiento: req.body.fechaNacimiento,
+          estadoCivil: req.body.estadoCivil,
+          telefonoFijo: req.body.telefonoFijo,
+          adultoResponsable: [],
+          activo: true,
+          estado: estado._id
         });
-      })
-      .catch(err => console.log("Error al meter en la bd estudiante" + err));
-  });
+        estudiante
+          .save()
+          .then(() => {
+            res.status(201).json({
+              message: "Estudiante registrado correctamente",
+              exito: true
+            });
+          })
+          .catch(err =>
+            res
+              .status(200)
+              .json({
+                message:
+                  "Ocurrió un error al meter en la base de datos a un estudiante",
+                exito: false
+              })
+          );
+      });
+    }
+  })
 });
 
 //Obtiene un estudiante dado un numero y tipo de documento
@@ -99,11 +117,19 @@ router.patch("/modificar", checkAuthMiddleware, (req, res, next) => {
     fechaNacimiento: req.body.fechaNacimiento,
     estadoCivil: req.body.estadoCivil,
     telefonoFijo: req.body.telefonoFijo
-  }).then(() => {
-    res.status(200).json({
-      message: "Estudiante exitosamente modificado"
+  })
+    .then(() => {
+      res.status(200).json({
+        message: "Estudiante modificado exitosamente",
+        exito: true
+      });
+    })
+    .catch(err => {
+      res.status(200).json({
+        message: "Ocurrió un problema al intentar modificar el estudiante",
+        exito: false
+      });
     });
-  });
 });
 
 //#resolve deberia buscar la inscripcion del estudiante y poner en inactiva
@@ -253,15 +279,15 @@ router.get("/asistencia", checkAuthMiddleware, (req, res) => {
       ]).then(asistenciaCurso => {
         var respuesta = [];
         asistenciaCurso.forEach(estudiante => {
-            var estudianteRefinado = {
-              _id: estudiante.datosEstudiante[0]._id,
-              nombre: estudiante.datosEstudiante[0].nombre,
-              apellido: estudiante.datosEstudiante[0].apellido,
-              idAsistencia: estudiante.asistencia[0]._id,
-              fecha: fechaHoy,
-              presente: estudiante.asistencia[0].presente
-            };
-            respuesta.push(estudianteRefinado);
+          var estudianteRefinado = {
+            _id: estudiante.datosEstudiante[0]._id,
+            nombre: estudiante.datosEstudiante[0].nombre,
+            apellido: estudiante.datosEstudiante[0].apellido,
+            idAsistencia: estudiante.asistencia[0]._id,
+            fecha: fechaHoy,
+            presente: estudiante.asistencia[0].presente
+          };
+          respuesta.push(estudianteRefinado);
         });
         res
           .status(200)
@@ -352,18 +378,36 @@ router.post("/asistencia", checkAuthMiddleware, (req, res) => {
     });
   } else {
     req.body.forEach(estudiante => {
-      AsistenciaDiaria.findByIdAndUpdate(estudiante.idAsistencia, {
-        presente: estudiante.presente
-      }).exec();
-      if (!estudiante.presente) {
-        Inscripcion.findOneAndUpdate(
-          {
-            idEstudiante: estudiante._id,
-            activa: true
-          },
-          { $inc: { contadorInasistenciasInjustificada: 1 } }
-        ).exec();
-      }
+      AsistenciaDiaria.findById(estudiante.idAsistencia).then(asistencia => {
+        //si estaba presente en la bd y se cambio a ausente incrementa contador inasistencia
+        if (asistencia.presente && !estudiante.presente) {
+          AsistenciaDiaria.findByIdAndUpdate(estudiante.idAsistencia, {
+            presente: estudiante.presente
+          }).then(()=>{
+            Inscripcion.findOneAndUpdate(
+              {
+                idEstudiante: estudiante._id,
+                activa: true
+              },
+              { $inc: { contadorInasistenciasInjustificada: 1 } }
+            ).exec();
+          });
+        }
+        //si estaba ausente y lo pasaron a presente decrementa contador inasistencia
+        else if(!asistencia.presente && estudiante.presente){
+          AsistenciaDiaria.findByIdAndUpdate(estudiante.idAsistencia, {
+            presente: estudiante.presente
+          }).then(()=>{
+            Inscripcion.findOneAndUpdate(
+              {
+                idEstudiante: estudiante._id,
+                activa: true
+              },
+              { $inc: { contadorInasistenciasInjustificada: -1 } }
+            ).exec();
+          });
+        }
+      });
     });
   }
   res
@@ -536,7 +580,9 @@ router.get("/materia/calificaciones", (req, res) => {
 
 //Recibe vector con inasistencias, cada una tiene su _id y si fue o no justificada
 router.post("/inasistencia/justificada", checkAuthMiddleware, (req, res) => {
-  req.body.forEach(inasistencia => {
+  let contador = 0;
+  req.body.ultimasInasistencias.forEach(inasistencia => {
+    contador = contador + 1;
     if (inasistencia.justificado) {
       AsistenciaDiaria.findByIdAndUpdate(inasistencia.idAsistencia, {
         justificado: true
@@ -549,9 +595,19 @@ router.post("/inasistencia/justificada", checkAuthMiddleware, (req, res) => {
         });
     }
   });
-  res
-    .status(200)
-    .json({ message: "Inasistencias justificadas correctamente", exito: true });
+  Inscripcion.findOneAndUpdate(
+    { idEstudiante: req.body.idEstudiante, activa: true },
+    {
+      $inc: { contadorInasistenciasJustificada: contador }
+    }
+  ).then(() => {
+    res
+      .status(200)
+      .json({
+        message: "Inasistencias justificadas correctamente",
+        exito: true
+      });
+  });
 });
 
 //Se obtienen las ultimas inasistencias dentro de un periodo de 5 dias antes
@@ -673,6 +729,53 @@ router.get("/tutores", (req, res) => {
       message: "Se obtuvieron los tutores exitosamente",
       exito: true,
       tutores: tutores
+    });
+  });
+});
+
+//Obtiene los adultos responsable de un estudiante
+router.get("/adultosResponsables", (req, res) => {
+  Estudiante.aggregate([
+    {
+      $match: {
+        _id: mongoose.Types.ObjectId(req.query.idEstudiante),
+        activo: true
+      }
+    },
+    {
+      $lookup: {
+        from: "adultoResponsable",
+        localField: "adultoResponsable",
+        foreignField: "_id",
+        as: "datosAR"
+      }
+    },
+    {
+      $project: {
+        "datosAR._id": 1,
+        "datosAR.apellido": 1,
+        "datosAR.nombre": 1,
+        "datosAR.telefono": 1,
+        "datosAR.email": 1,
+        "datosAR.tipoDocumento": 1,
+        "datosAR.numeroDocumento": 1
+      }
+    }
+  ]).then(datosAdResp => {
+    if (!datosAdResp) {
+      return res.status(200).json({
+        message: "El estudiante no tiene adultos responsables a su cargo",
+        exito: false
+      });
+    }
+    let AR = [];
+    datosAdResp[0].datosAR.forEach(AdResp => {
+      AR.push(AdResp);
+    });
+    return res.status(200).json({
+      message: "Se obtuvieron los adultos responsables exitosamente",
+      exito: true,
+      tutores: AR
     });
   });
 });

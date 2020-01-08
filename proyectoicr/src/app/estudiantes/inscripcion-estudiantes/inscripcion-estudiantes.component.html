@@ -1,4 +1,4 @@
-<h1 class="componente-titulo">Inscribir estudiante a un curso</h1>
+<h1 class="componente-titulo">Inscribir estudiante a un curso para el ciclo lectivo 2019</h1>
 <mat-card class="card-body-componente">
 <div class="ubicacionfecha">
     <b>Fecha: </b>
@@ -80,22 +80,15 @@
       <button
         mat-raised-button
         class="buttonPrimary"
-        (click)="openDialogo('confirmar', form, curso)"
+        (click)="openDialogo(form, curso)"
         mat-raised-button
       >
         Inscribir
       </button>
       <button
-        mat-raised-button
-        (click)="openDialogo('cancelar', form, curso)"
-        class="buttonWarn"
-      >
-        Cancelar
-      </button>
-      <button
       mat-raised-button
       [routerLink]="['/buscar/lista']"
-      class="buttonPrimary"
+      class="buttonWarn"
     >
      Volver
     </button>

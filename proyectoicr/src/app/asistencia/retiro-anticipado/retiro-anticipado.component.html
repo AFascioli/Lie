@@ -24,11 +24,11 @@
   <h3 class="tituloTutores">
     Tutores del estudiante: {{ apellidoEstudiante }}, {{ nombreEstudiante }}
   </h3>
-  <p *ngIf="tutores.length==0">El estudiante seleccionado no tiene registrado ningun adulto responsable</p>
+  <p *ngIf="tutores.length==0">El estudiante seleccionado no tiene registrado ningún tutor</p>
   <table mat-table [dataSource]="tutores" *ngIf="tutores && tutores.length!=0">
     <ng-container matColumnDef="apellido">
       <th class="columnasNormales" mat-header-cell *matHeaderCellDef>
-        Apellido/s
+        Apellido
       </th>
       <td class="columnasNormales" mat-cell *matCellDef="let tutor">
         {{ tutor.apellido }}
@@ -36,7 +36,7 @@
     </ng-container>
     <ng-container matColumnDef="nombre">
       <th class="columnasNormales" mat-header-cell *matHeaderCellDef>
-        Nombre/s
+        Nombre
       </th>
       <td class="columnasNormales" mat-cell *matCellDef="let tutor">
         {{ tutor.nombre }}
@@ -44,12 +44,28 @@
     </ng-container>
     <ng-container matColumnDef="telefono">
       <th class="columnasNormales" mat-header-cell *matHeaderCellDef>
-        Telefono
+        Teléfono
       </th>
       <td class="columnasNormales" mat-cell *matCellDef="let tutor">
         {{ tutor.telefono }}
       </td>
     </ng-container>
+    <ng-container matColumnDef="tipoDocumento">
+        <th class="columnasNormales" mat-header-cell *matHeaderCellDef>
+          Tipo
+        </th>
+        <td class="columnasNormales" mat-cell *matCellDef="let tutor">
+          {{ tutor.tipoDocumento }}
+        </td>
+      </ng-container>
+    <ng-container matColumnDef="nroDocumento">
+        <th class="columnasNormales" mat-header-cell *matHeaderCellDef>
+          Número
+        </th>
+        <td class="columnasNormales" mat-cell *matCellDef="let tutor">
+          {{ tutor.numeroDocumento }}
+        </td>
+      </ng-container>
     <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
     <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
   </table>
@@ -85,18 +101,10 @@
     >
       Guardar
     </button>
-
-    <button
-      mat-raised-button
-      (click)="openPopup('cancelar')"
-      class="buttonWarn"
-    >
-      Cancelar
-    </button>
     <button
       mat-raised-button
       [routerLink]="['/buscar/lista']"
-      class="buttonPrimary"
+      class="buttonWarn"
     >
       Volver
     </button>

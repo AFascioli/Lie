@@ -1,9 +1,10 @@
+import { PreferenciasComponent } from './../../menu-lateral/preferencias/preferencias.component';
 import { AutenticacionService } from "./../../login/autenticacionService.service";
 import { EstudiantesService } from "src/app/estudiantes/estudiante.service";
 import { Component, OnInit } from "@angular/core";
 import { MatDialogRef, MatDialog, MatSnackBar } from "@angular/material";
 import { Router } from "@angular/router";
-import { NgForm } from "@angular/forms";
+import { NgForm, NgModel } from "@angular/forms";
 
 @Component({
   selector: "app-calificaciones-estudiantes",
@@ -28,6 +29,7 @@ export class CalificacionesEstudiantesComponent implements OnInit {
   trimestrePorDefecto: string;
   rolConPermisosEdicion = false;
 
+
   constructor(
     public servicio: EstudiantesService,
     public popup: MatDialog,
@@ -50,7 +52,7 @@ export class CalificacionesEstudiantesComponent implements OnInit {
   }
 
   obtenerCursos(){
-    if(this.rolConPermisosEdicion && this.servicioAutenticacion.getRol() !="Admin"){
+    if(this.servicioAutenticacion.getRol() =="Docente"){
       this.servicio.obtenerCursosDeDocente(this.servicioAutenticacion.getId()).subscribe(response => {
         this.cursos = response.cursos;
         this.cursos.sort((a, b) =>
@@ -85,7 +87,10 @@ export class CalificacionesEstudiantesComponent implements OnInit {
     else this.trimestrePorDefecto = "2";
   }
 
-  onCursoSeleccionado(curso) {
+  onCursoSeleccionado(curso,materia:NgModel) {
+    this.estudiantes= null;
+    this.materias=null;
+    materia.reset();
     if(this.rolConPermisosEdicion && this.servicioAutenticacion.getRol() !="Admin"){
       this.servicio.obtenerMateriasXCurso(curso.value, this.servicioAutenticacion.getId()).subscribe(respuesta => {
         this.materias = respuesta.materias;
@@ -108,6 +113,9 @@ export class CalificacionesEstudiantesComponent implements OnInit {
         )
         .subscribe(respuesta => {
           this.estudiantes = [...respuesta.estudiantes];
+          this.estudiantes = this.estudiantes.sort((a, b) =>
+          a.apellido > b.apellido ? 1 : b.apellido > a.apellido ? -1 : 0
+        );
         });
       }
   }
@@ -154,6 +162,14 @@ export class CalificacionesEstudiantesComponent implements OnInit {
   onCancelar() {
     this.servicio.tipoPopUp = "cancelar";
     this.popup.open(CalificacionesEstudiantePopupComponent);
+  }
+  checkNotas(event, cal) {
+    var inputValue = event.which;
+    var concat = cal + String.fromCharCode(inputValue);
+    if (!(inputValue >= 48 && inputValue <= 57) && (inputValue != 32 && inputValue != 0))
+      event.preventDefault();
+    else if(cal != "" && Number(concat)>10)
+    event.preventDefault();
   }
 }
 

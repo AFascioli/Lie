@@ -70,7 +70,6 @@
           <input
             name="nroDocumento"
             maxlength="8"
-            pattern="[0-9]+"
             ngModel
             #nroDocumento="ngModel"
             matInput
@@ -140,7 +139,7 @@
             maxlength="20"
             ngModel
             #telefono="ngModel"
-            placeholder="Ingrese número de teléfono *"
+            placeholder="Ingrese número de teléfono"
             type="text"
             (keypress)="checkNumeros($event)"
             required
@@ -173,15 +172,7 @@
       >
         Guardar
       </button>
-      <button mat-raised-button (click)="popUpCancelar()" class="buttonWarn">
-        Cancelar
-      </button>
-      <button
-        class="button-volver"
-        mat-raised-button
-        [routerLink]="['/buscar/lista']"
-        class="buttonPrimary"
-      >
+      <button mat-raised-button (click)="popUpVolver()" class="buttonWarn">
         Volver
       </button>
     </div>

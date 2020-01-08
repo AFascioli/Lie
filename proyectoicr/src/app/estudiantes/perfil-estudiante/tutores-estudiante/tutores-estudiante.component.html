@@ -1,4 +1,4 @@
-<table mat-table [dataSource]="tutores" *ngIf="tutores">
+<table mat-table [dataSource]="tutores" *ngIf="tutores.length!=0">
   <ng-container matColumnDef="apellido">
     <th class="columnasNormales" mat-header-cell *matHeaderCellDef>
       Apellido/s
@@ -17,12 +17,21 @@
   </ng-container>
   <ng-container matColumnDef="telefono">
     <th class="columnasNormales" mat-header-cell *matHeaderCellDef>
-      Telefono
+      Teléfono
     </th>
     <td class="columnasNormales" mat-cell *matCellDef="let tutor">
       {{ tutor.telefono }}
     </td>
   </ng-container>
+  <ng-container matColumnDef="email">
+      <th class="columnasNormales" mat-header-cell *matHeaderCellDef>
+        Email
+      </th>
+      <td class="columnasNormales" mat-cell *matCellDef="let tutor">
+        {{ tutor.email }}
+      </td>
+    </ng-container>
   <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
   <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
 </table>
+<p *ngIf="tutores.length==0" class="aviso"><b>El estudiante no tiene tutores asignados</b></p>

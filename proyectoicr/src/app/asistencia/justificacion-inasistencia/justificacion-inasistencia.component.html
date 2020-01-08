@@ -2,8 +2,8 @@
 <mat-card class="card-body-componente">
   <form #form="ngForm">
     <div class="contenido">
-      <p *ngIf="ultimasInasistencias.length==0">El estudiante seleccionado no presenta inasistencias en los últimos 5 días</p>
-      <p *ngIf="ultimasInasistencias.length!=0" class="p-inasistencias"><b>Últimas Inasistencias</b></p>
+      <p *ngIf="ultimasInasistencias.length==0"> <b> El estudiante seleccionado no tiene inasistencias para justificar en los últimos 5 días </b> </p>
+      <p *ngIf="ultimasInasistencias.length!=0" class="p-inasistencias"><b>Inasistencias de los últimos 5 días </b></p>
       <p
         class="p-inasistencias"
         *ngFor="let inasistencia of ultimasInasistencias; let i = index"
@@ -16,19 +16,17 @@
     <div class="div-button">
       <button
         mat-raised-button
+        [disabled]="ultimasInasistencias.length==0"
         class="buttonPrimary"
         mat-raised-button
         (click)="justificarInasistencia()"
       >
         Guardar
       </button>
-      <button mat-raised-button (click)="onCancelar()" class="buttonWarn">
-        Cancelar
-      </button>
       <button
         mat-raised-button
         [routerLink]="['/buscar/lista']"
-        class="buttonPrimary"
+        class="buttonWarn"
       >
         Volver
       </button>

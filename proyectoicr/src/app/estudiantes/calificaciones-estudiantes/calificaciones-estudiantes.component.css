@@ -45,10 +45,6 @@ input:focus{
   outline: none;
 }
 
-[hidden] {
-  display: none !important;
-}
-
 .promedio{
   text-align: center !important;
 }

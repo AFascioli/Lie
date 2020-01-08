@@ -8,7 +8,7 @@ import { Subscription } from "rxjs";
 import { DateAdapter, MatSnackBar } from "@angular/material";
 import { MatDialog, MatDialogRef } from "@angular/material/dialog";
 import { Router } from "@angular/router";
-import { MediaMatcher } from '@angular/cdk/layout';
+import { MediaMatcher } from "@angular/cdk/layout";
 
 @Component({
   selector: "app-alta-estudiantes",
@@ -22,9 +22,16 @@ export class AltaEstudiantesComponent implements OnInit, OnDestroy {
   localidades: Localidad[] = [];
   localidadesFiltradas: Localidad[] = [];
   suscripcion: Subscription;
-  nombreProvinciaSeleccionada: string;
   _mobileQueryListener: () => void;
   mobileQuery: MediaQueryList;
+
+  //para asignar valores por defecto
+  nombreProvinciaSeleccionada: string;
+  nombreLocalidadSeleccionada: string;
+  defaultEstadoCivil="soltero";
+  codigoPostalEstudiante: string;
+  estadoCivilEstudiante: string;
+  nacionalidadEstudiante:string;
 
   constructor(
     public servicio: EstudiantesService,
@@ -34,14 +41,16 @@ export class AltaEstudiantesComponent implements OnInit, OnDestroy {
     public changeDetectorRef: ChangeDetectorRef,
     public media: MediaMatcher
   ) {
-//    this.dateAdapter.setLocale("es");
-  this.mobileQuery = media.matchMedia('(max-width: 1000px)');
+    //    this.dateAdapter.setLocale("es");
+    this.mobileQuery = media.matchMedia("(max-width: 1000px)");
     this._mobileQueryListener = () => changeDetectorRef.detectChanges();
     this.mobileQuery.addListener(this._mobileQueryListener);
   }
 
   // Cuando se inicializa el componente se cargar las provincias.
   ngOnInit() {
+    this.codigoPostalEstudiante = "2421";
+    this.nacionalidadEstudiante= "Argentina";
     this.servicio.formInvalidoEstudiante = true;
     this.servicio.getProvincias();
     this.suscripcion = this.servicio
@@ -54,13 +63,20 @@ export class AltaEstudiantesComponent implements OnInit, OnDestroy {
       .getLocalidadesListener()
       .subscribe(localidadesActualizadas => {
         this.localidades = localidadesActualizadas;
+        this.nombreProvinciaSeleccionada="Cordoba";
+        this.FiltrarLocalidades();
+        this.nombreLocalidadSeleccionada="Morteros"
       });
     this.servicio.getNacionalidades();
     this.suscripcion = this.servicio
       .getNacionalidadesListener()
       .subscribe(nacionalidadesActualizadas => {
         this.nacionalidades = nacionalidadesActualizadas;
+        this.nacionalidades.sort((a, b) =>
+        a.name > b.name ? 1 : b.name > a.name ? -1 : 0
+      );
       });
+
   }
 
   // Cuando se destruye el componente se eliminan las suscripciones.
@@ -70,27 +86,46 @@ export class AltaEstudiantesComponent implements OnInit, OnDestroy {
 
   onGuardar(form: NgForm) {
     if (form.invalid) {
+      console.log(form.value.localidad);
+      this.snackBar.open("Faltan campos por completar", "", {
+        panelClass: ["snack-bar-fracaso"],
+        duration: 4000
+      });
     } else {
-      this.servicio.altaEstudiante(
-        form.value.apellido,
-        form.value.nombre,
-        form.value.tipoDocumento,
-        form.value.nroDocumento,
-        form.value.cuil,
-        form.value.sexo,
-        form.value.calle,
-        form.value.nroCalle,
-        form.value.piso,
-        form.value.departamento,
-        form.value.provincia,
-        form.value.localidad,
-        form.value.codigoPostal,
-        form.value.nacionalidad,
-        form.value.fechaNac,
-        form.value.estadoCivil,
-        form.value.telefono
-      );
-      form.resetForm();
+      this.servicio
+        .altaEstudiante(
+          form.value.apellido,
+          form.value.nombre,
+          form.value.tipoDocumento,
+          form.value.nroDocumento,
+          form.value.cuil,
+          form.value.sexo,
+          form.value.calle,
+          form.value.nroCalle,
+          form.value.piso,
+          form.value.departamento,
+          form.value.provincia,
+          form.value.localidad,
+          form.value.codigoPostal,
+          form.value.nacionalidad,
+          form.value.fechaNac,
+          form.value.estadoCivil,
+          form.value.telefono
+        )
+        .subscribe(respuesta => {
+          if (respuesta.exito) {
+            this.snackBar.open(respuesta.message, "", {
+              panelClass: ["snack-bar-exito"],
+              duration: 4000
+            });
+            form.resetForm();
+          } else {
+            this.snackBar.open(respuesta.message, "", {
+              panelClass: ["snack-bar-fracaso"],
+              duration: 4000
+            });
+          }
+        });
     }
   }
 
@@ -104,20 +139,19 @@ export class AltaEstudiantesComponent implements OnInit, OnDestroy {
     );
   }
 
-  snackBarGuardar(form: NgForm): void {
-    if (form.invalid) {
-      this.snackBar.open("Faltan campos por completar", "", {
-        panelClass: ['snack-bar-fracaso'],
-        duration: 4000
-      });
-    } else {
-      this.snackBar.open("El estudiante se ha registrado correctamente", "", {
-        panelClass: ['snack-bar-exito'],
-        duration: 4000
-      });
-    }
-  }
-
+  // snackBarGuardar(form: NgForm): void {
+  //   if (form.invalid) {
+  //     this.snackBar.open("Faltan campos por completar", "", {
+  //       panelClass: ['snack-bar-fracaso'],
+  //       duration: 4000
+  //     });
+  //   } else {
+  //     this.snackBar.open("El estudiante se ha registrado correctamente", "", {
+  //       panelClass: ['snack-bar-exito'],
+  //       duration: 4000
+  //     });
+  //   }
+  // }
 
   popUpCancelar() {
     this.dialog.open(AltaPopupComponent, {
@@ -129,7 +163,10 @@ export class AltaEstudiantesComponent implements OnInit, OnDestroy {
   checkLetras(event) {
     var inputValue = event.which;
     if (
-      !(inputValue >= 65 && inputValue <= 122 || (inputValue == 209 ||  inputValue == 241)) &&
+      !(
+        (inputValue >= 65 && inputValue <= 122) ||
+        (inputValue == 209 || inputValue == 241)
+      ) &&
       (inputValue != 32 && inputValue != 0)
     ) {
       event.preventDefault();
@@ -166,5 +203,4 @@ export class AltaPopupComponent {
   onNoClick(): void {
     this.dialogRef.close();
   }
-
 }
