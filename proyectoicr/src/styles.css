@@ -20,14 +20,14 @@ button {
 }
 
 /* Oculta flechas en Mozilla. */
-input[type=number]::-webkit-outer-spin-button,
-input[type=number]::-webkit-inner-spin-button {
-    -webkit-appearance: none;
-    margin: 0;
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
 }
 
-input[type=number] {
-    -moz-appearance:textfield;
+input[type="number"] {
+  -moz-appearance: textfield;
 }
 
 .componente-titulo {
@@ -69,6 +69,11 @@ input[type=number] {
 
 .snack-bar-fracaso {
   background-color: #f02626;
+}
+
+.snack-bar-aviso {
+  background-color: rgb(47, 100, 131);
+  color: white;
 }
 
 .mat-drawer-inner-container {
@@ -136,4 +141,13 @@ input[type=number] {
 .mat-radio-button.mat-accent.mat-radio-checked .mat-radio-persistent-ripple,
 .mat-radio-button.mat-accent:active .mat-radio-persistent-ripple {
   background-color: rgb(47, 100, 131) !important;
+}
+
+.spinner {
+  margin: 0 auto;
+}
+
+/* Para que se muestre bien el dropdown menu */
+.mat-menu-content:not(:empty) {
+  padding-right: 8px;
 }

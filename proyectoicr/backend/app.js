@@ -1,14 +1,18 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
+const cron = require("node-schedule");
 const estudiantesRoutes = require("./routes/estudiante");
 const provinciasRoutes = require("./routes/provincia");
 const localidadesRoutes = require("./routes/localidad");
 const nacionalidadesRoutes = require("./routes/nacionalidad");
 const cursoRoutes = require("./routes/curso");
-const usuarioRoutes= require("./routes/usuario");
-const adultoResponsableRoutes= require("./routes/adultoResponsable");
-const empleadoRoutes= require("./routes/empleado");
+const usuarioRoutes = require("./routes/usuario");
+const adultoResponsableRoutes = require("./routes/adultoResponsable");
+const empleadoRoutes = require("./routes/empleado");
+const cicloLectivoRoutes = require("./routes/cicloLectivo");
+const asistenciaRoutes = require("./routes/asistencia");
+const calificacionesRoutes = require("./routes/calificacion");
 
 const app = express(); // Creo la app express
 
@@ -17,25 +21,25 @@ const app = express(); // Creo la app express
    lo que corresponda*/
 
 // Conexión a base de producción
-mongoose
+ mongoose
   .connect(
-    "mongodb+srv://ComandanteJr:SNcjNuPBMG42lOh1@cluster0-qvosw.mongodb.net/icrdev?retryWrites=true",
-    { useNewUrlParser: true, useUnifiedTopology: true  }
-  )
-  .then(() => {
-    console.log("Conexión a base de datos de producción exitosa");
-  })
-  .catch(() => {
-    console.log("Fallo conexión a la base de datos de producción");
-  });
+     "mongodb+srv://ComandanteJr:SNcjNuPBMG42lOh1@cluster0-qvosw.mongodb.net/icrdev?retryWrites=true",
+     { useNewUrlParser: true, useUnifiedTopology: true }
+   )
+   .then(() => {
+     console.log("Conexión a base de datos de producción exitosa");
+   })
+   .catch(() => {
+     console.log("Fallo conexión a la base de datos de producción");
+   });
 
-// // Conexión a base local
-// mongoose.connect('mongodb://127.0.0.1:27017/icr-local',{useNewUrlParser: true })
+// Conexión a base local
+// mongoose.connect('mongodb://127.0.0.1:27017/icr-local',{useNewUrlParser: true, useUnifiedTopology: true  })
 // .then(() => {
 //   console.log('Conexión a base de datos local exitosa');
 // })
 // .catch(() => {
-//   console.log('Fallo conexión a la base de datos local');
+//  console.log('Fallo conexión a la base de datos local');
 // });
 
 //Para sacar el deprecation warning de la consola
@@ -74,6 +78,12 @@ app.use("/usuario", usuarioRoutes);
 app.use("/adultoResponsable", adultoResponsableRoutes);
 
 app.use("/empleado", empleadoRoutes);
+
+app.use("/cicloLectivo", cicloLectivoRoutes);
+
+app.use("/asistencia", asistenciaRoutes);
+
+app.use("/calificacion", calificacionesRoutes);
 
 app.get("/status", (req, res, next) => {
     res.status(200).json({

@@ -1,15 +1,28 @@
 <h1 class="componente-titulo">Registrar llegada tarde</h1>
 <mat-card class="card-body-componente">
-  <p class="fecha">
+  <p class="aviso" *ngIf="fueraPeriodoCicloLectivo">Atención, no se puede registrar la llegada tarde debido a que estamos fuera del ciclo lectivo </p>
+  <div *ngIf="!fueraPeriodoCicloLectivo" >
+  <div class="ubicacionfecha">
     <b>Fecha: </b>
-    <br />
-    {{ fechaActual | date: "EEEE" }} {{ fechaActual | date: "dd/MM/yyyy" }}
-  </p>
+    &nbsp;
+    <mat-form-field>
+      <input
+        [disabled]="true"
+        ngModel
+        #diaFecha="ngModel"
+        matInput
+        name="diaFecha"
+        required
+        class="inputFecha"
+      />
+      {{ fechaActual | date: "EEEE" | titlecase }}
+      {{ fechaActual | date: "dd/MM/yyyy" }}
+    </mat-form-field>
+  </div>
   <br />
-
   <div class="contenido">
-    <mat-card class="card-body-componente">
-      <h3>Datos del estudiante seleccionado</h3>
+    <mat-card>
+      <p class="titulo-datos-est">Datos del estudiante</p>
       <mat-card-subtitle>
         <b>Apellido/s: </b> {{ apellidoEstudiante }}
         <br />
@@ -17,39 +30,38 @@
       </mat-card-subtitle>
     </mat-card>
   </div>
-
   <br />
-
-  <mat-radio-group  aria-label="Select an option">
+    <mat-radio-group aria-label="Selecciona una de las opciones">
     <mat-radio-button
-      (change)="cambiarTipoRetiro()"
-      [checked]=" "
+      (change)="radioButtonChange()"
+      [checked]="antes8am"
       value="1"
-      >Hasta 10 min</mat-radio-button
-    >
-    <mat-radio-button
-      (change)="cambiarTipoRetiro()"
-      [checked]=" "
-      value="2"
-      >Entre 10 y 20 min</mat-radio-button
-    >
-    <mat-radio-button
-      (change)="cambiarTipoRetiro()"
-      [checked]=""
-      value="3"
-      >Luego de 20 min</mat-radio-button
+      ><span class="label-radio-button"
+        >Antes de las 8 am</span
+      ></mat-radio-button>
+    <mat-radio-button (change)="radioButtonChange()" [checked]="despues8am" value="2"
+      ><span class="label-radio-button"
+        >Después de las 8 am</span
+      ></mat-radio-button
     >
   </mat-radio-group>
-
   <br />
-
+</div>
   <div class="div-button">
-    <button class="buttonPrimary" mat-raised-button>
+    <button
+      class="buttonPrimary"
+      (click)="onGuardar()"
+      mat-raised-button
+      [disabled]="fueraPeriodoCicloLectivo"
+    >
       Guardar
     </button>
-
-    <button mat-raised-button class="buttonWarn">
-      Cancelar
+    <button
+      mat-raised-button
+      [routerLink]="['/buscar/lista']"
+      class="buttonWarn"
+    >
+      Volver
     </button>
   </div>
 </mat-card>

@@ -1,5 +1,6 @@
+import { RegistrarEventoComponent } from './eventos/registrar-evento/registrar-evento.component';
+import { CalificacionesExamenesComponent } from './estudiantes/calificaciones-examenes/calificaciones-examenes.component';
 import { PreferenciasComponent } from './menu-lateral/preferencias/preferencias.component';
-
 import { AltaARComponent } from './adulto-responsable/alta-ar/alta-ar.component';
 import { AltaEmpleadoComponent } from './empleado/alta-empleado/alta-empleado.component';
 import { AgendaCursoPerfilEstudianteComponent } from "./estudiantes/perfil-estudiante/agenda-curso-perfil-estudiante/agenda-curso-perfil-estudiante.component";
@@ -95,9 +96,15 @@ const routes: Routes = [
         data: { rolesValidos: ["Admin", "Preceptor", "Director", "Docente"] }
       },
       {
+        path: "calificacionesExamenes",
+        component: CalificacionesExamenesComponent,
+        canActivate: [RoleGuard, RouteGuard],
+        data: { rolesValidos: ["Admin", "Preceptor", "Director", "Docente"] }
+      },
+      {
         path: "llegadaTarde",
         component: LlegadaTardeComponent,
-        canActivate: [RoleGuard],
+        canActivate: [RoleGuard, RouteGuard],
         data: { rolesValidos: ["Admin", "Preceptor", "Director"] }
       },
       { path: "cambiarContraseña",
@@ -151,10 +158,17 @@ const routes: Routes = [
         data: { rolesValidos: ["Admin", "Director", "Preceptor"] }
       },
       {
+        path: "registrarEvento",
+        component: RegistrarEventoComponent,
+        canActivate: [RoleGuard],
+        data: { rolesValidos: ["Admin", "Director", "Preceptor", "Docente"] }
+      },
+      {
         path:"preferencias",
         component: PreferenciasComponent
       }
     ]
+
   }
 ];
 

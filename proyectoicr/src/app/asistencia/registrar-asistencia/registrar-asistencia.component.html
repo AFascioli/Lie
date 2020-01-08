@@ -8,6 +8,7 @@
       name="curso"
       ngModel
       #curso="ngModel"
+      [disabled]="fueraPeriodoCicloLectivo"
       matNativeControl
       required
       (selectionChange)="onCursoSeleccionado(curso)"
@@ -36,6 +37,7 @@
     </mat-form-field>
   </div>
   <p class="aviso" *ngIf="asistenciaNueva!='true'">Atención, ya existe una asistencia registrada para este curso el día de hoy</p>
+  <p class="aviso" *ngIf="fueraPeriodoCicloLectivo==true">Atención, no se puede tomar asistencia debido a que estamos fuera del ciclo lectivo </p>
   <br />
   <div *ngIf="!cursoNotSelected">
     <table mat-table [dataSource]="estudiantesXDivision">
@@ -81,6 +83,7 @@
       <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
       <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
     </table>
+    <p class="aviso" *ngIf="estudiantesXDivision.length==0 && !cursoNotSelected">No exiten alumnos inscriptos a este curso</p>
   </div>
   <br />
   <div class="div-button">

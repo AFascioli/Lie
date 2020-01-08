@@ -1,13 +1,8 @@
-import { Component, OnInit, Inject } from "@angular/core";
+import { AutenticacionService } from "./../../login/autenticacionService.service";
+import { Component, OnInit } from "@angular/core";
 import { EstudiantesService } from "src/app/estudiantes/estudiante.service";
-import {
-  MatDialogRef,
-  MatDialog,
-  MAT_DIALOG_DATA,
-  MatDialogConfig
-} from "@angular/material";
-import { Router } from "@angular/router";
-import { DateAdapter } from "@angular/material";
+import { AsistenciaService } from "src/app/asistencia/asistencia.service";
+import { MatSnackBar } from "@angular/material";
 
 @Component({
   selector: "app-llegada-tarde",
@@ -15,68 +10,89 @@ import { DateAdapter } from "@angular/material";
   styleUrls: ["./llegada-tarde.component.css"]
 })
 export class LlegadaTardeComponent implements OnInit {
-  fechaActual = new Date();
+  fechaActual: Date;
   apellidoEstudiante: string;
   nombreEstudiante: string;
-  _idEstudiante: string;
-  matConfig = new MatDialogConfig();
-  
+  antes8am = false;
+  despues8am = false;
+  fueraPeriodoCicloLectivo = false;
+
   constructor(
-    private servicio: EstudiantesService,
-    public popup: MatDialog,
-    private dateAdapter: DateAdapter<Date>
-  ) {
-    this.dateAdapter.setLocale("es");
-  }
+    public servicioEstudiante: EstudiantesService,
+    public servicioAsistencia: AsistenciaService,
+    public snackBar: MatSnackBar,
+    public autenticacionService: AutenticacionService
+  ) {}
 
   ngOnInit() {
     this.fechaActual = new Date();
-    this.apellidoEstudiante = this.servicio.estudianteSeleccionado.apellido;
-    this.nombreEstudiante = this.servicio.estudianteSeleccionado.nombre;
-    this._idEstudiante = this.servicio.estudianteSeleccionado._id;
-  }
-
-  cambiarTipoRetiro(){}
-}
-
-@Component({
-  selector: "app-llegadaTarde-popup",
-  templateUrl: "./llegadaTarde-popup.component.html",
-  styleUrls: ["./llegada-tarde.component.css"]
-})
-
-export class LlegadaTardePopupComponent {
-  tipoPopup: string;
-  IdEstudiante: string;
-  exito: boolean = false;
-
-  constructor(
-    public dialogRef: MatDialogRef<LlegadaTardePopupComponent>,
-    public router: Router,
-    public servicio: EstudiantesService,
-    @Inject(MAT_DIALOG_DATA) data
-  ) {
-    this.tipoPopup = data.tipoPopup;
-    this.IdEstudiante = data.IdEstudiante;
-  }
-
-  //Vuelve al menu principal
-  onYesCancelarClick(): void {
-    this.router.navigate(["menuLateral/home"]);
-    this.dialogRef.close();
-  }
-
-  //Cierra el popup y vuelve a la interfaz de retiro
-  onNoCancelarConfirmarClick(): void {
-    this.dialogRef.close();
-  }
-
-  //Si fue exitosa la operacion vuelve al menu principal, sino vuelve a la interfaz de retiro
-  onOkConfirmarClick() {
-    if (this.exito) {
-      this.router.navigate(["menuLateral/home"]);
-      this.dialogRef.close();
+    this.fechaActualFinDeSemana();
+    if (
+      this.fechaActualEnCicloLectivo ||
+      this.autenticacionService.getRol() == "Admin"
+    ) {
+      if (this.fechaActual.getHours() < 8) {
+        this.antes8am = true;
+      } else {
+        this.despues8am = true;
+      }
+      this.apellidoEstudiante = this.servicioEstudiante.estudianteSeleccionado.apellido;
+      this.nombreEstudiante = this.servicioEstudiante.estudianteSeleccionado.nombre;
+    } else {
+      this.fueraPeriodoCicloLectivo = true;
     }
-    this.dialogRef.close();
+  }
+
+  fechaActualFinDeSemana() {
+    if (
+      this.fechaActual.toString().substring(0, 3) == "Sat" ||
+      this.fechaActual.toString().substring(0, 3) == "Sun"
+    ) {
+      this.snackBar.open(
+        "Considere que está queriendo registrar una llegada tarde en un fin de semana",
+        "",
+        {
+          panelClass: ["snack-bar-aviso"],
+          duration: 8000
+        }
+      );
+    }
+  }
+
+  fechaActualEnCicloLectivo() {
+    let fechaInicioPrimerTrimestre = new Date(
+      this.autenticacionService.getFechasCicloLectivo().fechaInicioPrimerTrimestre
+    );
+    let fechaFinTercerTrimestre = new Date(
+      this.autenticacionService.getFechasCicloLectivo().fechaFinTercerTrimestre
+    );
+
+    return (
+      this.fechaActual.getTime() > fechaInicioPrimerTrimestre.getTime() &&
+      this.fechaActual.getTime() < fechaFinTercerTrimestre.getTime()
+    );
+  }
+
+  radioButtonChange() {
+    this.antes8am = !this.antes8am;
+    this.despues8am = !this.despues8am;
+  }
+
+  onGuardar() {
+    this.servicioAsistencia
+      .registrarLlegadaTarde(this.antes8am)
+      .subscribe(result => {
+        if (result.exito) {
+          this.snackBar.open(result.message, "", {
+            panelClass: ["snack-bar-exito"],
+            duration: 4500
+          });
+        } else {
+          this.snackBar.open(result.message, "", {
+            panelClass: ["snack-bar-fracaso"],
+            duration: 4500
+          });
+        }
+      });
   }
 }

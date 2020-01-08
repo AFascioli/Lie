@@ -14,7 +14,10 @@ const inscripcionSchema = mongoose.Schema({
   calificacionesXMateria: [{type: mongoose.Schema.Types.ObjectId, ref: 'calificacionesXMateria'}],
   contadorInasistenciasInjustificada: {type: Number},
   contadorInasistenciasJustificada: {type: Number},
-  estado: {type: mongoose.Schema.Types.ObjectId, ref: "estado"}
+  contadorLlegadasTarde: {type: Number},
+  estado: {type: mongoose.Schema.Types.ObjectId, ref: "estado"},
+  año: {type: Number},
+  materiasPendientes: [{type: mongoose.Schema.Types.ObjectId, ref: 'calificacionesXMateria'}]
 });
 
 module.exports= mongoose.model('inscripcion', inscripcionSchema, 'inscripcion');

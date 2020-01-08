@@ -14,6 +14,17 @@
       <button mat-button class="homeButton" (click)="onClickHome()">
         <mat-icon>home </mat-icon>
       </button>
+      <button mat-button [matMenuTriggerFor]="menu" class="dropDown">
+        <mat-icon>arrow_drop_down</mat-icon>
+      </button>
+      <mat-menu #menu="matMenu">
+        <button mat-menu-item routerLink="/preferencias">
+          <mat-icon>settings</mat-icon> Preferencias
+        </button>
+        <button mat-menu-item (click)="cierreSesion()">
+          <mat-icon>exit_to_app</mat-icon> Cerrar sesión
+        </button>
+      </mat-menu>
     </mat-toolbar-row>
   </mat-toolbar>
 
@@ -31,6 +42,22 @@
     >
       <mat-nav-list>
         <mat-accordion>
+          <mat-icon class="iconUsuario">account_circle</mat-icon>
+          <p class="usuario">
+            <b>{{ rol }}</b>
+          </p>
+          <p class="usuario">{{ usuario }}</p>
+
+          <!-- VER SI DEJAMOS ESTOS BOTONES ACÁ O ABAJO
+          <button mat-button routerLink="/preferencias">
+            <mat-icon>settings</mat-icon>
+            Preferencias
+          </button>
+          <button mat-button (click)="cierreSesion()">
+            <mat-icon>exit_to_app</mat-icon>
+            Cerrar sesión
+          </button> -->
+
           <mat-expansion-panel class="opcion">
             <mat-expansion-panel-header>
               <mat-panel-title>
@@ -107,9 +134,7 @@
               Visualizar calificaciones
             </a>
           </mat-expansion-panel>
-          <mat-expansion-panel
-            class="opcion"
-            >
+          <mat-expansion-panel class="opcion">
             <!-- (opened)="panelOpenState = true"
             (closed)="panelOpenState = false" -->
             <mat-expansion-panel-header>
@@ -139,9 +164,7 @@
               Buscar
             </a>
           </mat-expansion-panel>
-          <mat-expansion-panel
-            class="opcion"
-          >
+          <mat-expansion-panel class="opcion">
             <mat-expansion-panel-header>
               <mat-panel-title>
                 <a mat-list-item ng-Focus="onSelected(this)">
@@ -153,7 +176,7 @@
             <a
               mat-list-item
               class="opciones-expansion"
-              routerLink="./"
+              routerLink="/registrarEvento"
               *ngIf="permisos.eventos > 1"
               (click)="cerrarMenuLateral(sideNav)"
             >
@@ -163,7 +186,7 @@
             <a
               mat-list-item
               class="opciones-expansion"
-              routerLink="./"
+
               *ngIf="permisos.eventos > 1"
               (click)="cerrarMenuLateral(sideNav)"
             >
@@ -193,14 +216,6 @@
           </mat-expansion-panel>
         </mat-accordion>
       </mat-nav-list>
-      <button mat-button class="preferencias" routerLink="/preferencias">
-        <mat-icon>settings</mat-icon>
-        Preferencias
-      </button>
-      <button mat-button class="cierreSesion" (click)="cierreSesion()">
-        <mat-icon>exit_to_app</mat-icon>
-        Cerrar sesión
-      </button>
     </mat-sidenav>
     <mat-sidenav-content>
       <div

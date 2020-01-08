@@ -1,11 +1,8 @@
-
-     <div *ngIf="contadorInasistenciaInjustificada && contadorInasistenciaInjustificada!=0" style="display: block">
-      <canvas baseChart
-              [data]="pieChartData"
-              [labels]="pieChartLabels"
-              [chartType]="pieChartType"
-              ></canvas>
-              <p class="parrafoReincorporacion" *ngIf="contadorInasistenciaInjustificada<15"><b>Le quedan {{ (15-contadorInasistenciaInjustificada)}} inasistencias para la reincorporación</b></p>
-              <p *ngIf="contadorInasistenciaInjustificada==15"><b>Necesita ser reincorporado por acumulación de faltas</b></p>
+    <div *ngIf="contadorInasistenciaInjustificada && contadorInasistenciaInjustificada!=0" style="display: block">
+      <canvas baseChart [data]="barChartData" [labels]="barChartLabels" [options]="barChartOptions"
+      [plugins]="barChartPlugins" [legend]="barChartLegend" [chartType]="barChartType"
+      ></canvas>
+      <p *ngIf="contadorInasistenciaInjustificada<15" class="mensajeReincorporacion"> <b>Le quedan {{(15-contadorInasistenciaInjustificada)}} inasistencias injustificadas para la reincorporación </b></p>
     </div>
-    <p *ngIf="contadorInasistenciaInjustificada==0">El estudiante no presenta ninguna inasistencia</p>
+    <p *ngIf="contadorInasistenciaInjustificada==0"> <b> El estudiante no presenta ninguna inasistencia </b></p>
+

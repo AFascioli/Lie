@@ -1,7 +1,9 @@
+import { CalificacionesService } from "./../../calificaciones.service";
 import { Estudiante } from "src/app/estudiantes/estudiante.model";
 import { EstudiantesService } from "src/app/estudiantes/estudiante.service";
 import { Component, OnInit } from "@angular/core";
 import { Router } from "@angular/router";
+import { AutenticacionService } from "src/app/login/autenticacionService.service";
 
 @Component({
   selector: "app-calificaciones-perfil-estudiante",
@@ -13,7 +15,6 @@ export class CalificacionesPerfilEstudianteComponent implements OnInit {
   nombreEstudiante: string;
   curso: string;
   calificacionesXMateria: any[];
-  trimestre: string;
   displayedColumns: string[] = [
     "materia",
     "calif1",
@@ -24,40 +25,75 @@ export class CalificacionesPerfilEstudianteComponent implements OnInit {
     "calif6",
     "prom"
   ];
-  constructor(public servicio: EstudiantesService, public router: Router) {}
+  trimestreActual: string;
+  fechaActual: Date;
+  promedio = 0;
+
+  constructor(
+    public servicioEstudiante: EstudiantesService,
+    public servicioCalificaciones: CalificacionesService,
+    public router: Router,
+    public servicioEstudianteAutenticacion: AutenticacionService
+  ) {}
 
   ngOnInit() {
-    this.servicio.obtenerCursoDeEstudiante().subscribe(response=> {
+    this.fechaActual = new Date();
+    this.servicioEstudiante.obtenerCursoDeEstudiante().subscribe(response => {
       this.curso = response.curso;
     });
-    this.apellidoEstudiante = this.servicio.estudianteSeleccionado.apellido;
-    this.nombreEstudiante = this.servicio.estudianteSeleccionado.nombre;
+    this.apellidoEstudiante = this.servicioEstudiante.estudianteSeleccionado.apellido;
+    this.nombreEstudiante = this.servicioEstudiante.estudianteSeleccionado.nombre;
     this.obtenerTrimestrePorDefecto();
-    this.servicio
-      .obtenerCalificacionesXMateriaXEstudiante(this.trimestre)
+   this.servicioCalificaciones
+      .obtenerCalificacionesXMateriaXEstudiante(this.trimestreActual)
       .subscribe(res => {
         this.calificacionesXMateria = res.vectorCalXMat;
       });
-
   }
 
   onChangeTrimestre() {
-    this.servicio
-      .obtenerCalificacionesXMateriaXEstudiante(this.trimestre)
+   this.servicioCalificaciones
+      .obtenerCalificacionesXMateriaXEstudiante(this.trimestreActual)
       .subscribe(res => {
         this.calificacionesXMateria = res.vectorCalXMat;
       });
+  }
+
+  calcularPromedio(index, cantidad) {
+    var notas: number = 0;
+    this.calificacionesXMateria[index].calificaciones.forEach(nota => {
+      if (nota != 0 && nota != null) notas = notas + nota;
+    });
+    this.promedio = notas / cantidad;
+    return this.promedio;
   }
 
   //Segun la fecha actual selecciona por defecto el trimestre
   obtenerTrimestrePorDefecto() {
-    var today = new Date();
-    var t1 = new Date(2019, 4, 31);
-    var t2 = new Date(2019, 8, 15);
+    let fechas = this.servicioEstudianteAutenticacion.getFechasCicloLectivo();
+    let fechaInicioPrimerTrimestre = new Date(
+      fechas.fechaInicioPrimerTrimestre
+    );
+    let fechaFinPrimerTrimestre = new Date(fechas.fechaFinPrimerTrimestre);
+    let fechaInicioSegundoTrimestre = new Date(
+      fechas.fechaInicioSegundoTrimestre
+    );
+    let fechaFinSegundoTrimestre = new Date(fechas.fechaFinSegundoTrimestre);
 
-    if (today < t1) this.trimestre = "1";
-    else if (today > t2) this.trimestre = "3";
-    else this.trimestre = "2";
+    if (
+      this.fechaActual.getTime() >= fechaInicioPrimerTrimestre.getTime() &&
+      this.fechaActual.getTime() <= fechaFinPrimerTrimestre.getTime()
+    ) {
+      this.trimestreActual = "1";
+    } else if (
+      this.fechaActual.getTime() >= fechaInicioSegundoTrimestre.getTime() &&
+      this.fechaActual.getTime() <= fechaFinSegundoTrimestre.getTime()
+    ) {
+      this.trimestreActual = "2";
+    } else {
+      this.trimestreActual = "3";
+      return;
+    }
   }
 
   //Dado el indice de la tabla que representa una materia, retorna cuantas

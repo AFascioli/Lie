@@ -10,6 +10,7 @@ import {
 } from "@angular/material";
 import { NgForm } from "@angular/forms";
 import { MediaMatcher } from "@angular/cdk/layout";
+import { AutenticacionService } from 'src/app/login/autenticacionService.service';
 
 @Component({
   selector: "app-inscripcion-estudiantes",
@@ -19,6 +20,7 @@ import { MediaMatcher } from "@angular/cdk/layout";
 export class InscripcionEstudianteComponent implements OnInit {
   cursos: any[];
   diaActual: string;
+  cursoSeleccionado: string;
   capacidadCurso: number;
   apellidoEstudiante: string;
   nombreEstudiante: string;
@@ -34,12 +36,14 @@ export class InscripcionEstudianteComponent implements OnInit {
   ];
   _mobileQueryListener: () => void;
   mobileQuery: MediaQueryList;
+  fechaDentroDeRangoInscripcion : boolean = true;
 
   constructor(
     public servicio: EstudiantesService,
     public dialog: MatDialog,
     public snackBar: MatSnackBar,
     public changeDetectorRef: ChangeDetectorRef,
+    public authService: AutenticacionService,
     public media: MediaMatcher
   ) {
     this.mobileQuery = media.matchMedia("(max-width: 1000px)");
@@ -48,7 +52,11 @@ export class InscripcionEstudianteComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.fechaActual = new Date();
+    this.fechaActual= new Date();
+    if(this.fechaActualEnRangoFechasInscripcion() || this.authService.getRol()=="Admin"){
+      this.fechaDentroDeRangoInscripcion = true;
+    }
+    this.authService.getFechasCicloLectivo();
     this.apellidoEstudiante = this.servicio.estudianteSeleccionado.apellido;
     this.nombreEstudiante = this.servicio.estudianteSeleccionado.nombre;
     this._idEstudiante = this.servicio.estudianteSeleccionado._id;
@@ -57,20 +65,29 @@ export class InscripcionEstudianteComponent implements OnInit {
       .subscribe(response => {
         this.estudianteEstaInscripto = response.exito;
       });
-    this.servicio.obtenerCursos().subscribe(response => {
+    this.servicio.obtenerCursosInscripcionEstudiante().subscribe(response => {
       this.cursos = response.cursos;
       this.cursos.sort((a, b) =>
-        a.curso.charAt(0) > b.curso.charAt(0)
-          ? 1
-          : b.curso.charAt(0) > a.curso.charAt(0)
-          ? -1
-          : 0
-      );
+          a.curso.charAt(0) > b.curso.charAt(0)
+            ? 1
+            : b.curso.charAt(0) > a.curso.charAt(0)
+            ? -1
+            : 0
+        );
     });
   }
 
+  fechaActualEnRangoFechasInscripcion() {
+    let fechaInicioInscripcion = new Date(this.authService.getFechasCicloLectivo().fechaInicioInscripcion);
+    let fechaFinInscripcion = new Date(this.authService.getFechasCicloLectivo().fechaFinInscripcion);
+
+    return this.fechaActual.getTime() > fechaInicioInscripcion.getTime() &&
+        this.fechaActual.getTime() < fechaFinInscripcion.getTime();
+    }
+
   //Obtiene la capacidad del curso seleccionado
   onCursoSeleccionado(curso) {
+    this.cursoSeleccionado = curso.value;
     this.servicio.obtenerCapacidadCurso(curso.value).subscribe(response => {
       this.capacidadCurso = response.capacidad;
     });
@@ -84,7 +101,7 @@ export class InscripcionEstudianteComponent implements OnInit {
   }
 
 
-  openDialogo(form: NgForm, curso) {
+  openDialogo(form: NgForm) {
     if (form.invalid) {
       this.snackBar.open("No se ha seleccionado un curso", "", {
         panelClass: ["snack-bar-fracaso"],
@@ -104,13 +121,15 @@ export class InscripcionEstudianteComponent implements OnInit {
         this.matConfig.data = {
           formValido: form.valid,
           IdEstudiante: this._idEstudiante,
-          curso: curso.value,
+          curso: this.cursoSeleccionado,
           documentosEntregados: this.documentosEntregados
         };
         this.matConfig.width = "250px";
-        this.dialog.open(InscripcionPopupComponent, this.matConfig);
-        this.dialog.afterAllClosed.subscribe(()=>{
-          this.estudianteEstaInscripto=true;
+        const dialogRef = this.dialog.open(InscripcionPopupComponent, this.matConfig);
+        dialogRef.afterClosed().subscribe((result)=>{
+          if(result.data){
+            this.estudianteEstaInscripto=true;
+          }
         })
       }
     }
@@ -132,6 +151,7 @@ export class InscripcionPopupComponent {
   curso: string;
   exito: boolean = false;
   documentosEntregados: any[];
+  isLoading: Boolean=false;
 
   constructor(
     public dialogRef: MatDialogRef<InscripcionPopupComponent>,
@@ -151,7 +171,7 @@ export class InscripcionPopupComponent {
   }
 
   onYesConfirmarClick(): void {
-    this.dialogRef.close();
+    this.isLoading=true;
     this.servicio
       .inscribirEstudiante(
         this.IdEstudiante,
@@ -165,12 +185,17 @@ export class InscripcionPopupComponent {
             panelClass: ["snack-bar-exito"],
             duration: 4500
           });
+          this.isLoading=false;
+          this.dialogRef.close({event:'close',data:this.exito});
         } else {
           this.snackBar.open(response.message, "", {
             duration: 4500,
             panelClass: ["snack-bar-fracaso"]
           });
+          this.isLoading=false;
+          this.dialogRef.close({event:'close',data:this.exito});
         }
       });
+
   }
 }

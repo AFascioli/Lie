@@ -1,9 +1,8 @@
-import { EstudiantesService } from "./../../estudiantes/estudiante.service";
+import { AutenticacionService } from "./../../login/autenticacionService.service";
+import { AsistenciaService } from "src/app/asistencia/asistencia.service";
 import { Component, OnInit } from "@angular/core";
-import {  MatSnackBar } from "@angular/material";
-import {
-  MatDialog
-} from "@angular/material";
+import { MatSnackBar } from "@angular/material";
+import { MatDialog } from "@angular/material";
 
 @Component({
   selector: "app-justificacion-inasistencia",
@@ -18,21 +17,32 @@ export class JustificacionInasistenciaComponent implements OnInit {
   esMultiple: boolean = false;
   ultimasInasistencias = [];
   inasistenciasAJustificar = [];
+  fueraDeCursado = false;
 
   constructor(
-    private servicio: EstudiantesService,
+    private servicioAsistencia: AsistenciaService,
     public snackBar: MatSnackBar,
-    public dialog: MatDialog
+    public dialog: MatDialog,
+    public autenticacionService: AutenticacionService
   ) {}
 
   ngOnInit() {
-    this.servicio.obtenerUltimasInasistencias().subscribe(response => {
-      this.ultimasInasistencias = response.inasistencias;
-    });
+    if (
+      this.fechaActualEnPeriodoCursado ||
+      this.autenticacionService.getRol() == "Admin"
+    ) {
+      this.servicioAsistencia
+        .obtenerUltimasInasistencias()
+        .subscribe(response => {
+          this.ultimasInasistencias = response.inasistencias;
+        });
+    } else {
+      this.fueraDeCursado = true;
+    }
   }
 
   justificarInasistencia() {
-    this.servicio
+    this.servicioAsistencia
       .justificarInasistencia(this.ultimasInasistencias)
       .subscribe(response => {
         let tipoSnackBar = "snack-bar-fracaso";
@@ -47,6 +57,20 @@ export class JustificacionInasistenciaComponent implements OnInit {
       });
   }
 
+  fechaActualEnPeriodoCursado() {
+    let fechaInicioPrimerTrimestre = new Date(
+      this.autenticacionService.getFechasCicloLectivo().fechaInicioPrimerTrimestre
+    );
+    let fechaFinTercerTrimestre = new Date(
+      this.autenticacionService.getFechasCicloLectivo().fechaFinTercerTrimestre
+    );
+
+    return (
+      this.fechaActual.getTime() > fechaInicioPrimerTrimestre.getTime() &&
+      this.fechaActual.getTime() < fechaFinTercerTrimestre.getTime()
+    );
+  }
+
   //Con el indice, cambia el valor del campo justificado de la inasistencia
   onChecked(index: number) {
     this.ultimasInasistencias[index].justificado = !this.ultimasInasistencias[
@@ -54,4 +78,3 @@ export class JustificacionInasistenciaComponent implements OnInit {
     ].justificado;
   }
 }
-

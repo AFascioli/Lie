@@ -7,9 +7,11 @@ const CalificacionesXTrimestre = require("../models/calificacionesXTrimestre");
 const CalificacionesXMateria = require("../models/calificacionesXMateria");
 const mongoose = require("mongoose");
 const Estudiante = require("../models/estudiante");
+const ClaseInscripcion = require("../classes/inscripcion");
+const ClaseCalifXMateria = require("../classes/calificacionXMateria");
 const checkAuthMiddleware = require("../middleware/check-auth");
 
-// Obtiene todos los cursos sin filtrar
+// Obtiene todos los cursos que están almacenados en la base de datos
 router.get("/", checkAuthMiddleware, (req, res) => {
   Curso.find()
     .select({ curso: 1, _id: 1 })
@@ -26,7 +28,89 @@ router.get("/", checkAuthMiddleware, (req, res) => {
     });
 });
 
+// Obtiene la capacidad de un curso pasado por parámetro
+// @params: id del curso
+router.get("/capacidad", checkAuthMiddleware, (req, res) => {
+  Curso.findById(req.query.idCurso).then(curso => {
+    res.status(200).json({
+      message: "Operación exitosa",
+      exito: true,
+      capacidad: curso.capacidad
+    });
+  });
+});
+
+//Obtiene los cursos a los que se puede inscribir un estudiante de acuerdo al estado actual (promovido o libre)
+// o devuelve todos en el caso de que no este inscripto a ningun curso
+// @params: id del estudiante
+router.get("/cursosDeEstudiante", checkAuthMiddleware, (req, res) => {
+  Inscripcion.aggregate([
+    {
+      $match: {
+        idEstudiante: mongoose.Types.ObjectId(req.query.idEstudiante)
+      }
+    },
+    {
+      $lookup: {
+        from: "curso",
+        localField: "idCurso",
+        foreignField: "_id",
+        as: "cursoActual"
+      }
+    },
+    {
+      $lookup: {
+        from: "estado",
+        localField: "estado",
+        foreignField: "_id",
+        as: "estadoInscripcion"
+      }
+    },
+    {
+      $project: {
+        estadoInscripcion: 1,
+        "cursoActual.curso": 1
+      }
+    }
+  ]).then(inscripcion => {
+    if (inscripcion.length != 0) {
+      //El estudiante está inscripto a un curso y por ende se fija al curso al que se puede inscribir
+      let siguiente;
+      siguiente = ClaseInscripcion.obtenerAñoHabilitado(inscripcion);
+
+      //Buscamos los cursos que corresponden al que se puede inscribir el estudiante
+      Curso.find({ curso: { $regex: siguiente } }).then(cursos => {
+        return res.status(200).json({
+          message: "Devolvio los cursos correctamente",
+          exito: true,
+          cursos: cursos
+        });
+      });
+    } else {
+      //El estudiante no está inscripto a ningun curso, devuelve todos los cursos almacenados
+      Curso.find()
+        .select({ curso: 1, _id: 1 })
+        .then(cursos => {
+          var respuesta = [];
+          cursos.forEach(curso => {
+            var cursoConId = {
+              _id: curso._id,
+              curso: curso.curso
+            };
+            respuesta.push(cursoConId);
+          });
+          return res.status(200).json({
+            message: "Devolvio los cursos correctamente",
+            exito: true,
+            cursos: respuesta
+          });
+        });
+    }
+  });
+});
+
 //Obtiene todos los cursos asignados a un docente
+//@params: id de la docente
 router.get("/docente", checkAuthMiddleware, (req, res) => {
   Curso.aggregate([
     {
@@ -52,388 +136,16 @@ router.get("/docente", checkAuthMiddleware, (req, res) => {
       respuesta.push(cursoConId);
     });
 
-    res.status(200).json({ cursos: respuesta });
-  });
-});
-
-//Obtiene las materias de un curso y un docente que se pasa por parametro
-router.get("/materiasDeCurso", checkAuthMiddleware, (req, res) => {
-  Curso.aggregate([
-    {
-      $match: {
-        _id: mongoose.Types.ObjectId(req.query.idCurso)
-      }
-    },
-    {
-      $lookup: {
-        from: "materiasXCurso",
-        localField: "materias",
-        foreignField: "_id",
-        as: "materiasDeCurso"
-      }
-    },
-    {
-      $project: {
-        "materiasDeCurso.materia": 1,
-        _id: 0
-      }
-    },
-    {
-      $lookup: {
-        from: "materia",
-        localField: "materiasDeCurso.materia",
-        foreignField: "_id",
-        as: "materias"
-      }
-    },
-    {
-      $project: {
-        materias: 1
-      }
-    }
-  ]).then(rtdoMaterias => {
-    var respuesta = [];
-    rtdoMaterias[0].materias.forEach(materia => {
-      var datosMateria = {
-        id: materia._id,
-        nombre: materia.nombre
-      };
-      respuesta.push(datosMateria);
-    });
-    res.status(200).json({ materias: respuesta });
-  });
-});
-
-//Obtiene las materias de un curso y un docente que se pasa por parametro
-router.get("/materias", checkAuthMiddleware, (req, res) => {
-  Curso.aggregate([
-    {
-      $match: {
-        _id: mongoose.Types.ObjectId(req.query.idCurso)
-      }
-    },
-    {
-      $lookup: {
-        from: "materiasXCurso",
-        localField: "materias",
-        foreignField: "_id",
-        as: "materiasDeCurso"
-      }
-    },
-    {
-      $project: {
-        "materiasDeCurso.materia": 1,
-        "materiasDeCurso.idDocente": 1,
-        _id: 0
-      }
-    },
-    {
-      $unwind: {
-        path: "$materiasDeCurso"
-      }
-    },
-    {
-      $match: {
-        "materiasDeCurso.idDocente": mongoose.Types.ObjectId(
-          req.query.idDocente
-        )
-      }
-    },
-    {
-      $lookup: {
-        from: "materia",
-        localField: "materiasDeCurso.materia",
-        foreignField: "_id",
-        as: "materias"
-      }
-    },
-    {
-      $project: {
-        materias: 1
-      }
-    }
-  ]).then(rtdoMaterias => {
-    var respuesta = [];
-    rtdoMaterias.forEach(materia => {
-      var datosMateria = {
-        id: materia.materias[0]._id,
-        nombre: materia.materias[0].nombre
-      };
-      respuesta.push(datosMateria);
-    });
-    res.status(200).json({ materias: respuesta });
-  });
-});
-
-router.get("/capacidad", checkAuthMiddleware, (req, res) => {
-  Curso.findById(req.query.idCurso).then(curso => {
     res.status(200).json({
-      message: "Operación exitosa",
-      exito: true,
-      capacidad: curso.capacidad
+      cursos: respuesta,
+      message: "Se devolvio los cursos que dicta la docente correctamente",
+      exito: true
     });
   });
 });
 
-// #deprecated Inscribe un estudiante seleccionado a un curso pasado por parametro
-// router.post("/inscripcion", checkAuthMiddleware, (req, res) => {
-//   Estudiante.aggregate([
-//     {
-//       $match: {
-//         _id: mongoose.Types.ObjectId(req.body.idEstudiante),
-//         activo: true
-//       }
-//     },
-//     {
-//       $lookup: {
-//         from: "estado",
-//         localField: "estado",
-//         foreignField: "_id",
-//         as: "estadoEstudiante"
-//       }
-//     },
-//     {
-//       $match: {
-//         "estadoEstudiante.nombre": "Registrado"
-//       }
-//     }
-//   ]).then(estudiante => {
-//     if (estudiante.length == 0) {
-//       res.status(200).json({
-//         message: "El estudiante ya esta inscripto en un curso",
-//         exito: false
-//       });
-//     } else {
-//       //#metodo: Obtener materias de curso con id de curso
-//       Curso.aggregate([
-//         {
-//           $match: {
-//             _id: mongoose.Types.ObjectId(req.query.idCurso)
-//           }
-//         },
-//         {
-//           $unwind: "$materias"
-//         },
-//         {
-//           $lookup: {
-//             from: "materiasXCurso",
-//             localField: "materias",
-//             foreignField: "_id",
-//             as: "materiasDelCurso"
-//           }
-//         },
-//         {
-//           $project: {
-//             "materiasDelCurso.materia": 1,
-//             _id: 0
-//           }
-//         }
-//       ]).then(materiasDelCurso => {
-//         Estado.findOne({
-//           nombre: "Cursando",
-//           ambito: "CalificacionesXMateria"
-//         }).then(estado => {
-//           //#resolve puede que este mal la logica
-//           let idsCalXMateria = [];
-//           materiasDelCurso.forEach(materia => {
-//             let idsCalificacionMatXTrim = [];
-
-//             //vas a crear las calificacionesXTrimestre de cada materia
-//             for (let i = 0; i < 3; i++) {
-//               let calificacionesXTrimestre = new CalificacionesXTrimestre({
-//                 calificaciones: [0, 0, 0, 0, 0, 0],
-//                 trimestre: i + 1
-//               });
-//               calificacionesXTrimestre.save().then(calXMateriaXTrimestre => {
-//                 idsCalificacionMatXTrim.push(calXMateriaXTrimestre._id);
-//               });
-//             }
-//             //creamos las calificacionesXMateria de cada materia
-//             let califXMateriaNueva = new CalificacionesXMateria({
-//               idMateria: materia,
-//               estado: estado._id,
-//               calificacionesXTrimestre: idsCalificacionMatXTrim
-//             });
-//             califXMateriaNueva.save().then(califXMateria => {
-//               idsCalXMateria.push(califXMateria._id);
-//             });
-//           });
-//           //se obtiene el id del estado y se registra la nueva inscripcion
-//           Curso.findOne({ _id: req.body.idCurso }).then(cursoSeleccionado => {
-//             Estado.findOne({
-//               nombre: "Inscripto",
-//               ambito: "Inscripcion"
-//             }).then(estado => {
-//               const nuevaInscripcion = new Inscripcion({
-//                 idEstudiante: req.body.idEstudiante,
-//                 idCurso: cursoSeleccionado._id,
-//                 documentosEntregados: req.body.documentosEntregados,
-//                 activa: true,
-//                 estado: estado._id,
-//                 contadorInasistenciasInjustificada: 0,
-//                 contadorInasistenciasJustificada: 0,
-//                 calificacionesXMateria: idsCalXMateria
-//               });
-//               nuevaInscripcion.save().then(() => {
-//                 cursoSeleccionado.capacidad = cursoSeleccionado.capacidad - 1;
-//                 cursoSeleccionado.save();
-//                 //Le cambiamos el estado al estudiante
-//                 Estado.findOne({
-//                   nombre: "Inscripto",
-//                   ambito: "Estudiante"
-//                 }).then(estadoEstudiante => {
-//                   Estudiante.findByIdAndUpdate(req.body.idEstudiante, {
-//                     estado: estadoEstudiante._id
-//                   }).then(() => {
-//                     res.status(201).json({
-//                       message: "Estudiante inscripto exitosamente",
-//                       exito: true
-//                     });
-//                   });
-//                 });
-//               });
-//             });
-//           });
-//         });
-//       });
-//     }
-//   });
-// });
-
-// Inscribe un estudiante seleccionado a un curso pasado por parametro
-router.post("/inscripcion", checkAuthMiddleware, (req, res) => {
-  Estudiante.aggregate([
-    {
-      $match: {
-        _id: mongoose.Types.ObjectId(req.body.idEstudiante),
-        activo: true
-      }
-    },
-    {
-      $lookup: {
-        from: "estado",
-        localField: "estado",
-        foreignField: "_id",
-        as: "estadoEstudiante"
-      }
-    },
-    {
-      $match: {
-        "estadoEstudiante.nombre": "Registrado"
-      }
-    }
-  ]).then(estudiante => {
-    if (estudiante.length == 0) {
-      res.status(200).json({
-        message: "El estudiante ya esta inscripto en un curso",
-        exito: false
-      });
-    } else {
-      //#metodo: Obtener materias de curso con id de curso
-      Curso.aggregate([
-        {
-          $match: {
-            _id: mongoose.Types.ObjectId(req.body.idCurso)
-          }
-        },
-        {
-          $unwind: "$materias"
-        },
-        {
-          $lookup: {
-            from: "materiasXCurso",
-            localField: "materias",
-            foreignField: "_id",
-            as: "materiasDelCurso"
-          }
-        },
-        {
-          $project: {
-            "materiasDelCurso.materia": 1,
-            _id: 0
-          }
-        }
-      ]).then(materiasDelCurso => {
-        let idsCalXMateria = [];
-        Estado.findOne({
-          nombre: "Cursando",
-          ambito: "CalificacionesXMateria"
-        })
-          .then(estado => {
-            //#resolve puede que este mal la logica
-            materiasDelCurso.forEach(elemento => {
-              let idsCalificacionMatXTrim = [];
-              //vas a crear las calificacionesXTrimestre de cada materia
-              for (let i = 0; i < 3; i++) {
-                let calificacionesXTrim = new CalificacionesXTrimestre({
-                  calificaciones: [0, 0, 0, 0, 0, 0],
-                  trimestre: i + 1
-                });
-                calificacionesXTrim.save().then(calXMateriaXTrimestre => {
-                  idsCalificacionMatXTrim.push(calXMateriaXTrimestre._id);
-                });
-              }
-              //creamos las calificacionesXMateria de cada materia
-              let califXMateriaNueva = new CalificacionesXMateria({
-                idMateria: elemento.materiasDelCurso[0].materia,
-                estado: estado._id,
-                calificacionesXTrimestre: []
-              });
-
-              setTimeout(() => {
-                idsCalXMateria.push(califXMateriaNueva._id);
-                califXMateriaNueva.calificacionesXTrimestre = idsCalificacionMatXTrim;
-                califXMateriaNueva.save();
-              }, 2000);
-            });
-          })
-          .then(() => {
-            //se obtiene el id del estado y se registra la nueva inscripcion
-            setTimeout(() => {
-              Curso.findOne({ _id: req.body.idCurso }).then(cursoSeleccionado => {
-                Estado.findOne({
-                  nombre: "Inscripto",
-                  ambito: "Inscripcion"
-                }).then(estado => {
-                  const nuevaInscripcion = new Inscripcion({
-                    idEstudiante: req.body.idEstudiante,
-                    idCurso: cursoSeleccionado._id,
-                    documentosEntregados: req.body.documentosEntregados,
-                    activa: true,
-                    estado: estado._id,
-                    contadorInasistenciasInjustificada: 0,
-                    contadorInasistenciasJustificada: 0,
-                    calificacionesXMateria: idsCalXMateria
-                  });
-                  nuevaInscripcion.save().then(() => {
-                    cursoSeleccionado.capacidad = cursoSeleccionado.capacidad - 1;
-                    cursoSeleccionado.save();
-                    //Le cambiamos el estado al estudiante
-                    Estado.findOne({
-                      nombre: "Inscripto",
-                      ambito: "Estudiante"
-                    }).then(estadoEstudiante => {
-                      Estudiante.findByIdAndUpdate(req.body.idEstudiante, {
-                        estado: estadoEstudiante._id
-                      }).then(() => {
-                        res.status(201).json({
-                          message: "Estudiante inscripto exitosamente",
-                          exito: true
-                        });
-                      });
-                    });
-                  });
-                });
-              });
-            }, 5000);
-
-          });
-      });
-    }
-  });
- });
-
-//Obtiene los documentos entregados de los estudiantes de un curso dado
+//Obtiene los documentos con su estado de entrega (true en el caso de que fue entregado) de los estudiantes de un curso dado
+//@params: id del curso
 router.get("/documentos", checkAuthMiddleware, (req, res) => {
   Inscripcion.aggregate([
     {
@@ -467,11 +179,19 @@ router.get("/documentos", checkAuthMiddleware, (req, res) => {
       }
     }
   ]).then(estudiantes => {
-    res.status(200).json(estudiantes);
+    res.status(200).json({
+      documentos: estudiantes,
+      message:
+        "Se devolvieron los documentos junto con su estado de entrega correctamente",
+      exito: true
+    });
   });
 });
 
-//obtiene las calificaciones de los estudiantes dado un curso y una materia
+//Obtiene las calificaciones de los estudiantes para un trimestre dado un curso y una materia
+//@params: id del curso
+//@params: id de la materia
+//@params: trimestre
 router.get(
   "/estudiantes/materias/calificaciones",
   checkAuthMiddleware,
@@ -579,11 +299,18 @@ router.get(
         respuesta.push(calificacionesEstudiante);
       });
 
-      res.status(200).json({ estudiantes: respuesta });
+      res.status(200).json({
+        estudiantes: respuesta,
+        message:
+          "Se obtuvieron las calificaciones para una materia, un curso y un trimestre determinado correctamente",
+        exito: true
+      });
     });
   }
 );
 
+//Obtiene el curso al que está inscripto un estudiante
+//@params: id del estudiante
 router.get("/estudiante", checkAuthMiddleware, (req, res) => {
   Inscripcion.aggregate([
     {
@@ -614,15 +341,445 @@ router.get("/estudiante", checkAuthMiddleware, (req, res) => {
         curso: cursoDeEstudiante[0].cursosDeEstudiante[0].curso
       });
     })
-    .catch(err => {
+    .catch(() => {
       res.status(200).json({
-        message: "Ocurrieron errores al querer obtener el curso del estudiante",
+        message:
+          "Ocurrieron errores al querer obtener el curso del estudiante: ",
         exito: false
       });
     });
 });
 
-//Registra las calificaciones por alumno de un curso y materia determinada
+//Obtiene las materias de un curso que se pasa por parametro
+//@params: id del curso
+router.get("/materiasDeCurso", checkAuthMiddleware, (req, res) => {
+  Curso.aggregate([
+    {
+      $match: {
+        _id: mongoose.Types.ObjectId(req.query.idCurso)
+      }
+    },
+    {
+      $lookup: {
+        from: "materiasXCurso",
+        localField: "materias",
+        foreignField: "_id",
+        as: "materiasDeCurso"
+      }
+    },
+    {
+      $project: {
+        "materiasDeCurso.materia": 1,
+        _id: 0
+      }
+    },
+    {
+      $lookup: {
+        from: "materia",
+        localField: "materiasDeCurso.materia",
+        foreignField: "_id",
+        as: "materias"
+      }
+    },
+    {
+      $project: {
+        materias: 1
+      }
+    }
+  ]).then(rtdoMaterias => {
+    var respuesta = [];
+    rtdoMaterias[0].materias.forEach(materia => {
+      var datosMateria = {
+        id: materia._id,
+        nombre: materia.nombre
+      };
+      respuesta.push(datosMateria);
+    });
+    res.status(200).json({
+      materias: respuesta,
+      message: "Se obtieron exitosamente las materias de un curso",
+      exito: true
+    });
+  });
+});
+
+//Obtiene todas las materias que son dictadas por una docente en un curso determinado
+//@params: id de la docente
+//@params: id del curso
+router.get("/materias", checkAuthMiddleware, (req, res) => {
+  Curso.aggregate([
+    {
+      $match: {
+        _id: mongoose.Types.ObjectId(req.query.idCurso)
+      }
+    },
+    {
+      $lookup: {
+        from: "materiasXCurso",
+        localField: "materias",
+        foreignField: "_id",
+        as: "materiasDeCurso"
+      }
+    },
+    {
+      $project: {
+        "materiasDeCurso.materia": 1,
+        "materiasDeCurso.idDocente": 1,
+        _id: 0
+      }
+    },
+    {
+      $unwind: {
+        path: "$materiasDeCurso"
+      }
+    },
+    {
+      $match: {
+        "materiasDeCurso.idDocente": mongoose.Types.ObjectId(
+          req.query.idDocente
+        )
+      }
+    },
+    {
+      $lookup: {
+        from: "materia",
+        localField: "materiasDeCurso.materia",
+        foreignField: "_id",
+        as: "materias"
+      }
+    },
+    {
+      $project: {
+        materias: 1
+      }
+    }
+  ]).then(rtdoMaterias => {
+    var respuesta = [];
+    rtdoMaterias.forEach(materia => {
+      var datosMateria = {
+        id: materia.materias[0]._id,
+        nombre: materia.materias[0].nombre
+      };
+      respuesta.push(datosMateria);
+    });
+    res.status(200).json({
+      materias: respuesta,
+      message:
+        "Se obtuvieron todas las materias que son dictadas por un docente para un curso exitosamente",
+      exito: true
+    });
+  });
+});
+
+//Inscribe a un estudiante a un curso y los documentos entregados durante la inscripción
+//@params: id estudiante que se quiere inscribir
+//@params: id curso al que se lo quiere inscribir
+//@params: array documentos entregados en inscripcion: true si se entregó ese documente
+// router.post("/inscripcion", checkAuthMiddleware, (req, res) => {
+//   let cursoSeleccionado;
+//   let inscripcionEstadoInscripto;
+//   Curso.findOne({ _id: req.body.idCurso }).then(async cursoSel => {
+//     cursoSeleccionado = await cursoSel;
+//     Estado.findOne({
+//       nombre: "Inscripto",
+//       ambito: "Inscripcion"
+//     }).then(async estado => {
+//       inscripcionEstadoInscripto = await estado;
+//     });
+//   });
+//   let materiasPendientes = [];
+//   Inscripcion.findOne({
+//     idEstudiante: req.body.idEstudiante,
+//     activa: true
+//   }).then(inscripcion => {
+//     if (inscripcion != null) {
+//       //Si hay una inscripcion activa
+//       inscripcion.activa = false;
+//       Estado.findOne({ nombre: "Promovido", ambito: "Inscripcion" }).then(
+//         estadoPromovido => {
+//           if (inscripcion.estado == estadoPromovido._id) {
+//             //Revisar logica, capas sea al reves
+//             Inscripcion.aggregate([
+//               {
+//                 $match: {
+//                   idEstudiante: Mongoose.types.ObjectId(req.body.idEstudiante)
+//                 }
+//               },
+//               {
+//                 $lookup: {
+//                   from: "calificacionesXMateria",
+//                   localField: "calificacionesXMateria",
+//                   foreignField: "_id",
+//                   as: "CXM"
+//                 }
+//               },
+//               {
+//                 $unwind: {
+//                   path: "$CXM"
+//                 }
+//               },
+//               {
+//                 $match: {
+//                   "CXM.promedio": 0
+//                 }
+//               },
+//               {
+//                 $project: {
+//                   CXM: 1
+//                 }
+//               }
+//             ]).then(materiasDesaprobadas => {
+//               materiasDesaprobadas.forEach(CXM => {
+//                 materiasPendientes.push(CXM._id);
+//               });
+//               materiasPendientes.push(inscripcion.materiasPendientes);
+//             });
+//           } else {
+//             materiasPendientes = inscripcion.materiasPendientes;
+//           }
+
+//           inscripcion.save();
+//         }
+//       );
+//     }
+//     //#metodo: Obtener materias de curso con id de curso
+//     Curso.aggregate([
+//       {
+//         $match: {
+//           _id: mongoose.Types.ObjectId(req.body.idCurso)
+//         }
+//       },
+//       {
+//         $unwind: "$materias"
+//       },
+//       {
+//         $lookup: {
+//           from: "materiasXCurso",
+//           localField: "materias",
+//           foreignField: "_id",
+//           as: "materiasDelCurso"
+//         }
+//       },
+//       {
+//         $project: {
+//           "materiasDelCurso.materia": 1,
+//           _id: 0
+//         }
+//       }
+//     ]).then(materiasDelCurso => {
+//       let estudianteEstadoInscripto;
+
+//       let idsCalXMateria = [];
+//       Estado.findOne({
+//         nombre: "Cursando",
+//         ambito: "CalificacionesXMateria"
+//       }).then(estado => {
+//         ClaseCalifXMateria.crearDocsCalif(materiasDelCurso, estado).then(
+//           async idsCalXMat => {
+//             idsCalXMateria = await idsCalXMat;
+//             //se obtiene el id del estado y se registra la nueva inscripcion
+//             console.log("ids CalXMat");
+//             console.log(idsCalXMateria);
+//             const nuevaInscripcion = new Inscripcion({
+//               idEstudiante: req.body.idEstudiante,
+//               idCurso: cursoSeleccionado._id,
+//               documentosEntregados: req.body.documentosEntregados,
+//               activa: true,
+//               estado: inscripcionEstadoInscripto._id,
+//               contadorInasistenciasInjustificada: 0,
+//               contadorInasistenciasJustificada: 0,
+//               calificacionesXMateria: await idsCalXMateria,
+//               materiasPendientes: materiasPendientes
+//             });
+
+//             await nuevaInscripcion.save().then(() => {
+//               cursoSeleccionado.capacidad = cursoSeleccionado.capacidad - 1;
+//               cursoSeleccionado.save();
+//               //Le cambiamos el estado al estudiante
+//               Estado.findOne({
+//                 nombre: "Inscripto",
+//                 ambito: "Estudiante"
+//               }).then(async estadoEstudiante => {
+//                 await Estudiante.findByIdAndUpdate(req.body.idEstudiante, {
+//                   estado: estadoEstudiante._id
+//                 }).then(async () => {
+//                   await res.status(201).json({
+//                     message: "Estudiante inscripto exitosamente",
+//                     exito: true
+//                   });
+//                 });
+//               });
+//             });
+//             //     });
+//             //   }
+//             // );
+//           }
+//         );
+//       });
+//     });
+//   });
+// });
+
+//Inscribe a un estudiante a un curso y los documentos entregados durante la inscripción
+//@params: id estudiante que se quiere inscribir
+//@params: id curso al que se lo quiere inscribir
+//@params: array documentos entregados en inscripcion: true si se entregó ese documente
+router.post("/inscripciontest", checkAuthMiddleware, async (req, res) => {
+  //Dado una id de curso, encuentra todos los datos del mismo
+  var obtenerCurso = () => {
+    return new Promise((resolve, reject) => {
+      Curso.findOne({ _id: req.body.idCurso }).then(curso => {
+        resolve(curso);
+      });
+    });
+  };
+
+  var obtenerEstadoInscriptoInscripcion = () => {
+    return new Promise((resolve, reject) => {
+      Estado.findOne({
+        nombre: "Inscripto",
+        ambito: "Inscripcion"
+      }).then(estado => {
+        resolve(estado);
+      });
+    });
+  };
+
+  var obtenerInscripcion = () => {
+    return new Promise((resolve, reject) => {
+      Inscripcion.findOne({
+        idEstudiante: req.body.idEstudiante,
+        activa: true
+      }).then(inscripcion => {
+        resolve(inscripcion);
+      });
+    });
+  };
+
+  var obtenerEstadoDesaprobadaMateria = () => {
+    return new Promise((resolve, reject) => {
+      Estado.findOne({
+        nombre: "Desaprobada",
+        ambito: "CalificacionesXMateria"
+      }).then(estado => {
+        resolve(estado);
+      });
+    });
+  };
+
+  var obtenerEstadoCursandoMateria = () => {
+    return new Promise((resolve, reject) => {
+      Estado.findOne({
+        nombre: "Cursando",
+        ambito: "CalificacionesXMateria"
+      }).then(estado => {
+        resolve(estado);
+      });
+    });
+  };
+
+  //Dada una id de curso, obtiene las ids de las materias que se dan en ese curso
+  var obtenerMateriasDeCurso = () => {
+    return new Promise((resolve, reject) => {
+      Curso.aggregate([
+        {
+          $match: {
+            _id: mongoose.Types.ObjectId(req.body.idCurso)
+          }
+        },
+        {
+          $unwind: "$materias"
+        },
+        {
+          $lookup: {
+            from: "materiasXCurso",
+            localField: "materias",
+            foreignField: "_id",
+            as: "materiasDelCurso"
+          }
+        },
+        {
+          $project: {
+            "materiasDelCurso.materia": 1,
+            _id: 0
+          }
+        }
+      ]).then(materiasDelCurso => {
+        resolve(materiasDelCurso);
+      });
+    });
+  };
+
+  //#resolve: Se puede implementar el Promise.all, fijarse si es necesario/no rompe nada
+  var cursoSeleccionado = await obtenerCurso();
+  var estadoInscriptoInscripcion = await obtenerEstadoInscriptoInscripcion();
+  var inscripcion = await obtenerInscripcion();
+
+  //Si el estudiante tiene una inscripcion anteriormente, se obtienen las CXM que esten desaprobadas,
+  //ya sea las que estan en materiasPendientes y las CXM con estado "Desaprobada"
+  var materiasPendientesNuevas = [];
+  if (inscripcion != null) {
+    inscripcion.activa = false;
+    var estadoDesaprobadaMateria = await obtenerEstadoDesaprobadaMateria();
+    if (inscripcion.materiasPendientes.length != 0) {
+      //Revisar logica
+      materiasPendientesNuevas.push(...inscripcion.materiasPendientes);
+    }
+    var idsCXMDesaprobadas = await ClaseCalifXMateria.obtenerMateriasDesaprobadasv2(
+      inscripcion.calificacionesXMateria,
+      estadoDesaprobadaMateria._id
+    );
+    if (idsCXMDesaprobadas.length != 0) {
+      materiasPendientesNuevas.push(...idsCXMDesaprobadas);
+    }
+    await inscripcion.save();
+  }
+
+  var materiasDelCurso = await obtenerMateriasDeCurso();
+  var estadoCursandoMateria = await obtenerEstadoCursandoMateria();
+  var idsCXMNuevas = await ClaseCalifXMateria.crearCXM(
+    materiasDelCurso,
+    estadoCursandoMateria._id
+  );
+
+  const nuevaInscripcion = new Inscripcion({
+    idEstudiante: req.body.idEstudiante,
+    idCurso: cursoSeleccionado._id,
+    documentosEntregados: req.body.documentosEntregados,
+    activa: true,
+    estado: estadoInscriptoInscripcion._id,
+    contadorInasistenciasInjustificada: 0,
+    contadorInasistenciasJustificada: 0,
+    contadorLlegadasTarde: 0,
+    calificacionesXMateria: idsCXMNuevas,
+    materiasPendientes: materiasPendientesNuevas,
+    año: 2019
+  });
+
+  nuevaInscripcion.save().then(() => {
+    cursoSeleccionado.capacidad = cursoSeleccionado.capacidad - 1;
+    cursoSeleccionado.save();
+    //Le cambiamos el estado al estudiante
+    Estado.findOne({
+      nombre: "Inscripto",
+      ambito: "Estudiante"
+    }).then(async estadoEstudiante => {
+      await Estudiante.findByIdAndUpdate(req.body.idEstudiante, {
+        estado: estadoEstudiante._id
+      }).then(async () => {
+        await res.status(201).json({
+          message: "Estudiante inscripto exitosamente",
+          exito: true
+        });
+      });
+    });
+  });
+});
+
+//Registra las calificaciones todos los estudiantes de un curso para una materia
+//y un trimestre determinado en la base de datos
+//@params: id de la materia
+//@params: trimestre (1,2 o 3)
 router.post(
   "/estudiantes/materias/calificaciones",
   checkAuthMiddleware,
@@ -699,3 +856,416 @@ router.post(
 );
 
 module.exports = router;
+
+// router.post("/inscripcion", checkAuthMiddleware, (req, res) => {
+//   let materiasPendientes = [];
+//   Inscripcion.findOne({
+//     idEstudiante: req.body.idEstudiante,
+//     activa: true
+//   }).then(inscripcion => {
+//     if (inscripcion.length != 0) {
+//       inscripcion.activa = false;
+//       Estado.findOne({ nombre: "Promovido", ambito: "Inscripcion" }).then(
+//         estadoPromovido => {
+//           if (inscripcion.estado == estadoPromovido._id) {
+//             Inscripcion.aggregate([
+//               {
+//                 $match: {
+//                   idEstudiante: Mongoose.types.ObjectId(req.body.idEstudiante)
+//                 }
+//               },
+//               {
+//                 $lookup: {
+//                   from: "calificacionesXMateria",
+//                   localField: "calificacionesXMateria",
+//                   foreignField: "_id",
+//                   as: "CXM"
+//                 }
+//               },
+//               {
+//                 $unwind: {
+//                   path: "$CXM"
+//                 }
+//               },
+//               {
+//                 $match: {
+//                   "CXM.promedio": 0
+//                 }
+//               },
+//               {
+//                 $project: {
+//                   CXM: 1
+//                 }
+//               }
+//             ]).then(materiasDesaprobadas => {
+//               materiasDesaprobadas.forEach(CXM => {
+//                 materiasPendientes.push(CXM._id);
+//               });
+//               materiasPendientes.push(inscripcion.materiasPendientes);
+//             });
+//           } else {
+//             materiasPendientes = inscripcion.materiasPendientes;
+//           }
+
+//           inscripcion.save();
+//         }
+//       );
+//     }
+//     //#metodo: Obtener materias de curso con id de curso
+//     Curso.aggregate([
+//       {
+//         $match: {
+//           _id: mongoose.Types.ObjectId(req.body.idCurso)
+//         }
+//       },
+//       {
+//         $unwind: "$materias"
+//       },
+//       {
+//         $lookup: {
+//           from: "materiasXCurso",
+//           localField: "materias",
+//           foreignField: "_id",
+//           as: "materiasDelCurso"
+//         }
+//       },
+//       {
+//         $project: {
+//           "materiasDelCurso.materia": 1,
+//           _id: 0
+//         }
+//       }
+//     ]).then(materiasDelCurso => {
+//       let idsCalXMateria = [];
+//       Estado.findOne({
+//         nombre: "Cursando",
+//         ambito: "CalificacionesXMateria"
+//       })
+//         .then(estado => {
+//           //#resolve puede que este mal la logica
+//           materiasDelCurso.forEach(elemento => {
+//             let idsCalificacionMatXTrim = [];
+//             //vas a crear las calificacionesXTrimestre de cada materia
+//             for (let i = 0; i < 3; i++) {
+//               let calificacionesXTrim = new CalificacionesXTrimestre({
+//                 calificaciones: [0, 0, 0, 0, 0, 0],
+//                 trimestre: i + 1
+//               });
+//               calificacionesXTrim.save().then(calXMateriaXTrimestre => {
+//                 idsCalificacionMatXTrim.push(calXMateriaXTrimestre._id);
+//               });
+//             }
+//             //creamos las calificacionesXMateria de cada materia
+//             let califXMateriaNueva = new CalificacionesXMateria({
+//               idMateria: elemento.materiasDelCurso[0].materia,
+//               estado: estado._id,
+//               calificacionesXTrimestre: []
+//             });
+
+//             setTimeout(() => {
+//               idsCalXMateria.push(califXMateriaNueva._id);
+//               califXMateriaNueva.calificacionesXTrimestre = idsCalificacionMatXTrim;
+//               califXMateriaNueva.save();
+//             }, 2000);
+//           });
+//         })
+//         .then(() => {
+//           //se obtiene el id del estado y se registra la nueva inscripcion
+//           setTimeout(() => {
+//             Curso.findOne({ _id: req.body.idCurso }).then(cursoSeleccionado => {
+//               Estado.findOne({
+//                 nombre: "Inscripto",
+//                 ambito: "Inscripcion"
+//               }).then(estado => {
+//                 const nuevaInscripcion = new Inscripcion({
+//                   idEstudiante: req.body.idEstudiante,
+//                   idCurso: cursoSeleccionado._id,
+//                   documentosEntregados: req.body.documentosEntregados,
+//                   activa: true,
+//                   estado: estado._id,
+//                   contadorInasistenciasInjustificada: 0,
+//                   contadorInasistenciasJustificada: 0,
+//                   calificacionesXMateria: idsCalXMateria,
+//                   materiasPendientes: materiasPendientes
+//                 });
+//                 nuevaInscripcion.save().then(() => {
+//                   cursoSeleccionado.capacidad = cursoSeleccionado.capacidad - 1;
+//                   cursoSeleccionado.save();
+//                   //Le cambiamos el estado al estudiante
+//                   Estado.findOne({
+//                     nombre: "Inscripto",
+//                     ambito: "Estudiante"
+//                   }).then(estadoEstudiante => {
+//                     Estudiante.findByIdAndUpdate(req.body.idEstudiante, {
+//                       estado: estadoEstudiante._id
+//                     }).then(() => {
+//                       res.status(201).json({
+//                         message: "Estudiante inscripto exitosamente",
+//                         exito: true
+//                       });
+//                     });
+//                   });
+//                 });
+//               });
+//             });
+//           }, 5000);
+//         });
+//     });
+//   });
+// });
+
+// #deprecated Inscribe un estudiante seleccionado a un curso pasado por parametro
+// router.post("/inscripcion", checkAuthMiddleware, (req, res) => {
+//   Estudiante.aggregate([
+//     {
+//       $match: {
+//         _id: mongoose.Types.ObjectId(req.body.idEstudiante),
+//         activo: true
+//       }
+//     },
+//     {
+//       $lookup: {
+//         from: "estado",
+//         localField: "estado",
+//         foreignField: "_id",
+//         as: "estadoEstudiante"
+//       }
+//     },
+//     {
+//       $match: {
+//         "estadoEstudiante.nombre": "Registrado"
+//       }
+//     }
+//   ]).then(estudiante => {
+//     if (estudiante.length == 0) {
+//       res.status(200).json({
+//         message: "El estudiante ya esta inscripto en un curso",
+//         exito: false
+//       });
+//     } else {
+//       //#metodo: Obtener materias de curso con id de curso
+//       Curso.aggregate([
+//         {
+//           $match: {
+//             _id: mongoose.Types.ObjectId(req.query.idCurso)
+//           }
+//         },
+//         {
+//           $unwind: "$materias"
+//         },
+//         {
+//           $lookup: {
+//             from: "materiasXCurso",
+//             localField: "materias",
+//             foreignField: "_id",
+//             as: "materiasDelCurso"
+//           }
+//         },
+//         {
+//           $project: {
+//             "materiasDelCurso.materia": 1,
+//             _id: 0
+//           }
+//         }
+//       ]).then(materiasDelCurso => {
+//         Estado.findOne({
+//           nombre: "Cursando",
+//           ambito: "CalificacionesXMateria"
+//         }).then(estado => {
+//           let idsCalXMateria = [];
+//           materiasDelCurso.forEach(materia => {
+//             let idsCalificacionMatXTrim = [];
+
+//             //vas a crear las calificacionesXTrimestre de cada materia
+//             for (let i = 0; i < 3; i++) {
+//               let calificacionesXTrimestre = new CalificacionesXTrimestre({
+//                 calificaciones: [0, 0, 0, 0, 0, 0],
+//                 trimestre: i + 1
+//               });
+//               calificacionesXTrimestre.save().then(calXMateriaXTrimestre => {
+//                 idsCalificacionMatXTrim.push(calXMateriaXTrimestre._id);
+//               });
+//             }
+//             //creamos las calificacionesXMateria de cada materia
+//             let califXMateriaNueva = new CalificacionesXMateria({
+//               idMateria: materia,
+//               estado: estado._id,
+//               calificacionesXTrimestre: idsCalificacionMatXTrim
+//             });
+//             califXMateriaNueva.save().then(califXMateria => {
+//               idsCalXMateria.push(califXMateria._id);
+//             });
+//           });
+//           //se obtiene el id del estado y se registra la nueva inscripcion
+//           Curso.findOne({ _id: req.body.idCurso }).then(cursoSeleccionado => {
+//             Estado.findOne({
+//               nombre: "Inscripto",
+//               ambito: "Inscripcion"
+//             }).then(estado => {
+//               const nuevaInscripcion = new Inscripcion({
+//                 idEstudiante: req.body.idEstudiante,
+//                 idCurso: cursoSeleccionado._id,
+//                 documentosEntregados: req.body.documentosEntregados,
+//                 activa: true,
+//                 estado: estado._id,
+//                 contadorInasistenciasInjustificada: 0,
+//                 contadorInasistenciasJustificada: 0,
+//                 calificacionesXMateria: idsCalXMateria
+//               });
+//               nuevaInscripcion.save().then(() => {
+//                 cursoSeleccionado.capacidad = cursoSeleccionado.capacidad - 1;
+//                 cursoSeleccionado.save();
+//                 //Le cambiamos el estado al estudiante
+//                 Estado.findOne({
+//                   nombre: "Inscripto",
+//                   ambito: "Estudiante"
+//                 }).then(estadoEstudiante => {
+//                   Estudiante.findByIdAndUpdate(req.body.idEstudiante, {
+//                     estado: estadoEstudiante._id
+//                   }).then(() => {
+//                     res.status(201).json({
+//                       message: "Estudiante inscripto exitosamente",
+//                       exito: true
+//                     });
+//                   });
+//                 });
+//               });
+//             });
+//           });
+//         });
+//       });
+//     }
+//   });
+// });
+
+// Inscribe un estudiante seleccionado a un curso pasado por parametro
+// router.post("/inscripcion", checkAuthMiddleware, (req, res) => {
+//   Estudiante.aggregate([
+//     {
+//       $match: {
+//         _id: mongoose.Types.ObjectId(req.body.idEstudiante),
+//         activo: true
+//       }
+//     },
+//     {
+//       $lookup: {
+//         from: "estado",
+//         localField: "estado",
+//         foreignField: "_id",
+//         as: "estadoEstudiante"
+//       }
+//     },
+//     {
+//       $match: {
+//         "estadoEstudiante.nombre": "Registrado"
+//       }
+//     }
+//   ]).then(estudiante => {
+//     if (estudiante.length == 0) {
+//       res.status(200).json({
+//         message: "El estudiante ya esta inscripto en un curso",
+//         exito: false
+//       });
+//     } else {
+//       //#metodo: Obtener materias de curso con id de curso
+//       Curso.aggregate([
+//         {
+//           $match: {
+//             _id: mongoose.Types.ObjectId(req.body.idCurso)
+//           }
+//         },
+//         {
+//           $unwind: "$materias"
+//         },
+//         {
+//           $lookup: {
+//             from: "materiasXCurso",
+//             localField: "materias",
+//             foreignField: "_id",
+//             as: "materiasDelCurso"
+//           }
+//         },
+//         {
+//           $project: {
+//             "materiasDelCurso.materia": 1,
+//             _id: 0
+//           }
+//         }
+//       ]).then(materiasDelCurso => {
+//         let idsCalXMateria = [];
+//         Estado.findOne({
+//           nombre: "Cursando",
+//           ambito: "CalificacionesXMateria"
+//         })
+//           .then(estado => {
+//             materiasDelCurso.forEach(elemento => {
+//               let idsCalificacionMatXTrim = [];
+//               //vas a crear las calificacionesXTrimestre de cada materia
+//               for (let i = 0; i < 3; i++) {
+//                 let calificacionesXTrim = new CalificacionesXTrimestre({
+//                   calificaciones: [0, 0, 0, 0, 0, 0],
+//                   trimestre: i + 1
+//                 });
+//                 calificacionesXTrim.save().then(calXMateriaXTrimestre => {
+//                   idsCalificacionMatXTrim.push(calXMateriaXTrimestre._id);
+//                 });
+//               }
+//               //creamos las calificacionesXMateria de cada materia
+//               let califXMateriaNueva = new CalificacionesXMateria({
+//                 idMateria: elemento.materiasDelCurso[0].materia,
+//                 estado: estado._id,
+//                 calificacionesXTrimestre: []
+//               });
+
+//               setTimeout(() => {
+//                 idsCalXMateria.push(califXMateriaNueva._id);
+//                 califXMateriaNueva.calificacionesXTrimestre = idsCalificacionMatXTrim;
+//                 califXMateriaNueva.save();
+//               }, 2000);
+//             });
+//           })
+//           .then(() => {
+//             //se obtiene el id del estado y se registra la nueva inscripcion
+//             setTimeout(() => {
+//               Curso.findOne({ _id: req.body.idCurso }).then(cursoSeleccionado => {
+//                 Estado.findOne({
+//                   nombre: "Inscripto",
+//                   ambito: "Inscripcion"
+//                 }).then(estado => {
+//                   const nuevaInscripcion = new Inscripcion({
+//                     idEstudiante: req.body.idEstudiante,
+//                     idCurso: cursoSeleccionado._id,
+//                     documentosEntregados: req.body.documentosEntregados,
+//                     activa: true,
+//                     estado: estado._id,
+//                     contadorInasistenciasInjustificada: 0,
+//                     contadorInasistenciasJustificada: 0,
+//                     calificacionesXMateria: idsCalXMateria
+//                   });
+//                   nuevaInscripcion.save().then(() => {
+//                     cursoSeleccionado.capacidad = cursoSeleccionado.capacidad - 1;
+//                     cursoSeleccionado.save();
+//                     //Le cambiamos el estado al estudiante
+//                     Estado.findOne({
+//                       nombre: "Inscripto",
+//                       ambito: "Estudiante"
+//                     }).then(estadoEstudiante => {
+//                       Estudiante.findByIdAndUpdate(req.body.idEstudiante, {
+//                         estado: estadoEstudiante._id
+//                       }).then(() => {
+//                         res.status(201).json({
+//                           message: "Estudiante inscripto exitosamente",
+//                           exito: true
+//                         });
+//                       });
+//                     });
+//                   });
+//                 });
+//               });
+//             }, 5000);
+
+//           });
+//       });
+//     }
+//   });
+//  });

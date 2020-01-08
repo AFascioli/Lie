@@ -1,10 +1,14 @@
-<mat-card *ngIf="estudiantes.length > 0">
+<mat-card *ngIf="isLoading">
+  <mat-spinner class="spinner"></mat-spinner>
+</mat-card>
+
+<mat-card *ngIf="estudiantes.length > 0 && !isLoading">
   <div *ngFor="let estudiante of estudiantes; let i = index">
-    <mat-expansion-panel [expanded]="i == 0">
+    <mat-expansion-panel [expanded]="'i == 0'">
       <mat-expansion-panel-header>
         <mat-panel-title>
           <b>
-            {{ estudiante.apellido }}, {{ estudiante.nombre }} -
+            {{ estudiante.apellido }}, {{ estudiante.nombre }} - 
             {{ estudiante.tipoDocumento }}: {{ estudiante.numeroDocumento }}
           </b>
         </mat-panel-title>
@@ -33,10 +37,28 @@
           mat-raised-button
           class="button"
           class="buttonPrimary"
-          (click)="onVRegistrarAR(i)"
+          (click)="onRegistrarAR(i)"
           *ngIf="permisos.inscribirEstudiante > 1"
         >
           Registrar adulto responsable
+        </button>
+        <button
+          mat-raised-button
+          class="button"
+          class="buttonPrimary"
+          (click)="onRegistrarExamenes(i)"
+          *ngIf="permisos.notas > 1"
+        >
+          Registrar examenes
+        </button>
+        <button
+          mat-raised-button
+          class="button"
+          class="buttonPrimary"
+          (click)="onLlegadaTarde(i)"
+          *ngIf="permisos.asistencia > 1"
+        >
+          Registrar llegada tarde
         </button>
         <button
           mat-raised-button
@@ -70,6 +92,6 @@
   </div>
 </mat-card>
 
-<mat-card *ngIf="estudiantes.length <= 0">
+<mat-card *ngIf="estudiantes.length <= 0 && !isLoading">
   <p>No se encontraron estudiantes</p>
 </mat-card>

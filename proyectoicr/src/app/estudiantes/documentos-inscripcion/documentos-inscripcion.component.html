@@ -6,6 +6,7 @@
       <mat-select
         placeholder="Seleccione curso"
         name="curso"
+        [disabled]="fueraPeriodoCicloLectivo"
         ngModel
         #curso="ngModel"
         matNativeControl
@@ -21,7 +22,7 @@
       </mat-select>
     </mat-form-field>
   </div>
-
+  <p class="aviso" *ngIf="fueraPeriodoCicloLectivo==true">Atención, no se puede registrar documentación debido a que estamos fuera de las fechas autorizadas</p>
   <div *ngIf="estudiantesConDocumentos.length != 0">
     <table mat-table [dataSource]="estudiantesConDocumentos">
       <ng-container matColumnDef="apellido">
@@ -86,9 +87,9 @@
   <div class="div-button">
     <button
       class="buttonPrimary"
-      (click)="onGuardar(curso)"
+      (click)="onGuardar()"
       mat-raised-button
-      [disabled]="!cursoSeleccionado"
+      [disabled]="!cursoSeleccionado || !documentosEntregadosOnChange"
     >
       Guardar
     </button>

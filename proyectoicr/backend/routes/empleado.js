@@ -4,6 +4,7 @@ const Empleado = require("../models/empleado");
 const checkAuthMiddleware= require("../middleware/check-auth");
 
 //Registra un nuevo empleado en la base de datos
+//@params: datos del empleado para ser creado
 router.post("/", checkAuthMiddleware,(req, res) => {
   const empleado= new Empleado({
     apellido: req.body.apellido,

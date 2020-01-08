@@ -1,5 +1,9 @@
 
-<div *ngIf="formValido">
+  <div *ngIf="isLoading">
+    <h3 mat-dialog-title class="tituloPopup">Procesando</h3>
+    <mat-spinner class="spinner"></mat-spinner>
+  </div>
+<div *ngIf="formValido && !isLoading">
   <h3 mat-dialog-title class="tituloPopup">Confirmar</h3>
   <div mat-dialog-content>
     <p class="parrafo">¿Desea confirmar la acción?</p>

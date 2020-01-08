@@ -3,15 +3,15 @@ table {
   margin: 2rem;
 }
 
-.columnasNormales{
-  width:22% !important;
+.columnasNormales {
+  width: 22% !important;
 }
 
-.columnasChicas{
-  width:8%;
+.columnasChicas {
+  width: 8%;
 }
 
-th{
+th {
   font-weight: bold;
   font-size: 15px;
 }
@@ -20,35 +20,53 @@ th{
   text-align: right;
 }
 
-.div-selects{
+.div-selects {
   text-align: center;
 }
 
-.mat-form-field{
+.mat-form-field {
   margin-left: 0.5rem;
   margin-right: 0.5rem;
 }
 
 /* Nuevo */
-input[type=number]::-webkit-inner-spin-button,
-input[type=number]::-webkit-outer-spin-button {
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
 
-input{
+input {
   border: none;
   width: 40%;
 }
 
-input:focus{
+input:focus {
   outline: none;
 }
 
-.promedio{
+.promedio {
   text-align: center !important;
 }
 
-.mat-cell{
+.mat-cell {
   font-size: medium !important;
+}
+
+.cardSpinner {
+  margin: auto;
+  margin-top: 1rem;
+  margin-bottom: 1.5rem;
+  max-width: 800px;
+  box-shadow: 0px 0px 8px 0px rgba(0, 0, 0, 0.71) !important;
+}
+
+.bajoPromedio {
+  background-color: #fc7978;
+}
+
+.paginator
+{
+  display:flex;
+  justify-content: center;
 }
