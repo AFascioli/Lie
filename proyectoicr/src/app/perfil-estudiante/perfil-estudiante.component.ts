@@ -1,6 +1,6 @@
 import { Component, OnInit, ElementRef, ViewChild } from '@angular/core';
-import { EstudiantesService } from "../estudiante.service";
-import { Estudiante } from '../estudiante.model';
+import { EstudiantesService } from "../estudiantes/estudiante.service";
+import { Estudiante } from '../estudiantes/estudiante.model';
 import { Router } from '@angular/router';
 import { MatDialogRef, MatDialog } from '@angular/material';
 

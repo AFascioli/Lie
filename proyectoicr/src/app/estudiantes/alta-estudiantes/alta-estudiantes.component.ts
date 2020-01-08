@@ -1,14 +1,15 @@
-import { Nacionalidad } from "./../nacionalidades.model";
+import { UbicacionService } from "src/app/ubicacion/ubicacion.service";
+import { Nacionalidad } from "../../ubicacion/nacionalidades.model";
 import { Component, OnInit, OnDestroy, ChangeDetectorRef } from "@angular/core";
 import { EstudiantesService } from "../estudiante.service";
 import { NgForm } from "@angular/forms";
-import { Provincia } from "../provincias.model";
-import { Localidad } from "../localidades.model";
+import { Provincia } from "../../ubicacion/provincias.model";
+import { Localidad } from "../../ubicacion/localidades.model";
 import { Subscription } from "rxjs";
-import { DateAdapter, MatSnackBar } from "@angular/material";
+import { MatSnackBar } from "@angular/material";
 import { MatDialog, MatDialogRef } from "@angular/material/dialog";
-import { Router } from "@angular/router";
 import { MediaMatcher } from "@angular/cdk/layout";
+import { CancelPopupComponent } from "src/app/popup-genericos/cancel-popup.component";
 
 @Component({
   selector: "app-alta-estudiantes",
@@ -28,14 +29,14 @@ export class AltaEstudiantesComponent implements OnInit, OnDestroy {
   //para asignar valores por defecto
   nombreProvinciaSeleccionada: string;
   nombreLocalidadSeleccionada: string;
-  defaultEstadoCivil="soltero";
+  defaultEstadoCivil = "soltero";
   codigoPostalEstudiante: string;
   estadoCivilEstudiante: string;
-  nacionalidadEstudiante:string;
+  nacionalidadEstudiante: string;
 
   constructor(
-    public servicio: EstudiantesService,
-    private dateAdapter: DateAdapter<Date>,
+    public servicioEstudiante: EstudiantesService,
+    public servicioUbicacion: UbicacionService,
     public dialog: MatDialog,
     private snackBar: MatSnackBar,
     public changeDetectorRef: ChangeDetectorRef,
@@ -50,33 +51,32 @@ export class AltaEstudiantesComponent implements OnInit, OnDestroy {
   // Cuando se inicializa el componente se cargar las provincias.
   ngOnInit() {
     this.codigoPostalEstudiante = "2421";
-    this.nacionalidadEstudiante= "Argentina";
-    this.servicio.formInvalidoEstudiante = true;
-    this.servicio.getProvincias();
-    this.suscripcion = this.servicio
+    this.nacionalidadEstudiante = "Argentina";
+    this.servicioEstudiante.formInvalidoEstudiante = true;
+    this.servicioUbicacion.getProvincias();
+    this.suscripcion = this.servicioUbicacion
       .getProvinciasListener()
       .subscribe(provinciasActualizadas => {
         this.provincias = provinciasActualizadas;
       });
-    this.servicio.getLocalidades();
-    this.suscripcion = this.servicio
+    this.servicioUbicacion.getLocalidades();
+    this.suscripcion = this.servicioUbicacion
       .getLocalidadesListener()
       .subscribe(localidadesActualizadas => {
         this.localidades = localidadesActualizadas;
-        this.nombreProvinciaSeleccionada="Cordoba";
+        this.nombreProvinciaSeleccionada = "Cordoba";
         this.FiltrarLocalidades();
-        this.nombreLocalidadSeleccionada="Morteros"
+        this.nombreLocalidadSeleccionada = "Morteros";
       });
-    this.servicio.getNacionalidades();
-    this.suscripcion = this.servicio
+    this.servicioUbicacion.getNacionalidades();
+    this.suscripcion = this.servicioUbicacion
       .getNacionalidadesListener()
       .subscribe(nacionalidadesActualizadas => {
         this.nacionalidades = nacionalidadesActualizadas;
         this.nacionalidades.sort((a, b) =>
-        a.name > b.name ? 1 : b.name > a.name ? -1 : 0
-      );
+          a.name > b.name ? 1 : b.name > a.name ? -1 : 0
+        );
       });
-
   }
 
   // Cuando se destruye el componente se eliminan las suscripciones.
@@ -92,7 +92,7 @@ export class AltaEstudiantesComponent implements OnInit, OnDestroy {
         duration: 4000
       });
     } else {
-      this.servicio
+      this.servicioEstudiante
         .altaEstudiante(
           form.value.apellido,
           form.value.nombre,
@@ -154,7 +154,7 @@ export class AltaEstudiantesComponent implements OnInit, OnDestroy {
   // }
 
   popUpCancelar() {
-    this.dialog.open(AltaPopupComponent, {
+    this.dialog.open(CancelPopupComponent, {
       width: "250px"
     });
   }
@@ -165,9 +165,11 @@ export class AltaEstudiantesComponent implements OnInit, OnDestroy {
     if (
       !(
         (inputValue >= 65 && inputValue <= 122) ||
-        (inputValue == 209 || inputValue == 241)
+        inputValue == 209 ||
+        inputValue == 241
       ) &&
-      (inputValue != 32 && inputValue != 0)
+      inputValue != 32 &&
+      inputValue != 0
     ) {
       event.preventDefault();
     }
@@ -178,29 +180,10 @@ export class AltaEstudiantesComponent implements OnInit, OnDestroy {
     var inputValue = event.which;
     if (
       !(inputValue >= 48 && inputValue <= 57) &&
-      (inputValue != 32 && inputValue != 0)
+      inputValue != 32 &&
+      inputValue != 0
     ) {
       event.preventDefault();
     }
-  }
-}
-
-@Component({
-  selector: "app-alta-popup",
-  templateUrl: "./alta-popup.component.html",
-  styleUrls: ["./alta-estudiantes.component.css"]
-})
-export class AltaPopupComponent {
-  constructor(
-    public dialogRef: MatDialogRef<AltaPopupComponent>,
-    public router: Router
-  ) {}
-
-  onYesClick(): void {
-    this.router.navigate(["./home"]);
-    this.dialogRef.close();
-  }
-  onNoClick(): void {
-    this.dialogRef.close();
   }
 }

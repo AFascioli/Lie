@@ -1,12 +1,12 @@
-import { AutenticacionService } from "./../../login/autenticacionService.service";
+import { CancelPopupComponent } from "src/app/popup-genericos/cancel-popup.component";
+import { AutenticacionService } from "../../login/autenticacionService.service";
 import { EstudiantesService } from "src/app/estudiantes/estudiante.service";
 import { Component, OnInit, ViewChild } from "@angular/core";
-import { MatDialogRef, MatDialog, MatSnackBar } from "@angular/material";
-import { Router } from "@angular/router";
+import { MatDialog, MatSnackBar } from "@angular/material";
 import { NgForm, NgModel } from "@angular/forms";
 import { MatPaginator, PageEvent } from "@angular/material/paginator";
 import { MatTableDataSource } from "@angular/material/table";
-import { CalificacionesService } from '../calificaciones.service';
+import { CalificacionesService } from "../calificaciones.service";
 
 @Component({
   selector: "app-calificaciones-estudiantes",
@@ -57,12 +57,14 @@ export class CalificacionesEstudiantesComponent implements OnInit {
   }
 
   validarPermisos() {
-    this.servicioEstudianteAutenticacion.obtenerPermisosDeRol().subscribe(res => {
-      if (res.permisos.notas == 2) {
-        this.rolConPermisosEdicion = true;
-      }
-      this.isLoading = false;
-    });
+    this.servicioEstudianteAutenticacion
+      .obtenerPermisosDeRol()
+      .subscribe(res => {
+        if (res.permisos.notas == 2) {
+          this.rolConPermisosEdicion = true;
+        }
+        this.isLoading = false;
+      });
   }
 
   obtenerCursos() {
@@ -150,21 +152,26 @@ export class CalificacionesEstudiantesComponent implements OnInit {
       this.servicioEstudianteAutenticacion.getRol() != "Admin"
     ) {
       this.servicioEstudiante
-        .obtenerMateriasXCursoXDocente(curso.value, this.servicioEstudianteAutenticacion.getId())
+        .obtenerMateriasXCursoXDocente(
+          curso.value,
+          this.servicioEstudianteAutenticacion.getId()
+        )
         .subscribe(respuesta => {
           this.materias = respuesta.materias;
         });
     } else {
-      this.servicioEstudiante.obtenerMateriasDeCurso(curso.value).subscribe(respuesta => {
-        this.materias = respuesta.materias;
-      });
+      this.servicioEstudiante
+        .obtenerMateriasDeCurso(curso.value)
+        .subscribe(respuesta => {
+          this.materias = respuesta.materias;
+        });
     }
   }
 
   obtenerNotas(form: NgForm) {
     if (form.value.curso != "" || form.value.materia != "") {
       this.servicioCalificaciones
-    //this.servicioEstudiante
+        //this.servicioEstudiante
         .obtenerCalificacionesEstudiantesXCursoXMateria(
           form.value.curso,
           form.value.materia,
@@ -188,14 +195,13 @@ export class CalificacionesEstudiantesComponent implements OnInit {
   }
 
   calcularPromedio(index, cantidad) {
-    if (cantidad!=0)
-    {var notas: number = 0;
-    this.estudiantes[index].calificaciones.forEach(nota => {
-      if (nota != 0 && nota != null) notas = notas + nota;
-    });
-    this.promedio = notas / cantidad;
-    }
-    else  this.promedio = 0;
+    if (cantidad != 0) {
+      var notas: number = 0;
+      this.estudiantes[index].calificaciones.forEach(nota => {
+        if (nota != 0 && nota != null) notas = notas + nota;
+      });
+      this.promedio = notas / cantidad;
+    } else this.promedio = 0;
     return this.promedio;
   }
 
@@ -222,7 +228,7 @@ export class CalificacionesEstudiantesComponent implements OnInit {
       }
     } else if (form.valueChanges) {
       this.servicioCalificaciones
-    //this.servicioEstudiante
+        //this.servicioEstudiante
         .registrarCalificaciones(
           this.estudiantes,
           form.value.materia,
@@ -248,7 +254,7 @@ export class CalificacionesEstudiantesComponent implements OnInit {
 
   onCancelar() {
     this.servicioEstudiante.tipoPopUp = "cancelar";
-    this.popup.open(CalificacionesEstudiantePopupComponent);
+    this.popup.open(CancelPopupComponent);
   }
   checkNotas(event, cal) {
     var inputValue = event.which;
@@ -260,26 +266,5 @@ export class CalificacionesEstudiantesComponent implements OnInit {
     )
       event.preventDefault();
     else if (cal != "" && Number(concat) > 10) event.preventDefault();
-  }
-}
-
-@Component({
-  selector: "app-calificaciones-estudiantes",
-  templateUrl: "./calificaciones-estudiantes-popup.component.html",
-  styleUrls: ["./calificaciones-estudiantes.component.css"]
-})
-export class CalificacionesEstudiantePopupComponent {
-  constructor(
-    public dialogRef: MatDialogRef<CalificacionesEstudiantePopupComponent>,
-    public router: Router
-  ) {}
-
-  onYesCancelarClick(): void {
-    this.router.navigate(["./home"]);
-    this.dialogRef.close();
-  }
-
-  onNoCancelarClick(): void {
-    this.dialogRef.close();
   }
 }

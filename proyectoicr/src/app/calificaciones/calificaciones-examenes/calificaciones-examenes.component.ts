@@ -1,6 +1,6 @@
-import { CalificacionesService } from "./../calificaciones.service";
+import { CalificacionesService } from "../calificaciones.service";
 import { MatSnackBar } from "@angular/material";
-import { AutenticacionService } from "./../../login/autenticacionService.service";
+import { AutenticacionService } from "../../login/autenticacionService.service";
 import { EstudiantesService } from "src/app/estudiantes/estudiante.service";
 import { Component, OnInit, ChangeDetectorRef } from "@angular/core";
 import { MediaMatcher } from "@angular/cdk/layout";

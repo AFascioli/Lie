@@ -1,4 +1,5 @@
-import { EstudiantesService } from "../estudiante.service";
+import { InscripcionService } from "../insccripcion.service";
+import { EstudiantesService } from "../../estudiantes/estudiante.service";
 import { OnInit, Component, Inject, ChangeDetectorRef } from "@angular/core";
 import { Router } from "@angular/router";
 import {
@@ -10,7 +11,7 @@ import {
 } from "@angular/material";
 import { NgForm } from "@angular/forms";
 import { MediaMatcher } from "@angular/cdk/layout";
-import { AutenticacionService } from 'src/app/login/autenticacionService.service';
+import { AutenticacionService } from "src/app/login/autenticacionService.service";
 
 @Component({
   selector: "app-inscripcion-estudiantes",
@@ -36,10 +37,11 @@ export class InscripcionEstudianteComponent implements OnInit {
   ];
   _mobileQueryListener: () => void;
   mobileQuery: MediaQueryList;
-  fechaDentroDeRangoInscripcion : boolean = true;
+  fechaDentroDeRangoInscripcion: boolean = true;
 
   constructor(
-    public servicio: EstudiantesService,
+    public servicioEstudiante: EstudiantesService,
+    public servicioInscripcion: InscripcionService,
     public dialog: MatDialog,
     public snackBar: MatSnackBar,
     public changeDetectorRef: ChangeDetectorRef,
@@ -52,45 +54,58 @@ export class InscripcionEstudianteComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.fechaActual= new Date();
-    if(this.fechaActualEnRangoFechasInscripcion() || this.authService.getRol()=="Admin"){
+    this.fechaActual = new Date();
+    if (
+      this.fechaActualEnRangoFechasInscripcion() ||
+      this.authService.getRol() == "Admin"
+    ) {
       this.fechaDentroDeRangoInscripcion = true;
     }
     this.authService.getFechasCicloLectivo();
-    this.apellidoEstudiante = this.servicio.estudianteSeleccionado.apellido;
-    this.nombreEstudiante = this.servicio.estudianteSeleccionado.nombre;
-    this._idEstudiante = this.servicio.estudianteSeleccionado._id;
-    this.servicio
+    this.apellidoEstudiante = this.servicioEstudiante.estudianteSeleccionado.apellido;
+    this.nombreEstudiante = this.servicioEstudiante.estudianteSeleccionado.nombre;
+    this._idEstudiante = this.servicioEstudiante.estudianteSeleccionado._id;
+    this.servicioEstudiante
       .estudianteEstaInscripto(this._idEstudiante)
       .subscribe(response => {
         this.estudianteEstaInscripto = response.exito;
       });
-    this.servicio.obtenerCursosInscripcionEstudiante().subscribe(response => {
-      this.cursos = response.cursos;
-      this.cursos.sort((a, b) =>
+    this.servicioInscripcion
+      .obtenerCursosInscripcionEstudiante()
+      .subscribe(response => {
+        this.cursos = response.cursos;
+        this.cursos.sort((a, b) =>
           a.curso.charAt(0) > b.curso.charAt(0)
             ? 1
             : b.curso.charAt(0) > a.curso.charAt(0)
             ? -1
             : 0
         );
-    });
+      });
   }
 
   fechaActualEnRangoFechasInscripcion() {
-    let fechaInicioInscripcion = new Date(this.authService.getFechasCicloLectivo().fechaInicioInscripcion);
-    let fechaFinInscripcion = new Date(this.authService.getFechasCicloLectivo().fechaFinInscripcion);
+    let fechaInicioInscripcion = new Date(
+      this.authService.getFechasCicloLectivo().fechaInicioInscripcion
+    );
+    let fechaFinInscripcion = new Date(
+      this.authService.getFechasCicloLectivo().fechaFinInscripcion
+    );
 
-    return this.fechaActual.getTime() > fechaInicioInscripcion.getTime() &&
-        this.fechaActual.getTime() < fechaFinInscripcion.getTime();
-    }
+    return (
+      this.fechaActual.getTime() > fechaInicioInscripcion.getTime() &&
+      this.fechaActual.getTime() < fechaFinInscripcion.getTime()
+    );
+  }
 
   //Obtiene la capacidad del curso seleccionado
   onCursoSeleccionado(curso) {
     this.cursoSeleccionado = curso.value;
-    this.servicio.obtenerCapacidadCurso(curso.value).subscribe(response => {
-      this.capacidadCurso = response.capacidad;
-    });
+    this.servicioInscripcion
+      .obtenerCapacidadCurso(curso.value)
+      .subscribe(response => {
+        this.capacidadCurso = response.capacidad;
+      });
   }
 
   //Cambia el valor de entregado del documento seleccionado por el usuario
@@ -99,7 +114,6 @@ export class InscripcionEstudianteComponent implements OnInit {
       indexDoc
     ].entregado;
   }
-
 
   openDialogo(form: NgForm) {
     if (form.invalid) {
@@ -156,7 +170,8 @@ export class InscripcionPopupComponent {
   constructor(
     public dialogRef: MatDialogRef<InscripcionPopupComponent>,
     public router: Router,
-    public servicio: EstudiantesService,
+    public servicioEstudiante: EstudiantesService,
+    public servicioInscripcion: InscripcionService,
     public snackBar: MatSnackBar,
     @Inject(MAT_DIALOG_DATA) data
   ) {
@@ -172,7 +187,8 @@ export class InscripcionPopupComponent {
 
   onYesConfirmarClick(): void {
     this.isLoading=true;
-    this.servicio
+    this.dialogRef.close();
+    this.servicioInscripcion
       .inscribirEstudiante(
         this.IdEstudiante,
         this.curso,

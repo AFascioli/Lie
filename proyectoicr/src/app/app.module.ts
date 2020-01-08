@@ -1,3 +1,4 @@
+import { Evento } from "./eventos/evento.model";
 import { AuthInterceptor } from "./login/auth-interceptor";
 import { BrowserModule } from "@angular/platform-browser";
 import { NgModule } from "@angular/core";
@@ -21,15 +22,14 @@ import {
   MatChipsModule,
   MatInputModule
 } from "@angular/material";
+import { MatTooltipModule } from "@angular/material/tooltip";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { MatPaginatorModule } from "@angular/material/paginator";
 import { MatDatepickerModule } from "@angular/material/datepicker";
 import { MatMenuModule } from "@angular/material/menu";
 import { AppComponent } from "./app.component";
-import {
-  AltaEstudiantesComponent,
-  AltaPopupComponent
-} from "./estudiantes/alta-estudiantes/alta-estudiantes.component";
+import { AltaEstudiantesComponent } from "./estudiantes/alta-estudiantes/alta-estudiantes.component";
+import { CancelPopupComponent } from "./popup-genericos/cancel-popup.component";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { HttpClientModule, HTTP_INTERCEPTORS } from "@angular/common/http";
 import { EstudiantesService } from "./estudiantes/estudiante.service";
@@ -57,20 +57,14 @@ import { MatExpansionModule } from "@angular/material/expansion";
 import {
   InscripcionEstudianteComponent,
   InscripcionPopupComponent
-} from "./estudiantes/inscripcion-estudiantes/inscripcion-estudiantes.component";
+} from "./inscripcion/inscripcion-estudiantes/inscripcion-estudiantes.component";
 import {
   RetiroAnticipadoComponent,
   RetiroPopupComponent
 } from "./asistencia/retiro-anticipado/retiro-anticipado.component";
-import {
-  DocumentosInscripcionComponent,
-  DocumentosInscripcionPopupComponent
-} from "./estudiantes/documentos-inscripcion/documentos-inscripcion.component";
+import { DocumentosInscripcionComponent } from "./inscripcion/documentos-inscripcion/documentos-inscripcion.component";
 import { MatGridListModule } from "@angular/material/grid-list";
-import {
-  CalificacionesEstudiantesComponent,
-  CalificacionesEstudiantePopupComponent
-} from "./estudiantes/calificaciones-estudiantes/calificaciones-estudiantes.component";
+import { CalificacionesEstudiantesComponent } from "./calificaciones/calificaciones-estudiantes/calificaciones-estudiantes.component";
 import { LlegadaTardeComponent } from "./asistencia/llegada-tarde/llegada-tarde.component";
 import {
   CambiarPassword,
@@ -79,9 +73,9 @@ import {
 import {
   PerfilEstudianteComponent,
   PerfilEstudiantePopupComponent
-} from "./estudiantes/perfil-estudiante/perfil-estudiante.component";
-import { CalificacionesPerfilEstudianteComponent } from "./estudiantes/perfil-estudiante/calificaciones-perfil-estudiante/calificaciones-perfil-estudiante.component";
-import { AgendaCursoPerfilEstudianteComponent } from "./estudiantes/perfil-estudiante/agenda-curso-perfil-estudiante/agenda-curso-perfil-estudiante.component";
+} from "./perfil-estudiante/perfil-estudiante.component";
+import { CalificacionesPerfilEstudianteComponent } from "./perfil-estudiante/calificaciones-perfil-estudiante/calificaciones-perfil-estudiante.component";
+import { AgendaCursoPerfilEstudianteComponent } from "./perfil-estudiante/agenda-curso-perfil-estudiante/agenda-curso-perfil-estudiante.component";
 import { LOCALE_ID } from "@angular/core";
 import { registerLocaleData } from "@angular/common";
 import { ChartsModule } from "ng2-charts";
@@ -102,10 +96,10 @@ import {
 } from "./menu-lateral/preferencias/preferencias.component";
 import { ServiceWorkerModule } from "@angular/service-worker";
 import { environment } from "../environments/environment";
-import { InasistenciasEstudianteComponent } from "./estudiantes/perfil-estudiante/inasistencias-estudiante/inasistencias-estudiante.component";
-import { TutoresEstudianteComponent } from "./estudiantes/perfil-estudiante/tutores-estudiante/tutores-estudiante.component";
-import { DatosEstudianteComponent } from "./estudiantes/perfil-estudiante/datos-estudiante/datos-estudiante.component";
-import { CalificacionesExamenesComponent } from "./estudiantes/calificaciones-examenes/calificaciones-examenes.component";
+import { InasistenciasEstudianteComponent } from "./perfil-estudiante/inasistencias-estudiante/inasistencias-estudiante.component";
+import { TutoresEstudianteComponent } from "./perfil-estudiante/tutores-estudiante/tutores-estudiante.component";
+import { DatosEstudianteComponent } from "./perfil-estudiante/datos-estudiante/datos-estudiante.component";
+import { CalificacionesExamenesComponent } from "./calificaciones/calificaciones-examenes/calificaciones-examenes.component";
 import { RegistrarEventoComponent } from "./eventos/registrar-evento/registrar-evento.component";
 
 @NgModule({
@@ -115,7 +109,7 @@ import { RegistrarEventoComponent } from "./eventos/registrar-evento/registrar-e
     BuscarEstudiantesComponent,
     ListaEstudiantesComponent,
     MostrarEstudiantesComponent,
-    AltaPopupComponent,
+    CancelPopupComponent,
     MostrarPopupComponent,
     PreferenciasPopupComponent,
     MenuLateralComponent,
@@ -129,9 +123,7 @@ import { RegistrarEventoComponent } from "./eventos/registrar-evento/registrar-e
     RetiroAnticipadoComponent,
     RetiroPopupComponent,
     DocumentosInscripcionComponent,
-    DocumentosInscripcionPopupComponent,
     CalificacionesEstudiantesComponent,
-    CalificacionesEstudiantePopupComponent,
     LlegadaTardeComponent,
     CambiarPassword,
     CambiarPasswordPopupComponent,
@@ -154,15 +146,13 @@ import { RegistrarEventoComponent } from "./eventos/registrar-evento/registrar-e
   ],
   //entryComponents declara los componentes que se generan dinamicamente dentro de otros.
   entryComponents: [
-    AltaPopupComponent,
+    CancelPopupComponent,
     MostrarPopupComponent,
     AsistenciaPopupComponent,
     PerfilEstudiantePopupComponent,
     BuscarPopupComponent,
     InscripcionPopupComponent,
     RetiroPopupComponent,
-    DocumentosInscripcionPopupComponent,
-    CalificacionesEstudiantePopupComponent,
     CambiarPasswordPopupComponent,
     CerrarSesionPopupComponent,
     PreferenciasPopupComponent,
@@ -201,6 +191,7 @@ import { RegistrarEventoComponent } from "./eventos/registrar-evento/registrar-e
     MatGridListModule,
     ChartsModule,
     MatPaginatorModule,
+    MatTooltipModule,
     ServiceWorkerModule.register("ngsw-worker.js", {
       enabled: environment.production,
       registrationStrategy: "registerImmediately"

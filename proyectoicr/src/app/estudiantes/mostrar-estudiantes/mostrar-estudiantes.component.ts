@@ -1,12 +1,13 @@
+import { UbicacionService } from "src/app/ubicacion/ubicacion.service";
 import { AutenticacionService } from "./../../login/autenticacionService.service";
 import { Component, OnInit, Input, ChangeDetectorRef } from "@angular/core";
 import { EstudiantesService } from "../estudiante.service";
 import { Subscription } from "rxjs";
-import { Provincia } from "../provincias.model";
+import { Provincia } from "../../ubicacion/provincias.model";
 import { NgForm } from "@angular/forms";
 import { Estudiante } from "../estudiante.model";
-import { Nacionalidad } from "../nacionalidades.model";
-import { Localidad } from "../localidades.model";
+import { Nacionalidad } from "../../ubicacion/nacionalidades.model";
+import { Localidad } from "../../ubicacion/localidades.model";
 import { MatDialog, MatDialogRef, MatSnackBar } from "@angular/material";
 import { Router } from "@angular/router";
 import { MediaMatcher } from "@angular/cdk/layout";
@@ -59,7 +60,8 @@ export class MostrarEstudiantesComponent implements OnInit {
   mobileQuery: MediaQueryList;
 
   constructor(
-    public servicio: EstudiantesService,
+    public servicioEstudiante: EstudiantesService,
+    public servicioUbicacion: UbicacionService,
     public dialog: MatDialog,
     private snackBar: MatSnackBar,
     public authService: AutenticacionService,
@@ -67,46 +69,46 @@ export class MostrarEstudiantesComponent implements OnInit {
     public router: Router,
     public media: MediaMatcher
   ) {
-    this.apellidoEstudiante = this.servicio.estudianteSeleccionado.apellido;
-    this.nombreEstudiante = this.servicio.estudianteSeleccionado.nombre;
-    this.tipoDocEstudiante = this.servicio.estudianteSeleccionado.tipoDocumento;
-    this.nroDocEstudiante = this.servicio.estudianteSeleccionado.numeroDocumento;
-    this.cuilEstudiante = this.servicio.estudianteSeleccionado.cuil;
-    this.sexoEstudiante = this.servicio.estudianteSeleccionado.sexo;
-    this.calleEstudiante = this.servicio.estudianteSeleccionado.calle;
-    this.nroCalleEstudiante = this.servicio.estudianteSeleccionado.numeroCalle;
-    this.pisoEstudiante = this.servicio.estudianteSeleccionado.piso;
-    this.departamentoEstudiante = this.servicio.estudianteSeleccionado.departamento;
-    this.provinciaEstudiante = this.servicio.estudianteSeleccionado.provincia;
-    this.localidadEstudiante = this.servicio.estudianteSeleccionado.localidad;
-    this.CPEstudiante = this.servicio.estudianteSeleccionado.codigoPostal;
-    this.fechaNacEstudiante = this.servicio.estudianteSeleccionado.fechaNacimiento;
-    this.nacionalidadEstudiante = this.servicio.estudianteSeleccionado.nacionalidad;
-    this.estadoCivilEstudiante = this.servicio.estudianteSeleccionado.estadoCivil;
-    this.telefonoEstudiante = this.servicio.estudianteSeleccionado.telefonoFijo;
+    this.apellidoEstudiante = this.servicioEstudiante.estudianteSeleccionado.apellido;
+    this.nombreEstudiante = this.servicioEstudiante.estudianteSeleccionado.nombre;
+    this.tipoDocEstudiante = this.servicioEstudiante.estudianteSeleccionado.tipoDocumento;
+    this.nroDocEstudiante = this.servicioEstudiante.estudianteSeleccionado.numeroDocumento;
+    this.cuilEstudiante = this.servicioEstudiante.estudianteSeleccionado.cuil;
+    this.sexoEstudiante = this.servicioEstudiante.estudianteSeleccionado.sexo;
+    this.calleEstudiante = this.servicioEstudiante.estudianteSeleccionado.calle;
+    this.nroCalleEstudiante = this.servicioEstudiante.estudianteSeleccionado.numeroCalle;
+    this.pisoEstudiante = this.servicioEstudiante.estudianteSeleccionado.piso;
+    this.departamentoEstudiante = this.servicioEstudiante.estudianteSeleccionado.departamento;
+    this.provinciaEstudiante = this.servicioEstudiante.estudianteSeleccionado.provincia;
+    this.localidadEstudiante = this.servicioEstudiante.estudianteSeleccionado.localidad;
+    this.CPEstudiante = this.servicioEstudiante.estudianteSeleccionado.codigoPostal;
+    this.fechaNacEstudiante = this.servicioEstudiante.estudianteSeleccionado.fechaNacimiento;
+    this.nacionalidadEstudiante = this.servicioEstudiante.estudianteSeleccionado.nacionalidad;
+    this.estadoCivilEstudiante = this.servicioEstudiante.estudianteSeleccionado.estadoCivil;
+    this.telefonoEstudiante = this.servicioEstudiante.estudianteSeleccionado.telefonoFijo;
     this.mobileQuery = media.matchMedia("(max-width: 1000px)");
     this._mobileQueryListener = () => changeDetectorRef.detectChanges();
     this.mobileQuery.addListener(this._mobileQueryListener);
   }
 
   ngOnInit() {
-    this.servicio.formInvalidoEstudiante = true;
-    this.servicio.formEstudianteModificada = false;
-    this.servicio.getProvincias();
-    this.suscripcion = this.servicio
+    this.servicioEstudiante.formInvalidoEstudiante = true;
+    this.servicioEstudiante.formEstudianteModificada = false;
+    this.servicioUbicacion.getProvincias();
+    this.suscripcion = this.servicioUbicacion
       .getProvinciasListener()
       .subscribe(provinciasActualizadas => {
         this.provincias = provinciasActualizadas;
       });
-    this.servicio.getLocalidades();
-    this.suscripcion = this.servicio
+    this.servicioUbicacion.getLocalidades();
+    this.suscripcion = this.servicioUbicacion
       .getLocalidadesListener()
       .subscribe(localidadesActualizadas => {
         this.localidades = localidadesActualizadas;
         this.FiltrarLocalidades();
       });
-    this.servicio.getNacionalidades();
-    this.suscripcion = this.servicio
+    this.servicioUbicacion.getNacionalidades();
+    this.suscripcion = this.servicioUbicacion
       .getNacionalidadesListener()
       .subscribe(nacionalidadesActualizadas => {
         this.nacionalidades = nacionalidadesActualizadas;
@@ -137,9 +139,9 @@ export class MostrarEstudiantesComponent implements OnInit {
 
   onGuardar(form: NgForm) {
     if (!form.invalid && form.dirty) {
-      this.servicio
+      this.servicioEstudiante
         .modificarEstudiante(
-          this.servicio.estudianteSeleccionado._id,
+          this.servicioEstudiante.estudianteSeleccionado._id,
           this.apellidoEstudiante,
           this.nombreEstudiante,
           this.tipoDocEstudiante,
@@ -172,14 +174,13 @@ export class MostrarEstudiantesComponent implements OnInit {
             });
           }
         });
-    } else{
-      if (form.invalid){
+    } else {
+      if (form.invalid) {
         this.snackBar.open("Faltan campos por completar", "", {
           panelClass: ["snack-bar-fracaso"],
           duration: 4000
         });
-      }
-      else{
+      } else {
         this.snackBar.open("No se han realizado cambios en el formulario", "", {
           panelClass: ["snack-bar-fracaso"],
           duration: 4000
@@ -192,19 +193,18 @@ export class MostrarEstudiantesComponent implements OnInit {
     if (tipo == "volver" && !this.modoEditar) {
       this.router.navigate(["./buscar/lista"]);
     } else {
-      this.servicio.tipoPopUp = tipo;
+      this.servicioEstudiante.tipoPopUp = tipo;
       if (form.invalid) {
-        this.servicio.formInvalidoEstudiante = true;
+        this.servicioEstudiante.formInvalidoEstudiante = true;
       } else {
-        this.servicio.formInvalidoEstudiante = false;
-        this.servicio.formEstudianteModificada = form.dirty;
+        this.servicioEstudiante.formInvalidoEstudiante = false;
+        this.servicioEstudiante.formEstudianteModificada = form.dirty;
       }
       this.dialog.open(MostrarPopupComponent, {
         width: "250px"
       });
     }
   }
-
 }
 
 @Component({
@@ -221,12 +221,12 @@ export class MostrarPopupComponent {
   constructor(
     public dialogRef: MatDialogRef<MostrarPopupComponent>,
     public router: Router,
-    public servicio: EstudiantesService
+    public servicioEstudiante: EstudiantesService
   ) {
-    this.tipoPopup = this.servicio.tipoPopUp;
-    this.formInvalido = servicio.formInvalidoEstudiante;
+    this.tipoPopup = this.servicioEstudiante.tipoPopUp;
+    this.formInvalido = servicioEstudiante.formInvalidoEstudiante;
     this.borrar = "¿Está seguro que desea borrar el estudiante?";
-    this.formModificada = this.servicio.formEstudianteModificada;
+    this.formModificada = this.servicioEstudiante.formEstudianteModificada;
   }
 
   onYesClick(): void {
@@ -240,7 +240,7 @@ export class MostrarPopupComponent {
 
   onOkClick(): void {
     this.dialogRef.close();
-    this.servicio.formInvalidoEstudiante = true;
+    this.servicioEstudiante.formInvalidoEstudiante = true;
   }
 
   onOkClickBorrar(): void {
@@ -250,6 +250,8 @@ export class MostrarPopupComponent {
 
   onYesDeleteClick() {
     this.borrar = "El estudiante fue borrado exitosamente";
-    this.servicio.borrarEstudiante(this.servicio.estudianteSeleccionado._id);
+    this.servicioEstudiante.borrarEstudiante(
+      this.servicioEstudiante.estudianteSeleccionado._id
+    );
   }
 }

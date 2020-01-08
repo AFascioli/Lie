@@ -1,5 +1,7 @@
-import { AsistenciaService } from 'src/app/asistencia/asistencia.service';
-import { CalificacionesService } from './../calificaciones.service';
+import { AsistenciaService } from "src/app/asistencia/asistencia.service";
+import { UbicacionService } from "src/app/ubicacion/ubicacion.service";
+import { CalificacionesService } from "../../calificaciones/calificaciones.service";
+import { InscripcionService } from "../../inscripcion/insccripcion.service";
 import { AutenticacionService } from "./../../login/autenticacionService.service";
 import { Component, OnInit } from "@angular/core";
 import { EstudiantesService } from "../estudiante.service";
@@ -30,6 +32,8 @@ export class ListaEstudiantesComponent implements OnInit {
     public servicio: EstudiantesService,
     public servicioCalificaciones: CalificacionesService,
     public servicioAsistencia: AsistenciaService,
+    public servicioInscripcion: InscripcionService,
+    public servicioUbicacion: UbicacionService,
     public router: Router,
     public authService: AutenticacionService
   ) {}
@@ -58,7 +62,9 @@ export class ListaEstudiantesComponent implements OnInit {
         estudiante.numeroDocumento === this.estudiantes[indice].numeroDocumento
     );
     this.servicioCalificaciones.estudianteSeleccionado = this.servicio.estudianteSeleccionado;
-    this.servicioAsistencia.estudianteSeleccionado= this.servicio.estudianteSeleccionado;
+    this.servicioAsistencia.estudianteSeleccionado = this.servicio.estudianteSeleccionado;
+    this.servicioInscripcion.estudianteSeleccionado = this.servicio.estudianteSeleccionado;
+    this.servicioUbicacion.estudianteSeleccionado = this.servicio.estudianteSeleccionado;
     this.servicio.retornoDesdeAcciones = true;
   }
 
