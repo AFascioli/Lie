@@ -85,4 +85,10 @@ app.use("/asistencia", asistenciaRoutes);
 
 app.use("/calificacion", calificacionesRoutes);
 
+app.get("/status", (req, res, next) => {
+    res.status(200).json({
+      message: "Servidor Node.js Lie®"
+    });
+});
+
 module.exports = app;
