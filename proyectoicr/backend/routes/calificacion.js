@@ -53,6 +53,7 @@ router.get("/materiasDesaprobadas", (req, res) => {
       }
     }
   ]).then(materias => {
+    //#resolve: fijarse si no hay materias desaprobadas y revisar todo
     ClaseCXM.obtenerMateriasDesaprobadas(
       materias[0].materiasPendientesNombres,
       materias[0].CXM,

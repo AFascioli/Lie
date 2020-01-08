@@ -198,5 +198,6 @@ router.post("/suscripcion", (req, res) => {
       .status(200)
       .json({ message: "Ocurrieron errores al querer registrar la suscripcion" +err , exito: false});
     });
+  });
 
 module.exports = router;

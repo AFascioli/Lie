@@ -67,7 +67,7 @@ export class AutenticacionService {
       message: string;
     }>(environment.apiUrl+"/usuario/cambiarPassword", datosContraseña);
   }
-  
+
   //Registra a un usuario con el rol, contraseña e email
   //@params: email del usuario
   //@params: contraseña del usuario

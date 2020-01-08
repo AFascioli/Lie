@@ -1,4 +1,4 @@
-import { InscripcionService } from "../insccripcion.service";
+import { InscripcionService } from "../inscripcion.service";
 import { EstudiantesService } from "../../estudiantes/estudiante.service";
 import { OnInit, Component, Inject, ChangeDetectorRef } from "@angular/core";
 import { Router } from "@angular/router";

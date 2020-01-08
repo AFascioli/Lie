@@ -53,7 +53,6 @@ export class CalificacionesService {
   //Obtiene las materias desaprobadas de un estudiante determinado
   //@params: id del estudiante
   public obtenerMateriasDesaprobadasEstudiante() {
-    console.log("est " + this.estudianteSeleccionado);
     let params = new HttpParams().set(
       "idEstudiante",
       this.estudianteSeleccionado._id
@@ -63,7 +62,7 @@ export class CalificacionesService {
       exito: boolean;
       materiasDesaprobadas: any[];
     }>(environment.apiUrl + "/calificacion/materiasDesaprobadas", {
-      // params: params
+      params: params
     });
   }
 
