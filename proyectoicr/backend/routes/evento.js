@@ -49,8 +49,10 @@ var upload = multer({ storage: storage }).single("image");
 //Registra el evento en la base de datos
 //@params: evento a publicar
 router.post("/registrar", upload, (req, res, next) => {
+  const host = req.hostname;
+const filePath = req.protocol + "://" + host + '/' + req.file.path;
   Usuario.findOne({ email: req.body.autor }).then(usuario => {
-    const url = req.protocol + "://" + req.get("host");
+    //const url = req.protocol + "://" + req.get("host");
     const evento = new Evento({
       titulo: req.body.titulo,
       descripcion: req.body.descripcion,
@@ -58,7 +60,7 @@ router.post("/registrar", upload, (req, res, next) => {
       horaInicio: req.body.horaInicio,
       horaFin: req.body.horaFin,
       tags: req.body.tags,
-      imgUrl: url + "/images/" + req.body.imgUrl,
+      imgUrl: req.protocol + "://" + req.get("host") + '/' + req.file.filename,
       autor: usuario._id
     });
     evento.save().then(() => {

@@ -14,7 +14,7 @@
   <mat-card-subtitle *ngIf="evento.horaFin">{{evento.horaFin}}</mat-card-subtitle>
   <img
     mat-card-image
-    src="evento.imgUrl"
+    [src]="evento.imgUrl"
   />
   <mat-card-content>
     <p class="parrafo">
