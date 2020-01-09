@@ -14,6 +14,7 @@ declare var require: any;
 export class HomeComponent implements OnInit {
   eventos: Evento[];
   imagen;
+  fechaActual;
   readonly VAPID_PUBLIC =
     "BMlC2dLJTBP6T1GCl3S3sDBmhERNVcjN7ff2a6JAoOg8bA_qXjikveleRwjz0Zn8c9-58mnrNo2K4p07UPK0DKQ";
 
@@ -23,9 +24,20 @@ export class HomeComponent implements OnInit {
     return require("backend/images/"+imgUrl)
   }
 
+  obtenerMes(fechaEvento){
+    let fecha = new Date(fechaEvento);
+    let rtdoMes= fecha.toLocaleString('es-ES', { month: 'long' });
+    return rtdoMes.charAt(0).toUpperCase()+rtdoMes.slice(1);
+  }
+
+  obtenerDia(fechaEvento){
+    let fecha = new Date(fechaEvento);
+    return fecha.getDate();
+  }
+
   ngOnInit() {
+    this.fechaActual = new Date();
     this.servicioEvento.obtenerEvento().subscribe(rtdo => {
-      console.log(rtdo);
       this.eventos = rtdo.eventos;
     })
     if ("serviceWorker" in navigator) {
@@ -38,8 +50,8 @@ export class HomeComponent implements OnInit {
     }
   }
 
-  obra = require("../../img/acto.jpg");
-  desfile = require("../../img/desfile.jpg");
+  // obra = require("../../img/acto.jpg");
+  // desfile = require("../../img/desfile.jpg");
 
   subscribeToNotifications() {
     if (Notification.permission === "granted") {
