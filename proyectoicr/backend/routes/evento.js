@@ -16,6 +16,7 @@ const MIME_TYPE_MAPA = {
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
+    console.log("file", file);
     const isValid = MIME_TYPE_MAPA[file.mimetype];
     let error = new Error("El tipo de archivo es invalido");
     if (isValid) {
@@ -65,6 +66,16 @@ router.post("/registrar", upload, (req, res, next) => {
         message: "Evento creado existosamente",
         exito: true
       });
+    });
+  });
+});
+
+router.get("", (req, res, next) => {
+  Evento.find().then(eventos => {
+    res.status(200).json({
+      eventos: eventos,
+      message: "Evento devuelto existosamente",
+      exito: true
     });
   });
 });

@@ -32,6 +32,7 @@ export class EventosService {
     datosEvento.append("fechaEvento", fechaEvento);
     datosEvento.append("horaInicio", horaInicio);
     datosEvento.append("horaFin", horaFin);
+    datosEvento.append("imgUrl", imgName);
     for (var i = 0; i < tags.length; i++) {
       datosEvento.append("tags", tags[i]);
     }
@@ -41,6 +42,13 @@ export class EventosService {
     return this.http.post<{ message: string; exito: boolean }>(
       environment.apiUrl + "/evento/registrar",
       datosEvento
+    );
+  }
+
+  public obtenerEvento(){
+    return this.http
+    .get<{ eventos: Evento[], message: string, exito: string }>(
+      environment.apiUrl + "/evento"
     );
   }
 }

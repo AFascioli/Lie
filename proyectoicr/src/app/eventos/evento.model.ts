@@ -8,4 +8,5 @@ export interface Evento {
   tags: string[];
   autor: string;
   imgUrl: any;
+  comentarios: string[];
 }

@@ -1,6 +1,8 @@
 import { Component, OnInit } from "@angular/core";
 import { SwPush } from "@angular/service-worker";
 import { AutenticacionService } from "../login/autenticacionService.service";
+import { Evento } from '../eventos/evento.model';
+import { EventosService } from '../eventos/eventos.service';
 //Parche para la demo #resolve
 declare var require: any;
 
@@ -10,12 +12,17 @@ declare var require: any;
   styleUrls: ["./home.component.css"]
 })
 export class HomeComponent implements OnInit {
+  eventos: Evento[];
   readonly VAPID_PUBLIC =
     "BMlC2dLJTBP6T1GCl3S3sDBmhERNVcjN7ff2a6JAoOg8bA_qXjikveleRwjz0Zn8c9-58mnrNo2K4p07UPK0DKQ";
 
-  constructor(private swPush: SwPush, private servicio: AutenticacionService) {}
+  constructor(private swPush: SwPush, private servicioAuth: AutenticacionService, private servicioEvento: EventosService ) {}
 
   ngOnInit() {
+    this.servicioEvento.obtenerEvento().subscribe(rtdo => {
+      console.log(rtdo);
+      this.eventos = rtdo.eventos;
+    })
     if ("serviceWorker" in navigator) {
       navigator.serviceWorker.register("ngsw-worker.js").then(swreg => {
         if (swreg.active) {
@@ -38,7 +45,7 @@ export class HomeComponent implements OnInit {
           serverPublicKey: this.VAPID_PUBLIC
         })
         .then(pushsub => {
-          this.servicio.addPushSubscriber(pushsub).subscribe(res => {
+          this.servicioAuth.addPushSubscriber(pushsub).subscribe(res => {
             console.log('Se suscribió a recibir notificaciones push.');
           });
         })
