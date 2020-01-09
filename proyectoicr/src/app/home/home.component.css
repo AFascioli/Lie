@@ -63,16 +63,16 @@ time.icon strong
   top: 0;
   padding: 0.4em 0;
   color: #fff;
-  background-color: #fd9f1b;
-  border-bottom: 1px dashed #f37302;
-  box-shadow: 0 2px 0 #fd9f1b;
+  background-color: #5c49bb;
+  border-bottom: 1px dashed rgb(146, 132, 214);
+  box-shadow: 0 2px 0 #5c49bb;
 }
 
 time.icon em
 {
   position: absolute;
   /* bottom: 0.3em; */
-  color: #fd9f1b;
+  color: #5c49bb;
 }
 
 time.icon span
