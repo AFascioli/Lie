@@ -13,10 +13,15 @@ declare var require: any;
 })
 export class HomeComponent implements OnInit {
   eventos: Evento[];
+  imagen;
   readonly VAPID_PUBLIC =
     "BMlC2dLJTBP6T1GCl3S3sDBmhERNVcjN7ff2a6JAoOg8bA_qXjikveleRwjz0Zn8c9-58mnrNo2K4p07UPK0DKQ";
 
   constructor(private swPush: SwPush, private servicioAuth: AutenticacionService, private servicioEvento: EventosService ) {}
+
+  getImage(imgUrl){
+    return require("backend/images/"+imgUrl)
+  }
 
   ngOnInit() {
     this.servicioEvento.obtenerEvento().subscribe(rtdo => {
