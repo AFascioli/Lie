@@ -69,4 +69,32 @@ router.post("/registrar", upload, (req, res, next) => {
   });
 });
 
+//Modifica el evento en la base de datos
+//@params: evento a publicar
+router.patch("/editar", checkAuthMiddleware, (req, res, next) => {
+  Evento.findByIdAndUpdate(req.body._id, {
+      titulo: req.body.titulo,
+      descripcion: req.body.descripcion,
+      fechaEvento: req.body.fechaEvento,
+      horaInicio: req.body.horaInicio,
+      horaFin: req.body.horaFin,
+      tags: req.body.tags,
+      imgUrl: url + "/images/" + req.body.imgUrl,
+      autor: usuario._id
+  })
+    .then(() => {
+      res.status(200).json({
+        message: "Evento modificado exitosamente",
+        exito: true
+      });
+    })
+    .catch(() => {
+      res.status(200).json({
+        message: "Ocurrió un problema al intentar modificar el evento",
+        exito: false
+      });
+    });
+});
+
+
 module.exports = router;

@@ -1,6 +1,7 @@
 import { Component, OnInit } from "@angular/core";
 import { SwPush } from "@angular/service-worker";
 import { AutenticacionService } from "../login/autenticacionService.service";
+import { Router } from "@angular/router";
 //Parche para la demo #resolve
 declare var require: any;
 
@@ -13,7 +14,7 @@ export class HomeComponent implements OnInit {
   readonly VAPID_PUBLIC =
     "BMlC2dLJTBP6T1GCl3S3sDBmhERNVcjN7ff2a6JAoOg8bA_qXjikveleRwjz0Zn8c9-58mnrNo2K4p07UPK0DKQ";
 
-  constructor(private swPush: SwPush, private servicio: AutenticacionService) {}
+  constructor(private swPush: SwPush, private servicio: AutenticacionService,public router: Router,) {}
 
   ngOnInit() {
     if ("serviceWorker" in navigator) {
@@ -46,5 +47,9 @@ export class HomeComponent implements OnInit {
           console.error("No se pudo suscribir a las notificaciones push.", err)
         );
     }
+  }
+  onEditar(index)
+  {
+    this.router.navigate(["./editarEvento"]);
   }
 }

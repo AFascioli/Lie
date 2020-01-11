@@ -8,7 +8,16 @@
 </button> -->
 
 <mat-card class="card-body-componente">
-  <mat-card-title>Acto 25 de Mayo</mat-card-title>
+  <mat-card-title>Acto 25 de Mayo
+    <button
+    mat-stroked-button
+    class="boton-editar"
+    (click)="onEditar()"
+    type="button"
+  >
+    Editar
+  </button>
+  </mat-card-title>
   <mat-card-subtitle>Acto de caracter obligatorio</mat-card-subtitle>
   <img
     mat-card-image

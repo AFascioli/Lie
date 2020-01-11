@@ -17,3 +17,11 @@ button:hover {
   white-space: normal !important;
   font-size:17px;
 }
+
+.boton-editar{
+  text-align: left;
+}
+
+.boton-editar:hover {
+  background-color:#bbded6;
+}
