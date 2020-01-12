@@ -41,7 +41,7 @@ export class CalificacionesExamenesComponent implements OnInit {
     this.servicioCalificaciones
       .obtenerMateriasDesaprobadasEstudiante()
       .subscribe(materias => {
-        if (materias.materiasDesaprobadas.length != 0) {
+        if (materias.materiasDesaprobadas != null) {
           this.materiasDesaprobadas = materias.materiasDesaprobadas;
           this.tieneMateriasDesaprobadas = true;
         }
