@@ -72,15 +72,16 @@ router.post("/registrar", upload, (req, res, next) => {
 //Modifica el evento en la base de datos
 //@params: evento a publicar
 router.patch("/editar", checkAuthMiddleware, (req, res, next) => {
+  console.log("papappa");
   Evento.findByIdAndUpdate(req.body._id, {
-      titulo: req.body.titulo,
-      descripcion: req.body.descripcion,
-      fechaEvento: req.body.fechaEvento,
-      horaInicio: req.body.horaInicio,
-      horaFin: req.body.horaFin,
-      tags: req.body.tags,
-      imgUrl: url + "/images/" + req.body.imgUrl,
-      autor: usuario._id
+    titulo: req.body.titulo,
+    descripcion: req.body.descripcion,
+    fechaEvento: req.body.fechaEvento,
+    horaInicio: req.body.horaInicio,
+    horaFin: req.body.horaFin,
+    tags: req.body.tags,
+    imgUrl: url + "/images/" + req.body.imgUrl,
+    autor: usuario._id
   })
     .then(() => {
       res.status(200).json({
@@ -96,5 +97,20 @@ router.patch("/editar", checkAuthMiddleware, (req, res, next) => {
     });
 });
 
+router.get("/verEvento", checkAuthMiddleware, (req, res) => {
+    Evento.aggregate([
+    {
+      $match: {
+        titulo: req.query.titulo
+      }
+    }
+  ]).then(eventoEncontrado => {
+    return res.status(200).json({
+      message: "Devolvio el evento correctamente",
+      exito: true,
+      evento: eventoEncontrado
+    });
+  });
+});
 
 module.exports = router;

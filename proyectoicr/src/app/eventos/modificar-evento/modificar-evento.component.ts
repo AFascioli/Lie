@@ -37,12 +37,22 @@ export class ModificarEventoComponent implements OnInit {
   allChips: string[] = ["1A", "2A", "3A", "4A", "5A", "6A", "Todos los cursos"];
   horaInicio = "";
   horaFin = "";
+//HTML
+
+titulo: string;
+descripcion:string;
+fechaEvento:Date;
+horaInicial:string;
+horaFinal:string;
+cursos:string[];
 
   constructor(
     public eventoService: EventosService,
     public dialog: MatDialog,
     public snackBar: MatSnackBar
   ) {
+    this.titulo = this.eventoService.evento.titulo;
+    this.descripcion = this.eventoService.evento.descripcion;
     //Hace que funcione el autocomplete, filtra
 
     this.filteredChips = this.chipsCtrl.valueChanges.pipe(

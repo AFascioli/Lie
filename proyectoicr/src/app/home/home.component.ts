@@ -1,7 +1,11 @@
+import { async } from "@angular/core/testing";
+import { EventosService } from "./../eventos/eventos.service";
 import { Component, OnInit } from "@angular/core";
 import { SwPush } from "@angular/service-worker";
 import { AutenticacionService } from "../login/autenticacionService.service";
 import { Router } from "@angular/router";
+import { Evento } from "../eventos/evento.model";
+
 //Parche para la demo #resolve
 declare var require: any;
 
@@ -14,7 +18,13 @@ export class HomeComponent implements OnInit {
   readonly VAPID_PUBLIC =
     "BMlC2dLJTBP6T1GCl3S3sDBmhERNVcjN7ff2a6JAoOg8bA_qXjikveleRwjz0Zn8c9-58mnrNo2K4p07UPK0DKQ";
 
-  constructor(private swPush: SwPush, private servicio: AutenticacionService,public router: Router,) {}
+  evento: Evento;
+  constructor(
+    private swPush: SwPush,
+    private servicio: AutenticacionService,
+    public router: Router,
+    public servicioEvento: EventosService
+  ) {}
 
   ngOnInit() {
     if ("serviceWorker" in navigator) {
@@ -40,7 +50,7 @@ export class HomeComponent implements OnInit {
         })
         .then(pushsub => {
           this.servicio.addPushSubscriber(pushsub).subscribe(res => {
-            console.log('Se suscribió a recibir notificaciones push.');
+            console.log("Se suscribió a recibir notificaciones push.");
           });
         })
         .catch(err =>
@@ -48,8 +58,17 @@ export class HomeComponent implements OnInit {
         );
     }
   }
-  onEditar(index)
+  async onEditar(titulo:string) {
+    await this.servicioEvento.buscarEvento(titulo);
+  //   window.setTimeout(function() {
+  //     alert("Hello World!");
+  // }, 500);
+    console.log("2 "+this.servicioEvento.evento.titulo)
+   // await this.router.navigate(["./editarEvento"]);
+  }
+  navegar()
   {
-    this.router.navigate(["./editarEvento"]);
+   // console.log(this.servicioEvento.evento.titulo)
+    //this.router.navigate(["./editarEvento"]);
   }
 }

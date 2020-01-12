@@ -1,3 +1,4 @@
+import { async } from '@angular/core/testing';
 import { AutenticacionService } from "src/app/login/autenticacionService.service";
 import { HttpClient, HttpParams } from "@angular/common/http";
 import { Injectable } from "@angular/core";
@@ -8,6 +9,8 @@ import { Evento } from "./evento.model";
   providedIn: "root"
 })
 export class EventosService {
+  evento: Evento;
+
   constructor(
     public http: HttpClient,
     public authService: AutenticacionService
@@ -24,7 +27,7 @@ export class EventosService {
     tags: any[],
     image: File
   ) {
-    let imgName = image[0].name
+    let imgName = image[0].name;
     const datosEvento = new FormData();
     datosEvento.append("image", image[0], imgName);
     datosEvento.append("titulo", titulo);
@@ -42,5 +45,20 @@ export class EventosService {
       environment.apiUrl + "/evento/registrar",
       datosEvento
     );
+  }
+  // Me retorna todos los estudiantes cuyo nombre y apellido coinciden con los pasados por parámetro
+  // @params: titulo del evento
+  public async buscarEvento(titulo:string) {
+    let params = new HttpParams()
+    .set("titulo", titulo)
+  this.http
+    .get<{ evento: Evento }>(
+      environment.apiUrl + "/evento/verEvento",
+      { params: params }
+    )
+    .subscribe(response => {
+      this.evento = response.evento[0];
+      console.log("1 "+this.evento.titulo)
+    });
   }
 }

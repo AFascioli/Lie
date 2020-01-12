@@ -8,21 +8,19 @@
 </button> -->
 
 <mat-card class="card-body-componente">
-  <mat-card-title>Acto 25 de Mayo
+  <mat-card-title
+    >Acto 25 de Mayo
     <button
-    mat-stroked-button
-    class="boton-editar"
-    (click)="onEditar()"
-    type="button"
-  >
-    Editar
-  </button>
+      mat-stroked-button
+      class="boton-editar"
+      (click)="onEditar('Acto 25 de Mayo')"
+      type="button"
+    >
+      Editar
+    </button>
   </mat-card-title>
   <mat-card-subtitle>Acto de caracter obligatorio</mat-card-subtitle>
-  <img
-    mat-card-image
-    src="{{desfile}}"
-  />
+  <img mat-card-image src="{{ desfile }}" />
   <mat-card-content>
     <p class="parrafo">
       El día 25 de mayo se realizará en la institución el acto correspondiente,
@@ -37,27 +35,23 @@
   </mat-card-actions>
 </mat-card>
 
-
 <mat-card class="card-body-componente">
-    <mat-card-title>Obras de Teatro</mat-card-title>
-    <mat-card-subtitle>Acto de caracter no obligatorio</mat-card-subtitle>
-    <img
-      mat-card-image
-      src="{{obra}}"
-    />
-    <mat-card-content>
-      <p class="parrafo">
-        El día viernes 22 de noviembre se realizará en la institución la
-        presentación de las obras de teatro que fueron desarrolladas en el marco
-        de la asignatura "Teatro" a lo largo del presente año. El evento va a ser
-        presentado por los dos cursos que se encuentran cursando sexto año. La
-        obra a presentar por 6 "A" se llama "Bernarnarda Alba" y la del 6 "B" "se
-        llama "Fahrenheit 451". Esperamos que puedan acompañarnos y disfrutarlas
-        junto a nosotros!
-      </p>
-    </mat-card-content>
-    <mat-card-actions>
-      <button mat-button>Allí estaré</button>
-      <button mat-button>No podré asistir</button>
-    </mat-card-actions>
-  </mat-card>
+  <mat-card-title>Obras de Teatro</mat-card-title>
+  <mat-card-subtitle>Acto de caracter no obligatorio</mat-card-subtitle>
+  <img mat-card-image src="{{ obra }}" />
+  <mat-card-content>
+    <p class="parrafo">
+      El día viernes 22 de noviembre se realizará en la institución la
+      presentación de las obras de teatro que fueron desarrolladas en el marco
+      de la asignatura "Teatro" a lo largo del presente año. El evento va a ser
+      presentado por los dos cursos que se encuentran cursando sexto año. La
+      obra a presentar por 6 "A" se llama "Bernarnarda Alba" y la del 6 "B" "se
+      llama "Fahrenheit 451". Esperamos que puedan acompañarnos y disfrutarlas
+      junto a nosotros!
+    </p>
+  </mat-card-content>
+  <mat-card-actions>
+    <button mat-button>Allí estaré</button>
+    <button mat-button>No podré asistir</button>
+  </mat-card-actions>
+</mat-card>

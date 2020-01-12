@@ -214,9 +214,15 @@ const routes: Routes = [
       },
       {
         path: "editarEvento",
-        component: ModificarEventoComponent,
-        canActivate: [RoleGuard],
-        data: { rolesValidos: ["Admin", "Director"] }
+        component: ModificarEventoComponent
+        // ,canActivate: [RoleGuard],
+        // data: { rolesValidos: ["Admin", "Director", "Preceptor", "Docente"]}
+      },
+      {
+        path: "verEvento",
+        component: ModificarEventoComponent
+        // ,canActivate: [RoleGuard],
+        // data: { rolesValidos: ["Admin", "Director", "Preceptor", "Docente"]}
       },
       {
         path: "preferencias",
