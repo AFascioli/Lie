@@ -38,6 +38,6 @@
     </textarea>
   </mat-form-field>
   <div class="div-button">
-    <button mat-raised-button class="buttonPrimary">Guardar</button>
+    <button mat-raised-button (click)="onGuardar(comentario.value)" class="buttonPrimary">Guardar</button>
   </div>
 </mat-card>

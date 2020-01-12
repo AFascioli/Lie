@@ -1,5 +1,13 @@
 const mongoose = require('mongoose');
 
+const comentarioSchema= mongoose.Schema({
+  idUsuario: {type: mongoose.Schema.Types.ObjectId, ref: 'usuario'},
+  comentario: String,
+  nombre: String,
+  apellido: String,
+  fecha: Date
+});
+
 const eventoSchema = mongoose.Schema({
   titulo: String,
   descripcion: String,
@@ -9,7 +17,7 @@ const eventoSchema = mongoose.Schema({
   tags: [String],
   imgUrl: String,
   autor: {type: mongoose.Schema.Types.ObjectId, ref: "usuario"},
-  comentarios: [{type: mongoose.Schema.Types.ObjectId, ref: "comentario"}]
+  comentarios: [comentarioSchema]
 });
 
 module.exports= mongoose.model('evento', eventoSchema, "evento");

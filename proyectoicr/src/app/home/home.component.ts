@@ -52,7 +52,6 @@ export class HomeComponent implements OnInit {
   }
 
   eventoSeleccionado(evento: Evento){
-    console.log(evento);
     this.servicioEvento.eventoSeleccionado= evento;
     this.router.navigate(["/visualizarEvento"]);
   }

@@ -26,7 +26,7 @@ export class EventosService {
     tags: any[],
     image: File
   ) {
-    let imgName = image[0].name
+    let imgName = image[0].name;
     const datosEvento = new FormData();
     datosEvento.append("image", image[0], imgName);
     datosEvento.append("titulo", titulo);
@@ -47,11 +47,26 @@ export class EventosService {
     );
   }
 
-  public obtenerEvento(){
-    return this.http
-    .get<{ eventos: Evento[], message: string, exito: string }>(
+  public obtenerEvento() {
+    return this.http.get<{ eventos: Evento[]; message: string; exito: string }>(
       environment.apiUrl + "/evento"
     );
   }
 
+  public publicarComentario(comentario, emailUsuario, rol) {
+    const idEvento = this.eventoSeleccionado._id;
+    const datosComentario = {
+      comentario: comentario,
+      emailUsuario: emailUsuario,
+      rol: rol,
+      idEvento: idEvento
+    };
+    console.log("llego al servicio");
+    return this.http.post<{
+      message: string;
+      exito: boolean;
+      nombre: string;
+      apellido: string;
+    }>(environment.apiUrl + "/evento/registrarComentario", datosComentario);
+  }
 }

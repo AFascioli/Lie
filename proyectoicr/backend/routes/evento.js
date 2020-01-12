@@ -2,6 +2,8 @@ const express = require("express");
 const Estudiante = require("../models/estudiante");
 const router = express.Router();
 const mongoose = require("mongoose");
+const AdultoResponsable = require("../models/adultoResponsable");
+const Empleado = require("../models/empleado");
 const checkAuthMiddleware = require("../middleware/check-auth");
 const multer = require("multer");
 const Evento = require("../models/evento");
@@ -64,6 +66,45 @@ router.get("", (req, res, next) => {
       eventos: eventos,
       message: "Evento devuelto existosamente",
       exito: true
+    });
+  });
+});
+
+router.post("/registrarComentario", (req, res, next) => {
+  let apellido = "";
+  let nombre = "";
+  let idUsuario = "";
+  if (req.body.rol == "Adulto Responsable") {
+    AdultoResponsable.findOne({ email: req.body.emailUsuario }).then(
+      usuario => {
+        apellido = usuario.apellido;
+        nombre = usuario.nombre;
+        idUsuario = usuario.idUsuario;
+      }
+    );
+  } else {
+    Empleado.findOne({ email: req.body.emailUsuario }).then(
+      usuario => {
+        apellido = usuario.apellido;
+        nombre = usuario.nombre;
+        idUsuario = usuario.idUsuario;
+      }
+    );
+  }
+  Evento.findByIdAndUpdate(req.body.idEvento, {
+    $push: {
+      apellido: apellido,
+      nombre: nombre,
+      comentario: req.body.comentario.comentario,
+      fecha: req.body.comentario.fecha,
+      idUsuario: idUsuario
+    }
+  }).then(() => {
+    res.status(200).json({
+      message: "Se ha registrado el comentario correctamente",
+      exito: true,
+      nombre: nombre,
+      apellido: apellido
     });
   });
 });
