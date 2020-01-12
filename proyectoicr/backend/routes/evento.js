@@ -70,34 +70,45 @@ router.get("", (req, res, next) => {
   });
 });
 
-router.post("/registrarComentario", (req, res, next) => {
+router.post("/registrarComentario", async(req, res, next) => {
   let apellido = "";
   let nombre = "";
   let idUsuario = "";
-  if (req.body.rol == "Adulto Responsable") {
-    AdultoResponsable.findOne({ email: req.body.emailUsuario }).then(
-      usuario => {
-        apellido = usuario.apellido;
-        nombre = usuario.nombre;
-        idUsuario = usuario.idUsuario;
+
+  var obtenerDatosUsuario= (rol, emailUsuario) => {
+    return new Promise((resolve, reject)=> {
+      if (rol == "Adulto Responsable") {
+        AdultoResponsable.findOne({ email: emailUsuario }).then(
+          usuario => {
+            apellido = usuario.apellido;
+            nombre = usuario.nombre;
+            idUsuario = usuario.idUsuario;
+            resolve({apellido: apellido, nombre:nombre, idUsuario: idUsuario});
+          }
+        );
+      } else {
+        Empleado.findOne({ email: emailUsuario }).then(
+          usuario => {
+            apellido = usuario.apellido;
+            nombre = usuario.nombre;
+            idUsuario = usuario.idUsuario;
+            resolve({apellido: apellido, nombre:nombre, idUsuario: idUsuario});
+          }
+        );
       }
-    );
-  } else {
-    Empleado.findOne({ email: req.body.emailUsuario }).then(
-      usuario => {
-        apellido = usuario.apellido;
-        nombre = usuario.nombre;
-        idUsuario = usuario.idUsuario;
-      }
-    );
-  }
+    })
+  };
+
+  var datosUsuario = await obtenerDatosUsuario(req.body.rol, req.body.emailUsuario);
+
   Evento.findByIdAndUpdate(req.body.idEvento, {
-    $push: {
-      apellido: apellido,
-      nombre: nombre,
+    $push: { comentarios: {
+      apellido: datosUsuario.apellido,
+      nombre: datosUsuario.nombre,
       comentario: req.body.comentario.comentario,
       fecha: req.body.comentario.fecha,
-      idUsuario: idUsuario
+      idUsuario: datosUsuario.idUsuario
+    }
     }
   }).then(() => {
     res.status(200).json({
