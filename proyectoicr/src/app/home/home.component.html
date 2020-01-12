@@ -9,7 +9,7 @@
 
 <mat-card class="card-body-componente" *ngFor="let evento of eventos">
   <mat-card-title>
-    {{ evento.titulo }}
+    <button (click)="eventoSeleccionado(evento)" class="titulo">{{ evento.titulo }}</button>
     <div class="fechaEvento">
       <time datetime="evento.fechaEvento" class="icon">
       <strong>{{obtenerMes(evento.fechaEvento)}}</strong>
@@ -31,6 +31,7 @@
     </p>
   </mat-card-content>
 </mat-card>
+
 
 <!-- <mat-card class="card-body-componente">
   <mat-card-title>Acto 25 de Mayo</mat-card-title>

@@ -3,6 +3,7 @@ import { SwPush } from "@angular/service-worker";
 import { AutenticacionService } from "../login/autenticacionService.service";
 import { Evento } from '../eventos/evento.model';
 import { EventosService } from '../eventos/eventos.service';
+import { Router } from "@angular/router";
 //Parche para la demo #resolve
 declare var require: any;
 
@@ -18,7 +19,7 @@ export class HomeComponent implements OnInit {
   readonly VAPID_PUBLIC =
     "BMlC2dLJTBP6T1GCl3S3sDBmhERNVcjN7ff2a6JAoOg8bA_qXjikveleRwjz0Zn8c9-58mnrNo2K4p07UPK0DKQ";
 
-  constructor(private swPush: SwPush, private servicioAuth: AutenticacionService, private servicioEvento: EventosService ) {}
+  constructor(private swPush: SwPush, private servicioAuth: AutenticacionService, public router: Router, private servicioEvento: EventosService ) {}
 
   getImage(imgUrl){
     return require("backend/images/"+imgUrl)
@@ -48,6 +49,12 @@ export class HomeComponent implements OnInit {
         }
       });
     }
+  }
+
+  eventoSeleccionado(evento: Evento){
+    console.log(evento);
+    this.servicioEvento.eventoSeleccionado= evento;
+    this.router.navigate(["/visualizarEvento"]);
   }
 
   // obra = require("../../img/acto.jpg");

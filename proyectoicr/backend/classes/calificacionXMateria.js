@@ -44,8 +44,6 @@ exports.obtenerMateriasDesaprobadas = async function(
     }
   }
 
-  console.log("despues");
-  console.log(materiasDesaprobadas);
   return materiasDesaprobadas;
 };
 

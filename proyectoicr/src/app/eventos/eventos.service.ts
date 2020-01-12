@@ -1,5 +1,5 @@
 import { AutenticacionService } from "src/app/login/autenticacionService.service";
-import { HttpClient, HttpParams } from "@angular/common/http";
+import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { environment } from "src/environments/environment";
 import { Evento } from "./evento.model";
@@ -12,6 +12,8 @@ export class EventosService {
     public http: HttpClient,
     public authService: AutenticacionService
   ) {}
+
+  eventoSeleccionado: Evento;
 
   //Registra el evento en la base de datos
   //@params: evento a publicar
@@ -51,4 +53,5 @@ export class EventosService {
       environment.apiUrl + "/evento"
     );
   }
+
 }

@@ -1,3 +1,9 @@
+mat-form-field,
+textarea {
+  width: 100%;
+  margin-top: 15px;
+}
+
 .mat-card-title {
   text-align: center;
   font-size: 35px;
@@ -11,12 +17,6 @@
 
 .titulo:hover {
   text-decoration: underline;
-}
-
-button {
-  background: white !important;
-  border: none !important;
-  font-size: 35px;
 }
 
 .mat-chip {
@@ -84,4 +84,17 @@ time.icon span {
   letter-spacing: -0.05em;
   padding-top: 0.8em;
   color: #2f2f2f;
+}
+
+.divisor{
+  border-top-color: #00000052 !important;
+  border-top-width: 2px !important;
+  width: 90% !important;
+  margin-left: 5% !important;
+  margin-right: 5% !important;
+  height: 10px !important;
+}
+
+.div-button {
+  text-align: right;
 }
