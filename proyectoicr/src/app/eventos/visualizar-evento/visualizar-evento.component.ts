@@ -53,4 +53,5 @@ export class VisualizarEventoComponent implements OnInit {
       console.log(rtdo);
     })
   }
+
 }
