@@ -14,7 +14,6 @@ textarea {
   font-size: 20px;
 } */
 
-
 .titulo {
   text-align: center;
   font-size: 35px;
@@ -42,13 +41,14 @@ textarea {
   margin-left: 20px;
 }
 
-.comentario{
+.comentario {
   appearance: "outline" !important;
   border-color: black !important;
   margin-left: 30px;
 }
 
-p,b{
+p,
+b {
   font-size: 20px;
   margin-left: 25px;
 }
@@ -97,7 +97,7 @@ time.icon span {
   color: #2f2f2f;
 }
 
-.divisor{
+.divisor {
   border-top-color: #00000052 !important;
   border-top-width: 2px !important;
   width: 90% !important;
@@ -110,16 +110,28 @@ time.icon span {
   text-align: right;
 }
 
-.imagenEvento{
-    margin: auto;
-    display: flex;
-    border: 3px solid black;
-    padding: 5px;
-    margin-bottom: 20px !important;
+.imagenEvento {
+  margin: auto;
+  display: flex;
+  border: 3px solid black;
+  padding: 5px;
+  margin-bottom: 20px !important;
 }
 
-mat-icon{
+mat-icon {
   display: flex;
   margin-left: auto;
 }
 
+.datosComentario {
+  display: flex;
+  margin-left: auto;
+}
+
+.nombreAutor {
+  margin-left: 0px;
+}
+
+.mat-panel-title{
+  font-size: 20px;
+}

@@ -33,6 +33,7 @@
       name="comentario"
       ngModel
       #comentario="ngModel"
+      [(ngModel)]="descripcionComentario"
       rows="3"
       placeholder="Ingrese comentario"
       type="text"
@@ -48,6 +49,8 @@
       Guardar
     </button>
   </div>
+  <br>
+  <mat-divider class="divisor"></mat-divider>
   <br />
   <mat-accordion class="example-headers-align">
     <mat-expansion-panel hideToggle>
@@ -59,13 +62,19 @@
           <mat-icon>menu_book</mat-icon>
         </mat-panel-description>
       </mat-expansion-panel-header>
-      <!-- <div *ngFor="comentario of comentarios">
-        <p>
-          <b>{{ comentario.nombre }} </b>
+      <div *ngFor="let comentario of comentarios">
+       <div class="datosComentario">
+         <p class="nombreAutor">
+          <b>{{ comentario.apellido }}, {{ comentario.nombre }} </b>
         </p>
-        <p>{{ comentario.fecha }}</p>
-        <p>{{ comentario.descripcion }}</p>
-      </div> -->
+        <p>
+          {{ obtenerDia(comentario.fecha) }} de
+          {{ obtenerMes(comentario.fecha) }}
+        </p>
+       </div>
+        <p>{{ comentario.comentario }}</p>
+        <mat-divider [inset]="true"></mat-divider>
+      </div>
     </mat-expansion-panel>
   </mat-accordion>
 </mat-card>

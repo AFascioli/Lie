@@ -1,5 +1,6 @@
+import { Comentario } from "./comentario.model";
 import { AutenticacionService } from "src/app/login/autenticacionService.service";
-import { HttpClient } from "@angular/common/http";
+import { HttpClient, HttpParams } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { environment } from "src/environments/environment";
 import { Evento } from "./evento.model";
@@ -47,12 +48,27 @@ export class EventosService {
     );
   }
 
+  //Obtiene todos los eventos que estan almacenados en la base de datos
   public obtenerEvento() {
     return this.http.get<{ eventos: Evento[]; message: string; exito: string }>(
       environment.apiUrl + "/evento"
     );
   }
 
+  //Obtiene todos los comentarios de un evento que estan almacenados en la base de datos
+  //@params: id del evento
+  public obtenerComentariosDeEvento() {
+    let params = new HttpParams().set("idEvento", this.eventoSeleccionado._id);
+    return this.http.get<{
+      comentarios: Comentario[];
+      message: string;
+      exito: string;
+    }>(environment.apiUrl + "/evento/comentarios", { params: params });
+  }
+
+  //Publica en la base de datos un comentario
+  //@params: id del evento
+  //@params: la descripcion del comentario, el autor junto con el rol que cumple
   public publicarComentario(comentario, emailUsuario, rol) {
     const idEvento = this.eventoSeleccionado._id;
     const datosComentario = {
@@ -61,7 +77,7 @@ export class EventosService {
       rol: rol,
       idEvento: idEvento
     };
-    console.log("llego al servicio");
+
     return this.http.post<{
       message: string;
       exito: boolean;

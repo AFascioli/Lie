@@ -49,6 +49,7 @@ export class HomeComponent implements OnInit {
         }
       });
     }
+    this.servicioEvento.eventoSeleccionado=null;
   }
 
   eventoSeleccionado(evento: Evento){

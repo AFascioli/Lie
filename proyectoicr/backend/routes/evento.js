@@ -9,6 +9,7 @@ const multer = require("multer");
 const Evento = require("../models/evento");
 const Usuario = require("../models/usuario");
 const path = require("path");
+const Admin = require("../models/administrador");
 
 const MIME_TYPE_MAPA = {
   "image/png": "png",
@@ -60,55 +61,78 @@ router.post("/registrar", upload, (req, res, next) => {
   });
 });
 
+//Obtiene todos los eventos que estan almacenados en la base de datos
 router.get("", (req, res, next) => {
   Evento.find().then(eventos => {
     res.status(200).json({
       eventos: eventos,
+      message: "Eventos devuelto existosamente",
+      exito: true
+    });
+  });
+});
+
+//Obtiene todos los comentarios de un evento que estan almacenados en la base de datos
+//@params: id del evento
+router.get("/comentarios", (req, res, next) => {
+  Evento.findById(req.query.idEvento).then(evento => {
+    res.status(200).json({
+      comentarios: evento.comentarios,
       message: "Evento devuelto existosamente",
       exito: true
     });
   });
 });
 
-router.post("/registrarComentario", async(req, res, next) => {
+//Publica en la base de datos un comentario
+//@params: id del evento
+//@params: la descripcion del comentario, el autor junto con el rol que cumple
+router.post("/registrarComentario", async (req, res, next) => {
   let apellido = "";
   let nombre = "";
   let idUsuario = "";
 
-  var obtenerDatosUsuario= (rol, emailUsuario) => {
-    return new Promise((resolve, reject)=> {
+  var obtenerDatosUsuario = (rol, emailUsuario) => {
+    return new Promise((resolve, reject) => {
       if (rol == "Adulto Responsable") {
-        AdultoResponsable.findOne({ email: emailUsuario }).then(
-          usuario => {
-            apellido = usuario.apellido;
-            nombre = usuario.nombre;
-            idUsuario = usuario.idUsuario;
-            resolve({apellido: apellido, nombre:nombre, idUsuario: idUsuario});
-          }
-        );
-      } else {
-        Empleado.findOne({ email: emailUsuario }).then(
-          usuario => {
-            apellido = usuario.apellido;
-            nombre = usuario.nombre;
-            idUsuario = usuario.idUsuario;
-            resolve({apellido: apellido, nombre:nombre, idUsuario: idUsuario});
-          }
-        );
+        AdultoResponsable.findOne({ email: emailUsuario }).then(usuario => {
+          apellido = usuario.apellido;
+          nombre = usuario.nombre;
+          idUsuario = usuario.idUsuario;
+          resolve({ apellido: apellido, nombre: nombre, idUsuario: idUsuario });
+        });
+      } else if(rol == "Admin"){
+        Admin.findOne({ email: emailUsuario }).then(usuario => {
+          apellido = usuario.apellido;
+          nombre = usuario.nombre;
+          idUsuario = usuario.idUsuario;
+          resolve({ apellido: apellido, nombre: nombre, idUsuario: idUsuario });
+        });
+      }else{
+        Empleado.findOne({ email: emailUsuario }).then(usuario => {
+          apellido = usuario.apellido;
+          nombre = usuario.nombre;
+          idUsuario = usuario.idUsuario;
+          resolve({ apellido: apellido, nombre: nombre, idUsuario: idUsuario });
+        });
       }
-    })
+    });
   };
 
-  var datosUsuario = await obtenerDatosUsuario(req.body.rol, req.body.emailUsuario);
+  var datosUsuario = await obtenerDatosUsuario(
+    req.body.rol,
+    req.body.emailUsuario
+  );
 
   Evento.findByIdAndUpdate(req.body.idEvento, {
-    $push: { comentarios: {
-      apellido: datosUsuario.apellido,
-      nombre: datosUsuario.nombre,
-      comentario: req.body.comentario.comentario,
-      fecha: req.body.comentario.fecha,
-      idUsuario: datosUsuario.idUsuario
-    }
+    $push: {
+      comentarios: {
+        apellido: datosUsuario.apellido,
+        nombre: datosUsuario.nombre,
+        comentario: req.body.comentario.comentario,
+        fecha: req.body.comentario.fecha,
+        idUsuario: datosUsuario.idUsuario
+      }
     }
   }).then(() => {
     res.status(200).json({
