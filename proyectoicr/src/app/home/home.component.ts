@@ -58,17 +58,11 @@ export class HomeComponent implements OnInit {
         );
     }
   }
-  async onEditar(titulo:string) {
-    await this.servicioEvento.buscarEvento(titulo);
-  //   window.setTimeout(function() {
-  //     alert("Hello World!");
-  // }, 500);
-    console.log("2 "+this.servicioEvento.evento.titulo)
-   // await this.router.navigate(["./editarEvento"]);
-  }
-  navegar()
-  {
-   // console.log(this.servicioEvento.evento.titulo)
-    //this.router.navigate(["./editarEvento"]);
+  onEditar(titulo: string) {
+    this.servicioEvento.buscarEvento(titulo).subscribe(response => {
+      this.servicioEvento.evento = response.evento[0];
+      this.router.navigate(["./editarEvento"]);
+    });
+    //
   }
 }

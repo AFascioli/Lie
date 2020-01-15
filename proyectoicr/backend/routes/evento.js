@@ -72,7 +72,6 @@ router.post("/registrar", upload, (req, res, next) => {
 //Modifica el evento en la base de datos
 //@params: evento a publicar
 router.patch("/editar", checkAuthMiddleware, (req, res, next) => {
-  console.log("papappa");
   Evento.findByIdAndUpdate(req.body._id, {
     titulo: req.body.titulo,
     descripcion: req.body.descripcion,
