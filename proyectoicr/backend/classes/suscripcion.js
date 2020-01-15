@@ -56,7 +56,9 @@ function notificar(idusuario, titulo, cuerpo) {
  });
 }
 
+//@params: idusuarios vector de ids
 function notificarAll(idusuarios, titulo, cuerpo) {
+  console.log('idusuarios'+ idusuarios.lenght);
   Usuario.find({ _id: { $in: idusuarios } }).then(usuarios => {
     var allSubscriptions = [];
     usuarios.forEach(usuario => {
@@ -90,7 +92,7 @@ function notificarAll(idusuarios, titulo, cuerpo) {
         allSubscriptions.map(sub =>
           webpush
             .sendNotification(sub, JSON.stringify(notificationPayload))
-            .then(sendRes => {})
+            .then(sendRes => console.log(">Notif. enviada."))
             .catch(e => {
               console.log(e.headers.body);
             })

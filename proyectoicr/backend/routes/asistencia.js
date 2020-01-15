@@ -6,6 +6,8 @@ const router = express.Router();
 const mongoose = require("mongoose");
 const checkAuthMiddleware = require("../middleware/check-auth");
 const ClaseAsistencia = require("../classes/asistencia");
+const Estudiante = require("../models/estudiante");
+const Suscripcion = require("../classes/suscripcion");
 
 //Retorna vector con datos de los estudiantes y presente. Si ya se registro una asistencia para
 //el dia de hoy se retorna ese valor de la asistencia, sino se "construye" una nueva
@@ -55,7 +57,9 @@ router.get("", checkAuthMiddleware, (req, res) => {
     var fechaHoy = new Date();
     fechaHoy.setHours(fechaHoy.getHours() - 3);
     //Compara si la ultima asistencia fue el dia de hoy
-    console.log(ClaseAsistencia.esFechaActual(ultimaAsistencia[0].asistencia[0].fecha));
+    console.log(
+      ClaseAsistencia.esFechaActual(ultimaAsistencia[0].asistencia[0].fecha)
+    );
     if (
       ultimaAsistencia[0].asistencia.length > 0 &&
       ClaseAsistencia.esFechaActual(ultimaAsistencia[0].asistencia[0].fecha)
@@ -565,6 +569,19 @@ router.post("/retiro", checkAuthMiddleware, (req, res) => {
                     inscripcion.contadorInasistenciasInjustificada +
                     actualizacionInasistencia;
                   inscripcion.save().then(() => {
+                    // Envio de notificación a los adultos responsables del estudiante.
+                    Estudiante.findById(req.body.idEstudiante).then(
+                      estudiante => {
+                        Suscripcion.notificarAll(
+                          ...estudiante.adultoResponsable,
+                          "Retiro anticipado",
+                          "Se ha registrado un retiro anticipado de " +
+                            estudiante.apellido + " " +
+                            estudiante.nombre+
+                            "."
+                        );
+                      }
+                    );
                     res.status(200).json({
                       message: "Retiro anticipado exitosamente registrado",
                       exito: "exito"

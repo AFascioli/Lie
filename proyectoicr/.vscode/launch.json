@@ -12,6 +12,9 @@
             "preLaunchTask": "tsc: build - tsconfig.json",
             "outFiles": [
                 "${workspaceFolder}/dist/out-tsc/**/*.js"
+            ],
+            "skipFiles": [
+              "node_modules/**/*.js"
             ]
         }
     ]
