@@ -2,6 +2,7 @@ mat-form-field,
 textarea {
   width: 92%;
   margin-top: 15px;
+  resize: initial;
 }
 
 /* .mat-card-title {
@@ -126,6 +127,7 @@ mat-icon {
 .datosComentario {
   display: flex;
   margin-left: auto;
+  justify-content: space-between;  /* para que la fecha este del lado derecho */
 }
 
 .nombreAutor {
@@ -134,4 +136,13 @@ mat-icon {
 
 .mat-panel-title{
   font-size: 20px;
+}
+
+.mat-chip{
+  margin-bottom: 2%;
+  margin-left: 14px;
+}
+
+.fechaComentario{
+  margin-right: 5%;
 }

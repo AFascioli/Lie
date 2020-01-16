@@ -30,7 +30,7 @@ export class VisualizarEventoComponent implements OnInit {
     }
     this.evento = this.eventoService.eventoSeleccionado;
     this.eventoService.obtenerComentariosDeEvento().subscribe(rtdo => {
-      this.comentarios = rtdo.comentarios;
+      this.comentarios = rtdo.comentarios.reverse();
     });
   }
 
@@ -71,7 +71,7 @@ export class VisualizarEventoComponent implements OnInit {
           });
           this.descripcionComentario = "";
           this.eventoService.obtenerComentariosDeEvento().subscribe(rtdo => {
-            this.comentarios = rtdo.comentarios;
+            this.comentarios = rtdo.comentarios.reverse();
           });
         } else {
           this.snackBar.open(
