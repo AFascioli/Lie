@@ -68,7 +68,6 @@ router.post("/registrar", upload, (req, res, next) => {
     });
   });
 });
-
 //Modifica el evento en la base de datos
 //@params: evento a publicar
 router.patch("/editar", checkAuthMiddleware, (req, res, next) => {
@@ -97,7 +96,7 @@ router.patch("/editar", checkAuthMiddleware, (req, res, next) => {
 });
 
 router.get("/verEvento", checkAuthMiddleware, (req, res) => {
-    Evento.aggregate([
+  Evento.aggregate([
     {
       $match: {
         titulo: req.query.titulo

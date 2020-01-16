@@ -58,6 +58,7 @@ export class ModificarEventoComponent implements OnInit {
     this.horaInicial = this.eventoService.evento.horaInicio;
     this.horaFinal = this.eventoService.evento.horaFin;
     this.cursos = this.eventoService.evento.tags;
+    this.chips = this.eventoService.evento.tags;
     this.imagenEvento= this.eventoService.evento.imgUrl;
     //Hace que funcione el autocomplete, filtra
 

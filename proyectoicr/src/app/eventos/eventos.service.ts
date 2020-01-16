@@ -1,4 +1,3 @@
-import { async } from "@angular/core/testing";
 import { AutenticacionService } from "src/app/login/autenticacionService.service";
 import { HttpClient, HttpParams } from "@angular/common/http";
 import { Injectable } from "@angular/core";
@@ -44,6 +43,37 @@ export class EventosService {
     return this.http.post<{ message: string; exito: boolean }>(
       environment.apiUrl + "/evento/registrar",
       datosEvento
+    );
+  }
+  //Modifica el evento en la base de datos
+  public ModificarEvento(
+    _id: string,
+    titulo: string,
+    descripcion: string,
+    fechaEvento: string,
+    horaInicio: string,
+    horaFin: string,
+    tags: any[],
+    image: File
+  ) {
+    let imgName = image[0].name;
+    const eventoModificado = new FormData();
+    eventoModificado.append("image", image[0], imgName);
+    eventoModificado.append("titulo", titulo);
+    eventoModificado.append("descripcion", descripcion);
+    eventoModificado.append("fechaEvento", fechaEvento);
+    eventoModificado.append("horaInicio", horaInicio);
+    eventoModificado.append("horaFin", horaFin);
+    for (var i = 0; i < tags.length; i++) {
+      eventoModificado.append("tags", tags[i]);
+    }
+    const autor = this.authService.getUsuarioAutenticado();
+    eventoModificado.append("autor", autor);
+
+    console.log(eventoModificado);
+    return this.http.patch<{ message: string; exito: boolean }>(
+      environment.apiUrl + "/evento/editar",
+      eventoModificado
     );
   }
   // Me retorna todos los estudiantes cuyo nombre y apellido coinciden con los pasados por parámetro

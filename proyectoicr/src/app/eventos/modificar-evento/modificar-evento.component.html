@@ -92,8 +92,8 @@
           <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
         </mat-chip>
         <input
-          [(ngModel)]="cursos"
           placeholder="Seleccione los cursos"
+          name="chipsInput"
           #chipsInput
           [formControl]="chipsCtrl"
           [matAutocomplete]="auto"
