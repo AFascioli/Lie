@@ -11,6 +11,7 @@ import {
 } from "@angular/material";
 import { Router } from "@angular/router";
 import { MediaMatcher } from "@angular/cdk/layout";
+import { SelectionModel } from "@angular/cdk/collections";
 
 @Component({
   selector: "app-retiro-anticipado",
@@ -28,6 +29,7 @@ export class RetiroAnticipadoComponent implements OnInit {
   _mobileQueryListener: () => void;
   mobileQuery: MediaQueryList;
   displayedColumns: string[] = [
+    "seleccion",
     "apellido",
     "nombre",
     "telefono",
@@ -36,6 +38,7 @@ export class RetiroAnticipadoComponent implements OnInit {
   ];
   tutores: any[] = [];
   fueraPeriodoCicloLectivo = false;
+  seleccion = new SelectionModel(true, []);
 
   constructor(
     public snackBar: MatSnackBar,
@@ -111,7 +114,8 @@ export class RetiroAnticipadoComponent implements OnInit {
     this.matConfig.data = {
       IdEstudiante: this._idEstudiante,
       antes10am: this.antes10am,
-      tipoPopup: tipoPopup
+      tipoPopup: tipoPopup,
+      tutoresSeleccionados: this.seleccion.selected
     };
     this.dialog.open(RetiroPopupComponent, this.matConfig);
   }
@@ -127,6 +131,7 @@ export class RetiroPopupComponent {
   IdEstudiante: string;
   antes10am: Boolean;
   resultado: string;
+  tutoresSeleccionados: Array<any>;
 
   constructor(
     public dialogRef: MatDialogRef<RetiroPopupComponent>,
@@ -138,6 +143,7 @@ export class RetiroPopupComponent {
     this.tipoPopup = data.tipoPopup;
     this.IdEstudiante = data.IdEstudiante;
     this.antes10am = data.antes10am;
+    this.tutoresSeleccionados = data.tutoresSeleccionados;
   }
 
   //Vuelve al menu principal
@@ -154,7 +160,7 @@ export class RetiroPopupComponent {
   //Confirma el retiro anticipado para el estudiante
   onYesConfirmarClick(): void {
     this.servicioAsistencia
-      .registrarRetiroAnticipado(this.IdEstudiante, this.antes10am)
+      .registrarRetiroAnticipado(this.IdEstudiante, this.antes10am, this.tutoresSeleccionados)
       .subscribe(response => {
         this.resultado = response.exito;
         this.dialogRef.close();

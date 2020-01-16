@@ -572,6 +572,9 @@ router.post("/retiro", checkAuthMiddleware, (req, res) => {
                     // Envio de notificación a los adultos responsables del estudiante.
                     Estudiante.findById(req.body.idEstudiante).then(
                       estudiante => {
+                        var cuerpo;
+                        // Construccion de cuerpo de la notificación.
+                        req.body.tutoresSeleccionados
                         Suscripcion.notificarAll(
                           ...estudiante.adultoResponsable,
                           "Retiro anticipado",
