@@ -10,7 +10,17 @@
   <p>
     <b>Hora inicio y fin:</b> {{ evento.horaInicio }} - {{ evento.horaFin }}
   </p>
-  <img class="imagenEvento" [src]="getImage(evento.imgUrl)" />
+  <mat-carousel
+    interval="5000"
+    maxWidth="auto"
+    proportion="100"
+    [hideArrows]="false"
+    [hideIndicators]="false"
+  >
+    <mat-carousel-slide overlayColor="transparent" [image]="getImage(evento.imgUrl)"></mat-carousel-slide>
+    <mat-carousel-slide overlayColor="transparent" [image]="getImage('acto.6a876ba866add45c1f70.jpg-1577996177889.jpg')"></mat-carousel-slide>
+  </mat-carousel>
+  <!-- <img class="imagenEvento" [src]="getImage(evento.imgUrl)" /> -->
   <mat-chip-list>
     <p class="textoParticipan"><b>Participan:</b></p>
     <mat-chip *ngFor="let tag of evento.tags">
@@ -62,19 +72,21 @@
           <mat-icon>menu_book</mat-icon>
         </mat-panel-description>
       </mat-expansion-panel-header> -->
-      <div class="test" *ngFor="let comentario of comentarios">
-       <div class="datosComentario">
-         <p class="nombreAutor">
-          <b>{{ comentario.apellido }}, {{ comentario.nombre }} </b>
-        <p>
-        <p class="fechaComentario">
-          {{ obtenerDia(comentario.fecha) }} de
-          {{ obtenerMes(comentario.fecha) }}
-        </p>
-       </div>
-        <p class="textoComentario">{{ comentario.comentario }}</p>
-        <mat-divider [inset]="true"></mat-divider>
-      </div>
-    <!-- </mat-expansion-panel>
+  <div class="test" *ngFor="let comentario of comentarios">
+    <div class="datosComentario">
+      <p class="nombreAutor">
+        <b>{{ comentario.apellido }}, {{ comentario.nombre }} </b>
+      </p>
+
+      <p></p>
+      <p class="fechaComentario">
+        {{ obtenerDia(comentario.fecha) }} de
+        {{ obtenerMes(comentario.fecha) }}
+      </p>
+    </div>
+    <p class="textoComentario">{{ comentario.comentario }}</p>
+    <mat-divider [inset]="true"></mat-divider>
+  </div>
+  <!-- </mat-expansion-panel>
   </mat-accordion> -->
 </mat-card>

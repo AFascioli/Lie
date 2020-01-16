@@ -4,7 +4,7 @@ import { Component, OnInit } from "@angular/core";
 import { EventosService } from "../eventos.service";
 import { Evento } from "../evento.model";
 import { Comentario } from "../comentario.model";
-import { Router } from '@angular/router';
+import { Router } from "@angular/router";
 declare var require: any;
 
 @Component({
@@ -25,7 +25,7 @@ export class VisualizarEventoComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    if(this.eventoService.eventoSeleccionado ==null){
+    if (this.eventoService.eventoSeleccionado == null) {
       this.router.navigate(["/home"]);
     }
     this.evento = this.eventoService.eventoSeleccionado;

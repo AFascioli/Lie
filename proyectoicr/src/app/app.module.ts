@@ -102,6 +102,7 @@ import { DatosEstudianteComponent } from "./perfil-estudiante/datos-estudiante/d
 import { CalificacionesExamenesComponent } from "./calificaciones/calificaciones-examenes/calificaciones-examenes.component";
 import { RegistrarEventoComponent } from "./eventos/registrar-evento/registrar-evento.component";
 import { VisualizarEventoComponent } from './eventos/visualizar-evento/visualizar-evento.component';
+import { MatCarouselModule } from '@ngmodule/material-carousel';
 
 @NgModule({
   declarations: [
@@ -194,6 +195,7 @@ import { VisualizarEventoComponent } from './eventos/visualizar-evento/visualiza
     ChartsModule,
     MatPaginatorModule,
     MatTooltipModule,
+    MatCarouselModule.forRoot(),
     ServiceWorkerModule.register("ngsw-worker.js", {
       enabled: environment.production,
       registrationStrategy: "registerImmediately"
