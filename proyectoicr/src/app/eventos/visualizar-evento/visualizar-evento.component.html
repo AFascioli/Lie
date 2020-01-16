@@ -51,7 +51,7 @@
   </div>
   <br />
   <mat-divider class="divisor"></mat-divider>
-  <br />
+  <p class="tituloComentarios"><b style="font-size: 28px;">Comentarios</b></p>
   <!-- <mat-accordion class="example-headers-align">
     <mat-expansion-panel hideToggle>
       <mat-expansion-panel-header>
@@ -62,7 +62,7 @@
           <mat-icon>menu_book</mat-icon>
         </mat-panel-description>
       </mat-expansion-panel-header> -->
-      <div *ngFor="let comentario of comentarios">
+      <div class="test" *ngFor="let comentario of comentarios">
        <div class="datosComentario">
          <p class="nombreAutor">
           <b>{{ comentario.apellido }}, {{ comentario.nombre }} </b>
@@ -72,7 +72,7 @@
           {{ obtenerMes(comentario.fecha) }}
         </p>
        </div>
-        <mat-chip>{{ comentario.comentario }}</mat-chip>
+        <p class="textoComentario">{{ comentario.comentario }}</p>
         <mat-divider [inset]="true"></mat-divider>
       </div>
     <!-- </mat-expansion-panel>
