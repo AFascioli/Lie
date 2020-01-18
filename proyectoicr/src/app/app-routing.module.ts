@@ -212,12 +212,12 @@ const routes: Routes = [
         canActivate: [RoleGuard],
         data: { rolesValidos: ["Admin", "Director", "Preceptor", "Docente"] }
       },
-      {
-        path: "editarEvento",
-        component: ModificarEventoComponent
-        // ,canActivate: [RoleGuard],
-        // data: { rolesValidos: ["Admin", "Director", "Preceptor", "Docente"]}
-      },
+      // {
+      //   path: "editar",
+      //   component: ModificarEventoComponent
+      //   // ,canActivate: [RoleGuard],
+      //   // data: { rolesValidos: ["Admin", "Director", "Preceptor", "Docente"]}
+      // },
       {
         path: "verEvento",
         component: ModificarEventoComponent

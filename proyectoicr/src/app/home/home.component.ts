@@ -61,8 +61,7 @@ export class HomeComponent implements OnInit {
   onEditar(titulo: string) {
     this.servicioEvento.buscarEvento(titulo).subscribe(response => {
       this.servicioEvento.evento = response.evento[0];
-      this.router.navigate(["./editarEvento"]);
+      this.router.navigate(["./verEvento"]);
     });
-    //
   }
 }

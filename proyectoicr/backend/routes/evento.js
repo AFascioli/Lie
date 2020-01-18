@@ -78,8 +78,8 @@ router.patch("/editar", checkAuthMiddleware, (req, res, next) => {
     horaInicio: req.body.horaInicio,
     horaFin: req.body.horaFin,
     tags: req.body.tags,
-    imgUrl: url + "/images/" + req.body.imgUrl,
-    autor: usuario._id
+    imgUrl: req.body.imgUrl,
+    autor: req.body.autor
   })
     .then(() => {
       res.status(200).json({

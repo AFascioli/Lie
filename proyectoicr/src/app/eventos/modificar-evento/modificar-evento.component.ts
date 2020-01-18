@@ -59,7 +59,7 @@ export class ModificarEventoComponent implements OnInit {
     this.horaFinal = this.eventoService.evento.horaFin;
     this.cursos = this.eventoService.evento.tags;
     this.chips = this.eventoService.evento.tags;
-    this.imagenEvento= this.eventoService.evento.imgUrl;
+    this.imagenEvento = this.eventoService.evento.imgUrl;
     //Hace que funcione el autocomplete, filtra
 
     this.filteredChips = this.chipsCtrl.valueChanges.pipe(
@@ -160,14 +160,16 @@ export class ModificarEventoComponent implements OnInit {
       const fechaEvento = form.value.fechaEvento.toString();
       if (this.horaInicio == "" && this.horaFin == "") {
         this.eventoService
-          .registrarEvento(
+          .ModificarEvento(
+            this.eventoService.evento._id,
             form.value.titulo,
             form.value.descripcion,
             fechaEvento,
             this.horaInicio,
             this.horaFin,
             this.chips,
-            this.imagePath
+            this.eventoService.evento.autor,
+            this.eventoService.evento.imgUrl
           )
           .subscribe(rtdo => {
             if (rtdo.exito) {
@@ -184,14 +186,16 @@ export class ModificarEventoComponent implements OnInit {
           });
       } else if (this.horaEventoEsValido(this.horaInicio, this.horaFin)) {
         this.eventoService
-          .registrarEvento(
+          .ModificarEvento(
+            this.eventoService.evento._id,
             form.value.titulo,
             form.value.descripcion,
             fechaEvento,
             this.horaInicio,
             this.horaFin,
             this.chips,
-            this.imagePath
+            this.eventoService.evento.autor,
+            this.eventoService.evento.imgUrl
           )
           .subscribe(rtdo => {
             if (rtdo.exito) {
