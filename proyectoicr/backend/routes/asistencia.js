@@ -569,19 +569,50 @@ router.post("/retiro", checkAuthMiddleware, (req, res) => {
                     inscripcion.contadorInasistenciasInjustificada +
                     actualizacionInasistencia;
                   inscripcion.save().then(() => {
-                    // Envio de notificación a los adultos responsables del estudiante.
+                    //Envio de notificación a los adultos responsables del estudiante. #working
                     Estudiante.findById(req.body.idEstudiante).then(
                       estudiante => {
-                        var cuerpo;
-                        // Construccion de cuerpo de la notificación.
-                        req.body.tutoresSeleccionados
+                        //Construcción del cuerpo de la notificación.
+                        var tutores = req.body.tutoresSeleccionados;
+                        var cuerpo =
+                          "Se ha registrado un retiro anticipado de " +
+                          estudiante.apellido +
+                          " " +
+                          estudiante.nombre +
+                          ". ";
+
+                        if (tutores.length > 0) {
+                          cuerpo =
+                            cuerpo +
+                            "El estudiante fue retirado por " +
+                            tutores[0].apellido +
+                            " " +
+                            tutores[0].nombre;
+
+                          for (let i = 0; i < tutores.length; i++) {
+                            if (i == tutores.length - 1) {
+                              cuerpo =
+                                cuerpo +
+                                " y " +
+                                tutores[i].apellido +
+                                " " +
+                                tutores[i].nombre;
+                            } else if (i != 0) {
+                              cuerpo =
+                                cuerpo +
+                                ", " +
+                                tutores[i].apellido +
+                                " " +
+                                tutores[i].nombre;
+                            }
+                            if (i == tutores.length - 1) cuerpo = cuerpo + ".";
+                          }
+                        }
+                        //Envio de la notificación
                         Suscripcion.notificarAll(
                           ...estudiante.adultoResponsable,
                           "Retiro anticipado",
-                          "Se ha registrado un retiro anticipado de " +
-                            estudiante.apellido + " " +
-                            estudiante.nombre+
-                            "."
+                          this.cuerpo
                         );
                       }
                     );
