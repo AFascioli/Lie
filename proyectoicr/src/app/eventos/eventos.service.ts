@@ -82,4 +82,12 @@ export class EventosService {
       { params: params }
     );
   }
+
+  public eliminarEvento(titulo: string) {
+    let params = new HttpParams().set("titulo", titulo);
+    return this.http.get<{ evento: Evento }>(
+      environment.apiUrl + "/evento/eliminarEvento",
+      { params: params }
+    );
+  }
 }

@@ -111,4 +111,13 @@ router.get("/verEvento", checkAuthMiddleware, (req, res) => {
   });
 });
 
+router.delete("/eliminarEvento", checkAuthMiddleware, (req, res, next) => {
+  console.log('b' + req.body.titulo);
+  Evento.findByIdAndDelete("5e19e6340445c5340825e237");
+  return res.status(200).json({
+    message: "Se elimino el evento correctamente",
+    exito: true
+  });
+});
+
 module.exports = router;

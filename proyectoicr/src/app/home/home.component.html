@@ -11,12 +11,20 @@
   <mat-card-title
     >Acto 25 de Mayo
     <button
-      mat-stroked-button
-      class="boton-editar"
-      (click)="onEditar('Acto 25 de Mayo')"
       type="button"
+      mat-icon-button
+      class="botones"
+      *ngIf="conocerUsuarioLogueado()"
     >
-      Editar
+      <mat-icon (click)="onEditar('Acto 25 de Mayo')">mode_edit </mat-icon>
+    </button>
+    <button
+      type="button"
+      mat-icon-button
+      class="botones"
+      *ngIf="conocerUsuarioLogueado()"
+    >
+      <mat-icon (click)="onBorrar('Acto 25 de Mayo')">delete </mat-icon>
     </button>
   </mat-card-title>
   <mat-card-subtitle>Acto de caracter obligatorio</mat-card-subtitle>

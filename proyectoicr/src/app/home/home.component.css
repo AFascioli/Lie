@@ -18,10 +18,10 @@ button:hover {
   font-size:17px;
 }
 
-.boton-editar{
-  text-align: left;
+.botones{
+    margin-left: auto !important;
 }
 
-.boton-editar:hover {
+.botones:hover {
   background-color:#bbded6;
 }

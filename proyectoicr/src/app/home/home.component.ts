@@ -64,4 +64,17 @@ export class HomeComponent implements OnInit {
       this.router.navigate(["./verEvento"]);
     });
   }
+  onBorrar(titulo: string)
+  {
+        this.servicioEvento.eliminarEvento(titulo);
+  }
+
+  conocerUsuarioLogueado(): boolean {
+    let mostrarBoton = false;
+    if (
+      this.servicio.getRol() == "Admin" // ||    this.servicio.getUsuarioAutenticado() == this.servicioEvento.evento.autor
+    )
+      mostrarBoton = true;
+    return mostrarBoton;
+  }
 }
