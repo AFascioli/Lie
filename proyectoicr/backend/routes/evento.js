@@ -7,6 +7,7 @@ const multer = require("multer");
 const Evento = require("../models/evento");
 const Usuario = require("../models/usuario");
 const path = require("path");
+const Suscripcion = require("../classes/suscripcion");
 
 const MIME_TYPE_MAPA = {
   "image/png": "png",
@@ -60,12 +61,30 @@ router.post("/registrar", upload, (req, res, next) => {
       imgUrl: url + "/images/" + req.body.imgUrl,
       autor: usuario._id
     });
-    evento.save().then(() => {
-      res.status(201).json({
-        message: "Evento creado existosamente",
-        exito: true
-      });
-    });
+    var cuerpo;
+    var idtutores;
+    // NOTIFICACIÓN
+    //Construcción de cuerpo de la notificación
+
+    // Notificar a los adultos que correspondan a los cursos de los tags/chips
+    if (tags.includes("Todos los cursos")) {
+      Suscripcion.notificacionMasiva(evento.titulo, this.cuerpo);
+    } else {
+
+      Suscripcion.notificacionGrupal(
+        "", // Tutores de los cursos seleccionados
+        evento.titulo,
+        this.cuerpo
+      );
+    }
+
+    // evento.save().then(() => {
+    //   //Completar con código de la notificación
+    //   res.status(201).json({
+    //     message: "Evento creado existosamente",
+    //     exito: true
+    //   });
+    // });
   });
 });
 

@@ -609,7 +609,7 @@ router.post("/retiro", checkAuthMiddleware, (req, res) => {
                           }
                         }
                         //Envio de la notificación
-                        Suscripcion.notificarAll(
+                        Suscripcion.notificacionGrupal(
                           ...estudiante.adultoResponsable,
                           "Retiro anticipado",
                           this.cuerpo
