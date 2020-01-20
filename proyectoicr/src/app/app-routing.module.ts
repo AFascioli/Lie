@@ -29,7 +29,7 @@ import { RoleGuard } from "./role.guard";
 import { InasistenciasEstudianteComponent } from "./perfil-estudiante/inasistencias-estudiante/inasistencias-estudiante.component";
 import { DatosEstudianteComponent } from "./perfil-estudiante/datos-estudiante/datos-estudiante.component";
 import { TutoresEstudianteComponent } from "./perfil-estudiante/tutores-estudiante/tutores-estudiante.component";
-import { ModificarEventoComponent } from './eventos/modificar-evento/modificar-evento.component';
+import { ModificarEventoComponent } from "./eventos/modificar-evento/modificar-evento.component";
 
 const routes: Routes = [
   { path: "login", component: LoginComponent },
@@ -212,17 +212,11 @@ const routes: Routes = [
         canActivate: [RoleGuard],
         data: { rolesValidos: ["Admin", "Director", "Preceptor", "Docente"] }
       },
-      // {
-      //   path: "editar",
-      //   component: ModificarEventoComponent
-      //   // ,canActivate: [RoleGuard],
-      //   // data: { rolesValidos: ["Admin", "Director", "Preceptor", "Docente"]}
-      // },
       {
         path: "verEvento",
-        component: ModificarEventoComponent
-        // ,canActivate: [RoleGuard],
-        // data: { rolesValidos: ["Admin", "Director", "Preceptor", "Docente"]}
+        component: ModificarEventoComponent,
+        canActivate: [RoleGuard],
+        data: { rolesValidos: ["Admin", "Director", "Preceptor", "Docente"] }
       },
       {
         path: "preferencias",

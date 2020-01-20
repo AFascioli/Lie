@@ -64,9 +64,9 @@ export class HomeComponent implements OnInit {
       this.router.navigate(["./verEvento"]);
     });
   }
-  onBorrar(titulo: string)
-  {
-        this.servicioEvento.eliminarEvento(titulo);
+  onBorrar(titulo: string) {
+    console.log("entro en home" + titulo);
+    this.servicioEvento.eliminarEvento(titulo);
   }
 
   conocerUsuarioLogueado(): boolean {

@@ -1,10 +1,9 @@
 const express = require("express");
-const Estudiante = require("../models/estudiante");
+const Evento = require("../models/evento");
 const router = express.Router();
 const mongoose = require("mongoose");
 const checkAuthMiddleware = require("../middleware/check-auth");
 const multer = require("multer");
-const Evento = require("../models/evento");
 const Usuario = require("../models/usuario");
 const path = require("path");
 
@@ -112,11 +111,21 @@ router.get("/verEvento", checkAuthMiddleware, (req, res) => {
 });
 
 router.delete("/eliminarEvento", checkAuthMiddleware, (req, res, next) => {
-  console.log('b' + req.body.titulo);
-  Evento.findByIdAndDelete("5e19e6340445c5340825e237");
-  return res.status(200).json({
-    message: "Se elimino el evento correctamente",
-    exito: true
+  Evento.aggregate([
+    {
+      $match: {
+        titulo: req.query.titulo
+      }
+    }
+  ]).then(eventoEncontrado => {
+    Evento.findById({
+      //mongoose.Types.ObjectId(
+      _id: eventoEncontrado[0]._id
+    }).deleteOne().exec();
+    return res.status(202).json({
+      message: "Elimino el evento correctamente",
+      exito: true
+    });
   });
 });
 

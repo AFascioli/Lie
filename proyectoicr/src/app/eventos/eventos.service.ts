@@ -85,9 +85,11 @@ export class EventosService {
 
   public eliminarEvento(titulo: string) {
     let params = new HttpParams().set("titulo", titulo);
-    return this.http.get<{ evento: Evento }>(
-      environment.apiUrl + "/evento/eliminarEvento",
-      { params: params }
-    );
+    this.http
+      .delete<{ message: string }>(
+        environment.apiUrl + "/evento/eliminarEvento",
+        { params: params }
+      )
+      .subscribe(response => {});
   }
 }
