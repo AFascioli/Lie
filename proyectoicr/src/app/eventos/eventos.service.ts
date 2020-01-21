@@ -1,4 +1,4 @@
-import { MatSnackBar } from '@angular/material';
+import { MatSnackBar } from "@angular/material";
 import { AutenticacionService } from "src/app/login/autenticacionService.service";
 import { HttpClient, HttpParams } from "@angular/common/http";
 import { Injectable } from "@angular/core";
@@ -10,6 +10,7 @@ import { Evento } from "./evento.model";
 })
 export class EventosService {
   public evento: Evento;
+  public tituloABorrar: string;
 
   constructor(
     public snackBar: MatSnackBar,

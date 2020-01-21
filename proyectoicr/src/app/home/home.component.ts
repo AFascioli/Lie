@@ -5,7 +5,7 @@ import { SwPush } from "@angular/service-worker";
 import { AutenticacionService } from "../login/autenticacionService.service";
 import { Router } from "@angular/router";
 import { Evento } from "../eventos/evento.model";
-import { MatSnackBar, MatDialogRef } from "@angular/material";
+import { MatSnackBar, MatDialogRef, MatDialog } from "@angular/material";
 
 //Parche para la demo #resolve
 declare var require: any;
@@ -25,7 +25,8 @@ export class HomeComponent implements OnInit {
     private swPush: SwPush,
     private servicio: AutenticacionService,
     public router: Router,
-    public servicioEvento: EventosService
+    public servicioEvento: EventosService,
+    public dialog: MatDialog,
   ) {}
 
   ngOnInit() {
@@ -67,7 +68,11 @@ export class HomeComponent implements OnInit {
     });
   }
   onBorrar(titulo: string) {
-    this.servicioEvento.eliminarEvento(titulo);
+    this.servicioEvento.tituloABorrar=titulo;
+    this.dialog.open(BorrarPopupComponent, {
+      width: "250px"
+    });
+    // this.servicioEvento.eliminarEvento(titulo);
   }
 
   conocerUsuarioLogueado(): boolean {
@@ -79,41 +84,30 @@ export class HomeComponent implements OnInit {
     return mostrarBoton;
   }
 }
-/*
+
 @Component({
   selector: "app-borrar-popup",
   templateUrl: "./borrar-popup.component.html",
   styleUrls: ["./home.component.css"]
 })
-export class MostrarPopupComponent {
-  tipoPopup: string;
-  formInvalido: Boolean;
-  borrar: string;
+export class BorrarPopupComponent {
+  titulo:string;
 
   constructor(
-    public dialogRef: MatDialogRef<MostrarPopupComponent>,
+    public dialogRef: MatDialogRef<BorrarPopupComponent>,
     public router: Router,
     public servicioEvento: EventosService,
-    public home: Home
   ) {
-    this.borrar = "¿Está seguro que desea borrar el evento?";
+    this.titulo=this.servicioEvento.tituloABorrar;
   }
 
   onYesClick(): void {
-    this.router.navigate(["./buscar/lista"]);
+    this.servicioEvento.eliminarEvento(this.servicioEvento.tituloABorrar);
     this.dialogRef.close();
   }
 
   onNoClick(): void {
     this.dialogRef.close();
   }
-
-  onOkClickBorrar(): void {
-    this.dialogRef.close();
-    this.router.navigate(["./buscar/lista"]);
-  }
-
-  onYesDeleteClick() {
-  }
 }
-*/
+

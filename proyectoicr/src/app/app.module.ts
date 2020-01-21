@@ -94,6 +94,7 @@ import {
   PreferenciasComponent,
   PreferenciasPopupComponent
 } from "./menu-lateral/preferencias/preferencias.component";
+import { BorrarPopupComponent } from "./home/home.component";
 import { ServiceWorkerModule } from "@angular/service-worker";
 import { environment } from "../environments/environment";
 import { InasistenciasEstudianteComponent } from "./perfil-estudiante/inasistencias-estudiante/inasistencias-estudiante.component";
@@ -111,6 +112,7 @@ import { ModificarEventoComponent } from "./eventos/modificar-evento/modificar-e
     MostrarEstudiantesComponent,
     CancelPopupComponent,
     MostrarPopupComponent,
+    BorrarPopupComponent,
     PreferenciasPopupComponent,
     MenuLateralComponent,
     HomeComponent,
@@ -149,6 +151,7 @@ import { ModificarEventoComponent } from "./eventos/modificar-evento/modificar-e
   entryComponents: [
     CancelPopupComponent,
     MostrarPopupComponent,
+    BorrarPopupComponent,
     AsistenciaPopupComponent,
     PerfilEstudiantePopupComponent,
     BuscarPopupComponent,
