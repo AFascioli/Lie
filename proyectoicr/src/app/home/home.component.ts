@@ -5,6 +5,7 @@ import { SwPush } from "@angular/service-worker";
 import { AutenticacionService } from "../login/autenticacionService.service";
 import { Router } from "@angular/router";
 import { Evento } from "../eventos/evento.model";
+import { MatSnackBar, MatDialogRef } from "@angular/material";
 
 //Parche para la demo #resolve
 declare var require: any;
@@ -20,6 +21,7 @@ export class HomeComponent implements OnInit {
 
   evento: Evento;
   constructor(
+    public snackBar: MatSnackBar,
     private swPush: SwPush,
     private servicio: AutenticacionService,
     public router: Router,
@@ -65,7 +67,6 @@ export class HomeComponent implements OnInit {
     });
   }
   onBorrar(titulo: string) {
-    console.log("entro en home" + titulo);
     this.servicioEvento.eliminarEvento(titulo);
   }
 
@@ -78,3 +79,41 @@ export class HomeComponent implements OnInit {
     return mostrarBoton;
   }
 }
+/*
+@Component({
+  selector: "app-borrar-popup",
+  templateUrl: "./borrar-popup.component.html",
+  styleUrls: ["./home.component.css"]
+})
+export class MostrarPopupComponent {
+  tipoPopup: string;
+  formInvalido: Boolean;
+  borrar: string;
+
+  constructor(
+    public dialogRef: MatDialogRef<MostrarPopupComponent>,
+    public router: Router,
+    public servicioEvento: EventosService,
+    public home: Home
+  ) {
+    this.borrar = "¿Está seguro que desea borrar el evento?";
+  }
+
+  onYesClick(): void {
+    this.router.navigate(["./buscar/lista"]);
+    this.dialogRef.close();
+  }
+
+  onNoClick(): void {
+    this.dialogRef.close();
+  }
+
+  onOkClickBorrar(): void {
+    this.dialogRef.close();
+    this.router.navigate(["./buscar/lista"]);
+  }
+
+  onYesDeleteClick() {
+  }
+}
+*/

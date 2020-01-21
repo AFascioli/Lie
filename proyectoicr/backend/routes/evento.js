@@ -111,21 +111,12 @@ router.get("/verEvento", checkAuthMiddleware, (req, res) => {
 });
 
 router.delete("/eliminarEvento", checkAuthMiddleware, (req, res, next) => {
-  Evento.aggregate([
-    {
-      $match: {
-        titulo: req.query.titulo
-      }
-    }
-  ]).then(eventoEncontrado => {
-    Evento.findById({
-      //mongoose.Types.ObjectId(
-      _id: eventoEncontrado[0]._id
-    }).deleteOne().exec();
+  Evento.deleteOne({
+    titulo: req.query.titulo
+  }).exec();
     return res.status(202).json({
-      message: "Elimino el evento correctamente",
+      message: "Evento eliminado exitosamente",
       exito: true
-    });
   });
 });
 

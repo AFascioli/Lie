@@ -1,3 +1,4 @@
+import { MatSnackBar } from '@angular/material';
 import { AutenticacionService } from "src/app/login/autenticacionService.service";
 import { HttpClient, HttpParams } from "@angular/common/http";
 import { Injectable } from "@angular/core";
@@ -11,6 +12,7 @@ export class EventosService {
   public evento: Evento;
 
   constructor(
+    public snackBar: MatSnackBar,
     public http: HttpClient,
     public authService: AutenticacionService
   ) {}
@@ -86,10 +88,17 @@ export class EventosService {
   public eliminarEvento(titulo: string) {
     let params = new HttpParams().set("titulo", titulo);
     this.http
-      .delete<{ message: string }>(
+      .delete<{ message: string; exito: boolean }>(
         environment.apiUrl + "/evento/eliminarEvento",
         { params: params }
       )
-      .subscribe(response => {});
+      .subscribe(response => {
+        if (response.exito) {
+          this.snackBar.open(response.message, "", {
+            panelClass: ["snack-bar-exito"],
+            duration: 4500
+          });
+        }
+      });
   }
 }
