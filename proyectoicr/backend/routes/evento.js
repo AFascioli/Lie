@@ -61,7 +61,7 @@ router.post("/registrar", upload, (req, res, next) => {
       imgUrl: url + "/images/" + req.body.imgUrl,
       autor: usuario._id
     });
-    var cuerpo;
+    var cuerpo = "El evento se realizará en la fecha " + evento.fechaEvento + ".";
     var idtutores;
     // NOTIFICACIÓN
     //Construcción de cuerpo de la notificación
@@ -70,16 +70,79 @@ router.post("/registrar", upload, (req, res, next) => {
     if (tags.includes("Todos los cursos")) {
       Suscripcion.notificacionMasiva(evento.titulo, this.cuerpo);
     } else {
+      Inscripcion.agreggate([
+        {
+          '$lookup': {
+            'from': 'curso',
+            'localField': 'idCurso',
+            'foreignField': '_id',
+            'as': 'icurso'
+          }
+        }, {
+          '$unwind': {
+            'path': '$icurso',
+            'preserveNullAndEmptyArrays': false
+          }
+        }, {
+          '$match': {
+            '$expr': {
+              '$in': [
+                '$icurso.curso', [
+                  '5A'
+                ]
+              ]
+            }
+          }
+        }, {
+          '$lookup': {
+            'from': 'estudiante',
+            'localField': 'idEstudiante',
+            'foreignField': '_id',
+            'as': 'conest'
+          }
+        }, {
+          '$unwind': {
+            'path': '$conest',
+            'preserveNullAndEmptyArrays': false
+          }
+        }, {
+          '$unwind': {
+            'path': '$conest.adultoResponsable',
+            'preserveNullAndEmptyArrays': false
+          }
+        }, {
+          '$lookup': {
+            'from': 'adultoResponsable',
+            'localField': 'idAdulto',
+            'foreignField': 'string',
+            'as': 'conadulto'
+          }
+        }, {
+          '$unwind': {
+            'path': '$conadulto',
+            'preserveNullAndEmptyArrays': false
+          }
+        }, {
+          '$project': {
+            '_id': 0,
+            'conadulto.idUsuario': 1
+          }
+        }
+      ]).then(response =>{
+        response.forEach(conadulto => {
+          idtutores.push(conadulto[0].idUsuario);
+        });
+        Suscripcion.notificacionGrupal(
+          idtutores, // Tutores de los cursos seleccionados
+          evento.titulo,
+          this.cuerpo
+        );
+      })
 
-      Suscripcion.notificacionGrupal(
-        "", // Tutores de los cursos seleccionados
-        evento.titulo,
-        this.cuerpo
-      );
     }
 
     // evento.save().then(() => {
-    //   //Completar con código de la notificación
+    //   //Completar con código de la notificación COMPLETAR CON LO DE ARRIBA
     //   res.status(201).json({
     //     message: "Evento creado existosamente",
     //     exito: true
