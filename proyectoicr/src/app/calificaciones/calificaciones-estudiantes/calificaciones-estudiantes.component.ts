@@ -7,6 +7,7 @@ import { NgForm, NgModel } from "@angular/forms";
 import { MatPaginator, PageEvent } from "@angular/material/paginator";
 import { MatTableDataSource } from "@angular/material/table";
 import { CalificacionesService } from "../calificaciones.service";
+import { MatPaginatorIntl } from '@angular/material';
 
 @Component({
   selector: "app-calificaciones-estudiantes",
@@ -267,4 +268,16 @@ export class CalificacionesEstudiantesComponent implements OnInit {
       event.preventDefault();
     else if (cal != "" && Number(concat) > 10) event.preventDefault();
   }
+}
+
+export class PaginatorOverviewExample {}
+
+
+export function getDutchPaginatorIntl() {
+  const paginatorIntl = new MatPaginatorIntl();
+
+  paginatorIntl.itemsPerPageLabel = 'Items por página';
+  paginatorIntl.nextPageLabel = 'Página siguiente';
+  paginatorIntl.previousPageLabel = 'Página anterior';
+  return paginatorIntl;
 }

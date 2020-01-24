@@ -20,7 +20,8 @@ import {
   MatCheckboxModule,
   MatSnackBarModule,
   MatChipsModule,
-  MatInputModule
+  MatInputModule,
+  MatPaginatorIntl
 } from "@angular/material";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
@@ -102,6 +103,7 @@ import { TutoresEstudianteComponent } from "./perfil-estudiante/tutores-estudian
 import { DatosEstudianteComponent } from "./perfil-estudiante/datos-estudiante/datos-estudiante.component";
 import { CalificacionesExamenesComponent } from "./calificaciones/calificaciones-examenes/calificaciones-examenes.component";
 import { RegistrarEventoComponent } from "./eventos/registrar-evento/registrar-evento.component";
+import { getDutchPaginatorIntl } from "./calificaciones/calificaciones-estudiantes/calificaciones-estudiantes.component";
 import { ModificarEventoComponent } from "./eventos/modificar-evento/modificar-evento.component";
 import { VisualizarEventoComponent } from './eventos/visualizar-evento/visualizar-evento.component';
 import { MatCarouselModule } from '@ngmodule/material-carousel';
@@ -212,7 +214,10 @@ import { MatCarouselModule } from '@ngmodule/material-carousel';
   providers: [
     EstudiantesService,
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
-    { provide: LOCALE_ID, useValue: "es" }
+    { provide: LOCALE_ID, useValue: "es" },
+
+    { provide: MatPaginatorIntl, useValue: getDutchPaginatorIntl() }
+
   ],
   bootstrap: [AppComponent]
 })
