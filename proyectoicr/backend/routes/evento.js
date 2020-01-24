@@ -2,11 +2,14 @@ const express = require("express");
 const Estudiante = require("../models/estudiante");
 const router = express.Router();
 const mongoose = require("mongoose");
+const AdultoResponsable = require("../models/adultoResponsable");
+const Empleado = require("../models/empleado");
 const checkAuthMiddleware = require("../middleware/check-auth");
 const multer = require("multer");
 const Evento = require("../models/evento");
 const Usuario = require("../models/usuario");
 const path = require("path");
+const Admin = require("../models/administrador");
 const Suscripcion = require("../classes/suscripcion");
 
 const MIME_TYPE_MAPA = {
@@ -34,23 +37,12 @@ const storage = multer.diskStorage({
   }
 });
 
-// var storage = multer.diskStorage({
-//   destination: function (req, file, cb) {
-//     console.log("FILE>>>" , file);
-//     cb(null, './backend/images')
-//   },
-//   filename: function (req, file, cb) {
-//     cb(null, file.fieldname + '-' + Date.now()+path.extname(file.originalname));
-//   }
-// })
-
 var upload = multer({ storage: storage }).single("image");
 
 //Registra el evento en la base de datos
 //@params: evento a publicar
 router.post("/registrar", upload, (req, res, next) => {
   Usuario.findOne({ email: req.body.autor }).then(usuario => {
-    const url = req.protocol + "://" + req.get("host");
     const evento = new Evento({
       titulo: req.body.titulo,
       descripcion: req.body.descripcion,
@@ -58,7 +50,7 @@ router.post("/registrar", upload, (req, res, next) => {
       horaInicio: req.body.horaInicio,
       horaFin: req.body.horaFin,
       tags: req.body.tags,
-      imgUrl: url + "/images/" + req.body.imgUrl,
+      imgUrl: req.file.filename,
       autor: usuario._id
     });
     var cuerpo = "El evento se realizará en la fecha " + evento.fechaEvento + ".";
@@ -148,6 +140,89 @@ router.post("/registrar", upload, (req, res, next) => {
     //     exito: true
     //   });
     // });
+  });
+});
+
+//Obtiene todos los eventos que estan almacenados en la base de datos
+router.get("", (req, res, next) => {
+  Evento.find().then(eventos => {
+    res.status(200).json({
+      eventos: eventos,
+      message: "Eventos devuelto existosamente",
+      exito: true
+    });
+  });
+});
+
+//Obtiene todos los comentarios de un evento que estan almacenados en la base de datos
+//@params: id del evento
+router.get("/comentarios", (req, res, next) => {
+  Evento.findById(req.query.idEvento).then(evento => {
+    res.status(200).json({
+      comentarios: evento.comentarios,
+      message: "Evento devuelto existosamente",
+      exito: true
+    });
+  });
+});
+
+//Publica en la base de datos un comentario
+//@params: id del evento
+//@params: la descripcion del comentario, el autor junto con el rol que cumple
+router.post("/registrarComentario", async (req, res, next) => {
+  let apellido = "";
+  let nombre = "";
+  let idUsuario = "";
+
+  var obtenerDatosUsuario = (rol, emailUsuario) => {
+    return new Promise((resolve, reject) => {
+      if (rol == "Adulto Responsable") {
+        AdultoResponsable.findOne({ email: emailUsuario }).then(usuario => {
+          apellido = usuario.apellido;
+          nombre = usuario.nombre;
+          idUsuario = usuario.idUsuario;
+          resolve({ apellido: apellido, nombre: nombre, idUsuario: idUsuario });
+        });
+      } else if(rol == "Admin"){
+        Admin.findOne({ email: emailUsuario }).then(usuario => {
+          apellido = usuario.apellido;
+          nombre = usuario.nombre;
+          idUsuario = usuario.idUsuario;
+          resolve({ apellido: apellido, nombre: nombre, idUsuario: idUsuario });
+        });
+      }else{
+        Empleado.findOne({ email: emailUsuario }).then(usuario => {
+          apellido = usuario.apellido;
+          nombre = usuario.nombre;
+          idUsuario = usuario.idUsuario;
+          resolve({ apellido: apellido, nombre: nombre, idUsuario: idUsuario });
+        });
+      }
+    });
+  };
+
+  var datosUsuario = await obtenerDatosUsuario(
+    req.body.rol,
+    req.body.emailUsuario
+  );
+
+  Evento.findByIdAndUpdate(req.body.idEvento, {
+    $push: {
+      comentarios: {
+        apellido: datosUsuario.apellido,
+        nombre: datosUsuario.nombre,
+        comentario: req.body.comentario.comentario,
+        fecha: req.body.comentario.fecha,
+        idUsuario: datosUsuario.idUsuario
+      }
+    }
+  }).then(() => {
+    res.status(200).json({
+      message: "Se ha registrado el comentario correctamente",
+      exito: true,
+      nombre: nombre,
+      apellido: apellido
+    });
   });
 });
 

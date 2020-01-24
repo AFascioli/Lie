@@ -7,7 +7,33 @@
  Prueba de notificación
 </button> -->
 
-<mat-card class="card-body-componente">
+<mat-card class="card-body-componente" *ngFor="let evento of eventos">
+  <mat-card-title>
+    <button (click)="eventoSeleccionado(evento)" class="titulo">{{ evento.titulo }}</button>
+    <div class="fechaEvento">
+      <time datetime="evento.fechaEvento" class="icon">
+      <strong>{{obtenerMes(evento.fechaEvento)}}</strong>
+      <span>{{obtenerDia(evento.fechaEvento)}}</span>
+    </time>
+    </div>
+  </mat-card-title>
+  <mat-card-subtitle>{{ evento.horaInicio }} - {{ evento.horaFin }}</mat-card-subtitle>
+  <img mat-card-image [src]="getImage(evento.imgUrl)" />
+  <mat-chip-list>
+     <p class="textoParticipan"> Participan:</p>
+    <mat-chip *ngFor="let tag of evento.tags">
+      {{tag}}
+    </mat-chip>
+  </mat-chip-list>
+  <mat-card-content>
+    <p class="descripcion">
+      {{ evento.descripcion }}
+    </p>
+  </mat-card-content>
+</mat-card>
+
+
+<!-- <mat-card class="card-body-componente">
   <mat-card-title>Acto 25 de Mayo</mat-card-title>
   <mat-card-subtitle>Acto de caracter obligatorio</mat-card-subtitle>
   <img
@@ -51,4 +77,4 @@
       <button mat-button>Allí estaré</button>
       <button mat-button>No podré asistir</button>
     </mat-card-actions>
-  </mat-card>
+  </mat-card> -->
