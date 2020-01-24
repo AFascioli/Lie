@@ -1,0 +1,17 @@
+<h3 mat-dialog-title class="tituloPopup">Borrar</h3>
+<div mat-dialog-content>
+  <p class="parrafo">¿Está seguro que desea borrar el evento?</p>
+</div>
+<div mat-dialog-actions class="buttonPopup">
+  <button
+    mat-raised-button
+    class="buttonPrimary"
+    (click)="onYesClick()"
+    cdkFocusInitial
+  >
+    Sí
+  </button>
+  <button mat-raised-button class="buttonWarn" (click)="onNoClick()">
+    No
+  </button>
+</div>

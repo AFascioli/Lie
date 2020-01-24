@@ -18,7 +18,13 @@ const eventoRoutes = require("./routes/evento");
 
 const app = express(); // Creo la app express
 
-app.use("/images", express.static(path.join("backend/images")));
+app.use("/images", express.static(path.join("../images")));
+
+app.use('/static', express.static(path.join("images", 'public')))
+
+app.use(express.static('../images'));
+
+// app.use(express.static("backend/images", 'public'));
 
 // Mongodb password: SNcjNuPBMG42lOh1
 /* Conectamos a la bd y segun lo que responda ese metodo (la promesa) imprimimos en consola
@@ -89,6 +95,11 @@ app.use("/asistencia", asistenciaRoutes);
 
 app.use("/calificacion", calificacionesRoutes);
 
+app.get("/status", (req, res, next) => {
+    res.status(200).json({
+      message: "Servidor Node.js Lie®"
+    });
+});
 app.use("/evento", eventoRoutes);
 
 module.exports = app;

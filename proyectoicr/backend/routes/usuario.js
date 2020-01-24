@@ -95,7 +95,7 @@ router.post("/login", (req, res) => {
 router.get("/notificacion", (req, res) => {
   Usuario.findOne({ email: req.query.email }).then(usuario => {
     console.log("Envio de notificación a " + usuario.email);
-    Suscripcion.notificar(
+    Suscripcion.notificacionIndividual(
       usuario._id,
       "Titulo de la notificación de prueba",
       "Cuerpo de la notificación de prueba"
@@ -198,6 +198,6 @@ router.post("/suscripcion", (req, res) => {
       .status(200)
       .json({ message: "Ocurrieron errores al querer registrar la suscripcion" +err , exito: false});
     });
-});
+  });
 
 module.exports = router;

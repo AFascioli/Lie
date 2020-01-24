@@ -1,5 +1,5 @@
 import { CancelPopupComponent } from "src/app/popup-genericos/cancel-popup.component";
-import { InscripcionService } from "../insccripcion.service";
+import { InscripcionService } from "../inscripcion.service";
 import { AutenticacionService } from "src/app/login/autenticacionService.service";
 import { EstudiantesService } from "src/app/estudiantes/estudiante.service";
 import { Component, OnInit } from "@angular/core";

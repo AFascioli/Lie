@@ -145,7 +145,6 @@ router.get("/curso", checkAuthMiddleware, (req, res) => {
   Estudiante.findOne({ _id: req.query.idEstudiante, activo: true }).then(
     estudiante => {
       Estado.findById(estudiante.estado).then(estado => {
-        console.log(estado);
         if (estado.nombre == "Inscripto") {
           res.status(200).json({
             message:
@@ -244,16 +243,6 @@ router.get("/nombreyapellido", checkAuthMiddleware, (req, res, next) => {
       estudiantes: documents
     });
   });
-});
-
-//Prueba notif #resolve #borrar
-router.get("/notificacion", (req, res) => {
-  Suscripcion.notificar(
-    "5d7bfd1b93119f33f80819a1",
-    "Titulo",
-    "Notificación de prueba."
-  );
-  res.status(200).json({ message: "Prueba de notificación" });
 });
 
 //Obtiene los tutores de un estudiante

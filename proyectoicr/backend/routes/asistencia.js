@@ -6,6 +6,8 @@ const router = express.Router();
 const mongoose = require("mongoose");
 const checkAuthMiddleware = require("../middleware/check-auth");
 const ClaseAsistencia = require("../classes/asistencia");
+const Estudiante = require("../models/estudiante");
+const Suscripcion = require("../classes/suscripcion");
 
 //Retorna vector con datos de los estudiantes y presente. Si ya se registro una asistencia para
 //el dia de hoy se retorna ese valor de la asistencia, sino se "construye" una nueva
@@ -55,14 +57,12 @@ router.get("", checkAuthMiddleware, (req, res) => {
     var fechaHoy = new Date();
     fechaHoy.setHours(fechaHoy.getHours() - 3);
     //Compara si la ultima asistencia fue el dia de hoy
+    console.log(
+      ClaseAsistencia.esFechaActual(ultimaAsistencia[0].asistencia[0].fecha)
+    );
     if (
       ultimaAsistencia[0].asistencia.length > 0 &&
       ClaseAsistencia.esFechaActual(ultimaAsistencia[0].asistencia[0].fecha)
-      // fechaHoy.getDate() == ultimaAsistencia[0].asistencia[0].fecha.getDate() &&
-      // fechaHoy.getMonth() ==
-      //   ultimaAsistencia[0].asistencia[0].fecha.getMonth() &&
-      // fechaHoy.getFullYear() ==
-      //   ultimaAsistencia[0].asistencia[0].fecha.getFullYear()
     ) {
       Inscripcion.aggregate([
         {
@@ -112,9 +112,36 @@ router.get("", checkAuthMiddleware, (req, res) => {
             "asistencia._id": 1
           }
         }
-      ]).then(asistenciaCurso => {
+      ]).then(async asistenciaCurso => {
         var respuesta = [];
-        asistenciaCurso.forEach(estudiante => {
+        for (const estudiante of asistenciaCurso) {
+          if (estudiante.asistencia.length == 0) {
+            //Para el caso de que se haya inscripto un estudiante nuevo, este no tiene asistencia
+            //diaria, entonces la creamos y actualizamos su inscripcion
+            var asistenciaNuevaEstudiante = new AsistenciaDiaria({
+              idInscripcion: estudiante._id,
+              fecha: fechaHoy,
+              presente: true,
+              valorInasistencia: 0,
+              justificado: false,
+              llegadaTarde: 0
+            });
+            await asistenciaNuevaEstudiante.save().then(asistenciaGuardada => {
+              Inscripcion.findByIdAndUpdate(estudiante._id, {
+                $push: { asistenciaDiaria: asistenciaGuardada._id }
+              }).then(() => {
+                var estudianteRefinado = {
+                  _id: estudiante.datosEstudiante[0]._id,
+                  nombre: estudiante.datosEstudiante[0].nombre,
+                  apellido: estudiante.datosEstudiante[0].apellido,
+                  idAsistencia: asistenciaGuardada._id,
+                  fecha: fechaHoy,
+                  presente: true
+                };
+                respuesta.push(estudianteRefinado);
+              });
+            });
+          } else {
             var estudianteRefinado = {
               _id: estudiante.datosEstudiante[0]._id,
               nombre: estudiante.datosEstudiante[0].nombre,
@@ -124,7 +151,8 @@ router.get("", checkAuthMiddleware, (req, res) => {
               presente: estudiante.asistencia[0].presente
             };
             respuesta.push(estudianteRefinado);
-        });
+          }
+        }
         res
           .status(200)
           .json({ estudiantes: respuesta, asistenciaNueva: "false" });
@@ -278,12 +306,10 @@ router.post("/inasistencia/justificada", checkAuthMiddleware, (req, res) => {
       })
         .exec()
         .catch(() => {
-          res
-            .status(200)
-            .json({
-              message: "Ocurrió un error al querer justificar la inasistencia ",
-              exito: false
-            });
+          res.status(200).json({
+            message: "Ocurrió un error al querer justificar la inasistencia ",
+            exito: false
+          });
         });
     }
   });
@@ -543,6 +569,53 @@ router.post("/retiro", checkAuthMiddleware, (req, res) => {
                     inscripcion.contadorInasistenciasInjustificada +
                     actualizacionInasistencia;
                   inscripcion.save().then(() => {
+                    //Envio de notificación a los adultos responsables del estudiante. #working
+                    Estudiante.findById(req.body.idEstudiante).then(
+                      estudiante => {
+                        //Construcción del cuerpo de la notificación.
+                        var tutores = req.body.tutoresSeleccionados;
+                        var cuerpo =
+                          "Se ha registrado un retiro anticipado de " +
+                          estudiante.apellido +
+                          " " +
+                          estudiante.nombre +
+                          ". ";
+
+                        if (tutores.length > 0) {
+                          cuerpo =
+                            cuerpo +
+                            "El estudiante fue retirado por " +
+                            tutores[0].apellido +
+                            " " +
+                            tutores[0].nombre;
+
+                          for (let i = 0; i < tutores.length; i++) {
+                            if (i == tutores.length - 1) {
+                              cuerpo =
+                                cuerpo +
+                                " y " +
+                                tutores[i].apellido +
+                                " " +
+                                tutores[i].nombre;
+                            } else if (i != 0) {
+                              cuerpo =
+                                cuerpo +
+                                ", " +
+                                tutores[i].apellido +
+                                " " +
+                                tutores[i].nombre;
+                            }
+                            if (i == tutores.length - 1) cuerpo = cuerpo + ".";
+                          }
+                        }
+                        //Envio de la notificación
+                        Suscripcion.notificacionGrupal(
+                          ...estudiante.adultoResponsable,
+                          "Retiro anticipado",
+                          this.cuerpo
+                        );
+                      }
+                    );
                     res.status(200).json({
                       message: "Retiro anticipado exitosamente registrado",
                       exito: "exito"
