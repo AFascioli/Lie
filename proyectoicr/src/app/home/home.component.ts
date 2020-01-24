@@ -1,9 +1,13 @@
+import { async } from "@angular/core/testing";
+import { EventosService } from "./../eventos/eventos.service";
 import { Component, OnInit } from "@angular/core";
 import { SwPush } from "@angular/service-worker";
 import { AutenticacionService } from "../login/autenticacionService.service";
-import { Evento } from '../eventos/evento.model';
-import { EventosService } from '../eventos/eventos.service';
 import { Router } from "@angular/router";
+import { Evento } from "../eventos/evento.model";
+import { MatSnackBar, MatDialogRef, MatDialog } from "@angular/material";
+import { EventosService } from '../eventos/eventos.service';
+
 //Parche para la demo #resolve
 declare var require: any;
 
@@ -19,7 +23,15 @@ export class HomeComponent implements OnInit {
   readonly VAPID_PUBLIC =
     "BMlC2dLJTBP6T1GCl3S3sDBmhERNVcjN7ff2a6JAoOg8bA_qXjikveleRwjz0Zn8c9-58mnrNo2K4p07UPK0DKQ";
 
-  constructor(private swPush: SwPush, private servicioAuth: AutenticacionService, public router: Router, private servicioEvento: EventosService ) {}
+  evento: Evento;
+  constructor(
+    public snackBar: MatSnackBar,
+    private swPush: SwPush,
+    private servicioAuth: AutenticacionService,
+    public router: Router,
+    public servicioEvento: EventosService,
+    public dialog: MatDialog,
+  ) {}
 
   getImage(imgUrl){
     return require("backend/images/"+imgUrl)
@@ -78,4 +90,53 @@ export class HomeComponent implements OnInit {
         );
     }
   }
+  onEditar(titulo: string) {
+    this.servicioEvento.buscarEvento(titulo).subscribe(response => {
+      this.servicioEvento.evento = response.evento[0];
+      this.router.navigate(["./verEvento"]);
+    });
+  }
+  onBorrar(titulo: string) {
+    this.servicioEvento.tituloABorrar=titulo;
+    this.dialog.open(BorrarPopupComponent, {
+      width: "250px"
+    });
+    // this.servicioEvento.eliminarEvento(titulo);
+  }
+
+  conocerUsuarioLogueado(): boolean {
+    let mostrarBoton = false;
+    if (
+      this.servicio.getRol() == "Admin" // ||    this.servicio.getUsuarioAutenticado() == this.servicioEvento.evento.autor
+    )
+      mostrarBoton = true;
+    return mostrarBoton;
+  }
 }
+
+@Component({
+  selector: "app-borrar-popup",
+  templateUrl: "./borrar-popup.component.html",
+  styleUrls: ["./home.component.css"]
+})
+export class BorrarPopupComponent {
+  titulo:string;
+
+  constructor(
+    public dialogRef: MatDialogRef<BorrarPopupComponent>,
+    public router: Router,
+    public servicioEvento: EventosService,
+  ) {
+    this.titulo=this.servicioEvento.tituloABorrar;
+  }
+
+  onYesClick(): void {
+    this.servicioEvento.eliminarEvento(this.servicioEvento.tituloABorrar);
+    this.dialogRef.close();
+  }
+
+  onNoClick(): void {
+    this.dialogRef.close();
+  }
+}
+

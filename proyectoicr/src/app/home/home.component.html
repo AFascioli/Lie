@@ -2,11 +2,6 @@
   Instituto Cristo Rey
 </h1>
 
-<!-- <button mat-button
-(click)="testNP()">
- Prueba de notificación
-</button> -->
-
 <mat-card class="card-body-componente" *ngFor="let evento of eventos">
   <mat-card-title>
     <button (click)="eventoSeleccionado(evento)" class="titulo">{{ evento.titulo }}</button>
@@ -30,16 +25,28 @@
       {{ evento.descripcion }}
     </p>
   </mat-card-content>
+    <button
+      type="button"
+      mat-icon-button
+      class="botones"
+      *ngIf="conocerUsuarioLogueado()"
+    >
+      <mat-icon (click)="onEditar('Acto 25 de Mayo')">mode_edit </mat-icon>
+    </button>
+    <button
+      type="button"
+      mat-icon-button
+      class="botones"
+      *ngIf="conocerUsuarioLogueado()"
+    >
+      <mat-icon (click)="onBorrar('Acto 25 de Mayo')">delete </mat-icon>
+    </button>
 </mat-card>
-
 
 <!-- <mat-card class="card-body-componente">
   <mat-card-title>Acto 25 de Mayo</mat-card-title>
   <mat-card-subtitle>Acto de caracter obligatorio</mat-card-subtitle>
-  <img
-    mat-card-image
-    src="{{desfile}}"
-  />
+  <img mat-card-image src="{{ desfile }}" />
   <mat-card-content>
     <p class="parrafo">
       El día 25 de mayo se realizará en la institución el acto correspondiente,
@@ -53,7 +60,6 @@
     <button mat-button>No podré asistir</button>
   </mat-card-actions>
 </mat-card>
-
 
 <mat-card class="card-body-componente">
     <mat-card-title>Obras de Teatro</mat-card-title>

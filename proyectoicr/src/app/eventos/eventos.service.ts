@@ -1,3 +1,4 @@
+import { MatSnackBar } from "@angular/material";
 import { Comentario } from "./comentario.model";
 import { AutenticacionService } from "src/app/login/autenticacionService.service";
 import { HttpClient, HttpParams } from "@angular/common/http";
@@ -9,7 +10,11 @@ import { Evento } from "./evento.model";
   providedIn: "root"
 })
 export class EventosService {
+  public evento: Evento;
+  public tituloABorrar: string;
+
   constructor(
+    public snackBar: MatSnackBar,
     public http: HttpClient,
     public authService: AutenticacionService
   ) {}
@@ -47,6 +52,60 @@ export class EventosService {
       datosEvento
     );
   }
+  
+  //Modifica el evento en la base de datos
+  public ModificarEvento(
+    _id: string,
+    titulo: string,
+    descripcion: string,
+    fechaEvento: Date,
+    horaInicio: string,
+    horaFin: string,
+    tags: any[],
+    autor: string,
+    imgUrl: any
+  ) {
+    const eventoModificado: Evento = {
+      _id,
+      titulo,
+      descripcion,
+      fechaEvento,
+      horaInicio,
+      horaFin,
+      tags,
+      autor,
+      imgUrl
+    };
+    return this.http.patch<{ message: string; exito: boolean }>(
+      environment.apiUrl + "/evento/editar",
+      eventoModificado
+    );
+  }
+  // Me retorna todos los estudiantes cuyo nombre y apellido coinciden con los pasados por parámetro
+  // @params: titulo del evento
+  public buscarEvento(titulo: string) {
+    let params = new HttpParams().set("titulo", titulo);
+    return this.http.get<{ evento: Evento }>(
+      environment.apiUrl + "/evento/verEvento",
+      { params: params }
+    );
+  }
+
+  public eliminarEvento(titulo: string) {
+    let params = new HttpParams().set("titulo", titulo);
+    this.http
+      .delete<{ message: string; exito: boolean }>(
+        environment.apiUrl + "/evento/eliminarEvento",
+        { params: params }
+      )
+      .subscribe(response => {
+        if (response.exito) {
+          this.snackBar.open(response.message, "", {
+            panelClass: ["snack-bar-exito"],
+            duration: 4500
+          });
+        }
+      });
 
   //Obtiene todos los eventos que estan almacenados en la base de datos
   public obtenerEvento() {

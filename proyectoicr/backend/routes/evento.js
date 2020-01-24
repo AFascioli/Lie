@@ -1,12 +1,11 @@
 const express = require("express");
-const Estudiante = require("../models/estudiante");
+const Evento = require("../models/evento");
 const router = express.Router();
 const mongoose = require("mongoose");
 const AdultoResponsable = require("../models/adultoResponsable");
 const Empleado = require("../models/empleado");
 const checkAuthMiddleware = require("../middleware/check-auth");
 const multer = require("multer");
-const Evento = require("../models/evento");
 const Usuario = require("../models/usuario");
 const path = require("path");
 const Admin = require("../models/administrador");
@@ -223,6 +222,58 @@ router.post("/registrarComentario", async (req, res, next) => {
       nombre: nombre,
       apellido: apellido
     });
+  });
+});
+//Modifica el evento en la base de datos
+//@params: evento a publicar
+router.patch("/editar", checkAuthMiddleware, (req, res, next) => {
+  Evento.findByIdAndUpdate(req.body._id, {
+    titulo: req.body.titulo,
+    descripcion: req.body.descripcion,
+    fechaEvento: req.body.fechaEvento,
+    horaInicio: req.body.horaInicio,
+    horaFin: req.body.horaFin,
+    tags: req.body.tags,
+    imgUrl: req.body.imgUrl,
+    autor: req.body.autor
+  })
+    .then(() => {
+      res.status(200).json({
+        message: "Evento modificado exitosamente",
+        exito: true
+      });
+    })
+    .catch(() => {
+      res.status(200).json({
+        message: "Ocurrió un problema al intentar modificar el evento",
+        exito: false
+      });
+    });
+});
+
+router.get("/verEvento", checkAuthMiddleware, (req, res) => {
+  Evento.aggregate([
+    {
+      $match: {
+        titulo: req.query.titulo
+      }
+    }
+  ]).then(eventoEncontrado => {
+    return res.status(200).json({
+      message: "Devolvio el evento correctamente",
+      exito: true,
+      evento: eventoEncontrado
+    });
+  });
+});
+
+router.delete("/eliminarEvento", checkAuthMiddleware, (req, res, next) => {
+  Evento.deleteOne({
+    titulo: req.query.titulo
+  }).exec();
+    return res.status(202).json({
+      message: "Evento eliminado exitosamente",
+      exito: true
   });
 });
 

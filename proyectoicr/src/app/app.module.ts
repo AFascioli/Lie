@@ -94,6 +94,7 @@ import {
   PreferenciasComponent,
   PreferenciasPopupComponent
 } from "./menu-lateral/preferencias/preferencias.component";
+import { BorrarPopupComponent } from "./home/home.component";
 import { ServiceWorkerModule } from "@angular/service-worker";
 import { environment } from "../environments/environment";
 import { InasistenciasEstudianteComponent } from "./perfil-estudiante/inasistencias-estudiante/inasistencias-estudiante.component";
@@ -101,6 +102,7 @@ import { TutoresEstudianteComponent } from "./perfil-estudiante/tutores-estudian
 import { DatosEstudianteComponent } from "./perfil-estudiante/datos-estudiante/datos-estudiante.component";
 import { CalificacionesExamenesComponent } from "./calificaciones/calificaciones-examenes/calificaciones-examenes.component";
 import { RegistrarEventoComponent } from "./eventos/registrar-evento/registrar-evento.component";
+import { ModificarEventoComponent } from "./eventos/modificar-evento/modificar-evento.component";
 import { VisualizarEventoComponent } from './eventos/visualizar-evento/visualizar-evento.component';
 import { MatCarouselModule } from '@ngmodule/material-carousel';
 
@@ -113,6 +115,7 @@ import { MatCarouselModule } from '@ngmodule/material-carousel';
     MostrarEstudiantesComponent,
     CancelPopupComponent,
     MostrarPopupComponent,
+    BorrarPopupComponent,
     PreferenciasPopupComponent,
     MenuLateralComponent,
     HomeComponent,
@@ -145,12 +148,14 @@ import { MatCarouselModule } from '@ngmodule/material-carousel';
     DatosEstudianteComponent,
     CalificacionesExamenesComponent,
     RegistrarEventoComponent,
+    ModificarEventoComponent,
     VisualizarEventoComponent
   ],
   //entryComponents declara los componentes que se generan dinamicamente dentro de otros.
   entryComponents: [
     CancelPopupComponent,
     MostrarPopupComponent,
+    BorrarPopupComponent,
     AsistenciaPopupComponent,
     PerfilEstudiantePopupComponent,
     BuscarPopupComponent,

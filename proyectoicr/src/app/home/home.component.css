@@ -85,3 +85,11 @@ time.icon span {
   padding-top: 0.8em;
   color: #2f2f2f;
 }
+
+.botones{
+    margin-left: auto !important;
+}
+
+.botones:hover {
+  background-color:#bbded6;
+}
