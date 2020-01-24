@@ -30,6 +30,7 @@ import { InasistenciasEstudianteComponent } from "./perfil-estudiante/inasistenc
 import { DatosEstudianteComponent } from "./perfil-estudiante/datos-estudiante/datos-estudiante.component";
 import { TutoresEstudianteComponent } from "./perfil-estudiante/tutores-estudiante/tutores-estudiante.component";
 import { ModificarEventoComponent } from "./eventos/modificar-evento/modificar-evento.component";
+import { VisualizarEventoComponent } from './eventos/visualizar-evento/visualizar-evento.component';
 
 const routes: Routes = [
   { path: "login", component: LoginComponent },
@@ -44,6 +45,7 @@ const routes: Routes = [
         redirectTo: "home"
       },
       { path: "home", component: HomeComponent },
+      { path: "visualizarEvento", component: VisualizarEventoComponent },
       {
         path: "alta",
         component: AltaEstudiantesComponent,

@@ -18,13 +18,19 @@ const eventoRoutes = require("./routes/evento");
 
 const app = express(); // Creo la app express
 
-app.use("/images", express.static(path.join("backend/images")));
+app.use("/images", express.static(path.join("../images")));
+
+app.use('/static', express.static(path.join("images", 'public')))
+
+app.use(express.static('../images'));
+
+// app.use(express.static("backend/images", 'public'));
 
 // Mongodb password: SNcjNuPBMG42lOh1
 /* Conectamos a la bd y segun lo que responda ese metodo (la promesa) imprimimos en consola
    lo que corresponda*/
 
-// // Conexión a base de producción
+// Conexión a base de producción
 //  mongoose
 //   .connect(
 //      "mongodb+srv://ComandanteJr:SNcjNuPBMG42lOh1@cluster0-qvosw.mongodb.net/icrdev?retryWrites=true",
@@ -37,7 +43,7 @@ app.use("/images", express.static(path.join("backend/images")));
 //      console.log("Fallo conexión a la base de datos de producción");
 //    });
 
-//Conexión a base local
+// Conexión a base local
 mongoose.connect('mongodb://127.0.0.1:27017/icr-local',{useNewUrlParser: true, useUnifiedTopology: true  })
 .then(() => {
   console.log('Conexión a base de datos local exitosa');

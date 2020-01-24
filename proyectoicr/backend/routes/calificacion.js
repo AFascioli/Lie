@@ -5,6 +5,7 @@ const mongoose = require("mongoose");
 const ClaseCXM = require("../classes/calificacionXMateria");
 
 //Dado un id de estudiante obtiene todas las materias desaprobadas
+//Falta testeo exhaustivo
 router.get("/materiasDesaprobadas", (req, res) => {
   Inscripcion.aggregate([
     {
@@ -53,20 +54,19 @@ router.get("/materiasDesaprobadas", (req, res) => {
       }
     }
   ]).then(materias => {
-    //#resolve: fijarse si no hay materias desaprobadas y revisar todo
     ClaseCXM.obtenerMateriasDesaprobadas(
       materias[0].materiasPendientesNombres,
       materias[0].CXM,
       materias[0].nombreCXM
     ).then(materiasDesaprobadas => {
       if (materiasDesaprobadas.length !=0) {
-        res.status(200).json({
+        return res.status(200).json({
           message: "Materias desaprobadas obtenidas correctamente",
           exito: true,
           materiasDesaprobadas: materiasDesaprobadas
         });
       } else {
-        res.status(200).json({
+        return res.status(200).json({
           message: "El alumno seleccionado no tiene materias desaprobadas",
           exito: true,
           materiasDesaprobadas: []

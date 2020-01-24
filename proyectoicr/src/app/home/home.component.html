@@ -2,14 +2,29 @@
   Instituto Cristo Rey
 </h1>
 
-<!-- <button mat-button
-(click)="testNP()">
- Prueba de notificación
-</button> -->
-
-<mat-card class="card-body-componente">
-  <mat-card-title
-    >Acto 25 de Mayo
+<mat-card class="card-body-componente" *ngFor="let evento of eventos">
+  <mat-card-title>
+    <button (click)="eventoSeleccionado(evento)" class="titulo">{{ evento.titulo }}</button>
+    <div class="fechaEvento">
+      <time datetime="evento.fechaEvento" class="icon">
+      <strong>{{obtenerMes(evento.fechaEvento)}}</strong>
+      <span>{{obtenerDia(evento.fechaEvento)}}</span>
+    </time>
+    </div>
+  </mat-card-title>
+  <mat-card-subtitle>{{ evento.horaInicio }} - {{ evento.horaFin }}</mat-card-subtitle>
+  <img mat-card-image [src]="getImage(evento.imgUrl)" />
+  <mat-chip-list>
+     <p class="textoParticipan"> Participan:</p>
+    <mat-chip *ngFor="let tag of evento.tags">
+      {{tag}}
+    </mat-chip>
+  </mat-chip-list>
+  <mat-card-content>
+    <p class="descripcion">
+      {{ evento.descripcion }}
+    </p>
+  </mat-card-content>
     <button
       type="button"
       mat-icon-button
@@ -26,7 +41,10 @@
     >
       <mat-icon (click)="onBorrar('Acto 25 de Mayo')">delete </mat-icon>
     </button>
-  </mat-card-title>
+</mat-card>
+
+<!-- <mat-card class="card-body-componente">
+  <mat-card-title>Acto 25 de Mayo</mat-card-title>
   <mat-card-subtitle>Acto de caracter obligatorio</mat-card-subtitle>
   <img mat-card-image src="{{ desfile }}" />
   <mat-card-content>
@@ -44,22 +62,25 @@
 </mat-card>
 
 <mat-card class="card-body-componente">
-  <mat-card-title>Obras de Teatro</mat-card-title>
-  <mat-card-subtitle>Acto de caracter no obligatorio</mat-card-subtitle>
-  <img mat-card-image src="{{ obra }}" />
-  <mat-card-content>
-    <p class="parrafo">
-      El día viernes 22 de noviembre se realizará en la institución la
-      presentación de las obras de teatro que fueron desarrolladas en el marco
-      de la asignatura "Teatro" a lo largo del presente año. El evento va a ser
-      presentado por los dos cursos que se encuentran cursando sexto año. La
-      obra a presentar por 6 "A" se llama "Bernarnarda Alba" y la del 6 "B" "se
-      llama "Fahrenheit 451". Esperamos que puedan acompañarnos y disfrutarlas
-      junto a nosotros!
-    </p>
-  </mat-card-content>
-  <mat-card-actions>
-    <button mat-button>Allí estaré</button>
-    <button mat-button>No podré asistir</button>
-  </mat-card-actions>
-</mat-card>
+    <mat-card-title>Obras de Teatro</mat-card-title>
+    <mat-card-subtitle>Acto de caracter no obligatorio</mat-card-subtitle>
+    <img
+      mat-card-image
+      src="{{obra}}"
+    />
+    <mat-card-content>
+      <p class="parrafo">
+        El día viernes 22 de noviembre se realizará en la institución la
+        presentación de las obras de teatro que fueron desarrolladas en el marco
+        de la asignatura "Teatro" a lo largo del presente año. El evento va a ser
+        presentado por los dos cursos que se encuentran cursando sexto año. La
+        obra a presentar por 6 "A" se llama "Bernarnarda Alba" y la del 6 "B" "se
+        llama "Fahrenheit 451". Esperamos que puedan acompañarnos y disfrutarlas
+        junto a nosotros!
+      </p>
+    </mat-card-content>
+    <mat-card-actions>
+      <button mat-button>Allí estaré</button>
+      <button mat-button>No podré asistir</button>
+    </mat-card-actions>
+  </mat-card> -->

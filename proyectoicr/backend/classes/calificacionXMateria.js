@@ -147,7 +147,7 @@ exports.obtenerMateriasDesaprobadasv2 = async function(
   idEstado
 ) {
   var idsCXMDesaprobadas = [];
-  for (const cxm of idsCalificacionesXMateria){
+  for (const cxm of idsCalificacionesXMateria) {
     await CalificacionesXMateria.findOne({ _id: cxm, estado: idEstado }).then(
       cxmEncontrada => {
         if (cxmEncontrada != null) {

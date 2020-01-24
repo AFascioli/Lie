@@ -6,6 +6,7 @@ import { AutenticacionService } from "../login/autenticacionService.service";
 import { Router } from "@angular/router";
 import { Evento } from "../eventos/evento.model";
 import { MatSnackBar, MatDialogRef, MatDialog } from "@angular/material";
+import { EventosService } from '../eventos/eventos.service';
 
 //Parche para la demo #resolve
 declare var require: any;
@@ -16,6 +17,9 @@ declare var require: any;
   styleUrls: ["./home.component.css"]
 })
 export class HomeComponent implements OnInit {
+  eventos: Evento[];
+  imagen;
+  fechaActual;
   readonly VAPID_PUBLIC =
     "BMlC2dLJTBP6T1GCl3S3sDBmhERNVcjN7ff2a6JAoOg8bA_qXjikveleRwjz0Zn8c9-58mnrNo2K4p07UPK0DKQ";
 
@@ -23,13 +27,32 @@ export class HomeComponent implements OnInit {
   constructor(
     public snackBar: MatSnackBar,
     private swPush: SwPush,
-    private servicio: AutenticacionService,
+    private servicioAuth: AutenticacionService,
     public router: Router,
     public servicioEvento: EventosService,
     public dialog: MatDialog,
   ) {}
 
+  getImage(imgUrl){
+    return require("backend/images/"+imgUrl)
+  }
+
+  obtenerMes(fechaEvento){
+    let fecha = new Date(fechaEvento);
+    let rtdoMes= fecha.toLocaleString('es-ES', { month: 'long' });
+    return rtdoMes.charAt(0).toUpperCase()+rtdoMes.slice(1);
+  }
+
+  obtenerDia(fechaEvento){
+    let fecha = new Date(fechaEvento);
+    return fecha.getDate();
+  }
+
   ngOnInit() {
+    this.fechaActual = new Date();
+    this.servicioEvento.obtenerEvento().subscribe(rtdo => {
+      this.eventos = rtdo.eventos;
+    })
     if ("serviceWorker" in navigator) {
       navigator.serviceWorker.register("ngsw-worker.js").then(swreg => {
         if (swreg.active) {
@@ -38,10 +61,16 @@ export class HomeComponent implements OnInit {
         }
       });
     }
+    this.servicioEvento.eventoSeleccionado=null;
   }
 
-  obra = require("../../img/acto.jpg");
-  desfile = require("../../img/desfile.jpg");
+  eventoSeleccionado(evento: Evento){
+    this.servicioEvento.eventoSeleccionado= evento;
+    this.router.navigate(["/visualizarEvento"]);
+  }
+
+  // obra = require("../../img/acto.jpg");
+  // desfile = require("../../img/desfile.jpg");
 
   subscribeToNotifications() {
     if (Notification.permission === "granted") {
@@ -52,8 +81,8 @@ export class HomeComponent implements OnInit {
           serverPublicKey: this.VAPID_PUBLIC
         })
         .then(pushsub => {
-          this.servicio.addPushSubscriber(pushsub).subscribe(res => {
-            console.log("Se suscribió a recibir notificaciones push.");
+          this.servicioAuth.addPushSubscriber(pushsub).subscribe(res => {
+            console.log('Se suscribió a recibir notificaciones push.');
           });
         })
         .catch(err =>

@@ -245,16 +245,6 @@ router.get("/nombreyapellido", checkAuthMiddleware, (req, res, next) => {
   });
 });
 
-//Prueba notif #resolve #borrar
-router.get("/notificacion", (req, res) => {
-  Suscripcion.notificar(
-    "5d7bfd1b93119f33f80819a1",
-    "Titulo",
-    "Notificación de prueba."
-  );
-  res.status(200).json({ message: "Prueba de notificación" });
-});
-
 //Obtiene los tutores de un estudiante
 router.get("/tutores", (req, res) => {
   Estudiante.aggregate([
