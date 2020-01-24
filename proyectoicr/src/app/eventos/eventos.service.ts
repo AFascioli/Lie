@@ -52,7 +52,7 @@ export class EventosService {
       datosEvento
     );
   }
-  
+
   //Modifica el evento en la base de datos
   public ModificarEvento(
     _id: string,
@@ -63,7 +63,8 @@ export class EventosService {
     horaFin: string,
     tags: any[],
     autor: string,
-    imgUrl: any
+    imgUrl: any,
+    comentarios: any[]
   ) {
     const eventoModificado: Evento = {
       _id,
@@ -74,7 +75,8 @@ export class EventosService {
       horaFin,
       tags,
       autor,
-      imgUrl
+      imgUrl,
+      comentarios
     };
     return this.http.patch<{ message: string; exito: boolean }>(
       environment.apiUrl + "/evento/editar",
@@ -106,7 +108,7 @@ export class EventosService {
           });
         }
       });
-
+  }
   //Obtiene todos los eventos que estan almacenados en la base de datos
   public obtenerEvento() {
     return this.http.get<{ eventos: Evento[]; message: string; exito: string }>(

@@ -169,7 +169,8 @@ export class ModificarEventoComponent implements OnInit {
             this.horaFin,
             this.chips,
             this.eventoService.evento.autor,
-            this.eventoService.evento.imgUrl
+            this.eventoService.evento.imgUrl,
+            []
           )
           .subscribe(rtdo => {
             if (rtdo.exito) {
@@ -195,7 +196,8 @@ export class ModificarEventoComponent implements OnInit {
             this.horaFin,
             this.chips,
             this.eventoService.evento.autor,
-            this.eventoService.evento.imgUrl
+            this.eventoService.evento.imgUrl,
+            []
           )
           .subscribe(rtdo => {
             if (rtdo.exito) {

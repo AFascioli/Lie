@@ -6,7 +6,6 @@ import { AutenticacionService } from "../login/autenticacionService.service";
 import { Router } from "@angular/router";
 import { Evento } from "../eventos/evento.model";
 import { MatSnackBar, MatDialogRef, MatDialog } from "@angular/material";
-import { EventosService } from '../eventos/eventos.service';
 
 //Parche para la demo #resolve
 declare var require: any;
@@ -107,7 +106,7 @@ export class HomeComponent implements OnInit {
   conocerUsuarioLogueado(): boolean {
     let mostrarBoton = false;
     if (
-      this.servicio.getRol() == "Admin" // ||    this.servicio.getUsuarioAutenticado() == this.servicioEvento.evento.autor
+      this.servicioAuth.getRol() == "Admin" // ||    this.servicio.getUsuarioAutenticado() == this.servicioEvento.evento.autor
     )
       mostrarBoton = true;
     return mostrarBoton;
