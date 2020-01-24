@@ -10,6 +10,7 @@ const Evento = require("../models/evento");
 const Usuario = require("../models/usuario");
 const path = require("path");
 const Admin = require("../models/administrador");
+const Suscripcion = require("../classes/suscripcion");
 
 const MIME_TYPE_MAPA = {
   "image/png": "png",
@@ -52,12 +53,93 @@ router.post("/registrar", upload, (req, res, next) => {
       imgUrl: req.file.filename,
       autor: usuario._id
     });
-    evento.save().then(() => {
-      res.status(201).json({
-        message: "Evento creado existosamente",
-        exito: true
-      });
-    });
+    var cuerpo = "El evento se realizará en la fecha " + evento.fechaEvento + ".";
+    var idtutores;
+    // NOTIFICACIÓN
+    //Construcción de cuerpo de la notificación
+
+    // Notificar a los adultos que correspondan a los cursos de los tags/chips
+    if (tags.includes("Todos los cursos")) {
+      Suscripcion.notificacionMasiva(evento.titulo, this.cuerpo);
+    } else {
+      Inscripcion.agreggate([
+        {
+          '$lookup': {
+            'from': 'curso',
+            'localField': 'idCurso',
+            'foreignField': '_id',
+            'as': 'icurso'
+          }
+        }, {
+          '$unwind': {
+            'path': '$icurso',
+            'preserveNullAndEmptyArrays': false
+          }
+        }, {
+          '$match': {
+            '$expr': {
+              '$in': [
+                '$icurso.curso', [
+                  '5A'
+                ]
+              ]
+            }
+          }
+        }, {
+          '$lookup': {
+            'from': 'estudiante',
+            'localField': 'idEstudiante',
+            'foreignField': '_id',
+            'as': 'conest'
+          }
+        }, {
+          '$unwind': {
+            'path': '$conest',
+            'preserveNullAndEmptyArrays': false
+          }
+        }, {
+          '$unwind': {
+            'path': '$conest.adultoResponsable',
+            'preserveNullAndEmptyArrays': false
+          }
+        }, {
+          '$lookup': {
+            'from': 'adultoResponsable',
+            'localField': 'idAdulto',
+            'foreignField': 'string',
+            'as': 'conadulto'
+          }
+        }, {
+          '$unwind': {
+            'path': '$conadulto',
+            'preserveNullAndEmptyArrays': false
+          }
+        }, {
+          '$project': {
+            '_id': 0,
+            'conadulto.idUsuario': 1
+          }
+        }
+      ]).then(response =>{
+        response.forEach(conadulto => {
+          idtutores.push(conadulto[0].idUsuario);
+        });
+        Suscripcion.notificacionGrupal(
+          idtutores, // Tutores de los cursos seleccionados
+          evento.titulo,
+          this.cuerpo
+        );
+      })
+
+    }
+
+    // evento.save().then(() => {
+    //   //Completar con código de la notificación COMPLETAR CON LO DE ARRIBA
+    //   res.status(201).json({
+    //     message: "Evento creado existosamente",
+    //     exito: true
+    //   });
+    // });
   });
 });
 

@@ -96,10 +96,11 @@ export class AsistenciaService {
   //Registra el retiro anticipado y el tipo para que se aplique la inasistencia correspondiente
   //@params: booleano: si es true el estudiante se retiró antes de las 10 am
   //@params: id del estudiante
-  public registrarRetiroAnticipado(idEstudiante: string, antes10am: Boolean) {
+  //@params:
+  public registrarRetiroAnticipado(idEstudiante: string, antes10am: Boolean, tutoresSeleccionados: Array<any>) {
     return this.http.post<{ message: string; exito: string }>(
       environment.apiUrl + "/asistencia/retiro",
-      { idEstudiante: idEstudiante, antes10am: antes10am }
+      { idEstudiante: idEstudiante, antes10am: antes10am, tutoresSeleccionados: tutoresSeleccionados }
     );
   }
 }
