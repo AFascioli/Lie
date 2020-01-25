@@ -86,10 +86,34 @@ time.icon span {
   color: #2f2f2f;
 }
 
-.botones{
+.botonEditar, .botonBorrar{
     margin-left: auto !important;
+    display: flex;
 }
 
-.botones:hover {
+
+.mat-icon{
+  margin-left: 8px !important;
+  margin-bottom: 5px !important;
+}
+
+.botonEditar:hover, .botonBorrar:hover {
   background-color:#bbded6;
+}
+
+.containerImg .botonEditar{
+  position: absolute;
+  right:8%;
+  bottom:4%;
+  margin-right: 20px !important;
+}
+
+.containerImg .botonBorrar{
+  position: absolute;
+  right:1%;
+  bottom:4%;
+}
+
+.containerImg{
+  position: relative;
 }
