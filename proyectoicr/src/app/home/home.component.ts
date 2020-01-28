@@ -1,3 +1,4 @@
+import { environment } from 'src/environments/environment';
 import { async } from "@angular/core/testing";
 import { EventosService } from "./../eventos/eventos.service";
 import { Component, OnInit } from "@angular/core";
@@ -33,7 +34,7 @@ export class HomeComponent implements OnInit {
   ) {}
 
   getImage(imgUrl){
-    return require("backend/images/"+imgUrl)
+      return `${environment.apiUrl}/evento/imagenes?imgUrl=${imgUrl}`
   }
 
   obtenerMes(fechaEvento){

@@ -116,6 +116,14 @@ export class EventosService {
     );
   }
 
+  //Obtiene la imagen de un evento dada su url
+  public obtenerImagenEvento(imgUrl: string) {
+    let params = new HttpParams().set("imgUrl", imgUrl);
+    return this.http.get<File>(
+      environment.apiUrl + "/evento/imagenes",{params: params}
+    );
+  }
+
   //Obtiene todos los comentarios de un evento que estan almacenados en la base de datos
   //@params: id del evento
   public obtenerComentariosDeEvento() {

@@ -153,6 +153,11 @@ router.get("", (req, res, next) => {
   });
 });
 
+//Retorna la imagen de un evento dada su url
+router.get("/imagenes",(req, res, next) => {
+  res.sendFile(path.join(__dirname, '../images', req.query.imgUrl));
+});
+
 //Obtiene todos los comentarios de un evento que estan almacenados en la base de datos
 //@params: id del evento
 router.get("/comentarios", (req, res, next) => {
