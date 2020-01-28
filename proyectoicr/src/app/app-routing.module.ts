@@ -31,6 +31,7 @@ import { DatosEstudianteComponent } from "./perfil-estudiante/datos-estudiante/d
 import { TutoresEstudianteComponent } from "./perfil-estudiante/tutores-estudiante/tutores-estudiante.component";
 import { ModificarEventoComponent } from "./eventos/modificar-evento/modificar-evento.component";
 import { VisualizarEventoComponent } from './eventos/visualizar-evento/visualizar-evento.component';
+import { VisualizarAgendaComponent } from './visualizar-agenda/visualizar-agenda.component';
 
 const routes: Routes = [
   { path: "login", component: LoginComponent },
@@ -223,6 +224,10 @@ const routes: Routes = [
       {
         path: "preferencias",
         component: PreferenciasComponent
+      },
+      {
+        path: "visualizarAgenda",
+        component: VisualizarAgendaComponent
       }
     ]
   }
