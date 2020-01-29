@@ -29,20 +29,20 @@ export class HomeComponent implements OnInit {
     private servicioAuth: AutenticacionService,
     public router: Router,
     public servicioEvento: EventosService,
-    public dialog: MatDialog,
+    public dialog: MatDialog
   ) {}
 
-  getImage(imgUrl){
-    return require("backend/images/"+imgUrl)
+  getImage(imgUrl) {
+    return require("backend/images/" + imgUrl);
   }
 
-  obtenerMes(fechaEvento){
+  obtenerMes(fechaEvento) {
     let fecha = new Date(fechaEvento);
-    let rtdoMes= fecha.toLocaleString('es-ES', { month: 'long' });
-    return rtdoMes.charAt(0).toUpperCase()+rtdoMes.slice(1);
+    let rtdoMes = fecha.toLocaleString("es-ES", { month: "long" });
+    return rtdoMes.charAt(0).toUpperCase() + rtdoMes.slice(1);
   }
 
-  obtenerDia(fechaEvento){
+  obtenerDia(fechaEvento) {
     let fecha = new Date(fechaEvento);
     return fecha.getDate();
   }
@@ -51,7 +51,7 @@ export class HomeComponent implements OnInit {
     this.fechaActual = new Date();
     this.servicioEvento.obtenerEvento().subscribe(rtdo => {
       this.eventos = rtdo.eventos;
-    })
+    });
     if ("serviceWorker" in navigator) {
       navigator.serviceWorker.register("ngsw-worker.js").then(swreg => {
         if (swreg.active) {
@@ -60,11 +60,11 @@ export class HomeComponent implements OnInit {
         }
       });
     }
-    this.servicioEvento.eventoSeleccionado=null;
+    this.servicioEvento.eventoSeleccionado = null;
   }
 
-  eventoSeleccionado(evento: Evento){
-    this.servicioEvento.eventoSeleccionado= evento;
+  eventoSeleccionado(evento: Evento) {
+    this.servicioEvento.eventoSeleccionado = evento;
     this.router.navigate(["/visualizarEvento"]);
   }
 
@@ -81,7 +81,7 @@ export class HomeComponent implements OnInit {
         })
         .then(pushsub => {
           this.servicioAuth.addPushSubscriber(pushsub).subscribe(res => {
-            console.log('Se suscribió a recibir notificaciones push.');
+            console.log("Se suscribió a recibir notificaciones push.");
           });
         })
         .catch(err =>
@@ -96,11 +96,10 @@ export class HomeComponent implements OnInit {
     });
   }
   onBorrar(titulo: string) {
-    this.servicioEvento.tituloABorrar=titulo;
+    this.servicioEvento.tituloABorrar = titulo;
     this.dialog.open(BorrarPopupComponent, {
       width: "250px"
     });
-    // this.servicioEvento.eliminarEvento(titulo);
   }
 
   conocerUsuarioLogueado(): boolean {
@@ -116,17 +115,19 @@ export class HomeComponent implements OnInit {
 @Component({
   selector: "app-borrar-popup",
   templateUrl: "./borrar-popup.component.html",
-  styleUrls: ["./home.component.css"]
+  styleUrls: [
+    "../estudiantes/mostrar-estudiantes/mostrar-estudiantes.component.css"
+  ]
 })
 export class BorrarPopupComponent {
-  titulo:string;
+  titulo: string;
 
   constructor(
     public dialogRef: MatDialogRef<BorrarPopupComponent>,
     public router: Router,
-    public servicioEvento: EventosService,
+    public servicioEvento: EventosService
   ) {
-    this.titulo=this.servicioEvento.tituloABorrar;
+    this.titulo = this.servicioEvento.tituloABorrar;
   }
 
   onYesClick(): void {
@@ -138,4 +139,3 @@ export class BorrarPopupComponent {
     this.dialogRef.close();
   }
 }
-

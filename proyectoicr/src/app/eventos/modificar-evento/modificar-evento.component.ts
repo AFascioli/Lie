@@ -1,3 +1,4 @@
+import { Comentario } from './../comentario.model';
 import { Component, OnInit, ElementRef, ViewChild } from "@angular/core";
 import { COMMA, ENTER } from "@angular/cdk/keycodes";
 import { FormControl, NgForm } from "@angular/forms";
@@ -60,6 +61,7 @@ export class ModificarEventoComponent implements OnInit {
     this.cursos = this.eventoService.evento.tags;
     this.chips = this.eventoService.evento.tags;
     this.imagenEvento = this.eventoService.evento.imgUrl;
+    this.imgURL= this.getImage(this.imagenEvento);
     //Hace que funcione el autocomplete, filtra
 
     this.filteredChips = this.chipsCtrl.valueChanges.pipe(
@@ -151,7 +153,7 @@ export class ModificarEventoComponent implements OnInit {
     this.imagePath = files;
     reader.readAsDataURL(files[0]);
     reader.onload = _event => {
-      this.imgURL = reader.result;
+    this.imgURL = reader.result;
     };
   }
 
@@ -169,8 +171,8 @@ export class ModificarEventoComponent implements OnInit {
             this.horaFin,
             this.chips,
             this.eventoService.evento.autor,
-            this.eventoService.evento.imgUrl,
-            []
+            this.imgURL,
+            this.eventoService.evento.comentarios
           )
           .subscribe(rtdo => {
             if (rtdo.exito) {
@@ -196,8 +198,8 @@ export class ModificarEventoComponent implements OnInit {
             this.horaFin,
             this.chips,
             this.eventoService.evento.autor,
-            this.eventoService.evento.imgUrl,
-            []
+            this.imgURL,
+            this.eventoService.evento.comentarios
           )
           .subscribe(rtdo => {
             if (rtdo.exito) {
@@ -241,5 +243,8 @@ export class ModificarEventoComponent implements OnInit {
     this.dialog.open(CancelPopupComponent, {
       width: "250px"
     });
+  }
+  getImage(imgUrl) {
+    return require("backend/images/" + imgUrl);
   }
 }

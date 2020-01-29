@@ -21,7 +21,7 @@
       class="botonEditar"
       *ngIf="conocerUsuarioLogueado()"
     >
-      <mat-icon (click)="onEditar('Acto 25 de Mayo')">mode_edit </mat-icon>
+      <mat-icon (click)="onEditar(evento.titulo)">mode_edit </mat-icon>
     </button>
     <button
       type="button"
@@ -29,7 +29,7 @@
       class="botonBorrar"
       *ngIf="conocerUsuarioLogueado()"
     >
-      <mat-icon (click)="onBorrar('Acto 25 de Mayo')">delete </mat-icon>
+      <mat-icon (click)="onBorrar(evento.titulo)">delete </mat-icon>
     </button>
   </div>
   <mat-chip-list>
