@@ -166,14 +166,15 @@ export class ModificarEventoComponent implements OnInit {
     if (form.valid && this.chips.length != 0) {
       const fechaEvento = form.value.fechaEvento.toString();
       if (this.horaInicio == "" && this.horaFin == "") {
+        console.log("entro por el hora ''" + this.horaFin + " , " + this.horaFinal)
         this.eventoService
           .ModificarEvento(
             this.eventoService.evento._id,
             form.value.titulo,
             form.value.descripcion,
             fechaEvento,
-            this.horaInicio,
-            this.horaFin,
+            this.horaInicial,
+            this.horaFinal,
             this.chips,
             this.eventoService.evento.autor,
             this.imgURL,
@@ -193,6 +194,7 @@ export class ModificarEventoComponent implements OnInit {
             }
           });
       } else if (this.horaEventoEsValido(this.horaInicio, this.horaFin)) {
+        console.log("entro por el hora no ''" + this.horaFin + " , " + this.horaFinal)
         this.eventoService
           .ModificarEvento(
             this.eventoService.evento._id,
