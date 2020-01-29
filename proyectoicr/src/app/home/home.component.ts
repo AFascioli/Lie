@@ -50,6 +50,7 @@ export class HomeComponent implements OnInit {
   ngOnInit() {
     this.fechaActual = new Date();
     this.servicioEvento.obtenerEvento().subscribe(rtdo => {
+      console.log(rtdo);
       this.eventos = rtdo.eventos;
     });
     if ("serviceWorker" in navigator) {

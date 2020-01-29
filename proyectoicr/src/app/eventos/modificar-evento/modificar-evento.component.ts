@@ -14,11 +14,15 @@ import { MatSnackBar, MatDialog } from "@angular/material";
 import Rolldate from "../../../assets/rolldate.min.js";
 import { CancelPopupComponent } from "src/app/popup-genericos/cancel-popup.component";
 
+//Parche para la demo #resolve
+declare var require: any;
+
 @Component({
   selector: "app-modificar-evento",
   templateUrl: "./modificar-evento.component.html",
   styleUrls: ["./modificar-evento.component.css"]
 })
+
 export class ModificarEventoComponent implements OnInit {
   @ViewChild("chipsInput", { static: false }) chipsInput: ElementRef<
     HTMLInputElement
@@ -39,6 +43,7 @@ export class ModificarEventoComponent implements OnInit {
   horaInicio = "";
   horaFin = "";
   //HTML
+
 
   tituloEvento: string;
   descripcionDelEvento: string;

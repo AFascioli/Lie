@@ -4,15 +4,19 @@
 
 <mat-card class="card-body-componente" *ngFor="let evento of eventos">
   <mat-card-title>
-    <button (click)="eventoSeleccionado(evento)" class="titulo">{{ evento.titulo }}</button>
+    <button (click)="eventoSeleccionado(evento)" class="titulo">
+      {{ evento.titulo }}
+    </button>
     <div class="fechaEvento">
       <time datetime="evento.fechaEvento" class="icon">
-      <strong>{{obtenerMes(evento.fechaEvento)}}</strong>
-      <span>{{obtenerDia(evento.fechaEvento)}}</span>
-    </time>
+        <strong>{{ obtenerMes(evento.fechaEvento) }}</strong>
+        <span>{{ obtenerDia(evento.fechaEvento) }}</span>
+      </time>
     </div>
   </mat-card-title>
-  <mat-card-subtitle>{{ evento.horaInicio }} - {{ evento.horaFin }}</mat-card-subtitle>
+  <mat-card-subtitle
+    >{{ evento.horaInicio }} - {{ evento.horaFin }}</mat-card-subtitle
+  >
   <div class="containerImg">
     <img mat-card-image [src]="getImage(evento.imgUrl)" />
     <button
@@ -33,9 +37,9 @@
     </button>
   </div>
   <mat-chip-list>
-     <p class="textoParticipan"> Participan:</p>
+    <p class="textoParticipan">Participan:</p>
     <mat-chip *ngFor="let tag of evento.tags">
-      {{tag}}
+      {{ tag }}
     </mat-chip>
   </mat-chip-list>
   <mat-card-content>
@@ -43,7 +47,11 @@
       {{ evento.descripcion }}
     </p>
   </mat-card-content>
-
+  <div class="botonVisualizar">
+    <button class="botonComentario" (click)="eventoSeleccionado(evento)">
+      Ver comentarios
+    </button>
+  </div>
 </mat-card>
 
 <!-- <mat-card class="card-body-componente">
