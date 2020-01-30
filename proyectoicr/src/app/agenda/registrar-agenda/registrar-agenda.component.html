@@ -1,0 +1,117 @@
+<h1 class="componente-titulo">
+  Definir agenda de curso
+</h1>
+
+<mat-card class="card-body-componente">
+  <form>
+    <mat-form-field>
+      <mat-select
+        placeholder="Seleccione curso"
+        name="curso"
+        ngModel
+        #curso="ngModel"
+        matNativeControl
+        required
+      >
+        <mat-option *ngFor="let objCurso of cursos" [value]="objCurso.id">
+          {{ objCurso.curso }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+  </form>
+  <mat-card class="card-body-componente">
+    <div>
+      <h3>Materia seleccionada</h3>
+      <mat-form-field>
+        <mat-select
+          placeholder="Seleccione materia"
+          name="materia"
+          ngModel
+          #materia="ngModel"
+          matNativeControl
+          required
+        >
+          <mat-option
+            *ngFor="let objMateria of materias"
+            [value]="objMateria.id"
+          >
+            {{ objMateria }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field>
+        <mat-select
+          placeholder="Seleccione docente"
+          name="docente"
+          ngModel
+          #docente="ngModel"
+          matNativeControl
+          required
+        >
+          <mat-option
+            *ngFor="let objDocente of docentes"
+            [value]="objDocente.id"
+          >
+            {{ objDocente }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+    <br>
+    <hr>
+    <br />
+    <div>
+    <mat-form-field>
+      <mat-select
+        placeholder="Seleccione dia"
+        name="dia"
+        ngModel
+        #dia="ngModel"
+        matNativeControl
+        required
+      >
+        <mat-option *ngFor="let objDia of dias" [value]="objDia">
+          {{ objDia }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field class="matFormHora">
+      <div class="hora">
+        <input
+          matInput
+          name="horaInicio"
+          ngModel
+          #horaInicio="ngModel"
+          placeholder="Hora inicio"
+          id="pickerInicio"
+          readonly
+        />
+      </div>
+    </mat-form-field>
+    <mat-form-field class="matFormHora">
+      <div class="hora">
+        <input
+          matInput
+          name="horaFin"
+          ngModel
+          #horaFin="ngModel"
+          placeholder="Hora fin"
+          id="pickerFin"
+          readonly
+        />
+      </div>
+    </mat-form-field>
+  </div>
+    <br />
+    <div class="div-buttons">
+      <button mat-raised-button>
+        <mat-icon>add_circle_outline</mat-icon> Agregar otro horario
+      </button>
+    </div>
+  </mat-card>
+  <div class="div-buttons">
+    <button mat-raised-button>
+      <mat-icon>add_circle_outline</mat-icon> Agregar otra materia
+    </button>
+  </div>
+</mat-card>
