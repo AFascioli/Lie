@@ -9,6 +9,7 @@ import Rolldate from "../../../assets/rolldate.min.js";
 })
 export class RegistrarAgendaComponent implements OnInit {
   cursos: any[];
+  idCursoSeleccionado: string;
   materias: any[];
   docentes: any[];
   dias: any[] = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes'];
@@ -22,6 +23,11 @@ export class RegistrarAgendaComponent implements OnInit {
     this.inicializarPickers();
   }
 
+  obtenerMaterias(idCurso){
+    this.servicioEstudiante.obtenerMateriasDeCurso(idCurso.value).subscribe(rtdo => {
+      this.materias = rtdo.materias;
+    });
+  }
 
   inicializarPickers() {
     new Rolldate({
