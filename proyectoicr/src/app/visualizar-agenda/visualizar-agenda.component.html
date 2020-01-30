@@ -16,6 +16,5 @@
   <div class="hora modulo9">13:00 - 13:45</div>
   <div class="hora modulo10">13:45 - 14:30</div>
 
-  <div class="materia" id="1">{{materiaObj.nombre}}</div>
-  <div class="materia" id="2">{{materiaObj2.nombre}}</div>
+  <div class="materia" *ngFor="let materia of materias; let i=index" [id]="i">{{materia.nombre}}</div>
 </div>

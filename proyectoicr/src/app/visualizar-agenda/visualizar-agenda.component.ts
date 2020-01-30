@@ -1,3 +1,4 @@
+import { AgendaService } from './agenda.service';
 import { Component, OnInit } from "@angular/core";
 
 @Component({
@@ -20,25 +21,18 @@ export class VisualizarAgendaComponent implements OnInit {
     "13:00",
     "13:45"
   ];
-  materiaObj = {
-    nombre: "Matemáticas",
-    dia: "Miercoles",
-    inicio: "09:15",
-    fin: "11:30"
-  };
-
-  materiaObj2 = {
-    nombre: "Matemáticas",
-    dia: "Miercoles",
-    inicio: "11:30",
-    fin: "12:15"
-  };
-
-  constructor() {}
+  materias=[];
+  constructor(public servicioAgenda: AgendaService) {}
 
   ngOnInit() {
-    this.acomodarEnGrilla("1", this.materiaObj);
-    this.acomodarEnGrilla("2", this.materiaObj2);
+    this.materias=this.servicioAgenda.obtenerMaterias();
+  }
+
+  //Este metodo dado por angular se ejecuta una vez que se cargo todo el html :D
+  ngAfterViewInit(){
+    this.materias.forEach((materia, index) => {
+      this.acomodarEnGrilla(index.toString(), materia);
+    });
   }
 
   //Dada la id de un elemento HTML, le pone el respectivo css para acomodarlo en la grilla
