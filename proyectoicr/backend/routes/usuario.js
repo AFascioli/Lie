@@ -79,7 +79,7 @@ router.post("/login", (req, res) => {
               token: token,
               duracionToken: 43200,
               rol: rol.tipo,
-              idPersona: idPersona,
+              idPersona: usuarioEncontrado._id,
               message: "Bienvenido a Lié",
               exito: true
             });

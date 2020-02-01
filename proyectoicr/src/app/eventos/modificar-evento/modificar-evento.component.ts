@@ -1,4 +1,4 @@
-import { Comentario } from './../comentario.model';
+import { Comentario } from "./../comentario.model";
 import { Component, OnInit, ElementRef, ViewChild } from "@angular/core";
 import { COMMA, ENTER } from "@angular/cdk/keycodes";
 import { FormControl, NgForm } from "@angular/forms";
@@ -22,7 +22,6 @@ declare var require: any;
   templateUrl: "./modificar-evento.component.html",
   styleUrls: ["./modificar-evento.component.css"]
 })
-
 export class ModificarEventoComponent implements OnInit {
   @ViewChild("chipsInput", { static: false }) chipsInput: ElementRef<
     HTMLInputElement
@@ -43,7 +42,6 @@ export class ModificarEventoComponent implements OnInit {
   horaInicio = "";
   horaFin = "";
   //HTML
-
 
   tituloEvento: string;
   descripcionDelEvento: string;
@@ -66,7 +64,7 @@ export class ModificarEventoComponent implements OnInit {
     this.cursos = this.eventoService.evento.tags;
     this.chips = this.eventoService.evento.tags;
     this.imagenEvento = this.eventoService.evento.imgUrl;
-    this.imgURL= this.getImage(this.imagenEvento);
+    this.imgURL = this.getImage(this.imagenEvento);
     //Hace que funcione el autocomplete, filtra
 
     this.filteredChips = this.chipsCtrl.valueChanges.pipe(
@@ -158,7 +156,7 @@ export class ModificarEventoComponent implements OnInit {
     this.imagePath = files;
     reader.readAsDataURL(files[0]);
     reader.onload = _event => {
-    this.imgURL = reader.result;
+      this.imgURL = reader.result;
     };
   }
 

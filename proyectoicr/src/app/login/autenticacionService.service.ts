@@ -37,6 +37,7 @@ export class AutenticacionService {
   //Obtine la info guardada en el local storage y si no se vencio en token lo autentica al usuario
   public autenticacionAutomatica() {
     const infoAutenticacion = this.obtenerDatosAutenticacion();
+    console.log(infoAutenticacion);
     if (!infoAutenticacion) {
       return;
     }
@@ -123,6 +124,7 @@ export class AutenticacionService {
     rol: string,
     id: string
   ) {
+    console.log("lo que guarda el storage "+ id);
     localStorage.setItem("token", token);
     localStorage.setItem("vencimiento", fechaVencimiento.toISOString());
     localStorage.setItem("usuario", usuario);
@@ -211,6 +213,7 @@ export class AutenticacionService {
       .subscribe(response => {
         respuesta = response;
         if (response.token) {
+          console.log('response' + response.idPersona);
           this.usuarioAutenticado = email;
           this.token = response.token;
           const duracionToken = response.duracionToken;

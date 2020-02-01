@@ -103,10 +103,11 @@ export class HomeComponent implements OnInit {
     });
   }
 
-  conocerUsuarioLogueado(): boolean {
+  conocerUsuarioLogueado(indiceEvento): boolean {
     let mostrarBoton = false;
     if (
-      this.servicioAuth.getRol() == "Admin" // ||    this.servicio.getUsuarioAutenticado() == this.servicioEvento.evento.autor
+      this.servicioAuth.getRol() == "Admin" ||
+      this.servicioAuth.getId() == this.eventos[indiceEvento].autor
     )
       mostrarBoton = true;
     return mostrarBoton;
