@@ -85,16 +85,16 @@ export class EventosService {
   }
   // Me retorna todos los estudiantes cuyo nombre y apellido coinciden con los pasados por parámetro
   // @params: titulo del evento
-  public buscarEvento(titulo: string) {
-    let params = new HttpParams().set("titulo", titulo);
+  public buscarEvento(_id) {
+    let params = new HttpParams().set("_id", _id);
     return this.http.get<{ evento: Evento }>(
       environment.apiUrl + "/evento/verEvento",
       { params: params }
     );
   }
 
-  public eliminarEvento(titulo: string) {
-    let params = new HttpParams().set("titulo", titulo);
+  public eliminarEvento(_id) {
+    let params = new HttpParams().set("_id", _id);
     this.http
       .delete<{ message: string; exito: boolean }>(
         environment.apiUrl + "/evento/eliminarEvento",

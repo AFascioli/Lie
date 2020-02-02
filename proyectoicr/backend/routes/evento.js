@@ -252,25 +252,9 @@ router.patch("/editar", checkAuthMiddleware, (req, res, next) => {
     });
 });
 
-router.get("/verEvento", checkAuthMiddleware, (req, res) => {
-  Evento.aggregate([
-    {
-      $match: {
-        titulo: req.query.titulo
-      }
-    }
-  ]).then(eventoEncontrado => {
-    return res.status(200).json({
-      message: "Devolvio el evento correctamente",
-      exito: true,
-      evento: eventoEncontrado
-    });
-  });
-});
-
 router.delete("/eliminarEvento", checkAuthMiddleware, (req, res, next) => {
-  Evento.deleteOne({
-    titulo: req.query.titulo
+  Evento.findByIdAndDelete({
+    _id: req.query._id
   }).exec();
     return res.status(202).json({
       message: "Evento eliminado exitosamente",

@@ -1,4 +1,3 @@
-import { async } from "@angular/core/testing";
 import { EventosService } from "./../eventos/eventos.service";
 import { Component, OnInit } from "@angular/core";
 import { SwPush } from "@angular/service-worker";
@@ -90,14 +89,12 @@ export class HomeComponent implements OnInit {
         );
     }
   }
-  onEditar(titulo: string) {
-    this.servicioEvento.buscarEvento(titulo).subscribe(response => {
-      this.servicioEvento.evento = response.evento[0];
-      this.router.navigate(["./verEvento"]);
-    });
+  onEditar(evento) {
+    this.servicioEvento.evento = evento;
+    this.router.navigate(["./verEvento"]);
   }
-  onBorrar(titulo: string) {
-    this.servicioEvento.tituloABorrar = titulo;
+  onBorrar(evento) {
+    this.servicioEvento.evento = evento;
     this.dialog.open(BorrarPopupComponent, {
       width: "250px"
     });
@@ -122,18 +119,18 @@ export class HomeComponent implements OnInit {
   ]
 })
 export class BorrarPopupComponent {
-  titulo: string;
+ // titulo: string;
 
   constructor(
     public dialogRef: MatDialogRef<BorrarPopupComponent>,
     public router: Router,
     public servicioEvento: EventosService
   ) {
-    this.titulo = this.servicioEvento.tituloABorrar;
+    //this.eve = this.servicioEvento.evento.titulo;
   }
 
   onYesClick(): void {
-    this.servicioEvento.eliminarEvento(this.servicioEvento.tituloABorrar);
+    this.servicioEvento.eliminarEvento(this.servicioEvento.evento._id);
     this.dialogRef.close();
   }
 
