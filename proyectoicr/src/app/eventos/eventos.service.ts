@@ -63,21 +63,27 @@ export class EventosService {
     horaFin: string,
     tags: any[],
     autor: string,
-    imgUrl: any,
+    image: File,
     comentarios: any[]
   ) {
-    const eventoModificado: Evento = {
-      _id,
-      titulo,
-      descripcion,
-      fechaEvento,
-      horaInicio,
-      horaFin,
-      tags,
-      autor,
-      imgUrl,
-      comentarios
-    };
+    let imgUrl = image[0].name;
+    const fechaEventoS = fechaEvento.toString();
+    const eventoModificado = new FormData();
+    eventoModificado.append("_id", _id);
+    eventoModificado.append("image", image[0], imgUrl);
+    eventoModificado.append("titulo", titulo);
+    eventoModificado.append("descripcion", descripcion);
+    eventoModificado.append("fechaEvento", fechaEventoS);
+    eventoModificado.append("horaInicio", horaInicio);
+    eventoModificado.append("horaFin", horaFin);
+    eventoModificado.append("imgUrl", imgUrl);
+    for (var i = 0; i < tags.length; i++) {
+      eventoModificado.append("tags", tags[i]);
+    }
+    eventoModificado.append("autor", autor);
+    for (var i = 0; i < comentarios.length; i++) {
+      eventoModificado.append("comentarios", comentarios[i]);
+    }
     return this.http.patch<{ message: string; exito: boolean }>(
       environment.apiUrl + "/evento/editar",
       eventoModificado

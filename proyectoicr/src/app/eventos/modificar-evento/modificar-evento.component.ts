@@ -174,7 +174,7 @@ export class ModificarEventoComponent implements OnInit {
             this.horaFinal,
             this.chips,
             this.eventoService.evento.autor,
-            this.imgURL,
+            this.imagePath,
             this.eventoService.evento.comentarios
           )
           .subscribe(rtdo => {
@@ -201,7 +201,7 @@ export class ModificarEventoComponent implements OnInit {
             this.horaFin,
             this.chips,
             this.eventoService.evento.autor,
-            this.imgURL,
+            this.imagePath,
             this.eventoService.evento.comentarios
           )
           .subscribe(rtdo => {

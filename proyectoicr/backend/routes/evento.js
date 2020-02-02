@@ -53,7 +53,8 @@ router.post("/registrar", upload, (req, res, next) => {
       imgUrl: req.file.filename,
       autor: usuario._id
     });
-    var cuerpo = "El evento se realizará en la fecha " + evento.fechaEvento + ".";
+    var cuerpo =
+      "El evento se realizará en la fecha " + evento.fechaEvento + ".";
     var idtutores;
     // NOTIFICACIÓN
     //Construcción de cuerpo de la notificación
@@ -183,14 +184,14 @@ router.post("/registrarComentario", async (req, res, next) => {
           idUsuario = usuario.idUsuario;
           resolve({ apellido: apellido, nombre: nombre, idUsuario: idUsuario });
         });
-      } else if(rol == "Admin"){
+      } else if (rol == "Admin") {
         Admin.findOne({ email: emailUsuario }).then(usuario => {
           apellido = usuario.apellido;
           nombre = usuario.nombre;
           idUsuario = usuario.idUsuario;
           resolve({ apellido: apellido, nombre: nombre, idUsuario: idUsuario });
         });
-      }else{
+      } else {
         Empleado.findOne({ email: emailUsuario }).then(usuario => {
           apellido = usuario.apellido;
           nombre = usuario.nombre;
@@ -227,7 +228,7 @@ router.post("/registrarComentario", async (req, res, next) => {
 });
 //Modifica el evento en la base de datos
 //@params: evento a publicar
-router.patch("/editar", checkAuthMiddleware, (req, res, next) => {
+router.patch("/editar", upload, (req, res, next) => {
   Evento.findByIdAndUpdate(req.body._id, {
     titulo: req.body.titulo,
     descripcion: req.body.descripcion,
@@ -235,7 +236,7 @@ router.patch("/editar", checkAuthMiddleware, (req, res, next) => {
     horaInicio: req.body.horaInicio,
     horaFin: req.body.horaFin,
     tags: req.body.tags,
-    imgUrl: req.body.imgUrl,
+    imgUrl: req.file.filename,
     autor: req.body.autor
   })
     .then(() => {
@@ -256,9 +257,9 @@ router.delete("/eliminarEvento", checkAuthMiddleware, (req, res, next) => {
   Evento.findByIdAndDelete({
     _id: req.query._id
   }).exec();
-    return res.status(202).json({
-      message: "Evento eliminado exitosamente",
-      exito: true
+  return res.status(202).json({
+    message: "Evento eliminado exitosamente",
+    exito: true
   });
 });
 
