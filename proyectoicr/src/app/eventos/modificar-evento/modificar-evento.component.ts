@@ -1,4 +1,3 @@
-import { Comentario } from "./../comentario.model";
 import { Component, OnInit, ElementRef, ViewChild } from "@angular/core";
 import { COMMA, ENTER } from "@angular/cdk/keycodes";
 import { FormControl, NgForm } from "@angular/forms";
@@ -130,7 +129,19 @@ export class ModificarEventoComponent implements OnInit {
   }
 
   selected(event: MatAutocompleteSelectedEvent): void {
-    this.chips.push(event.option.viewValue);
+    if (event.option.viewValue == "Todos los cursos") {
+      this.chips = [];
+      this.chips.push(event.option.viewValue);
+    } else if (
+      !this.chips.includes(event.option.viewValue) &&
+      !this.cursos.includes(event.option.viewValue) &&
+      !this.chips.includes("Todos los cursos")
+    )
+      this.chips.push(event.option.viewValue);
+    if (this.chips.length == this.allChips.length - 1) {
+      this.chips = [];
+      this.chips.push("Todos los cursos");
+    }
     this.chipsInput.nativeElement.value = "";
     this.chipsCtrl.setValue(null);
   }
