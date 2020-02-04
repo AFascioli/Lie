@@ -182,6 +182,7 @@ export class RegistrarEventoComponent implements OnInit {
                 panelClass: ["snack-bar-exito"],
                 duration: 4500
               });
+              form.resetForm();
             } else {
               this.snackBar.open(rtdo.message, "", {
                 duration: 4500,
