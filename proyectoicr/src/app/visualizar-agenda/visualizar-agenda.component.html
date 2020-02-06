@@ -1,0 +1,20 @@
+<div class="grid-container">
+  <div class="cabecera">Hora</div>
+  <div class="cabecera">Lunes</div>
+  <div class="cabecera">Martes</div>
+  <div class="cabecera">Miércoles</div>
+  <div class="cabecera">Jueves</div>
+  <div class="cabecera">Viernes</div>
+  <div class="hora modulo1">07:00 - 07:45</div>
+  <div class="hora modulo2">07:45 - 08:30</div>
+  <div class="hora modulo3">08:30 - 09:15</div>
+  <div class="hora modulo4">09:15 - 10:00</div>
+  <div class="hora modulo5">10:00 - 10:45</div>
+  <div class="hora modulo6">10:45 - 11:30</div>
+  <div class="hora modulo7">11:30 - 12:15</div>
+  <div class="hora modulo8">12:15 - 13:00</div>
+  <div class="hora modulo9">13:00 - 13:45</div>
+  <div class="hora modulo10">13:45 - 14:30</div>
+
+  <div class="materia" *ngFor="let materia of materias; let i=index" [id]="i">{{materia.nombre}}</div>
+</div>

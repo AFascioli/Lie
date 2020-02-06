@@ -99,8 +99,9 @@ export class RegistrarEventoComponent implements OnInit {
       }
     });
   }
-  remove(fruit: string): void {
-    const index = this.chips.indexOf(fruit);
+
+  remove(chip: string): void {
+    const index = this.chips.indexOf(chip);
 
     if (index >= 0) {
       this.chips.splice(index, 1);
@@ -193,6 +194,7 @@ export class RegistrarEventoComponent implements OnInit {
                 panelClass: ["snack-bar-exito"],
                 duration: 4500
               });
+              form.resetForm();
             } else {
               this.snackBar.open(rtdo.message, "", {
                 duration: 4500,

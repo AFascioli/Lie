@@ -5,6 +5,7 @@ import { EventosService } from "../eventos.service";
 import { Evento } from "../evento.model";
 import { Comentario } from "../comentario.model";
 import { Router } from "@angular/router";
+import { environment } from 'src/environments/environment';
 declare var require: any;
 
 @Component({
@@ -35,7 +36,7 @@ export class VisualizarEventoComponent implements OnInit {
   }
 
   getImage(imgUrl) {
-    return require("backend/images/" + imgUrl);
+    return `${environment.apiUrl}/evento/imagenes?imgUrl=${imgUrl}`
   }
 
   obtenerMes(fechaEvento) {

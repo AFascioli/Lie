@@ -1,3 +1,5 @@
+import { environment } from 'src/environments/environment';
+import { async } from "@angular/core/testing";
 import { EventosService } from "./../eventos/eventos.service";
 import { Component, OnInit } from "@angular/core";
 import { SwPush } from "@angular/service-worker";
@@ -31,8 +33,8 @@ export class HomeComponent implements OnInit {
     public dialog: MatDialog
   ) {}
 
-  getImage(imgUrl) {
-    return require("backend/images/" + imgUrl);
+  getImage(imgUrl){
+      return `${environment.apiUrl}/evento/imagenes?imgUrl=${imgUrl}`
   }
 
   obtenerMes(fechaEvento) {
