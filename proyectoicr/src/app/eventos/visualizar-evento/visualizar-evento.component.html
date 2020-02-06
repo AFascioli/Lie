@@ -20,7 +20,7 @@
   >
     <mat-carousel-slide overlayColor="transparent" [image]="getImage(evento.imgUrl)"></mat-carousel-slide>
     <mat-carousel-slide overlayColor="transparent" [image]="getImage('acto.6a876ba866add45c1f70.jpg-1577996177889.jpg')"></mat-carousel-slide>
-  </mat-carousel> -->
+  </mat-carousel>
   <!-- <img class="imagenEvento" [src]="getImage(evento.imgUrl)" /> -->
   <mat-chip-list>
     <p class="textoParticipan"><b>Participan:</b></p>
@@ -63,17 +63,18 @@
   </div>
   <br />
   <mat-divider class="divisor"></mat-divider>
-  <p class="tituloComentarios"><b style="font-size: 28px;">Comentarios</b></p>
-  <!-- <mat-accordion class="example-headers-align">
+  <!-- <p class="tituloComentarios"><b style="font-size: 28px;">Comentarios</b></p> -->
+  <br>
+  <mat-accordion class="example-headers-align">
     <mat-expansion-panel hideToggle>
       <mat-expansion-panel-header>
         <mat-panel-title>
-          Comentarios
+          <b>Comentarios</b>
         </mat-panel-title>
         <mat-panel-description>
           <mat-icon>menu_book</mat-icon>
         </mat-panel-description>
-      </mat-expansion-panel-header> -->
+      </mat-expansion-panel-header>
   <div class="test" *ngFor="let comentario of comentarios">
     <div class="datosComentario">
       <p class="nombreAutor">
@@ -89,6 +90,6 @@
     <p class="textoComentario">{{ comentario.comentario }}</p>
     <mat-divider [inset]="true"></mat-divider>
   </div>
-  <!-- </mat-expansion-panel>
-  </mat-accordion> -->
+  </mat-expansion-panel>
+  </mat-accordion>
 </mat-card>

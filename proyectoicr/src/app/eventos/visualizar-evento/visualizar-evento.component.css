@@ -15,6 +15,7 @@ textarea {
   font-size: 20px;
 } */
 
+
 .titulo {
   text-align: center;
   font-size: 35px;
@@ -154,7 +155,8 @@ mat-icon {
 }
 .textoComentario{
     border-radius: 25px;
-    background: rgb(199, 201, 197);
+    /* background: rgb(231, 232, 230); */
+    background: white;
     padding: 20px;
     margin-top:0%;
     margin-left: 2%;
@@ -177,5 +179,9 @@ mat-icon {
 
 ::ng-deep .mat-mini-fab.mat-warn [ng-reflect-disabled="false"]{
   background-color: white !important;
+}
+
+.mat-expansion-panel{
+  box-shadow: none;
 }
 
