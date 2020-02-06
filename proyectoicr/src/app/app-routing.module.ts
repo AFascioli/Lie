@@ -32,6 +32,7 @@ import { TutoresEstudianteComponent } from "./perfil-estudiante/tutores-estudian
 import { ModificarEventoComponent } from "./eventos/modificar-evento/modificar-evento.component";
 import { VisualizarEventoComponent } from './eventos/visualizar-evento/visualizar-evento.component';
 import { VisualizarAgendaComponent } from './visualizar-agenda/visualizar-agenda.component';
+import { RegistrarAgendaComponent } from './agenda/registrar-agenda/registrar-agenda.component';
 
 const routes: Routes = [
   { path: "login", component: LoginComponent },
@@ -45,6 +46,7 @@ const routes: Routes = [
         pathMatch: "full",
         redirectTo: "home"
       },
+      { path: "registrarAgenda", component: RegistrarAgendaComponent },
       { path: "home", component: HomeComponent },
       { path: "visualizarEvento", component: VisualizarEventoComponent },
       {

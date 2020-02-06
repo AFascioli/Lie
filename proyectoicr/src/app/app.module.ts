@@ -108,6 +108,7 @@ import { ModificarEventoComponent } from "./eventos/modificar-evento/modificar-e
 import { VisualizarEventoComponent } from './eventos/visualizar-evento/visualizar-evento.component';
 import { MatCarouselModule } from '@ngmodule/material-carousel';
 import { VisualizarAgendaComponent } from './visualizar-agenda/visualizar-agenda.component';
+import { RegistrarAgendaComponent } from './agenda/registrar-agenda/registrar-agenda.component';
 
 @NgModule({
   declarations: [
@@ -153,7 +154,8 @@ import { VisualizarAgendaComponent } from './visualizar-agenda/visualizar-agenda
     RegistrarEventoComponent,
     ModificarEventoComponent,
     VisualizarEventoComponent,
-    VisualizarAgendaComponent
+    VisualizarAgendaComponent,
+    RegistrarAgendaComponent
   ],
   //entryComponents declara los componentes que se generan dinamicamente dentro de otros.
   entryComponents: [
