@@ -107,6 +107,7 @@ import { getDutchPaginatorIntl } from "./calificaciones/calificaciones-estudiant
 import { ModificarEventoComponent } from "./eventos/modificar-evento/modificar-evento.component";
 import { VisualizarEventoComponent } from './eventos/visualizar-evento/visualizar-evento.component';
 import { MatCarouselModule } from '@ngmodule/material-carousel';
+import { VisualizarAgendaComponent } from './visualizar-agenda/visualizar-agenda.component';
 import { RegistrarAgendaComponent } from './agenda/registrar-agenda/registrar-agenda.component';
 
 @NgModule({
@@ -153,6 +154,7 @@ import { RegistrarAgendaComponent } from './agenda/registrar-agenda/registrar-ag
     RegistrarEventoComponent,
     ModificarEventoComponent,
     VisualizarEventoComponent,
+    VisualizarAgendaComponent,
     RegistrarAgendaComponent
   ],
   //entryComponents declara los componentes que se generan dinamicamente dentro de otros.
