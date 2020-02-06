@@ -6,8 +6,8 @@
 .mat-card-subtitle {
   text-align: center;
   font-size: 20px;
+  margin-bottom: 20px;
 }
-
 
 .titulo:hover {
   text-decoration: underline;
@@ -25,7 +25,7 @@ button {
 
 .fechaEvento {
   position: absolute;
-  top: 7px;
+  top: 9px;
   right: 20px;
   width: 6em;
 }
@@ -86,10 +86,49 @@ time.icon span {
   color: #2f2f2f;
 }
 
-.botones{
-    margin-left: auto !important;
+.botonEditar,
+.botonBorrar {
+  margin-left: auto !important;
+  display: flex;
 }
 
-.botones:hover {
-  background-color:#bbded6;
+.mat-icon {
+  margin-left: 8px !important;
+  margin-bottom: 5px !important;
+}
+
+.botonEditar:hover,
+.botonBorrar:hover {
+  background-color: #bbded6;
+}
+
+.containerImg .botonEditar {
+  position: absolute;
+  right: 8%;
+  bottom: 4%;
+  margin-right: 20px !important;
+}
+
+.containerImg .botonBorrar {
+  position: absolute;
+  right: 1%;
+  bottom: 4%;
+}
+
+.containerImg {
+  position: relative;
+}
+
+.botonVisualizar {
+  text-align: center;
+}
+
+.botonComentario {
+  background: rgba(0, 0, 0, 0.79) !important;
+  color: white;
+  font-size: 20px;
+  border-radius: 25px;
+  padding: 10px !important;
+  padding-left: 15px !important;
+  padding-right: 15px !important;
 }

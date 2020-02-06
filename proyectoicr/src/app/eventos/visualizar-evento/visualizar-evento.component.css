@@ -159,3 +159,23 @@ mat-icon {
     margin-top:0%;
     margin-left: 2%;
 }
+
+/* .carousel[_ngcontent-dwo-c14] > button[_ngcontent-dwo-c14] > mat-icon[_ngcontent-dwo-c14] {
+  background: white !important;
+  border-radius: 50% !important; */
+/* } */
+
+::ng-deep .mat-button-wrapper > mat-icon.notranslate.material-icons.mat-icon-no-color.ng-star-inserted {
+  background: white !important;
+  border-radius: 50% !important;
+  color: black !important;
+}
+
+::ng-deep .mat-mini-fab.mat-warn[disabled], .mat-mini-fab[disabled][disabled]{
+  background-color: rgba(27, 11, 97, 0.938);
+}
+
+::ng-deep .mat-mini-fab.mat-warn [ng-reflect-disabled="false"]{
+  background-color: white !important;
+}
+

@@ -13,6 +13,9 @@ import { MatSnackBar, MatDialog } from "@angular/material";
 import Rolldate from "../../../assets/rolldate.min.js";
 import { CancelPopupComponent } from "src/app/popup-genericos/cancel-popup.component";
 
+//Parche para la demo #resolve
+declare var require: any;
+
 @Component({
   selector: "app-modificar-evento",
   templateUrl: "./modificar-evento.component.html",
@@ -60,6 +63,7 @@ export class ModificarEventoComponent implements OnInit {
     this.cursos = this.eventoService.evento.tags;
     this.chips = this.eventoService.evento.tags;
     this.imagenEvento = this.eventoService.evento.imgUrl;
+    this.imgURL = this.getImage(this.imagenEvento);
     //Hace que funcione el autocomplete, filtra
 
     this.filteredChips = this.chipsCtrl.valueChanges.pipe(
@@ -125,7 +129,19 @@ export class ModificarEventoComponent implements OnInit {
   }
 
   selected(event: MatAutocompleteSelectedEvent): void {
-    this.chips.push(event.option.viewValue);
+    if (event.option.viewValue == "Todos los cursos") {
+      this.chips = [];
+      this.chips.push(event.option.viewValue);
+    } else if (
+      !this.chips.includes(event.option.viewValue) &&
+      !this.cursos.includes(event.option.viewValue) &&
+      !this.chips.includes("Todos los cursos")
+    )
+      this.chips.push(event.option.viewValue);
+    if (this.chips.length == this.allChips.length - 1) {
+      this.chips = [];
+      this.chips.push("Todos los cursos");
+    }
     this.chipsInput.nativeElement.value = "";
     this.chipsCtrl.setValue(null);
   }
@@ -165,12 +181,12 @@ export class ModificarEventoComponent implements OnInit {
             form.value.titulo,
             form.value.descripcion,
             fechaEvento,
-            this.horaInicio,
-            this.horaFin,
+            this.horaInicial,
+            this.horaFinal,
             this.chips,
             this.eventoService.evento.autor,
-            this.eventoService.evento.imgUrl,
-            []
+            this.imagePath,
+            this.eventoService.evento.comentarios
           )
           .subscribe(rtdo => {
             if (rtdo.exito) {
@@ -196,8 +212,8 @@ export class ModificarEventoComponent implements OnInit {
             this.horaFin,
             this.chips,
             this.eventoService.evento.autor,
-            this.eventoService.evento.imgUrl,
-            []
+            this.imagePath,
+            this.eventoService.evento.comentarios
           )
           .subscribe(rtdo => {
             if (rtdo.exito) {
@@ -241,5 +257,8 @@ export class ModificarEventoComponent implements OnInit {
     this.dialog.open(CancelPopupComponent, {
       width: "250px"
     });
+  }
+  getImage(imgUrl) {
+    return require("backend/images/" + imgUrl);
   }
 }
