@@ -35,6 +35,9 @@ export class VisualizarAgendaComponent implements OnInit {
     });
   }
 
+  //Ver si se puede hacer que cada div de materia tenga su propio color para
+  //que sea mas facil de ver en la grilla
+
   //Dada la id de un elemento HTML, le pone el respectivo css para acomodarlo en la grilla
   acomodarEnGrilla(id: string, materiaObj: any) {
     let elem: HTMLElement = document.getElementById(id);
