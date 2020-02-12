@@ -1,6 +1,8 @@
+import { element } from 'protractor';
 import { Component, OnInit } from "@angular/core";
 import { EstudiantesService } from "src/app/estudiantes/estudiante.service";
 import Rolldate from "../../../assets/rolldate.min.js";
+import { tick } from '@angular/core/testing';
 
 @Component({
   selector: "app-registrar-agenda",
@@ -15,12 +17,16 @@ export class RegistrarAgendaComponent implements OnInit {
   dias: any[] = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes'];
   horaInicio: any;
   horaFin: any;
+  elementos=[1]; //#resolve Usado para agregar un nuevo horario
 
   constructor(public servicioEstudiante: EstudiantesService) {}
 
   ngOnInit() {
     this.obtenerCursos();
-    this.inicializarPickers();
+  }
+
+  ngAfterViewInit(){
+    this.inicializarPickers("#pickerInicio0","#pickerFin0");
   }
 
   obtenerMaterias(idCurso){
@@ -29,13 +35,13 @@ export class RegistrarAgendaComponent implements OnInit {
     });
   }
 
-  inicializarPickers() {
+  inicializarPickers(id1:string, id2:string) {
     new Rolldate({
-      el: "#pickerInicio",
+      el: id1,
       format: "hh:mm",
       minStep: 15,
       lang: {
-        title: "Seleccione hora de inicio del evento",
+        title: "Seleccione hora de inicio",
         hour: "",
         min: ""
       },
@@ -44,16 +50,15 @@ export class RegistrarAgendaComponent implements OnInit {
       }
     });
     new Rolldate({
-      el: "#pickerFin",
+      el: id2,
       format: "hh:mm",
       minStep: 15,
-      lang: { title: "Seleccione hora de fin del evento", hour: "", min: "" },
+      lang: { title: "Seleccione hora de fin", hour: "", min: "" },
       confirm: date => {
         this.horaFin = date;
       }
     });
   }
-
 
   obtenerCursos() {
     this.servicioEstudiante.obtenerCursos().subscribe(response => {
@@ -66,5 +71,35 @@ export class RegistrarAgendaComponent implements OnInit {
           : 0
       );
     });
+  }
+
+  //Agrega un elemento al vector elementos para que se triggeree otra vuelta del for
+  //que esta en el HTML que crea los horarios. Se usa un time out para que se cargue primero
+  //el HTML y luego se le pueda asignar un rolldate a los elementos creados
+  //#resolve
+  agregarHorario(index: number){
+    this.elementos.push(1);
+    setTimeout(()=>{
+      new Rolldate({
+        el: "#pickerInicio"+index,
+        format: "hh:mm",
+        minStep: 15,
+        lang: {
+          title: "Seleccione hora de inicio",
+          hour: "",
+          min: ""
+        }
+      });
+      new Rolldate({
+        el: "#pickerFin"+index,
+        format: "hh:mm",
+        minStep: 15,
+        lang: {
+          title: "Seleccione hora de fin",
+          hour: "",
+          min: ""
+        }
+      });
+    }, 1000);
   }
 }
