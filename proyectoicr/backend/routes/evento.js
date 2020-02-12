@@ -237,6 +237,7 @@ router.patch("/editar", checkAuthMiddleware, (req, res, next) => {
     imgUrl: req.body.imgUrl,
     autor: req.body.autor
   })
+  console.log(horaFin)
     .then(() => {
       res.status(200).json({
         message: "Evento modificado exitosamente",

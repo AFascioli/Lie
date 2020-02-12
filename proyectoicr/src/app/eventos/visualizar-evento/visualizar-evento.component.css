@@ -158,4 +158,5 @@ mat-icon {
     padding: 20px;
     margin-top:0%;
     margin-left: 2%;
+    word-wrap: break-word;
 }
