@@ -39,6 +39,7 @@ button {
   text-align: center;
   white-space: normal !important;
   font-size: 20px;
+  word-wrap: break-word;
 }
 
 time.icon {
