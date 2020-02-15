@@ -77,14 +77,16 @@
       <p class="nombreAutor">
         <b>{{ comentario.apellido }}, {{ comentario.nombre }} </b>
       </p>
-
       <p></p>
       <p class="fechaComentario">
-        {{ obtenerDia(comentario.fecha) }} de
+        {{ obtenerDia(comentario.fecha) }}
         {{ obtenerMes(comentario.fecha) }}
       </p>
     </div>
-    <p class="textoComentario">{{ comentario.comentario }}</p>
+    <p class="textoComentario">
+      {{ comentario.comentario }}
+      <a href="link" onclick="vermas()">Ver mas</a>
+    </p>
     <mat-divider [inset]="true"></mat-divider>
   </div>
   <!-- </mat-expansion-panel>
