@@ -47,6 +47,7 @@
       rows="3"
       placeholder="Ingrese comentario"
       type="text"
+      
     >
     </textarea>
   </mat-form-field>
@@ -55,6 +56,7 @@
       mat-raised-button
       (click)="onGuardar(comentario.value)"
       class="buttonPrimary"
+      [disabled]= "comentario.value == null"
     >
       Guardar
     </button>
