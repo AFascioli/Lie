@@ -12,7 +12,6 @@
         #curso="ngModel"
         matNativeControl
         required
-        (selectionChange)="obtenerMaterias(curso)"
       >
         <mat-option *ngFor="let objCurso of cursos" [value]="objCurso.id">
           {{ objCurso.curso }}
@@ -33,10 +32,10 @@
           required
         >
           <mat-option
-            *ngFor="let objMateria of materias"
-            [value]="objMateria.id"
+            *ngFor="let materia of materias"
+            [value]="materia.id"
           >
-            {{ objMateria.nombre }}
+            {{ materia.nombre }}
           </mat-option>
         </mat-select>
       </mat-form-field>
@@ -50,10 +49,10 @@
           required
         >
           <mat-option
-            *ngFor="let objDocente of docentes"
-            [value]="objDocente.id"
+            *ngFor="let docente of docentes"
+            [value]="docente.id"
           >
-            {{ objDocente }}
+          {{docente.apellido}}, {{docente.nombre}}
           </mat-option>
         </mat-select>
       </mat-form-field>

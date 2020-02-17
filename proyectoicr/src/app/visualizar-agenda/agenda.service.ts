@@ -1,3 +1,5 @@
+import { environment } from 'src/environments/environment';
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from "@angular/core";
 
 @Injectable({
@@ -5,30 +7,15 @@ import { Injectable } from "@angular/core";
 })
 export class AgendaService {
 
-  //#resolve Metodo para probar, borrar una vez que este hecho todo
-  obtenerMaterias(){
-    var materiaObj = {
-      nombre: "Matemáticas",
-      dia: "Miercoles",
-      inicio: "11:30",
-      fin: "12:15"
-    };
+  constructor(public http: HttpClient){}
 
-    var materiaObj2 = {
-      nombre: "Lengua",
-      dia: "Miercoles",
-      inicio: "09:15",
-      fin: "11:30"
-    };
+  //Retorna todas las materias de la institucion
+  public obtenerMaterias(){
+    return this.http.get<{materias: any[]}>(environment.apiUrl+"/materia");
+  }
 
-    var materiaObj3 = {
-      nombre: "Fisica",
-      dia: "Lunes",
-      inicio: "07:00",
-      fin: "08:30"
-    };
-
-    return [materiaObj, materiaObj2, materiaObj3];
-
+  //Retorna todos los docentes de la institucion
+  public obtenerDocentes(){
+    return this.http.get<{docentes: any[]}>(environment.apiUrl+"/empleado/docente");
   }
 }

@@ -1,12 +1,12 @@
 const express = require("express");
 const router = express.Router();
 const Empleado = require("../models/empleado");
-const checkAuthMiddleware= require("../middleware/check-auth");
+const checkAuthMiddleware = require("../middleware/check-auth");
 
 //Registra un nuevo empleado en la base de datos
 //@params: datos del empleado para ser creado
-router.post("/", checkAuthMiddleware,(req, res) => {
-  const empleado= new Empleado({
+router.post("/", checkAuthMiddleware, (req, res) => {
+  const empleado = new Empleado({
     apellido: req.body.apellido,
     nombre: req.body.nombre,
     tipoDocumento: req.body.tipoDocumento,
@@ -27,7 +27,23 @@ router.post("/", checkAuthMiddleware,(req, res) => {
         exito: true
       });
     })
-    .catch(err => console.log("Se presentó un error al querer almacenar el empleado en la base de datos" + err));
+    .catch(err =>
+      console.log(
+        "Se presentó un error al querer almacenar el empleado en la base de datos" +
+          err
+      )
+    );
+});
+
+//Retorna todos los docentes de la institucion
+router.get("/docente", checkAuthMiddleware, (req, res) => {
+  Empleado.find({ tipoEmpleado: "Docente" })
+    .select("nombre apellido")
+    .then(docentes => {
+      res.status(201).json({
+        docentes: docentes
+      });
+    });
 });
 
 module.exports = router;

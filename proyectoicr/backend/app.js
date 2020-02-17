@@ -15,6 +15,7 @@ const cicloLectivoRoutes = require("./routes/cicloLectivo");
 const asistenciaRoutes = require("./routes/asistencia");
 const calificacionesRoutes = require("./routes/calificacion");
 const eventoRoutes = require("./routes/evento");
+const materiasRoutes = require("./routes/materia");
 
 const app = express(); // Creo la app express
 
@@ -94,6 +95,8 @@ app.use("/cicloLectivo", cicloLectivoRoutes);
 app.use("/asistencia", asistenciaRoutes);
 
 app.use("/calificacion", calificacionesRoutes);
+
+app.use("/materia", materiasRoutes);
 
 app.get("/status", (req, res, next) => {
     res.status(200).json({

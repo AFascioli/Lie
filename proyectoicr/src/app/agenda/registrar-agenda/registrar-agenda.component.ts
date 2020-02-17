@@ -3,6 +3,7 @@ import { Component, OnInit } from "@angular/core";
 import { EstudiantesService } from "src/app/estudiantes/estudiante.service";
 import Rolldate from "../../../assets/rolldate.min.js";
 import { tick } from "@angular/core/testing";
+import { AgendaService } from "src/app/visualizar-agenda/agenda.service.js";
 
 @Component({
   selector: "app-registrar-agenda",
@@ -19,10 +20,23 @@ export class RegistrarAgendaComponent implements OnInit {
   horaFin: any;
   elementos = [1]; //#resolve Usado para agregar un nuevo horario
   materiasHTML = [1]; //#resolve Usado para agregar un nuevo horario
-  constructor(public servicioEstudiante: EstudiantesService) {}
+
+  constructor(
+    public servicioEstudiante: EstudiantesService,
+    public servicioAgenda: AgendaService
+  ) {}
 
   ngOnInit() {
     this.obtenerCursos();
+    this.servicioAgenda.obtenerMaterias().subscribe(response => {
+      // this.materias=response.materias;
+      console.log(response);
+    });
+
+    this.servicioAgenda.obtenerDocentes().subscribe(response => {
+      // this.docentes=response.docentes;
+      console.log(response);
+    });
   }
 
   ngAfterViewInit() {
@@ -32,14 +46,7 @@ export class RegistrarAgendaComponent implements OnInit {
       "#pickerInicio20",
       "#pickerFin20"
     );
-  }
 
-  obtenerMaterias(idCurso) {
-    this.servicioEstudiante
-      .obtenerMateriasDeCurso(idCurso.value)
-      .subscribe(rtdo => {
-        this.materias = rtdo.materias;
-      });
   }
 
   //Se inicializar los 4 pickers de cada materia
