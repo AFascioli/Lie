@@ -12,7 +12,7 @@ div{
   text-align: center;
 }
 
-button{
+.agregarHorario{
   background: gainsboro;
 }
 
@@ -21,4 +21,8 @@ hr{
   margin: 10px 0 10px 0;
   border-top: 1px solid rgba(0, 0, 0, .12);
   width: 100%
+}
+
+.div-buttons{
+  text-align: right;
 }

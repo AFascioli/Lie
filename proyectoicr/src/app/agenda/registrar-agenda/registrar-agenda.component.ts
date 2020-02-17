@@ -1,3 +1,4 @@
+import { NgForm } from "@angular/forms";
 import { element } from "protractor";
 import { Component, OnInit } from "@angular/core";
 import { EstudiantesService } from "src/app/estudiantes/estudiante.service";
@@ -18,7 +19,7 @@ export class RegistrarAgendaComponent implements OnInit {
   dias: any[] = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes"];
   horaInicio: any;
   horaFin: any;
-  elementos = [1]; //#resolve Usado para agregar un nuevo horario
+  horarios = [];
   materiasHTML = [1]; //#resolve Usado para agregar un nuevo horario
 
   constructor(
@@ -29,13 +30,11 @@ export class RegistrarAgendaComponent implements OnInit {
   ngOnInit() {
     this.obtenerCursos();
     this.servicioAgenda.obtenerMaterias().subscribe(response => {
-      // this.materias=response.materias;
-      console.log(response);
+      this.materias = response.materias;
     });
 
     this.servicioAgenda.obtenerDocentes().subscribe(response => {
-      // this.docentes=response.docentes;
-      console.log(response);
+      this.docentes = response.docentes;
     });
   }
 
@@ -46,7 +45,6 @@ export class RegistrarAgendaComponent implements OnInit {
       "#pickerInicio20",
       "#pickerFin20"
     );
-
   }
 
   //Se inicializar los 4 pickers de cada materia
@@ -61,7 +59,7 @@ export class RegistrarAgendaComponent implements OnInit {
         min: ""
       },
       confirm: date => {
-        this.horaInicio = date;
+        this.horarios.push(date);
       }
     });
     new Rolldate({
@@ -70,7 +68,7 @@ export class RegistrarAgendaComponent implements OnInit {
       minStep: 15,
       lang: { title: "Seleccione hora de fin", hour: "", min: "" },
       confirm: date => {
-        this.horaFin = date;
+        this.horarios.push(date);
       }
     });
     new Rolldate({
@@ -79,7 +77,7 @@ export class RegistrarAgendaComponent implements OnInit {
       minStep: 15,
       lang: { title: "Seleccione hora de inicio", hour: "", min: "" },
       confirm: date => {
-        this.horaFin = date;
+        this.horarios.push(date);
       }
     });
     new Rolldate({
@@ -88,7 +86,7 @@ export class RegistrarAgendaComponent implements OnInit {
       minStep: 15,
       lang: { title: "Seleccione hora de fin", hour: "", min: "" },
       confirm: date => {
-        this.horaFin = date;
+        this.horarios.push(date);
       }
     });
   }
@@ -121,4 +119,33 @@ export class RegistrarAgendaComponent implements OnInit {
       );
     }, 1000);
   }
+
+  onGuardar(form: NgForm) {
+    let curso = form.value.curso;
+    // console.log(form.value);
+    let vectorMateriasArmadas = [];
+    let indiceArrayHorarios=0;
+    this.materiasHTML.forEach((materia, index) => {
+      let objMateriaXCurso: any;
+      objMateriaXCurso = {
+        idMateria: form.value["materia" + index],
+        idDocente: form.value["docente" + index],
+        horaInicio: this.horarios[index],
+        horaFin: this.horarios[index+1],
+        dia: form.value["dia" + index]
+      };
+      indiceArrayHorarios=+2;
+      if (form.value["dia2" + index] != "") {
+        objMateriaXCurso.dia2 = form.value["dia2" + index];
+        objMateriaXCurso.horaInicio2 = this.horarios[index+2];
+        objMateriaXCurso.horaFin2 = this.horarios[index+3];
+        indiceArrayHorarios=+2;
+      }
+      vectorMateriasArmadas.push(objMateriaXCurso);
+    });
+    console.log(vectorMateriasArmadas);
+  }
+
+  //IMPORTANTE: #resolve, se debe respetar el orden de izq a der y de arriba a abajo en todos los
+  //campos de hora, sino la logica de onGuardar no funciona
 }
