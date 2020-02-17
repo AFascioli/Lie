@@ -27,7 +27,7 @@
         <mat-form-field>
           <mat-select
             placeholder="Seleccione materia"
-            [name]="'materia'+j"
+            [name]="'materia' + j"
             ngModel
             #materia="ngModel"
             matNativeControl
@@ -41,7 +41,7 @@
         <mat-form-field>
           <mat-select
             placeholder="Seleccione docente"
-            [name]="'docente'+j"
+            [name]="'docente' + j"
             ngModel
             #docente="ngModel"
             matNativeControl
@@ -60,7 +60,7 @@
         <mat-form-field>
           <mat-select
             placeholder="Seleccione dia"
-            [name]="'dia'+j"
+            [name]="'dia' + j"
             ngModel
             #dia="ngModel"
             matNativeControl
@@ -73,34 +73,20 @@
         </mat-form-field>
         <mat-form-field class="matFormHora">
           <div class="hora">
-            <input
-              matInput
-              [name]="'horaInicio'+j"
-              ngModel
-              #horaInicio="ngModel"
-              placeholder="Hora inicio"
-              [id]="'pickerInicio' + j"
-              readonly
-            />
+            <input [name]="'horaInicio1'+j" ngModel #horaInicio1+j="ngModel" matInput [ngxTimepicker]="picker1" />
+            <ngx-material-timepicker #picker1></ngx-material-timepicker>
           </div>
         </mat-form-field>
         <mat-form-field class="matFormHora">
           <div class="hora">
-            <input
-              matInput
-              [name]="'horaFin'+j"
-              ngModel
-              #horaFin="ngModel"
-              placeholder="Hora fin"
-              [id]="'pickerFin' + j"
-              readonly
-            />
+            <input name="horaFin1" matInput [ngxTimepicker]="picker2" />
+            <ngx-material-timepicker #picker2></ngx-material-timepicker>
           </div>
         </mat-form-field>
         <mat-form-field>
           <mat-select
             placeholder="Seleccione dia"
-            [name]="'dia2'+j"
+            [name]="'dia2' + j"
             ngModel
             #dia="ngModel"
             matNativeControl
@@ -113,28 +99,14 @@
         </mat-form-field>
         <mat-form-field class="matFormHora">
           <div class="hora">
-            <input
-              matInput
-              [name]="'horaInicio2'+j"
-              ngModel
-              #horaInicio="ngModel"
-              placeholder="Hora inicio"
-              [id]="'pickerInicio2' + j"
-              readonly
-            />
+            <input name="horaInicio2" matInput [ngxTimepicker]="picker3" />
+            <ngx-material-timepicker #picker3></ngx-material-timepicker>
           </div>
         </mat-form-field>
         <mat-form-field class="matFormHora">
           <div class="hora">
-            <input
-              matInput
-              [name]="'horaFin2'+j"
-              ngModel
-              #horaFin="ngModel"
-              placeholder="Hora fin"
-              [id]="'pickerFin2' + j"
-              readonly
-            />
+            <input name="horaFin2" matInput [ngxTimepicker]="picker4" />
+            <ngx-material-timepicker #picker4></ngx-material-timepicker>
           </div>
         </mat-form-field>
       </div>

@@ -6,6 +6,7 @@ import Rolldate from "../../../assets/rolldate.min.js";
 import { tick } from "@angular/core/testing";
 import { AgendaService } from "src/app/visualizar-agenda/agenda.service.js";
 
+
 @Component({
   selector: "app-registrar-agenda",
   templateUrl: "./registrar-agenda.component.html",
@@ -39,56 +40,6 @@ export class RegistrarAgendaComponent implements OnInit {
   }
 
   ngAfterViewInit() {
-    this.inicializarPickers(
-      "#pickerInicio0",
-      "#pickerFin0",
-      "#pickerInicio20",
-      "#pickerFin20"
-    );
-  }
-
-  //Se inicializar los 4 pickers de cada materia
-  inicializarPickers(id1: string, id2: string, id3: string, id4: string) {
-    new Rolldate({
-      el: id1,
-      format: "hh:mm",
-      minStep: 15,
-      lang: {
-        title: "Seleccione hora de inicio",
-        hour: "",
-        min: ""
-      },
-      confirm: date => {
-        this.horarios.push(date);
-      }
-    });
-    new Rolldate({
-      el: id2,
-      format: "hh:mm",
-      minStep: 15,
-      lang: { title: "Seleccione hora de fin", hour: "", min: "" },
-      confirm: date => {
-        this.horarios.push(date);
-      }
-    });
-    new Rolldate({
-      el: id3,
-      format: "hh:mm",
-      minStep: 15,
-      lang: { title: "Seleccione hora de inicio", hour: "", min: "" },
-      confirm: date => {
-        this.horarios.push(date);
-      }
-    });
-    new Rolldate({
-      el: id4,
-      format: "hh:mm",
-      minStep: 15,
-      lang: { title: "Seleccione hora de fin", hour: "", min: "" },
-      confirm: date => {
-        this.horarios.push(date);
-      }
-    });
   }
 
   obtenerCursos() {
@@ -110,40 +61,32 @@ export class RegistrarAgendaComponent implements OnInit {
   //#resolve
   agregarMateria(indexM: number) {
     this.materiasHTML.push(1);
-    setTimeout(() => {
-      this.inicializarPickers(
-        "#pickerInicio" + indexM,
-        "#pickerFin" + indexM,
-        "#pickerInicio2" + indexM,
-        "#pickerFin2" + indexM
-      );
-    }, 1000);
   }
 
   onGuardar(form: NgForm) {
-    let curso = form.value.curso;
-    // console.log(form.value);
-    let vectorMateriasArmadas = [];
-    let indiceArrayHorarios=0;
-    this.materiasHTML.forEach((materia, index) => {
-      let objMateriaXCurso: any;
-      objMateriaXCurso = {
-        idMateria: form.value["materia" + index],
-        idDocente: form.value["docente" + index],
-        horaInicio: this.horarios[index],
-        horaFin: this.horarios[index+1],
-        dia: form.value["dia" + index]
-      };
-      indiceArrayHorarios=+2;
-      if (form.value["dia2" + index] != "") {
-        objMateriaXCurso.dia2 = form.value["dia2" + index];
-        objMateriaXCurso.horaInicio2 = this.horarios[index+2];
-        objMateriaXCurso.horaFin2 = this.horarios[index+3];
-        indiceArrayHorarios=+2;
-      }
-      vectorMateriasArmadas.push(objMateriaXCurso);
-    });
-    console.log(vectorMateriasArmadas);
+    // let curso = form.value.curso;
+    // // console.log(form.value);
+    // let vectorMateriasArmadas = [];
+    // let indiceArrayHorarios=0;
+    // this.materiasHTML.forEach((materia, index) => {
+    //   let objMateriaXCurso: any;
+    //   objMateriaXCurso = {
+    //     idMateria: form.value["materia" + index],
+    //     idDocente: form.value["docente" + index],
+    //     horaInicio: this.horarios[index],
+    //     horaFin: this.horarios[index+1],
+    //     dia: form.value["dia" + index]
+    //   };
+    //   indiceArrayHorarios=+2;
+    //   if (form.value["dia2" + index] != "") {
+    //     objMateriaXCurso.dia2 = form.value["dia2" + index];
+    //     objMateriaXCurso.horaInicio2 = this.horarios[index+2];
+    //     objMateriaXCurso.horaFin2 = this.horarios[index+3];
+    //     indiceArrayHorarios=+2;
+    //   }
+    //   vectorMateriasArmadas.push(objMateriaXCurso);
+    // });
+    console.log(form);
   }
 
   //IMPORTANTE: #resolve, se debe respetar el orden de izq a der y de arriba a abajo en todos los

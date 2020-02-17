@@ -33,6 +33,7 @@ import { AltaEstudiantesComponent } from "./estudiantes/alta-estudiantes/alta-es
 import { CancelPopupComponent } from "./popup-genericos/cancel-popup.component";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { HttpClientModule, HTTP_INTERCEPTORS } from "@angular/common/http";
+import {NgxMaterialTimepickerModule} from 'ngx-material-timepicker';
 import { EstudiantesService } from "./estudiantes/estudiante.service";
 import {
   BuscarEstudiantesComponent,
@@ -205,6 +206,7 @@ import { RegistrarAgendaComponent } from './agenda/registrar-agenda/registrar-ag
     MatGridListModule,
     ChartsModule,
     MatPaginatorModule,
+    NgxMaterialTimepickerModule,
     MatTooltipModule,
     MatCarouselModule.forRoot(),
     ServiceWorkerModule.register("ngsw-worker.js", {
