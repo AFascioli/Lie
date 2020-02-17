@@ -1,8 +1,8 @@
-import { element } from 'protractor';
+import { element } from "protractor";
 import { Component, OnInit } from "@angular/core";
 import { EstudiantesService } from "src/app/estudiantes/estudiante.service";
 import Rolldate from "../../../assets/rolldate.min.js";
-import { tick } from '@angular/core/testing';
+import { tick } from "@angular/core/testing";
 
 @Component({
   selector: "app-registrar-agenda",
@@ -14,28 +14,36 @@ export class RegistrarAgendaComponent implements OnInit {
   idCursoSeleccionado: string;
   materias: any[];
   docentes: any[];
-  dias: any[] = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes'];
+  dias: any[] = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes"];
   horaInicio: any;
   horaFin: any;
-  elementos=[1]; //#resolve Usado para agregar un nuevo horario
-
+  elementos = [1]; //#resolve Usado para agregar un nuevo horario
+  materiasHTML = [1]; //#resolve Usado para agregar un nuevo horario
   constructor(public servicioEstudiante: EstudiantesService) {}
 
   ngOnInit() {
     this.obtenerCursos();
   }
 
-  ngAfterViewInit(){
-    this.inicializarPickers("#pickerInicio0","#pickerFin0");
+  ngAfterViewInit() {
+    this.inicializarPickers(
+      "#pickerInicio0",
+      "#pickerFin0",
+      "#pickerInicio20",
+      "#pickerFin20"
+    );
   }
 
-  obtenerMaterias(idCurso){
-    this.servicioEstudiante.obtenerMateriasDeCurso(idCurso.value).subscribe(rtdo => {
-      this.materias = rtdo.materias;
-    });
+  obtenerMaterias(idCurso) {
+    this.servicioEstudiante
+      .obtenerMateriasDeCurso(idCurso.value)
+      .subscribe(rtdo => {
+        this.materias = rtdo.materias;
+      });
   }
 
-  inicializarPickers(id1:string, id2:string) {
+  //Se inicializar los 4 pickers de cada materia
+  inicializarPickers(id1: string, id2: string, id3: string, id4: string) {
     new Rolldate({
       el: id1,
       format: "hh:mm",
@@ -58,6 +66,24 @@ export class RegistrarAgendaComponent implements OnInit {
         this.horaFin = date;
       }
     });
+    new Rolldate({
+      el: id3,
+      format: "hh:mm",
+      minStep: 15,
+      lang: { title: "Seleccione hora de inicio", hour: "", min: "" },
+      confirm: date => {
+        this.horaFin = date;
+      }
+    });
+    new Rolldate({
+      el: id4,
+      format: "hh:mm",
+      minStep: 15,
+      lang: { title: "Seleccione hora de fin", hour: "", min: "" },
+      confirm: date => {
+        this.horaFin = date;
+      }
+    });
   }
 
   obtenerCursos() {
@@ -73,33 +99,19 @@ export class RegistrarAgendaComponent implements OnInit {
     });
   }
 
-  //Agrega un elemento al vector elementos para que se triggeree otra vuelta del for
-  //que esta en el HTML que crea los horarios. Se usa un time out para que se cargue primero
+  //Agrega un elemento al vector materiasHTML para que se triggeree otra vuelta del for
+  //que esta en el HTML que crea los cards de las materias. Se usa un time out para que se cargue primero
   //el HTML y luego se le pueda asignar un rolldate a los elementos creados
   //#resolve
-  agregarHorario(index: number){
-    this.elementos.push(1);
-    setTimeout(()=>{
-      new Rolldate({
-        el: "#pickerInicio"+index,
-        format: "hh:mm",
-        minStep: 15,
-        lang: {
-          title: "Seleccione hora de inicio",
-          hour: "",
-          min: ""
-        }
-      });
-      new Rolldate({
-        el: "#pickerFin"+index,
-        format: "hh:mm",
-        minStep: 15,
-        lang: {
-          title: "Seleccione hora de fin",
-          hour: "",
-          min: ""
-        }
-      });
+  agregarMateria(indexM: number) {
+    this.materiasHTML.push(1);
+    setTimeout(() => {
+      this.inicializarPickers(
+        "#pickerInicio" + indexM,
+        "#pickerFin" + indexM,
+        "#pickerInicio2" + indexM,
+        "#pickerFin2" + indexM
+      );
     }, 1000);
   }
 }

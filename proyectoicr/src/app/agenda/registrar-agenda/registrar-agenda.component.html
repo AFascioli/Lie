@@ -20,7 +20,7 @@
       </mat-select>
     </mat-form-field>
   </form>
-  <mat-card class="card-body-componente">
+  <mat-card *ngFor="let materia of materiasHTML, let j=index" class="card-body-componente">
     <div>
       <h3>Materia seleccionada</h3>
       <mat-form-field>
@@ -61,7 +61,7 @@
     <br />
     <hr />
     <br />
-    <div class="horario" *ngFor="let elemento of elementos, let i=index">
+    <div class="horario">
       <mat-form-field>
         <mat-select
           placeholder="Seleccione dia"
@@ -84,7 +84,7 @@
             ngModel
             #horaInicio="ngModel"
             placeholder="Hora inicio"
-            [id]="'pickerInicio'+i"
+            [id]="'pickerInicio'+j"
             readonly
           />
         </div>
@@ -97,21 +97,61 @@
             ngModel
             #horaFin="ngModel"
             placeholder="Hora fin"
-            [id]="'pickerFin'+i"
+            [id]="'pickerFin'+j"
+            readonly
+          />
+        </div>
+      </mat-form-field>
+      <mat-form-field>
+        <mat-select
+          placeholder="Seleccione dia"
+          name="dia2"
+          ngModel
+          #dia="ngModel"
+          matNativeControl
+          required
+        >
+          <mat-option *ngFor="let objDia of dias" [value]="objDia">
+            {{ objDia }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field class="matFormHora">
+        <div class="hora">
+          <input
+            matInput
+            name="horaInicio"
+            ngModel
+            #horaInicio="ngModel"
+            placeholder="Hora inicio"
+            [id]="'pickerInicio2'+j"
+            readonly
+          />
+        </div>
+      </mat-form-field>
+      <mat-form-field class="matFormHora">
+        <div class="hora">
+          <input
+            matInput
+            name="horaFin"
+            ngModel
+            #horaFin="ngModel"
+            placeholder="Hora fin"
+            [id]="'pickerFin2'+j"
             readonly
           />
         </div>
       </mat-form-field>
     </div>
     <br />
-    <div class="div-buttons">
-      <button mat-raised-button (click)="agregarHorario(elementos.length)">
+    <!-- <div class="div-buttons">
+      <button mat-raised-button (click)="agregarHorario(materiasHTML.length)">
         <mat-icon>add_circle_outline</mat-icon> Agregar otro horario
       </button>
-    </div>
+    </div> -->
   </mat-card>
   <div class="div-buttons">
-    <button mat-raised-button>
+    <button mat-raised-button (click)="agregarMateria(materiasHTML.length)">
       <mat-icon>add_circle_outline</mat-icon> Agregar otra materia
     </button>
   </div>
