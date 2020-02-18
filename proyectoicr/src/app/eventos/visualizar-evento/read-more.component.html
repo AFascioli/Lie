@@ -1,0 +1,8 @@
+<div [class.collapsed]="isCollapsed"
+     [style.height]="isCollapsed ? maxHeight+'px' : 'auto'"
+     class="summary"
+     [ngClass]="{'read-all': readAll}"> {{text}}
+</div>
+<a *ngIf="isCollapsable" class="show-link" (click)="isCollapsed =! isCollapsed">Leer {{isCollapsed ? 'más':'menos'}}</a>
+
+

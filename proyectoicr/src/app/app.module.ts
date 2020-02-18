@@ -1,3 +1,4 @@
+import { ReadMoreComponent } from './eventos/visualizar-evento/read-more.component';
 import { Evento } from "./eventos/evento.model";
 import { AuthInterceptor } from "./login/auth-interceptor";
 import { BrowserModule } from "@angular/platform-browser";
@@ -151,7 +152,8 @@ import { MatCarouselModule } from '@ngmodule/material-carousel';
     CalificacionesExamenesComponent,
     RegistrarEventoComponent,
     ModificarEventoComponent,
-    VisualizarEventoComponent
+    VisualizarEventoComponent,
+    ReadMoreComponent
   ],
   //entryComponents declara los componentes que se generan dinamicamente dentro de otros.
   entryComponents: [
@@ -167,7 +169,8 @@ import { MatCarouselModule } from '@ngmodule/material-carousel';
     CerrarSesionPopupComponent,
     PreferenciasPopupComponent,
     AltaEmpleadoPopupComponent,
-    AltaARPopupComponent
+    AltaARPopupComponent,
+    ReadMoreComponent
   ],
   imports: [
     MatChipsModule,

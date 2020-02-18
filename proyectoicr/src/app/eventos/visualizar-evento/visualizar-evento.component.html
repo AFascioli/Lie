@@ -93,8 +93,7 @@
       </p>
     </div>
     <p class="textoComentario">
-      {{ comentario.comentario }}
-      <a href="link" onclick="vermas()">Ver mas</a>
+      <app-read-more [text]= "comentario.comentario" [maxHeight]="40" [readAll]='false' ></app-read-more>
     </p>
     <mat-divider [inset]="true"></mat-divider>
   </div>
