@@ -54,13 +54,13 @@ export class RegistrarAgendaComponent implements OnInit {
   }
 
   //Agrega un elemento al vector materiasHTML para que se triggeree otra vuelta del for
-  //que esta en el HTML que crea los cards de las materias. Se usa un time out para que se cargue primero
-  //el HTML y luego se le pueda asignar un rolldate a los elementos creados
-  //#resolve
+  //que esta en el HTML que crea los cards de las materias.
   agregarMateria(indexM: number) {
     this.materiasHTML.push([1]);
   }
 
+  //Dentro del elemento correspondiente en materias, se agrega un vector que representa los horarios
+  //que va a tener esa materia (length=cantidad de horarios)
   agregarHorario(index: number) {
     this.materiasHTML[index].push(1);
   }
@@ -87,6 +87,8 @@ export class RegistrarAgendaComponent implements OnInit {
       });
       materiasXCurso.push(materiaXCurso);
     });
-    console.log(materiasXCurso);
+    this.servicioAgenda.registrarAgenda(materiasXCurso, form.value.curso).subscribe(response =>{
+      console.log('NICE');
+    });
   }
 }
