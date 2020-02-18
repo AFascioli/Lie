@@ -56,11 +56,11 @@
       <br />
       <hr />
       <br />
-      <div class="horario">
+      <div class="horario" *ngFor="let horario of materiasHTML[j]; let i = index">
         <mat-form-field>
           <mat-select
             placeholder="Seleccione dia"
-            [name]="'dia' + j"
+            [name]="'dia' + j + i"
             ngModel
             #dia="ngModel"
             matNativeControl
@@ -73,47 +73,42 @@
         </mat-form-field>
         <mat-form-field class="matFormHora">
           <div class="hora">
-            <input [name]="'horaInicio1'+j" ngModel #horaInicio1+j="ngModel" matInput [ngxTimepicker]="picker1" />
+            <input
+              [name]="'horaInicio' + j + i"
+              ngModel
+              #horaInicio+j+i="ngModel"
+              matInput
+              [ngxTimepicker]="picker1"
+            />
             <ngx-material-timepicker #picker1></ngx-material-timepicker>
           </div>
         </mat-form-field>
         <mat-form-field class="matFormHora">
           <div class="hora">
-            <input name="horaFin1" matInput [ngxTimepicker]="picker2" />
+            <input
+              [name]="'horaFin' + j + i"
+              ngModel
+              #horaFin+j+i="ngModel"
+              matInput
+              [ngxTimepicker]="picker2"
+            />
             <ngx-material-timepicker #picker2></ngx-material-timepicker>
           </div>
         </mat-form-field>
-        <mat-form-field>
-          <mat-select
-            placeholder="Seleccione dia"
-            [name]="'dia2' + j"
-            ngModel
-            #dia="ngModel"
-            matNativeControl
-            required
-          >
-            <mat-option *ngFor="let objDia of dias" [value]="objDia">
-              {{ objDia }}
-            </mat-option>
-          </mat-select>
-        </mat-form-field>
-        <mat-form-field class="matFormHora">
-          <div class="hora">
-            <input name="horaInicio2" matInput [ngxTimepicker]="picker3" />
-            <ngx-material-timepicker #picker3></ngx-material-timepicker>
-          </div>
-        </mat-form-field>
-        <mat-form-field class="matFormHora">
-          <div class="hora">
-            <input name="horaFin2" matInput [ngxTimepicker]="picker4" />
-            <ngx-material-timepicker #picker4></ngx-material-timepicker>
-          </div>
-        </mat-form-field>
+      </div>
+      <div class="divAgregar">
+        <button
+          mat-raised-button
+          class="agregarHorario"
+          (click)="agregarHorario(j)"
+        >
+          <mat-icon>add_circle_outline</mat-icon> Agregar otra horario
+        </button>
       </div>
       <br />
     </mat-card>
   </form>
-  <div>
+  <div class="divAgregar">
     <button
       mat-raised-button
       class="agregarHorario"
@@ -122,7 +117,7 @@
       <mat-icon>add_circle_outline</mat-icon> Agregar otra materia
     </button>
   </div>
-  <div class="div-buttons">
+  <div class="divGuardar">
     <button mat-raised-button class="buttonPrimary" (click)="onGuardar(form)">
       Guardar
     </button>

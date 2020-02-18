@@ -6,7 +6,6 @@ import Rolldate from "../../../assets/rolldate.min.js";
 import { tick } from "@angular/core/testing";
 import { AgendaService } from "src/app/visualizar-agenda/agenda.service.js";
 
-
 @Component({
   selector: "app-registrar-agenda",
   templateUrl: "./registrar-agenda.component.html",
@@ -20,8 +19,8 @@ export class RegistrarAgendaComponent implements OnInit {
   dias: any[] = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes"];
   horaInicio: any;
   horaFin: any;
-  horarios = [];
-  materiasHTML = [1]; //#resolve Usado para agregar un nuevo horario
+  horarios = [1];
+  materiasHTML = [[1]]; //#resolve Usado para agregar un nuevo horario
 
   constructor(
     public servicioEstudiante: EstudiantesService,
@@ -39,8 +38,7 @@ export class RegistrarAgendaComponent implements OnInit {
     });
   }
 
-  ngAfterViewInit() {
-  }
+  ngAfterViewInit() {}
 
   obtenerCursos() {
     this.servicioEstudiante.obtenerCursos().subscribe(response => {
@@ -60,35 +58,35 @@ export class RegistrarAgendaComponent implements OnInit {
   //el HTML y luego se le pueda asignar un rolldate a los elementos creados
   //#resolve
   agregarMateria(indexM: number) {
-    this.materiasHTML.push(1);
+    this.materiasHTML.push([1]);
   }
 
+  agregarHorario(index: number) {
+    this.materiasHTML[index].push(1);
+  }
+
+  //Se crea el vector materiasXCurso que es lo que se enviara al backend, luego por cada elemento del
+  //vector materiasHTML (cada elemento representa a una materia y es un vector que tiene tantos elementos
+  //como horarios se definieros), se crea un objeto materiaXCurso y luego se recorre el vector
+  //que representa a los horarios creando un horario por cada uno de estos.
   onGuardar(form: NgForm) {
-    // let curso = form.value.curso;
-    // // console.log(form.value);
-    // let vectorMateriasArmadas = [];
-    // let indiceArrayHorarios=0;
-    // this.materiasHTML.forEach((materia, index) => {
-    //   let objMateriaXCurso: any;
-    //   objMateriaXCurso = {
-    //     idMateria: form.value["materia" + index],
-    //     idDocente: form.value["docente" + index],
-    //     horaInicio: this.horarios[index],
-    //     horaFin: this.horarios[index+1],
-    //     dia: form.value["dia" + index]
-    //   };
-    //   indiceArrayHorarios=+2;
-    //   if (form.value["dia2" + index] != "") {
-    //     objMateriaXCurso.dia2 = form.value["dia2" + index];
-    //     objMateriaXCurso.horaInicio2 = this.horarios[index+2];
-    //     objMateriaXCurso.horaFin2 = this.horarios[index+3];
-    //     indiceArrayHorarios=+2;
-    //   }
-    //   vectorMateriasArmadas.push(objMateriaXCurso);
-    // });
-    console.log(form);
+    let materiasXCurso = [];
+    this.materiasHTML.forEach((materia, index) => {
+      let materiaXCurso: any;
+      materiaXCurso = {
+        idMateria: form.value["materia" + `${index}`],
+        idDocente: form.value["docente" + `${index}`],
+        horarios: []
+      };
+      materia.forEach((horario, indice) => {
+        materiaXCurso.horarios.push({
+          dia: form.value["dia" + `${index}` + `${indice}`],
+          horaInicio: form.value["horaInicio" + `${index}` + `${indice}`],
+          horaFin: form.value["horaFin" + `${index}` + `${indice}`]
+        });
+      });
+      materiasXCurso.push(materiaXCurso);
+    });
+    console.log(materiasXCurso);
   }
-
-  //IMPORTANTE: #resolve, se debe respetar el orden de izq a der y de arriba a abajo en todos los
-  //campos de hora, sino la logica de onGuardar no funciona
 }

@@ -23,6 +23,10 @@ hr{
   width: 100%
 }
 
-.div-buttons{
+.divGuardar{
   text-align: right;
+}
+
+.divAgregar{
+  text-align: center;
 }
