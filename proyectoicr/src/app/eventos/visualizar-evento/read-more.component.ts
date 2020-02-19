@@ -3,7 +3,7 @@ import { Component, Input, ElementRef, AfterViewInit, ChangeDetectorRef, HostLis
 @Component({
   selector: 'app-read-more',
   templateUrl: './read-more.component.html',
-  styleUrls: ['./read-more.component.scss'],
+  styleUrls: ['./read-more.component.css'],
 })
 export class ReadMoreComponent implements AfterViewInit {
 

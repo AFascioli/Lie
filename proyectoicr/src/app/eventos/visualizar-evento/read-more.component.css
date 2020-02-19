@@ -1,23 +1,21 @@
-@mixin line-clamp($numLines : 2) {
+
+
+div.collapsed {
 
   -moz-box-orient: vertical;      /* Mozilla */
   -webkit-box-orient: vertical;   /* WebKit */
   display: flex;                   /* As specified */
   display: -moz-box;              /* Mozilla */
   display: -webkit-box;           /* WebKit */
-  -webkit-line-clamp: $numLines;
+  -webkit-line-clamp: 2;
   overflow: hidden;
   text-overflow: -o-ellipsis-lastline;
   text-overflow: ellipsis;
-}
 
-div.collapsed {
-
-  @include line-clamp(2);
 }
 
 a.show-link {
-  color: brand-main !important;
+  color: rgb(47, 100, 131);
   cursor: pointer;
   display: block;
   margin-top: 5px;
