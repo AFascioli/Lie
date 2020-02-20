@@ -53,6 +53,7 @@ mongoose.connect('mongodb://127.0.0.1:27017/icr-local',{useNewUrlParser: true, u
  console.log('Fallo conexión a la base de datos local');
 });
 
+
 //Para sacar el deprecation warning de la consola
 mongoose.set("useFindAndModify", false);
 

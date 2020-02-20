@@ -160,6 +160,7 @@ mat-icon {
     padding: 20px;
     margin-top:0%;
     margin-left: 2%;
+    word-wrap: break-word;
 }
 
 /* .carousel[_ngcontent-dwo-c14] > button[_ngcontent-dwo-c14] > mat-icon[_ngcontent-dwo-c14] {

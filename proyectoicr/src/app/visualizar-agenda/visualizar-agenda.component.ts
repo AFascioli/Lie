@@ -1,4 +1,4 @@
-import { AgendaService } from './agenda.service';
+import { AgendaService } from "./agenda.service";
 import { Component, OnInit } from "@angular/core";
 
 @Component({
@@ -13,15 +13,20 @@ export class VisualizarAgendaComponent implements OnInit {
     "07:00",
     "07:45",
     "08:30",
-    "09:15",
-    "10:00",
-    "10:45",
-    "11:30",
-    "12:15",
-    "13:00",
-    "13:45"
+    "08:40",
+    "09:25",
+    "10:10",
+    "10:30",
+    "10:15",
+    "12:00",
+    "12:20",
+    "13:05",
+    "13:55",
+    "14:05",
+    "14:50"
   ];
-  materias=[];
+  colores = [];
+  materias = [];
   constructor(public servicioAgenda: AgendaService) {}
 
   ngOnInit() {
@@ -29,7 +34,7 @@ export class VisualizarAgendaComponent implements OnInit {
   }
 
   //Este metodo dado por angular se ejecuta una vez que se cargo todo el html :D
-  ngAfterViewInit(){
+  ngAfterViewInit() {
     this.materias.forEach((materia, index) => {
       this.acomodarEnGrilla(index.toString(), materia);
     });
@@ -45,9 +50,24 @@ export class VisualizarAgendaComponent implements OnInit {
       "style",
       `grid-column-start: ${this.dias.indexOf(materiaObj.dia) +
         1}; grid-column-end: ${this.dias.indexOf(materiaObj.dia) +
-        2}; grid-row-start: ${this.modulo.indexOf(
-        materiaObj.inicio) + 1}; grid-row-end: ${this.modulo.indexOf(
-        materiaObj.fin) + 1};`
+        2}; grid-row-start: ${this.modulo.indexOf(materiaObj.inicio) +
+        1}; grid-row-end: ${this.modulo.indexOf(materiaObj.fin) + 1};`
     );
+  }
+
+  //después lo hago genérico y con mejores colores
+  getColor(materia) {
+    switch (materia.nombre) {
+      case "Lengua":
+        return "#eb9788";
+      case "Matemática":
+        return "#c05c7e";
+      case "Física":
+        return "#f3826f";
+      case "Biología":
+        return "#ffb961";
+      case "Historia":
+        return "#899857";
+    }
   }
 }

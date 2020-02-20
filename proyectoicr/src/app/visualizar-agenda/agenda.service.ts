@@ -25,5 +25,6 @@ export class AgendaService {
       environment.apiUrl + "/curso/agenda",
       {agenda: agenda, idCurso: curso}
     );
+
   }
 }

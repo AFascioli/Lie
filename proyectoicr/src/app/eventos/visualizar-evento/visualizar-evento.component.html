@@ -48,6 +48,7 @@
       rows="3"
       placeholder="Ingrese comentario"
       type="text"
+
     >
     </textarea>
   </mat-form-field>
@@ -60,6 +61,13 @@
     >
       Guardar
     </button>
+    <button
+    mat-raised-button
+    [routerLink]="['/home']"
+    class="buttonWarn"
+  >
+    Volver
+  </button>
   </div>
   <br />
   <mat-divider class="divisor"></mat-divider>
@@ -80,14 +88,15 @@
       <p class="nombreAutor">
         <b>{{ comentario.apellido }}, {{ comentario.nombre }} </b>
       </p>
-
       <p></p>
       <p class="fechaComentario">
-        {{ obtenerDia(comentario.fecha) }} de
+        {{ obtenerDia(comentario.fecha) }}
         {{ obtenerMes(comentario.fecha) }}
       </p>
     </div>
-    <p class="textoComentario">{{ comentario.comentario }}</p>
+    <p class="textoComentario">
+      <app-read-more [text]= "comentario.comentario" [maxHeight]="40" [readAll]='false' ></app-read-more>
+    </p>
     <mat-divider [inset]="true"></mat-divider>
   </div>
   </mat-expansion-panel>
