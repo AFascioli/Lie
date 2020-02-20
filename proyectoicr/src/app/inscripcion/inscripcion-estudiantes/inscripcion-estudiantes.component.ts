@@ -81,7 +81,10 @@ export class InscripcionEstudianteComponent implements OnInit {
             ? -1
             : 0
         );
+        console.log(this.cursos[0].curso);
       });
+
+
   }
 
   fechaActualEnRangoFechasInscripcion() {
