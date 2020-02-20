@@ -1,6 +1,10 @@
+import { NgForm } from "@angular/forms";
+import { element } from "protractor";
 import { Component, OnInit } from "@angular/core";
 import { EstudiantesService } from "src/app/estudiantes/estudiante.service";
 import Rolldate from "../../../assets/rolldate.min.js";
+import { tick } from "@angular/core/testing";
+import { AgendaService } from "src/app/visualizar-agenda/agenda.service.js";
 
 @Component({
   selector: "app-registrar-agenda",
@@ -12,48 +16,29 @@ export class RegistrarAgendaComponent implements OnInit {
   idCursoSeleccionado: string;
   materias: any[];
   docentes: any[];
-  dias: any[] = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes'];
+  dias: any[] = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes"];
   horaInicio: any;
   horaFin: any;
+  horarios = [1];
+  materiasHTML = [[1]]; //#resolve Usado para agregar un nuevo horario
 
-  constructor(public servicioEstudiante: EstudiantesService) {}
+  constructor(
+    public servicioEstudiante: EstudiantesService,
+    public servicioAgenda: AgendaService
+  ) {}
 
   ngOnInit() {
     this.obtenerCursos();
-    this.inicializarPickers();
-  }
+    this.servicioAgenda.obtenerMaterias().subscribe(response => {
+      this.materias = response.materias;
+    });
 
-  obtenerMaterias(idCurso){
-    this.servicioEstudiante.obtenerMateriasDeCurso(idCurso.value).subscribe(rtdo => {
-      this.materias = rtdo.materias;
+    this.servicioAgenda.obtenerDocentes().subscribe(response => {
+      this.docentes = response.docentes;
     });
   }
 
-  inicializarPickers() {
-    new Rolldate({
-      el: "#pickerInicio",
-      format: "hh:mm",
-      minStep: 15,
-      lang: {
-        title: "Seleccione hora de inicio del evento",
-        hour: "",
-        min: ""
-      },
-      confirm: date => {
-        this.horaInicio = date;
-      }
-    });
-    new Rolldate({
-      el: "#pickerFin",
-      format: "hh:mm",
-      minStep: 15,
-      lang: { title: "Seleccione hora de fin del evento", hour: "", min: "" },
-      confirm: date => {
-        this.horaFin = date;
-      }
-    });
-  }
-
+  ngAfterViewInit() {}
 
   obtenerCursos() {
     this.servicioEstudiante.obtenerCursos().subscribe(response => {
@@ -65,6 +50,45 @@ export class RegistrarAgendaComponent implements OnInit {
           ? -1
           : 0
       );
+    });
+  }
+
+  //Agrega un elemento al vector materiasHTML para que se triggeree otra vuelta del for
+  //que esta en el HTML que crea los cards de las materias.
+  agregarMateria(indexM: number) {
+    this.materiasHTML.push([1]);
+  }
+
+  //Dentro del elemento correspondiente en materias, se agrega un vector que representa los horarios
+  //que va a tener esa materia (length=cantidad de horarios)
+  agregarHorario(index: number) {
+    this.materiasHTML[index].push(1);
+  }
+
+  //Se crea el vector materiasXCurso que es lo que se enviara al backend, luego por cada elemento del
+  //vector materiasHTML (cada elemento representa a una materia y es un vector que tiene tantos elementos
+  //como horarios se definieros), se crea un objeto materiaXCurso y luego se recorre el vector
+  //que representa a los horarios creando un horario por cada uno de estos.
+  onGuardar(form: NgForm) {
+    let materiasXCurso = [];
+    this.materiasHTML.forEach((materia, index) => {
+      let materiaXCurso: any;
+      materiaXCurso = {
+        idMateria: form.value["materia" + `${index}`],
+        idDocente: form.value["docente" + `${index}`],
+        horarios: []
+      };
+      materia.forEach((horario, indice) => {
+        materiaXCurso.horarios.push({
+          dia: form.value["dia" + `${index}` + `${indice}`],
+          horaInicio: form.value["horaInicio" + `${index}` + `${indice}`],
+          horaFin: form.value["horaFin" + `${index}` + `${indice}`]
+        });
+      });
+      materiasXCurso.push(materiaXCurso);
+    });
+    this.servicioAgenda.registrarAgenda(materiasXCurso, form.value.curso).subscribe(response =>{
+      console.log('NICE');
     });
   }
 }

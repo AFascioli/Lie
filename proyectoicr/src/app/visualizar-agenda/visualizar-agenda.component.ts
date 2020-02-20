@@ -30,7 +30,7 @@ export class VisualizarAgendaComponent implements OnInit {
   constructor(public servicioAgenda: AgendaService) {}
 
   ngOnInit() {
-    this.materias = this.servicioAgenda.obtenerMaterias();
+    // this.materias=this.servicioAgenda.obtenerMaterias();
   }
 
   //Este metodo dado por angular se ejecuta una vez que se cargo todo el html :D
