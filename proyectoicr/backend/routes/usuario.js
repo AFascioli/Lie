@@ -63,7 +63,8 @@ router.post("/login", (req, res) => {
           if (rol.tipo == "Docente") {
             Empleado.findOne({ idUsuario: usuarioEncontrado._id }).then(
               async empleado => {
-                idPersona = empleado._id;
+               // idPersona = empleado._id;
+                idPersona = empleado.idUsuario;
                 await res.status(200).json({
                   token: token,
                   duracionToken: 43200,
@@ -79,7 +80,7 @@ router.post("/login", (req, res) => {
               token: token,
               duracionToken: 43200,
               rol: rol.tipo,
-              idPersona: idPersona,
+              idPersona: usuarioEncontrado._id,
               message: "Bienvenido a Lié",
               exito: true
             });

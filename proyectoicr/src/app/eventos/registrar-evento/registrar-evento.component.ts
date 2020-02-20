@@ -99,8 +99,9 @@ export class RegistrarEventoComponent implements OnInit {
       }
     });
   }
-  remove(fruit: string): void {
-    const index = this.chips.indexOf(fruit);
+
+  remove(chip: string): void {
+    const index = this.chips.indexOf(chip);
 
     if (index >= 0) {
       this.chips.splice(index, 1);
@@ -108,7 +109,18 @@ export class RegistrarEventoComponent implements OnInit {
   }
 
   selected(event: MatAutocompleteSelectedEvent): void {
-    this.chips.push(event.option.viewValue);
+    if (event.option.viewValue == "Todos los cursos") {
+      this.chips = [];
+      this.chips.push(event.option.viewValue);
+    } else if (
+      !this.chips.includes(event.option.viewValue) &&
+      !this.chips.includes("Todos los cursos")
+    )
+      this.chips.push(event.option.viewValue);
+    if (this.chips.length == this.allChips.length-1) {
+      this.chips = [];
+      this.chips.push("Todos los cursos");
+    }
     this.chipsInput.nativeElement.value = "";
     this.chipsCtrl.setValue(null);
   }
@@ -182,6 +194,7 @@ export class RegistrarEventoComponent implements OnInit {
                 panelClass: ["snack-bar-exito"],
                 duration: 4500
               });
+              form.resetForm();
             } else {
               this.snackBar.open(rtdo.message, "", {
                 duration: 4500,

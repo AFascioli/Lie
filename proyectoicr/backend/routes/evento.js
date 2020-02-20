@@ -10,6 +10,7 @@ const Usuario = require("../models/usuario");
 const path = require("path");
 const Admin = require("../models/administrador");
 const Suscripcion = require("../classes/suscripcion");
+const Inscripcion = require("../models/inscripcion");
 
 const MIME_TYPE_MAPA = {
   "image/png": "png",
@@ -52,93 +53,94 @@ router.post("/registrar", upload, (req, res, next) => {
       imgUrl: req.file.filename,
       autor: usuario._id
     });
-    var cuerpo = "El evento se realizará en la fecha " + evento.fechaEvento + ".";
+    var cuerpo =
+      "El evento se realizará en la fecha " + evento.fechaEvento + ".";
     var idtutores;
     // NOTIFICACIÓN
     //Construcción de cuerpo de la notificación
 
     // Notificar a los adultos que correspondan a los cursos de los tags/chips
-    if (tags.includes("Todos los cursos")) {
-      Suscripcion.notificacionMasiva(evento.titulo, this.cuerpo);
-    } else {
-      Inscripcion.agreggate([
-        {
-          '$lookup': {
-            'from': 'curso',
-            'localField': 'idCurso',
-            'foreignField': '_id',
-            'as': 'icurso'
-          }
-        }, {
-          '$unwind': {
-            'path': '$icurso',
-            'preserveNullAndEmptyArrays': false
-          }
-        }, {
-          '$match': {
-            '$expr': {
-              '$in': [
-                '$icurso.curso', [
-                  '5A'
-                ]
-              ]
-            }
-          }
-        }, {
-          '$lookup': {
-            'from': 'estudiante',
-            'localField': 'idEstudiante',
-            'foreignField': '_id',
-            'as': 'conest'
-          }
-        }, {
-          '$unwind': {
-            'path': '$conest',
-            'preserveNullAndEmptyArrays': false
-          }
-        }, {
-          '$unwind': {
-            'path': '$conest.adultoResponsable',
-            'preserveNullAndEmptyArrays': false
-          }
-        }, {
-          '$lookup': {
-            'from': 'adultoResponsable',
-            'localField': 'idAdulto',
-            'foreignField': 'string',
-            'as': 'conadulto'
-          }
-        }, {
-          '$unwind': {
-            'path': '$conadulto',
-            'preserveNullAndEmptyArrays': false
-          }
-        }, {
-          '$project': {
-            '_id': 0,
-            'conadulto.idUsuario': 1
-          }
-        }
-      ]).then(response =>{
-        response.forEach(conadulto => {
-          idtutores.push(conadulto[0].idUsuario);
-        });
-        Suscripcion.notificacionGrupal(
-          idtutores, // Tutores de los cursos seleccionados
-          evento.titulo,
-          this.cuerpo
-        );
-      })
+    // if (evento.tags.includes("Todos los cursos")) {
+    //   Suscripcion.notificacionMasiva(evento.titulo, this.cuerpo);
+    // } else {
+    //   Inscripcion.agreggate([
+    //     {
+    //       '$lookup': {
+    //         'from': 'curso',
+    //         'localField': 'idCurso',
+    //         'foreignField': '_id',
+    //         'as': 'icurso'
+    //       }
+    //     }, {
+    //       '$unwind': {
+    //         'path': '$icurso',
+    //         'preserveNullAndEmptyArrays': false
+    //       }
+    //     }, {
+    //       '$match': {
+    //         '$expr': {
+    //           '$in': [
+    //             '$icurso.curso', [
+    //               '5A'
+    //             ]
+    //           ]
+    //         }
+    //       }
+    //     }, {
+    //       '$lookup': {
+    //         'from': 'estudiante',
+    //         'localField': 'idEstudiante',
+    //         'foreignField': '_id',
+    //         'as': 'conest'
+    //       }
+    //     }, {
+    //       '$unwind': {
+    //         'path': '$conest',
+    //         'preserveNullAndEmptyArrays': false
+    //       }
+    //     }, {
+    //       '$unwind': {
+    //         'path': '$conest.adultoResponsable',
+    //         'preserveNullAndEmptyArrays': false
+    //       }
+    //     }, {
+    //       '$lookup': {
+    //         'from': 'adultoResponsable',
+    //         'localField': 'idAdulto',
+    //         'foreignField': 'string',
+    //         'as': 'conadulto'
+    //       }
+    //     }, {
+    //       '$unwind': {
+    //         'path': '$conadulto',
+    //         'preserveNullAndEmptyArrays': false
+    //       }
+    //     }, {
+    //       '$project': {
+    //         '_id': 0,
+    //         'conadulto.idUsuario': 1
+    //       }
+    //     }
+    //   ]).then(response =>{
+    //     response.forEach(conadulto => {
+    //       idtutores.push(conadulto[0].idUsuario);
+    //     });
+    //     Suscripcion.notificacionGrupal(
+    //       idtutores, // Tutores de los cursos seleccionados
+    //       evento.titulo,
+    //       this.cuerpo
+    //     );
+    //   })
 
-    }
+    // }
 
-    // evento.save().then(() => {
-    //   //Completar con código de la notificación COMPLETAR CON LO DE ARRIBA
-    //   res.status(201).json({
-    //     message: "Evento creado existosamente",
-    //     exito: true
-    //   });
-    // });
+    evento.save().then(() => {
+      //Completar con código de la notificación COMPLETAR CON LO DE ARRIBA
+      res.status(201).json({
+        message: "Evento creado existosamente",
+        exito: true
+      });
+    });
   });
 });
 
@@ -151,6 +153,11 @@ router.get("", (req, res, next) => {
       exito: true
     });
   });
+});
+
+//Retorna la imagen de un evento dada su url
+router.get("/imagenes",(req, res, next) => {
+  res.sendFile(path.join(__dirname, '../images', req.query.imgUrl));
 });
 
 //Obtiene todos los comentarios de un evento que estan almacenados en la base de datos
@@ -182,14 +189,14 @@ router.post("/registrarComentario", async (req, res, next) => {
           idUsuario = usuario.idUsuario;
           resolve({ apellido: apellido, nombre: nombre, idUsuario: idUsuario });
         });
-      } else if(rol == "Admin"){
+      } else if (rol == "Admin") {
         Admin.findOne({ email: emailUsuario }).then(usuario => {
           apellido = usuario.apellido;
           nombre = usuario.nombre;
           idUsuario = usuario.idUsuario;
           resolve({ apellido: apellido, nombre: nombre, idUsuario: idUsuario });
         });
-      }else{
+      } else {
         Empleado.findOne({ email: emailUsuario }).then(usuario => {
           apellido = usuario.apellido;
           nombre = usuario.nombre;
@@ -226,7 +233,7 @@ router.post("/registrarComentario", async (req, res, next) => {
 });
 //Modifica el evento en la base de datos
 //@params: evento a publicar
-router.patch("/editar", checkAuthMiddleware, (req, res, next) => {
+router.patch("/editar", upload, (req, res, next) => {
   Evento.findByIdAndUpdate(req.body._id, {
     titulo: req.body.titulo,
     descripcion: req.body.descripcion,
@@ -234,7 +241,7 @@ router.patch("/editar", checkAuthMiddleware, (req, res, next) => {
     horaInicio: req.body.horaInicio,
     horaFin: req.body.horaFin,
     tags: req.body.tags,
-    imgUrl: req.body.imgUrl,
+    imgUrl: req.file.filename,
     autor: req.body.autor
   })
   console.log(horaFin)
@@ -252,29 +259,13 @@ router.patch("/editar", checkAuthMiddleware, (req, res, next) => {
     });
 });
 
-router.get("/verEvento", checkAuthMiddleware, (req, res) => {
-  Evento.aggregate([
-    {
-      $match: {
-        titulo: req.query.titulo
-      }
-    }
-  ]).then(eventoEncontrado => {
-    return res.status(200).json({
-      message: "Devolvio el evento correctamente",
-      exito: true,
-      evento: eventoEncontrado
-    });
-  });
-});
-
 router.delete("/eliminarEvento", checkAuthMiddleware, (req, res, next) => {
-  Evento.deleteOne({
-    titulo: req.query.titulo
+  Evento.findByIdAndDelete({
+    _id: req.query._id
   }).exec();
-    return res.status(202).json({
-      message: "Evento eliminado exitosamente",
-      exito: true
+  return res.status(202).json({
+    message: "Evento eliminado exitosamente",
+    exito: true
   });
 });
 

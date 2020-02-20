@@ -13,7 +13,8 @@
   <mat-carousel
     interval="5000"
     maxWidth="auto"
-    proportion="100"
+    proportion="75"
+    color="warn"
     [hideArrows]="false"
     [hideIndicators]="false"
   >
@@ -56,7 +57,7 @@
       mat-raised-button
       (click)="onGuardar(comentario.value)"
       class="buttonPrimary"
-      [disabled]= "comentario.value == null"
+      [disabled] = "comentario.value == null"
     >
       Guardar
     </button>
@@ -70,17 +71,18 @@
   </div>
   <br />
   <mat-divider class="divisor"></mat-divider>
-  <p class="tituloComentarios"><b style="font-size: 28px;">Comentarios</b></p>
-  <!-- <mat-accordion class="example-headers-align">
+  <!-- <p class="tituloComentarios"><b style="font-size: 28px;">Comentarios</b></p> -->
+  <br>
+  <mat-accordion class="example-headers-align">
     <mat-expansion-panel hideToggle>
       <mat-expansion-panel-header>
         <mat-panel-title>
-          Comentarios
+          <b>Comentarios</b>
         </mat-panel-title>
         <mat-panel-description>
           <mat-icon>menu_book</mat-icon>
         </mat-panel-description>
-      </mat-expansion-panel-header> -->
+      </mat-expansion-panel-header>
   <div class="test" *ngFor="let comentario of comentarios">
     <div class="datosComentario">
       <p class="nombreAutor">
@@ -97,6 +99,6 @@
     </p>
     <mat-divider [inset]="true"></mat-divider>
   </div>
-  <!-- </mat-expansion-panel>
-  </mat-accordion> -->
+  </mat-expansion-panel>
+  </mat-accordion>
 </mat-card>
