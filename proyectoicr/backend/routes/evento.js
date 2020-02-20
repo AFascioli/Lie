@@ -244,6 +244,7 @@ router.patch("/editar", upload, (req, res, next) => {
     imgUrl: req.file.filename,
     autor: req.body.autor
   })
+  console.log(horaFin)
     .then(() => {
       res.status(200).json({
         message: "Evento modificado exitosamente",
