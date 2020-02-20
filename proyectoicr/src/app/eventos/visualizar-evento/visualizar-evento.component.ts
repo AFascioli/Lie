@@ -34,9 +34,10 @@ export class VisualizarEventoComponent implements OnInit {
       this.comentarios = rtdo.comentarios.reverse();
     });
   }
-
+ 
   getImage(imgUrl) {
-    return `${environment.apiUrl}/evento/imagenes?imgUrl=${imgUrl}`
+  return `${environment.apiUrl}/evento/imagenes?imgUrl=${imgUrl}`
+
   }
 
   obtenerMes(fechaEvento) {
