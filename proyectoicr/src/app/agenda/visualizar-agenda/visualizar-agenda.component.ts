@@ -1,4 +1,4 @@
-import { AgendaService } from "./agenda.service";
+import { AgendaService } from "../agenda.service";
 import { Component, OnInit } from "@angular/core";
 
 @Component({
@@ -30,10 +30,10 @@ export class VisualizarAgendaComponent implements OnInit {
   constructor(public servicioAgenda: AgendaService) {}
 
   ngOnInit() {
-    // this.materias=this.servicioAgenda.obtenerMaterias();
+    this.materias = this.servicioAgenda.obtenerMaterias();
   }
 
-  //Este metodo dado por angular se ejecuta una vez que se cargo todo el html :D
+  //Este metodo dado por angular se ejecuta una vez que se cargo todo el html
   ngAfterViewInit() {
     this.materias.forEach((materia, index) => {
       this.acomodarEnGrilla(index.toString(), materia);

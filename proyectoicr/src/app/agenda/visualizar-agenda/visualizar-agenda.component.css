@@ -4,23 +4,37 @@
   margin-right: auto;
   display: grid;
   grid-template-columns: auto 18% 18% 18% 18% 18%; /*Aca se definen la cantidad de columnas*/
-  grid-template-rows: 60px 50px 50px 25px 50px 50px 25px 50px 50px 25px 50px 50px 25px 50px 50px; /*Aca se definen la cantidad de filas*/
+  grid-template-rows: 50px 50px 50px 8px 50px 50px 8px 50px 50px 8px 50px 50px 8px 50px 50px; /*Aca se definen la cantidad de filas*/
   grid-gap: 8px;
-  background-color: #95adbe;/*2196F3*/
+  background-color: #c3c8cc;/*2196F3*/
   padding: 10px;
 }
 
 .grid-container > div {
-  background-color: rgba(255, 255, 255, 0.8);
+  background-color: rgb(85, 92, 94, 0.7);
   padding: 0px;
   display: flex;
   align-items: stretch;
+  grid-column-gap: 50px;
 }
 
 .hora {
   font-size: 15px !important;
   line-height: 25px;
   text-align: center;
+  color: beige;
+}
+
+hr {
+  display: block;
+  margin: 10px 0 10px 0;
+  border-top: 1px solid rgba(0, 0, 0, .12);
+  width: 100%
+}
+
+.modulo{
+  display: flex;
+  align-items: center;
 }
 
 /* En cada uno de estos, se define desde que linea arranca y en cual termina */
@@ -28,11 +42,15 @@
 .modulo1 {
   grid-row-start: 2;
   grid-row-end: 3;
+  justify-content: center;
+  align-items: center;
 }
 
 .modulo2 {
   grid-row-start: 3;
   grid-row-end: 4;
+  justify-content: center;
+  align-items: center;
 }
 
 .recreo1 {
@@ -46,11 +64,15 @@
 .modulo3 {
   grid-row-start: 5;
   grid-row-end: 6;
+  justify-content: center;
+  align-items: center;
 }
 
 .modulo4 {
   grid-row-start: 6;
   grid-row-end: 7;
+  justify-content: center;
+  align-items: center;
 }
 .recreo2 {
   grid-row: 7/8;
@@ -63,11 +85,15 @@
 .modulo5 {
   grid-row-start: 8;
   grid-row-end: 9;
+  justify-content: center;
+  align-items: center;
 }
 
 .modulo6 {
   grid-row-start: 9;
   grid-row-end: 10;
+  justify-content: center;
+  align-items: center;
 }
 
 .recreo3 {
@@ -81,10 +107,14 @@
 .modulo7 {
   grid-row-start: 11;
   grid-row-end: 12;
+  justify-content: center;
+  align-items: center;
 }
 .modulo8 {
   grid-row-start: 12;
   grid-row-end: 13;
+  justify-content: center;
+  align-items: center;
 }
 .recreo4 {
   grid-row: 13/14;
@@ -97,18 +127,23 @@
 .modulo9 {
   grid-row-start: 14;
   grid-row-end: 15;
+  justify-content: center;
+  align-items: center;
 }
 .modulo10 {
   grid-row-start: 15;
   grid-row-end: 16;
+  justify-content: center;
+  align-items: center;
 }
 .cabecera {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 30px;
+  font-size: 25px;
   margin-block-start: 0;
   margin-block-end: 0;
+  color: beige;
 }
 
 .materia {
@@ -117,4 +152,5 @@
   align-items: center;
   width: -webkit-fill-available;
   font-size: 20px;
+  color: beige;
 }

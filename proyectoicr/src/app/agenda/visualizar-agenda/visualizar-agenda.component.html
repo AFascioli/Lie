@@ -29,36 +29,39 @@
       Viernes
     </p>
   </div>
-  <div class="hora modulo1">07:00 - 07:45</div>
-  <div class="hora modulo2">07:45 - 08:30</div>
-  <div class="hora recreo1">
+  <div class="hora modulo1">
+    <p class="modulo"> 07:00 - 07:45</p>
+  </div>
+  <div class="hora modulo2"><p class="modulo"> 07:45 - 08:30</p></div>
+
+  <!-- <div class="hora recreo1">
     <p class="recreo1">
       Recreo de 10 minutos
     </p>
-  </div>
-  <div class="hora modulo3">08:40 - 09:25</div>
-  <div class="hora modulo4">09:25 - 10:10</div>
-  <div class="hora recreo2">
+  </div> -->
+  <div class="hora modulo3"><p class="modulo">08:40 - 09:25</p></div>
+  <div class="hora modulo4"><p class="modulo">09:25 - 10:10</p></div>
+  <!-- <div class="hora recreo2">
     <p class="recreo1">
       Recreo de 20 minutos
     </p>
-  </div>
-  <div class="hora modulo5">10:30 - 11:15</div>
-  <div class="hora modulo6">10:15 - 12:00</div>
-  <div class="hora recreo3">
+  </div> -->
+  <div class="hora modulo5"><p class="modulo">10:30 - 11:15</p></div>
+  <div class="hora modulo6"><p class="modulo">10:15 - 12:00</p></div>
+  <!-- <div class="hora recreo3">
     <p class="recreo1">
       Recreo de 20 minutos
     </p>
-  </div>
-  <div class="hora modulo7">12:20 - 13:05</div>
-  <div class="hora modulo8">13:05 - 13:55</div>
-  <div class="hora recreo4">
+  </div> -->
+  <div class="hora modulo7"><p class="modulo">12:20 - 13:05</p></div>
+  <div class="hora modulo8"><p class="modulo">13:05 - 13:55</p></div>
+  <!-- <div class="hora recreo4">
     <p class="recreo1">
       Recreo de 20 minutos
     </p>
-  </div>
-  <div class="hora modulo9">14:05 - 14:50</div>
-  <div class="hora modulo10">14:50 - 15:35</div>
+  </div> -->
+  <div class="hora modulo9"><p class="modulo">14:05 - 14:50</p></div>
+  <div class="hora modulo10"><p class="modulo">14:50 - 15:35</p></div>
 
   <div class="materia" *ngFor="let materia of materias; let i = index" [id]="i">
     <div class="materia" [ngStyle]="{ 'background-color': getColor(materia) }">
