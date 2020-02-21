@@ -1,3 +1,4 @@
+import { RegistrarCuotasComponent } from './cuotas/registrar-cuotas/registrar-cuotas.component';
 import { RegistrarEventoComponent } from "./eventos/registrar-evento/registrar-evento.component";
 import { CalificacionesExamenesComponent } from "./calificaciones/calificaciones-examenes/calificaciones-examenes.component";
 import { PreferenciasComponent } from "./menu-lateral/preferencias/preferencias.component";
@@ -84,7 +85,7 @@ const routes: Routes = [
         component: RegistrarAsistenciaComponent
       },
       {
-        path: "curso", //ruta inscribir estudiante a un curso
+        path: "curso", //resolve: ruta inscribir estudiante a un curso
         component: InscripcionEstudianteComponent,
         canActivate: [RouteGuard, RoleGuard],
         data: { rolesValidos: ["Admin", "Preceptor", "Director"] }
@@ -106,6 +107,11 @@ const routes: Routes = [
         component: CalificacionesEstudiantesComponent,
         canActivate: [RoleGuard],
         data: { rolesValidos: ["Admin", "Preceptor", "Director", "Docente"] }
+      },
+      {
+        path: "registrarCuotas",
+        component: RegistrarCuotasComponent,
+        data: { rolesValidos: ["Admin", "Preceptor", "Director"] }
       },
       {
         path: "calificacionesExamenes",
