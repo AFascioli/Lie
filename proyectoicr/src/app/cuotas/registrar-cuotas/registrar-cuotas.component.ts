@@ -65,6 +65,7 @@ export class RegistrarCuotasComponent implements OnInit {
   //Busca los estudiantes segun el curso que se selecciono en pantalla. Los orden alfabeticamente
   onCursoSeleccionado(curso) {
     this.cursoNotSelected = false;
+
   }
 
   //Cambia el atributo presente del estudiante cuando se cambia de valor el toggle
@@ -91,6 +92,7 @@ export class RegistrarCuotasComponent implements OnInit {
     );
   }
 
+  //Al seleccionar el mes obtiene todos los cursos y los ordena alfabeticamente
   onMesSeleccionado(mes) {
     this.mesSeleccionado = mes;
     this.servicioEstudiante.obtenerCursos().subscribe(response => {

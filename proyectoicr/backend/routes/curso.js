@@ -473,6 +473,9 @@ router.get("/materias", checkAuthMiddleware, (req, res) => {
   });
 });
 
+router.get("/estadoCuotas", checkAuthMiddleware, (req, res) => {
+
+});
 
 
 //Inscribe a un estudiante a un curso y los documentos entregados durante la inscripción
