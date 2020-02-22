@@ -28,7 +28,7 @@
       [disabled]="fueraPeriodoCicloLectivo || !mesSeleccionado"
       matNativeControl
       required
-      (selectionChange)="onCursoSeleccionado(curso)"
+      (selectionChange)="onCursoSeleccionado(curso,mes)"
     >
       <mat-option *ngFor="let objCurso of cursos" [value]="objCurso.curso">
         {{ objCurso.curso }}
@@ -106,7 +106,7 @@
   <div class="div-button">
     <button
       class="buttonPrimary"
-      (click)="onGuardar()"
+      (click)="onGuardar(mes,curso)"
       mat-raised-button
       [disabled]="cursoNotSelected"
     >

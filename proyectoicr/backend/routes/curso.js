@@ -8,6 +8,7 @@ const Inscripcion = require("../models/inscripcion");
 const CalificacionesXTrimestre = require("../models/calificacionesXTrimestre");
 const CalificacionesXMateria = require("../models/calificacionesXMateria");
 const Estudiante = require("../models/estudiante");
+const Cuota = require("../models/inscripcion");
 const Horario = require("../models/horario");
 const MateriaXCurso = require("../models/materiasXCurso");
 const ClaseInscripcion = require("../classes/inscripcion");
@@ -28,6 +29,48 @@ router.get("/", checkAuthMiddleware, (req, res) => {
       });
       res.status(200).json({ cursos: respuesta });
     });
+});
+
+router.get("/estadoCuotas", checkAuthMiddleware, (req, res) => {
+  let fechaActual = new Date();
+  let añoActual = fechaActual.getFullYear();
+  Inscripcion.aggregate(
+    [
+      {
+        '$unwind': {
+          'path': '$cuota'
+        }
+      }, {
+        '$unwind': {
+          'path': '$cuota'
+        }
+      }, {
+        '$match': {
+          'activa': true,
+          'año': añoActual,
+          'idCurso': mongoose.Types.ObjectId(req.query.idCurso),
+          'cuota.mes': parseInt(req.query.mes, 10)
+        }
+      }, {
+        '$lookup': {
+          'from': 'estudiante',
+          'localField': 'idEstudiante',
+          'foreignField': '_id',
+          'as': 'estudiante'
+        }
+      }, {
+        '$project': {
+          'estudiante': 1,
+          'cuota': 1
+        }
+      }
+    ]).then(estadoCuotas => {
+      res.status(200).json({
+        message: "Operación exitosa",
+        exito: true,
+        cuotasXEstudiante: estadoCuotas
+      });
+    })
 });
 
 // Obtiene la capacidad de un curso pasado por parámetro
@@ -568,6 +611,18 @@ router.post("/inscripciontest", checkAuthMiddleware, async (req, res) => {
     });
   };
 
+var cearCuotas = () => {
+  return new Promise((resolve, reject) => {
+    cuotas = [];
+
+    for (var i = 0; i < 12; i++){
+    let cuota = {mes: i+1, pagado:false }
+      cuotas.push(cuota);
+    }
+    resolve(cuotas);
+  });
+};
+
   //#resolve: Se puede implementar el Promise.all, fijarse si es necesario/no rompe nada
   var cursoSeleccionado = await obtenerCurso();
   var estadoInscriptoInscripcion = await obtenerEstadoInscriptoInscripcion();
@@ -594,6 +649,7 @@ router.post("/inscripciontest", checkAuthMiddleware, async (req, res) => {
   }
 
   var materiasDelCurso = await obtenerMateriasDeCurso();
+  var cuotas = await cearCuotas();
   var estadoCursandoMateria = await obtenerEstadoCursandoMateria();
   var idsCXMNuevas = await ClaseCalifXMateria.crearCXM(
     materiasDelCurso,
@@ -611,7 +667,8 @@ router.post("/inscripciontest", checkAuthMiddleware, async (req, res) => {
     contadorLlegadasTarde: 0,
     calificacionesXMateria: idsCXMNuevas,
     materiasPendientes: materiasPendientesNuevas,
-    año: 2019
+    año: 2019,
+    cuotas: cuotas
   });
 
   nuevaInscripcion.save().then(() => {

@@ -6,7 +6,7 @@ const documentosSchema = mongoose.Schema({
 });
 
 const cuotasSchema = mongoose.Schema({
-  mes: String,
+  mes: Number,
   pagado: Boolean
 });
 

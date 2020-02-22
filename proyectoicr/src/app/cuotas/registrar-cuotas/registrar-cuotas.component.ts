@@ -2,6 +2,7 @@ import { AutenticacionService } from "./../../login/autenticacionService.service
 import { Component, OnInit } from "@angular/core";
 import { MatSnackBar } from "@angular/material";
 import { EstudiantesService } from "src/app/estudiantes/estudiante.service";
+import { CuotasService } from "../cuotas.service";
 
 @Component({
   selector: "app-registrar-cuotas",
@@ -12,6 +13,7 @@ export class RegistrarCuotasComponent implements OnInit {
   constructor(
     public autenticacionService: AutenticacionService,
     public servicioEstudiante: EstudiantesService,
+    public cuotasService: CuotasService,
     public snackBar: MatSnackBar
   ) {}
 
@@ -45,7 +47,7 @@ export class RegistrarCuotasComponent implements OnInit {
       this.fechaActual.toString().substring(0, 3) == "Sun"
     ) {
       this.snackBar.open(
-        "Considere que está queriendo registrar una asistencia en un fin de semana",
+        "Considere que está queriendo registrar el estado de las cuotas en un fin de semana",
         "",
         {
           panelClass: ["snack-bar-aviso"],
@@ -63,9 +65,19 @@ export class RegistrarCuotasComponent implements OnInit {
   }
 
   //Busca los estudiantes segun el curso que se selecciono en pantalla. Los orden alfabeticamente
-  onCursoSeleccionado(curso) {
+  onCursoSeleccionado(curso, mes) {
     this.cursoNotSelected = false;
+    let nroMes: number = 0;
 
+    for (let i = 0; i < this.meses.length; i++) {
+      if (mes.value == this.meses[i]) {
+        nroMes = i + 1;
+        break;
+      }
+    }
+    this.cuotasService.obtenerEstadoCuotasDeCurso(curso.value, nroMes).subscribe(rtdo => {
+      console.log(rtdo);
+    });
   }
 
   //Cambia el atributo presente del estudiante cuando se cambia de valor el toggle
@@ -94,7 +106,7 @@ export class RegistrarCuotasComponent implements OnInit {
 
   //Al seleccionar el mes obtiene todos los cursos y los ordena alfabeticamente
   onMesSeleccionado(mes) {
-    this.mesSeleccionado = mes;
+    this.mesSeleccionado = mes.value;
     this.servicioEstudiante.obtenerCursos().subscribe(response => {
       this.cursos = response.cursos;
       this.cursos.sort((a, b) =>
