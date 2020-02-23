@@ -85,9 +85,10 @@ export class RegistrarAgendaComponent implements OnInit {
   //que va a tener esa materia (length=cantidad de horarios)
   agregarHorario(index: number, form: NgForm) {
     this.materiasHTML[index].push(1);
-    if(!this.reservarHorario(form)){
+    var res=this.reservarHorario(form);
+    if(!res.resultado){
       this.materiasHTML[index].pop();
-      this.snackBar.open("Los horarios seleccionados entran en conflicto con otra materia", "", {
+      this.snackBar.open(res.mensaje, "", {
         panelClass: ["snack-bar-fracaso"],
         duration: 4500
       });
@@ -105,15 +106,19 @@ export class RegistrarAgendaComponent implements OnInit {
     var diaMatrix= this.dias.indexOf(dia);
     var moduloInicio= this.modulos.indexOf(horaInicio);
     var moduloFin= this.modulos.indexOf(horaFin);
+    if(moduloFin<moduloInicio){
+      return {resultado:false, mensaje: "El horario de inicio es menor al horario de fin"};
+    }
     var cantidadModulos=moduloFin-moduloInicio;
     for(var index=moduloInicio; index<moduloInicio+cantidadModulos; index++){
       if(this.horariosReservados[index][diaMatrix]){
-        return false;
+
+        return {resultado:false, mensaje: "Los horarios seleccionados entran en conflicto con otra materia"};
       }
         this.horariosReservados[index][diaMatrix]=true;
 
     }
-    return true;
+    return {resultado:true, mensaje: ""};
   }
 
   //Se crea el vector materiasXCurso que es lo que se enviara al backend, luego por cada elemento del
