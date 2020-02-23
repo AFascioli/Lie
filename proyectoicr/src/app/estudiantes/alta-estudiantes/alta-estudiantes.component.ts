@@ -86,7 +86,6 @@ export class AltaEstudiantesComponent implements OnInit, OnDestroy {
 
   onGuardar(form: NgForm) {
     if (form.invalid) {
-      console.log(form.value.localidad);
       this.snackBar.open("Faltan campos por completar", "", {
         panelClass: ["snack-bar-fracaso"],
         duration: 4000

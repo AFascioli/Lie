@@ -5,6 +5,7 @@ import { EstudiantesService } from "src/app/estudiantes/estudiante.service";
 import Rolldate from "../../../assets/rolldate.min.js";
 import { tick } from "@angular/core/testing";
 import { AgendaService } from "src/app/visualizar-agenda/agenda.service.js";
+import { MatSnackBar } from '@angular/material';
 
 @Component({
   selector: "app-registrar-agenda",
@@ -21,10 +22,25 @@ export class RegistrarAgendaComponent implements OnInit {
   horaFin: any;
   horarios = [1];
   materiasHTML = [[1]]; //#resolve Usado para agregar un nuevo horario
+  horariosReservados = [];
+  modulos=[
+    "07:30",
+    "08:15",
+    "09:00",
+    "09:45",
+    "10:30",
+    "11:15",
+    "12:00",
+    "12:45",
+    "13:30",
+    "14:15"
+  ];
+  horariosValidos=true;
 
   constructor(
     public servicioEstudiante: EstudiantesService,
-    public servicioAgenda: AgendaService
+    public servicioAgenda: AgendaService,
+    private snackBar: MatSnackBar
   ) {}
 
   ngOnInit() {
@@ -36,6 +52,12 @@ export class RegistrarAgendaComponent implements OnInit {
     this.servicioAgenda.obtenerDocentes().subscribe(response => {
       this.docentes = response.docentes;
     });
+    for(var i=0; i<9; i++) {
+      this.horariosReservados[i] = [];
+      for(var j=0; j<5; j++) {
+        this.horariosReservados[i][j] = false;
+      }
+  }
   }
 
   ngAfterViewInit() {}
@@ -61,8 +83,37 @@ export class RegistrarAgendaComponent implements OnInit {
 
   //Dentro del elemento correspondiente en materias, se agrega un vector que representa los horarios
   //que va a tener esa materia (length=cantidad de horarios)
-  agregarHorario(index: number) {
+  agregarHorario(index: number, form: NgForm) {
     this.materiasHTML[index].push(1);
+    if(!this.reservarHorario(form)){
+      this.materiasHTML[index].pop();
+      this.snackBar.open("Los horarios seleccionados entran en conflicto con otra materia", "", {
+        panelClass: ["snack-bar-fracaso"],
+        duration: 4500
+      });
+    }
+  }
+
+  //TEST
+  //j=materiasHTML.length, i=materiasHTML[j].length
+  reservarHorario(form: NgForm) {
+    var j=this.materiasHTML.length-1;
+    var i= this.materiasHTML[this.materiasHTML.length-1].length-2;
+    var horaInicio=form.value["horaInicio" + `${j}` + `${i}`];
+    var horaFin=form.value["horaFin" + `${j}` + `${i}`];
+    var dia= form.value["dia" + `${j}` + `${i}`];
+    var diaMatrix= this.dias.indexOf(dia);
+    var moduloInicio= this.modulos.indexOf(horaInicio);
+    var moduloFin= this.modulos.indexOf(horaFin);
+    var cantidadModulos=moduloFin-moduloInicio;
+    for(var index=moduloInicio; index<moduloInicio+cantidadModulos; index++){
+      if(this.horariosReservados[index][diaMatrix]){
+        return false;
+      }
+        this.horariosReservados[index][diaMatrix]=true;
+
+    }
+    return true;
   }
 
   //Se crea el vector materiasXCurso que es lo que se enviara al backend, luego por cada elemento del
@@ -87,8 +138,10 @@ export class RegistrarAgendaComponent implements OnInit {
       });
       materiasXCurso.push(materiaXCurso);
     });
-    this.servicioAgenda.registrarAgenda(materiasXCurso, form.value.curso).subscribe(response =>{
-      console.log('NICE');
-    });
+    this.servicioAgenda
+      .registrarAgenda(materiasXCurso, form.value.curso)
+      .subscribe(response => {
+        console.log("NICE");
+      });
   }
 }
