@@ -41,20 +41,14 @@ router.get("/estadoCuotas", checkAuthMiddleware, (req, res) => {
     Inscripcion.aggregate([
       {
         $unwind: {
-          path: "$cuota"
-        }
-      },
-      {
-        $unwind: {
-          path: "$cuota"
+          path: "$cuotas"
         }
       },
       {
         $match: {
           activa: true,
-          año: añoActual - 1,
           idCurso: mongoose.Types.ObjectId(curso._id),
-          "cuota.mes": parseInt(req.query.mes, 10)
+          "cuotas.mes": parseInt(req.query.mes, 10)
         }
       },
       {
@@ -69,7 +63,7 @@ router.get("/estadoCuotas", checkAuthMiddleware, (req, res) => {
         $project: {
           "estudiante.apellido": 1,
           "estudiante.nombre": 1,
-          cuota: 1
+          cuotas: 1
         }
       }
     ]).then(estadoCuotas => {
@@ -82,8 +76,8 @@ router.get("/estadoCuotas", checkAuthMiddleware, (req, res) => {
             _id: estadoCuotas[i]._id,
             apellido: estadoCuotas[i].estudiante[0].apellido,
             nombre: estadoCuotas[i].estudiante[0].nombre,
-            pagado: estadoCuotas[i].cuota.pagado,
-            mes: estadoCuotas[i].cuota.mes
+            pagado: estadoCuotas[i].cuotas.pagado,
+            mes: estadoCuotas[i].cuotas.mes
           };
           cuotasXEstudiantes.push(cuotaXEstudiante);
         }
@@ -102,20 +96,11 @@ router.get("/estadoCuotas", checkAuthMiddleware, (req, res) => {
 router.post("/publicarEstadoCuotas", checkAuthMiddleware, (req, res) => {
   final = req.body.length - 1;
   for (let i = 0; i <= final; i++) {
-      console.log(i);
-      Inscripcion.findById(req.body[i]._id).then(inscripcion => {
-        console.log(inscripcion);
-        // console.log(inscripcion.cuota[0]);
-        console.log('obtuvo inscripcion');
-        // inscripcion.cuota[0].forEach(cuota => {
-        //   console.log('recorre cuota');
-        //   console.log(cuota);
-        //   if ((cuota.mes = req.body[i].mes)) {
-        //     cuota.pagado = CXE.pagado;
-        //   }
-        // });
-        // inscripcion.save();
-      });
+    let rtdo;
+    Inscripcion.findById(req.body[i]._id).then(inscripcion => {
+      inscripcion.cuotas[req.body[i].mes-1].pagado = true;
+      inscripcion.save();
+    });
   }
   res.status(200).json({
     message: "Operación exitosa",
