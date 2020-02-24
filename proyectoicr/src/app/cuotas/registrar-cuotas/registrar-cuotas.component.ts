@@ -79,23 +79,21 @@ export class RegistrarCuotasComponent implements OnInit {
     this.cuotasService
       .obtenerEstadoCuotasDeCurso(curso.value, nroMes)
       .subscribe(rtdo => {
-        // let estudiantes: any[] = [];
-        // for (let i = 0; i < this.cuotasXEstudiante.length; i++) {
-        //   estudiantes.push(rtdo.cuotasXEstudiante[i].estudiante[0]);
-        // }
         this.cuotasXEstudiante = rtdo.cuotasXEstudiante.sort((a, b) =>
           a.apellido > b.apellido ? 1 : b.apellido > a.apellido ? -1 : 0
         );
+        console.log(rtdo.cuotasXEstudiante);
       });
   }
 
   //Cambia el atributo presente del estudiante cuando se cambia de valor el toggle
   onCambioEstadoCuota(row) {
-    const indexEstudiante = this.estudiantesXDivision.findIndex(
+    const indexEstudiante = this.cuotasXEstudiante.findIndex(
       objConIDEstudiante => objConIDEstudiante._id == row._id
     );
-    this.estudiantesXDivision[indexEstudiante].pagada = !this
-      .estudiantesXDivision[indexEstudiante].pagada;
+    this.cuotasXEstudiante[indexEstudiante].pagado = !this.cuotasXEstudiante[
+      indexEstudiante
+    ].pagado;
   }
 
   //Devuelve true si la fecha actual se encuentra dentro del ciclo lectivo, y false caso contrario.
@@ -128,7 +126,17 @@ export class RegistrarCuotasComponent implements OnInit {
     });
   }
 
-  onGuardar() {}
+  onGuardar() {
+    let cuotasCambiadas = [];
+    this.cuotasXEstudiante.forEach(cuota => {
+      if(cuota.pagado == true){
+        cuotasCambiadas.push(cuota);
+      }
+    });
+    this.cuotasService.publicarEstadoCuotasDeCurso(cuotasCambiadas).subscribe(rtdo => {
+      console.log(rtdo);
+    });
+  }
 
   onCancelar() {}
 }

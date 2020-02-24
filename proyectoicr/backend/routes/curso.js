@@ -31,6 +31,9 @@ router.get("/", checkAuthMiddleware, (req, res) => {
     });
 });
 
+//Obtiene el estado de las cuotas de todos los estudiantes de un curso
+//@params: id del curso
+//@params: mes de la cuota
 router.get("/estadoCuotas", checkAuthMiddleware, (req, res) => {
   let fechaActual = new Date();
   let añoActual = fechaActual.getFullYear();
@@ -66,26 +69,23 @@ router.get("/estadoCuotas", checkAuthMiddleware, (req, res) => {
         $project: {
           "estudiante.apellido": 1,
           "estudiante.nombre": 1,
-          "cuota.pagado": 1
+          cuota: 1
         }
       }
     ]).then(estadoCuotas => {
-      // console.log(estadoCuotas);
-      console.log(estadoCuotas.length);
       cuotasXEstudiantes = [];
       let cuotaXEstudiante;
-      let i = 0;
-
-      for (let i = 0; i <= estadoCuotas.length-1; i++) {
+      final = estadoCuotas.length - 1;
+      for (let i = 0; i <= final; i++) {
         if (i <= estadoCuotas.length - 1) {
           cuotaXEstudiante = {
             _id: estadoCuotas[i]._id,
             apellido: estadoCuotas[i].estudiante[0].apellido,
             nombre: estadoCuotas[i].estudiante[0].nombre,
-            pagado: estadoCuotas[i].cuota.pagado
+            pagado: estadoCuotas[i].cuota.pagado,
+            mes: estadoCuotas[i].cuota.mes
           };
-          estadoCuotas.push(cuotaXEstudiante);
-          console.log(cuotaXEstudiante);
+          cuotasXEstudiantes.push(cuotaXEstudiante);
         }
       }
       res.status(200).json({
@@ -94,6 +94,32 @@ router.get("/estadoCuotas", checkAuthMiddleware, (req, res) => {
         cuotasXEstudiante: cuotasXEstudiantes
       });
     });
+  });
+});
+
+//Publica el estado de las cuotas de todos los estudiantes de un curso
+//@params: id de la inscripcion, mes de la cuota, estado cuota (pagada o no) y nombre y apellido
+router.post("/publicarEstadoCuotas", checkAuthMiddleware, (req, res) => {
+  final = req.body.length - 1;
+  for (let i = 0; i <= final; i++) {
+      console.log(i);
+      Inscripcion.findById(req.body[i]._id).then(inscripcion => {
+        console.log(inscripcion);
+        // console.log(inscripcion.cuota[0]);
+        console.log('obtuvo inscripcion');
+        // inscripcion.cuota[0].forEach(cuota => {
+        //   console.log('recorre cuota');
+        //   console.log(cuota);
+        //   if ((cuota.mes = req.body[i].mes)) {
+        //     cuota.pagado = CXE.pagado;
+        //   }
+        // });
+        // inscripcion.save();
+      });
+  }
+  res.status(200).json({
+    message: "Operación exitosa",
+    exito: true
   });
 });
 

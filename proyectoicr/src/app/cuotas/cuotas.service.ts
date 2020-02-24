@@ -13,7 +13,7 @@ export class CuotasService {
 
   }
 
-  //Obtiene el estado de las cuotas de todos los estudiantes de un curso en la base de datos
+  //Obtiene el estado de las cuotas de todos los estudiantes de un curso
   //@params: id del curso
   //@params: mes de la cuota
   public obtenerEstadoCuotasDeCurso(idCurso: string, mes: string) {
@@ -21,6 +21,14 @@ export class CuotasService {
     return this.http.get<{ message: any; exito: boolean; cuotasXEstudiante: any;  }>(
       environment.apiUrl + "/curso/estadoCuotas",
       { params: params }
+    );
+  }
+
+  public publicarEstadoCuotasDeCurso(estadoXCuotas:any[]){
+    console.log(estadoXCuotas);
+    return this.http.post<{ message: string; exito: boolean }>(
+      environment.apiUrl + "/curso/publicarEstadoCuotas",
+      estadoXCuotas
     );
   }
 }

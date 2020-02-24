@@ -56,7 +56,7 @@
   <p class="aviso" *ngIf="fueraPeriodoCicloLectivo==true">Atención, no se puede tomar asistencia debido a que estamos fuera del ciclo lectivo </p> -->
   <br />
   <div *ngIf="!cursoNotSelected">
-    <table mat-table [dataSource]="estudiantesXDivision">
+    <table mat-table [dataSource]="cuotasXEstudiante">
       <ng-container matColumnDef="apellido">
         <th class="nombreApellido" mat-header-cell *matHeaderCellDef>
           Apellido/s
@@ -64,9 +64,9 @@
         <td
           class="nombreApellido"
           mat-cell
-          *matCellDef="let estudianteXDivision"
+          *matCellDef="let cuotaXEstudiante"
         >
-          {{ estudiantesXDivision[0].apellido }}
+          {{ cuotaXEstudiante.apellido }}
         </td>
       </ng-container>
       <ng-container matColumnDef="nombre">
@@ -76,9 +76,9 @@
         <td
           class="nombreApellido"
           mat-cell
-          *matCellDef="let estudianteXDivision"
+          *matCellDef="let cuotaXEstudiante"
         >
-        {{ estudiantesXDivision[0].nombre }}
+        {{ cuotaXEstudiante.nombre }}
         </td>
       </ng-container>
 
