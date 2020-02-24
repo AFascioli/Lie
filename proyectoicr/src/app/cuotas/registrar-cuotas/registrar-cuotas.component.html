@@ -64,9 +64,9 @@
         <td
           class="nombreApellido"
           mat-cell
-          *matCellDef="let estudiantesXDivision"
+          *matCellDef="let estudianteXDivision"
         >
-          {{ estudiantesXDivision.apellido }}
+          {{ estudiantesXDivision[0].apellido }}
         </td>
       </ng-container>
       <ng-container matColumnDef="nombre">
@@ -76,23 +76,23 @@
         <td
           class="nombreApellido"
           mat-cell
-          *matCellDef="let estudiantesXDivision"
+          *matCellDef="let estudianteXDivision"
         >
-          {{ estudiantesXDivision.nombre }}
+        {{ estudiantesXDivision[0].nombre }}
         </td>
       </ng-container>
 
       <ng-container matColumnDef="accion">
         <th class="presentismo" mat-header-cell *matHeaderCellDef>
-          Estado cuota
+          Presentismo
         </th>
         <td class="presentismo" mat-cell *matCellDef="let row">
           <mat-slide-toggle
-            [checked]="row.presente"
+            [checked]="row.pagado"
             (change)="onCambioEstadoCuota(row)"
           >
-            <p *ngIf="row.presente">Pagada</p>
-            <p *ngIf="!row.presente">No pagada</p></mat-slide-toggle
+            <p *ngIf="row.pagado">Pagado</p>
+            <p *ngIf="!row.pagado">No pagado</p></mat-slide-toggle
           >
         </td>
       </ng-container>

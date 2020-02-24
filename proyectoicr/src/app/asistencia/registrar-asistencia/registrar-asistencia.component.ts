@@ -90,6 +90,7 @@ export class RegistrarAsistenciaComponent implements OnInit {
         this.estudiantesXDivision = respuesta.estudiantes.sort((a, b) =>
           a.apellido > b.apellido ? 1 : b.apellido > a.apellido ? -1 : 0
         );
+        console.log(this.estudiantesXDivision);
       });
   }
 

@@ -34,43 +34,67 @@ router.get("/", checkAuthMiddleware, (req, res) => {
 router.get("/estadoCuotas", checkAuthMiddleware, (req, res) => {
   let fechaActual = new Date();
   let añoActual = fechaActual.getFullYear();
-  Inscripcion.aggregate(
-    [
+  Curso.findOne({ curso: req.query.idCurso }).then(curso => {
+    Inscripcion.aggregate([
       {
-        '$unwind': {
-          'path': '$cuota'
+        $unwind: {
+          path: "$cuota"
         }
-      }, {
-        '$unwind': {
-          'path': '$cuota'
+      },
+      {
+        $unwind: {
+          path: "$cuota"
         }
-      }, {
-        '$match': {
-          'activa': true,
-          'año': añoActual,
-          'idCurso': mongoose.Types.ObjectId(req.query.idCurso),
-          'cuota.mes': parseInt(req.query.mes, 10)
+      },
+      {
+        $match: {
+          activa: true,
+          año: añoActual - 1,
+          idCurso: mongoose.Types.ObjectId(curso._id),
+          "cuota.mes": parseInt(req.query.mes, 10)
         }
-      }, {
-        '$lookup': {
-          'from': 'estudiante',
-          'localField': 'idEstudiante',
-          'foreignField': '_id',
-          'as': 'estudiante'
+      },
+      {
+        $lookup: {
+          from: "estudiante",
+          localField: "idEstudiante",
+          foreignField: "_id",
+          as: "estudiante"
         }
-      }, {
-        '$project': {
-          'estudiante': 1,
-          'cuota': 1
+      },
+      {
+        $project: {
+          "estudiante.apellido": 1,
+          "estudiante.nombre": 1,
+          "cuota.pagado": 1
         }
       }
     ]).then(estadoCuotas => {
+      // console.log(estadoCuotas);
+      console.log(estadoCuotas.length);
+      cuotasXEstudiantes = [];
+      let cuotaXEstudiante;
+      let i = 0;
+
+      for (let i = 0; i <= estadoCuotas.length-1; i++) {
+        if (i <= estadoCuotas.length - 1) {
+          cuotaXEstudiante = {
+            _id: estadoCuotas[i]._id,
+            apellido: estadoCuotas[i].estudiante[0].apellido,
+            nombre: estadoCuotas[i].estudiante[0].nombre,
+            pagado: estadoCuotas[i].cuota.pagado
+          };
+          estadoCuotas.push(cuotaXEstudiante);
+          console.log(cuotaXEstudiante);
+        }
+      }
       res.status(200).json({
         message: "Operación exitosa",
         exito: true,
-        cuotasXEstudiante: estadoCuotas
+        cuotasXEstudiante: cuotasXEstudiantes
       });
-    })
+    });
+  });
 });
 
 // Obtiene la capacidad de un curso pasado por parámetro
@@ -516,10 +540,7 @@ router.get("/materias", checkAuthMiddleware, (req, res) => {
   });
 });
 
-router.get("/estadoCuotas", checkAuthMiddleware, (req, res) => {
-
-});
-
+router.get("/estadoCuotas", checkAuthMiddleware, (req, res) => {});
 
 //Inscribe a un estudiante a un curso y los documentos entregados durante la inscripción
 //@params: id estudiante que se quiere inscribir
@@ -611,17 +632,17 @@ router.post("/inscripciontest", checkAuthMiddleware, async (req, res) => {
     });
   };
 
-var cearCuotas = () => {
-  return new Promise((resolve, reject) => {
-    cuotas = [];
+  var cearCuotas = () => {
+    return new Promise((resolve, reject) => {
+      cuotas = [];
 
-    for (var i = 0; i < 12; i++){
-    let cuota = {mes: i+1, pagado:false }
-      cuotas.push(cuota);
-    }
-    resolve(cuotas);
-  });
-};
+      for (var i = 0; i < 12; i++) {
+        let cuota = { mes: i + 1, pagado: false };
+        cuotas.push(cuota);
+      }
+      resolve(cuotas);
+    });
+  };
 
   //#resolve: Se puede implementar el Promise.all, fijarse si es necesario/no rompe nada
   var cursoSeleccionado = await obtenerCurso();
@@ -774,7 +795,7 @@ router.post(
 //@params: id del curso
 //@params: agenda, que es un objeto que tiene idMateria, idDocente y el vector de horarios
 router.post("/agenda", checkAuthMiddleware, async (req, res) => {
-  var crearHorario = (horario) => {
+  var crearHorario = horario => {
     return new Promise((resolve, reject) => {
       horario.save().then(horarioGuardado => {
         resolve(horarioGuardado._id);
@@ -782,7 +803,7 @@ router.post("/agenda", checkAuthMiddleware, async (req, res) => {
     });
   };
 
-  var crearMateriaXCurso = (mxc) => {
+  var crearMateriaXCurso = mxc => {
     return new Promise((resolve, reject) => {
       mxc.save().then(mxcGuardada => {
         resolve(mxcGuardada._id);
@@ -790,13 +811,13 @@ router.post("/agenda", checkAuthMiddleware, async (req, res) => {
     });
   };
 
-  let vectorIdsMXC=[];
+  let vectorIdsMXC = [];
   //For que recorre MXC
-  for (const materia of req.body.agenda){
-    let vectorIdsHorarios=[];
+  for (const materia of req.body.agenda) {
+    let vectorIdsHorarios = [];
     //For que recorre Horarios
-    for(const horario of materia.horarios){
-      let nuevoHorario= new Horario({
+    for (const horario of materia.horarios) {
+      let nuevoHorario = new Horario({
         dia: horario.dia,
         horaInicio: horario.horaInicio,
         horaFin: horario.horaFin
@@ -813,8 +834,10 @@ router.post("/agenda", checkAuthMiddleware, async (req, res) => {
     let idMXC = await crearMateriaXCurso(nuevaMateriaXCurso);
     vectorIdsMXC.push(idMXC);
   }
-  Curso.findByIdAndUpdate(req.body.idCurso, {materias: vectorIdsMXC}).then(() => {
-    res.json({exito: true, message: "nice"});
-  });
+  Curso.findByIdAndUpdate(req.body.idCurso, { materias: vectorIdsMXC }).then(
+    () => {
+      res.json({ exito: true, message: "nice" });
+    }
+  );
 });
 module.exports = router;

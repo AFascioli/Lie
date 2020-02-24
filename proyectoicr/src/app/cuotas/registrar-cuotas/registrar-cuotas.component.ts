@@ -37,6 +37,7 @@ export class RegistrarCuotasComponent implements OnInit {
   ];
   cursoNotSelected: Boolean = true;
   estudiantesXDivision: any[];
+  cuotasXEstudiante: any[];
   displayedColumns: string[] = ["apellido", "nombre", "accion"];
 
   ngOnInit() {
@@ -67,7 +68,7 @@ export class RegistrarCuotasComponent implements OnInit {
   //Busca los estudiantes segun el curso que se selecciono en pantalla. Los orden alfabeticamente
   onCursoSeleccionado(curso, mes) {
     this.cursoNotSelected = false;
-    let nroMes: number = 0;
+    let nroMes: any = 0;
 
     for (let i = 0; i < this.meses.length; i++) {
       if (mes.value == this.meses[i]) {
@@ -75,9 +76,17 @@ export class RegistrarCuotasComponent implements OnInit {
         break;
       }
     }
-    this.cuotasService.obtenerEstadoCuotasDeCurso(curso.value, nroMes).subscribe(rtdo => {
-      console.log(rtdo);
-    });
+    this.cuotasService
+      .obtenerEstadoCuotasDeCurso(curso.value, nroMes)
+      .subscribe(rtdo => {
+        // let estudiantes: any[] = [];
+        // for (let i = 0; i < this.cuotasXEstudiante.length; i++) {
+        //   estudiantes.push(rtdo.cuotasXEstudiante[i].estudiante[0]);
+        // }
+        this.cuotasXEstudiante = rtdo.cuotasXEstudiante.sort((a, b) =>
+          a.apellido > b.apellido ? 1 : b.apellido > a.apellido ? -1 : 0
+        );
+      });
   }
 
   //Cambia el atributo presente del estudiante cuando se cambia de valor el toggle
@@ -85,8 +94,8 @@ export class RegistrarCuotasComponent implements OnInit {
     const indexEstudiante = this.estudiantesXDivision.findIndex(
       objConIDEstudiante => objConIDEstudiante._id == row._id
     );
-    this.estudiantesXDivision[indexEstudiante].presente = !this
-      .estudiantesXDivision[indexEstudiante].presente;
+    this.estudiantesXDivision[indexEstudiante].pagada = !this
+      .estudiantesXDivision[indexEstudiante].pagada;
   }
 
   //Devuelve true si la fecha actual se encuentra dentro del ciclo lectivo, y false caso contrario.
