@@ -57,7 +57,7 @@
             name="horaInicio"
             ngModel
             #horaInicio="ngModel"
-            placeholder="Hora inicio"
+            placeholder="Hora inicio *"
             id="pickerInicio"
             readonly
           />
@@ -72,7 +72,7 @@
             name="horaFin"
             ngModel
             #horaFin="ngModel"
-            placeholder="Hora fin"
+            placeholder="Hora fin *"
             id="pickerFin"
             readonly
           />
@@ -92,7 +92,7 @@
           <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
         </mat-chip>
         <input
-          placeholder="Seleccione los cursos"
+          placeholder="Seleccione los cursos *"
           name="chipsInput"
           #chipsInput
           [formControl]="chipsCtrl"
@@ -115,7 +115,6 @@
       </mat-autocomplete>
     </mat-form-field>
     <div>
-      <!-- <img mat-card-image [src]="getImage(imagenEvento)" /> -->
       <img [src]="imgURL" class="image-preview" *ngIf="imgURL" />
       <button
         mat-stroked-button
@@ -123,7 +122,7 @@
         type="button"
         (click)="file.click()"
       >
-        Seleccionar imagen
+        Seleccionar imagen *
       </button>
       <br />
       <span class="mensaje" *ngIf="message">{{ message }}</span>

@@ -67,26 +67,34 @@ router.get("/estadoCuotas", checkAuthMiddleware, (req, res) => {
         }
       }
     ]).then(estadoCuotas => {
-      cuotasXEstudiantes = [];
-      let cuotaXEstudiante;
-      final = estadoCuotas.length - 1;
-      for (let i = 0; i <= final; i++) {
-        if (i <= estadoCuotas.length - 1) {
-          cuotaXEstudiante = {
-            _id: estadoCuotas[i]._id,
-            apellido: estadoCuotas[i].estudiante[0].apellido,
-            nombre: estadoCuotas[i].estudiante[0].nombre,
-            pagado: estadoCuotas[i].cuotas.pagado,
-            mes: estadoCuotas[i].cuotas.mes
-          };
-          cuotasXEstudiantes.push(cuotaXEstudiante);
+      if (estadoCuotas.length == 0) {
+        res.status(200).json({
+          message: "No se han obtenido alumnos de dicho curso",
+          exito: true
+        });
+      } else {
+        cuotasXEstudiantes = [];
+        let cuotaXEstudiante;
+        final = estadoCuotas.length - 1;
+        for (let i = 0; i <= final; i++) {
+          if (i <= estadoCuotas.length - 1) {
+            cuotaXEstudiante = {
+              _id: estadoCuotas[i]._id,
+              apellido: estadoCuotas[i].estudiante[0].apellido,
+              nombre: estadoCuotas[i].estudiante[0].nombre,
+              pagado: estadoCuotas[i].cuotas.pagado,
+              mes: estadoCuotas[i].cuotas.mes
+            };
+            cuotasXEstudiantes.push(cuotaXEstudiante);
+          }
         }
+        res.status(200).json({
+          message:
+            "Se ha obtenido el estado de las cuotas de un curso exitosamente",
+          exito: true,
+          cuotasXEstudiante: cuotasXEstudiantes
+        });
       }
-      res.status(200).json({
-        message: "Se ha obtenido el estado de las cuotas de un curso exitosamente",
-        exito: true,
-        cuotasXEstudiante: cuotasXEstudiantes
-      });
     });
   });
 });
@@ -98,12 +106,15 @@ router.post("/publicarEstadoCuotas", checkAuthMiddleware, (req, res) => {
   for (let i = 0; i <= final; i++) {
     let rtdo;
     Inscripcion.findById(req.body[i]._id).then(inscripcion => {
-      inscripcion.cuotas[req.body[i].mes-1].pagado = !inscripcion.cuotas[req.body[i].mes-1].pagado;
+      inscripcion.cuotas[req.body[i].mes - 1].pagado = !inscripcion.cuotas[
+        req.body[i].mes - 1
+      ].pagado;
       inscripcion.save();
     });
   }
   res.status(200).json({
-    message: "Se ha registrado el estado de las cuotas de un curso de manera exitosa",
+    message:
+      "Se ha registrado el estado de las cuotas de un curso de manera exitosa",
     exito: true
   });
 });
