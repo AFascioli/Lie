@@ -1,9 +1,6 @@
 import { NgForm } from "@angular/forms";
-import { element } from "protractor";
 import { Component, OnInit } from "@angular/core";
 import { EstudiantesService } from "src/app/estudiantes/estudiante.service";
-import Rolldate from "../../../assets/rolldate.min.js";
-import { tick } from "@angular/core/testing";
 import { AgendaService } from "src/app/visualizar-agenda/agenda.service.js";
 import { MatSnackBar } from "@angular/material";
 
@@ -36,6 +33,7 @@ export class RegistrarAgendaComponent implements OnInit {
     "14:15"
   ];
   horariosValidos = true;
+  mensajeError="";
 
   constructor(
     public servicioEstudiante: EstudiantesService,
@@ -75,24 +73,25 @@ export class RegistrarAgendaComponent implements OnInit {
     });
   }
 
-  //Agrega un elemento al vector materiasHTML para que se triggeree otra vuelta del for
+  //Chequea que no haya conflicto entre los horarios. si no hay, agrega un elemento
+  //al vector materiasHTML para que se triggeree otra vuelta del for
   //que esta en el HTML que crea los cards de las materias.
-  agregarMateria(indexM: number) {
-    this.materiasHTML.push([1]);
+  agregarMateria() {
+    if(this.horariosValidos){
+      this.materiasHTML.push([1]);
+    }else{
+      this.openSnackBar(this.mensajeError,"snack-bar-fracaso")
+    }
   }
 
   //Dentro del elemento correspondiente en materias, se agrega un vector que representa los horarios
   //que va a tener esa materia (length=cantidad de horarios)
-  agregarHorario(index: number, form: NgForm) {
-    this.materiasHTML[index].push(1);
-    // var res=this.reservarHorario(form);
-    // if(!res.resultado){
-    //   this.materiasHTML[index].pop();
-    //   this.snackBar.open(res.mensaje, "", {
-    //     panelClass: ["snack-bar-fracaso"],
-    //     duration: 4500
-    //   });
-    // }
+  agregarHorario(index: number) {
+    if(this.horariosValidos){
+      this.materiasHTML[index].push(1);
+    }else{
+      this.openSnackBar(this.mensajeError,"snack-bar-fracaso")
+    }
   }
 
   //Este metodo recibe la hora inicio, la hora fin y el dia de una materia, si horaInicioMateria
@@ -100,6 +99,7 @@ export class RegistrarAgendaComponent implements OnInit {
   //si hora fin tiene el valor "horaFin"+j+i, se debe buscar su valor. Luego nos fijamos si ambas
   //tienen valor. Si tienen, nos fijamos que los modulos sean correctos. Por ultimo, se cambia
   //el valor correspondiente de la matriz horariosReservados a true (un por cada modulo de la materia)
+  //Si existe conflicto entre los horarios, cambia el valor de los atributos horariosValidos y mensajeError.
   reservarHorario(
     form: NgForm,
     horaInicioMateria: string,
@@ -124,14 +124,9 @@ export class RegistrarAgendaComponent implements OnInit {
       var moduloFin = this.modulos.indexOf(horaFin);
       var cantidadModulos = moduloFin - moduloInicio;
       if (moduloFin <= moduloInicio) {
-        this.snackBar.open(
-          "El horario de inicio es menor al horario de fin",
-          "",
-          {
-            panelClass: ["snack-bar-fracaso"],
-            duration: 4500
-          }
-        );
+        this.horariosValidos=false;
+        this.mensajeError="El horario de inicio es menor al horario de fin";
+        this.openSnackBar(this.mensajeError,"snack-bar-fracaso");
         return;
       }
       for (
@@ -140,18 +135,15 @@ export class RegistrarAgendaComponent implements OnInit {
         index++
       ) {
         if (this.horariosReservados[index][diaMatrix]) {
-          this.snackBar.open(
-            "Los horarios seleccionados entran en conflicto con otra materia",
-            "",
-            {
-              panelClass: ["snack-bar-fracaso"],
-              duration: 4500
-            }
-          );
+        this.horariosValidos=false;
+        this.mensajeError="Los horarios seleccionados entran en conflicto con otra materia";
+        this.openSnackBar(this.mensajeError,"snack-bar-fracaso");
           return;
         }
         this.horariosReservados[index][diaMatrix] = true;
       }
+      this.horariosValidos=true;
+      this.mensajeError="";
       return;
     }
   }
@@ -183,5 +175,16 @@ export class RegistrarAgendaComponent implements OnInit {
       .subscribe(response => {
         console.log("NICE");
       });
+  }
+
+  openSnackBar(mensaje:string,exito:string){
+    this.snackBar.open(
+      mensaje,
+      "",
+      {
+        panelClass: [exito],
+        duration: 4500
+      }
+    );
   }
 }
