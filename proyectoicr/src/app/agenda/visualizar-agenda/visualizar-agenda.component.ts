@@ -1,5 +1,6 @@
 import { AgendaService } from "../agenda.service";
 import { Component, OnInit } from "@angular/core";
+import { EstudiantesService } from "src/app/estudiantes/estudiante.service";
 
 @Component({
   selector: "app-visualizar-agenda",
@@ -25,12 +26,20 @@ export class VisualizarAgendaComponent implements OnInit {
     "14:05",
     "14:50"
   ];
+  cursos: any[];
+  materiasDistintas = [];
   colores = [];
   materias = [];
-  constructor(public servicioAgenda: AgendaService) {}
+  constructor(
+    public servicioEstudiante: EstudiantesService,
+    public servicioAgenda: AgendaService
+  ) {}
 
   ngOnInit() {
     this.materias = this.servicioAgenda.obtenerMaterias();
+    this.obtenerCursos();
+    this.getMateriasDistintas();
+    this.getColorVector();
   }
 
   //Este metodo dado por angular se ejecuta una vez que se cargo todo el html
@@ -40,6 +49,18 @@ export class VisualizarAgendaComponent implements OnInit {
     });
   }
 
+  obtenerCursos() {
+    this.servicioEstudiante.obtenerCursos().subscribe(response => {
+      this.cursos = response.cursos;
+      this.cursos.sort((a, b) =>
+        a.curso.charAt(0) > b.curso.charAt(0)
+          ? 1
+          : b.curso.charAt(0) > a.curso.charAt(0)
+          ? -1
+          : 0
+      );
+    });
+  }
   //Ver si se puede hacer que cada div de materia tenga su propio color para
   //que sea mas facil de ver en la grilla
 
@@ -55,19 +76,53 @@ export class VisualizarAgendaComponent implements OnInit {
     );
   }
 
-  //después lo hago genérico y con mejores colores
-  getColor(materia) {
-    switch (materia.nombre) {
-      case "Lengua":
-        return "#eb9788";
-      case "Matemática":
-        return "#c05c7e";
-      case "Física":
-        return "#f3826f";
-      case "Biología":
-        return "#ffb961";
-      case "Historia":
-        return "#899857";
+  getColorVector() {
+    this.colores[0] = "#eb9788";
+    this.colores[1] = "#c05c7e";
+    this.colores[2] = "#f3826f";
+    this.colores[3] = "#ffb961";
+    this.colores[4] = "#899857";
+    this.colores[5] = "#ba6b57";
+    this.colores[6] = "#e7b2a5";
+    this.colores[7] = "#6e5773";
+    this.colores[8] = "#f1935c";
+    this.colores[9] = "#a3f7bf";
+    this.colores[10] = "#ce0f3d";
+
+  }
+
+  getMateriasDistintas() {
+    for (let i = 0; i < this.materias.length; i++) {
+      if (
+        this.materiasDistintas.length == 0 ||
+        !this.materiasDistintas.includes(this.materias[i].nombre)
+      )
+        this.materiasDistintas.push(this.materias[i].nombre);
+    }
+    this.materiasDistintas.sort();
+  }
+
+  getColores(materia) {
+    for (let i = 0; i < this.materiasDistintas.length; i++) {
+      if (this.materiasDistintas[i] == materia) {
+        return this.colores[i];
+      }
     }
   }
+
+  //después lo hago genérico y con mejores colores
+  // getColor(materia) {
+  //   switch (materia.nombre) {
+  //     case "Lengua":
+  //       return "#eb9788";
+  //     case "Matemática":
+  //       return "#c05c7e";
+  //     case "Física":
+  //       return "#f3826f";
+  //     case "Biología":
+  //       return "#ffb961";
+  //     case "Historia":
+  //       return "#899857";
+  //   }
+  // }
 }

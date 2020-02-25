@@ -1,3 +1,15 @@
+<!-- <mat-select
+  placeholder="Seleccione curso"
+  name="curso"
+  ngModel
+  #curso="ngModel"
+  matNativeControl
+  required
+>
+  <mat-option *ngFor="let curso of cursos" [value]="curso.id">
+    {{ curso.curso }}
+  </mat-option>
+</mat-select> -->
 <div class="grid-container">
   <div class="cabecera">
     <p class="cabecera">
@@ -30,9 +42,9 @@
     </p>
   </div>
   <div class="hora modulo1">
-    <p class="modulo"> 07:00 - 07:45</p>
+    <p class="modulo">07:00 - 07:45</p>
   </div>
-  <div class="hora modulo2"><p class="modulo"> 07:45 - 08:30</p></div>
+  <div class="hora modulo2"><p class="modulo">07:45 - 08:30</p></div>
 
   <!-- <div class="hora recreo1">
     <p class="recreo1">
@@ -64,7 +76,10 @@
   <div class="hora modulo10"><p class="modulo">14:50 - 15:35</p></div>
 
   <div class="materia" *ngFor="let materia of materias; let i = index" [id]="i">
-    <div class="materia" [ngStyle]="{ 'background-color': getColor(materia) }">
+    <div
+      class="materia"
+      [ngStyle]="{ 'background-color': getColores(materia.nombre) }"
+    >
       {{ materia.nombre }}
     </div>
   </div>

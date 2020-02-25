@@ -61,6 +61,20 @@ export class AgendaService {
       fin: "08:30"
     };
 
+    var materiaObj8 = {
+      nombre: "Química",
+      dia: "Martes",
+      inicio: "07:00",
+      fin: "08:30"
+    };
+
+    var materiaObj9 = {
+      nombre: "Lengua",
+      dia: "Martes",
+      inicio: "08:40",
+      fin: "09:25"
+    };
+
     return [
       materiaObj,
       materiaObj2,
@@ -68,7 +82,9 @@ export class AgendaService {
       materiaObj4,
       materiaObj5,
       materiaObj6,
-      materiaObj7
+      materiaObj7,
+      materiaObj8,
+      materiaObj9
     ];
   }
 
@@ -82,8 +98,7 @@ export class AgendaService {
   public registrarAgenda(agenda: any[], curso: string) {
     return this.http.post<{ exito: boolean; mensaje: string }>(
       environment.apiUrl + "/curso/agenda",
-      {agenda: agenda, idCurso: curso}
+      { agenda: agenda, idCurso: curso }
     );
-
   }
 }
