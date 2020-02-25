@@ -5,7 +5,7 @@ import { EstudiantesService } from "src/app/estudiantes/estudiante.service";
 import Rolldate from "../../../assets/rolldate.min.js";
 import { tick } from "@angular/core/testing";
 import { AgendaService } from "src/app/visualizar-agenda/agenda.service.js";
-import { MatSnackBar } from '@angular/material';
+import { MatSnackBar } from "@angular/material";
 
 @Component({
   selector: "app-registrar-agenda",
@@ -23,7 +23,7 @@ export class RegistrarAgendaComponent implements OnInit {
   horarios = [1];
   materiasHTML = [[1]]; //#resolve Usado para agregar un nuevo horario
   horariosReservados = [];
-  modulos=[
+  modulos = [
     "07:30",
     "08:15",
     "09:00",
@@ -35,7 +35,7 @@ export class RegistrarAgendaComponent implements OnInit {
     "13:30",
     "14:15"
   ];
-  horariosValidos=true;
+  horariosValidos = true;
 
   constructor(
     public servicioEstudiante: EstudiantesService,
@@ -52,12 +52,12 @@ export class RegistrarAgendaComponent implements OnInit {
     this.servicioAgenda.obtenerDocentes().subscribe(response => {
       this.docentes = response.docentes;
     });
-    for(var i=0; i<9; i++) {
+    for (var i = 0; i < 9; i++) {
       this.horariosReservados[i] = [];
-      for(var j=0; j<5; j++) {
+      for (var j = 0; j < 5; j++) {
         this.horariosReservados[i][j] = false;
       }
-  }
+    }
   }
 
   ngAfterViewInit() {}
@@ -85,40 +85,75 @@ export class RegistrarAgendaComponent implements OnInit {
   //que va a tener esa materia (length=cantidad de horarios)
   agregarHorario(index: number, form: NgForm) {
     this.materiasHTML[index].push(1);
-    var res=this.reservarHorario(form);
-    if(!res.resultado){
-      this.materiasHTML[index].pop();
-      this.snackBar.open(res.mensaje, "", {
-        panelClass: ["snack-bar-fracaso"],
-        duration: 4500
-      });
-    }
+    // var res=this.reservarHorario(form);
+    // if(!res.resultado){
+    //   this.materiasHTML[index].pop();
+    //   this.snackBar.open(res.mensaje, "", {
+    //     panelClass: ["snack-bar-fracaso"],
+    //     duration: 4500
+    //   });
+    // }
   }
 
-  //TEST
-  //j=materiasHTML.length, i=materiasHTML[j].length
-  reservarHorario(form: NgForm) {
-    var j=this.materiasHTML.length-1;
-    var i= this.materiasHTML[this.materiasHTML.length-1].length-2;
-    var horaInicio=form.value["horaInicio" + `${j}` + `${i}`];
-    var horaFin=form.value["horaFin" + `${j}` + `${i}`];
-    var dia= form.value["dia" + `${j}` + `${i}`];
-    var diaMatrix= this.dias.indexOf(dia);
-    var moduloInicio= this.modulos.indexOf(horaInicio);
-    var moduloFin= this.modulos.indexOf(horaFin);
-    if(moduloFin<moduloInicio){
-      return {resultado:false, mensaje: "El horario de inicio es menor al horario de fin"};
+  //Este metodo recibe la hora inicio, la hora fin y el dia de una materia, si horaInicioMateria
+  //tiene el valor "horaIncio"j+i (viene del html), se debe buscar en el form su valor. En cambio
+  //si hora fin tiene el valor "horaFin"+j+i, se debe buscar su valor. Luego nos fijamos si ambas
+  //tienen valor. Si tienen, nos fijamos que los modulos sean correctos. Por ultimo, se cambia
+  //el valor correspondiente de la matriz horariosReservados a true (un por cada modulo de la materia)
+  reservarHorario(
+    form: NgForm,
+    horaInicioMateria: string,
+    horaFinMateria: string,
+    diaMateria: string
+  ) {
+    var horaInicio;
+    var horaFin;
+    if (horaInicioMateria.localeCompare("hora") == 1) {
+      horaInicio = form.value[horaInicioMateria];
+      horaFin = horaFinMateria;
+    } else {
+      horaFin = form.value[horaFinMateria];
+      horaInicio = horaInicioMateria;
     }
-    var cantidadModulos=moduloFin-moduloInicio;
-    for(var index=moduloInicio; index<moduloInicio+cantidadModulos; index++){
-      if(this.horariosReservados[index][diaMatrix]){
-
-        return {resultado:false, mensaje: "Los horarios seleccionados entran en conflicto con otra materia"};
+    if (!(horaInicio && horaFin)) {
+      return;
+    } else {
+      var dia = form.value[diaMateria];
+      var diaMatrix = this.dias.indexOf(dia);
+      var moduloInicio = this.modulos.indexOf(horaInicio);
+      var moduloFin = this.modulos.indexOf(horaFin);
+      var cantidadModulos = moduloFin - moduloInicio;
+      if (moduloFin <= moduloInicio) {
+        this.snackBar.open(
+          "El horario de inicio es menor al horario de fin",
+          "",
+          {
+            panelClass: ["snack-bar-fracaso"],
+            duration: 4500
+          }
+        );
+        return;
       }
-        this.horariosReservados[index][diaMatrix]=true;
-
+      for (
+        var index = moduloInicio;
+        index < moduloInicio + cantidadModulos;
+        index++
+      ) {
+        if (this.horariosReservados[index][diaMatrix]) {
+          this.snackBar.open(
+            "Los horarios seleccionados entran en conflicto con otra materia",
+            "",
+            {
+              panelClass: ["snack-bar-fracaso"],
+              duration: 4500
+            }
+          );
+          return;
+        }
+        this.horariosReservados[index][diaMatrix] = true;
+      }
+      return;
     }
-    return {resultado:true, mensaje: ""};
   }
 
   //Se crea el vector materiasXCurso que es lo que se enviara al backend, luego por cada elemento del

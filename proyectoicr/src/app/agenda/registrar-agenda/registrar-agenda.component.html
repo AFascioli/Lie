@@ -91,6 +91,7 @@
             <ngx-material-timepicker
               [minutesGap]="15"
               #picker1
+              (timeSet)="reservarHorario(form,$event,'horaFin'+j+i,'dia'+j+i)"
             ></ngx-material-timepicker>
           </div>
         </mat-form-field>
@@ -111,6 +112,7 @@
             <ngx-material-timepicker
               [minutesGap]="15"
               #picker2
+              (timeSet)="reservarHorario(form,'horaInicio'+j+i,$event,'dia'+j+i)"
             ></ngx-material-timepicker>
           </div>
         </mat-form-field>
