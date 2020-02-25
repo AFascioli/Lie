@@ -83,7 +83,7 @@ router.get("/estadoCuotas", checkAuthMiddleware, (req, res) => {
         }
       }
       res.status(200).json({
-        message: "Operación exitosa",
+        message: "Se ha obtenido el estado de las cuotas de un curso exitosamente",
         exito: true,
         cuotasXEstudiante: cuotasXEstudiantes
       });
@@ -98,12 +98,12 @@ router.post("/publicarEstadoCuotas", checkAuthMiddleware, (req, res) => {
   for (let i = 0; i <= final; i++) {
     let rtdo;
     Inscripcion.findById(req.body[i]._id).then(inscripcion => {
-      inscripcion.cuotas[req.body[i].mes-1].pagado = true;
+      inscripcion.cuotas[req.body[i].mes-1].pagado = !inscripcion.cuotas[req.body[i].mes-1].pagado;
       inscripcion.save();
     });
   }
   res.status(200).json({
-    message: "Operación exitosa",
+    message: "Se ha registrado el estado de las cuotas de un curso de manera exitosa",
     exito: true
   });
 });

@@ -14,7 +14,7 @@ export class RegistrarAsistenciaComponent implements OnInit {
   cursos: any[];
   cursoNotSelected: boolean;
   diaActual: string;
-  estudiantesXDivision: any[];
+  estudiantesXDivision: any[] = [];
   displayedColumns: string[] = ["apellido", "nombre", "accion"];
   fechaActual: Date;
   asistenciaNueva: string = "true";
@@ -90,7 +90,6 @@ export class RegistrarAsistenciaComponent implements OnInit {
         this.estudiantesXDivision = respuesta.estudiantes.sort((a, b) =>
           a.apellido > b.apellido ? 1 : b.apellido > a.apellido ? -1 : 0
         );
-        console.log(this.estudiantesXDivision);
       });
   }
 

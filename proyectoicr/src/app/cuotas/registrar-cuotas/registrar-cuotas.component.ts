@@ -1,8 +1,9 @@
 import { AutenticacionService } from "./../../login/autenticacionService.service";
 import { Component, OnInit } from "@angular/core";
-import { MatSnackBar } from "@angular/material";
+import { MatSnackBar, MatDialog } from "@angular/material";
 import { EstudiantesService } from "src/app/estudiantes/estudiante.service";
 import { CuotasService } from "../cuotas.service";
+import { CancelPopupComponent } from 'src/app/popup-genericos/cancel-popup.component';
 
 @Component({
   selector: "app-registrar-cuotas",
@@ -14,6 +15,7 @@ export class RegistrarCuotasComponent implements OnInit {
     public autenticacionService: AutenticacionService,
     public servicioEstudiante: EstudiantesService,
     public cuotasService: CuotasService,
+    public popup: MatDialog,
     public snackBar: MatSnackBar
   ) {}
 
@@ -21,6 +23,7 @@ export class RegistrarCuotasComponent implements OnInit {
   fechaActual: Date;
   fueraPeriodoCicloLectivo: Boolean;
   cursos: any[];
+  cursoEstudiante: any;
   meses: string[] = [
     "Enero",
     "Febrero",
@@ -36,8 +39,7 @@ export class RegistrarCuotasComponent implements OnInit {
     "Diciembre"
   ];
   cursoNotSelected: Boolean = true;
-  estudiantesXDivision: any[];
-  cuotasXEstudiante: any[];
+  cuotasXEstudiante: any[] = [];
   displayedColumns: string[] = ["apellido", "nombre", "accion"];
 
   ngOnInit() {
@@ -57,12 +59,12 @@ export class RegistrarCuotasComponent implements OnInit {
       );
     }
 
-    if (
-      !this.fechaActualEnCicloLectivo() ||
-      this.autenticacionService.getRol() != "Admin"
-    ) {
-      // this.fueraPeriodoCicloLectivo = true;
-    }
+    // if (
+    //   !this.fechaActualEnCicloLectivo() ||
+    //   this.autenticacionService.getRol() != "Admin"
+    // ) {
+    //    this.fueraPeriodoCicloLectivo = true;
+    // }
   }
 
   //Busca los estudiantes segun el curso que se selecciono en pantalla. Los orden alfabeticamente
@@ -82,7 +84,6 @@ export class RegistrarCuotasComponent implements OnInit {
         this.cuotasXEstudiante = rtdo.cuotasXEstudiante.sort((a, b) =>
           a.apellido > b.apellido ? 1 : b.apellido > a.apellido ? -1 : 0
         );
-        console.log(rtdo.cuotasXEstudiante);
       });
   }
 
@@ -94,25 +95,27 @@ export class RegistrarCuotasComponent implements OnInit {
     this.cuotasXEstudiante[indexEstudiante].pagado = !this.cuotasXEstudiante[
       indexEstudiante
     ].pagado;
+    this.cuotasXEstudiante[indexEstudiante].changed = true;
   }
 
   //Devuelve true si la fecha actual se encuentra dentro del ciclo lectivo, y false caso contrario.
-  fechaActualEnCicloLectivo() {
-    let fechaInicioPrimerTrimestre = new Date(
-      this.autenticacionService.getFechasCicloLectivo().fechaInicioPrimerTrimestre
-    );
-    let fechaFinTercerTrimestre = new Date(
-      this.autenticacionService.getFechasCicloLectivo().fechaFinTercerTrimestre
-    );
+  // fechaActualEnCicloLectivo() {
+  //   let fechaInicioPrimerTrimestre = new Date(
+  //     this.autenticacionService.getFechasCicloLectivo().fechaInicioPrimerTrimestre
+  //   );
+  //   let fechaFinTercerTrimestre = new Date(
+  //     this.autenticacionService.getFechasCicloLectivo().fechaFinTercerTrimestre
+  //   );
 
-    return (
-      this.fechaActual.getTime() > fechaInicioPrimerTrimestre.getTime() &&
-      this.fechaActual.getTime() < fechaFinTercerTrimestre.getTime()
-    );
-  }
+  //   return (
+  //     this.fechaActual.getTime() > fechaInicioPrimerTrimestre.getTime() &&
+  //     this.fechaActual.getTime() < fechaFinTercerTrimestre.getTime()
+  //   );
+  // }
 
   //Al seleccionar el mes obtiene todos los cursos y los ordena alfabeticamente
   onMesSeleccionado(mes) {
+    this.cursoNotSelected = true;
     this.mesSeleccionado = mes.value;
     this.servicioEstudiante.obtenerCursos().subscribe(response => {
       this.cursos = response.cursos;
@@ -124,19 +127,40 @@ export class RegistrarCuotasComponent implements OnInit {
           : 0
       );
     });
+    this.cursoEstudiante = "";
   }
 
   onGuardar() {
     let cuotasCambiadas = [];
     this.cuotasXEstudiante.forEach(cuota => {
-      if(cuota.pagado == true){
+      if (cuota.changed == true) {
         cuotasCambiadas.push(cuota);
       }
     });
-    this.cuotasService.publicarEstadoCuotasDeCurso(cuotasCambiadas).subscribe(rtdo => {
-      console.log(rtdo);
-    });
+    this.cuotasService
+      .publicarEstadoCuotasDeCurso(cuotasCambiadas)
+      .subscribe(rtdo => {
+        if (cuotasCambiadas.length == 0) {
+          this.snackBar.open(
+            "No se ha realizado ninguna modificación en las cuotas",
+            "",
+            {
+              panelClass: ["snack-bar-fracaso"],
+              duration: 3000
+            }
+          );
+        } else {
+          this.snackBar.open(rtdo.message, "", {
+            panelClass: ["snack-bar-exito"],
+            duration: 3000
+          });
+        }
+      });
   }
 
-  onCancelar() {}
+  onCancelar() {
+    this.servicioEstudiante.tipoPopUp = "cancelar";
+    this.popup.open(CancelPopupComponent);
+  }
+
 }

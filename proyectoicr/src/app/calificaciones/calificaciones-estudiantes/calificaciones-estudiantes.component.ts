@@ -172,7 +172,6 @@ export class CalificacionesEstudiantesComponent implements OnInit {
   obtenerNotas(form: NgForm) {
     if (form.value.curso != "" || form.value.materia != "") {
       this.servicioCalificaciones
-        //this.servicioEstudiante
         .obtenerCalificacionesEstudiantesXCursoXMateria(
           form.value.curso,
           form.value.materia,
@@ -229,7 +228,6 @@ export class CalificacionesEstudiantesComponent implements OnInit {
       }
     } else if (form.valueChanges) {
       this.servicioCalificaciones
-        //this.servicioEstudiante
         .registrarCalificaciones(
           this.estudiantes,
           form.value.materia,
