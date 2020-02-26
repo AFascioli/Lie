@@ -28,6 +28,7 @@ export class VisualizarAgendaComponent implements OnInit {
   ];
   cursos: any[];
   materiasDistintas = [];
+  cursoSelected: Boolean;
   colores = [];
   materias = [];
   constructor(
@@ -36,10 +37,18 @@ export class VisualizarAgendaComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.materias = this.servicioAgenda.obtenerMaterias();
+
     this.obtenerCursos();
     this.getMateriasDistintas();
     this.getColorVector();
+  }
+
+  obtenerAgenda(idCurso){
+    this.cursoSelected= true;
+    this.servicioAgenda.obtenerAgendaDeCurso(idCurso.value).subscribe(agenda => {
+      this.materias = agenda.agenda;
+      console.log(agenda.agenda);
+    })
   }
 
   //Este metodo dado por angular se ejecuta una vez que se cargo todo el html
@@ -88,7 +97,6 @@ export class VisualizarAgendaComponent implements OnInit {
     this.colores[8] = "#f1935c";
     this.colores[9] = "#a3f7bf";
     this.colores[10] = "#ce0f3d";
-
   }
 
   getMateriasDistintas() {

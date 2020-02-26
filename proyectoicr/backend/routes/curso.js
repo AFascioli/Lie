@@ -473,8 +473,6 @@ router.get("/materias", checkAuthMiddleware, (req, res) => {
   });
 });
 
-
-
 //Inscribe a un estudiante a un curso y los documentos entregados durante la inscripción
 //@params: id estudiante que se quiere inscribir
 //@params: id curso al que se lo quiere inscribir
@@ -714,7 +712,7 @@ router.post(
 //@params: id del curso
 //@params: agenda, que es un objeto que tiene idMateria, idDocente y el vector de horarios
 router.post("/agenda", checkAuthMiddleware, async (req, res) => {
-  var crearHorario = (horario) => {
+  var crearHorario = horario => {
     return new Promise((resolve, reject) => {
       horario.save().then(horarioGuardado => {
         resolve(horarioGuardado._id);
@@ -722,7 +720,7 @@ router.post("/agenda", checkAuthMiddleware, async (req, res) => {
     });
   };
 
-  var crearMateriaXCurso = (mxc) => {
+  var crearMateriaXCurso = mxc => {
     return new Promise((resolve, reject) => {
       mxc.save().then(mxcGuardada => {
         resolve(mxcGuardada._id);
@@ -730,13 +728,13 @@ router.post("/agenda", checkAuthMiddleware, async (req, res) => {
     });
   };
 
-  let vectorIdsMXC=[];
+  let vectorIdsMXC = [];
   //For que recorre MXC
-  for (const materia of req.body.agenda){
-    let vectorIdsHorarios=[];
+  for (const materia of req.body.agenda) {
+    let vectorIdsHorarios = [];
     //For que recorre Horarios
-    for(const horario of materia.horarios){
-      let nuevoHorario= new Horario({
+    for (const horario of materia.horarios) {
+      let nuevoHorario = new Horario({
         dia: horario.dia,
         horaInicio: horario.horaInicio,
         horaFin: horario.horaFin
@@ -753,8 +751,79 @@ router.post("/agenda", checkAuthMiddleware, async (req, res) => {
     let idMXC = await crearMateriaXCurso(nuevaMateriaXCurso);
     vectorIdsMXC.push(idMXC);
   }
-  Curso.findByIdAndUpdate(req.body.idCurso, {materias: vectorIdsMXC}).then(() => {
-    res.json({exito: true, message: "nice"});
+  Curso.findByIdAndUpdate(req.body.idCurso, { materias: vectorIdsMXC }).then(
+    () => {
+      res.json({ exito: true, message: "nice" });
+    }
+  );
+});
+
+//Obtiene la agenda de un curso (materias, horario y día dictadas)
+//@params: idCurso
+router.get("/agenda", checkAuthMiddleware, (req, res) => {
+  Curso.aggregate([
+    {
+      $match: {
+        _id: mongoose.Types.ObjectId(req.query.idCurso)
+      }
+    },
+    {
+      $lookup: {
+        from: "materiasXCurso",
+        localField: "materias",
+        foreignField: "_id",
+        as: "MXC"
+      }
+    },
+    {
+      $unwind: {
+        path: "$MXC"
+      }
+    },
+    {
+      $lookup: {
+        from: "materia",
+        localField: "MXC.materia",
+        foreignField: "_id",
+        as: "nombreMateria"
+      }
+    },
+    {
+      $unwind: {
+        path: "$MXC.horarios"
+      }
+    },
+    {
+      $lookup: {
+        from: "horario",
+        localField: "MXC.horarios",
+        foreignField: "_id",
+        as: "horarios"
+      }
+    },
+    {
+      $project: {
+        "nombreMateria.nombre": 1,
+        horarios: 1
+      }
+    }
+  ]).then(agendaCompleta => {
+    let agenda = [];
+    for (let i = 0; i < agendaCompleta.length; i++) {
+      let valor = {
+        nombre: agendaCompleta[i].nombreMateria[0].nombre,
+        dia: agendaCompleta[i].horarios[0].dia,
+        inicio: agendaCompleta[i].horarios[0].horaInicio,
+        fin: agendaCompleta[i].horarios[0].horaFin
+      };
+      agenda.push(valor);
+    }
+    res.json({
+      exito: true,
+      message: "Se ha obtenido la agenda correctamente",
+      agenda: agenda
+    });
   });
 });
+
 module.exports = router;
