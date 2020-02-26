@@ -37,18 +37,19 @@ export class VisualizarAgendaComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-
-    this.obtenerCursos();
-    this.getMateriasDistintas();
-    this.getColorVector();
+    this.servicioAgenda
+      .obtenerAgendaDeCurso("idCurso.value")
+      .subscribe(agenda => {
+        this.materias = agenda.agenda;
+        console.log(agenda.agenda);
+        this.obtenerCursos();
+        this.getMateriasDistintas();
+        this.getColorVector();
+      });
   }
 
-  obtenerAgenda(idCurso){
-    this.cursoSelected= true;
-    this.servicioAgenda.obtenerAgendaDeCurso(idCurso.value).subscribe(agenda => {
-      this.materias = agenda.agenda;
-      console.log(agenda.agenda);
-    })
+  obtenerAgenda(idCurso) {
+    this.cursoSelected = true;
   }
 
   //Este metodo dado por angular se ejecuta una vez que se cargo todo el html
