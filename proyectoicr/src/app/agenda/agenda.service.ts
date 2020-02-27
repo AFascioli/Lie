@@ -37,57 +37,57 @@ export class AgendaService {
     var materiaObj2 = {
       nombre: "Lengua",
       dia: "Miercoles",
-      inicio: "08:40",
-      fin: "10:10"
+      inicio: "11:15",
+      fin: "12:00"
     };
 
     var materiaObj3 = {
       nombre: "Física",
       dia: "Lunes",
       inicio: "07:00",
-      fin: "08:30"
+      fin: "08:15"
     };
 
     var materiaObj4 = {
       nombre: "Historia",
       dia: "Lunes",
-      inicio: "08:40",
-      fin: "10:10"
+      inicio: "08:15",
+      fin: "09:00"
     };
 
     var materiaObj5 = {
       nombre: "Biología",
       dia: "Jueves",
       inicio: "07:00",
-      fin: "08:30"
+      fin: "08:15"
     };
 
     var materiaObj7 = {
       nombre: "Biología",
       dia: "Jueves",
-      inicio: "08:40",
-      fin: "09:25"
+      inicio: "08:15",
+      fin: "09:00"
     };
 
     var materiaObj6 = {
       nombre: "Matemática",
       dia: "Viernes",
-      inicio: "07:00",
-      fin: "08:30"
+      inicio: "12:00",
+      fin: "12:45"
     };
 
     var materiaObj8 = {
       nombre: "Química",
       dia: "Martes",
       inicio: "07:00",
-      fin: "08:30"
+      fin: "08:15"
     };
 
     var materiaObj9 = {
       nombre: "Lengua",
       dia: "Martes",
-      inicio: "08:40",
-      fin: "09:25"
+      inicio: "08:15",
+      fin: "09:00"
     };
 
     return [

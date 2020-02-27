@@ -1,6 +1,7 @@
 import { AgendaService } from "../agenda.service";
 import { Component, OnInit } from "@angular/core";
 import { EstudiantesService } from "src/app/estudiantes/estudiante.service";
+import { delay } from "q";
 
 @Component({
   selector: "app-visualizar-agenda",
@@ -11,41 +12,42 @@ export class VisualizarAgendaComponent implements OnInit {
   dias = ["Hora", "Lunes", "Martes", "Miercoles", "Jueves", "Viernes"]; //Agrego Hora en los dos vectores para que el calculo sea siempre +1 +2
   modulo = [
     "Hora",
-    "07:00",
-    "07:45",
-    "08:30",
-    "08:40",
-    "09:25",
-    "10:10",
+    "07:30",
+    "08:15",
+    "09:00",
+    "09:45",
     "10:30",
-    "10:15",
+    "11:15",
     "12:00",
-    "12:20",
-    "13:05",
-    "13:55",
-    "14:05",
-    "14:50"
+    "12:45",
+    "13:30",
+    "14:15"
   ];
   cursos: any[];
   materiasDistintas = [];
   cursoSelected: Boolean;
   colores = [];
-  materias = [];
+  materias: any[];
   constructor(
     public servicioEstudiante: EstudiantesService,
     public servicioAgenda: AgendaService
   ) {}
 
   ngOnInit() {
-    this.servicioAgenda
-      .obtenerAgendaDeCurso("idCurso.value")
-      .subscribe(agenda => {
-        this.materias = agenda.agenda;
-        console.log(agenda.agenda);
-        this.obtenerCursos();
-        this.getMateriasDistintas();
-        this.getColorVector();
-      });
+    // this.servicioAgenda
+    //   .obtenerAgendaDeCurso("5d213fabf63ccad39b46f773")
+    //   .subscribe(agenda => {
+    //     this.materias = agenda.agenda;
+    //     console.log(agenda.agenda);
+    //     this.obtenerCursos();
+    //     this.getMateriasDistintas();
+    //     this.getColorVector();
+    //   });
+    this.materias = this.servicioAgenda.obtenerMaterias();
+    console.log(this.materias);
+    this.obtenerCursos();
+    this.getMateriasDistintas();
+    this.getColorVector();
   }
 
   obtenerAgenda(idCurso) {
@@ -54,9 +56,21 @@ export class VisualizarAgendaComponent implements OnInit {
 
   //Este metodo dado por angular se ejecuta una vez que se cargo todo el html
   ngAfterViewInit() {
-    this.materias.forEach((materia, index) => {
-      this.acomodarEnGrilla(index.toString(), materia);
-    });
+    console.log('entro');
+    if (this.materias) {
+      console.log('entro1');
+      this.materias.forEach((materia, index) => {
+        this.acomodarEnGrilla(index.toString(), materia);
+      });
+    } else {
+      console.log('entro2');
+      setTimeout(() => {
+        this.materias.forEach((materia, index) => {
+          this.acomodarEnGrilla(index.toString(), materia);
+        });
+        console.log('se ejecuto');
+      }, 500);
+    }
   }
 
   obtenerCursos() {

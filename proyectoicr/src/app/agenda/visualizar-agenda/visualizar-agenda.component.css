@@ -4,7 +4,8 @@
   margin-right: auto;
   display: grid;
   grid-template-columns: auto 18% 18% 18% 18% 18%; /*Aca se definen la cantidad de columnas*/
-  grid-template-rows: 50px 50px 50px 8px 50px 50px 8px 50px 50px 8px 50px 50px 8px 50px 50px; /*Aca se definen la cantidad de filas*/
+  /* grid-template-rows: 50px 50px 50px 0px 50px 50px 0px 50px 50px 0px 50px 50px 0px 50px 50px; Aca se definen la cantidad de filas */
+  grid-template-rows: 50px 50px 50px 50px 50px 50px 50px 50px 50px 50px 50px;
   grid-gap: 8px;
   background-color: #c3c8cc;/*2196F3*/
   padding: 10px;
@@ -52,7 +53,7 @@ hr {
   justify-content: center;
   align-items: center;
 }
-
+/*
 .recreo1 {
   grid-row: 4/5;
   grid-column: 1/7;
@@ -60,82 +61,86 @@ hr {
   margin-block-end: 0;
   display: flex;
   justify-content: center;
-}
+} */
+
 .modulo3 {
-  grid-row-start: 5;
-  grid-row-end: 6;
+  grid-row-start: 4;
+  grid-row-end: 5;
   justify-content: center;
   align-items: center;
 }
 
 .modulo4 {
-  grid-row-start: 6;
-  grid-row-end: 7;
+  grid-row-start: 5;
+  grid-row-end: 6;
   justify-content: center;
   align-items: center;
 }
-.recreo2 {
+/* .recreo2 {
   grid-row: 7/8;
   grid-column: 1/7;
   margin-block-start: 0;
   margin-block-end: 0;
   display: flex;
   justify-content: center;
-}
+} */
 .modulo5 {
-  grid-row-start: 8;
-  grid-row-end: 9;
+  grid-row-start: 6;
+  grid-row-end: 7;
   justify-content: center;
   align-items: center;
 }
 
 .modulo6 {
-  grid-row-start: 9;
-  grid-row-end: 10;
+  grid-row-start: 7;
+  grid-row-end: 8;
   justify-content: center;
   align-items: center;
 }
 
-.recreo3 {
+/* .recreo3 {
   grid-row: 10/11;
   grid-column: 1/7;
   margin-block-start: 0;
   margin-block-end: 0;
   display: flex;
   justify-content: center;
-}
+} */
 .modulo7 {
-  grid-row-start: 11;
-  grid-row-end: 12;
+  grid-row-start: 8;
+  grid-row-end: 9;
   justify-content: center;
   align-items: center;
 }
 .modulo8 {
-  grid-row-start: 12;
-  grid-row-end: 13;
+  grid-row-start: 9;
+  grid-row-end: 10;
   justify-content: center;
   align-items: center;
 }
-.recreo4 {
+/* .recreo4 {
   grid-row: 13/14;
   grid-column: 1/7;
   margin-block-start: 0;
   margin-block-end: 0;
   display: flex;
   justify-content: center;
-}
+} */
+
 .modulo9 {
-  grid-row-start: 14;
-  grid-row-end: 15;
+  grid-row-start: 10;
+  grid-row-end: 11;
   justify-content: center;
   align-items: center;
 }
+
 .modulo10 {
-  grid-row-start: 15;
-  grid-row-end: 16;
+  grid-row-start: 11;
+  grid-row-end: 12;
   justify-content: center;
   align-items: center;
 }
+
 .cabecera {
   display: flex;
   align-items: center;
