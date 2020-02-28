@@ -1,3 +1,6 @@
+<h1 class="componente-titulo">
+  Visualizar agenda de curso
+</h1>
 <mat-card class="card-body-componente">
   <mat-form-field>
     <mat-select
@@ -6,19 +9,18 @@
       ngModel
       #curso="ngModel"
       [(ngModel)]="idCurso"
-      (selectionChange)="actualizar(curso)"
+      (selectionChange)="actualizarInterfaz(curso)"
       matNativeControl
       required
     >
-      <!-- (selectionChange)="obtenerAgenda(curso)" -->
       <mat-option *ngFor="let curso of cursos" [value]="curso.id">
         {{ curso.curso }}
       </mat-option>
     </mat-select>
   </mat-form-field>
 </mat-card>
-<!-- *ngIf="cursoSelected" -->
-<div id="parent-id" class="grid-container">
+
+<div id="parent-id" class="grid-container" *ngIf="cursoSelected">
   <div class="cabecera">
     <p class="cabecera">
       Hora
@@ -84,14 +86,15 @@
   </div> -->
   <div class="hora modulo9"><p class="modulo">14:05 - 14:50</p></div>
 
-<!-- <div class="hora modulo10"><p class="modulo">14:50 - 15:35</p></div> -->
+  <!-- <div class="hora modulo10"><p class="modulo">14:50 - 15:35</p></div> -->
 
-<div class="materia" *ngFor="let materia of materias; let i = index" [id]="i">
-  <div
-    class="materia"
-    [ngStyle]="{ 'background-color': getColores(materia.nombre) }"
-  >
-    {{ materia.nombre }}
+  <div class="materia" *ngFor="let materia of materias; let i = index" [id]="i">
+    <div
+      class="materia"
+      [ngStyle]="{ 'background-color': getColores(materia.nombre) }"
+    >
+      {{ materia.nombre }}
+    </div>
   </div>
+  <!-- getColor(materia) -->
 </div>
-<!-- getColor(materia) -->

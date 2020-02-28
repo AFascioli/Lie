@@ -41,6 +41,7 @@ export class VisualizarAgendaComponent implements OnInit {
     // this.getColorVector();
   }
 
+  // Obtiene la agenda de un curso y le asigna a las materias un color distinto
   async obtenerAgenda(idCurso) {
     this.cursoSelected = true;
     return new Promise((resolve, reject) => {
@@ -55,12 +56,12 @@ export class VisualizarAgendaComponent implements OnInit {
     });
   }
 
-  actualizar(idCurso) {
+  //Muestran en la interfaz los diferentes horarios de la materia
+  actualizarInterfaz(idCurso) {
     (async () => {
       let agenda: any = await this.obtenerAgenda(idCurso.value);
-      console.log(agenda);
       agenda.forEach((materia, index) => {
-        this.acomodarEnGrilla(index.toString(), materia);
+        this.setInGrid(index.toString(), materia);
       });
     })();
   }
@@ -78,8 +79,9 @@ export class VisualizarAgendaComponent implements OnInit {
     });
   }
 
-  //Dada la id de un elemento HTML, le pone el respectivo css para acomodarlo en la grilla
-  acomodarEnGrilla(id: string, materiaObj: any) {
+  //Dada la id de un elemento HTML, le asocia el estilo correspondiente (css) para su correcta
+  //visualización en la grilla
+  setInGrid(id: string, materiaObj: any) {
     setTimeout(() => {
       let elem: HTMLElement = document.getElementById(id);
       elem.setAttribute(
