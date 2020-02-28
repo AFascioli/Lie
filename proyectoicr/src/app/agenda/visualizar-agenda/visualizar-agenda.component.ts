@@ -2,6 +2,7 @@ import { AgendaService } from "../agenda.service";
 import { Component, OnInit } from "@angular/core";
 import { EstudiantesService } from "src/app/estudiantes/estudiante.service";
 import { delay } from "q";
+import { MatSnackBar } from '@angular/material';
 
 @Component({
   selector: "app-visualizar-agenda",
@@ -31,7 +32,8 @@ export class VisualizarAgendaComponent implements OnInit {
   materias: any[] = [];
   constructor(
     public servicioEstudiante: EstudiantesService,
-    public servicioAgenda: AgendaService
+    public servicioAgenda: AgendaService,
+    public snackBar: MatSnackBar
   ) {}
 
   ngOnInit() {
@@ -43,11 +45,25 @@ export class VisualizarAgendaComponent implements OnInit {
 
   // Obtiene la agenda de un curso y le asigna a las materias un color distinto
   async obtenerAgenda(idCurso) {
-    this.cursoSelected = true;
+
     return new Promise((resolve, reject) => {
       this.servicioAgenda
         .obtenerAgendaDeCurso(idCurso)
         .subscribe(async agenda => {
+          if(agenda.exito){
+              this.cursoSelected = true;
+              this.snackBar.open(agenda.message, "", {
+                panelClass: ["snack-bar-exito"],
+                duration: 3000
+              });
+          }
+          else{
+            this.cursoSelected = false;
+            this.snackBar.open(agenda.message, "", {
+              panelClass: ["snack-bar-fracaso"],
+              duration: 3000
+            });
+          }
           this.materias = agenda.agenda;
           this.getMateriasDistintas();
           this.getColorVector();
