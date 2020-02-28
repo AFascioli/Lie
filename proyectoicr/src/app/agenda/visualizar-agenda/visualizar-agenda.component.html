@@ -1,22 +1,24 @@
-<mat-card class="card-body-componente" >
-<mat-form-field>
-  <mat-select
-    placeholder="Seleccione curso"
-    name="curso"
-    ngModel
-    #curso="ngModel"
-    (selectionChange)="obtenerAgenda(curso)"
-    matNativeControl
-    required
-  >
-    <mat-option *ngFor="let curso of cursos" [value]="curso.id">
-      {{ curso.curso }}
-    </mat-option>
-  </mat-select>
-</mat-form-field>
+<mat-card class="card-body-componente">
+  <mat-form-field>
+    <mat-select
+      placeholder="Seleccione curso"
+      name="curso"
+      ngModel
+      #curso="ngModel"
+      [(ngModel)]="idCurso"
+      (selectionChange)="actualizar(curso)"
+      matNativeControl
+      required
+    >
+      <!-- (selectionChange)="obtenerAgenda(curso)" -->
+      <mat-option *ngFor="let curso of cursos" [value]="curso.id">
+        {{ curso.curso }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
 </mat-card>
-
-<div class="grid-container">
+<!-- *ngIf="cursoSelected" -->
+<div id="parent-id" class="grid-container">
   <div class="cabecera">
     <p class="cabecera">
       Hora
@@ -47,9 +49,11 @@
       Viernes
     </p>
   </div>
+
   <div class="hora modulo1">
     <p class="modulo">07:30 - 08:15</p>
   </div>
+
   <div class="hora modulo2"><p class="modulo">08:15 - 09:00</p></div>
 
   <!-- <div class="hora recreo1">
@@ -79,16 +83,15 @@
     </p>
   </div> -->
   <div class="hora modulo9"><p class="modulo">14:05 - 14:50</p></div>
-  <!-- <div class="hora modulo10"><p class="modulo">14:50 - 15:35</p></div> -->
 
-  <div class="materia" *ngFor="let materia of materias; let i = index" [id]="i">
-    <div
-      class="materia"
-      [ngStyle]="{ 'background-color': getColores(materia.nombre) }"
-    >
-      {{ materia.nombre }}
-    </div>
+<!-- <div class="hora modulo10"><p class="modulo">14:50 - 15:35</p></div> -->
+
+<div class="materia" *ngFor="let materia of materias; let i = index" [id]="i">
+  <div
+    class="materia"
+    [ngStyle]="{ 'background-color': getColores(materia.nombre) }"
+  >
+    {{ materia.nombre }}
   </div>
 </div>
 <!-- getColor(materia) -->
-

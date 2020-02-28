@@ -5,7 +5,8 @@
   display: grid;
   grid-template-columns: auto 18% 18% 18% 18% 18%; /*Aca se definen la cantidad de columnas*/
   /* grid-template-rows: 50px 50px 50px 0px 50px 50px 0px 50px 50px 0px 50px 50px 0px 50px 50px; Aca se definen la cantidad de filas */
-  grid-template-rows: 50px 50px 50px 50px 50px 50px 50px 50px 50px 50px 50px;
+  /* grid-template-rows: 50px 50px 50px 50px 50px 50px 50px 50px 50px 50px 50px; */
+  grid-template-rows: 50px 50px 50px 50px 50px 50px 50px 50px 50px;
   grid-gap: 8px;
   background-color: #c3c8cc;/*2196F3*/
   padding: 10px;
@@ -134,12 +135,12 @@ hr {
   align-items: center;
 }
 
-.modulo10 {
+/* .modulo10 {
   grid-row-start: 11;
   grid-row-end: 12;
   justify-content: center;
   align-items: center;
-}
+} */
 
 .cabecera {
   display: flex;

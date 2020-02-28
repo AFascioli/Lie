@@ -29,14 +29,14 @@ export class AgendaService {
 
     var materiaObj = {
       nombre: "Matemática",
-      dia: "Miercoles",
+      dia: "Miércoles",
       inicio: "10:30",
       fin: "11:15"
     };
 
     var materiaObj2 = {
       nombre: "Lengua",
-      dia: "Miercoles",
+      dia: "Miércoles",
       inicio: "11:15",
       fin: "12:00"
     };
@@ -44,7 +44,7 @@ export class AgendaService {
     var materiaObj3 = {
       nombre: "Física",
       dia: "Lunes",
-      inicio: "07:00",
+      inicio: "07:30",
       fin: "08:15"
     };
 
@@ -58,7 +58,7 @@ export class AgendaService {
     var materiaObj5 = {
       nombre: "Biología",
       dia: "Jueves",
-      inicio: "07:00",
+      inicio: "07:30",
       fin: "08:15"
     };
 
@@ -79,7 +79,7 @@ export class AgendaService {
     var materiaObj8 = {
       nombre: "Química",
       dia: "Martes",
-      inicio: "07:00",
+      inicio: "07:30",
       fin: "08:15"
     };
 

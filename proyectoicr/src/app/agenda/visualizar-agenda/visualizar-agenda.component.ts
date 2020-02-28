@@ -9,7 +9,7 @@ import { delay } from "q";
   styleUrls: ["./visualizar-agenda.component.css"]
 })
 export class VisualizarAgendaComponent implements OnInit {
-  dias = ["Hora", "Lunes", "Martes", "Miercoles", "Jueves", "Viernes"]; //Agrego Hora en los dos vectores para que el calculo sea siempre +1 +2
+  dias = ["Hora", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes"]; //Agrego Hora en los dos vectores para que el calculo sea siempre +1 +2
   modulo = [
     "Hora",
     "07:30",
@@ -23,54 +23,46 @@ export class VisualizarAgendaComponent implements OnInit {
     "13:30",
     "14:15"
   ];
+  idCurso: any;
   cursos: any[];
   materiasDistintas = [];
-  cursoSelected: Boolean;
+  cursoSelected: Boolean = false;
   colores = [];
-  materias: any[];
+  materias: any[] = [];
   constructor(
     public servicioEstudiante: EstudiantesService,
     public servicioAgenda: AgendaService
   ) {}
 
   ngOnInit() {
-    // this.servicioAgenda
-    //   .obtenerAgendaDeCurso("5d213fabf63ccad39b46f773")
-    //   .subscribe(agenda => {
-    //     this.materias = agenda.agenda;
-    //     console.log(agenda.agenda);
-    //     this.obtenerCursos();
-    //     this.getMateriasDistintas();
-    //     this.getColorVector();
-    //   });
-    this.materias = this.servicioAgenda.obtenerMaterias();
-    console.log(this.materias);
     this.obtenerCursos();
-    this.getMateriasDistintas();
-    this.getColorVector();
+    // this.materias = this.servicioAgenda.obtenerMaterias();
+    // this.getMateriasDistintas();
+    // this.getColorVector();
   }
 
-  obtenerAgenda(idCurso) {
+  async obtenerAgenda(idCurso) {
     this.cursoSelected = true;
+    return new Promise((resolve, reject) => {
+      this.servicioAgenda
+        .obtenerAgendaDeCurso(idCurso)
+        .subscribe(async agenda => {
+          this.materias = agenda.agenda;
+          this.getMateriasDistintas();
+          this.getColorVector();
+          resolve(agenda.agenda);
+        });
+    });
   }
 
-  //Este metodo dado por angular se ejecuta una vez que se cargo todo el html
-  ngAfterViewInit() {
-    console.log('entro');
-    if (this.materias) {
-      console.log('entro1');
-      this.materias.forEach((materia, index) => {
+  actualizar(idCurso) {
+    (async () => {
+      let agenda: any = await this.obtenerAgenda(idCurso.value);
+      console.log(agenda);
+      agenda.forEach((materia, index) => {
         this.acomodarEnGrilla(index.toString(), materia);
       });
-    } else {
-      console.log('entro2');
-      setTimeout(() => {
-        this.materias.forEach((materia, index) => {
-          this.acomodarEnGrilla(index.toString(), materia);
-        });
-        console.log('se ejecuto');
-      }, 500);
-    }
+    })();
   }
 
   obtenerCursos() {
@@ -85,19 +77,19 @@ export class VisualizarAgendaComponent implements OnInit {
       );
     });
   }
-  //Ver si se puede hacer que cada div de materia tenga su propio color para
-  //que sea mas facil de ver en la grilla
 
   //Dada la id de un elemento HTML, le pone el respectivo css para acomodarlo en la grilla
   acomodarEnGrilla(id: string, materiaObj: any) {
-    let elem: HTMLElement = document.getElementById(id);
-    elem.setAttribute(
-      "style",
-      `grid-column-start: ${this.dias.indexOf(materiaObj.dia) +
-        1}; grid-column-end: ${this.dias.indexOf(materiaObj.dia) +
-        2}; grid-row-start: ${this.modulo.indexOf(materiaObj.inicio) +
-        1}; grid-row-end: ${this.modulo.indexOf(materiaObj.fin) + 1};`
-    );
+    setTimeout(() => {
+      let elem: HTMLElement = document.getElementById(id);
+      elem.setAttribute(
+        "style",
+        `grid-column-start: ${this.dias.indexOf(materiaObj.dia) +
+          1}; grid-column-end: ${this.dias.indexOf(materiaObj.dia) +
+          2}; grid-row-start: ${this.modulo.indexOf(materiaObj.inicio) +
+          1}; grid-row-end: ${this.modulo.indexOf(materiaObj.fin) + 1};`
+      );
+    }, 10);
   }
 
   getColorVector() {
@@ -132,20 +124,4 @@ export class VisualizarAgendaComponent implements OnInit {
       }
     }
   }
-
-  //después lo hago genérico y con mejores colores
-  // getColor(materia) {
-  //   switch (materia.nombre) {
-  //     case "Lengua":
-  //       return "#eb9788";
-  //     case "Matemática":
-  //       return "#c05c7e";
-  //     case "Física":
-  //       return "#f3826f";
-  //     case "Biología":
-  //       return "#ffb961";
-  //     case "Historia":
-  //       return "#899857";
-  //   }
-  // }
 }
