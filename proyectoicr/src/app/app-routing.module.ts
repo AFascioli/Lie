@@ -1,4 +1,4 @@
-import { RegistrarCuotasComponent } from './cuotas/registrar-cuotas/registrar-cuotas.component';
+import { RegistrarCuotasComponent } from "./cuotas/registrar-cuotas/registrar-cuotas.component";
 import { RegistrarEventoComponent } from "./eventos/registrar-evento/registrar-evento.component";
 import { CalificacionesExamenesComponent } from "./calificaciones/calificaciones-examenes/calificaciones-examenes.component";
 import { PreferenciasComponent } from "./menu-lateral/preferencias/preferencias.component";
@@ -29,11 +29,12 @@ import { JustificacionInasistenciaComponent } from "./asistencia/justificacion-i
 import { RoleGuard } from "./role.guard";
 import { InasistenciasEstudianteComponent } from "./perfil-estudiante/inasistencias-estudiante/inasistencias-estudiante.component";
 import { DatosEstudianteComponent } from "./perfil-estudiante/datos-estudiante/datos-estudiante.component";
+import { CuotasPerfilEstudianteComponent } from "./perfil-estudiante/cuotas-perfil-estudiante/cuotas-perfil-estudiante.component";
 import { TutoresEstudianteComponent } from "./perfil-estudiante/tutores-estudiante/tutores-estudiante.component";
 import { ModificarEventoComponent } from "./eventos/modificar-evento/modificar-evento.component";
-import { VisualizarEventoComponent } from './eventos/visualizar-evento/visualizar-evento.component';
-import { VisualizarAgendaComponent } from './visualizar-agenda/visualizar-agenda.component';
-import { RegistrarAgendaComponent } from './agenda/registrar-agenda/registrar-agenda.component';
+import { VisualizarEventoComponent } from "./eventos/visualizar-evento/visualizar-evento.component";
+import { VisualizarAgendaComponent } from "./visualizar-agenda/visualizar-agenda.component";
+import { RegistrarAgendaComponent } from "./agenda/registrar-agenda/registrar-agenda.component";
 
 const routes: Routes = [
   { path: "login", component: LoginComponent },
@@ -167,6 +168,10 @@ const routes: Routes = [
                 "AdultoResponsable"
               ]
             }
+          },
+          {
+            path: "cuotasEstudiante",
+            component: CuotasPerfilEstudianteComponent
           },
           {
             path: "tutoresEstudiante",

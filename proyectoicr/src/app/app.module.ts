@@ -103,6 +103,7 @@ import { environment } from "../environments/environment";
 import { InasistenciasEstudianteComponent } from "./perfil-estudiante/inasistencias-estudiante/inasistencias-estudiante.component";
 import { TutoresEstudianteComponent } from "./perfil-estudiante/tutores-estudiante/tutores-estudiante.component";
 import { DatosEstudianteComponent } from "./perfil-estudiante/datos-estudiante/datos-estudiante.component";
+import { CuotasPerfilEstudianteComponent } from "./perfil-estudiante/cuotas-perfil-estudiante/cuotas-perfil-estudiante.component";
 import { CalificacionesExamenesComponent } from "./calificaciones/calificaciones-examenes/calificaciones-examenes.component";
 import { RegistrarEventoComponent } from "./eventos/registrar-evento/registrar-evento.component";
 import { getDutchPaginatorIntl } from "./calificaciones/calificaciones-estudiantes/calificaciones-estudiantes.component";
@@ -153,6 +154,7 @@ import { RegistrarCuotasComponent } from './cuotas/registrar-cuotas/registrar-cu
     InasistenciasEstudianteComponent,
     TutoresEstudianteComponent,
     DatosEstudianteComponent,
+    CuotasPerfilEstudianteComponent,
     CalificacionesExamenesComponent,
     RegistrarEventoComponent,
     ModificarEventoComponent,

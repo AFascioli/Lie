@@ -144,6 +144,22 @@ export class EstudiantesService {
     return this.estudiantesXDivisionActualizados.asObservable();
   }
 
+  //Obtiene todas las cuotas de un estudiante pasado por parámetro
+  //@params: id del estudiante
+  public getCuotasDeEstudiante() {
+    let params = new HttpParams().set(
+      "idEstudiante",
+      this.estudianteSeleccionado._id
+    );
+    return this.http.get<{
+      message: string;
+      exito: boolean;
+      cuotas: any[];
+    }>(environment.apiUrl + "/estudiante/cuotasEstudiante", {
+      params: params
+    });
+  }
+
   //Obtiene todos los tutores (tutores y adultos responsables) de un estudiante pasado por parámetro
   //@params: id del estudiante
   public getTutoresDeEstudiante() {

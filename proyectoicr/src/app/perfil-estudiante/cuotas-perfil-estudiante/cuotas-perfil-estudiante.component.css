@@ -1,0 +1,19 @@
+table {
+  width: 95%;
+  margin: 2rem;
+}
+
+.columnasNormales{
+  width:22% !important;
+}
+
+.columnasChicas{
+  width:8%;
+}
+
+th{
+  font-weight: bold;
+  font-size: 15px;
+}
+
+
