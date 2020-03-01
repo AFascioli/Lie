@@ -1,0 +1,20 @@
+<h1 class="componente-titulo">
+  Modificar agenda de curso
+</h1>
+
+<mat-card class="card-body-componente">
+  <form #form="ngForm">
+    <mat-form-field>
+      <mat-select
+        placeholder="Seleccione curso"
+        name="curso"
+        ngModel
+        #curso="ngModel"
+        matNativeControl
+        required
+      >
+        <mat-option *ngFor="let curso of cursos" [value]="curso.id">
+          {{ curso.curso }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
