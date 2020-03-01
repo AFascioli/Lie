@@ -11,7 +11,14 @@ import { EstudiantesService } from "src/app/estudiantes/estudiante.service";
 export class ModificarAgendaComponent implements OnInit {
   cursos: any[];
   idCursoSeleccionado: string;
-
+  agendaCurso: any[];
+  displayedColumns: string[] = [
+    "Materiaa",
+    "Docente",
+    "Día",
+    "HoraInicio",
+    "HoraFin"
+  ];
   constructor(
     public servicioEstudiante: EstudiantesService,
     public servicioAgenda: AgendaService,

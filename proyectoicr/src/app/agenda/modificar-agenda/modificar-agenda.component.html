@@ -18,3 +18,55 @@
         </mat-option>
       </mat-select>
     </mat-form-field>
+
+    <table mat-table [dataSource]="agendaCurso">
+      <ng-container matColumnDef="Materia">
+        <th class="columnasNormales" mat-header-cell *matHeaderCellDef>
+          Materia
+        </th>
+        <td
+          class="columnasNormales"
+          mat-cell
+          *matCellDef="let agendaCurso; let i = index"
+        ></td>
+      </ng-container>
+
+      <ng-container matColumnDef="Docente">
+        <th class="columnasNormales" mat-header-cell *matHeaderCellDef>
+          Docente
+        </th>
+        <td
+          class="columnasNormales"
+          mat-cell
+          *matCellDef="let agendaCurso; let i = index"
+        ></td>
+      </ng-container>
+
+      <ng-container matColumnDef="Dia">
+        <th class="columnasChicas" mat-header-cell *matHeaderCellDef>Día</th>
+        <td
+          class="columnasChicas"
+          mat-cell
+          *matCellDef="let agendaCurso; let i = index"
+        ></td>
+      </ng-container>
+      <ng-container matColumnDef="HoraInicio">
+        <th class="columnasChicas" mat-header-cell *matHeaderCellDef>2°</th>
+        <td
+          class="columnasChicas"
+          mat-cell
+          *matCellDef="let agendaCurso; let i = index"
+        ></td>
+      </ng-container>
+      <ng-container matColumnDef="HoraFin">
+        <th class="columnasChicas" mat-header-cell *matHeaderCellDef>3°</th>
+        <td
+          class="columnasChicas"
+          mat-cell
+          *matCellDef="let agendaCurso; let i = index"
+        ></td>
+      </ng-container>
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+    </table></form
+></mat-card>

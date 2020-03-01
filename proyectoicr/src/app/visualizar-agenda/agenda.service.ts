@@ -1,5 +1,5 @@
 import { environment } from "src/environments/environment";
-import { HttpClient } from "@angular/common/http";
+import { HttpClient, HttpParams } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 
 @Injectable({
@@ -25,5 +25,17 @@ export class AgendaService {
       environment.apiUrl + "/curso/agenda",
       {agenda: agenda, idCurso: curso}
     );
+  }
+  public obtenerAgendaDeCurso(idCurso){
+    let params = new HttpParams().set(
+      "idCurso", idCurso
+    );
+    return this.http.get<{
+      message: string;
+      exito: boolean;
+      agenda: any[];
+    }>(environment.apiUrl + "/curso/agenda", {
+      params: params
+    });
   }
 }
