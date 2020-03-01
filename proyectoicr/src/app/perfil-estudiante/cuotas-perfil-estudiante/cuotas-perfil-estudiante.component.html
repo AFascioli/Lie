@@ -13,11 +13,7 @@
       Pagado
     </th>
     <td class="columnasNormales" mat-cell *matCellDef="let i = index">
-      <!-- {{ cuotasV[i][1] }} -->
-      <mat-checkbox
-      [checked]="cuotasV[i][1]"
-      [disabled]="true"
-    ></mat-checkbox>
+      <mat-checkbox [checked]="cuotasV[i][1]" [disabled]="true"></mat-checkbox>
       <ng-template #noTieneNotas>
         <p>-</p>
       </ng-template>
