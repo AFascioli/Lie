@@ -12,6 +12,7 @@
         #curso="ngModel"
         matNativeControl
         required
+        (selectionChange)="obtenerAgenda(curso)"
       >
         <mat-option *ngFor="let curso of cursos" [value]="curso.id">
           {{ curso.curso }}
@@ -19,7 +20,7 @@
       </mat-select>
     </mat-form-field>
 
-    <table mat-table [dataSource]="agendaCurso">
+    <table mat-table [dataSource]="agendaCurso" *ngIf="!cursoSelected">
       <ng-container matColumnDef="Materia">
         <th class="columnasNormales" mat-header-cell *matHeaderCellDef>
           Materia
@@ -28,7 +29,9 @@
           class="columnasNormales"
           mat-cell
           *matCellDef="let agendaCurso; let i = index"
-        ></td>
+        >
+          {{ agendaCurso.nombre }}
+        </td>
       </ng-container>
 
       <ng-container matColumnDef="Docente">
@@ -39,32 +42,57 @@
           class="columnasNormales"
           mat-cell
           *matCellDef="let agendaCurso; let i = index"
-        ></td>
+        >
+          <p>
+            {{ agendaCurso.apellidoDocente }}, {{ agendaCurso.nombreDocente }}
+          </p>
+        </td>
       </ng-container>
 
       <ng-container matColumnDef="Dia">
-        <th class="columnasChicas" mat-header-cell *matHeaderCellDef>Día</th>
+        <th class="columnasNormales" mat-header-cell *matHeaderCellDef>Día</th>
         <td
-          class="columnasChicas"
+          class="columnasNormales"
           mat-cell
           *matCellDef="let agendaCurso; let i = index"
-        ></td>
+        >
+          {{ agendaCurso.dia }}
+        </td>
       </ng-container>
       <ng-container matColumnDef="HoraInicio">
-        <th class="columnasChicas" mat-header-cell *matHeaderCellDef>2°</th>
+        <th class="columnasNormales" mat-header-cell *matHeaderCellDef>
+          Hora inicio
+        </th>
         <td
-          class="columnasChicas"
+          class="columnasNormales"
           mat-cell
           *matCellDef="let agendaCurso; let i = index"
-        ></td>
+        >
+          {{ agendaCurso.inicio }}
+        </td>
       </ng-container>
       <ng-container matColumnDef="HoraFin">
-        <th class="columnasChicas" mat-header-cell *matHeaderCellDef>3°</th>
+        <th class="columnasNormales" mat-header-cell *matHeaderCellDef>
+          Hora fin
+        </th>
         <td
-          class="columnasChicas"
+          class="columnasNormales"
           mat-cell
           *matCellDef="let agendaCurso; let i = index"
-        ></td>
+        >
+          {{ agendaCurso.fin }}
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="Accion">
+        <th class="columnasNormales" mat-header-cell *matHeaderCellDef>
+          Acción
+        </th>
+        <td
+          class="columnasNormales"
+          mat-cell
+          *matCellDef="let agendaCurso; let i = index"
+        >
+        </td>
       </ng-container>
       <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
       <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>

@@ -709,51 +709,55 @@ router.post(
     });
   }
 );
+
 router.get("/agenda", checkAuthMiddleware, (req, res) => {
   Curso.aggregate([
     {
-      $match: {
-        _id: mongoose.Types.ObjectId(req.query.idCurso)
+      '$match': {
+        '_id': mongoose.Types.ObjectId(req.query.idCurso)
       }
-    },
-    {
-      $lookup: {
-        from: "materiasXCurso",
-        localField: "materias",
-        foreignField: "_id",
-        as: "MXC"
+    }, {
+      '$lookup': {
+        'from': 'materiasXCurso',
+        'localField': 'materias',
+        'foreignField': '_id',
+        'as': 'MXC'
       }
-    },
-    {
-      $unwind: {
-        path: "$MXC"
+    }, {
+      '$unwind': {
+        'path': '$MXC'
       }
-    },
-    {
-      $lookup: {
-        from: "materia",
-        localField: "MXC.materia",
-        foreignField: "_id",
-        as: "nombreMateria"
+    }, {
+      '$lookup': {
+        'from': 'materia',
+        'localField': 'MXC.materia',
+        'foreignField': '_id',
+        'as': 'nombreMateria'
       }
-    },
-    {
-      $unwind: {
-        path: "$MXC.horarios"
+    }, {
+      '$lookup': {
+        'from': 'empleado',
+        'localField': 'MXC.idDocente',
+        'foreignField': '_id',
+        'as': 'docente'
       }
-    },
-    {
-      $lookup: {
-        from: "horario",
-        localField: "MXC.horarios",
-        foreignField: "_id",
-        as: "horarios"
+    }, {
+      '$unwind': {
+        'path': '$MXC.horarios'
       }
-    },
-    {
-      $project: {
-        "nombreMateria.nombre": 1,
-        horarios: 1
+    }, {
+      '$lookup': {
+        'from': 'horario',
+        'localField': 'MXC.horarios',
+        'foreignField': '_id',
+        'as': 'horarios'
+      }
+    }, {
+      '$project': {
+        'nombreMateria.nombre': 1,
+        'horarios': 1,
+        'docente.nombre': 1,
+        'docente.apellido': 1
       }
     }
   ]).then(agendaCompleta => {
@@ -770,7 +774,9 @@ router.get("/agenda", checkAuthMiddleware, (req, res) => {
           nombre: agendaCompleta[i].nombreMateria[0].nombre,
           dia: agendaCompleta[i].horarios[0].dia,
           inicio: agendaCompleta[i].horarios[0].horaInicio,
-          fin: agendaCompleta[i].horarios[0].horaFin
+          fin: agendaCompleta[i].horarios[0].horaFin,
+          nombreDocente: agendaCompleta[i].docente[0].nombre,
+          apellidoDocente: agendaCompleta[i].docente[0].apellido
         };
         agenda.push(valor);
       }
@@ -782,6 +788,7 @@ router.get("/agenda", checkAuthMiddleware, (req, res) => {
     }
   });
 });
+
 //Registra las materiasXCurso de un curso dado, cada una de estas tiene su propio horario.
 //@params: id del curso
 //@params: agenda, que es un objeto que tiene idMateria, idDocente y el vector de horarios

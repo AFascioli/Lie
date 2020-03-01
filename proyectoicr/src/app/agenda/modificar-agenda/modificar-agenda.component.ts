@@ -12,12 +12,14 @@ export class ModificarAgendaComponent implements OnInit {
   cursos: any[];
   idCursoSeleccionado: string;
   agendaCurso: any[];
+  cursoSelected: Boolean = false;
   displayedColumns: string[] = [
-    "Materiaa",
+    "Materia",
     "Docente",
-    "Día",
+    "Dia",
     "HoraInicio",
-    "HoraFin"
+    "HoraFin",
+    "Accion"
   ];
   constructor(
     public servicioEstudiante: EstudiantesService,
@@ -28,6 +30,14 @@ export class ModificarAgendaComponent implements OnInit {
   ngOnInit() {
     this.obtenerCursos();
   }
+
+  obtenerAgenda(idCurso){
+    this.cursoSelected = true;
+    this.servicioAgenda.obtenerAgendaDeCurso(idCurso.value).subscribe(rtdo => {
+      this.agendaCurso = rtdo.agenda;
+    });
+  }
+
   obtenerCursos() {
     this.servicioEstudiante.obtenerCursos().subscribe(response => {
       this.cursos = response.cursos;
