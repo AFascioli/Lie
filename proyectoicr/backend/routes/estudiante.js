@@ -316,30 +316,28 @@ router.get("/cuotasEstudiante", (req, res) => {
       }
     },
     {
-      $match: {
-        activa: true
-      }
-    },
-
-    {
       $project: {
-        _id:1,
+        _id: 1,
         InscripcionEstudiante: 1
       }
     }
-  ]).
-  then(docs => {
-    if (docs[0].InscripcionEstudiante[0].cuotas.length==0) {
+  ]).then(docs => {
+    let docPosta = [];
+
+    for (let i = 0; i < docs[0].InscripcionEstudiante.length; i++) {
+      if (docs[0].InscripcionEstudiante[i].activa == true) {
+        docPosta.push(docs[0].InscripcionEstudiante[i]);
+      }
+    }
+    if (docPosta[0].cuotas.length == 0) {
       return res.status(200).json({
         message: "El estudiante no tiene tutores",
         exito: false
       });
     }
     let cuo = [];
-    docs[0].InscripcionEstudiante[0].cuotas.forEach(d => {
-      console.log(docs[0].InscripcionEstudiante[0]._id);
-      console.log(d.pagado);
-      cuo.push([d.mes,d.pagado]);
+    docPosta[0].cuotas.forEach(d => {
+      cuo.push([d.mes, d.pagado]);
     });
     return res.status(200).json({
       message: "Se obtuvieron los tutores exitosamente",

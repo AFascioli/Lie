@@ -1,19 +1,19 @@
 table {
+  text-align: center;
   width: 95%;
   margin: 2rem;
 }
 
-.columnasNormales{
-  width:22% !important;
+.columnasNormales {
+  width: 22% !important;
 }
 
-.columnasChicas{
-  width:8%;
+.columnasChicas {
+  width: 8%;
 }
 
-th{
+th {
+  text-align: center;
   font-weight: bold;
   font-size: 15px;
 }
-
-
