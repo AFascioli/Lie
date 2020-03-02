@@ -31,11 +31,28 @@ export class ModificarAgendaComponent implements OnInit {
     this.obtenerCursos();
   }
 
-  obtenerAgenda(idCurso){
+  obtenerAgenda(idCurso) {
     this.cursoSelected = true;
+    this.idCursoSeleccionado = idCurso.value;
     this.servicioAgenda.obtenerAgendaDeCurso(idCurso.value).subscribe(rtdo => {
       this.agendaCurso = rtdo.agenda;
+      console.log(this.agendaCurso);
     });
+  }
+
+  editarAgenda(agendaCurso) {}
+
+
+  eliminarHorarios(agendaCurso) {
+    this.servicioAgenda
+      .eliminarHorarios(
+        this.idCursoSeleccionado,
+        agendaCurso.idHorarios,
+        agendaCurso.nombre
+      )
+      .subscribe(rtdo => {
+        console.log(rtdo);
+      });
   }
 
   obtenerCursos() {

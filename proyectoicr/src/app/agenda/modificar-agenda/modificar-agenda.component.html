@@ -12,6 +12,7 @@
         #curso="ngModel"
         matNativeControl
         required
+        class="curso"
         (selectionChange)="obtenerAgenda(curso)"
       >
         <mat-option *ngFor="let curso of cursos" [value]="curso.id">
@@ -20,7 +21,7 @@
       </mat-select>
     </mat-form-field>
 
-    <table mat-table [dataSource]="agendaCurso" *ngIf="!cursoSelected">
+    <table mat-table [dataSource]="agendaCurso" *ngIf="cursoSelected">
       <ng-container matColumnDef="Materia">
         <th class="columnasNormales" mat-header-cell *matHeaderCellDef>
           Materia
@@ -61,26 +62,26 @@
       </ng-container>
       <ng-container matColumnDef="HoraInicio">
         <th class="columnasNormales" mat-header-cell *matHeaderCellDef>
-          Hora inicio
+          Inicio
         </th>
         <td
           class="columnasNormales"
           mat-cell
           *matCellDef="let agendaCurso; let i = index"
         >
-          {{ agendaCurso.inicio }}
+          <p>{{ agendaCurso.inicio }} hs</p>
         </td>
       </ng-container>
       <ng-container matColumnDef="HoraFin">
         <th class="columnasNormales" mat-header-cell *matHeaderCellDef>
-          Hora fin
+          Fin
         </th>
         <td
           class="columnasNormales"
           mat-cell
           *matCellDef="let agendaCurso; let i = index"
         >
-          {{ agendaCurso.fin }}
+          <p>{{ agendaCurso.fin }} hs</p>
         </td>
       </ng-container>
       <ng-container matColumnDef="Accion">
@@ -90,8 +91,16 @@
         <td
           class="columnasNormales"
           mat-cell
-          *matCellDef="let agendaCurso; let i = index"
+          *matCellDef="let row"
         >
+          <p class="botonesAccion">
+            <button mat-button (click)="editarAgenda(row)">
+              <mat-icon>edit</mat-icon>
+            </button>
+            <button mat-button (click)="eliminarHorarios(row)">
+              <mat-icon>remove_circle_outline</mat-icon>
+            </button>
+          </p>
         </td>
       </ng-container>
       <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>

@@ -4,10 +4,26 @@ table {
 }
 
 .columnasNormales {
-  width: 22% !important;
+  width: 21% !important;
 }
 
 th {
   font-weight: bold;
   font-size: 15px;
+}
+
+th, td{
+  text-align: center !important;
+}
+
+.botonesAccion{
+  display: flex;
+}
+
+button{
+  margin: 0px !important;
+}
+
+.mat-form-field{
+  margin-left: 15px !important;
 }
