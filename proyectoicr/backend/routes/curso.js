@@ -846,39 +846,56 @@ router.post("/eliminarHorarios", checkAuthMiddleware, (req, res) => {
   ]).then(horariosDeMateria => {
     //Valido que haya mas de un horario, sino tengo que borrar la MateriaXCurso
     if (horariosDeMateria.length > 1) {
-      Horario.findByIdAndDelete(req.body.idHorario).then(() => {
-        MateriaXCurso.findById(horariosDeMateria[0].MXC._id).then(MXC => {
-          for (var i = 0; i < MXC.horarios.length; i++) {
-            if (MXC.horarios[i] === req.body.idHorario) {
-              MXC.horarios.splice(i, 1);
-            }
-          }
-          MXC.save().then(() => {
-            res.json({
-              exito: true,
-              message: "Se ha eliminado el horario correctamente",
-            });
-          });
-        });
-      });
+      // console.log('entro');
+      // let crearHorario = (MXC) => {
+      //   return new Promise((resolve, reject) => {
+      //     for (var i = 0; i < MXC.horarios.length; i++) {
+      //       if (MXC.horarios[i] === req.body.idHorario) {
+      //         MXC.horarios.splice(i, 1);
+      //         console.log('encontro y ahora manda resolve');
+      //         resolve(true);
+      //       }
+      //     }
+
+      //   });
+      // };
+
+      // let guardarMXC = (MXC) => {
+      //   return new Promise((resolve, reject) => {
+      //     MXC.save().then(()=> {resolve(true);})
+      //   });
+      // };
+
+      // Horario.findByIdAndDelete(req.body.idHorario).then(() => {
+      //   MateriaXCurso.findById(horariosDeMateria[0].MXC._id).then(MXC => {
+      //     crearHorario(MXC).then(() => {
+      //       console.log('mando resolve efect');
+      //       guardarMXC(MXC).then(() => {
+      //         res.json({
+      //           exito: true,
+      //           message: "Se ha eliminado el horario correctamente"
+      //         });
+      //       });
+      //     });
+      //   });
+      // });
     } else {
-      MateriaXCurso.findByIdAndDelete(
-        horariosDeMateria[0].MXC._id
-      ).then(() => {
-        Curso.findById(req.body.idCurso).then(curso => {
-          for (var i = 0; i < curso.materias.length; i++) {
-            if (curso.materias[i] === horariosDeMateria[0].MXC._id) {
-              MXC.horarios.splice(i, 1);
-            }
-          }
-          MXC.save().then(() => {
-            res.json({
-              exito: true,
-              message: "Se ha eliminado el horario correctamente"
-            });
-          });
-        });
-      });
+      console.log('mando por aca');
+      // MateriaXCurso.findByIdAndDelete(horariosDeMateria[0].MXC._id).then(() => {
+      //   Curso.findById(req.body.idCurso).then(curso => {
+      //     for (var i = 0; i < curso.materias.length; i++) {
+      //       if (curso.materias[i] === horariosDeMateria[0].MXC._id) {
+      //         MXC.horarios.splice(i, 1);
+      //       }
+      //     }
+      //     MXC.save().then(() => {
+      //       res.json({
+      //         exito: true,
+      //         message: "Se ha eliminado el horario correctamente"
+      //       });
+      //     });
+      //   });
+      // });
     }
   });
 });
