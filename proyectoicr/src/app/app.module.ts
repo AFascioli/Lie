@@ -34,7 +34,7 @@ import { AltaEstudiantesComponent } from "./estudiantes/alta-estudiantes/alta-es
 import { CancelPopupComponent } from "./popup-genericos/cancel-popup.component";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { HttpClientModule, HTTP_INTERCEPTORS } from "@angular/common/http";
-import {NgxMaterialTimepickerModule} from 'ngx-material-timepicker';
+import { NgxMaterialTimepickerModule } from "ngx-material-timepicker";
 import { EstudiantesService } from "./estudiantes/estudiante.service";
 import {
   BuscarEstudiantesComponent,
@@ -113,6 +113,7 @@ import { MatCarouselModule } from '@ngmodule/material-carousel';
 import { VisualizarAgendaComponent } from './visualizar-agenda/visualizar-agenda.component';
 import { RegistrarAgendaComponent } from './agenda/registrar-agenda/registrar-agenda.component';
 import { RegistrarCuotasComponent } from './cuotas/registrar-cuotas/registrar-cuotas.component';
+import { ModificarAgendaComponent } from "./agenda/modificar-agenda/modificar-agenda.component";
 
 @NgModule({
   declarations: [
@@ -162,7 +163,8 @@ import { RegistrarCuotasComponent } from './cuotas/registrar-cuotas/registrar-cu
     ReadMoreComponent,
     VisualizarAgendaComponent,
     RegistrarAgendaComponent,
-    RegistrarCuotasComponent
+    RegistrarCuotasComponent,
+    ModificarAgendaComponent
   ],
   //entryComponents declara los componentes que se generan dinamicamente dentro de otros.
   entryComponents: [
@@ -230,7 +232,6 @@ import { RegistrarCuotasComponent } from './cuotas/registrar-cuotas/registrar-cu
     { provide: LOCALE_ID, useValue: "es" },
 
     { provide: MatPaginatorIntl, useValue: getDutchPaginatorIntl() }
-
   ],
   bootstrap: [AppComponent]
 })

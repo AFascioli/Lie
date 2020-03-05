@@ -48,16 +48,6 @@
           </p>
           <p class="usuario">{{ usuario }}</p>
 
-          <!-- VER SI DEJAMOS ESTOS BOTONES ACÁ O ABAJO
-          <button mat-button routerLink="/preferencias">
-            <mat-icon>settings</mat-icon>
-            Preferencias
-          </button>
-          <button mat-button (click)="cierreSesion()">
-            <mat-icon>exit_to_app</mat-icon>
-            Cerrar sesión
-          </button> -->
-
           <mat-expansion-panel class="opcion">
             <mat-expansion-panel-header>
               <mat-panel-title>
@@ -70,14 +60,25 @@
             <a
               mat-list-item
               class="opciones-expansion"
-              routerLink="./"
+              routerLink="/registrarAgenda"
               *ngIf="permisos.agendaCursos > 1"
               (click)="cerrarMenuLateral(sideNav)"
             >
               Registrar agenda de curso
             </a>
+            <mat-divider *ngIf="permisos.agendaCursos > 1"
+            ></mat-divider>
+            <a
+              mat-list-item
+              class="opciones-expansion"
+              routerLink="/visualizarAgenda"
+              *ngIf="permisos.agendaCursos > 1"
+              (click)="cerrarMenuLateral(sideNav)"
+            >
+              Visualizar agenda de curso
+            </a>
             <mat-divider
-              *ngIf="permisos.agendaCursos > 1 && permisos.asistencia > 1"
+              *ngIf="permisos.agendaCursos > 1"
             ></mat-divider>
             <a
               mat-list-item
