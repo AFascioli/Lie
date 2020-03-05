@@ -708,6 +708,198 @@ router.post(
   }
 );
 
+router.get("/agenda", checkAuthMiddleware, (req, res) => {
+  Curso.aggregate([
+    {
+      $match: {
+        _id: mongoose.Types.ObjectId(req.query.idCurso)
+      }
+    },
+    {
+      $lookup: {
+        from: "materiasXCurso",
+        localField: "materias",
+        foreignField: "_id",
+        as: "MXC"
+      }
+    },
+    {
+      $unwind: {
+        path: "$MXC"
+      }
+    },
+    {
+      $lookup: {
+        from: "materia",
+        localField: "MXC.materia",
+        foreignField: "_id",
+        as: "nombreMateria"
+      }
+    },
+    {
+      $lookup: {
+        from: "empleado",
+        localField: "MXC.idDocente",
+        foreignField: "_id",
+        as: "docente"
+      }
+    },
+    {
+      $unwind: {
+        path: "$MXC.horarios"
+      }
+    },
+    {
+      $lookup: {
+        from: "horario",
+        localField: "MXC.horarios",
+        foreignField: "_id",
+        as: "horarios"
+      }
+    },
+    {
+      $project: {
+        "nombreMateria.nombre": 1,
+        horarios: 1,
+        "docente.nombre": 1,
+        "docente.apellido": 1
+      }
+    }
+  ]).then(agendaCompleta => {
+    console.log(agendaCompleta);
+    if (agendaCompleta[0].horarios[0] == null) {
+      return res.json({
+        exito: false,
+        message: "No existen horarios registrados para este curso",
+        agenda: []
+      });
+    } else {
+      let agenda = [];
+      for (let i = 0; i < agendaCompleta.length; i++) {
+        let valor = {
+          nombre: agendaCompleta[i].nombreMateria[0].nombre,
+          dia: agendaCompleta[i].horarios[0].dia,
+          inicio: agendaCompleta[i].horarios[0].horaInicio,
+          fin: agendaCompleta[i].horarios[0].horaFin,
+          nombreDocente: agendaCompleta[i].docente[0].nombre,
+          apellidoDocente: agendaCompleta[i].docente[0].apellido,
+          idHorarios: agendaCompleta[i].horarios[0]._id
+        };
+        agenda.push(valor);
+      }
+      res.json({
+        exito: true,
+        message: "Se ha obtenido la agenda correctamente",
+        agenda: agenda
+      });
+    }
+  });
+});
+
+router.post("/eliminarHorarios", checkAuthMiddleware, (req, res) => {
+  Curso.aggregate([
+    {
+      $match: {
+        _id: mongoose.Types.ObjectId(req.body.idCurso)
+      }
+    },
+    {
+      $lookup: {
+        from: "materiasXCurso",
+        localField: "materias",
+        foreignField: "_id",
+        as: "MXC"
+      }
+    },
+    {
+      $unwind: {
+        path: "$MXC"
+      }
+    },
+    {
+      $lookup: {
+        from: "materia",
+        localField: "MXC.materia",
+        foreignField: "_id",
+        as: "nombreMateria"
+      }
+    },
+    {
+      $unwind: {
+        path: "$MXC.horarios"
+      }
+    },
+    {
+      $lookup: {
+        from: "horario",
+        localField: "MXC.horarios",
+        foreignField: "_id",
+        as: "horarios"
+      }
+    },
+    {
+      $match: {
+        "nombreMateria.nombre": req.body.nombreMateria,
+        _id: mongoose.Types.ObjectId(req.body.idCurso)
+      }
+    }
+  ]).then(horariosDeMateria => {
+    //Valido que haya mas de un horario, sino tengo que borrar la MateriaXCurso
+    if (horariosDeMateria.length > 1) {
+      // console.log('entro');
+      // let crearHorario = (MXC) => {
+      //   return new Promise((resolve, reject) => {
+      //     for (var i = 0; i < MXC.horarios.length; i++) {
+      //       if (MXC.horarios[i] === req.body.idHorario) {
+      //         MXC.horarios.splice(i, 1);
+      //         console.log('encontro y ahora manda resolve');
+      //         resolve(true);
+      //       }
+      //     }
+
+      //   });
+      // };
+
+      // let guardarMXC = (MXC) => {
+      //   return new Promise((resolve, reject) => {
+      //     MXC.save().then(()=> {resolve(true);})
+      //   });
+      // };
+
+      // Horario.findByIdAndDelete(req.body.idHorario).then(() => {
+      //   MateriaXCurso.findById(horariosDeMateria[0].MXC._id).then(MXC => {
+      //     crearHorario(MXC).then(() => {
+      //       console.log('mando resolve efect');
+      //       guardarMXC(MXC).then(() => {
+      //         res.json({
+      //           exito: true,
+      //           message: "Se ha eliminado el horario correctamente"
+      //         });
+      //       });
+      //     });
+      //   });
+      // });
+    } else {
+      console.log('mando por aca');
+      // MateriaXCurso.findByIdAndDelete(horariosDeMateria[0].MXC._id).then(() => {
+      //   Curso.findById(req.body.idCurso).then(curso => {
+      //     for (var i = 0; i < curso.materias.length; i++) {
+      //       if (curso.materias[i] === horariosDeMateria[0].MXC._id) {
+      //         MXC.horarios.splice(i, 1);
+      //       }
+      //     }
+      //     MXC.save().then(() => {
+      //       res.json({
+      //         exito: true,
+      //         message: "Se ha eliminado el horario correctamente"
+      //       });
+      //     });
+      //   });
+      // });
+    }
+  });
+});
+
 //Registra las materiasXCurso de un curso dado, cada una de estas tiene su propio horario.
 //@params: id del curso
 //@params: agenda, que es un objeto que tiene idMateria, idDocente y el vector de horarios

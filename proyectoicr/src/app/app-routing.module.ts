@@ -33,6 +33,7 @@ import { ModificarEventoComponent } from "./eventos/modificar-evento/modificar-e
 import { VisualizarEventoComponent } from './eventos/visualizar-evento/visualizar-evento.component';
 import { VisualizarAgendaComponent } from './agenda/visualizar-agenda/visualizar-agenda.component';
 import { RegistrarAgendaComponent } from './agenda/registrar-agenda/registrar-agenda.component';
+import { ModificarAgendaComponent } from './agenda/modificar-agenda/modificar-agenda.component';
 
 const routes: Routes = [
   { path: "login", component: LoginComponent },
@@ -47,6 +48,7 @@ const routes: Routes = [
         redirectTo: "home"
       },
       { path: "registrarAgenda", component: RegistrarAgendaComponent },
+      { path: "modificarAgenda", component: ModificarAgendaComponent },
       { path: "home", component: HomeComponent },
       { path: "visualizarEvento", component: VisualizarEventoComponent },
       {
