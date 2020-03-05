@@ -8,6 +8,7 @@ const Inscripcion = require("../models/inscripcion");
 const CalificacionesXTrimestre = require("../models/calificacionesXTrimestre");
 const CalificacionesXMateria = require("../models/calificacionesXMateria");
 const Estudiante = require("../models/estudiante");
+const Cuota = require("../models/inscripcion");
 const Horario = require("../models/horario");
 const MateriaXCurso = require("../models/materiasXCurso");
 const ClaseInscripcion = require("../classes/inscripcion");
@@ -28,6 +29,94 @@ router.get("/", checkAuthMiddleware, (req, res) => {
       });
       res.status(200).json({ cursos: respuesta });
     });
+});
+
+//Obtiene el estado de las cuotas de todos los estudiantes de un curso
+//@params: id del curso
+//@params: mes de la cuota
+router.get("/estadoCuotas", checkAuthMiddleware, (req, res) => {
+  let fechaActual = new Date();
+  let añoActual = fechaActual.getFullYear();
+  Curso.findOne({ curso: req.query.idCurso }).then(curso => {
+    Inscripcion.aggregate([
+      {
+        $unwind: {
+          path: "$cuotas"
+        }
+      },
+      {
+        $match: {
+          activa: true,
+          idCurso: mongoose.Types.ObjectId(curso._id),
+          "cuotas.mes": parseInt(req.query.mes, 10)
+        }
+      },
+      {
+        $lookup: {
+          from: "estudiante",
+          localField: "idEstudiante",
+          foreignField: "_id",
+          as: "estudiante"
+        }
+      },
+      {
+        $project: {
+          "estudiante.apellido": 1,
+          "estudiante.nombre": 1,
+          cuotas: 1
+        }
+      }
+    ]).then(estadoCuotas => {
+      if (estadoCuotas.length == 0) {
+        res.status(200).json({
+          message: "No se han obtenido alumnos de dicho curso",
+          exito: true
+        });
+      } else {
+        cuotasXEstudiantes = [];
+        let cuotaXEstudiante;
+        final = estadoCuotas.length - 1;
+        for (let i = 0; i <= final; i++) {
+          if (i <= estadoCuotas.length - 1) {
+            cuotaXEstudiante = {
+              _id: estadoCuotas[i]._id,
+              apellido: estadoCuotas[i].estudiante[0].apellido,
+              nombre: estadoCuotas[i].estudiante[0].nombre,
+              pagado: estadoCuotas[i].cuotas.pagado,
+              mes: estadoCuotas[i].cuotas.mes
+            };
+            cuotasXEstudiantes.push(cuotaXEstudiante);
+          }
+        }
+        res.status(200).json({
+          message:
+            "Se ha obtenido el estado de las cuotas de un curso exitosamente",
+          exito: true,
+          cuotasXEstudiante: cuotasXEstudiantes
+        });
+      }
+    });
+  });
+});
+
+//Publica el estado de las cuotas de todos los estudiantes de un curso
+//@params: id de la inscripcion, mes de la cuota, estado cuota (pagada o no) y nombre y apellido
+router.post("/publicarEstadoCuotas", checkAuthMiddleware, (req, res) => {
+  final = req.body.length - 1;
+  for (let i = 0; i <= final; i++) {
+    let rtdo;
+    Inscripcion.findById(req.body[i]._id).then(inscripcion => {
+      inscripcion.cuotas[req.body[i].mes - 1].pagado = !inscripcion.cuotas[
+        req.body[i].mes - 1
+      ].pagado;
+      inscripcion.save();
+    });
+  }
+  res.status(200).json({
+    message:
+      "Se ha registrado el estado de las cuotas de un curso de manera exitosa",
+    exito: true
+  });
 });
 
 // Obtiene la capacidad de un curso pasado por parámetro
@@ -473,6 +562,8 @@ router.get("/materias", checkAuthMiddleware, (req, res) => {
   });
 });
 
+router.get("/estadoCuotas", checkAuthMiddleware, (req, res) => {});
+
 //Inscribe a un estudiante a un curso y los documentos entregados durante la inscripción
 //@params: id estudiante que se quiere inscribir
 //@params: id curso al que se lo quiere inscribir
@@ -563,6 +654,18 @@ router.post("/inscripciontest", checkAuthMiddleware, async (req, res) => {
     });
   };
 
+  var cearCuotas = () => {
+    return new Promise((resolve, reject) => {
+      cuotas = [];
+
+      for (var i = 0; i < 12; i++) {
+        let cuota = { mes: i + 1, pagado: false };
+        cuotas.push(cuota);
+      }
+      resolve(cuotas);
+    });
+  };
+
   //#resolve: Se puede implementar el Promise.all, fijarse si es necesario/no rompe nada
   var cursoSeleccionado = await obtenerCurso();
   var estadoInscriptoInscripcion = await obtenerEstadoInscriptoInscripcion();
@@ -589,6 +692,7 @@ router.post("/inscripciontest", checkAuthMiddleware, async (req, res) => {
   }
 
   var materiasDelCurso = await obtenerMateriasDeCurso();
+  var cuotas = await cearCuotas();
   var estadoCursandoMateria = await obtenerEstadoCursandoMateria();
   var idsCXMNuevas = await ClaseCalifXMateria.crearCXM(
     materiasDelCurso,
@@ -606,7 +710,8 @@ router.post("/inscripciontest", checkAuthMiddleware, async (req, res) => {
     contadorLlegadasTarde: 0,
     calificacionesXMateria: idsCXMNuevas,
     materiasPendientes: materiasPendientesNuevas,
-    año: 2019
+    año: 2019,
+    cuotas: cuotas
   });
 
   nuevaInscripcion.save().then(() => {
@@ -948,6 +1053,7 @@ router.post("/agenda", checkAuthMiddleware, async (req, res) => {
       res.json({ exito: true, message: "nice" });
     }
   );
+
 });
 
 //Obtiene la agenda de un curso (materias, horario y día dictadas)
@@ -1024,6 +1130,7 @@ router.get("/agenda", checkAuthMiddleware, (req, res) => {
       });
     }
   });
+
 });
 
 module.exports = router;

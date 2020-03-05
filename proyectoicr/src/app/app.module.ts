@@ -103,14 +103,16 @@ import { environment } from "../environments/environment";
 import { InasistenciasEstudianteComponent } from "./perfil-estudiante/inasistencias-estudiante/inasistencias-estudiante.component";
 import { TutoresEstudianteComponent } from "./perfil-estudiante/tutores-estudiante/tutores-estudiante.component";
 import { DatosEstudianteComponent } from "./perfil-estudiante/datos-estudiante/datos-estudiante.component";
+import { CuotasPerfilEstudianteComponent } from "./perfil-estudiante/cuotas-perfil-estudiante/cuotas-perfil-estudiante.component";
 import { CalificacionesExamenesComponent } from "./calificaciones/calificaciones-examenes/calificaciones-examenes.component";
 import { RegistrarEventoComponent } from "./eventos/registrar-evento/registrar-evento.component";
 import { getDutchPaginatorIntl } from "./calificaciones/calificaciones-estudiantes/calificaciones-estudiantes.component";
 import { ModificarEventoComponent } from "./eventos/modificar-evento/modificar-evento.component";
-import { VisualizarEventoComponent } from "./eventos/visualizar-evento/visualizar-evento.component";
-import { MatCarouselModule } from "@ngmodule/material-carousel";
-//import { VisualizarAgendaComponent } from "./visualizar-agenda/visualizar-agenda.component";
-import { RegistrarAgendaComponent } from "./agenda/registrar-agenda/registrar-agenda.component";
+import { VisualizarEventoComponent } from './eventos/visualizar-evento/visualizar-evento.component';
+import { MatCarouselModule } from '@ngmodule/material-carousel';
+import { VisualizarAgendaComponent } from './visualizar-agenda/visualizar-agenda.component';
+import { RegistrarAgendaComponent } from './agenda/registrar-agenda/registrar-agenda.component';
+import { RegistrarCuotasComponent } from './cuotas/registrar-cuotas/registrar-cuotas.component';
 import { ModificarAgendaComponent } from "./agenda/modificar-agenda/modificar-agenda.component";
 
 @NgModule({
@@ -153,13 +155,15 @@ import { ModificarAgendaComponent } from "./agenda/modificar-agenda/modificar-ag
     InasistenciasEstudianteComponent,
     TutoresEstudianteComponent,
     DatosEstudianteComponent,
+    CuotasPerfilEstudianteComponent,
     CalificacionesExamenesComponent,
     RegistrarEventoComponent,
     ModificarEventoComponent,
     VisualizarEventoComponent,
     ReadMoreComponent,
-    //VisualizarAgendaComponent,
+    VisualizarAgendaComponent,
     RegistrarAgendaComponent,
+    RegistrarCuotasComponent,
     ModificarAgendaComponent
   ],
   //entryComponents declara los componentes que se generan dinamicamente dentro de otros.

@@ -299,4 +299,52 @@ router.get("/tutores", (req, res) => {
   });
 });
 
+router.get("/cuotasEstudiante", (req, res) => {
+  Estudiante.aggregate([
+    {
+      $match: {
+        _id: mongoose.Types.ObjectId(req.query.idEstudiante),
+        activo: true
+      }
+    },
+    {
+      $lookup: {
+        from: "inscripcion",
+        localField: "_id",
+        foreignField: "idEstudiante",
+        as: "InscripcionEstudiante"
+      }
+    },
+    {
+      $project: {
+        _id: 1,
+        InscripcionEstudiante: 1
+      }
+    }
+  ]).then(docs => {
+    let docPosta = [];
+
+    for (let i = 0; i < docs[0].InscripcionEstudiante.length; i++) {
+      if (docs[0].InscripcionEstudiante[i].activa == true) {
+        docPosta.push(docs[0].InscripcionEstudiante[i]);
+      }
+    }
+    if (docPosta[0].cuotas.length == 0) {
+      return res.status(200).json({
+        message: "El estudiante no tiene tutores",
+        exito: false
+      });
+    }
+    let cuo = [];
+    docPosta[0].cuotas.forEach(d => {
+      cuo.push([d.mes, d.pagado]);
+    });
+    return res.status(200).json({
+      message: "Se obtuvieron los tutores exitosamente",
+      exito: true,
+      cuotas: cuo
+    });
+  });
+});
+
 module.exports = router;
