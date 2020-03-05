@@ -56,7 +56,10 @@
       <br />
       <hr />
       <br />
-      <div class="horario" *ngFor="let horario of materiasHTML[j]; let i = index">
+      <div
+        class="horario"
+        *ngFor="let horario of materiasHTML[j]; let i = index"
+      >
         <mat-form-field>
           <mat-select
             placeholder="Seleccione dia"
@@ -74,25 +77,43 @@
         <mat-form-field class="matFormHora">
           <div class="hora">
             <input
+              placeholder="Seleccione la hora de inicio"
               [name]="'horaInicio' + j + i"
               ngModel
               #horaInicio+j+i="ngModel"
               matInput
               [ngxTimepicker]="picker1"
+              [format]="24"
+              min="07:30"
+              max="13:30"
+              readonly
             />
-            <ngx-material-timepicker #picker1></ngx-material-timepicker>
+            <ngx-material-timepicker
+              [minutesGap]="15"
+              #picker1
+              (timeSet)="reservarHorario(form,$event,'horaFin'+j+i,'dia'+j+i)"
+            ></ngx-material-timepicker>
           </div>
         </mat-form-field>
         <mat-form-field class="matFormHora">
           <div class="hora">
             <input
+              placeholder="Seleccione la hora de fin"
               [name]="'horaFin' + j + i"
               ngModel
               #horaFin+j+i="ngModel"
               matInput
               [ngxTimepicker]="picker2"
+              [format]="24"
+              min="08:15"
+              max="14:15"
+              readonly
             />
-            <ngx-material-timepicker #picker2></ngx-material-timepicker>
+            <ngx-material-timepicker
+              [minutesGap]="15"
+              #picker2
+              (timeSet)="reservarHorario(form,'horaInicio'+j+i,$event,'dia'+j+i)"
+            ></ngx-material-timepicker>
           </div>
         </mat-form-field>
       </div>
@@ -100,7 +121,7 @@
         <button
           mat-raised-button
           class="agregarHorario"
-          (click)="agregarHorario(j)"
+          (click)="agregarHorario(j, form)"
         >
           <mat-icon>add_circle_outline</mat-icon> Agregar otra horario
         </button>

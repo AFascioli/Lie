@@ -34,7 +34,7 @@ import { AltaEstudiantesComponent } from "./estudiantes/alta-estudiantes/alta-es
 import { CancelPopupComponent } from "./popup-genericos/cancel-popup.component";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { HttpClientModule, HTTP_INTERCEPTORS } from "@angular/common/http";
-import {NgxMaterialTimepickerModule} from 'ngx-material-timepicker';
+import { NgxMaterialTimepickerModule } from "ngx-material-timepicker";
 import { EstudiantesService } from "./estudiantes/estudiante.service";
 import {
   BuscarEstudiantesComponent,
@@ -107,10 +107,11 @@ import { CalificacionesExamenesComponent } from "./calificaciones/calificaciones
 import { RegistrarEventoComponent } from "./eventos/registrar-evento/registrar-evento.component";
 import { getDutchPaginatorIntl } from "./calificaciones/calificaciones-estudiantes/calificaciones-estudiantes.component";
 import { ModificarEventoComponent } from "./eventos/modificar-evento/modificar-evento.component";
-import { VisualizarEventoComponent } from './eventos/visualizar-evento/visualizar-evento.component';
-import { MatCarouselModule } from '@ngmodule/material-carousel';
-import { VisualizarAgendaComponent } from './visualizar-agenda/visualizar-agenda.component';
-import { RegistrarAgendaComponent } from './agenda/registrar-agenda/registrar-agenda.component';
+import { VisualizarEventoComponent } from "./eventos/visualizar-evento/visualizar-evento.component";
+import { MatCarouselModule } from "@ngmodule/material-carousel";
+import { VisualizarAgendaComponent } from "./visualizar-agenda/visualizar-agenda.component";
+import { RegistrarAgendaComponent } from "./agenda/registrar-agenda/registrar-agenda.component";
+import { ModificarAgendaComponent } from "./agenda/modificar-agenda/modificar-agenda.component";
 
 @NgModule({
   declarations: [
@@ -158,7 +159,8 @@ import { RegistrarAgendaComponent } from './agenda/registrar-agenda/registrar-ag
     VisualizarEventoComponent,
     ReadMoreComponent,
     VisualizarAgendaComponent,
-    RegistrarAgendaComponent
+    RegistrarAgendaComponent,
+    ModificarAgendaComponent
   ],
   //entryComponents declara los componentes que se generan dinamicamente dentro de otros.
   entryComponents: [
@@ -226,7 +228,6 @@ import { RegistrarAgendaComponent } from './agenda/registrar-agenda/registrar-ag
     { provide: LOCALE_ID, useValue: "es" },
 
     { provide: MatPaginatorIntl, useValue: getDutchPaginatorIntl() }
-
   ],
   bootstrap: [AppComponent]
 })
