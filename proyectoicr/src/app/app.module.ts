@@ -109,7 +109,7 @@ import { getDutchPaginatorIntl } from "./calificaciones/calificaciones-estudiant
 import { ModificarEventoComponent } from "./eventos/modificar-evento/modificar-evento.component";
 import { VisualizarEventoComponent } from "./eventos/visualizar-evento/visualizar-evento.component";
 import { MatCarouselModule } from "@ngmodule/material-carousel";
-import { VisualizarAgendaComponent } from "./visualizar-agenda/visualizar-agenda.component";
+//import { VisualizarAgendaComponent } from "./visualizar-agenda/visualizar-agenda.component";
 import { RegistrarAgendaComponent } from "./agenda/registrar-agenda/registrar-agenda.component";
 import { ModificarAgendaComponent } from "./agenda/modificar-agenda/modificar-agenda.component";
 
@@ -158,7 +158,7 @@ import { ModificarAgendaComponent } from "./agenda/modificar-agenda/modificar-ag
     ModificarEventoComponent,
     VisualizarEventoComponent,
     ReadMoreComponent,
-    VisualizarAgendaComponent,
+    //VisualizarAgendaComponent,
     RegistrarAgendaComponent,
     ModificarAgendaComponent
   ],

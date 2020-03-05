@@ -1,7 +1,9 @@
+import { AgendaService } from '../agenda.service';
 import { NgForm } from "@angular/forms";
 import { Component, OnInit } from "@angular/core";
 import { EstudiantesService } from "src/app/estudiantes/estudiante.service";
-import { AgendaService } from "src/app/visualizar-agenda/agenda.service.js";
+import Rolldate from "../../../assets/rolldate.min.js";
+import { tick } from "@angular/core/testing";
 import { MatSnackBar } from "@angular/material";
 
 @Component({
@@ -43,9 +45,9 @@ export class RegistrarAgendaComponent implements OnInit {
 
   ngOnInit() {
     this.obtenerCursos();
-    this.servicioAgenda.obtenerMaterias().subscribe(response => {
-      this.materias = response.materias;
-    });
+    // this.servicioAgenda.obtenerMaterias().subscribe(response => {
+    //   this.materias = response.materias;
+    // });
 
     this.servicioAgenda.obtenerDocentes().subscribe(response => {
       this.docentes = response.docentes;

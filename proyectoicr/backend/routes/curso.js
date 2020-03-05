@@ -949,4 +949,81 @@ router.post("/agenda", checkAuthMiddleware, async (req, res) => {
     }
   );
 });
+
+//Obtiene la agenda de un curso (materias, horario y día dictadas)
+//@params: idCurso
+router.get("/agenda", checkAuthMiddleware, (req, res) => {
+  Curso.aggregate([
+    {
+      $match: {
+        _id: mongoose.Types.ObjectId(req.query.idCurso)
+      }
+    },
+    {
+      $lookup: {
+        from: "materiasXCurso",
+        localField: "materias",
+        foreignField: "_id",
+        as: "MXC"
+      }
+    },
+    {
+      $unwind: {
+        path: "$MXC"
+      }
+    },
+    {
+      $lookup: {
+        from: "materia",
+        localField: "MXC.materia",
+        foreignField: "_id",
+        as: "nombreMateria"
+      }
+    },
+    {
+      $unwind: {
+        path: "$MXC.horarios"
+      }
+    },
+    {
+      $lookup: {
+        from: "horario",
+        localField: "MXC.horarios",
+        foreignField: "_id",
+        as: "horarios"
+      }
+    },
+    {
+      $project: {
+        "nombreMateria.nombre": 1,
+        horarios: 1
+      }
+    }
+  ]).then(agendaCompleta => {
+    if (agendaCompleta[0].horarios[0] == null) {
+      return res.json({
+        exito: false,
+        message: "No existen horarios registrados para este curso",
+        agenda: []
+      });
+    } else {
+      let agenda = [];
+      for (let i = 0; i < agendaCompleta.length; i++) {
+        let valor = {
+          nombre: agendaCompleta[i].nombreMateria[0].nombre,
+          dia: agendaCompleta[i].horarios[0].dia,
+          inicio: agendaCompleta[i].horarios[0].horaInicio,
+          fin: agendaCompleta[i].horarios[0].horaFin
+        };
+        agenda.push(valor);
+      }
+      res.json({
+        exito: true,
+        message: "Se ha obtenido la agenda correctamente",
+        agenda: agenda
+      });
+    }
+  });
+});
+
 module.exports = router;
