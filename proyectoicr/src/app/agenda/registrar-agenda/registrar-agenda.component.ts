@@ -2,8 +2,6 @@ import { AgendaService } from '../agenda.service';
 import { NgForm } from "@angular/forms";
 import { Component, OnInit } from "@angular/core";
 import { EstudiantesService } from "src/app/estudiantes/estudiante.service";
-import Rolldate from "../../../assets/rolldate.min.js";
-import { tick } from "@angular/core/testing";
 import { MatSnackBar } from "@angular/material";
 
 @Component({

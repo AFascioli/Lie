@@ -1,5 +1,4 @@
 import { ReadMoreComponent } from './eventos/visualizar-evento/read-more.component';
-import { Evento } from "./eventos/evento.model";
 import { AuthInterceptor } from "./login/auth-interceptor";
 import { BrowserModule } from "@angular/platform-browser";
 import { NgModule } from "@angular/core";
@@ -110,7 +109,7 @@ import { getDutchPaginatorIntl } from "./calificaciones/calificaciones-estudiant
 import { ModificarEventoComponent } from "./eventos/modificar-evento/modificar-evento.component";
 import { VisualizarEventoComponent } from './eventos/visualizar-evento/visualizar-evento.component';
 import { MatCarouselModule } from '@ngmodule/material-carousel';
-import { VisualizarAgendaComponent } from './visualizar-agenda/visualizar-agenda.component';
+import { VisualizarAgendaComponent } from "./agenda/visualizar-agenda/visualizar-agenda.component";
 import { RegistrarAgendaComponent } from './agenda/registrar-agenda/registrar-agenda.component';
 import { RegistrarCuotasComponent } from './cuotas/registrar-cuotas/registrar-cuotas.component';
 import { ModificarAgendaComponent } from "./agenda/modificar-agenda/modificar-agenda.component";
