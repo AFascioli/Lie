@@ -70,3 +70,9 @@ input:focus {
   display:flex;
   justify-content: center;
 }
+
+.filtro
+{
+  font-size: 14px;
+  width: 100%;
+}
