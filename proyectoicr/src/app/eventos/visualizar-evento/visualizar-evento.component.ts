@@ -1,4 +1,5 @@
-import { MatSnackBar } from "@angular/material";
+import { VolverPopupComponent } from './../../popup-genericos/volver-popup/volver-popup.component';
+import { MatSnackBar, MatDialog } from "@angular/material";
 import { AutenticacionService } from "src/app/login/autenticacionService.service";
 import { Component, OnInit } from "@angular/core";
 import { EventosService } from "../eventos.service";
@@ -6,8 +7,8 @@ import { Evento } from "../evento.model";
 import { Comentario } from "../comentario.model";
 import { Router } from "@angular/router";
 import { environment } from "src/environments/environment";
-import { equal } from "assert";
-declare var require: any;
+import { EstudiantesService } from 'src/app/estudiantes/estudiante.service';
+// declare var require: any;
 
 @Component({
   selector: "app-visualizar-evento",
@@ -23,6 +24,8 @@ export class VisualizarEventoComponent implements OnInit {
   constructor(
     public eventoService: EventosService,
     public autenticacionService: AutenticacionService,
+    public popup: MatDialog,
+    public servicioEstudiante: EstudiantesService,
     public snackBar: MatSnackBar,
     public router: Router
   ) {}
@@ -59,6 +62,7 @@ export class VisualizarEventoComponent implements OnInit {
       this.comentarioIsEmpty = false;
     }
   }
+
 
   onGuardar(descripcion) {
     if (!this.descripcionComentario || !this.descripcionComentario.trim()) {

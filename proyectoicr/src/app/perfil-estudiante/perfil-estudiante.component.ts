@@ -17,6 +17,7 @@ export class PerfilEstudianteComponent implements OnInit {
   _idEstudiante: string;
   idUsuario: string;
   calificacionesSelected: boolean;
+  fechaActual: Date;
 
   constructor(
     public servicio: EstudiantesService,
@@ -24,6 +25,7 @@ export class PerfilEstudianteComponent implements OnInit {
     public popup: MatDialog) { }
 
   ngOnInit() {
+    this.fechaActual = new Date();
     this.apellidoEstudiante = this.servicio.estudianteSeleccionado.apellido;
     this.nombreEstudiante = this.servicio.estudianteSeleccionado.nombre;
     this._idEstudiante = this.servicio.estudianteSeleccionado._id;
