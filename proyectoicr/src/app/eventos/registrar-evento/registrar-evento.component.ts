@@ -64,7 +64,7 @@ export class RegistrarEventoComponent implements OnInit {
       const value = event.value;
 
       if ((value || "").trim()) {
-        this.chips.push(value.trim());
+        if (this.allChips.includes(value)) this.chips.push(value.trim());
       }
 
       if (input) {
@@ -117,7 +117,7 @@ export class RegistrarEventoComponent implements OnInit {
       !this.chips.includes("Todos los cursos")
     )
       this.chips.push(event.option.viewValue);
-    if (this.chips.length == this.allChips.length-1) {
+    if (this.chips.length == this.allChips.length - 1) {
       this.chips = [];
       this.chips.push("Todos los cursos");
     }
