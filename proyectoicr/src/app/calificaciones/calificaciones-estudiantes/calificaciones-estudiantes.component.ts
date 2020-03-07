@@ -189,12 +189,11 @@ export class CalificacionesEstudiantesComponent implements OnInit {
         });
     }
   }
-  applyFilter(filterValue: string) {
-    filterValue = filterValue.trim(); // Remove whitespace
-    filterValue = filterValue.toLowerCase(); // Datasource defaults to lowercase matches
-    //ACA CREO Q ESTA EL PROBLEMA
-    this.dataSource = new MatTableDataSource(this.servicioEstudiante.estudiantes);
-    this.dataSource.filter = filterValue;
+  //Recibe la palabra que escribe el usuario y filtra tabla de html
+  aplicarFiltro(valorFiltro: string) {
+    valorFiltro = valorFiltro.trim();
+    valorFiltro = valorFiltro.toLowerCase(); 
+    this.dataSource.filter = valorFiltro;
   }
 
   indexEstudiante() {
