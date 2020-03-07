@@ -277,4 +277,18 @@ export class EstudiantesService {
       params: params
     });
   }
+  public obtenerCursoDeEstudianteById(id) {
+    let params = new HttpParams().set(
+      "idEstudiante",
+      id
+    );
+    return this.http.get<{
+      message: string;
+      exito: boolean;
+      curso: string;
+    }>(environment.apiUrl + "/curso/estudiante", {
+      params: params
+    });
+  }
+
 }

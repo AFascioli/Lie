@@ -15,7 +15,7 @@ import { Router } from "@angular/router";
 })
 export class ListaEstudiantesComponent implements OnInit {
   estudiantes: Estudiante[] = [];
-  curso: string;
+  curso: any[]= [];
   permisos = {
     notas: 0,
     asistencia: 0,
@@ -45,6 +45,13 @@ export class ListaEstudiantesComponent implements OnInit {
       this.servicio.getEstudiantesListener().subscribe(estudiantesBuscados => {
         this.estudiantes = estudiantesBuscados;
         this.isLoading = false;
+        for (let i = 0; i < estudiantesBuscados.length; i++) {
+          this.servicio
+            .obtenerCursoDeEstudianteById(this.estudiantes[i]._id)
+            .subscribe(response => {
+              this.curso[i] = response.curso;
+            });
+        }
       });
 
       if (this.servicio.retornoDesdeAcciones) {
