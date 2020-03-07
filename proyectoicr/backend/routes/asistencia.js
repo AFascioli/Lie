@@ -57,9 +57,6 @@ router.get("", checkAuthMiddleware, (req, res) => {
     var fechaHoy = new Date();
     fechaHoy.setHours(fechaHoy.getHours() - 3);
     //Compara si la ultima asistencia fue el dia de hoy
-    console.log(
-      ClaseAsistencia.esFechaActual(ultimaAsistencia[0].asistencia[0].fecha)
-    );
     if (
       ultimaAsistencia[0].asistencia.length > 0 &&
       ClaseAsistencia.esFechaActual(ultimaAsistencia[0].asistencia[0].fecha)

@@ -186,3 +186,6 @@ mat-icon {
   box-shadow: none;
 }
 
+.botonVolver{
+  text-align: right;
+}

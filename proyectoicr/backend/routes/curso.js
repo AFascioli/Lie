@@ -813,6 +813,8 @@ router.post(
   }
 );
 
+//Obtiene la agenda de un curso (materias, horario y día dictadas)
+//@params: idCurso
 router.get("/agenda", checkAuthMiddleware, (req, res) => {
   Curso.aggregate([
     {
@@ -871,7 +873,6 @@ router.get("/agenda", checkAuthMiddleware, (req, res) => {
       }
     }
   ]).then(agendaCompleta => {
-    console.log(agendaCompleta);
     if (agendaCompleta[0].horarios[0] == null) {
       return res.json({
         exito: false,
@@ -901,6 +902,10 @@ router.get("/agenda", checkAuthMiddleware, (req, res) => {
   });
 });
 
+//Elimina ciertos horarios registrados para un curso y una materia
+//@params: id del curso
+//@params: id horario
+//@params: nombre de la materia
 router.post("/eliminarHorarios", checkAuthMiddleware, (req, res) => {
   Curso.aggregate([
     {
@@ -961,16 +966,13 @@ router.post("/eliminarHorarios", checkAuthMiddleware, (req, res) => {
       //         resolve(true);
       //       }
       //     }
-
       //   });
       // };
-
       // let guardarMXC = (MXC) => {
       //   return new Promise((resolve, reject) => {
       //     MXC.save().then(()=> {resolve(true);})
       //   });
       // };
-
       // Horario.findByIdAndDelete(req.body.idHorario).then(() => {
       //   MateriaXCurso.findById(horariosDeMateria[0].MXC._id).then(MXC => {
       //     crearHorario(MXC).then(() => {
@@ -985,7 +987,7 @@ router.post("/eliminarHorarios", checkAuthMiddleware, (req, res) => {
       //   });
       // });
     } else {
-      console.log('mando por aca');
+      console.log("mando por aca");
       // MateriaXCurso.findByIdAndDelete(horariosDeMateria[0].MXC._id).then(() => {
       //   Curso.findById(req.body.idCurso).then(curso => {
       //     for (var i = 0; i < curso.materias.length; i++) {
@@ -1053,84 +1055,82 @@ router.post("/agenda", checkAuthMiddleware, async (req, res) => {
       res.json({ exito: true, message: "nice" });
     }
   );
-
 });
 
 //Obtiene la agenda de un curso (materias, horario y día dictadas)
 //@params: idCurso
-router.get("/agenda", checkAuthMiddleware, (req, res) => {
-  Curso.aggregate([
-    {
-      $match: {
-        _id: mongoose.Types.ObjectId(req.query.idCurso)
-      }
-    },
-    {
-      $lookup: {
-        from: "materiasXCurso",
-        localField: "materias",
-        foreignField: "_id",
-        as: "MXC"
-      }
-    },
-    {
-      $unwind: {
-        path: "$MXC"
-      }
-    },
-    {
-      $lookup: {
-        from: "materia",
-        localField: "MXC.materia",
-        foreignField: "_id",
-        as: "nombreMateria"
-      }
-    },
-    {
-      $unwind: {
-        path: "$MXC.horarios"
-      }
-    },
-    {
-      $lookup: {
-        from: "horario",
-        localField: "MXC.horarios",
-        foreignField: "_id",
-        as: "horarios"
-      }
-    },
-    {
-      $project: {
-        "nombreMateria.nombre": 1,
-        horarios: 1
-      }
-    }
-  ]).then(agendaCompleta => {
-    if (agendaCompleta[0].horarios[0] == null) {
-      return res.json({
-        exito: false,
-        message: "No existen horarios registrados para este curso",
-        agenda: []
-      });
-    } else {
-      let agenda = [];
-      for (let i = 0; i < agendaCompleta.length; i++) {
-        let valor = {
-          nombre: agendaCompleta[i].nombreMateria[0].nombre,
-          dia: agendaCompleta[i].horarios[0].dia,
-          inicio: agendaCompleta[i].horarios[0].horaInicio,
-          fin: agendaCompleta[i].horarios[0].horaFin
-        };
-        agenda.push(valor);
-      }
-      res.json({
-        exito: true,
-        message: "Se ha obtenido la agenda correctamente",
-        agenda: agenda
-      });
-    }
-  });
-
-});
+// router.get("/agenda", checkAuthMiddleware, (req, res) => {
+//   Curso.aggregate([
+//     {
+//       $match: {
+//         _id: mongoose.Types.ObjectId(req.query.idCurso)
+//       }
+//     },
+//     {
+//       $lookup: {
+//         from: "materiasXCurso",
+//         localField: "materias",
+//         foreignField: "_id",
+//         as: "MXC"
+//       }
+//     },
+//     {
+//       $unwind: {
+//         path: "$MXC"
+//       }
+//     },
+//     {
+//       $lookup: {
+//         from: "materia",
+//         localField: "MXC.materia",
+//         foreignField: "_id",
+//         as: "nombreMateria"
+//       }
+//     },
+//     {
+//       $unwind: {
+//         path: "$MXC.horarios"
+//       }
+//     },
+//     {
+//       $lookup: {
+//         from: "horario",
+//         localField: "MXC.horarios",
+//         foreignField: "_id",
+//         as: "horarios"
+//       }
+//     },
+//     {
+//       $project: {
+//         "nombreMateria.nombre": 1,
+//         horarios: 1
+//       }
+//     }
+//   ]).then(agendaCompleta => {
+//     if (agendaCompleta[0].horarios[0] == null) {
+//       return res.json({
+//         exito: false,
+//         message: "No existen horarios registrados para este curso",
+//         agenda: []
+//       });
+//     } else {
+//       let agenda = [];
+//       for (let i = 0; i < agendaCompleta.length; i++) {
+//         let valor = {
+//           nombre: agendaCompleta[i].nombreMateria[0].nombre,
+//           dia: agendaCompleta[i].horarios[0].dia,
+//           inicio: agendaCompleta[i].horarios[0].horaInicio,
+//           fin: agendaCompleta[i].horarios[0].horaFin
+//         };
+//         agenda.push(valor);
+//       }
+//       res.json({
+//         exito: true,
+//         message: "Se ha obtenido la agenda correctamente",
+//         agenda: agenda
+//       });
+//     }
+//   });
+// });
 
 module.exports = router;

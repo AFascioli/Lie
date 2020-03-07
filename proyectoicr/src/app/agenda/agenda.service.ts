@@ -45,7 +45,7 @@ export class AgendaService {
     return this.http.get<{ materias: any[] }>(environment.apiUrl + "/materia");
   }
 
-   //Elimina ciertos horarios registrados para un curso y una materia
+  //Elimina ciertos horarios registrados para un curso y una materia
   //@params: id del curso
   //@params: id horario
   //@params: nombre de la materia
