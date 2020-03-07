@@ -63,6 +63,11 @@
         </mat-select>
       </mat-form-field>
     </div>
+    <mat-form-field class="filtro">
+      <mat-label>Filtro</mat-label>
+      <input matInput  placeholder="Nombre del estudiante">
+    </mat-form-field>
+
     <table mat-table [dataSource]="dataSource" *ngIf="estudiantes">
       <ng-container matColumnDef="apellido">
         <th class="columnasNormales" mat-header-cell *matHeaderCellDef>
