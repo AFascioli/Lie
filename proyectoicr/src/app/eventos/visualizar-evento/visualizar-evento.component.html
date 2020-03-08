@@ -84,6 +84,9 @@
         </mat-panel-description>
       </mat-expansion-panel-header>
       <div class="test" *ngFor="let comentario of comentarios">
+        <button  mat-icon-button class="botonOpciones">
+          <mat-icon>more_horiz</mat-icon>
+        </button>
         <div class="datosComentario">
           <p class="nombreAutor">
             <b>{{ comentario.apellido }}, {{ comentario.nombre }} </b>

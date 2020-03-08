@@ -15,7 +15,6 @@ textarea {
   font-size: 20px;
 } */
 
-
 .titulo {
   text-align: center;
   font-size: 35px;
@@ -31,6 +30,11 @@ textarea {
   top: 7px;
   right: 20px;
   width: 6em;
+}
+
+.botonOpciones {
+  margin-left: auto !important;
+  display: flex;
 }
 
 .textoParticipan {
@@ -128,39 +132,39 @@ mat-icon {
 .datosComentario {
   display: flex;
   margin-left: auto;
-  justify-content: space-between;  /* para que la fecha este del lado derecho */
+  justify-content: space-between; /* para que la fecha este del lado derecho */
 }
 
 .nombreAutor {
   margin-left: 0px;
 }
 
-.mat-panel-title{
+.mat-panel-title {
   font-size: 20px;
 }
 
-.mat-chip{
+.mat-chip {
   margin-bottom: 2%;
   margin-left: 14px;
 }
 
-.fechaComentario{
+.fechaComentario {
   margin-right: 5%;
 }
 
-.tituloComentarios{
+.tituloComentarios {
   font-size: 27px;
   text-align: center;
   margin-left: 0%;
 }
-.textoComentario{
-    border-radius: 25px;
-    /* background: rgb(231, 232, 230); */
-    background: white;
-    padding: 20px;
-    margin-top:0%;
-    margin-left: 2%;
-    word-wrap: break-word;
+.textoComentario {
+  border-radius: 25px;
+  /* background: rgb(231, 232, 230); */
+  background: white;
+  padding: 20px;
+  margin-top: 0%;
+  margin-left: 2%;
+  word-wrap: break-word;
 }
 
 /* .carousel[_ngcontent-dwo-c14] > button[_ngcontent-dwo-c14] > mat-icon[_ngcontent-dwo-c14] {
@@ -168,24 +172,27 @@ mat-icon {
   border-radius: 50% !important; */
 /* } */
 
-::ng-deep .mat-button-wrapper > mat-icon.notranslate.material-icons.mat-icon-no-color.ng-star-inserted {
+::ng-deep
+  .mat-button-wrapper
+  > mat-icon.notranslate.material-icons.mat-icon-no-color.ng-star-inserted {
   background: white !important;
   border-radius: 50% !important;
   color: black !important;
 }
 
-::ng-deep .mat-mini-fab.mat-warn[disabled], .mat-mini-fab[disabled][disabled]{
+::ng-deep .mat-mini-fab.mat-warn[disabled],
+.mat-mini-fab[disabled][disabled] {
   background-color: rgba(27, 11, 97, 0.938);
 }
 
-::ng-deep .mat-mini-fab.mat-warn [ng-reflect-disabled="false"]{
+::ng-deep .mat-mini-fab.mat-warn [ng-reflect-disabled="false"] {
   background-color: white !important;
 }
 
-.mat-expansion-panel{
+.mat-expansion-panel {
   box-shadow: none;
 }
 
-.botonVolver{
+.botonVolver {
   text-align: right;
 }
