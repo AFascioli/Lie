@@ -150,6 +150,7 @@ mat-icon {
 
 .fechaComentario {
   margin-right: 5%;
+  font-size: small !important;
 }
 
 .tituloComentarios {

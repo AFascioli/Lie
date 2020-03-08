@@ -1,3 +1,4 @@
+import { Evento } from './eventos/evento.model';
 import { ReadMoreComponent } from './eventos/visualizar-evento/read-more.component';
 import { AuthInterceptor } from "./login/auth-interceptor";
 import { BrowserModule } from "@angular/platform-browser";
@@ -31,6 +32,7 @@ import { MatMenuModule } from "@angular/material/menu";
 import { AppComponent } from "./app.component";
 import { AltaEstudiantesComponent } from "./estudiantes/alta-estudiantes/alta-estudiantes.component";
 import { CancelPopupComponent } from "./popup-genericos/cancel-popup.component";
+import { AccionesComentariosPopupComponent } from "./eventos/visualizar-evento/visualizar-evento.component";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { HttpClientModule, HTTP_INTERCEPTORS } from "@angular/common/http";
 import { NgxMaterialTimepickerModule } from "ngx-material-timepicker";
@@ -123,6 +125,7 @@ import { VolverPopupComponent } from './popup-genericos/volver-popup/volver-popu
     ListaEstudiantesComponent,
     MostrarEstudiantesComponent,
     CancelPopupComponent,
+    AccionesComentariosPopupComponent,
     MostrarPopupComponent,
     BorrarPopupComponent,
     PreferenciasPopupComponent,
@@ -170,6 +173,7 @@ import { VolverPopupComponent } from './popup-genericos/volver-popup/volver-popu
   //entryComponents declara los componentes que se generan dinamicamente dentro de otros.
   entryComponents: [
     CancelPopupComponent,
+    AccionesComentariosPopupComponent,
     MostrarPopupComponent,
     BorrarPopupComponent,
     AsistenciaPopupComponent,

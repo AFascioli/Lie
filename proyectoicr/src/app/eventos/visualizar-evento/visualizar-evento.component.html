@@ -84,18 +84,17 @@
         </mat-panel-description>
       </mat-expansion-panel-header>
       <div class="test" *ngFor="let comentario of comentarios">
-        <button  mat-icon-button class="botonOpciones">
+        <!-- <button  mat-icon-button class="botonOpciones">
           <mat-icon>more_horiz</mat-icon>
-        </button>
+        </button> -->
         <div class="datosComentario">
           <p class="nombreAutor">
             <b>{{ comentario.apellido }}, {{ comentario.nombre }} </b>
           </p>
           <p></p>
-          <p class="fechaComentario">
-            {{ obtenerDia(comentario.fecha) }}
-            {{ obtenerMes(comentario.fecha) }}
-          </p>
+          <button mat-icon-button class="botonOpciones" (click)="onOpciones(comentario._id)">
+            <mat-icon>more_horiz</mat-icon>
+          </button>
         </div>
         <p class="textoComentario">
           <app-read-more
@@ -103,6 +102,10 @@
             [maxHeight]="40"
             [readAll]="false"
           ></app-read-more>
+        </p>
+        <p class="fechaComentario">
+          {{ obtenerDia(comentario.fecha) }}
+          {{ obtenerMes(comentario.fecha) }}
         </p>
         <mat-divider [inset]="true"></mat-divider>
       </div>
