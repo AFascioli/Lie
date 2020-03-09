@@ -31,6 +31,24 @@ router.get("/", checkAuthMiddleware, (req, res) => {
     });
 });
 
+router.post("/registrarSancion", checkAuthMiddleware, (req, res) => {
+  console.log('req.body');
+  console.log(req.body);
+  console.log('req.body.idEstud');
+  console.log(req.body.idEstudiante);
+  // Inscripcion.findOne({ _id: req.body.idEstudiante, activa: true }).then(
+  //   inscripcion => {
+  //     inscripcion.sanciones[req.body.tipoSancion].cantidad = req.body.cantidad;
+  //     inscripcion.save().then(
+  //       res.status(200).json({
+  //         message: "Se ha registrado la sanción del estudiante correctamente",
+  //         exito: true
+  //       })
+  //     );
+  //   }
+  // );
+});
+
 //Obtiene el estado de las cuotas de todos los estudiantes de un curso
 //@params: id del curso
 //@params: mes de la cuota
@@ -677,8 +695,6 @@ router.post("/inscripciontest", checkAuthMiddleware, async (req, res) => {
       resolve(cuotas);
     });
   };
-
-
 
   //#resolve: Se puede implementar el Promise.all, fijarse si es necesario/no rompe nada
   var cursoSeleccionado = await obtenerCurso();

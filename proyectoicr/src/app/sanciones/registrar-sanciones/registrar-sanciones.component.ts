@@ -1,5 +1,6 @@
 import { Component, OnInit } from "@angular/core";
 import { EstudiantesService } from "src/app/estudiantes/estudiante.service";
+import { SancionService } from "../sancion.service";
 
 @Component({
   selector: "app-registrar-sanciones",
@@ -10,15 +11,25 @@ export class RegistrarSancionesComponent implements OnInit {
   fechaActual: Date;
   apellidoEstudiante: String;
   nombreEstudiante: String;
-  tiposSanciones = ['Llamado de atención','Apercibimiento','Amonestación','Suspensión' ];
+  idEstudiante: String;
+  tiposSanciones = [
+    "Llamado de atención",
+    "Apercibimiento",
+    "Amonestación",
+    "Suspensión"
+  ];
   tipoSancionSelected: Boolean = false;
 
-  constructor(public servicioEstudiante: EstudiantesService) {}
+  constructor(
+    public servicioEstudiante: EstudiantesService,
+    public servicioSancion: SancionService
+  ) {}
 
   ngOnInit() {
     this.fechaActual = new Date();
     this.apellidoEstudiante = this.servicioEstudiante.estudianteSeleccionado.apellido;
     this.nombreEstudiante = this.servicioEstudiante.estudianteSeleccionado.nombre;
+    this.idEstudiante = this.servicioEstudiante.estudianteSeleccionado._id;
   }
 
   onTipoSancionChange() {
@@ -26,8 +37,8 @@ export class RegistrarSancionesComponent implements OnInit {
   }
 
   guardar(cantidad, tipoSancion) {
-    console.log('cantidad'+cantidad);
-    console.log('tipo sancion'+tipoSancion);
+    this.servicioSancion
+      .registrarSancion(cantidad, tipoSancion, this.idEstudiante)
+      .subscribe(rtdo => {});
   }
-
 }
