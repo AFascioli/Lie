@@ -35,7 +35,7 @@
       <div class="div-selects">
         <mat-form-field>
           <mat-select
-            placeholder="Seleccione tipo sanción"
+            placeholder="Seleccione tipo de sanción"
             name="sancion"
             ngModel
             #sancion="ngModel"
@@ -53,10 +53,11 @@
           <input
             ngModel
             #cantidad="ngModel"
-            [disabled]="!tipoSancionSelected"
+            [disabled]="!tipoSancionSelected || suspensionSelected"
             matInput
             name="cantidadSancion"
             placeholder="Ingrese cantidad"
+            (keypress)="checkNumeros($event)"
             required
           />
         </mat-form-field>
@@ -66,7 +67,7 @@
       <button
         mat-raised-button
         class="buttonPrimary"
-        (click)="guardar(cantidad.value, sancion.value)"
+        (click)="guardar(cantidad.value, sancion.value, form)"
         mat-raised-button
       >
         Guardar

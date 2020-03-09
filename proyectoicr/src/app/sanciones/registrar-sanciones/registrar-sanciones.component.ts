@@ -1,6 +1,9 @@
 import { Component, OnInit } from "@angular/core";
 import { EstudiantesService } from "src/app/estudiantes/estudiante.service";
 import { SancionService } from "../sancion.service";
+import { MatSnackBar } from '@angular/material';
+import { format } from 'url';
+import { NgForm } from '@angular/forms';
 
 @Component({
   selector: "app-registrar-sanciones",
@@ -19,11 +22,13 @@ export class RegistrarSancionesComponent implements OnInit {
     "Suspensión"
   ];
   tipoSancionSelected: Boolean = false;
+  suspensionSelected: Boolean = false;
 
   constructor(
     public servicioEstudiante: EstudiantesService,
-    public servicioSancion: SancionService
-  ) {}
+    public servicioSancion: SancionService,
+    public snackBar: MatSnackBar
+  ) { }
 
   ngOnInit() {
     this.fechaActual = new Date();
@@ -32,13 +37,45 @@ export class RegistrarSancionesComponent implements OnInit {
     this.idEstudiante = this.servicioEstudiante.estudianteSeleccionado._id;
   }
 
-  onTipoSancionChange() {
+  onTipoSancionChange(tipoSancion) {
     this.tipoSancionSelected = true;
+    if (tipoSancion == 3) {
+      this.suspensionSelected = true;
+    }
+    else{
+      this.suspensionSelected = false;
+    }
   }
 
-  guardar(cantidad, tipoSancion) {
+  checkNumeros(event) {
+    var inputValue = event.which;
+    if (
+      !(inputValue >= 48 && inputValue <= 57) &&
+      inputValue != 32 &&
+      inputValue != 0
+    ) {
+      event.preventDefault();
+    }
+  }
+
+  guardar(cantidad, tipoSancion, form: NgForm) {
+    if (tipoSancion == 3) {
+      cantidad = 1;
+    }
     this.servicioSancion
       .registrarSancion(cantidad, tipoSancion, this.idEstudiante)
-      .subscribe(rtdo => {});
+      .subscribe(rtdo => {
+        if (rtdo.exito) {
+          this.snackBar.open(
+            rtdo.message,
+            "",
+            {
+              panelClass: ["snack-bar-exito"],
+              duration: 8000
+            }
+          );
+          form.resetForm();
+        }
+      });
   }
 }

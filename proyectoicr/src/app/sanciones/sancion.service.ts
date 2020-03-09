@@ -9,7 +9,7 @@ import { environment } from "src/environments/environment";
 export class SancionService {
   constructor(public http: HttpClient) {}
 
-  public registrarSancion(tipoSancion, cantidad, idEstudiante) {
+  public registrarSancion(cantidad, tipoSancion, idEstudiante) {
     const datosSancion = {
       tipoSancion: tipoSancion,
       cantidad: cantidad,
