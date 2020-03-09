@@ -1,3 +1,4 @@
+import { RegistrarSancionesComponent } from './sanciones/registrar-sanciones/registrar-sanciones.component';
 import { RegistrarCuotasComponent } from "./cuotas/registrar-cuotas/registrar-cuotas.component";
 import { RegistrarEventoComponent } from "./eventos/registrar-evento/registrar-evento.component";
 import { CalificacionesExamenesComponent } from "./calificaciones/calificaciones-examenes/calificaciones-examenes.component";
@@ -90,6 +91,12 @@ const routes: Routes = [
       {
         path: "curso", //resolve: ruta inscribir estudiante a un curso
         component: InscripcionEstudianteComponent,
+        canActivate: [RouteGuard, RoleGuard],
+        data: { rolesValidos: ["Admin", "Preceptor", "Director"] }
+      },
+      {
+        path: "registrarSancion",
+        component: RegistrarSancionesComponent,
         canActivate: [RouteGuard, RoleGuard],
         data: { rolesValidos: ["Admin", "Preceptor", "Director"] }
       },

@@ -93,6 +93,11 @@ export class ListaEstudiantesComponent implements OnInit {
     this.router.navigate(["./perfilEstudiante"]);
   }
 
+  onSancion(indice){
+    this.asignarEstudianteSeleccionado(indice);
+    this.router.navigate(["./registrarSancion"]);
+  }
+
   onJustificar(indice) {
     this.asignarEstudianteSeleccionado(indice);
     this.router.navigate(["./justificarInasistencia"]);
