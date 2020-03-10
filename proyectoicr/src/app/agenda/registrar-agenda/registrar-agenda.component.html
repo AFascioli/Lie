@@ -32,6 +32,7 @@
             #materia="ngModel"
             matNativeControl
             required
+            (selectionChange)="validarMateria(materia)"
           >
             <mat-option *ngFor="let materia of materias" [value]="materia._id">
               {{ materia.nombre }}
@@ -78,6 +79,7 @@
           <div class="hora">
             <input
               placeholder="Seleccione la hora de inicio"
+              required
               [name]="'horaInicio' + j + i"
               ngModel
               #horaInicio+j+i="ngModel"
@@ -99,6 +101,7 @@
           <div class="hora">
             <input
               placeholder="Seleccione la hora de fin"
+              required
               [name]="'horaFin' + j + i"
               ngModel
               #horaFin+j+i="ngModel"
