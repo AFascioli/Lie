@@ -1,10 +1,14 @@
 <!-- <h3 mat-dialog-title class="tituloPopup">Acciones</h3> -->
 <mat-list>
-  <button mat-raised-button (click)="onEliminar()" cdkFocusInitial>
-    Eliminar comentario
-  </button>
+  <div *ngIf="permisos">
+    <button mat-raised-button (click)="onEliminar()" cdkFocusInitial>
+      Eliminar comentario
+    </button>
+  </div>
   <br />
-  <button mat-raised-button (click)="onReportar()">
-    Reportar como inapropiado (Todavía no resuelto)
-  </button>
+  <div>
+    <button mat-raised-button (click)="onReportar()">
+      Reportar como inapropiado (Todavía no resuelto)
+    </button>
+  </div>
 </mat-list>

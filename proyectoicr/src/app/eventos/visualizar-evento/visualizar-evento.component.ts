@@ -16,7 +16,7 @@ import { EstudiantesService } from "src/app/estudiantes/estudiante.service";
 })
 export class VisualizarEventoComponent implements OnInit {
   evento: Evento;
-  comentarios: any[];
+  //comentarios: any[];
   descripcionComentario: String;
   comentarioIsEmpty: Boolean = true;
 
@@ -35,7 +35,7 @@ export class VisualizarEventoComponent implements OnInit {
     }
     this.evento = this.eventoService.eventoSeleccionado;
     this.eventoService.obtenerComentariosDeEvento().subscribe(rtdo => {
-      this.comentarios = rtdo.comentarios.reverse();
+      this.eventoService.comentarios = rtdo.comentarios.reverse();
     });
   }
 
@@ -90,7 +90,7 @@ export class VisualizarEventoComponent implements OnInit {
             });
             this.descripcionComentario = "";
             this.eventoService.obtenerComentariosDeEvento().subscribe(rtdo => {
-              this.comentarios = rtdo.comentarios.reverse();
+              this.eventoService.comentarios = rtdo.comentarios.reverse();
             });
           } else {
             this.snackBar.open(
@@ -117,7 +117,11 @@ export class VisualizarEventoComponent implements OnInit {
   templateUrl: "./acciones-comentarios-popup.component.html",
   styleUrls: ["./visualizar-evento.component.css"]
 })
-export class AccionesComentariosPopupComponent {
+export class AccionesComentariosPopupComponent implements OnInit {
+  permisos: boolean = false;
+  evento = this.eventoService.eventoSeleccionado;
+  comentario;
+
   constructor(
     public dialogRef: MatDialogRef<AccionesComentariosPopupComponent>,
     public router: Router,
@@ -126,8 +130,29 @@ export class AccionesComentariosPopupComponent {
     public autenticacionService: AutenticacionService
   ) {}
 
+  ngOnInit() {
+    this.eventoService.obtenerComentariosDeEvento().subscribe(rtdo => {
+      for (let i = 0; i < rtdo.comentarios.length; i++) {
+        if (
+          rtdo.comentarios[i]._id == this.eventoService.idComentarioSeleccionado
+        ) {
+          if (
+            rtdo.comentarios[i].idUsuario ==
+              this.autenticacionService.getId() ||
+            this.autenticacionService.getRol() == "Admin"
+          )
+            this.permisos = true;
+        }
+      }
+    });
+  }
   onEliminar(): void {
-    this.eventoService.eliminarComentario(this.eventoService.idComentarioSeleccionado);
+    this.eventoService.eliminarComentario(
+      this.eventoService.idComentarioSeleccionado
+    );
+      this.eventoService.obtenerComentariosDeEvento().subscribe(rtdo => {
+      this.eventoService.comentarios = rtdo.comentarios.reverse();
+    });
     this.dialogRef.close();
   }
 

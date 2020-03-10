@@ -13,6 +13,7 @@ export class EventosService {
   public evento: Evento;
   public tituloABorrar: string;
   public idComentarioSeleccionado: string;
+  public comentarios: any[]
 
   constructor(
     public snackBar: MatSnackBar,
@@ -136,7 +137,7 @@ export class EventosService {
   public obtenerComentariosDeEvento() {
     let params = new HttpParams().set("idEvento", this.eventoSeleccionado._id);
     return this.http.get<{
-      comentarios: Comentario[];
+      comentarios: any[];
       message: string;
       exito: string;
     }>(environment.apiUrl + "/evento/comentarios", { params: params });
