@@ -2,7 +2,8 @@ import { NgForm, NgModel } from "@angular/forms";
 import { Component, OnInit } from "@angular/core";
 import { EstudiantesService } from "src/app/estudiantes/estudiante.service";
 import { AgendaService } from "src/app/visualizar-agenda/agenda.service.js";
-import { MatSnackBar } from "@angular/material";
+import { MatSnackBar, MatDialog } from "@angular/material";
+import { CancelPopupComponent } from "src/app/popup-genericos/cancel-popup.component";
 
 @Component({
   selector: "app-registrar-agenda",
@@ -39,6 +40,7 @@ export class RegistrarAgendaComponent implements OnInit {
   constructor(
     public servicioEstudiante: EstudiantesService,
     public servicioAgenda: AgendaService,
+    public dialog: MatDialog,
     private snackBar: MatSnackBar
   ) {}
 
@@ -210,5 +212,11 @@ export class RegistrarAgendaComponent implements OnInit {
         duration: 4500
       }
     );
+  }
+
+  popUpCancelar() {
+    this.dialog.open(CancelPopupComponent, {
+      width: "250px"
+    });
   }
 }
