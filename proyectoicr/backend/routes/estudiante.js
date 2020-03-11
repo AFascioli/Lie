@@ -299,6 +299,8 @@ router.get("/tutores", (req, res) => {
   });
 });
 
+//Obtiene todas las cuotas de un estudiante pasado por parámetro
+//@params: id del estudiante
 router.get("/cuotasEstudiante", (req, res) => {
   Estudiante.aggregate([
     {
@@ -331,7 +333,7 @@ router.get("/cuotasEstudiante", (req, res) => {
     }
     if (docPosta[0].cuotas.length == 0) {
       return res.status(200).json({
-        message: "El estudiante no tiene tutores",
+        message: "El estudiante no tiene cuotas",
         exito: false
       });
     }
@@ -340,78 +342,152 @@ router.get("/cuotasEstudiante", (req, res) => {
       cuo.push([d.mes, d.pagado]);
     });
     return res.status(200).json({
-      message: "Se obtuvieron los tutores exitosamente",
+      message: "Se obtuvieron las cuotas exitosamente",
       exito: true,
       cuotas: cuo
     });
   });
 });
 
+router.get("/sancionesEstudiante", (req, res) => {
+  Estudiante.aggregate([
+    {
+      $match: {
+        _id: mongoose.Types.ObjectId(req.query.idEstudiante),
+        activo: true
+      }
+    },
+    {
+      $lookup: {
+        from: "inscripcion",
+        localField: "_id",
+        foreignField: "idEstudiante",
+        as: "InscripcionEstudiante"
+      }
+    },
+    {
+      $unwind: {
+        path: "$InscripcionEstudiante"
+      }
+    },
+    {
+      $match: {
+        "InscripcionEstudiante.activa": true
+      }
+    },
+    {
+      $project: {
+        _id: 1,
+        InscripcionEstudiante: 1
+      }
+    },
+    {
+      $unwind: {
+        path: "$InscripcionEstudiante"
+      }
+    },
+    {
+      $project: {
+        _id: 0,
+        "InscripcionEstudiante.sanciones": 1
+      }
+    }
+  ]).then(inscripciones => {
+    let sanciones = inscripciones[0].InscripcionEstudiante.sanciones;
+
+    if (sanciones.length == 0) {
+      return res.status(200).json({
+        message: "El estudiante no tiene sanciones",
+        exito: false,
+        sanciones: []
+      });
+    } else {
+      return res.status(200).json({
+        message: "Se obtuvieron las sanciones exitosamente",
+        exito: true,
+        sanciones: sanciones
+      });
+    }
+  });
+});
+
 //Obtiene la agenda de un curso (materias, horario y día dictadas)
 //@params: idEstudiante
 router.get("/agenda", checkAuthMiddleware, (req, res) => {
- Inscripcion.aggregate([
+  console.log("idEstudiante> " + req.query.idEstudiante);
+  Inscripcion.aggregate([
     {
-      '$match': {
-        idEstudiante: mongoose.Types.ObjectId(req.body.idEstudiante)
+      $match: {
+        idEstudiante: mongoose.Types.ObjectId(req.query.idEstudiante),
+        activa: true
       }
-    }, {
-      '$project': {
-        'idCurso': 1
+    },
+    {
+      $project: {
+        idCurso: 1
       }
-    }, {
-      '$lookup': {
-        'from': 'curso',
-        'localField': 'idCurso',
-        'foreignField': '_id',
-        'as': 'curso'
+    },
+    {
+      $lookup: {
+        from: "curso",
+        localField: "idCurso",
+        foreignField: "_id",
+        as: "curso"
       }
-    }, {
-      '$unwind': {
-        'path': '$curso'
+    },
+    {
+      $unwind: {
+        path: "$curso"
       }
-    }, {
-      '$lookup': {
-        'from': 'materiasXCurso',
-        'localField': 'curso.materias',
-        'foreignField': '_id',
-        'as': 'MXC'
+    },
+    {
+      $lookup: {
+        from: "materiasXCurso",
+        localField: "curso.materias",
+        foreignField: "_id",
+        as: "MXC"
       }
-    }, {
-      '$unwind': {
-        'path': '$MXC'
+    },
+    {
+      $unwind: {
+        path: "$MXC"
       }
-    }, {
-      '$lookup': {
-        'from': 'materia',
-        'localField': 'MXC.materia',
-        'foreignField': '_id',
-        'as': 'nombreMateria'
+    },
+    {
+      $lookup: {
+        from: "materia",
+        localField: "MXC.materia",
+        foreignField: "_id",
+        as: "nombreMateria"
       }
-    }, {
-      '$lookup': {
-        'from': 'empleado',
-        'localField': 'MXC.idDocente',
-        'foreignField': '_id',
-        'as': 'docente'
+    },
+    {
+      $lookup: {
+        from: "empleado",
+        localField: "MXC.idDocente",
+        foreignField: "_id",
+        as: "docente"
       }
-    }, {
-      '$unwind': {
-        'path': '$MXC.horarios'
+    },
+    {
+      $unwind: {
+        path: "$MXC.horarios"
       }
-    }, {
-      '$lookup': {
-        'from': 'horario',
-        'localField': 'MXC.horarios',
-        'foreignField': '_id',
-        'as': 'horarios'
+    },
+    {
+      $lookup: {
+        from: "horario",
+        localField: "MXC.horarios",
+        foreignField: "_id",
+        as: "horarios"
       }
-    }, {
-      '$project': {
-        'nombreMateria.nombre': 1,
-        'horarios': 1,
-        'docente.nombre': 1,
-        'docente.apellido': 1
+    },
+    {
+      $project: {
+        "nombreMateria.nombre": 1,
+        horarios: 1,
+        "docente.nombre": 1,
+        "docente.apellido": 1
       }
     }
   ]).then(agendaCompleta => {
@@ -435,7 +511,7 @@ router.get("/agenda", checkAuthMiddleware, (req, res) => {
         };
         agenda.push(valor);
       }
-      res.json({
+      return res.json({
         exito: true,
         message: "Se ha obtenido la agenda correctamente",
         agenda: agenda

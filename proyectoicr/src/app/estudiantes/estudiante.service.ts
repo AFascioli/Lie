@@ -160,6 +160,21 @@ export class EstudiantesService {
     });
   }
 
+  //Obtiene todas las sanciones del estudiante seleccionado
+  public getSancionesDeEstudiante() {
+    let params = new HttpParams().set(
+      "idEstudiante",
+      this.estudianteSeleccionado._id
+    );
+    return this.http.get<{
+      message: string;
+      exito: boolean;
+      sanciones: any[];
+    }>(environment.apiUrl + "/estudiante/sancionesEstudiante", {
+      params: params
+    });
+  }
+
   //Obtiene todos los tutores (tutores y adultos responsables) de un estudiante pasado por parámetro
   //@params: id del estudiante
   public getTutoresDeEstudiante() {
@@ -281,10 +296,7 @@ export class EstudiantesService {
   //Obtiene el nombre del curso al que se encuentra inscripto el estudiante
   //@params: id del estudiante
   public obtenerCursoDeEstudianteById(idEstudiante) {
-    let params = new HttpParams().set(
-      "idEstudiante",
-      idEstudiante
-    );
+    let params = new HttpParams().set("idEstudiante", idEstudiante);
 
     return this.http.get<{
       message: string;

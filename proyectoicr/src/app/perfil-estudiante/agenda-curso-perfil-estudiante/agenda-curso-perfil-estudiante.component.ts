@@ -3,7 +3,7 @@ import { Estudiante } from "src/app/estudiantes/estudiante.model";
 import { EstudiantesService } from "src/app/estudiantes/estudiante.service";
 import { Router } from "@angular/router";
 import { AgendaService } from "src/app/agenda/agenda.service";
-import { MatSnackBar } from '@angular/material';
+import { MatSnackBar } from "@angular/material";
 
 @Component({
   selector: "app-agenda-curso-perfil-estudiante",
@@ -44,42 +44,44 @@ export class AgendaCursoPerfilEstudianteComponent implements OnInit {
     this.apellidoEstudiante = this.servicio.estudianteSeleccionado.apellido;
     this.nombreEstudiante = this.servicio.estudianteSeleccionado.nombre;
     this._idEstudiante = this.servicio.estudianteSeleccionado._id;
-    console.log('idEstudiante:'+this._idEstudiante);
-    this.servicioAgenda.obtenerAgendaDeCursoByIdEstudiante(this._idEstudiante).subscribe( respuesta => {
-      console.log('Respuesta de agenda:' + respuesta);
-       this.materias = respuesta.agenda;
-    });
+    this.actualizarInterfaz();
+    // console.log('idEstudiante:'+ this._idEstudiante);
+    // this.servicioAgenda.obtenerAgendaDeCursoByIdEstudiante(this._idEstudiante).subscribe( respuesta => {
+    //   console.log('Respuesta de agenda:' + respuesta.agenda);
+    //    this.materias = respuesta.agenda;
+    // });
   }
 
   // Obtiene la agenda de un curso y le asigna a las materias un color distinto
-  async obtenerAgenda(idCurso) {
+  async obtenerAgenda() {
     return new Promise((resolve, reject) => {
       this.servicioAgenda
-        .obtenerAgendaDeCurso(idCurso)
-        .subscribe(async agenda => {
-          if (agenda.exito) {
-            this.snackBar.open(agenda.message, "", {
+        .obtenerAgendaDeCursoByIdEstudiante(this._idEstudiante)
+        .subscribe(async rtdo => {
+          if (rtdo.exito) {
+            this.snackBar.open(rtdo.message, "", {
               panelClass: ["snack-bar-exito"],
               duration: 3000
             });
           } else {
-            this.snackBar.open(agenda.message, "", {
+            this.snackBar.open(rtdo.message, "", {
               panelClass: ["snack-bar-fracaso"],
               duration: 3000
             });
           }
-          this.materias = agenda.agenda;
+          this.materias = rtdo.agenda;
+          console.log(this.materias);
           this.getMateriasDistintas();
           this.getColorVector();
-          resolve(agenda.agenda);
+          resolve(rtdo.agenda);
         });
     });
   }
 
   //Muestran en la interfaz los diferentes horarios de la materia
-  actualizarInterfaz(idCurso) {
+  actualizarInterfaz() {
     (async () => {
-      let agenda: any = await this.obtenerAgenda(idCurso.value);
+      let agenda: any = await this.obtenerAgenda();
       agenda.forEach((materia, index) => {
         this.setInGrid(index.toString(), materia);
       });
@@ -133,5 +135,4 @@ export class AgendaCursoPerfilEstudianteComponent implements OnInit {
       }
     }
   }
-
 }
