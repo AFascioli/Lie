@@ -23,6 +23,21 @@ export class AgendaService {
     });
   }
 
+  //Obtiene la agenda de un curso (materias, horario y día dictadas)
+  //@params: idCurso
+  public obtenerAgendaDeCursoByIdEstudiante(idEstudiante){
+    let params = new HttpParams().set(
+      "idEstudiante", idEstudiante
+    );
+    return this.http.get<{
+      message: string;
+      exito: boolean;
+      agenda: any[];
+    }>(environment.apiUrl + "/estudiante/agenda", {
+      params: params
+    });
+  }
+
   //Retorna todos los docentes de la institucion
   public obtenerDocentes() {
     return this.http.get<{ docentes: any[] }>(

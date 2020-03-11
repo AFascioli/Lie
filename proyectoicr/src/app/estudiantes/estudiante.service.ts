@@ -263,12 +263,29 @@ export class EstudiantesService {
   }
 
   //Obtiene el curso al que se encuentra inscripto el estudiante
-  //@params: id del estudiante
   public obtenerCursoDeEstudiante() {
     let params = new HttpParams().set(
       "idEstudiante",
       this.estudianteSeleccionado._id
     );
+
+    return this.http.get<{
+      message: string;
+      exito: boolean;
+      curso: string;
+    }>(environment.apiUrl + "/curso/estudiante", {
+      params: params
+    });
+  }
+
+  //Obtiene el nombre del curso al que se encuentra inscripto el estudiante
+  //@params: id del estudiante
+  public obtenerCursoDeEstudianteById(idEstudiante) {
+    let params = new HttpParams().set(
+      "idEstudiante",
+      idEstudiante
+    );
+
     return this.http.get<{
       message: string;
       exito: boolean;

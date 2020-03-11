@@ -347,4 +347,101 @@ router.get("/cuotasEstudiante", (req, res) => {
   });
 });
 
+//Obtiene la agenda de un curso (materias, horario y día dictadas)
+//@params: idEstudiante
+router.get("/agenda", checkAuthMiddleware, (req, res) => {
+ Inscripcion.aggregate([
+    {
+      '$match': {
+        idEstudiante: mongoose.Types.ObjectId(req.body.idEstudiante)
+      }
+    }, {
+      '$project': {
+        'idCurso': 1
+      }
+    }, {
+      '$lookup': {
+        'from': 'curso',
+        'localField': 'idCurso',
+        'foreignField': '_id',
+        'as': 'curso'
+      }
+    }, {
+      '$unwind': {
+        'path': '$curso'
+      }
+    }, {
+      '$lookup': {
+        'from': 'materiasXCurso',
+        'localField': 'curso.materias',
+        'foreignField': '_id',
+        'as': 'MXC'
+      }
+    }, {
+      '$unwind': {
+        'path': '$MXC'
+      }
+    }, {
+      '$lookup': {
+        'from': 'materia',
+        'localField': 'MXC.materia',
+        'foreignField': '_id',
+        'as': 'nombreMateria'
+      }
+    }, {
+      '$lookup': {
+        'from': 'empleado',
+        'localField': 'MXC.idDocente',
+        'foreignField': '_id',
+        'as': 'docente'
+      }
+    }, {
+      '$unwind': {
+        'path': '$MXC.horarios'
+      }
+    }, {
+      '$lookup': {
+        'from': 'horario',
+        'localField': 'MXC.horarios',
+        'foreignField': '_id',
+        'as': 'horarios'
+      }
+    }, {
+      '$project': {
+        'nombreMateria.nombre': 1,
+        'horarios': 1,
+        'docente.nombre': 1,
+        'docente.apellido': 1
+      }
+    }
+  ]).then(agendaCompleta => {
+    if (agendaCompleta[0].horarios[0] == null) {
+      return res.json({
+        exito: false,
+        message: "No existen horarios registrados para este curso",
+        agenda: []
+      });
+    } else {
+      let agenda = [];
+      for (let i = 0; i < agendaCompleta.length; i++) {
+        let valor = {
+          nombre: agendaCompleta[i].nombreMateria[0].nombre,
+          dia: agendaCompleta[i].horarios[0].dia,
+          inicio: agendaCompleta[i].horarios[0].horaInicio,
+          fin: agendaCompleta[i].horarios[0].horaFin,
+          nombreDocente: agendaCompleta[i].docente[0].nombre,
+          apellidoDocente: agendaCompleta[i].docente[0].apellido,
+          idHorarios: agendaCompleta[i].horarios[0]._id
+        };
+        agenda.push(valor);
+      }
+      res.json({
+        exito: true,
+        message: "Se ha obtenido la agenda correctamente",
+        agenda: agenda
+      });
+    }
+  });
+});
+
 module.exports = router;

@@ -115,6 +115,7 @@ import { RegistrarCuotasComponent } from './cuotas/registrar-cuotas/registrar-cu
 import { ModificarAgendaComponent } from "./agenda/modificar-agenda/modificar-agenda.component";
 import { VolverPopupComponent } from './popup-genericos/volver-popup/volver-popup.component';
 import { RegistrarSancionesComponent } from './sanciones/registrar-sanciones/registrar-sanciones.component';
+import { SancionesEstudianteComponent } from './perfil-estudiante/sanciones-estudiante/sanciones-estudiante.component';
 
 @NgModule({
   declarations: [
@@ -167,7 +168,8 @@ import { RegistrarSancionesComponent } from './sanciones/registrar-sanciones/reg
     RegistrarCuotasComponent,
     ModificarAgendaComponent,
     VolverPopupComponent,
-    RegistrarSancionesComponent
+    RegistrarSancionesComponent,
+    SancionesEstudianteComponent
   ],
   //entryComponents declara los componentes que se generan dinamicamente dentro de otros.
   entryComponents: [

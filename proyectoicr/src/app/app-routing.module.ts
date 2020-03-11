@@ -1,4 +1,4 @@
-import { RegistrarSancionesComponent } from './sanciones/registrar-sanciones/registrar-sanciones.component';
+import { RegistrarSancionesComponent } from "./sanciones/registrar-sanciones/registrar-sanciones.component";
 import { RegistrarCuotasComponent } from "./cuotas/registrar-cuotas/registrar-cuotas.component";
 import { RegistrarEventoComponent } from "./eventos/registrar-evento/registrar-evento.component";
 import { CalificacionesExamenesComponent } from "./calificaciones/calificaciones-examenes/calificaciones-examenes.component";
@@ -36,7 +36,8 @@ import { ModificarEventoComponent } from "./eventos/modificar-evento/modificar-e
 import { VisualizarEventoComponent } from "./eventos/visualizar-evento/visualizar-evento.component";
 import { VisualizarAgendaComponent } from "./agenda/visualizar-agenda/visualizar-agenda.component";
 import { RegistrarAgendaComponent } from "./agenda/registrar-agenda/registrar-agenda.component";
-import { ModificarAgendaComponent } from './agenda/modificar-agenda/modificar-agenda.component';
+import { ModificarAgendaComponent } from "./agenda/modificar-agenda/modificar-agenda.component";
+import { SancionesEstudianteComponent } from "./perfil-estudiante/sanciones-estudiante/sanciones-estudiante.component";
 
 const routes: Routes = [
   { path: "login", component: LoginComponent },
@@ -181,6 +182,34 @@ const routes: Routes = [
           {
             path: "cuotasEstudiante",
             component: CuotasPerfilEstudianteComponent
+          },
+          {
+            path: "agendaCursoEstudiante",
+            component: AgendaCursoPerfilEstudianteComponent,
+            canActivate: [RoleGuard, RouteGuard],
+            data: {
+              rolesValidos: [
+                "Admin",
+                "Preceptor",
+                "Director",
+                "Docente",
+                "AdultoResponsable"
+              ]
+            }
+          },
+          {
+            path: "sancionesEstudiante",
+            component: SancionesEstudianteComponent,
+            canActivate: [RoleGuard, RouteGuard],
+            data: {
+              rolesValidos: [
+                "Admin",
+                "Preceptor",
+                "Director",
+                "Docente",
+                "AdultoResponsable"
+              ]
+            }
           },
           {
             path: "tutoresEstudiante",
