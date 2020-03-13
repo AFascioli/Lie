@@ -75,6 +75,18 @@ export class AgendaService {
     );
   }
 
+  getMateriasDistintas(materias:any) {
+    let materiasDistintas: any[] = [];
+    for (let i = 0; i < materias.length; i++) {
+      if (
+        materiasDistintas.length == 0 ||
+        !materiasDistintas.includes(materias[i].nombre)
+      )
+        materiasDistintas.push(materias[i].nombre);
+    }
+    materiasDistintas.sort();
+    return materiasDistintas;
+  }
 
    // //Retorna todas las materias de la institucion
   // public obtenerMaterias() {

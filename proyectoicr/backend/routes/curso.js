@@ -32,17 +32,20 @@ router.get("/", checkAuthMiddleware, (req, res) => {
 });
 
 router.post("/registrarSancion", checkAuthMiddleware, (req, res) => {
-  Inscripcion.findOne({ idEstudiante: req.body.idEstudiante, activa: true }).then(
-    inscripcion => {
-      inscripcion.sanciones[req.body.tipoSancion].cantidad += parseInt(req.body.cantidad);
-      inscripcion.save().then(
-        res.status(200).json({
-          message: "Se ha registrado la sanción del estudiante correctamente",
-          exito: true
-        })
-      );
-    }
-  );
+  Inscripcion.findOne({
+    idEstudiante: req.body.idEstudiante,
+    activa: true
+  }).then(inscripcion => {
+    inscripcion.sanciones[req.body.tipoSancion].cantidad += parseInt(
+      req.body.cantidad
+    );
+    inscripcion.save().then(
+      res.status(200).json({
+        message: "Se ha registrado la sanción del estudiante correctamente",
+        exito: true
+      })
+    );
+  });
 });
 
 //Obtiene el estado de las cuotas de todos los estudiantes de un curso
@@ -1080,7 +1083,7 @@ router.post("/agenda", checkAuthMiddleware, async (req, res) => {
   }
   Curso.findByIdAndUpdate(req.body.idCurso, { materias: vectorIdsMXC }).then(
     () => {
-      res.json({ exito: true, message: "nice" });
+      res.json({ exito: true, message: "Se registró la agenda correctamente" });
     }
   );
 });

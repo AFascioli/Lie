@@ -12,6 +12,7 @@
         #curso="ngModel"
         matNativeControl
         required
+        (selectionChange)="obtenerAgenda(curso.value)"
       >
         <mat-option *ngFor="let curso of cursos" [value]="curso.id">
           {{ curso.curso }}
