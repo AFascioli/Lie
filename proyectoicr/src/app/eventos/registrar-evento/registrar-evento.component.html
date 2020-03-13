@@ -108,16 +108,22 @@
         </mat-option>
       </mat-autocomplete>
     </mat-form-field>
-    <div>
-      <img [src]="imgURL" class="image-preview" *ngIf="imgURL" />
+    <div >
+       <img [src]="imgURL" class="image-preview" *ngIf="imgURL" />
+       <div class="contenedor-flexbox">
       <button
         mat-stroked-button
         class="boton-seleccionar"
         type="button"
         (click)="file.click()"
+
       >
         Seleccionar imagen *
       </button>
+      <a>
+        <mat-icon>delete</mat-icon>
+      </a>
+    </div>
       <br />
       <span class="mensaje" *ngIf="message">{{ message }}</span>
       <br />
@@ -128,6 +134,7 @@
         (change)="preview(file.files)"
       />
     </div>
+
     <div class="div-button">
       <button
         class="buttonPrimary"

@@ -80,3 +80,10 @@ mat-datepicker-toggle{
 {
   width: 29%;
 }
+
+.contenedor-flexbox
+{
+ display: flex;
+ justify-content: center;
+ align-items: center;
+}
