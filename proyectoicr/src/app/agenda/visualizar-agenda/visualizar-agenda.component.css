@@ -12,6 +12,7 @@
   grid-gap: 8px;
   padding: 10px;
   background-color: #c3c8cc;/*2196F3*/
+  border-radius: 4px;
 }
 
 .texto-mobile,.texto-mobile > *{
@@ -25,6 +26,7 @@
   display: flex;
   align-items: stretch;
   grid-column-gap: 30px;
+  border-radius: 4px;
 }
 
 .hora, .modulo{
@@ -170,4 +172,16 @@ hr {
   width: -webkit-fill-available;
   font-size: 20px;
   color: beige;
+  border-radius: 4px;
+}
+
+.horarioMateria{
+  font-size: 13px;
+  position: absolute;
+  align-self: end;
+}
+
+.nombreMateria{
+  position: absolute;
+  align-self: center;
 }

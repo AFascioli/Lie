@@ -61,10 +61,6 @@ export class VisualizarAgendaComponent implements OnInit {
         .subscribe(async agenda => {
           if(agenda.exito){
               this.cursoSelected = true;
-              this.snackBar.open(agenda.message, "", {
-                panelClass: ["snack-bar-exito"],
-                duration: 3000
-              });
           }
           else{
             this.cursoSelected = false;
@@ -85,6 +81,7 @@ export class VisualizarAgendaComponent implements OnInit {
   actualizarInterfaz(idCurso) {
     (async () => {
       let agenda: any = await this.obtenerAgenda(idCurso.value);
+      console.log(agenda);
       agenda.forEach((materia, index) => {
         this.setInGrid(index.toString(), materia);
       });
