@@ -1,9 +1,9 @@
 import { NgForm, NgModel } from "@angular/forms";
 import { Component, OnInit } from "@angular/core";
 import { EstudiantesService } from "src/app/estudiantes/estudiante.service";
-import { AgendaService } from "src/app/visualizar-agenda/agenda.service.js";
 import { MatSnackBar, MatDialog } from "@angular/material";
 import { CancelPopupComponent } from "src/app/popup-genericos/cancel-popup.component";
+import { AgendaService } from '../agenda.service';
 
 @Component({
   selector: "app-registrar-agenda",
@@ -13,13 +13,14 @@ import { CancelPopupComponent } from "src/app/popup-genericos/cancel-popup.compo
 export class RegistrarAgendaComponent implements OnInit {
   cursos: any[];
   idCursoSeleccionado: string;
+  agendaCurso: any[];
   materias: any[];
   docentes: any[];
   dias: any[] = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes"];
   horaInicio: any;
   horaFin: any;
   horarios = [1];
-  materiasHTML = [[1]]; //#resolve Usado para agregar un nuevo horario
+  materiasHTML = [[1]];
   horariosReservados = [];
   modulos = [
     "07:30",
@@ -42,7 +43,7 @@ export class RegistrarAgendaComponent implements OnInit {
     public servicioAgenda: AgendaService,
     public dialog: MatDialog,
     private snackBar: MatSnackBar
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.obtenerCursos();
@@ -61,7 +62,7 @@ export class RegistrarAgendaComponent implements OnInit {
     }
   }
 
-  ngAfterViewInit() {}
+  ngAfterViewInit() { }
 
   obtenerCursos() {
     this.servicioEstudiante.obtenerCursos().subscribe(response => {
@@ -70,9 +71,17 @@ export class RegistrarAgendaComponent implements OnInit {
         a.curso.charAt(0) > b.curso.charAt(0)
           ? 1
           : b.curso.charAt(0) > a.curso.charAt(0)
-          ? -1
-          : 0
+            ? -1
+            : 0
       );
+    });
+  }
+
+  obtenerAgenda(idCurso) { //#wip
+    this.idCursoSeleccionado = idCurso.value;
+    this.servicioAgenda.obtenerAgendaDeCurso(idCurso.value).subscribe(rtdo => {
+      this.agendaCurso = rtdo.agenda;
+      console.log(this.agendaCurso);
     });
   }
 
@@ -82,8 +91,8 @@ export class RegistrarAgendaComponent implements OnInit {
   agregarMateria() {
     if(this.agendaValida){
       this.materiasHTML.push([1]);
-    }else{
-      this.openSnackBar(this.mensajeError,"snack-bar-fracaso")
+    } else {
+      this.openSnackBar(this.mensajeError, "snack-bar-fracaso")
     }
   }
 
@@ -92,8 +101,8 @@ export class RegistrarAgendaComponent implements OnInit {
   agregarHorario(index: number) {
     if(this.agendaValida){
       this.materiasHTML[index].push(1);
-    }else{
-      this.openSnackBar(this.mensajeError,"snack-bar-fracaso")
+    } else {
+      this.openSnackBar(this.mensajeError, "snack-bar-fracaso")
     }
   }
 
@@ -118,36 +127,44 @@ export class RegistrarAgendaComponent implements OnInit {
       horaFin = form.value[horaFinMateria];
       horaInicio = horaInicioMateria;
     }
-    if (!(horaInicio && horaFin)) {
-      return;
-    } else {
+    if (horaInicio && horaFin) {
       var dia = form.value[diaMateria];
       var diaMatrix = this.dias.indexOf(dia);
       var moduloInicio = this.modulos.indexOf(horaInicio);
       var moduloFin = this.modulos.indexOf(horaFin);
       var cantidadModulos = moduloFin - moduloInicio;
-      if (moduloFin <= moduloInicio) {
+
+      if (moduloInicio == -1) {
         this.agendaValida=false;
-        this.mensajeError="El horario de inicio es menor al horario de fin";
-        this.openSnackBar(this.mensajeError,"snack-bar-fracaso");
-        return;
+        this.mensajeError = "El horario de inicio seleccionado no corresponde a un módulo.";
+        this.openSnackBar(this.mensajeError, "snack-bar-fracaso");
       }
-      for (
-        var index = moduloInicio;
-        index < moduloInicio + cantidadModulos;
-        index++
-      ) {
-        if (this.horariosReservados[index][diaMatrix]) {
+      else if (moduloFin == -1) {
         this.agendaValida=false;
-        this.mensajeError="Los horarios seleccionados entran en conflicto con otra materia";
-        this.openSnackBar(this.mensajeError,"snack-bar-fracaso");
-          return;
+        this.mensajeError = "El horario de fin seleccionado no corresponde a un módulo.";
+        this.openSnackBar(this.mensajeError, "snack-bar-fracaso");
+      }
+      else if (moduloFin <= moduloInicio) {
+        this.agendaValida=false;
+        this.mensajeError = "El horario de inicio es menor al horario de fin";
+        this.openSnackBar(this.mensajeError, "snack-bar-fracaso");
+      } else {
+
+        for (
+          var index = moduloInicio;
+          index < moduloInicio + cantidadModulos;
+          index++
+        ) {
+          if (this.horariosReservados[index][diaMatrix]) {
+        this.agendaValida=false;
+            this.mensajeError = "Los horarios seleccionados entran en conflicto con otra materia";
+            this.openSnackBar(this.mensajeError, "snack-bar-fracaso");
+          }
+          this.horariosReservados[index][diaMatrix] = true;
         }
-        this.horariosReservados[index][diaMatrix] = true;
+        this.agendaValida=true;
+        this.mensajeError = "";
       }
-      this.agendaValida=true;
-      this.mensajeError="";
-      return;
     }
   }
 
@@ -203,7 +220,7 @@ export class RegistrarAgendaComponent implements OnInit {
     this.materiasSeleccionadas.push(idMateria);
   }
 
-  openSnackBar(mensaje:string,exito:string){
+  openSnackBar(mensaje: string, exito: string) {
     this.snackBar.open(
       mensaje,
       "",

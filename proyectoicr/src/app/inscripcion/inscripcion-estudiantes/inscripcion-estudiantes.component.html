@@ -1,11 +1,11 @@
 <h1 class="componente-titulo">
-  Inscribir estudiante a un curso para el ciclo lectivo 2019
+  Inscribir estudiante a un curso para el ciclo lectivo {{fechaActual.getFullYear()}}
 </h1>
 <mat-card class="card-body-componente">
   <form #form="ngForm">
     <p class="aviso" *ngIf="!fechaDentroDeRangoInscripcion">
       Atención, no se puede realizar inscripciones debido a que nos encontramos
-      fuera de las fechas habilitadas
+      fuera de las fechas
     </p>
     <div *ngIf="fechaDentroDeRangoInscripcion">
       <div class="ubicacionfecha">
@@ -36,9 +36,10 @@
             <b>Nombre/s: </b> {{ nombreEstudiante }}
             <p class="mensajeAtencion" *ngIf="estudianteEstaInscripto">
               <b
-                >Atención, el estudiante seleccionado ya esta inscripto en un
+                >Atención, el estudiante seleccionado ya esta inscripto en el
                 curso
               </b>
+              <label *ngFor="let curso of cursos" [innerHTML]= "curso.curso"  class="mensajeAtencioncurso"> </label>
             </p>
           </mat-card-subtitle>
         </mat-card>

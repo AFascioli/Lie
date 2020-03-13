@@ -1,3 +1,5 @@
+import { RegistrarSancionesComponent } from "./sanciones/registrar-sanciones/registrar-sanciones.component";
+import { RegistrarCuotasComponent } from "./cuotas/registrar-cuotas/registrar-cuotas.component";
 import { RegistrarEventoComponent } from "./eventos/registrar-evento/registrar-evento.component";
 import { CalificacionesExamenesComponent } from "./calificaciones/calificaciones-examenes/calificaciones-examenes.component";
 import { PreferenciasComponent } from "./menu-lateral/preferencias/preferencias.component";
@@ -28,12 +30,14 @@ import { JustificacionInasistenciaComponent } from "./asistencia/justificacion-i
 import { RoleGuard } from "./role.guard";
 import { InasistenciasEstudianteComponent } from "./perfil-estudiante/inasistencias-estudiante/inasistencias-estudiante.component";
 import { DatosEstudianteComponent } from "./perfil-estudiante/datos-estudiante/datos-estudiante.component";
+import { CuotasPerfilEstudianteComponent } from "./perfil-estudiante/cuotas-perfil-estudiante/cuotas-perfil-estudiante.component";
 import { TutoresEstudianteComponent } from "./perfil-estudiante/tutores-estudiante/tutores-estudiante.component";
 import { ModificarEventoComponent } from "./eventos/modificar-evento/modificar-evento.component";
-import { VisualizarEventoComponent } from './eventos/visualizar-evento/visualizar-evento.component';
-import { VisualizarAgendaComponent } from './visualizar-agenda/visualizar-agenda.component';
-import { RegistrarAgendaComponent } from './agenda/registrar-agenda/registrar-agenda.component';
-import { ModificarAgendaComponent } from './agenda/modificar-agenda/modificar-agenda.component';
+import { VisualizarEventoComponent } from "./eventos/visualizar-evento/visualizar-evento.component";
+import { VisualizarAgendaComponent } from "./agenda/visualizar-agenda/visualizar-agenda.component";
+import { RegistrarAgendaComponent } from "./agenda/registrar-agenda/registrar-agenda.component";
+import { ModificarAgendaComponent } from "./agenda/modificar-agenda/modificar-agenda.component";
+import { SancionesEstudianteComponent } from "./perfil-estudiante/sanciones-estudiante/sanciones-estudiante.component";
 
 const routes: Routes = [
   { path: "login", component: LoginComponent },
@@ -86,8 +90,14 @@ const routes: Routes = [
         component: RegistrarAsistenciaComponent
       },
       {
-        path: "curso", //ruta inscribir estudiante a un curso
+        path: "curso", //resolve: ruta inscribir estudiante a un curso
         component: InscripcionEstudianteComponent,
+        canActivate: [RouteGuard, RoleGuard],
+        data: { rolesValidos: ["Admin", "Preceptor", "Director"] }
+      },
+      {
+        path: "registrarSancion",
+        component: RegistrarSancionesComponent,
         canActivate: [RouteGuard, RoleGuard],
         data: { rolesValidos: ["Admin", "Preceptor", "Director"] }
       },
@@ -108,6 +118,11 @@ const routes: Routes = [
         component: CalificacionesEstudiantesComponent,
         canActivate: [RoleGuard],
         data: { rolesValidos: ["Admin", "Preceptor", "Director", "Docente"] }
+      },
+      {
+        path: "registrarCuotas",
+        component: RegistrarCuotasComponent,
+        data: { rolesValidos: ["Admin", "Preceptor", "Director"] }
       },
       {
         path: "calificacionesExamenes",
@@ -154,6 +169,38 @@ const routes: Routes = [
             path: "inasistenciasEstudiante",
             component: InasistenciasEstudianteComponent,
             canActivate: [RouteGuard, RoleGuard],
+            data: {
+              rolesValidos: [
+                "Admin",
+                "Preceptor",
+                "Director",
+                "Docente",
+                "AdultoResponsable"
+              ]
+            }
+          },
+          {
+            path: "cuotasEstudiante",
+            component: CuotasPerfilEstudianteComponent
+          },
+          {
+            path: "agendaCursoEstudiante",
+            component: AgendaCursoPerfilEstudianteComponent,
+            canActivate: [RoleGuard, RouteGuard],
+            data: {
+              rolesValidos: [
+                "Admin",
+                "Preceptor",
+                "Director",
+                "Docente",
+                "AdultoResponsable"
+              ]
+            }
+          },
+          {
+            path: "sancionesEstudiante",
+            component: SancionesEstudianteComponent,
+            canActivate: [RoleGuard, RouteGuard],
             data: {
               rolesValidos: [
                 "Admin",

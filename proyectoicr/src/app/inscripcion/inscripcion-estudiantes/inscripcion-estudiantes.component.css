@@ -78,6 +78,11 @@
   color: black;
 }
 
+.mensajeAtencioncurso{
+  color:black;
+  font-weight: bold;
+}
+
 .aviso{
   margin-bottom: 0;
   text-align: center;

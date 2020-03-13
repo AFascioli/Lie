@@ -81,7 +81,10 @@ export class InscripcionEstudianteComponent implements OnInit {
             ? -1
             : 0
         );
+        console.log(this.cursos[0].curso);
       });
+
+
   }
 
   fechaActualEnRangoFechasInscripcion() {
@@ -166,6 +169,7 @@ export class InscripcionPopupComponent {
   exito: boolean = false;
   documentosEntregados: any[];
   isLoading: Boolean=false;
+  fechaActual: Date;
 
   constructor(
     public dialogRef: MatDialogRef<InscripcionPopupComponent>,
@@ -175,6 +179,7 @@ export class InscripcionPopupComponent {
     public snackBar: MatSnackBar,
     @Inject(MAT_DIALOG_DATA) data
   ) {
+    this.fechaActual = new Date();
     this.formValido = data.formValido;
     this.IdEstudiante = data.IdEstudiante;
     this.curso = data.curso;

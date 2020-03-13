@@ -5,6 +5,17 @@ const documentosSchema = mongoose.Schema({
   entregado: Boolean
 });
 
+const cuotasSchema = mongoose.Schema({
+  mes: Number,
+  pagado: Boolean
+});
+
+const sancionSchema = mongoose.Schema({
+  id: Number,
+  tipo: String,
+  cantidad: Number
+});
+
 const inscripcionSchema = mongoose.Schema({
   idEstudiante: {type: mongoose.Schema.Types.ObjectId, ref: 'estudiante'},
   idCurso: {type: mongoose.Schema.Types.ObjectId, ref: 'curso'},
@@ -17,7 +28,9 @@ const inscripcionSchema = mongoose.Schema({
   contadorLlegadasTarde: {type: Number},
   estado: {type: mongoose.Schema.Types.ObjectId, ref: "estado"},
   año: {type: Number},
-  materiasPendientes: [{type: mongoose.Schema.Types.ObjectId, ref: 'calificacionesXMateria'}]
+  materiasPendientes: [{type: mongoose.Schema.Types.ObjectId, ref: 'calificacionesXMateria'}],
+  cuotas: [cuotasSchema],
+  sanciones: [sancionSchema],
 });
 
 module.exports= mongoose.model('inscripcion', inscripcionSchema, 'inscripcion');

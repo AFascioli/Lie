@@ -14,7 +14,7 @@ export class RegistrarAsistenciaComponent implements OnInit {
   cursos: any[];
   cursoNotSelected: boolean;
   diaActual: string;
-  estudiantesXDivision: any[];
+  estudiantesXDivision: any[] = [];
   displayedColumns: string[] = ["apellido", "nombre", "accion"];
   fechaActual: Date;
   asistenciaNueva: string = "true";

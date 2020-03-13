@@ -7,6 +7,11 @@
   float: right;
 }
 
+.mat-form-field-infix
+{
+ width: 150px;
+}
+
 .inputFecha{
   width: 0%;
   color: black !important;
@@ -19,6 +24,7 @@ table {
 
 .nombreApellido {
   width: 40%;
+  font-size: 16px;
 }
 
 .presentismo {

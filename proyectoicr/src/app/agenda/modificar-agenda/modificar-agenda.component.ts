@@ -1,7 +1,7 @@
 import { Component, OnInit } from "@angular/core";
 import { MatSnackBar } from "@angular/material";
-import { AgendaService } from "src/app/visualizar-agenda/agenda.service";
 import { EstudiantesService } from "src/app/estudiantes/estudiante.service";
+import { AgendaService } from '../agenda.service';
 
 @Component({
   selector: "app- modificar-agenda",

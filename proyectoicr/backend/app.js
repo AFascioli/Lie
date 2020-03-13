@@ -31,7 +31,7 @@ app.use(express.static('../images'));
 /* Conectamos a la bd y segun lo que responda ese metodo (la promesa) imprimimos en consola
    lo que corresponda*/
 
-// Conexión a base de producción
+//Conexión a base de producción
 //  mongoose
 //   .connect(
 //       "mongodb+srv://ComandanteJr:SNcjNuPBMG42lOh1@cluster0-qvosw.mongodb.net/icrdev?retryWrites=true",
@@ -44,7 +44,7 @@ app.use(express.static('../images'));
 //       console.log("Fallo conexión a la base de datos de producción");
 //    });
 
-// Conexión a base local
+// //Conexión a base local
 mongoose.connect('mongodb://127.0.0.1:27017/icr-local',{useNewUrlParser: true, useUnifiedTopology: true  })
 .then(() => {
  console.log('Conexión a base de datos local exitosa');
@@ -52,6 +52,7 @@ mongoose.connect('mongodb://127.0.0.1:27017/icr-local',{useNewUrlParser: true, u
 .catch(() => {
  console.log('Fallo conexión a la base de datos local');
 });
+
 
 //Para sacar el deprecation warning de la consola
 mongoose.set("useFindAndModify", false);

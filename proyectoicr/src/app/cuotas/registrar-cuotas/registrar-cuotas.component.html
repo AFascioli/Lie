@@ -1,0 +1,119 @@
+<h1 class="componente-titulo">
+  Registrar pago de cuotas
+</h1>
+<mat-card class="card-body-componente">
+  <mat-form-field class="mes">
+    <mat-select
+      placeholder="Seleccione mes"
+      name="mes"
+      ngModel
+      #mes="ngModel"
+      [disabled]="fueraPeriodoCicloLectivo"
+      matNativeControl
+      required
+      (selectionChange)="onMesSeleccionado(mes)"
+    >
+      <mat-option *ngFor="let objMes of meses" [value]="objMes">
+        {{ objMes }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field class="curso">
+    <mat-select
+      placeholder="Seleccione curso"
+      name="curso"
+      ngModel
+      #curso="ngModel"
+      [(ngModel)]="cursoEstudiante"
+      [disabled]="fueraPeriodoCicloLectivo || !mesSeleccionado"
+      matNativeControl
+      required
+      (selectionChange)="onCursoSeleccionado(curso,mes)"
+    >
+      <mat-option *ngFor="let objCurso of cursos" [value]="objCurso.curso">
+        {{ objCurso.curso }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <div class="ubicacionfecha">
+    <b>Fecha: </b> &nbsp;
+    <mat-form-field>
+      <input
+        [disabled]="true"
+        ngModel
+        #diaFecha="ngModel"
+        matInput
+        name="diaFecha"
+        required
+        class="inputFecha"
+      />
+      {{ fechaActual | date: "EEEE" | titlecase }}
+      {{ fechaActual | date: "dd/MM/yyyy" }}
+    </mat-form-field>
+  </div>
+  <!-- <p class="aviso" *ngIf="fueraPeriodoCicloLectivo==true">Atención, no se puede registrar las cuotas debido a que estamos fuera del ciclo lectivo </p>  -->
+  <br />
+  <div *ngIf="!cursoNotSelected">
+    <table mat-table [dataSource]="cuotasXEstudiante">
+      <ng-container matColumnDef="apellido">
+        <th class="nombreApellido" mat-header-cell *matHeaderCellDef>
+          Apellido/s
+        </th>
+        <td
+          class="nombreApellido"
+          mat-cell
+          *matCellDef="let cuotaXEstudiante"
+        >
+          {{ cuotaXEstudiante.apellido }}
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="nombre">
+        <th class="nombreApellido" mat-header-cell *matHeaderCellDef>
+          Nombre/s
+        </th>
+        <td
+          class="nombreApellido"
+          mat-cell
+          *matCellDef="let cuotaXEstudiante"
+        >
+        {{ cuotaXEstudiante.nombre }}
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="accion">
+        <th class="cuotas" mat-header-cell *matHeaderCellDef>
+          Estado cuotas
+        </th>
+        <td class="cuotas" mat-cell *matCellDef="let row">
+          <mat-slide-toggle
+            [checked]="row.pagado"
+            (change)="onCambioEstadoCuota(row)"
+          >
+            <p *ngIf="row.pagado">Pagado</p>
+            <p *ngIf="!row.pagado">No pagado</p></mat-slide-toggle
+          >
+        </td>
+      </ng-container>
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+    </table>
+
+    <p class="aviso" *ngIf="cuotasXEstudiante.length==0 && !cursoNotSelected">No exiten alumnos inscriptos a este curso</p>
+  </div>
+  <br />
+  <div class="div-button">
+    <button
+      class="buttonPrimary"
+      (click)="onGuardar(mes,curso)"
+      mat-raised-button
+      [disabled]="cursoNotSelected"
+    >
+      Guardar
+    </button>
+    <button mat-raised-button class="buttonWarn" (click)="onCancelar()">
+      Cancelar
+    </button>
+  </div>
+</mat-card>

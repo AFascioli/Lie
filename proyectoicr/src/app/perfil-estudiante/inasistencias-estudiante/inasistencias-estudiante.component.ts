@@ -16,9 +16,7 @@ export class InasistenciasEstudianteComponent implements OnInit {
   barChartData: any[];
   barChartLabels: Label[];
 
-  constructor(
-    public servicioAsistencia: AsistenciaService
-  ) {}
+  constructor(public servicioAsistencia: AsistenciaService) {}
 
   ngOnInit() {
     this.servicioAsistencia
@@ -55,4 +53,5 @@ export class InasistenciasEstudianteComponent implements OnInit {
 
   public barChartType: ChartType = "pie";
   public barChartPlugins = [pluginDataLabels];
+  public barChartLegend;
 }
