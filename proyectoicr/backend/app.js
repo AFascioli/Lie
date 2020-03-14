@@ -21,9 +21,9 @@ const app = express(); // Creo la app express
 
 app.use("/images", express.static(path.join("../images")));
 
-app.use('/static', express.static(path.join("images", 'public')))
+app.use("/static", express.static(path.join("images", "public")));
 
-app.use(express.static('../images'));
+app.use(express.static("../images"));
 
 // app.use(express.static("backend/images", 'public'));
 
@@ -45,14 +45,17 @@ app.use(express.static('../images'));
 //    });
 
 // //Conexión a base local
-mongoose.connect('mongodb://127.0.0.1:27017/icr-local',{useNewUrlParser: true, useUnifiedTopology: true  })
-.then(() => {
- console.log('Conexión a base de datos local exitosa');
-})
-.catch(() => {
- console.log('Fallo conexión a la base de datos local');
-});
-
+mongoose
+  .connect("mongodb://127.0.0.1:27017/icr-local", {
+    useNewUrlParser: true,
+    useUnifiedTopology: true
+  })
+  .then(() => {
+    console.log("Conexión a base de datos local exitosa");
+  })
+  .catch(() => {
+    console.log("Fallo conexión a la base de datos local");
+  });
 
 //Para sacar el deprecation warning de la consola
 mongoose.set("useFindAndModify", false);
@@ -100,10 +103,11 @@ app.use("/calificacion", calificacionesRoutes);
 app.use("/materia", materiasRoutes);
 
 app.get("/status", (req, res, next) => {
-    res.status(200).json({
-      message: "Servidor Node.js Lie®"
-    });
+  res.status(200).json({
+    message: "Servidor Node.js Lie®"
+  });
 });
+
 app.use("/evento", eventoRoutes);
 
 module.exports = app;

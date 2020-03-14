@@ -21,11 +21,11 @@ export class ErrorInterceptor implements HttpInterceptor {
   intercept(req: HttpRequest<any>, next: HttpHandler) {
     return next.handle(req).pipe(
       catchError((error: HttpErrorResponse) => {
-        let errorMessage = "An unknown error occurred!";
+        let errorMessage = "Ocurrió un error inesperado";
         if (error.error.message) {
           errorMessage = error.error.message;
         }
-        this.dialog.open(ErrorComponent, { data: { message: errorMessage } });
+        this.dialog.open(ErrorComponent, { data: { message: errorMessage, dialog: this.dialog } });
         return throwError(error);
       })
     );

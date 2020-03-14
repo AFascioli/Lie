@@ -1,4 +1,4 @@
-import { ReadMoreComponent } from './eventos/visualizar-evento/read-more.component';
+import { ReadMoreComponent } from "./eventos/visualizar-evento/read-more.component";
 import { AuthInterceptor } from "./login/auth-interceptor";
 import { BrowserModule } from "@angular/platform-browser";
 import { NgModule } from "@angular/core";
@@ -107,20 +107,21 @@ import { CalificacionesExamenesComponent } from "./calificaciones/calificaciones
 import { RegistrarEventoComponent } from "./eventos/registrar-evento/registrar-evento.component";
 import { getDutchPaginatorIntl } from "./calificaciones/calificaciones-estudiantes/calificaciones-estudiantes.component";
 import { ModificarEventoComponent } from "./eventos/modificar-evento/modificar-evento.component";
-import { VisualizarEventoComponent } from './eventos/visualizar-evento/visualizar-evento.component';
-import { MatCarouselModule } from '@ngmodule/material-carousel';
+import { VisualizarEventoComponent } from "./eventos/visualizar-evento/visualizar-evento.component";
+import { MatCarouselModule } from "@ngmodule/material-carousel";
 import { VisualizarAgendaComponent } from "./agenda/visualizar-agenda/visualizar-agenda.component";
-import { RegistrarAgendaComponent } from './agenda/registrar-agenda/registrar-agenda.component';
-import { RegistrarCuotasComponent } from './cuotas/registrar-cuotas/registrar-cuotas.component';
+import { RegistrarAgendaComponent } from "./agenda/registrar-agenda/registrar-agenda.component";
+import { RegistrarCuotasComponent } from "./cuotas/registrar-cuotas/registrar-cuotas.component";
 import { ModificarAgendaComponent } from "./agenda/modificar-agenda/modificar-agenda.component";
-import { VolverPopupComponent } from './popup-genericos/volver-popup/volver-popup.component';
-import { RegistrarSancionesComponent } from './sanciones/registrar-sanciones/registrar-sanciones.component';
-import { SancionesEstudianteComponent } from './perfil-estudiante/sanciones-estudiante/sanciones-estudiante.component';
-import { ErrorInterceptor } from './error-interceptor';
+import { RegistrarSancionesComponent } from "./sanciones/registrar-sanciones/registrar-sanciones.component";
+import { SancionesEstudianteComponent } from "./perfil-estudiante/sanciones-estudiante/sanciones-estudiante.component";
+import { ErrorInterceptor } from "./error-interceptor";
+import { ErrorComponent } from "./error/error.component";
 
 @NgModule({
   declarations: [
     AppComponent,
+    ErrorComponent,
     AltaEstudiantesComponent,
     BuscarEstudiantesComponent,
     ListaEstudiantesComponent,
@@ -168,7 +169,6 @@ import { ErrorInterceptor } from './error-interceptor';
     RegistrarAgendaComponent,
     RegistrarCuotasComponent,
     ModificarAgendaComponent,
-    VolverPopupComponent,
     RegistrarSancionesComponent,
     SancionesEstudianteComponent
   ],
@@ -187,7 +187,8 @@ import { ErrorInterceptor } from './error-interceptor';
     PreferenciasPopupComponent,
     AltaEmpleadoPopupComponent,
     AltaARPopupComponent,
-    ReadMoreComponent
+    ReadMoreComponent,
+    ErrorComponent
   ],
   imports: [
     MatChipsModule,
@@ -237,7 +238,6 @@ import { ErrorInterceptor } from './error-interceptor';
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
     { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },
     { provide: LOCALE_ID, useValue: "es" },
-
     { provide: MatPaginatorIntl, useValue: getDutchPaginatorIntl() }
   ],
   bootstrap: [AppComponent]

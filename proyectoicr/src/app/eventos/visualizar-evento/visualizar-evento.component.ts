@@ -1,4 +1,3 @@
-import { VolverPopupComponent } from './../../popup-genericos/volver-popup/volver-popup.component';
 import { MatSnackBar, MatDialog } from "@angular/material";
 import { AutenticacionService } from "src/app/login/autenticacionService.service";
 import { Component, OnInit } from "@angular/core";
@@ -7,7 +6,7 @@ import { Evento } from "../evento.model";
 import { Comentario } from "../comentario.model";
 import { Router } from "@angular/router";
 import { environment } from "src/environments/environment";
-import { EstudiantesService } from 'src/app/estudiantes/estudiante.service';
+import { EstudiantesService } from "src/app/estudiantes/estudiante.service";
 // declare var require: any;
 
 @Component({
@@ -63,7 +62,6 @@ export class VisualizarEventoComponent implements OnInit {
     }
   }
 
-
   onGuardar(descripcion) {
     if (!this.descripcionComentario || !this.descripcionComentario.trim()) {
       this.snackBar.open("El comentario esta vacío", "", {
@@ -71,7 +69,6 @@ export class VisualizarEventoComponent implements OnInit {
         panelClass: ["snack-bar-fracaso"]
       });
     } else {
-
       const comentario: Comentario = {
         idUsuario: null,
         comentario: descripcion,
