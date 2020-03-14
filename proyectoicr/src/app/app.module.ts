@@ -116,6 +116,7 @@ import { ModificarAgendaComponent } from "./agenda/modificar-agenda/modificar-ag
 import { VolverPopupComponent } from './popup-genericos/volver-popup/volver-popup.component';
 import { RegistrarSancionesComponent } from './sanciones/registrar-sanciones/registrar-sanciones.component';
 import { SancionesEstudianteComponent } from './perfil-estudiante/sanciones-estudiante/sanciones-estudiante.component';
+import { ErrorInterceptor } from './error-interceptor';
 
 @NgModule({
   declarations: [
@@ -234,6 +235,7 @@ import { SancionesEstudianteComponent } from './perfil-estudiante/sanciones-estu
   providers: [
     EstudiantesService,
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
+    { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },
     { provide: LOCALE_ID, useValue: "es" },
 
     { provide: MatPaginatorIntl, useValue: getDutchPaginatorIntl() }

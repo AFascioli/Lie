@@ -11,8 +11,8 @@ const CalificacionesXMateria = require("../models/calificacionesXMateria");
 
 router.get("/", checkAuthMiddleware, (req, res) => {
   let fechaActual = new Date();
-  CicloLectivo.findOne({ año: fechaActual.getFullYear() }).then(
-    cicloLectivo => {
+  CicloLectivo.findOne({ año: fechaActual.getFullYear() })
+    .then(cicloLectivo => {
       if (cicloLectivo) {
         res.status(200).json({
           cicloLectivo: cicloLectivo,
@@ -26,8 +26,12 @@ router.get("/", checkAuthMiddleware, (req, res) => {
           exito: false
         });
       }
-    }
-  );
+    })
+    .catch(() => {
+      res.status(500).json({
+        message: "Mensaje de error especifico"
+      });
+    });
 });
 
 /* Al finalizar el tercer trimestre: Se calculan los promedios de los trimestre y se asignan los estados de
@@ -36,13 +40,19 @@ caso de aprobada*/
 router.use("/procesoAutomaticoTercerTrimestre", (req, res) => {
   let date = new Date();
   let fechas;
-  CicloLectivo.findOne({ año: date.getFullYear() }).then(cicloLectivoActual => {
-    fechas = {
-      date: cicloLectivoActual.fechaFinTercerTrimestre.getDate(),
-      month: cicloLectivoActual.fechaFinTercerTrimestre.getMonth(),
-      year: cicloLectivoActual.fechaFinTercerTrimestre.getFullYear()
-    };
-  });
+  CicloLectivo.findOne({ año: date.getFullYear() })
+    .then(cicloLectivoActual => {
+      fechas = {
+        date: cicloLectivoActual.fechaFinTercerTrimestre.getDate(),
+        month: cicloLectivoActual.fechaFinTercerTrimestre.getMonth(),
+        year: cicloLectivoActual.fechaFinTercerTrimestre.getFullYear()
+      };
+    })
+    .catch(() => {
+      res.status(500).json({
+        message: "Mensaje de error especifico"
+      });
+    });
 
   cron.scheduleJob(
     //  {
@@ -92,77 +102,105 @@ router.use("/procesoAutomaticoTercerTrimestre", (req, res) => {
             as: "CXT"
           }
         }
-      ]).then(calificacionesDeInscripciones => {
-        let estadoAprobado;
-        Estado.findOne({
-          ambito: "CalificacionesXMateria",
-          nombre: "Aprobada"
-        }).then(estado => {
-          estadoAprobado = estado;
-        });
-        let promedioTrim1 = 0;
-        let promedioTrim2 = 0;
-        let promedioTrim3 = 0;
-        let promedioGral = 0;
+      ])
+        .then(calificacionesDeInscripciones => {
+          let estadoAprobado;
+          Estado.findOne({
+            ambito: "CalificacionesXMateria",
+            nombre: "Aprobada"
+          })
+            .then(estado => {
+              estadoAprobado = estado;
+            })
+            .catch(() => {
+              res.status(500).json({
+                message: "Mensaje de error especifico"
+              });
+            });
+          let promedioTrim1 = 0;
+          let promedioTrim2 = 0;
+          let promedioTrim3 = 0;
+          let promedioGral = 0;
 
-        //El objeto materia tiene: CXT y CXM de una materia dada
-        for (let materia of calificacionesDeInscripciones) {
-          //Se busca la CXM que estamos recorriendo
-          CalificacionesXMateria.findById({ _id: materia.CXM._id }).then(
-            CXMEncontrada => {
-              promedioTrim1 = 0;
-              promedioTrim2 = 0;
-              promedioTrim3 = 0;
-              promedioGral = 0;
+          //El objeto materia tiene: CXT y CXM de una materia dada
+          for (let materia of calificacionesDeInscripciones) {
+            //Se busca la CXM que estamos recorriendo
+            CalificacionesXMateria.findById({ _id: materia.CXM._id })
+              .then(CXMEncontrada => {
+                promedioTrim1 = 0;
+                promedioTrim2 = 0;
+                promedioTrim3 = 0;
+                promedioGral = 0;
 
-              //Calculamos el promedio del trimestre 3
-              promedioTrim3 = ClaseCXM.obtenerPromedioDeTrimestre(
-                materia.CXT[2].calificaciones
-              );
-
-              if (promedioTrim3 < 6) {
-                Estado.findOne({
-                  ambito: "CalificacionesXMateria",
-                  nombre: "Desaprobada"
-                }).then(async estado => {
-                  CXMEncontrada.estado = estado._id;
-                  CXMEncontrada.promedio = 0;
-                  await CXMEncontrada.save();
-                });
-              } else {
-                //Promedio trimestre 3 mayor a 6
-                //Se calcula el promedio del primer trimestre
-                promedioTrim1 = ClaseCXM.obtenerPromedioDeTrimestre(
-                  materia.CXT[0].calificaciones
+                //Calculamos el promedio del trimestre 3
+                promedioTrim3 = ClaseCXM.obtenerPromedioDeTrimestre(
+                  materia.CXT[2].calificaciones
                 );
 
-                //Se calcula el promedio del segundo trimestre
-                promedioTrim2 = ClaseCXM.obtenerPromedioDeTrimestre(
-                  materia.CXT[1].calificaciones
-                );
-
-                promedioGral =
-                  (promedioTrim1 + promedioTrim2 + promedioTrim3) / 3;
-
-                if (promedioGral >= 6) {
-                  CXMEncontrada.estado = estadoAprobado._id;
-                  CXMEncontrada.promedio = promedioGral;
-                  CXMEncontrada.save().then(() => {});
-                } else {
+                if (promedioTrim3 < 6) {
                   Estado.findOne({
                     ambito: "CalificacionesXMateria",
                     nombre: "Desaprobada"
-                  }).then(async estadoDesaprobado => {
-                    CXMEncontrada.estado = estadoDesaprobado._id;
-                    CXMEncontrada.promedio = 0;
-                    await CXMEncontrada.save();
-                  });
+                  })
+                    .then(async estado => {
+                      CXMEncontrada.estado = estado._id;
+                      CXMEncontrada.promedio = 0;
+                      await CXMEncontrada.save();
+                    })
+                    .catch(() => {
+                      res.status(500).json({
+                        message: "Mensaje de error especifico"
+                      });
+                    });
+                } else {
+                  //Promedio trimestre 3 mayor a 6
+                  //Se calcula el promedio del primer trimestre
+                  promedioTrim1 = ClaseCXM.obtenerPromedioDeTrimestre(
+                    materia.CXT[0].calificaciones
+                  );
+
+                  //Se calcula el promedio del segundo trimestre
+                  promedioTrim2 = ClaseCXM.obtenerPromedioDeTrimestre(
+                    materia.CXT[1].calificaciones
+                  );
+
+                  promedioGral =
+                    (promedioTrim1 + promedioTrim2 + promedioTrim3) / 3;
+
+                  if (promedioGral >= 6) {
+                    CXMEncontrada.estado = estadoAprobado._id;
+                    CXMEncontrada.promedio = promedioGral;
+                    CXMEncontrada.save();
+                  } else {
+                    Estado.findOne({
+                      ambito: "CalificacionesXMateria",
+                      nombre: "Desaprobada"
+                    })
+                      .then(async estadoDesaprobado => {
+                        CXMEncontrada.estado = estadoDesaprobado._id;
+                        CXMEncontrada.promedio = 0;
+                        await CXMEncontrada.save();
+                      })
+                      .catch(() => {
+                        res.status(500).json({
+                          message: "Mensaje de error especifico"
+                        });
+                      });
+                  }
                 }
-              }
-            }
-          );
-        }
-      });
+              })
+              .catch(() => {
+                res.status(500).json({
+                  message: "Mensaje de error especifico"
+                });
+              });
+          }
+        })
+        .catch(() => {
+          res.status(500).json({
+            message: "Mensaje de error especifico"
+          });
+        });
       let contadorMateriasDesaprobadas = 0;
       Inscripcion.aggregate([
         {
@@ -184,40 +222,56 @@ router.use("/procesoAutomaticoTercerTrimestre", (req, res) => {
             CXM: 1
           }
         }
-      ]).then(materiasDeInscripcion => {
-        //Se actualiza el estado de la inscripción según los estados de las diferentes CXM
-        //y la cantidad de materias pendientes
-        materiasDeInscripcion.forEach(inscripcion => {
-          inscripcion.CXM.forEach(materia => {
-            if (materia.promedio < 6) {
-              contadorMateriasDesaprobadas += 1;
+      ])
+        .then(materiasDeInscripcion => {
+          //Se actualiza el estado de la inscripción según los estados de las diferentes CXM
+          //y la cantidad de materias pendientes
+          materiasDeInscripcion.forEach(inscripcion => {
+            inscripcion.CXM.forEach(materia => {
+              if (materia.promedio < 6) {
+                contadorMateriasDesaprobadas += 1;
+              }
+            });
+
+            if (inscripcion.materiasPendientes != null) {
+              contadorMateriasDesaprobadas +=
+                inscripcion.materiasPendientes.length + 1;
+            }
+            if (contadorMateriasDesaprobadas > 3) {
+              Estado.findOne({
+                ambito: "Inscripcion",
+                nombre: "Examenes pendientes"
+              })
+                .then(estado => {
+                  Inscripcion.findByIdAndUpdate(inscripcion._id, {
+                    estado: estado._id
+                  }).exec();
+                })
+                .catch(() => {
+                  res.status(500).json({
+                    message: "Mensaje de error especifico"
+                  });
+                });
+            } else {
+              Estado.findOne({ ambito: "Inscripcion", nombre: "Promovido" })
+                .then(estado => {
+                  Inscripcion.findByIdAndUpdate(inscripcion._id, {
+                    estado: estado._id
+                  }).exec();
+                })
+                .catch(() => {
+                  res.status(500).json({
+                    message: "Mensaje de error especifico"
+                  });
+                });
             }
           });
-
-          if (inscripcion.materiasPendientes != null) {
-            contadorMateriasDesaprobadas +=
-              inscripcion.materiasPendientes.length + 1;
-          }
-          if (contadorMateriasDesaprobadas > 3) {
-            Estado.findOne({
-              ambito: "Inscripcion",
-              nombre: "Examenes pendientes"
-            }).then(estado => {
-              Inscripcion.findByIdAndUpdate(inscripcion._id, {
-                estado: estado._id
-              }).exec();
-            });
-          } else {
-            Estado.findOne({ ambito: "Inscripcion", nombre: "Promovido" }).then(
-              estado => {
-                Inscripcion.findByIdAndUpdate(inscripcion._id, {
-                  estado: estado._id
-                }).exec();
-              }
-            );
-          }
+        })
+        .catch(() => {
+          res.status(500).json({
+            message: "Mensaje de error especifico"
+          });
         });
-      });
     }
   );
 });
@@ -227,15 +281,19 @@ router.use("/procesoAutomaticoTercerTrimestre", (req, res) => {
 router.use("/procesoAutomaticoFinExamenes", (req, res) => {
   let fechaActual = new Date();
   let fechaFinExamenes;
-  CicloLectivo.findOne({ año: fechaActual.getFullYear() }).then(
-    cicloLectivoActual => {
+  CicloLectivo.findOne({ año: fechaActual.getFullYear() })
+    .then(cicloLectivoActual => {
       fechaFinExamenes = {
         date: cicloLectivoActual.fechaFinExamenes.getDate(),
         month: cicloLectivoActual.fechaFinExamenes.getMonth(),
         year: cicloLectivoActual.fechaFinExamenes.getFullYear()
       };
-    }
-  );
+    })
+    .catch(() => {
+      res.status(500).json({
+        message: "Mensaje de error especifico"
+      });
+    });
 
   cron.scheduleJob(
     // {
@@ -271,53 +329,81 @@ router.use("/procesoAutomaticoFinExamenes", (req, res) => {
             idEstudiante: 1
           }
         }
-      ]).then(materiasDeInscripcion => {
-        //Se actualiza el estado de la inscripción según los estados de las diferentes CXM
-        //y la cantidad de materias pendientes
-        let estadoEstudiante;
-        Estado.findOne({
-          ambito: "Estudiante",
-          nombre: "Registrado"
-        }).then(estadoEstudiante => {
-          estadoEstudiante = estadoEstudiante;
-        });
-        materiasDeInscripcion.forEach(inscripcion => {
-          inscripcion.CXM.forEach(materia => {
-            if (materia.promedio < 6) {
-              contadorMateriasDesaprobadas += 1;
+      ])
+        .then(materiasDeInscripcion => {
+          //Se actualiza el estado de la inscripción según los estados de las diferentes CXM
+          //y la cantidad de materias pendientes
+          let estadoEstudiante;
+          Estado.findOne({
+            ambito: "Estudiante",
+            nombre: "Registrado"
+          })
+            .then(estadoEstudiante => {
+              estadoEstudiante = estadoEstudiante;
+            })
+            .catch(() => {
+              res.status(500).json({
+                message: "Mensaje de error especifico"
+              });
+            });
+          materiasDeInscripcion.forEach(inscripcion => {
+            inscripcion.CXM.forEach(materia => {
+              if (materia.promedio < 6) {
+                contadorMateriasDesaprobadas += 1;
+              }
+            });
+
+            if (inscripcion.materiasPendientes != null) {
+              contadorMateriasDesaprobadas +=
+                inscripcion.materiasPendientes.length + 1;
+            }
+
+            Estudiante.findById(inscripcion.idEstudiante)
+              .then(estudiante => {
+                estudiante.estado = estadoEstudiante;
+                estudiante.save();
+              })
+              .catch(() => {
+                res.status(500).json({
+                  message: "Mensaje de error especifico"
+                });
+              });
+
+            if (contadorMateriasDesaprobadas > 3) {
+              Estado.findOne({
+                ambito: "Inscripcion",
+                nombre: "Libre"
+              })
+                .then(estado => {
+                  Inscripcion.findByIdAndUpdate(inscripcion._id, {
+                    estado: estado._id
+                  }).exec();
+                })
+                .catch(() => {
+                  res.status(500).json({
+                    message: "Mensaje de error especifico"
+                  });
+                });
+            } else {
+              Estado.findOne({ ambito: "Inscripcion", nombre: "Promovido" })
+                .then(estado => {
+                  Inscripcion.findByIdAndUpdate(inscripcion._id, {
+                    estado: estado._id
+                  }).exec();
+                })
+                .catch(() => {
+                  res.status(500).json({
+                    message: "Mensaje de error especifico"
+                  });
+                });
             }
           });
-
-          if (inscripcion.materiasPendientes != null) {
-            contadorMateriasDesaprobadas +=
-              inscripcion.materiasPendientes.length + 1;
-          }
-
-          Estudiante.findById(inscripcion.idEstudiante).then(estudiante => {
-            estudiante.estado = estadoEstudiante;
-            estudiante.save();
+        })
+        .catch(() => {
+          res.status(500).json({
+            message: "Mensaje de error especifico"
           });
-
-          if (contadorMateriasDesaprobadas > 3) {
-            Estado.findOne({
-              ambito: "Inscripcion",
-              nombre: "Libre"
-            }).then(estado => {
-              Inscripcion.findByIdAndUpdate(inscripcion._id, {
-                estado: estado._id
-              }).exec();
-            });
-          } else {
-            Estado.findOne({ ambito: "Inscripcion", nombre: "Promovido" }).then(
-              estado => {
-                Inscripcion.findByIdAndUpdate(inscripcion._id, {
-                  estado: estado._id
-                }).exec();
-              }
-            );
-          }
         });
-      });
     }
   );
 });
