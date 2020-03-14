@@ -16,9 +16,9 @@ import { EstudiantesService } from "src/app/estudiantes/estudiante.service";
 })
 export class VisualizarEventoComponent implements OnInit {
   evento: Evento;
-  //comentarios: any[];
   descripcionComentario: String;
   comentarioIsEmpty: Boolean = true;
+  permisos: Boolean[] = [];
 
   constructor(
     public eventoService: EventosService,
@@ -36,6 +36,14 @@ export class VisualizarEventoComponent implements OnInit {
     this.evento = this.eventoService.eventoSeleccionado;
     this.eventoService.obtenerComentariosDeEvento().subscribe(rtdo => {
       this.eventoService.comentarios = rtdo.comentarios.reverse();
+      for (let i = 0; i < rtdo.comentarios.length; i++) {
+        if (
+          rtdo.comentarios[i].idUsuario == this.autenticacionService.getId() ||
+          this.autenticacionService.getRol() == "Admin"
+        )
+          this.permisos[i] = true;
+        else this.permisos[i] = false;
+      }
     });
   }
 
@@ -105,58 +113,19 @@ export class VisualizarEventoComponent implements OnInit {
         });
     }
   }
-
-  onOpciones(id) {
-    this.eventoService.idComentarioSeleccionado = id;
-    this.popup.open(AccionesComentariosPopupComponent);
-  }
-}
-
-@Component({
-  selector: "app-mostrar-popup",
-  templateUrl: "./acciones-comentarios-popup.component.html",
-  styleUrls: ["./visualizar-evento.component.css"]
-})
-export class AccionesComentariosPopupComponent implements OnInit {
-  permisos: boolean = false;
-  evento = this.eventoService.eventoSeleccionado;
-  comentario;
-
-  constructor(
-    public dialogRef: MatDialogRef<AccionesComentariosPopupComponent>,
-    public router: Router,
-    public servicioEstudiante: EstudiantesService,
-    public eventoService: EventosService,
-    public autenticacionService: AutenticacionService
-  ) {}
-
-  ngOnInit() {
-    this.eventoService.obtenerComentariosDeEvento().subscribe(rtdo => {
-      for (let i = 0; i < rtdo.comentarios.length; i++) {
-        if (
-          rtdo.comentarios[i]._id == this.eventoService.idComentarioSeleccionado
-        ) {
-          if (
-            rtdo.comentarios[i].idUsuario ==
-              this.autenticacionService.getId() ||
-            this.autenticacionService.getRol() == "Admin"
-          )
-            this.permisos = true;
-        }
-      }
-    });
-  }
   onEliminar(): void {
     this.eventoService.eliminarComentario(
       this.eventoService.idComentarioSeleccionado
     );
-      this.eventoService.obtenerComentariosDeEvento().subscribe(rtdo => {
+    this.eventoService.obtenerComentariosDeEvento().subscribe(rtdo => {
       this.eventoService.comentarios = rtdo.comentarios.reverse();
+      console.log("borrado");
     });
-    this.dialogRef.close();
   }
 
-  onReportar(): void {
-    this.dialogRef.close();
+  onReportar(): void {}
+
+  onOpciones(id) {
+    this.eventoService.idComentarioSeleccionado = id;
   }
 }

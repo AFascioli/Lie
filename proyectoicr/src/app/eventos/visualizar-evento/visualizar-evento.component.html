@@ -83,7 +83,10 @@
           <mat-icon>menu_book</mat-icon>
         </mat-panel-description>
       </mat-expansion-panel-header>
-      <div class="test" *ngFor="let comentario of eventoService.comentarios">
+      <div
+        class="test"
+        *ngFor="let comentario of eventoService.comentarios; let i = index"
+      >
         <!-- <button  mat-icon-button class="botonOpciones">
           <mat-icon>more_horiz</mat-icon>
         </button> -->
@@ -92,9 +95,28 @@
             <b>{{ comentario.apellido }}, {{ comentario.nombre }} </b>
           </p>
           <p></p>
-          <button mat-icon-button class="botonOpciones" (click)="onOpciones(comentario._id)">
+          <button
+            mat-button
+            [matMenuTriggerFor]="menu"
+            class="dropDown"
+            class="botonOpciones"
+            (click)="onOpciones(comentario._id)"
+          >
             <mat-icon>more_horiz</mat-icon>
           </button>
+          <mat-menu #menu="matMenu">
+            <button
+              mat-menu-item
+              *ngIf="this.permisos[i]"
+              (click)="onEliminar()"
+            >
+              Eliminar comentario
+            </button>
+
+            <button mat-menu-item (click)="onReportar()">
+              Reportar como inapropiado (Todavía no resuelto)
+            </button>
+          </mat-menu>
         </div>
         <p class="textoComentario">
           <app-read-more
