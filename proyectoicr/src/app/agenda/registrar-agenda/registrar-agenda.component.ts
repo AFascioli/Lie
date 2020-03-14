@@ -77,18 +77,6 @@ export class RegistrarAgendaComponent implements OnInit {
     });
   }
 
-  obtenerAgenda(idCurso) {
-    this.servicioAgenda.obtenerAgendaDeCurso(idCurso).subscribe(rtdo => {
-      this.agendaCurso = rtdo.agenda;
-      let materias;
-      for (var i = 0; i < this.agendaCurso.length; i++) {
-        if (this.materiasHTML.includes(this.agendaCurso[i].nombre)) {
-        }
-      }
-      this.materiasHTML = this.servicioAgenda.getMateriasDistintas(materias);
-    });
-  }
-
   //Chequea que no haya conflicto entre los horarios. si no hay, agrega un elemento
   //al vector materiasHTML para que se triggeree otra vuelta del for
   //que esta en el HTML que crea los cards de las materias.

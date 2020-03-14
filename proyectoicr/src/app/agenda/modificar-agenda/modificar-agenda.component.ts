@@ -1,7 +1,7 @@
 import { Component, OnInit } from "@angular/core";
 import { MatSnackBar } from "@angular/material";
 import { EstudiantesService } from "src/app/estudiantes/estudiante.service";
-import { AgendaService } from '../agenda.service';
+import { AgendaService } from "../agenda.service";
 
 @Component({
   selector: "app- modificar-agenda",
@@ -11,7 +11,9 @@ import { AgendaService } from '../agenda.service';
 export class ModificarAgendaComponent implements OnInit {
   cursos: any[];
   idCursoSeleccionado: string;
-  agendaCurso: any[];
+  materias: any[];
+  isEditing: Boolean = false;
+  dataSource: any[];
   cursoSelected: Boolean = false;
   displayedColumns: string[] = [
     "Materia",
@@ -29,19 +31,39 @@ export class ModificarAgendaComponent implements OnInit {
 
   ngOnInit() {
     this.obtenerCursos();
-  }
-
-  obtenerAgenda(idCurso) {
-    this.cursoSelected = true;
-    this.idCursoSeleccionado = idCurso.value;
-    this.servicioAgenda.obtenerAgendaDeCurso(idCurso.value).subscribe(rtdo => {
-      this.agendaCurso = rtdo.agenda;
-      console.log(this.agendaCurso);
+    this.servicioAgenda.obtenerMaterias().subscribe(response => {
+      this.materias = response.materias;
     });
   }
 
-  editarAgenda(agendaCurso) {}
+  obtenerAgenda(idCurso) {
+    console.log('ejecuto');
+    this.cursoSelected = true;
+    //this.idCursoSeleccionado = idCurso.value;
+    this.servicioAgenda.obtenerAgendaDeCurso(idCurso.value).subscribe(rtdo => {
+      console.log(rtdo);
+      this.dataSource = rtdo.agenda;
+      console.log(rtdo.agenda);
+    });
+  }
 
+  reservarAgenda(indice) {
+    let botonEditar: HTMLElement = document.getElementById("editar" + indice);
+    let botonReservar: HTMLElement = document.getElementById(
+      "reservar" + indice
+    );
+    botonEditar.style.display = "block";
+    botonReservar.style.display = "none";
+  }
+
+  editarAgenda(indice) {
+    let botonEditar: HTMLElement = document.getElementById("editar" + indice);
+    let botonReservar: HTMLElement = document.getElementById(
+      "reservar" + indice
+    );
+    botonEditar.style.display = "none";
+    botonReservar.style.display = "block";
+  }
 
   eliminarHorarios(agendaCurso) {
     this.servicioAgenda
