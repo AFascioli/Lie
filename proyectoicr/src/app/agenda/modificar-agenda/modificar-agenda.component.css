@@ -12,18 +12,34 @@ th {
   font-size: 15px;
 }
 
-th, td{
+th,
+td {
   text-align: center !important;
 }
 
-.botonesAccion{
+.botonesAccion {
   display: flex;
 }
 
-button{
+button {
   margin: 0px !important;
 }
 
-.mat-form-field{
+.mat-form-field {
   margin-left: 15px !important;
+}
+
+.matFormHora {
+  width: 45px !important;
+  margin-left: 0px !important;
+  margin-right: 0px !important;
+}
+
+.matFormDia,
+.matFormMateria {
+  width: 100px !important;
+}
+
+.matFormDocente{
+  width: 130px !important;
 }

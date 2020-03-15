@@ -38,6 +38,7 @@ export class VisualizarAgendaComponent implements OnInit {
 
   ngOnInit() {
     this.obtenerCursos();
+    console.log('se ejecuto');
     // this.materias = this.servicioAgenda.obtenerMaterias();
     // this.getMateriasDistintas();
     // this.getColorVector();
@@ -65,6 +66,7 @@ export class VisualizarAgendaComponent implements OnInit {
             });
           }
           this.materias = agenda.agenda;
+          console.log(this.materias);
           this.getMateriasDistintas();
           this.getColorVector();
           resolve(agenda.agenda);

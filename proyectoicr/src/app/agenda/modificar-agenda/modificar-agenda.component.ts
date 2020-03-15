@@ -1,5 +1,5 @@
 import { Component, OnInit } from "@angular/core";
-import { MatSnackBar } from "@angular/material";
+import { MatSnackBar, MatTable } from "@angular/material";
 import { EstudiantesService } from "src/app/estudiantes/estudiante.service";
 import { AgendaService } from "../agenda.service";
 
@@ -15,6 +15,7 @@ export class ModificarAgendaComponent implements OnInit {
   isEditing: Boolean = false;
   dataSource: any[];
   cursoSelected: Boolean = false;
+  dias: any[] = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes"];
   displayedColumns: string[] = [
     "Materia",
     "Docente",
@@ -23,6 +24,8 @@ export class ModificarAgendaComponent implements OnInit {
     "HoraFin",
     "Accion"
   ];
+  docentes: any[] = [];
+
   constructor(
     public servicioEstudiante: EstudiantesService,
     public servicioAgenda: AgendaService,
@@ -34,16 +37,24 @@ export class ModificarAgendaComponent implements OnInit {
     this.servicioAgenda.obtenerMaterias().subscribe(response => {
       this.materias = response.materias;
     });
+
+    this.obtenerDocentes();
+  }
+
+  obtenerDocentes() {
+    this.servicioAgenda.obtenerDocentes().subscribe(response => {
+      for (let i = 0; i < response.docentes.length; i++) {
+        this.docentes.push(
+          `${response.docentes[i].apellido}, ${response.docentes[i].nombre}`
+        );
+      }
+    });
   }
 
   obtenerAgenda(idCurso) {
-    console.log('ejecuto');
     this.cursoSelected = true;
-    //this.idCursoSeleccionado = idCurso.value;
     this.servicioAgenda.obtenerAgendaDeCurso(idCurso.value).subscribe(rtdo => {
-      console.log(rtdo);
       this.dataSource = rtdo.agenda;
-      console.log(rtdo.agenda);
     });
   }
 
@@ -56,7 +67,7 @@ export class ModificarAgendaComponent implements OnInit {
     botonReservar.style.display = "none";
   }
 
-  editarAgenda(indice) {
+  editarAgenda(indice, tabla: MatTable<any>) {
     let botonEditar: HTMLElement = document.getElementById("editar" + indice);
     let botonReservar: HTMLElement = document.getElementById(
       "reservar" + indice

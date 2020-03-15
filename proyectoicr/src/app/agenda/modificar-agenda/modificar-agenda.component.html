@@ -21,7 +21,7 @@
       </mat-select>
     </mat-form-field>
 
-    <table mat-table [dataSource]="dataSource" *ngIf="cursoSelected">
+    <table #tabla mat-table [dataSource]="dataSource" *ngIf="cursoSelected">
       <ng-container matColumnDef="Materia">
         <th class="columnasNormales" mat-header-cell *matHeaderCellDef>
           Materia
@@ -31,9 +31,10 @@
           mat-cell
           *matCellDef="let agendaCurso; let i = index"
         >
-          <mat-form-field>
+          <mat-form-field class="matFormMateria">
             <mat-select
-              name="materia{{ i }}"
+              name="materia{{i}}"
+              id="materia{{i}}"
               ngModel
               #materia+i="ngModel"
               [disabled]="true"
@@ -60,9 +61,20 @@
           mat-cell
           *matCellDef="let agendaCurso; let i = index"
         >
-          <p>
-            {{ agendaCurso.apellidoDocente }}, {{ agendaCurso.nombreDocente }}
-          </p>
+          <mat-form-field class="matFormDocente">
+            <mat-select
+              name="docente{{ i }}"
+              ngModel
+              #docente+i="ngModel"
+              [disabled]="true"
+              [(ngModel)]="agendaCurso.docente"
+              matNativeControl
+            >
+              <mat-option *ngFor="let docente of docentes" [value]="docente">
+                {{ docente }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
         </td>
       </ng-container>
 
@@ -73,7 +85,20 @@
           mat-cell
           *matCellDef="let agendaCurso; let i = index"
         >
-          {{ agendaCurso.dia }}
+          <mat-form-field class="matFormDia">
+            <mat-select
+              name="dia{{ i }}"
+              ngModel
+              #dia+i="ngModel"
+              [disabled]="true"
+              [(ngModel)]="agendaCurso.dia"
+              matNativeControl
+            >
+              <mat-option *ngFor="let dia of dias" [value]="dia">
+                {{ dia }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
         </td>
       </ng-container>
       <ng-container matColumnDef="HoraInicio">
@@ -88,13 +113,13 @@
           <mat-form-field class="matFormHora">
             <div class="hora">
               <input
-                required
                 [name]="'horaInicio' + i"
                 ngModel
                 #horaInicio+i="ngModel"
                 matInput
                 [ngxTimepicker]="picker1"
                 [format]="24"
+                [disabled]="true"
                 [(ngModel)]="agendaCurso.inicio"
                 min="07:30"
                 max="13:30"
@@ -112,8 +137,32 @@
         <th class="columnasNormales" mat-header-cell *matHeaderCellDef>
           Fin
         </th>
-        <td class="columnasNormales" mat-cell *matCellDef="let agendaCurso">
-          <p>{{ agendaCurso.fin }} hs</p>
+        <td
+          class="columnasNormales"
+          mat-cell
+          *matCellDef="let agendaCurso; let i = index"
+        >
+          <mat-form-field class="matFormHora">
+            <div class="hora">
+              <input
+                [name]="'horaFin' + i"
+                ngModel
+                #horaInicio+i="ngModel"
+                matInput
+                [ngxTimepicker]="picker1"
+                [format]="24"
+                [disabled]="true"
+                [(ngModel)]="agendaCurso.fin"
+                min="07:30"
+                max="13:30"
+                readonly
+              />
+              <ngx-material-timepicker
+                [minutesGap]="15"
+                #picker1
+              ></ngx-material-timepicker>
+            </div>
+          </mat-form-field>
         </td>
       </ng-container>
       <ng-container matColumnDef="Accion">
@@ -129,7 +178,7 @@
             <button
               id="editar{{ i }}"
               mat-icon-button
-              (click)="editarAgenda(i)"
+              (click)="editarAgenda(i, tabla)"
             >
               <mat-icon>edit</mat-icon>
             </button>
@@ -137,11 +186,11 @@
               id="reservar{{ i }}"
               style="display: none"
               mat-icon-button
-              (click)="reservarAgenda(row)"
+              (click)="reservarAgenda(i)"
             >
               <mat-icon>done</mat-icon>
             </button>
-            <button mat-icon-button (click)="eliminarHorarios(row)">
+            <button mat-icon-button (click)="eliminarHorarios(i)">
               <mat-icon>remove_circle_outline</mat-icon>
             </button>
           </p>
