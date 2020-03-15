@@ -2,6 +2,7 @@ import { Component, OnInit } from "@angular/core";
 import { MatSnackBar, MatTable } from "@angular/material";
 import { EstudiantesService } from "src/app/estudiantes/estudiante.service";
 import { AgendaService } from "../agenda.service";
+import { UniqueSelectionDispatcher } from '@angular/cdk/collections';
 
 @Component({
   selector: "app- modificar-agenda",
@@ -14,6 +15,7 @@ export class ModificarAgendaComponent implements OnInit {
   materias: any[];
   isEditing: Boolean = false;
   dataSource: any[];
+  indice;
   cursoSelected: Boolean = false;
   dias: any[] = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes"];
   displayedColumns: string[] = [
@@ -41,6 +43,10 @@ export class ModificarAgendaComponent implements OnInit {
     this.obtenerDocentes();
   }
 
+  AfterViewInit(indice){
+    this.indice = indice;
+  }
+
   obtenerDocentes() {
     this.servicioAgenda.obtenerDocentes().subscribe(response => {
       for (let i = 0; i < response.docentes.length; i++) {
@@ -59,15 +65,21 @@ export class ModificarAgendaComponent implements OnInit {
   }
 
   reservarAgenda(indice) {
+    this.AfterViewInit(-1);
     let botonEditar: HTMLElement = document.getElementById("editar" + indice);
     let botonReservar: HTMLElement = document.getElementById(
       "reservar" + indice
     );
     botonEditar.style.display = "block";
     botonReservar.style.display = "none";
+
+    let materia: HTMLElement = document.getElementById("materia" + indice);
+    materia.removeAttribute("disabled");
+    materia.setAttribute("enabled", "");
   }
 
-  editarAgenda(indice, tabla: MatTable<any>) {
+  editarAgenda(indice) {
+    this.AfterViewInit(indice);
     let botonEditar: HTMLElement = document.getElementById("editar" + indice);
     let botonReservar: HTMLElement = document.getElementById(
       "reservar" + indice
