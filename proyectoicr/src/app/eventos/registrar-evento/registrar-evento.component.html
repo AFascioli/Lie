@@ -120,9 +120,10 @@
       >
         Seleccionar imagen *
       </button>
-      <a>
+
+    <button mat-button class="deleteButton" (click)="onEliminarImagen()" >
         <mat-icon>delete</mat-icon>
-      </a>
+      </button>
     </div>
       <br />
       <span class="mensaje" *ngIf="message">{{ message }}</span>
