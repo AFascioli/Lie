@@ -1,5 +1,5 @@
 <h1 class="componente-titulo">
-  Tomar asistencia ciclo lectivo {{fechaActual.getFullYear()}}
+  Tomar asistencia ciclo lectivo {{ fechaActual.getFullYear() }}
 </h1>
 <mat-card class="card-body-componente">
   <mat-form-field class="curso">
@@ -20,8 +20,8 @@
   </mat-form-field>
 
   <div class="ubicacionfecha">
-    <b>Fecha: </b> &nbsp;
-    <mat-form-field>
+    <b>Fecha: </b>&nbsp;
+    <mat-form-field class="mat-form-Fecha">
       <input
         [disabled]="true"
         ngModel
@@ -33,11 +33,16 @@
         class="inputFecha"
       />
       {{ fechaActual | date: "EEEE" | titlecase }}
-      {{ fechaActual | date: "dd/MM/yyyy" }}
+      {{ fechaActual | date: "dd/MM/yyyy" }}&nbsp;
     </mat-form-field>
   </div>
-  <p class="aviso" *ngIf="asistenciaNueva!='true'">Atención, ya existe una asistencia registrada para este curso el día de hoy</p>
-  <p class="aviso" *ngIf="fueraPeriodoCicloLectivo==true">Atención, no se puede tomar asistencia debido a que estamos fuera del ciclo lectivo </p>
+  <p class="aviso" *ngIf="asistenciaNueva != 'true'">
+    Atención, ya existe una asistencia registrada para este curso el día de hoy
+  </p>
+  <p class="aviso" *ngIf="fueraPeriodoCicloLectivo == true">
+    Atención, no se puede tomar asistencia debido a que estamos fuera del ciclo
+    lectivo
+  </p>
   <br />
   <div *ngIf="!cursoNotSelected">
     <table mat-table [dataSource]="estudiantesXDivision">
@@ -83,7 +88,13 @@
       <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
       <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
     </table>
-    <p class="aviso" *ngIf="estudiantesXDivision.length==0 && !cursoNotSelected">No exiten alumnos inscriptos a este curso</p>
+
+    <p
+      class="aviso"
+      *ngIf="estudiantesXDivision.length == 0 && !cursoNotSelected"
+    >
+      No exiten alumnos inscriptos a este curso
+    </p>
   </div>
   <br />
   <div class="div-button">

@@ -1,17 +1,21 @@
-.mat-expansion-panel{
+.mat-expansion-panel {
   width: 70%;
   margin: auto;
 }
 
-.mat-expansion-panel-mobile{
+.mat-form-Fecha {
+  text-align: center !important;
+}
+
+.mat-expansion-panel-mobile {
   width: 100%;
 }
 
-.expansion-panel-1{
+.expansion-panel-1 {
   margin-top: 1rem;
 }
 
-.mat-radio-button{
+.mat-radio-button {
   margin: 1rem;
 }
 
@@ -20,7 +24,7 @@
   float: right;
 }
 
-.inputFecha{
+.inputFecha {
   width: 0%;
   color: black !important;
 }
@@ -29,7 +33,7 @@
   text-align: right;
 }
 
-.div-selects{
+.div-selects {
   text-align: center !important;
 }
 
@@ -44,7 +48,7 @@
   width: 100%;
 }
 
-.card-datos{
+.card-datos {
   margin: auto;
   margin-top: 1rem;
   width: 66%;
@@ -52,38 +56,38 @@
   margin-right: auto;
 }
 
-.titulo-datos-est{
+.titulo-datos-est {
   font-size: 20px;
   font-weight: bold;
   text-align: center;
 }
 
-.titulos-reg-doc{
+.titulos-reg-doc {
   font-size: 20px;
 }
 
-.titulos-reg-doc-mobile{
+.titulos-reg-doc-mobile {
   font-size: 11px !important;
 }
 
-.parrafo{
+.parrafo {
   text-align: center;
 }
 
-.capacidad{
+.capacidad {
   text-align: center;
 }
 
-.mensajeAtencion{
+.mensajeAtencion {
   color: black;
 }
 
-.mensajeAtencioncurso{
-  color:black;
+.mensajeAtencioncurso {
+  color: black;
   font-weight: bold;
 }
 
-.aviso{
+.aviso {
   margin-bottom: 0;
   text-align: center;
   font-size: 19px;

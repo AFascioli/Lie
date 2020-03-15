@@ -8,7 +8,7 @@
     <div class="ubicacionfecha">
       <b>Fecha: </b>
       &nbsp;
-      <mat-form-field>
+      <mat-form-field class="mat-form-Fecha">
         <input
           [disabled]="true"
           ngModel
@@ -20,7 +20,7 @@
           class="inputFecha"
         />
         {{ fechaActual | date: "EEEE" | titlecase }}
-        {{ fechaActual | date: "dd/MM/yyyy" }}
+        {{ fechaActual | date: "dd/MM/yyyy" }}&nbsp;
       </mat-form-field>
     </div>
 
