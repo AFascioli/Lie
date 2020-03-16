@@ -14,11 +14,11 @@ export class ModificarAgendaComponent implements OnInit {
   idCursoSeleccionado: string;
   materias: any[];
   isEditing: Boolean = false;
-  dataSource: any[];
+  dataSource: any[] = [];
   indice = -1;
   cursoSelected: Boolean = false;
   mensajeError: string;
-  agendaValida: Boolean;
+  agendaValida: Boolean = true;
   horariosReservados: any[] = [];
   dias: any[] = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes"];
   displayedColumns: string[] = [
@@ -54,16 +54,16 @@ export class ModificarAgendaComponent implements OnInit {
     this.servicioAgenda.obtenerMaterias().subscribe(response => {
       this.materias = response.materias;
     });
-
     this.obtenerDocentes();
   }
 
   obtenerDocentes() {
     this.servicioAgenda.obtenerDocentes().subscribe(response => {
       for (let i = 0; i < response.docentes.length; i++) {
-        this.docentes.push(
-          `${response.docentes[i].apellido}, ${response.docentes[i].nombre}`
-        );
+        this.docentes.push({
+          _id: response.docentes[i]._id,
+          nombre: `${response.docentes[i].apellido}, ${response.docentes[i].nombre}`
+        });
       }
     });
   }
@@ -72,11 +72,12 @@ export class ModificarAgendaComponent implements OnInit {
     this.cursoSelected = true;
     this.servicioAgenda.obtenerAgendaDeCurso(idCurso.value).subscribe(rtdo => {
       this.dataSource = rtdo.agenda;
+      console.log("obtener agenda", this.dataSource);
     });
   }
 
-  reservarAgenda(indice, row, tabla) {
-    this.validarHorario(row, tabla._data, indice);
+  reservarAgenda(indice, row) {
+    this.validarHorario(row, indice);
     if (this.agendaValida) {
       this.indice = -1;
       document.getElementById("editar" + indice).style.display = "block";
@@ -84,12 +85,22 @@ export class ModificarAgendaComponent implements OnInit {
     }
   }
 
+  onGuardar() {
+    if (this.agendaValida) {
+      console.log(this.dataSource);
+    } else {
+      this.openSnackBar(this.mensajeError, "snack-bar-fracaso");
+    }
+  }
+
+  popUpCancelar() {}
+
   validarHorario(
     { nombreMateria, dia, inicio, fin, docente, idHorarios },
-    datosTabla,
     indice
   ) {
     this.agendaValida = true;
+    this.mensajeError = "";
     var moduloInicio = this.modulos.indexOf(inicio);
     var moduloFin = this.modulos.indexOf(fin);
 
@@ -108,15 +119,16 @@ export class ModificarAgendaComponent implements OnInit {
       this.mensajeError = "El horario de inicio es menor al horario de fin";
       this.openSnackBar(this.mensajeError, "snack-bar-fracaso");
     } else {
-      for (let index = 0; index < datosTabla.length; index++) {
-        let moduloInicioFila = this.modulos.indexOf(datosTabla[index].inicio);
-        let moduloFinFila = this.modulos.indexOf(datosTabla[index].fin);
+      for (let index = 0; index < this.dataSource.length; index++) {
+        let moduloInicioFila = this.modulos.indexOf(
+          this.dataSource[index].inicio
+        );
+        let moduloFinFila = this.modulos.indexOf(this.dataSource[index].fin);
         if (
-          datosTabla[index].dia == dia &&
+          this.dataSource[index].dia == dia &&
           index != indice &&
-          ((moduloInicioFila <= moduloInicio &&
-            moduloFinFila >= moduloInicio) ||
-            (moduloInicioFila <= moduloFin && moduloFinFila >= moduloFin))
+          ((moduloInicioFila <= moduloInicio && moduloFinFila > moduloInicio) ||
+            (moduloInicioFila < moduloFin && moduloFinFila >= moduloFin))
         ) {
           this.agendaValida = false;
           this.mensajeError =
@@ -124,13 +136,17 @@ export class ModificarAgendaComponent implements OnInit {
           this.openSnackBar(this.mensajeError, "snack-bar-fracaso");
         }
       }
-      if (this.agendaValida) {
-        this.mensajeError = "";
-      }
     }
   }
 
   editarAgenda(indice) {
+    this.agendaValida = false;
+    this.mensajeError =
+      "Necesitas finalizar la edición de la correspondiente fila";
+    if (this.indice != -1) {
+      this.openSnackBar(this.mensajeError, "snack-bar-aviso");
+      return;
+    }
     this.indice = indice;
     let botonEditar: HTMLElement = document.getElementById("editar" + indice);
     let botonReservar: HTMLElement = document.getElementById(

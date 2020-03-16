@@ -1035,9 +1035,12 @@ router.get("/agenda", checkAuthMiddleware, (req, res) => {
     {
       $project: {
         "nombreMateria.nombre": 1,
+        "nombreMateria._id": 1,
         horarios: 1,
         "docente.nombre": 1,
-        "docente.apellido": 1
+        "docente.apellido": 1,
+        "docente._id": 1,
+        "MXC._id": 1
       }
     }
   ])
@@ -1053,10 +1056,12 @@ router.get("/agenda", checkAuthMiddleware, (req, res) => {
         for (let i = 0; i < agendaCompleta.length; i++) {
           let valor = {
             nombre: agendaCompleta[i].nombreMateria[0].nombre,
+            idMXC: agendaCompleta[i].MXC[0]._id,
             dia: agendaCompleta[i].horarios[0].dia,
             inicio: agendaCompleta[i].horarios[0].horaInicio,
             fin: agendaCompleta[i].horarios[0].horaFin,
-            docente: `${agendaCompleta[i].docente[0].apellido}, ${agendaCompleta[i].docente[0].nombre}`,
+            idDocente: agendaCompleta[i].docente[0]._id,
+            idMateria: agendaCompleta[i].nombreMateria[0]._id,
             idHorarios: agendaCompleta[i].horarios[0]._id
           };
           agenda.push(valor);

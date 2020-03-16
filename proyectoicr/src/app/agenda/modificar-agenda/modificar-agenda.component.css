@@ -40,6 +40,10 @@ button {
   width: 100px !important;
 }
 
-.matFormDocente{
+.matFormDocente {
   width: 130px !important;
+}
+
+.divGuardar {
+  text-align: right;
 }

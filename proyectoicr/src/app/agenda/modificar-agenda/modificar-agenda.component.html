@@ -33,17 +33,17 @@
         >
           <mat-form-field class="matFormMateria">
             <mat-select
-              name="materia{{i}}"
-              id="materia{{i}}"
+              name="materia{{ i }}"
+              id="materia{{ i }}"
               ngModel
               #materia+i="ngModel"
-              [disabled]="indice!=i"
-              [(ngModel)]="agendaCurso.nombre"
+              [disabled]="indice != i"
+              [(ngModel)]="agendaCurso.idMateria"
               matNativeControl
             >
               <mat-option
                 *ngFor="let materia of materias"
-                [value]="materia.nombre"
+                [value]="materia._id"
               >
                 {{ materia.nombre }}
               </mat-option>
@@ -66,12 +66,15 @@
               name="docente{{ i }}"
               ngModel
               #docente+i="ngModel"
-              [disabled]="indice!=i"
-              [(ngModel)]="agendaCurso.docente"
+              [disabled]="indice != i"
+              [(ngModel)]="agendaCurso.idDocente"
               matNativeControl
             >
-              <mat-option *ngFor="let docente of docentes" [value]="docente">
-                {{ docente }}
+              <mat-option
+                *ngFor="let docente of docentes"
+                [value]="docente._id"
+              >
+                {{ docente.nombre }}
               </mat-option>
             </mat-select>
           </mat-form-field>
@@ -90,7 +93,7 @@
               name="dia{{ i }}"
               ngModel
               #dia+i="ngModel"
-              [disabled]="indice!=i"
+              [disabled]="indice != i"
               [(ngModel)]="agendaCurso.dia"
               matNativeControl
             >
@@ -119,7 +122,7 @@
                 matInput
                 [ngxTimepicker]="picker1"
                 [format]="24"
-                [disabled]="indice!=i"
+                [disabled]="indice != i"
                 [(ngModel)]="agendaCurso.inicio"
                 min="07:30"
                 max="13:30"
@@ -151,7 +154,7 @@
                 matInput
                 [ngxTimepicker]="picker1"
                 [format]="24"
-                [disabled]="indice!=i"
+                [disabled]="indice != i"
                 [(ngModel)]="agendaCurso.fin"
                 min="07:30"
                 max="13:30"
@@ -177,7 +180,7 @@
           <p class="botonesAccion">
             <button
               id="editar{{ i }}"
-              [disabled]="indice==i"
+              [disabled]="indice == i"
               mat-icon-button
               (click)="editarAgenda(i)"
             >
@@ -186,9 +189,9 @@
             <button
               id="reservar{{ i }}"
               style="display: none"
-              [disabled]="indice!=i"
+              [disabled]="indice != i"
               mat-icon-button
-              (click)="reservarAgenda(i, row, tabla)"
+              (click)="reservarAgenda(i, row)"
             >
               <mat-icon>done</mat-icon>
             </button>
@@ -200,5 +203,14 @@
       </ng-container>
       <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
       <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
-    </table></form
-></mat-card>
+    </table>
+  </form>
+  <div class="divGuardar">
+    <button mat-raised-button class="buttonPrimary" (click)="onGuardar(form)">
+      Guardar
+    </button>
+    <button mat-raised-button (click)="popUpCancelar()" class="buttonWarn">
+      Cancelar
+    </button>
+  </div>
+</mat-card>
