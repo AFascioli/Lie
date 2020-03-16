@@ -1056,7 +1056,7 @@ router.get("/agenda", checkAuthMiddleware, (req, res) => {
         for (let i = 0; i < agendaCompleta.length; i++) {
           let valor = {
             nombre: agendaCompleta[i].nombreMateria[0].nombre,
-            idMXC: agendaCompleta[i].MXC[0]._id,
+            idMXC: agendaCompleta[i].MXC._id,
             dia: agendaCompleta[i].horarios[0].dia,
             inicio: agendaCompleta[i].horarios[0].horaInicio,
             fin: agendaCompleta[i].horarios[0].horaFin,
@@ -1079,6 +1079,9 @@ router.get("/agenda", checkAuthMiddleware, (req, res) => {
       });
     });
 });
+
+//Recibimos : idCXM, idHorarios,
+router.post("/modificarAgenda", checkAuthMiddleware, (req, res) => {});
 
 //Elimina ciertos horarios registrados para un curso y una materia
 //@params: id del curso
