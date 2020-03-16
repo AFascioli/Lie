@@ -2,7 +2,7 @@ import { Component, OnInit } from "@angular/core";
 import { MatSnackBar, MatTable } from "@angular/material";
 import { EstudiantesService } from "src/app/estudiantes/estudiante.service";
 import { AgendaService } from "../agenda.service";
-import { UniqueSelectionDispatcher } from '@angular/cdk/collections';
+import { UniqueSelectionDispatcher } from "@angular/cdk/collections";
 
 @Component({
   selector: "app- modificar-agenda",
@@ -15,8 +15,11 @@ export class ModificarAgendaComponent implements OnInit {
   materias: any[];
   isEditing: Boolean = false;
   dataSource: any[];
-  indice;
+  indice = -1;
   cursoSelected: Boolean = false;
+  mensajeError: string;
+  agendaValida: Boolean;
+  horariosReservados: any[] = [];
   dias: any[] = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes"];
   displayedColumns: string[] = [
     "Materia",
@@ -27,6 +30,18 @@ export class ModificarAgendaComponent implements OnInit {
     "Accion"
   ];
   docentes: any[] = [];
+  modulos: any[] = [
+    "07:30",
+    "08:15",
+    "09:00",
+    "09:45",
+    "10:30",
+    "11:15",
+    "12:00",
+    "12:45",
+    "13:30",
+    "14:15"
+  ];
 
   constructor(
     public servicioEstudiante: EstudiantesService,
@@ -41,10 +56,6 @@ export class ModificarAgendaComponent implements OnInit {
     });
 
     this.obtenerDocentes();
-  }
-
-  AfterViewInit(indice){
-    this.indice = indice;
   }
 
   obtenerDocentes() {
@@ -64,22 +75,62 @@ export class ModificarAgendaComponent implements OnInit {
     });
   }
 
-  reservarAgenda(indice) {
-    this.AfterViewInit(-1);
-    let botonEditar: HTMLElement = document.getElementById("editar" + indice);
-    let botonReservar: HTMLElement = document.getElementById(
-      "reservar" + indice
-    );
-    botonEditar.style.display = "block";
-    botonReservar.style.display = "none";
+  reservarAgenda(indice, row, tabla) {
+    this.indice = -1;
+    document.getElementById("editar" + indice).style.display = "block";
+    document.getElementById("reservar" + indice).style.display = "none";
 
-    let materia: HTMLElement = document.getElementById("materia" + indice);
-    materia.removeAttribute("disabled");
-    materia.setAttribute("enabled", "");
+    this.validarHorario(row, tabla._data, indice);
+  }
+
+  validarHorario(
+    { nombreMateria, dia, inicio, fin, docente, idHorarios },
+    datosTabla,
+    indice
+  ) {
+    this.agendaValida = true;
+    var moduloInicio = this.modulos.indexOf(inicio);
+    var moduloFin = this.modulos.indexOf(fin);
+
+    if (moduloInicio == -1) {
+      this.agendaValida = false;
+      this.mensajeError =
+        "El horario de inicio seleccionado no corresponde a un módulo";
+      this.openSnackBar(this.mensajeError, "snack-bar-fracaso");
+    } else if (moduloFin == -1) {
+      this.agendaValida = false;
+      this.mensajeError =
+        "El horario de fin seleccionado no corresponde a un módulo";
+      this.openSnackBar(this.mensajeError, "snack-bar-fracaso");
+    } else if (moduloFin <= moduloInicio) {
+      this.agendaValida = false;
+      this.mensajeError = "El horario de inicio es menor al horario de fin";
+      this.openSnackBar(this.mensajeError, "snack-bar-fracaso");
+    } else {
+      for (let index = 0; index < datosTabla.length; index++) {
+        let moduloInicioFila = this.modulos.indexOf(datosTabla[index].inicio);
+        let moduloFinFila = this.modulos.indexOf(datosTabla[index].fin);
+        if (
+          datosTabla[index].dia == dia &&
+          index != indice &&
+          ((moduloInicioFila <= moduloInicio &&
+            moduloFinFila >= moduloInicio) ||
+            (moduloInicioFila <= moduloFin && moduloFinFila >= moduloFin))
+        ) {
+          this.agendaValida = false;
+          this.mensajeError =
+            "Los horarios seleccionados entran en conflicto con otra materia";
+          this.openSnackBar(this.mensajeError, "snack-bar-fracaso");
+        }
+      }
+      if (this.agendaValida) {
+        this.mensajeError = "";
+      }
+    }
   }
 
   editarAgenda(indice) {
-    this.AfterViewInit(indice);
+    this.indice = indice;
     let botonEditar: HTMLElement = document.getElementById("editar" + indice);
     let botonReservar: HTMLElement = document.getElementById(
       "reservar" + indice
@@ -98,6 +149,13 @@ export class ModificarAgendaComponent implements OnInit {
       .subscribe(rtdo => {
         console.log(rtdo);
       });
+  }
+
+  openSnackBar(mensaje: string, exito: string) {
+    this.snackBar.open(mensaje, "", {
+      panelClass: [exito],
+      duration: 4500
+    });
   }
 
   obtenerCursos() {

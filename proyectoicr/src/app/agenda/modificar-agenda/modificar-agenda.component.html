@@ -177,16 +177,18 @@
           <p class="botonesAccion">
             <button
               id="editar{{ i }}"
+              [disabled]="indice==i"
               mat-icon-button
-              (click)="editarAgenda(i, tabla)"
+              (click)="editarAgenda(i)"
             >
               <mat-icon>edit</mat-icon>
             </button>
             <button
               id="reservar{{ i }}"
               style="display: none"
+              [disabled]="indice!=i"
               mat-icon-button
-              (click)="reservarAgenda(i)"
+              (click)="reservarAgenda(i, row, tabla)"
             >
               <mat-icon>done</mat-icon>
             </button>
