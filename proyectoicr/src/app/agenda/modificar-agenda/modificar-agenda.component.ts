@@ -76,11 +76,12 @@ export class ModificarAgendaComponent implements OnInit {
   }
 
   reservarAgenda(indice, row, tabla) {
-    this.indice = -1;
-    document.getElementById("editar" + indice).style.display = "block";
-    document.getElementById("reservar" + indice).style.display = "none";
-
     this.validarHorario(row, tabla._data, indice);
+    if (this.agendaValida) {
+      this.indice = -1;
+      document.getElementById("editar" + indice).style.display = "block";
+      document.getElementById("reservar" + indice).style.display = "none";
+    }
   }
 
   validarHorario(
