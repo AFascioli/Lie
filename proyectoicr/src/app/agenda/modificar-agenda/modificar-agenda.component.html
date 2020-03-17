@@ -21,9 +21,20 @@
       </mat-select>
     </mat-form-field>
 
-    <table #tabla mat-table [dataSource]="dataSource" *ngIf="cursoSelected">
+    <table
+      #tabla
+      mat-table
+      matSort
+      [dataSource]="dataSource"
+      *ngIf="cursoSelected"
+    >
       <ng-container matColumnDef="Materia">
-        <th class="columnasNormales" mat-header-cell *matHeaderCellDef>
+        <th
+          class="columnasNormales"
+          mat-header-cell
+          *matHeaderCellDef
+          mat-sort-header
+        >
           Materia
         </th>
         <td
@@ -53,7 +64,12 @@
       </ng-container>
 
       <ng-container matColumnDef="Docente">
-        <th class="columnasNormales" mat-header-cell *matHeaderCellDef>
+        <th
+          class="columnasNormales"
+          mat-header-cell
+          *matHeaderCellDef
+          mat-sort-header
+        >
           Docente
         </th>
         <td
@@ -82,7 +98,14 @@
       </ng-container>
 
       <ng-container matColumnDef="Dia">
-        <th class="columnasNormales" mat-header-cell *matHeaderCellDef>Día</th>
+        <th
+          class="columnasNormales"
+          mat-header-cell
+          *matHeaderCellDef
+          mat-sort-header
+        >
+          Día
+        </th>
         <td
           class="columnasNormales"
           mat-cell
@@ -105,7 +128,12 @@
         </td>
       </ng-container>
       <ng-container matColumnDef="HoraInicio">
-        <th class="columnasNormales" mat-header-cell *matHeaderCellDef>
+        <th
+          class="columnasNormales"
+          mat-header-cell
+          *matHeaderCellDef
+          mat-sort-header
+        >
           Inicio
         </th>
         <td
@@ -137,7 +165,12 @@
         </td>
       </ng-container>
       <ng-container matColumnDef="HoraFin">
-        <th class="columnasNormales" mat-header-cell *matHeaderCellDef>
+        <th
+          class="columnasNormales"
+          mat-header-cell
+          *matHeaderCellDef
+          mat-sort-header
+        >
           Fin
         </th>
         <td
@@ -169,7 +202,12 @@
         </td>
       </ng-container>
       <ng-container matColumnDef="Accion">
-        <th class="columnasNormales" mat-header-cell *matHeaderCellDef>
+        <th
+          class="columnasNormales"
+          mat-header-cell
+          *matHeaderCellDef
+          mat-sort-header
+        >
           Acción
         </th>
         <td
@@ -205,8 +243,24 @@
       <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
     </table>
   </form>
+  <div class="divAgregar">
+    <button
+      mat-raised-button
+      class="buttonAgregar"
+      (click)="onAgregar()"
+      *ngIf="cursoSelected"
+    >
+      <mat-icon>add_circle_outline</mat-icon>
+      Agregar horario
+    </button>
+  </div>
   <div class="divGuardar">
-    <button mat-raised-button class="buttonPrimary" (click)="onGuardar(form)">
+    <button
+      mat-raised-button
+      class="buttonPrimary"
+      (click)="onGuardar(form)"
+      *ngIf="cursoSelected"
+    >
       Guardar
     </button>
     <button mat-raised-button (click)="popUpCancelar()" class="buttonWarn">

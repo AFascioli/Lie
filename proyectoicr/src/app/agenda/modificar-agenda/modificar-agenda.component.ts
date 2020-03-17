@@ -1,5 +1,10 @@
-import { Component, OnInit } from "@angular/core";
-import { MatSnackBar, MatTable } from "@angular/material";
+import { Component, OnInit, ViewChild } from "@angular/core";
+import {
+  MatSnackBar,
+  MatTable,
+  MatTableDataSource,
+  MatSort
+} from "@angular/material";
 import { EstudiantesService } from "src/app/estudiantes/estudiante.service";
 import { AgendaService } from "../agenda.service";
 import { UniqueSelectionDispatcher } from "@angular/cdk/collections";
@@ -14,7 +19,7 @@ export class ModificarAgendaComponent implements OnInit {
   idCursoSeleccionado: string;
   materias: any[];
   isEditing: Boolean = false;
-  dataSource: any[] = [];
+  dataSource = new MatTableDataSource<any>();
   indice = -1;
   cursoSelected: Boolean = false;
   mensajeError: string;
@@ -43,6 +48,8 @@ export class ModificarAgendaComponent implements OnInit {
     "14:15"
   ];
 
+  @ViewChild(MatSort, { static: true }) sort: MatSort;
+
   constructor(
     public servicioEstudiante: EstudiantesService,
     public servicioAgenda: AgendaService,
@@ -50,6 +57,7 @@ export class ModificarAgendaComponent implements OnInit {
   ) {}
 
   ngOnInit() {
+    this.dataSource.sort = this.sort;
     this.obtenerCursos();
     this.servicioAgenda.obtenerMaterias().subscribe(response => {
       this.materias = response.materias;
@@ -71,8 +79,8 @@ export class ModificarAgendaComponent implements OnInit {
   obtenerAgenda(idCurso) {
     this.cursoSelected = true;
     this.servicioAgenda.obtenerAgendaDeCurso(idCurso.value).subscribe(rtdo => {
-      this.dataSource = rtdo.agenda;
-      console.log("obtener agenda", this.dataSource);
+      this.dataSource.data = rtdo.agenda;
+      // this.dataSource.sort
     });
   }
 
@@ -87,7 +95,30 @@ export class ModificarAgendaComponent implements OnInit {
 
   onGuardar() {
     if (this.agendaValida) {
-      console.log(this.dataSource);
+      console.log(this.dataSource.data);
+      this.servicioAgenda.registrarAgenda(
+        this.dataSource.data,
+        this.idCursoSeleccionado
+      );
+    } else {
+      this.openSnackBar(this.mensajeError, "snack-bar-fracaso");
+    }
+  }
+
+  onAgregar() {
+    if (this.agendaValida) {
+      this.dataSource.data.push({
+        nombre: "",
+        idMXC: "",
+        dia: "",
+        inicio: "",
+        fin: "",
+        idDocente: "",
+        idMateria: "",
+        idHorarios: ""
+      });
+      this.dataSource._updateChangeSubscription(); // Fuerza el renderizado de la tabla.
+      console.log(this.dataSource.data);
     } else {
       this.openSnackBar(this.mensajeError, "snack-bar-fracaso");
     }
@@ -119,7 +150,7 @@ export class ModificarAgendaComponent implements OnInit {
       this.mensajeError = "El horario de inicio es menor al horario de fin";
       this.openSnackBar(this.mensajeError, "snack-bar-fracaso");
     } else {
-      for (let index = 0; index < this.dataSource.length; index++) {
+      for (let index = 0; index < this.dataSource.data.length; index++) {
         let moduloInicioFila = this.modulos.indexOf(
           this.dataSource[index].inicio
         );

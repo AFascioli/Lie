@@ -1,6 +1,7 @@
 table {
   width: 95%;
   margin: 2rem;
+  margin-top: 0px;
 }
 
 .columnasNormales {
@@ -46,4 +47,20 @@ button {
 
 .divGuardar {
   text-align: right;
+}
+
+.buttonPrimary {
+  margin-right: 13px !important;
+}
+
+.buttonAgregar {
+  background: gainsboro;
+}
+
+.divAgregar {
+  text-align: center;
+}
+
+th.mat-sort-header-sorted {
+  color: black;
 }
