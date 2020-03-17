@@ -1089,6 +1089,7 @@ router.post("/agenda", checkAuthMiddleware, async (req, res) => {
   );
 });
 
+//#RESOLVE checkAuthMiddleware,
 router.post("/agendaTEST", checkAuthMiddleware, async (req, res) => {
   var crearHorario = horario => {
     return new Promise((resolve, reject) => {
@@ -1105,27 +1106,38 @@ router.post("/agendaTEST", checkAuthMiddleware, async (req, res) => {
       });
     });
   };
-
+  console.log(req.body);
   var mxcNuevas = [];
+  let vectorIdsMXC = [];
   for (const materia of req.body.agenda) {//Recorrer agenda del front
     if (materia.idHorarios == null) {//vemos si la mxc es nueva o una modificada
-      for (const mxcNueva of mxcNuevas) {
-        //Recorrer mxcNuevas para saber si es una mxc nueva o es una ya creada que tiene un nuevo horario
-        if (mxcNueva.idMateria == materia.idMateria) {
-          mxcNueva.horaInicio.push({
-            dia: materia.dia,
-            inicio: materia.inicio,
-            fin: materia.fin
-          });
-        } else {
-          mxcNuevas.push({
-            idMateria: materia.idMateria,
-            idDocente: materia.idDocente,
-            horarios: [
-              { dia: materia.dia, inicio: materia.inicio, fin: materia.fin }
-            ]
-          });
+      if(mxcNuevas.length != 0){
+        for (const mxcNueva of mxcNuevas) {
+          //Recorrer mxcNuevas para saber si es una mxc nueva o es una ya creada que tiene un nuevo horario
+          if (mxcNueva.idMateria == materia.idMateria) {
+            mxcNueva.horaInicio.push({
+              dia: materia.dia,
+              inicio: materia.inicio,
+              fin: materia.fin
+            });
+          } else {
+            mxcNuevas.push({
+              idMateria: materia.idMateria,
+              idDocente: materia.idDocente,
+              horarios: [
+                { dia: materia.dia, inicio: materia.inicio, fin: materia.fin }
+              ]
+            });
+          }
         }
+      }else{
+        mxcNuevas.push({
+          idMateria: materia.idMateria,
+          idDocente: materia.idDocente,
+          horarios: [
+            { dia: materia.dia, inicio: materia.inicio, fin: materia.fin }
+          ]
+        });
       }
     } else if (materia.modificado) { //Se actualiza el nuevo horario para una mxc dada
       Horario.findByIdAndUpdate(materia.idHorarios, {
