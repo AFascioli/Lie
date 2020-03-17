@@ -57,7 +57,8 @@ button {
   background: gainsboro;
 }
 
-.divAgregar {
+.divAgregar,
+.parrafo {
   text-align: center;
 }
 

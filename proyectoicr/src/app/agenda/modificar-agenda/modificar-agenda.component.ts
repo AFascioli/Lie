@@ -1,13 +1,15 @@
-import { Component, OnInit, ViewChild } from "@angular/core";
+import { Component, OnInit, ViewChild, Inject } from "@angular/core";
 import {
   MatSnackBar,
   MatTable,
   MatTableDataSource,
-  MatSort
+  MatSort,
+  MatDialogRef,
+  MatDialog,
+  MAT_DIALOG_DATA
 } from "@angular/material";
 import { EstudiantesService } from "src/app/estudiantes/estudiante.service";
 import { AgendaService } from "../agenda.service";
-import { UniqueSelectionDispatcher } from "@angular/cdk/collections";
 
 @Component({
   selector: "app- modificar-agenda",
@@ -20,6 +22,7 @@ export class ModificarAgendaComponent implements OnInit {
   materias: any[];
   isEditing: Boolean = false;
   dataSource = new MatTableDataSource<any>();
+  removedDataSource = new MatTableDataSource<any>();
   indice = -1;
   cursoSelected: Boolean = false;
   mensajeError: string;
@@ -52,6 +55,7 @@ export class ModificarAgendaComponent implements OnInit {
   constructor(
     public servicioEstudiante: EstudiantesService,
     public servicioAgenda: AgendaService,
+    public dialog: MatDialog,
     private snackBar: MatSnackBar
   ) {}
 
@@ -120,7 +124,8 @@ export class ModificarAgendaComponent implements OnInit {
         fin: "",
         idDocente: "",
         idMateria: "",
-        idHorarios: null
+        idHorarios: null,
+        modificado: false
       });
       this.dataSource._updateChangeSubscription(); // Fuerza el renderizado de la tabla.
       setTimeout(() => {
@@ -198,16 +203,21 @@ export class ModificarAgendaComponent implements OnInit {
     }
   }
 
-  eliminarHorarios(agendaCurso) {
-    this.servicioAgenda
-      .eliminarHorarios(
-        this.idCursoSeleccionado,
-        agendaCurso.idHorarios,
-        agendaCurso.nombre
-      )
-      .subscribe(rtdo => {
-        console.log(rtdo);
-      });
+  popupEliminar(index) {
+    const dialogoElim = this.dialog.open(AgendaPopupComponent, {
+      width: "250px",
+      data: { index: index }
+    });
+
+    dialogoElim.afterClosed().subscribe(result => {
+      result && this.eliminarHorarios(index);
+    });
+  }
+
+  eliminarHorarios(index) {
+    this.removedDataSource.data.push(this.dataSource.data.splice(index, 1)[0]);
+    this.dataSource._updateChangeSubscription();
+    console.log("RemovedDataSource", this.removedDataSource.data);
   }
 
   openSnackBar(mensaje: string, exito: string) {
@@ -228,5 +238,26 @@ export class ModificarAgendaComponent implements OnInit {
           : 0
       );
     });
+  }
+}
+
+@Component({
+  selector: "app-agenda-popup",
+  templateUrl: "./agenda-popup.component.html",
+  styleUrls: ["./modificar-agenda.component.css"]
+})
+export class AgendaPopupComponent {
+  index: number;
+  constructor(
+    public dialogRef: MatDialogRef<AgendaPopupComponent>,
+    @Inject(MAT_DIALOG_DATA) data
+  ) {
+    this.index = data.index;
+  }
+  onYesClick(): void {
+    this.dialogRef.close(true);
+  }
+  onNoClick(): void {
+    this.dialogRef.close(false);
   }
 }

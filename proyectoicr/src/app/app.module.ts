@@ -113,7 +113,10 @@ import { MatCarouselModule } from "@ngmodule/material-carousel";
 import { VisualizarAgendaComponent } from "./agenda/visualizar-agenda/visualizar-agenda.component";
 import { RegistrarAgendaComponent } from "./agenda/registrar-agenda/registrar-agenda.component";
 import { RegistrarCuotasComponent } from "./cuotas/registrar-cuotas/registrar-cuotas.component";
-import { ModificarAgendaComponent } from "./agenda/modificar-agenda/modificar-agenda.component";
+import {
+  ModificarAgendaComponent,
+  AgendaPopupComponent
+} from "./agenda/modificar-agenda/modificar-agenda.component";
 import { RegistrarSancionesComponent } from "./sanciones/registrar-sanciones/registrar-sanciones.component";
 import { SancionesEstudianteComponent } from "./perfil-estudiante/sanciones-estudiante/sanciones-estudiante.component";
 import { ErrorInterceptor } from "./error-interceptor";
@@ -170,6 +173,7 @@ import { ErrorComponent } from "./error/error.component";
     RegistrarAgendaComponent,
     RegistrarCuotasComponent,
     ModificarAgendaComponent,
+    AgendaPopupComponent,
     RegistrarSancionesComponent,
     SancionesEstudianteComponent
   ],
@@ -188,6 +192,7 @@ import { ErrorComponent } from "./error/error.component";
     PreferenciasPopupComponent,
     AltaEmpleadoPopupComponent,
     AltaARPopupComponent,
+    AgendaPopupComponent,
     ReadMoreComponent,
     ErrorComponent
   ],

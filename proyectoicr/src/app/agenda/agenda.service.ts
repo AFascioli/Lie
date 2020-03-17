@@ -55,32 +55,4 @@ export class AgendaService {
   public obtenerMaterias() {
     return this.http.get<{ materias: any[] }>(environment.apiUrl + "/materia");
   }
-
-  //Elimina ciertos horarios registrados para un curso y una materia
-  //@params: id del curso
-  //@params: id horario
-  //@params: nombre de la materia
-  public eliminarHorarios(idCurso, idHorario, nombreMateria) {
-    return this.http.post<{ exito: boolean; message: string }>(
-      environment.apiUrl + "/curso/eliminarHorarios",
-      {
-        idCurso: idCurso,
-        idHorario: idHorario,
-        nombreMateria: nombreMateria
-      }
-    );
-  }
-
-  getMateriasDistintas(materias: any) {
-    let materiasDistintas: any[] = [];
-    for (let i = 0; i < materias.length; i++) {
-      if (
-        materiasDistintas.length == 0 ||
-        !materiasDistintas.includes(materias[i].nombre)
-      )
-        materiasDistintas.push(materias[i].nombre);
-    }
-    materiasDistintas.sort();
-    return materiasDistintas;
-  }
 }
