@@ -13,6 +13,7 @@ import {
   MatTableModule,
   MatSidenavModule,
   MatToolbarModule,
+  MatSortModule,
   MatIconModule,
   MatListModule,
   MatSlideToggleModule,

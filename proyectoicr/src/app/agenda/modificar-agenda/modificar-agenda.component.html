@@ -1,7 +1,7 @@
 <h1 class="componente-titulo">
   Modificar agenda de curso
 </h1>
-
+<!-- Selector de curso -->
 <mat-card class="card-body-componente">
   <form #form="ngForm">
     <mat-form-field>
@@ -26,8 +26,9 @@
       mat-table
       matSort
       [dataSource]="dataSource"
-      *ngIf="cursoSelected"
+      [hidden]="!cursoSelected"
     >
+      <!-- Selector de materia -->
       <ng-container matColumnDef="Materia">
         <th
           class="columnasNormales"
@@ -48,7 +49,7 @@
               id="materia{{ i }}"
               ngModel
               #materia+i="ngModel"
-              [disabled]="true"
+              [disabled]="nuevo != i || indice != i"
               [(ngModel)]="agendaCurso.idMateria"
               matNativeControl
             >
@@ -62,7 +63,7 @@
           </mat-form-field>
         </td>
       </ng-container>
-
+      <!-- Selector de docente -->
       <ng-container matColumnDef="Docente">
         <th
           class="columnasNormales"
@@ -82,7 +83,7 @@
               name="docente{{ i }}"
               ngModel
               #docente+i="ngModel"
-              [disabled]="true"
+              [disabled]="nuevo != i || indice != i"
               [(ngModel)]="agendaCurso.idDocente"
               matNativeControl
             >
@@ -96,7 +97,7 @@
           </mat-form-field>
         </td>
       </ng-container>
-
+      <!-- Dia -->
       <ng-container matColumnDef="Dia">
         <th
           class="columnasNormales"
@@ -127,6 +128,7 @@
           </mat-form-field>
         </td>
       </ng-container>
+      <!-- Time picker de hora inicio -->
       <ng-container matColumnDef="HoraInicio">
         <th
           class="columnasNormales"
@@ -164,6 +166,7 @@
           </mat-form-field>
         </td>
       </ng-container>
+      <!-- Time picker de hora inicio -->
       <ng-container matColumnDef="HoraFin">
         <th
           class="columnasNormales"
@@ -189,7 +192,7 @@
                 [format]="24"
                 [disabled]="indice != i"
                 [(ngModel)]="agendaCurso.fin"
-                min="07:30"
+                min="08:15"
                 max="13:30"
                 readonly
               />
@@ -201,13 +204,9 @@
           </mat-form-field>
         </td>
       </ng-container>
+      <!-- Botones/Acciones -->
       <ng-container matColumnDef="Accion">
-        <th
-          class="columnasNormales"
-          mat-header-cell
-          *matHeaderCellDef
-          mat-sort-header
-        >
+        <th class="columnasNormales" mat-header-cell *matHeaderCellDef>
           Acción
         </th>
         <td

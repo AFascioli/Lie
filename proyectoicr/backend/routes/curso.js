@@ -1169,7 +1169,7 @@ router.post("/eliminarHorarios", checkAuthMiddleware, (req, res) => {
         //   });
         // });
       } else {
-        console.log("mando por aca");
+        // console.log("mando por aca");
         // MateriaXCurso.findByIdAndDelete(horariosDeMateria[0].MXC._id).then(() => {
         //   Curso.findById(req.body.idCurso).then(curso => {
         //     for (var i = 0; i < curso.materias.length; i++) {

@@ -47,8 +47,7 @@ export class ModificarAgendaComponent implements OnInit {
     "13:30",
     "14:15"
   ];
-
-  @ViewChild(MatSort, { static: true }) sort: MatSort;
+  nuevo: number;
 
   constructor(
     public servicioEstudiante: EstudiantesService,
@@ -56,13 +55,18 @@ export class ModificarAgendaComponent implements OnInit {
     private snackBar: MatSnackBar
   ) {}
 
+  @ViewChild(MatSort, { static: true }) sort: MatSort;
+
   ngOnInit() {
-    this.dataSource.sort = this.sort;
     this.obtenerCursos();
     this.servicioAgenda.obtenerMaterias().subscribe(response => {
       this.materias = response.materias;
     });
     this.obtenerDocentes();
+  }
+
+  ngAfterViewInit() {
+    this.dataSource.sort = this.sort;
   }
 
   obtenerDocentes() {
@@ -80,7 +84,6 @@ export class ModificarAgendaComponent implements OnInit {
     this.cursoSelected = true;
     this.servicioAgenda.obtenerAgendaDeCurso(idCurso.value).subscribe(rtdo => {
       this.dataSource.data = rtdo.agenda;
-      // this.dataSource.sort
     });
   }
 
@@ -107,6 +110,8 @@ export class ModificarAgendaComponent implements OnInit {
 
   onAgregar() {
     if (this.agendaValida) {
+      let largo = this.dataSource.data.length;
+      this.nuevo = largo;
       this.dataSource.data.push({
         nombre: "",
         idMXC: "",
@@ -118,7 +123,9 @@ export class ModificarAgendaComponent implements OnInit {
         idHorarios: ""
       });
       this.dataSource._updateChangeSubscription(); // Fuerza el renderizado de la tabla.
-      console.log(this.dataSource.data);
+      setTimeout(() => {
+        this.editarAgenda(largo);
+      }, 100);
     } else {
       this.openSnackBar(this.mensajeError, "snack-bar-fracaso");
     }
@@ -152,11 +159,13 @@ export class ModificarAgendaComponent implements OnInit {
     } else {
       for (let index = 0; index < this.dataSource.data.length; index++) {
         let moduloInicioFila = this.modulos.indexOf(
-          this.dataSource[index].inicio
+          this.dataSource.data[index].inicio
         );
-        let moduloFinFila = this.modulos.indexOf(this.dataSource[index].fin);
+        let moduloFinFila = this.modulos.indexOf(
+          this.dataSource.data[index].fin
+        );
         if (
-          this.dataSource[index].dia == dia &&
+          this.dataSource.data[index].dia == dia &&
           index != indice &&
           ((moduloInicioFila <= moduloInicio && moduloFinFila > moduloInicio) ||
             (moduloInicioFila < moduloFin && moduloFinFila >= moduloFin))
