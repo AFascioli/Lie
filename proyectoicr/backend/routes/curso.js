@@ -1042,7 +1042,7 @@ router.post("/eliminarHorarios", checkAuthMiddleware, (req, res) => {
 //Registra las materiasXCurso de un curso dado, cada una de estas tiene su propio horario.
 //@params: id del curso
 //@params: agenda, que es un objeto que tiene idMateria, idDocente y el vector de horarios
-router.post("/agenda", checkAuthMiddleware, async (req, res) => {
+router.post("/agendaTEST", checkAuthMiddleware, async (req, res) => {
   var crearHorario = horario => {
     return new Promise((resolve, reject) => {
       horario.save().then(horarioGuardado => {
