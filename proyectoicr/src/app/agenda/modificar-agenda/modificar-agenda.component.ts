@@ -98,7 +98,7 @@ export class ModificarAgendaComponent implements OnInit {
 
   onGuardar() {
     if (this.agendaValida) {
-      console.log(this.dataSource.data);
+      console.log(JSON.stringify(this.dataSource.data));
       this.servicioAgenda.registrarAgenda(
         this.dataSource.data,
         this.idCursoSeleccionado
@@ -120,7 +120,7 @@ export class ModificarAgendaComponent implements OnInit {
         fin: "",
         idDocente: "",
         idMateria: "",
-        idHorarios: ""
+        idHorarios: null
       });
       this.dataSource._updateChangeSubscription(); // Fuerza el renderizado de la tabla.
       setTimeout(() => {
@@ -184,16 +184,18 @@ export class ModificarAgendaComponent implements OnInit {
     this.mensajeError =
       "Necesitas finalizar la edición de la correspondiente fila";
     if (this.indice != -1) {
+      //Cuando no se esta editando/no se utiliza se valua el indice en -1.
       this.openSnackBar(this.mensajeError, "snack-bar-aviso");
-      return;
+    } else {
+      this.dataSource.data[indice].modificado = true;
+      this.indice = indice;
+      let botonEditar: HTMLElement = document.getElementById("editar" + indice);
+      let botonReservar: HTMLElement = document.getElementById(
+        "reservar" + indice
+      );
+      botonEditar.style.display = "none";
+      botonReservar.style.display = "block";
     }
-    this.indice = indice;
-    let botonEditar: HTMLElement = document.getElementById("editar" + indice);
-    let botonReservar: HTMLElement = document.getElementById(
-      "reservar" + indice
-    );
-    botonEditar.style.display = "none";
-    botonReservar.style.display = "block";
   }
 
   eliminarHorarios(agendaCurso) {

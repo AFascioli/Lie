@@ -1062,7 +1062,8 @@ router.get("/agenda", checkAuthMiddleware, (req, res) => {
             fin: agendaCompleta[i].horarios[0].horaFin,
             idDocente: agendaCompleta[i].docente[0]._id,
             idMateria: agendaCompleta[i].nombreMateria[0]._id,
-            idHorarios: agendaCompleta[i].horarios[0]._id
+            idHorarios: agendaCompleta[i].horarios[0]._id,
+            modificado: false
           };
           agenda.push(valor);
         }
