@@ -1089,7 +1089,10 @@ router.post("/agenda", checkAuthMiddleware, async (req, res) => {
   );
 });
 
-//#RESOLVE checkAuthMiddleware,
+//Se fija cada objeto del vector agenda, si es una mxc nueva la registra
+//para un curso dado, sino se modifica el horario de la mxc existente.
+//@params: id del curso
+//@params: agenda, que es un vector que tiene objetos con idMateria, idDocente, modificado  y el vector de horarios
 router.post("/agendaTEST", checkAuthMiddleware, async (req, res) => {
   var crearHorario = horario => {
     return new Promise((resolve, reject) => {
