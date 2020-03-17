@@ -32,17 +32,20 @@ router.get("/", checkAuthMiddleware, (req, res) => {
 });
 
 router.post("/registrarSancion", checkAuthMiddleware, (req, res) => {
-  Inscripcion.findOne({ idEstudiante: req.body.idEstudiante, activa: true }).then(
-    inscripcion => {
-      inscripcion.sanciones[req.body.tipoSancion].cantidad += parseInt(req.body.cantidad);
-      inscripcion.save().then(
-        res.status(200).json({
-          message: "Se ha registrado la sanción del estudiante correctamente",
-          exito: true
-        })
-      );
-    }
-  );
+  Inscripcion.findOne({
+    idEstudiante: req.body.idEstudiante,
+    activa: true
+  }).then(inscripcion => {
+    inscripcion.sanciones[req.body.tipoSancion].cantidad += parseInt(
+      req.body.cantidad
+    );
+    inscripcion.save().then(
+      res.status(200).json({
+        message: "Se ha registrado la sanción del estudiante correctamente",
+        exito: true
+      })
+    );
+  });
 });
 
 //Obtiene el estado de las cuotas de todos los estudiantes de un curso
@@ -917,7 +920,8 @@ router.get("/agenda", checkAuthMiddleware, (req, res) => {
           fin: agendaCompleta[i].horarios[0].horaFin,
           nombreDocente: agendaCompleta[i].docente[0].nombre,
           apellidoDocente: agendaCompleta[i].docente[0].apellido,
-          idHorarios: agendaCompleta[i].horarios[0]._id
+          idHorarios: agendaCompleta[i].horarios[0]._id,
+          modificado: false
         };
         agenda.push(valor);
       }
@@ -1085,6 +1089,83 @@ router.post("/agenda", checkAuthMiddleware, async (req, res) => {
   );
 });
 
+router.post("/agenda", checkAuthMiddleware, async (req, res) => {
+  var crearHorario = horario => {
+    return new Promise((resolve, reject) => {
+      horario.save().then(horarioGuardado => {
+        resolve(horarioGuardado._id);
+      });
+    });
+  };
+
+  var crearMateriaXCurso = mxc => {
+    return new Promise((resolve, reject) => {
+      mxc.save().then(mxcGuardada => {
+        resolve(mxcGuardada._id);
+      });
+    });
+  };
+
+  var mxcNuevas = [];
+  for (const materia of req.body.agenda) {//Recorrer agenda del front
+    if (materia.idHorarios == null) {//vemos si la mxc es nueva o una modificada
+      for (const mxcNueva of mxcNuevas) {
+        //Recorrer mxcNuevas para saber si es una mxc nueva o es una ya creada que tiene un nuevo horario
+        if (mxcNueva.idMateria == materia.idMateria) {
+          mxcNueva.horaInicio.push({
+            dia: materia.dia,
+            inicio: materia.inicio,
+            fin: materia.fin
+          });
+        } else {
+          mxcNuevas.push({
+            idMateria: materia.idMateria,
+            idDocente: materia.idDocente,
+            horarios: [
+              { dia: materia.dia, inicio: materia.inicio, fin: materia.fin }
+            ]
+          });
+        }
+      }
+    } else if (materia.modificado) { //Se actualiza el nuevo horario para una mxc dada
+      Horario.findByIdAndUpdate(materia.idHorarios, {
+        dia: materia.dia,
+        horaInicio: materia.inicio,
+        horaFin: materia.fin
+      }).exec();
+    }
+  }
+
+  if (mxcNuevas.length != 0) {//Hay mxc nuevas para guarda en la bd
+    for (const mxcNueva of mxcNuevas) {
+      let vectorIdsHorarios = [];
+      for (const horario of mxcNueva.horarios) {
+        let nuevoHorario = new Horario({
+          dia: horario.dia,
+          horaInicio: horario.inicio,
+          horaFin: horario.fin
+        });
+        let idHorarioGuardado = await crearHorario(nuevoHorario);
+        vectorIdsHorarios.push(idHorarioGuardado);
+      }
+      let nuevaMateriaXCurso = new MateriaXCurso({
+        materia: mxcNueva.idMateria,
+        idDocente: mxcNueva.idDocente,
+        horarios: vectorIdsHorarios
+      });
+
+      let idMXC = await crearMateriaXCurso(nuevaMateriaXCurso);
+      vectorIdsMXC.push(idMXC);
+    }
+    Curso.findByIdAndUpdate(req.body.idCurso, { materias: vectorIdsMXC }).then(
+      () => {
+        res.json({ exito: true, message: "nice" });
+      }
+    );
+  }else{
+    res.json({ exito: true, message: "nice" });
+  }
+});
 //Obtiene la agenda de un curso (materias, horario y día dictadas)
 //@params: idCurso
 // router.get("/agenda", checkAuthMiddleware, (req, res) => {
