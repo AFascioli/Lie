@@ -38,7 +38,7 @@
     "core-util-is": "^1.0.2",
     "cron": "^1.7.2",
     "express": "^4.17.1",
-    "http-server": "^0.11.1",
+    "http-server": "^0.12.1",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.6.0",
     "mongoose-unique-validator": "^2.0.3",

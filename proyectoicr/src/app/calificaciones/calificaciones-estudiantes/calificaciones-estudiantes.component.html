@@ -63,6 +63,11 @@
         </mat-select>
       </mat-form-field>
     </div>
+    <mat-form-field class="filtro">
+      <mat-label>Filtrar estudiante</mat-label>
+      <input matInput (keyup)="aplicarFiltro($event.target.value)" placeholder="Estudiante">
+    </mat-form-field>
+
     <table mat-table [dataSource]="dataSource" *ngIf="estudiantes">
       <ng-container matColumnDef="apellido">
         <th class="columnasNormales" mat-header-cell *matHeaderCellDef>

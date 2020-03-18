@@ -31,6 +31,20 @@ router.get("/", checkAuthMiddleware, (req, res) => {
     });
 });
 
+router.post("/registrarSancion", checkAuthMiddleware, (req, res) => {
+  Inscripcion.findOne({ idEstudiante: req.body.idEstudiante, activa: true }).then(
+    inscripcion => {
+      inscripcion.sanciones[req.body.tipoSancion].cantidad += parseInt(req.body.cantidad);
+      inscripcion.save().then(
+        res.status(200).json({
+          message: "Se ha registrado la sanción del estudiante correctamente",
+          exito: true
+        })
+      );
+    }
+  );
+});
+
 //Obtiene el estado de las cuotas de todos los estudiantes de un curso
 //@params: id del curso
 //@params: mes de la cuota
@@ -654,6 +668,18 @@ router.post("/inscripciontest", checkAuthMiddleware, async (req, res) => {
     });
   };
 
+  var crearSanciones = () => {
+    return new Promise((resolve, reject) => {
+      sanciones = [
+        { id: 1, tipo: "Llamados de atencion", cantidad: 0 },
+        { id: 2, tipo: "Apercibimiento", cantidad: 0 },
+        { id: 3, tipo: "Amonestaciones", cantidad: 0 },
+        { id: 4, tipo: "Suspension", cantidad: 0 }
+      ];
+      resolve(sanciones);
+    });
+  };
+
   var cearCuotas = () => {
     return new Promise((resolve, reject) => {
       cuotas = [];
@@ -693,6 +719,7 @@ router.post("/inscripciontest", checkAuthMiddleware, async (req, res) => {
 
   var materiasDelCurso = await obtenerMateriasDeCurso();
   var cuotas = await cearCuotas();
+  var sanciones = await crearSanciones();
   var estadoCursandoMateria = await obtenerEstadoCursandoMateria();
   var idsCXMNuevas = await ClaseCalifXMateria.crearCXM(
     materiasDelCurso,
@@ -711,7 +738,8 @@ router.post("/inscripciontest", checkAuthMiddleware, async (req, res) => {
     calificacionesXMateria: idsCXMNuevas,
     materiasPendientes: materiasPendientesNuevas,
     año: 2019,
-    cuotas: cuotas
+    cuotas: cuotas,
+    sanciones: sanciones
   });
 
   nuevaInscripcion.save().then(() => {

@@ -37,7 +37,7 @@ export class MenuLateralComponent implements OnInit {
     public changeDetectorRef: ChangeDetectorRef,
     public media: MediaMatcher
   ) {
-    this.mobileQuery = media.matchMedia('(max-width: 800px)');
+    this.mobileQuery = media.matchMedia('(max-width: 1000px)');//Estaba en 800, lo tiro a 1000
     this._mobileQueryListener = () => changeDetectorRef.detectChanges();
     this.mobileQuery.addListener(this._mobileQueryListener);
   }

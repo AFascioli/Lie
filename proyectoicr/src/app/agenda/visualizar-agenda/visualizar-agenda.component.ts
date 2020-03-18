@@ -1,8 +1,9 @@
 import { AgendaService } from "../agenda.service";
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, ChangeDetectorRef } from "@angular/core";
 import { EstudiantesService } from "src/app/estudiantes/estudiante.service";
 import { delay } from "q";
 import { MatSnackBar } from '@angular/material';
+import { MediaMatcher } from '@angular/cdk/layout';
 
 @Component({
   selector: "app-visualizar-agenda",
@@ -30,11 +31,20 @@ export class VisualizarAgendaComponent implements OnInit {
   cursoSelected: Boolean = false;
   colores = [];
   materias: any[] = [];
+  _mobileQueryListener: () => void;
+  mobileQuery: MediaQueryList;
+
   constructor(
     public servicioEstudiante: EstudiantesService,
     public servicioAgenda: AgendaService,
-    public snackBar: MatSnackBar
-  ) {}
+    public snackBar: MatSnackBar,
+    public changeDetectorRef: ChangeDetectorRef,
+    public media: MediaMatcher
+  ) {
+    this.mobileQuery = media.matchMedia('(max-width: 880px)');
+    this._mobileQueryListener = () => changeDetectorRef.detectChanges();
+    this.mobileQuery.addListener(this._mobileQueryListener);
+  }
 
   ngOnInit() {
     this.obtenerCursos();
@@ -45,17 +55,12 @@ export class VisualizarAgendaComponent implements OnInit {
 
   // Obtiene la agenda de un curso y le asigna a las materias un color distinto
   async obtenerAgenda(idCurso) {
-
     return new Promise((resolve, reject) => {
       this.servicioAgenda
         .obtenerAgendaDeCurso(idCurso)
         .subscribe(async agenda => {
           if(agenda.exito){
               this.cursoSelected = true;
-              this.snackBar.open(agenda.message, "", {
-                panelClass: ["snack-bar-exito"],
-                duration: 3000
-              });
           }
           else{
             this.cursoSelected = false;
@@ -76,6 +81,7 @@ export class VisualizarAgendaComponent implements OnInit {
   actualizarInterfaz(idCurso) {
     (async () => {
       let agenda: any = await this.obtenerAgenda(idCurso.value);
+      console.log(agenda);
       agenda.forEach((materia, index) => {
         this.setInGrid(index.toString(), materia);
       });
