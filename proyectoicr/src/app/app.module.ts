@@ -1,3 +1,4 @@
+
 import { Evento } from './eventos/evento.model';
 import { ReadMoreComponent } from './eventos/visualizar-evento/read-more.component';
 import { AuthInterceptor } from "./login/auth-interceptor";
@@ -14,6 +15,7 @@ import {
   MatTableModule,
   MatSidenavModule,
   MatToolbarModule,
+  MatSortModule,
   MatIconModule,
   MatListModule,
   MatSlideToggleModule,
@@ -108,19 +110,24 @@ import { CalificacionesExamenesComponent } from "./calificaciones/calificaciones
 import { RegistrarEventoComponent } from "./eventos/registrar-evento/registrar-evento.component";
 import { getDutchPaginatorIntl } from "./calificaciones/calificaciones-estudiantes/calificaciones-estudiantes.component";
 import { ModificarEventoComponent } from "./eventos/modificar-evento/modificar-evento.component";
-import { VisualizarEventoComponent } from './eventos/visualizar-evento/visualizar-evento.component';
-import { MatCarouselModule } from '@ngmodule/material-carousel';
+import { VisualizarEventoComponent } from "./eventos/visualizar-evento/visualizar-evento.component";
+import { MatCarouselModule } from "@ngmodule/material-carousel";
 import { VisualizarAgendaComponent } from "./agenda/visualizar-agenda/visualizar-agenda.component";
-import { RegistrarAgendaComponent } from './agenda/registrar-agenda/registrar-agenda.component';
-import { RegistrarCuotasComponent } from './cuotas/registrar-cuotas/registrar-cuotas.component';
-import { ModificarAgendaComponent } from "./agenda/modificar-agenda/modificar-agenda.component";
-import { VolverPopupComponent } from './popup-genericos/volver-popup/volver-popup.component';
-import { RegistrarSancionesComponent } from './sanciones/registrar-sanciones/registrar-sanciones.component';
-import { SancionesEstudianteComponent } from './perfil-estudiante/sanciones-estudiante/sanciones-estudiante.component';
+import { RegistrarAgendaComponent } from "./agenda/registrar-agenda/registrar-agenda.component";
+import { RegistrarCuotasComponent } from "./cuotas/registrar-cuotas/registrar-cuotas.component";
+import {
+  ModificarAgendaComponent,
+  AgendaPopupComponent
+} from "./agenda/modificar-agenda/modificar-agenda.component";
+import { RegistrarSancionesComponent } from "./sanciones/registrar-sanciones/registrar-sanciones.component";
+import { SancionesEstudianteComponent } from "./perfil-estudiante/sanciones-estudiante/sanciones-estudiante.component";
+import { ErrorInterceptor } from "./error-interceptor";
+import { ErrorComponent } from "./error/error.component";
 
 @NgModule({
   declarations: [
     AppComponent,
+    ErrorComponent,
     AltaEstudiantesComponent,
     BuscarEstudiantesComponent,
     ListaEstudiantesComponent,
@@ -168,7 +175,7 @@ import { SancionesEstudianteComponent } from './perfil-estudiante/sanciones-estu
     RegistrarAgendaComponent,
     RegistrarCuotasComponent,
     ModificarAgendaComponent,
-    VolverPopupComponent,
+    AgendaPopupComponent,
     RegistrarSancionesComponent,
     SancionesEstudianteComponent
   ],
@@ -187,7 +194,9 @@ import { SancionesEstudianteComponent } from './perfil-estudiante/sanciones-estu
     PreferenciasPopupComponent,
     AltaEmpleadoPopupComponent,
     AltaARPopupComponent,
-    ReadMoreComponent
+    AgendaPopupComponent,
+    ReadMoreComponent,
+    ErrorComponent
   ],
   imports: [
     MatChipsModule,
@@ -235,8 +244,8 @@ import { SancionesEstudianteComponent } from './perfil-estudiante/sanciones-estu
   providers: [
     EstudiantesService,
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
+    { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },
     { provide: LOCALE_ID, useValue: "es" },
-
     { provide: MatPaginatorIntl, useValue: getDutchPaginatorIntl() }
   ],
   bootstrap: [AppComponent]

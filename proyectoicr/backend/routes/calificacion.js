@@ -53,27 +53,39 @@ router.get("/materiasDesaprobadas", (req, res) => {
         materiasPendientesArray: 1
       }
     }
-  ]).then(materias => {
-    ClaseCXM.obtenerMateriasDesaprobadas(
-      materias[0].materiasPendientesNombres,
-      materias[0].CXM,
-      materias[0].nombreCXM
-    ).then(materiasDesaprobadas => {
-      if (materiasDesaprobadas.length !=0) {
-        return res.status(200).json({
-          message: "Materias desaprobadas obtenidas correctamente",
-          exito: true,
-          materiasDesaprobadas: materiasDesaprobadas
+  ])
+    .then(materias => {
+      ClaseCXM.obtenerMateriasDesaprobadas(
+        materias[0].materiasPendientesNombres,
+        materias[0].CXM,
+        materias[0].nombreCXM
+      )
+        .then(materiasDesaprobadas => {
+          if (materiasDesaprobadas.length != 0) {
+            return res.status(200).json({
+              message: "Materias desaprobadas obtenidas correctamente",
+              exito: true,
+              materiasDesaprobadas: materiasDesaprobadas
+            });
+          } else {
+            return res.status(200).json({
+              message: "El alumno seleccionado no tiene materias desaprobadas",
+              exito: true,
+              materiasDesaprobadas: []
+            });
+          }
+        })
+        .catch(() => {
+          res.status(500).json({
+            message: "Mensaje de error especifico"
+          });
         });
-      } else {
-        return res.status(200).json({
-          message: "El alumno seleccionado no tiene materias desaprobadas",
-          exito: true,
-          materiasDesaprobadas: []
-        });
-      }
+    })
+    .catch(() => {
+      res.status(500).json({
+        message: "Mensaje de error especifico"
+      });
     });
-  });
 });
 
 //Dado una id de estudiante y un trimestre obtiene todas las materias con sus respectivas calificaciones
@@ -130,24 +142,29 @@ router.get("/materia/calificaciones", (req, res) => {
         "materia.nombre": 1
       }
     }
-  ]).then(resultado => {
-    let vectorRespuesta = [];
-    resultado.forEach(objEnResultado => {
-      vectorRespuesta.push({
-        materia: objEnResultado.materia[0].nombre,
-        calificaciones: objEnResultado.cXT.calificaciones
+  ])
+    .then(resultado => {
+      let vectorRespuesta = [];
+      resultado.forEach(objEnResultado => {
+        vectorRespuesta.push({
+          materia: objEnResultado.materia[0].nombre,
+          calificaciones: objEnResultado.cXT.calificaciones
+        });
+      });
+      res.status(200).json({
+        message: "Operación exitosa",
+        exito: true,
+        vectorCalXMat: vectorRespuesta
+      });
+    })
+    .catch(() => {
+      res.status(500).json({
+        message: "Mensaje de error especifico"
       });
     });
-    res.status(200).json({
-      message: "Operación exitosa",
-      exito: true,
-      vectorCalXMat: vectorRespuesta
-    });
-  });
 });
 
 router.post("/registrarCalificacionExamen", (req, res) => {
-  console.log(req.body);
   Inscripcion.aggregate([
     {
       $match: {
@@ -192,72 +209,117 @@ router.post("/registrarCalificacionExamen", (req, res) => {
         materiasPendientesArray: 1
       }
     }
-  ]).then(materias => {
-    // recorremos las materias de este año para ver si coincide con la rendida
-    // y le asignamos el promedio y estado
-    for (i = 0; i < materias[0].CXM.length - 1; i++) {
-      if (materias[0].CXM[i].idMateria == req.body.idMateria) {
-        Estado.findOne({
-          ambito: "CalificacionesXMateria",
-          nombre: "Aprobada"
-        }).then(async estado => {
-          await CalificacionesXMateria.findOne({
-            idMateria: req.body.idMateria,
-            _id: materias[0].CXM[i]._id
-          }).then(async CXMateria => {
-            CXMateria.promedio = req.body.calificacion;
-            CXMateria.estado = estado._id;
-            await CXMateria.save().then(() => {
-              return res.status(200).json({
-                message: "Se asignó la calificacion del examen exitosamente",
-                exito: true
-              });
-            });
-          });
-        });
-        return;
-      }
-    }
-
-    if (materias[0].materiasPendientesArray.length != 0) {
-      let indiceMateriaRendida;
-      // recorremos las materias pendientes para ver si coincide con la rendida
+  ])
+    .then(materias => {
+      // recorremos las materias de este año para ver si coincide con la rendida
       // y le asignamos el promedio y estado
-      for (i = 0; i < materias[0].materiasPendientesArray.length - 1; i++) {
-        if (
-          materias[0].materiasPendientesArray[i].idMateria == req.body.idMateria
-        ) {
-          indiceMateriaRendida = i;
+      for (i = 0; i < materias[0].CXM.length - 1; i++) {
+        if (materias[0].CXM[i].idMateria == req.body.idMateria) {
           Estado.findOne({
             ambito: "CalificacionesXMateria",
             nombre: "Aprobada"
-          }).then(async estado => {
-            await CalificacionesXMateria.findOne({
-              idMateria: req.body.idMateria,
-              _id: materias[0].materiasPendientesArray[i]._id
-            }).then(async CXMateria => {
-              CXMateria.promedio = req.body.calificacion;
-              CXMateria.estado = estado._id;
-              await CXMateria.save().then(() => {
-                return res.status(200).json({
-                  message: "Se asignó la calificacion del examen exitosamente",
-                  exito: true
+          })
+            .then(async estado => {
+              await CalificacionesXMateria.findOne({
+                idMateria: req.body.idMateria,
+                _id: materias[0].CXM[i]._id
+              })
+                .then(async CXMateria => {
+                  CXMateria.promedio = req.body.calificacion;
+                  CXMateria.estado = estado._id;
+                  await CXMateria.save()
+                    .then(() => {
+                      return res.status(200).json({
+                        message:
+                          "Se asignó la calificacion del examen exitosamente",
+                        exito: true
+                      });
+                    })
+                    .catch(() => {
+                      res.status(500).json({
+                        message: "Mensaje de error especifico"
+                      });
+                    });
+                })
+                .catch(() => {
+                  res.status(500).json({
+                    message: "Mensaje de error especifico"
+                  });
                 });
+            })
+            .catch(() => {
+              res.status(500).json({
+                message: "Mensaje de error especifico"
               });
             });
-          });
-          //Sacamos la materia aprobada del array de materias pendientes
-          materias[0].materiasPendientesArray.splice(indiceMateriaRendida, 1);
           return;
         }
       }
-    }
 
-    return res.status(200).json({
-      message: "No se logró asignar la calificacion del examen",
-      exito: false
+      if (materias[0].materiasPendientesArray.length != 0) {
+        let indiceMateriaRendida;
+        // recorremos las materias pendientes para ver si coincide con la rendida
+        // y le asignamos el promedio y estado
+        for (i = 0; i < materias[0].materiasPendientesArray.length - 1; i++) {
+          if (
+            materias[0].materiasPendientesArray[i].idMateria ==
+            req.body.idMateria
+          ) {
+            indiceMateriaRendida = i;
+            Estado.findOne({
+              ambito: "CalificacionesXMateria",
+              nombre: "Aprobada"
+            })
+              .then(async estado => {
+                await CalificacionesXMateria.findOne({
+                  idMateria: req.body.idMateria,
+                  _id: materias[0].materiasPendientesArray[i]._id
+                })
+                  .then(async CXMateria => {
+                    CXMateria.promedio = req.body.calificacion;
+                    CXMateria.estado = estado._id;
+                    await CXMateria.save()
+                      .then(() => {
+                        return res.status(200).json({
+                          message:
+                            "Se asignó la calificacion del examen exitosamente",
+                          exito: true
+                        });
+                      })
+                      .catch(() => {
+                        res.status(500).json({
+                          message: "Mensaje de error especifico"
+                        });
+                      });
+                  })
+                  .catch(() => {
+                    res.status(500).json({
+                      message: "Mensaje de error especifico"
+                    });
+                  });
+              })
+              .catch(() => {
+                res.status(500).json({
+                  message: "Mensaje de error especifico"
+                });
+              });
+            //Sacamos la materia aprobada del array de materias pendientes
+            materias[0].materiasPendientesArray.splice(indiceMateriaRendida, 1);
+            return;
+          }
+        }
+      }
+
+      return res.status(200).json({
+        message: "No se logró asignar la calificacion del examen",
+        exito: false
+      });
+    })
+    .catch(() => {
+      res.status(500).json({
+        message: "Mensaje de error especifico"
+      });
     });
-  });
 });
 
 module.exports = router;

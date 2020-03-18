@@ -27,12 +27,11 @@ router.post("/", checkAuthMiddleware, (req, res) => {
         exito: true
       });
     })
-    .catch(err =>
-      console.log(
-        "Se presentó un error al querer almacenar el empleado en la base de datos" +
-          err
-      )
-    );
+    .catch(() => {
+      res.status(500).json({
+        message: "Mensaje de error especifico"
+      });
+    });
 });
 
 //Retorna todos los docentes de la institucion
@@ -42,6 +41,11 @@ router.get("/docente", checkAuthMiddleware, (req, res) => {
     .then(docentes => {
       res.status(201).json({
         docentes: docentes
+      });
+    })
+    .catch(() => {
+      res.status(500).json({
+        message: "Mensaje de error especifico"
       });
     });
 });

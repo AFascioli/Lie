@@ -109,6 +109,7 @@ export class BuscarPopupComponent {
     this.dialogRef.close();
   }
   onNoClick(): void {
+    console.log(this.dialogRef);
     this.dialogRef.close();
   }
 

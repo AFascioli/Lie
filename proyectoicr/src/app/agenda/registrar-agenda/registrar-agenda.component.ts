@@ -1,8 +1,9 @@
-import { AgendaService } from '../agenda.service';
-import { NgForm } from "@angular/forms";
+import { NgForm, NgModel } from "@angular/forms";
 import { Component, OnInit } from "@angular/core";
 import { EstudiantesService } from "src/app/estudiantes/estudiante.service";
-import { MatSnackBar } from "@angular/material";
+import { MatSnackBar, MatDialog } from "@angular/material";
+import { CancelPopupComponent } from "src/app/popup-genericos/cancel-popup.component";
+import { AgendaService } from "../agenda.service";
 
 @Component({
   selector: "app-registrar-agenda",
@@ -33,14 +34,16 @@ export class RegistrarAgendaComponent implements OnInit {
     "13:30",
     "14:15"
   ];
-  horariosValidos = false;
+  agendaValida = true;
   mensajeError = "";
+  materiasSeleccionadas = [];
 
   constructor(
     public servicioEstudiante: EstudiantesService,
     public servicioAgenda: AgendaService,
+    public dialog: MatDialog,
     private snackBar: MatSnackBar
-  ) { }
+  ) {}
 
   ngOnInit() {
     this.obtenerCursos();
@@ -59,7 +62,7 @@ export class RegistrarAgendaComponent implements OnInit {
     }
   }
 
-  ngAfterViewInit() { }
+  ngAfterViewInit() {}
 
   obtenerCursos() {
     this.servicioEstudiante.obtenerCursos().subscribe(response => {
@@ -68,17 +71,9 @@ export class RegistrarAgendaComponent implements OnInit {
         a.curso.charAt(0) > b.curso.charAt(0)
           ? 1
           : b.curso.charAt(0) > a.curso.charAt(0)
-            ? -1
-            : 0
+          ? -1
+          : 0
       );
-    });
-  }
-
-  obtenerAgenda(idCurso) { //#wip
-    this.idCursoSeleccionado = idCurso.value;
-    this.servicioAgenda.obtenerAgendaDeCurso(idCurso.value).subscribe(rtdo => {
-      this.agendaCurso = rtdo.agenda;
-      console.log(this.agendaCurso);
     });
   }
 
@@ -86,21 +81,20 @@ export class RegistrarAgendaComponent implements OnInit {
   //al vector materiasHTML para que se triggeree otra vuelta del for
   //que esta en el HTML que crea los cards de las materias.
   agregarMateria() {
-    if (this.horariosValidos) {
+    if (this.agendaValida) {
       this.materiasHTML.push([1]);
     } else {
-      this.openSnackBar(this.mensajeError, "snack-bar-fracaso")
+      this.openSnackBar(this.mensajeError, "snack-bar-fracaso");
     }
   }
 
   //Dentro del elemento correspondiente en materias, se agrega un vector que representa los horarios
   //que va a tener esa materia (length=cantidad de horarios)
   agregarHorario(index: number) {
-    console.log(this.horariosValidos)
-    if (this.horariosValidos) {
+    if (this.agendaValida) {
       this.materiasHTML[index].push(1);
     } else {
-      this.openSnackBar(this.mensajeError, "snack-bar-fracaso")
+      this.openSnackBar(this.mensajeError, "snack-bar-fracaso");
     }
   }
 
@@ -133,34 +127,34 @@ export class RegistrarAgendaComponent implements OnInit {
       var cantidadModulos = moduloFin - moduloInicio;
 
       if (moduloInicio == -1) {
-        this.horariosValidos = false;
-        this.mensajeError = "El horario de inicio seleccionado no corresponde a un módulo.";
+        this.agendaValida = false;
+        this.mensajeError =
+          "El horario de inicio seleccionado no corresponde a un módulo.";
         this.openSnackBar(this.mensajeError, "snack-bar-fracaso");
-      }
-      else if (moduloFin == -1) {
-        this.horariosValidos = false;
-        this.mensajeError = "El horario de fin seleccionado no corresponde a un módulo.";
+      } else if (moduloFin == -1) {
+        this.agendaValida = false;
+        this.mensajeError =
+          "El horario de fin seleccionado no corresponde a un módulo.";
         this.openSnackBar(this.mensajeError, "snack-bar-fracaso");
-      }
-      else if (moduloFin <= moduloInicio) {
-        this.horariosValidos = false;
+      } else if (moduloFin <= moduloInicio) {
+        this.agendaValida = false;
         this.mensajeError = "El horario de inicio es menor al horario de fin";
         this.openSnackBar(this.mensajeError, "snack-bar-fracaso");
       } else {
-
         for (
           var index = moduloInicio;
           index < moduloInicio + cantidadModulos;
           index++
         ) {
           if (this.horariosReservados[index][diaMatrix]) {
-            this.horariosValidos = false;
-            this.mensajeError = "Los horarios seleccionados entran en conflicto con otra materia";
+            this.agendaValida = false;
+            this.mensajeError =
+              "Los horarios seleccionados entran en conflicto con otra materia";
             this.openSnackBar(this.mensajeError, "snack-bar-fracaso");
           }
           this.horariosReservados[index][diaMatrix] = true;
         }
-        this.horariosValidos = true;
+        this.agendaValida = true;
         this.mensajeError = "";
       }
     }
@@ -171,38 +165,67 @@ export class RegistrarAgendaComponent implements OnInit {
   //como horarios se definieros), se crea un objeto materiaXCurso y luego se recorre el vector
   //que representa a los horarios creando un horario por cada uno de estos.
   onGuardar(form: NgForm) {
-    let materiasXCurso = [];
-    this.materiasHTML.forEach((materia, index) => {
-      let materiaXCurso: any;
-      materiaXCurso = {
-        idMateria: form.value["materia" + `${index}`],
-        idDocente: form.value["docente" + `${index}`],
-        horarios: []
-      };
-      materia.forEach((horario, indice) => {
-        materiaXCurso.horarios.push({
-          dia: form.value["dia" + `${index}` + `${indice}`],
-          horaInicio: form.value["horaInicio" + `${index}` + `${indice}`],
-          horaFin: form.value["horaFin" + `${index}` + `${indice}`]
+    if (form.valid && this.agendaValida) {
+      let materiasXCurso = [];
+      this.materiasHTML.forEach((materia, index) => {
+        let materiaXCurso: any;
+        materiaXCurso = {
+          idMateria: form.value["materia" + `${index}`],
+          idDocente: form.value["docente" + `${index}`],
+          horarios: []
+        };
+        materia.forEach((horario, indice) => {
+          materiaXCurso.horarios.push({
+            dia: form.value["dia" + `${index}` + `${indice}`],
+            horaInicio: form.value["horaInicio" + `${index}` + `${indice}`],
+            horaFin: form.value["horaFin" + `${index}` + `${indice}`]
+          });
         });
+        materiasXCurso.push(materiaXCurso);
       });
-      materiasXCurso.push(materiaXCurso);
+      this.servicioAgenda
+        .registrarAgenda(materiasXCurso, form.value.curso)
+        .subscribe(response => {
+          if (response.exito) {
+            this.openSnackBar(response.mensaje, "snack-bar-exito");
+          } else {
+            this.openSnackBar(response.mensaje, "snack-bar-fracaso");
+          }
+        });
+    } else {
+      if (form.invalid) {
+        this.openSnackBar("Faltan campos por completar", "snack-bar-fracaso");
+      } else {
+        this.openSnackBar(this.mensajeError, "snack-bar-fracaso");
+      }
+    }
+  }
+
+  //Recibe el modelo de materia del HTML y agrega la id de la materia al vector materiasSeleccionadas
+  //si es que la materia no fue seleccionada anteriormente, en ese caso muestra error.
+  validarMateria(materia: NgModel) {
+    var idMateria = materia.value;
+    this.materiasSeleccionadas.forEach(materia => {
+      if (materia == idMateria) {
+        this.mensajeError = "La materia ya fue seleccionada anteriormente";
+        this.agendaValida = false;
+        this.openSnackBar(this.mensajeError, "snack-bar-fracaso");
+      } else {
+        this.materiasSeleccionadas.push(idMateria);
+      }
     });
-    this.servicioAgenda
-      .registrarAgenda(materiasXCurso, form.value.curso)
-      .subscribe(response => {
-        console.log("NICE");
-      });
   }
 
   openSnackBar(mensaje: string, exito: string) {
-    this.snackBar.open(
-      mensaje,
-      "",
-      {
-        panelClass: [exito],
-        duration: 4500
-      }
-    );
+    this.snackBar.open(mensaje, "", {
+      panelClass: [exito],
+      duration: 4500
+    });
+  }
+
+  popUpCancelar() {
+    this.dialog.open(CancelPopupComponent, {
+      width: "250px"
+    });
   }
 }

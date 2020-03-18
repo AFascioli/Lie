@@ -8,6 +8,10 @@ router.get("", (req, res, next) => {
     res.status(200).json({
       provincias: documents
     });
+  }).catch(() => {
+    res.status(500).json({
+      message: "Mensaje de error especifico"
+    });
   });
 });
 

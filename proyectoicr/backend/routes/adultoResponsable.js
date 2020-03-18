@@ -43,12 +43,11 @@ router.post("/", checkAuthMiddleware, (req, res) => {
             });
           });
         })
-        .catch(err =>
-          console.log(
-            "Se presentó un error al querer almacenar un adultoResponsable en la base de datos" +
-              err
-          )
-        );
+        .catch(() => {
+          res.status(500).json({
+            message: "Mensaje de error especifico"
+          });
+        });
     }
   });
 });

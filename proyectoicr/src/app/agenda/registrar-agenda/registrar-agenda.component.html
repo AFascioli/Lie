@@ -22,9 +22,8 @@
       *ngFor="let materia of materiasHTML; let j = index"
       class="card-body-componente"
     >
-      <div>
-        <h3>Materia seleccionada</h3>
-        <mat-form-field>
+      <div class="divMateriaDocente">
+        <mat-form-field class="materiaYDocente">
           <mat-select
             placeholder="Seleccione materia"
             [name]="'materia' + j"
@@ -32,13 +31,14 @@
             #materia="ngModel"
             matNativeControl
             required
+            (selectionChange)="validarMateria(materia)"
           >
             <mat-option *ngFor="let materia of materias" [value]="materia._id">
               {{ materia.nombre }}
             </mat-option>
           </mat-select>
         </mat-form-field>
-        <mat-form-field>
+        <mat-form-field class="materiaYDocente">
           <mat-select
             placeholder="Seleccione docente"
             [name]="'docente' + j"
@@ -53,14 +53,12 @@
           </mat-select>
         </mat-form-field>
       </div>
-      <br />
       <hr />
-      <br />
       <div
         class="horario"
         *ngFor="let horario of materiasHTML[j]; let i = index"
       >
-        <mat-form-field>
+        <mat-form-field class="selectDia">
           <mat-select
             placeholder="Seleccione dia"
             [name]="'dia' + j + i"
@@ -78,6 +76,7 @@
           <div class="hora">
             <input
               placeholder="Seleccione la hora de inicio"
+              required
               [name]="'horaInicio' + j + i"
               ngModel
               #horaInicio+j+i="ngModel"
@@ -99,6 +98,7 @@
           <div class="hora">
             <input
               placeholder="Seleccione la hora de fin"
+              required
               [name]="'horaFin' + j + i"
               ngModel
               #horaFin+j+i="ngModel"
@@ -126,7 +126,6 @@
           <mat-icon>add_circle_outline</mat-icon> Agregar otra horario
         </button>
       </div>
-      <br />
     </mat-card>
   </form>
   <div class="divAgregar">
@@ -141,6 +140,9 @@
   <div class="divGuardar">
     <button mat-raised-button class="buttonPrimary" (click)="onGuardar(form)">
       Guardar
+    </button>
+    <button mat-raised-button (click)="popUpCancelar()" class="buttonWarn">
+      Cancelar
     </button>
   </div>
 </mat-card>
