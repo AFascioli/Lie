@@ -20,6 +20,10 @@ table {
   width:22% !important;
 }
 
+.mat-card{
+max-width: 1200px !important;
+}
+
 th{
   font-weight: bold;
   font-size: 15px;

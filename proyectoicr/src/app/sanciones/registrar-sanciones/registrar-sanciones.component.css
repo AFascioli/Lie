@@ -1,0 +1,40 @@
+.contenido {
+  width: 41%;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 3rem !important;
+}
+
+.aviso{
+  margin-bottom: 0;
+  text-align: center;
+  font-size: 19px;
+}
+
+.ubicacionfecha {
+  margin-top: 0.5rem;
+  float: right;
+}
+
+.inputFecha{
+  width: 0%;
+  color: black !important;
+}
+
+.div-selects{
+  text-align: center !important;
+}
+
+.div-button {
+  text-align: right;
+}
+
+.titulo-datos-est{
+  font-size: 20px;
+  font-weight: bold;
+  text-align: center;
+}
+
+.mat-form-field{
+width: 260px !important;
+}

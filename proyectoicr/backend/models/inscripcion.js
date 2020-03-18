@@ -10,6 +10,12 @@ const cuotasSchema = mongoose.Schema({
   pagado: Boolean
 });
 
+const sancionSchema = mongoose.Schema({
+  id: Number,
+  tipo: String,
+  cantidad: Number
+});
+
 const inscripcionSchema = mongoose.Schema({
   idEstudiante: {type: mongoose.Schema.Types.ObjectId, ref: 'estudiante'},
   idCurso: {type: mongoose.Schema.Types.ObjectId, ref: 'curso'},
@@ -23,7 +29,8 @@ const inscripcionSchema = mongoose.Schema({
   estado: {type: mongoose.Schema.Types.ObjectId, ref: "estado"},
   año: {type: Number},
   materiasPendientes: [{type: mongoose.Schema.Types.ObjectId, ref: 'calificacionesXMateria'}],
-  cuotas: [cuotasSchema]
+  cuotas: [cuotasSchema],
+  sanciones: [sancionSchema],
 });
 
 module.exports= mongoose.model('inscripcion', inscripcionSchema, 'inscripcion');

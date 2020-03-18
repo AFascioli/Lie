@@ -1,0 +1,84 @@
+<h1 class="componente-titulo">
+  Registrar sanciones ciclo lectivo {{fechaActual.getFullYear()}}
+</h1>
+<mat-card class="card-body-componente">
+  <form #form="ngForm">
+      <div class="ubicacionfecha">
+        <b>Fecha: </b>
+        &nbsp;
+        <mat-form-field>
+          <input
+            [disabled]="true"
+            ngModel
+            #diaFecha="ngModel"
+            matInput
+            name="diaFecha"
+            required
+            class="inputFecha"
+          />
+          {{ fechaActual | date: "EEEE" | titlecase }}
+          {{ fechaActual | date: "dd/MM/yyyy" }}
+        </mat-form-field>
+      </div>
+      <br />
+      <div class="contenido">
+        <mat-card>
+          <p class="titulo-datos-est">Datos del estudiante</p>
+          <mat-card-subtitle>
+            <b>Apellido/s: </b> {{ apellidoEstudiante }}
+            <br />
+            <b>Nombre/s: </b> {{ nombreEstudiante }}
+          </mat-card-subtitle>
+        </mat-card>
+      </div>
+      <br />
+      <div class="div-selects">
+        <mat-form-field>
+          <mat-select
+            placeholder="Seleccione tipo de sanción"
+            name="sancion"
+            ngModel
+            #sancion="ngModel"
+            matNativeControl
+            (selectionChange)="onTipoSancionChange(sancion.value)"
+            required
+          >
+            <mat-option *ngFor="let sancion of tiposSanciones; let i = index" [value]="i">
+              {{ sancion }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+        <br />
+        <mat-form-field>
+          <input
+            ngModel
+            #cantidad="ngModel"
+            [disabled]="!tipoSancionSelected || suspensionSelected"
+            matInput
+            name="cantidadSancion"
+            placeholder="Ingrese cantidad"
+            (keypress)="checkNumeros($event)"
+            required
+          />
+        </mat-form-field>
+      </div>
+      <br />
+    <div class="div-button">
+      <button
+        mat-raised-button
+        class="buttonPrimary"
+        (click)="guardar(cantidad.value, sancion.value, form)"
+        mat-raised-button
+      >
+        Guardar
+      </button>
+      <button
+        mat-raised-button
+        [routerLink]="['/buscar/lista']"
+        class="buttonWarn"
+      >
+        Volver
+      </button>
+    </div>
+  </form>
+</mat-card>

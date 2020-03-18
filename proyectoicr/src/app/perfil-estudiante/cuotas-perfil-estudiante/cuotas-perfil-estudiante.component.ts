@@ -18,6 +18,7 @@ export class CuotasPerfilEstudianteComponent implements OnInit {
   ngOnInit() {
     this.servicio.getCuotasDeEstudiante().subscribe(respuesta => {
       this.cuotasV = respuesta.cuotas;
+      console.log(respuesta.cuotas);
     });
   }
 

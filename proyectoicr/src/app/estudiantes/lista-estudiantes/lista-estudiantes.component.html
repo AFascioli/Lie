@@ -50,7 +50,7 @@
           (click)="onRegistrarExamenes(i)"
           *ngIf="permisos.notas > 1"
         >
-          Registrar exámenes
+          Registrar examen
         </button>
         <button
           mat-raised-button
@@ -69,6 +69,15 @@
           *ngIf="permisos.asistencia > 1"
         >
           Registrar retiro anticipado
+        </button>
+        <button
+          mat-raised-button
+          class="button"
+          class="buttonPrimary"
+          (click)="onSancion(i)"
+          *ngIf="permisos.inscribirEstudiante >= 1"
+        >
+          Registrar sanción
         </button>
         <button
           mat-raised-button

@@ -15,7 +15,8 @@ import { Router } from "@angular/router";
 })
 export class ListaEstudiantesComponent implements OnInit {
   estudiantes: Estudiante[] = [];
-  curso: any[]= [];
+  curso: any[] = [];
+
   permisos = {
     notas: 0,
     asistencia: 0,
@@ -98,6 +99,11 @@ export class ListaEstudiantesComponent implements OnInit {
   onVisualizarPerfil(indice) {
     this.asignarEstudianteSeleccionado(indice);
     this.router.navigate(["./perfilEstudiante"]);
+  }
+
+  onSancion(indice){
+    this.asignarEstudianteSeleccionado(indice);
+    this.router.navigate(["./registrarSancion"]);
   }
 
   onJustificar(indice) {
