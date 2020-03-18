@@ -288,6 +288,7 @@ export class EstudiantesService {
       message: string;
       exito: boolean;
       curso: string;
+      idCurso: string;
     }>(environment.apiUrl + "/curso/estudiante", {
       params: params
     });
@@ -302,22 +303,9 @@ export class EstudiantesService {
       message: string;
       exito: boolean;
       curso: string;
+      idCurso: string;
     }>(environment.apiUrl + "/curso/estudiante", {
       params: params
     });
   }
-  public obtenerCursoDeEstudianteById(id) {
-    let params = new HttpParams().set(
-      "idEstudiante",
-      id
-    );
-    return this.http.get<{
-      message: string;
-      exito: boolean;
-      curso: string;
-    }>(environment.apiUrl + "/curso/estudiante", {
-      params: params
-    });
-  }
-
 }

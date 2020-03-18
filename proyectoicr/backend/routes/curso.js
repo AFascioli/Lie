@@ -508,7 +508,8 @@ router.get("/estudiante", checkAuthMiddleware, (req, res) => {
     {
       $project: {
         _id: 0,
-        "cursosDeEstudiante.curso": 1
+        "cursosDeEstudiante.curso": 1, 
+        "cursosDeEstudiante._id": 1
       }
     }
   ])
@@ -516,7 +517,8 @@ router.get("/estudiante", checkAuthMiddleware, (req, res) => {
       return res.status(200).json({
         message: "Se obtuvo el curso del estudiante exitosamente",
         exito: true,
-        curso: cursoDeEstudiante[0].cursosDeEstudiante[0].curso
+        curso: cursoDeEstudiante[0].cursosDeEstudiante[0].curso,
+        idCurso: cursoDeEstudiante[0].cursosDeEstudiante[0]._id
       });
     })
     .catch(() => {

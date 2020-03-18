@@ -1,9 +1,10 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, ChangeDetectorRef } from "@angular/core";
 import { Estudiante } from "src/app/estudiantes/estudiante.model";
 import { EstudiantesService } from "src/app/estudiantes/estudiante.service";
 import { Router } from "@angular/router";
 import { AgendaService } from "src/app/agenda/agenda.service";
 import { MatSnackBar } from "@angular/material";
+import { MediaMatcher } from "@angular/cdk/layout";
 
 @Component({
   selector: "app-agenda-curso-perfil-estudiante",
@@ -11,11 +12,6 @@ import { MatSnackBar } from "@angular/material";
   styleUrls: ["./agenda-curso-perfil-estudiante.component.css"]
 })
 export class AgendaCursoPerfilEstudianteComponent implements OnInit {
-  apellidoEstudiante: string;
-  nombreEstudiante: string;
-  _idEstudiante: string;
-  cursoEstudiante: string;
-  materias: any[];
   dias = ["Hora", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes"]; //Agrego Hora en los dos vectores para que el calculo sea siempre +1 +2
   modulo = [
     "Hora",
@@ -30,58 +26,67 @@ export class AgendaCursoPerfilEstudianteComponent implements OnInit {
     "13:30",
     "14:15"
   ];
-  materiasDistintas: any[] = [];
-  colores: any[] = [];
+  idCurso: any;
+  cursos: any[];
+  materiasDistintas = [];
+  cursoSelected: Boolean = false;
+  colores = [];
+  materias: any[] = [];
+  _mobileQueryListener: () => void;
+  mobileQuery: MediaQueryList;
+  apellidoEstudiante: any;
+  nombreEstudiante: any;
+  _idEstudiante: any;
 
   constructor(
     public servicio: EstudiantesService,
-    public router: Router,
     public servicioAgenda: AgendaService,
-    public snackBar: MatSnackBar
-  ) {}
+    public snackBar: MatSnackBar,
+    public changeDetectorRef: ChangeDetectorRef,
+    public media: MediaMatcher
+  ) {
+    this.mobileQuery = media.matchMedia("(max-width: 880px)");
+    this._mobileQueryListener = () => changeDetectorRef.detectChanges();
+    this.mobileQuery.addListener(this._mobileQueryListener);
+  }
 
   ngOnInit() {
     this.apellidoEstudiante = this.servicio.estudianteSeleccionado.apellido;
     this.nombreEstudiante = this.servicio.estudianteSeleccionado.nombre;
     this._idEstudiante = this.servicio.estudianteSeleccionado._id;
-    this.actualizarInterfaz();
-    // console.log('idEstudiante:'+ this._idEstudiante);
-    // this.servicioAgenda.obtenerAgendaDeCursoByIdEstudiante(this._idEstudiante).subscribe( respuesta => {
-    //   console.log('Respuesta de agenda:' + respuesta.agenda);
-    //    this.materias = respuesta.agenda;
-    // });
+    this.servicio.obtenerCursoDeEstudiante().subscribe(result => {
+      console.log(result);
+      this.actualizarInterfaz(result.idCurso);
+    });
   }
 
   // Obtiene la agenda de un curso y le asigna a las materias un color distinto
-  async obtenerAgenda() {
+  async obtenerAgenda(idCurso) {
     return new Promise((resolve, reject) => {
       this.servicioAgenda
-        .obtenerAgendaDeCursoByIdEstudiante(this._idEstudiante)
-        .subscribe(async rtdo => {
-          if (rtdo.exito) {
-            this.snackBar.open(rtdo.message, "", {
-              panelClass: ["snack-bar-exito"],
-              duration: 3000
-            });
+        .obtenerAgendaDeCurso(idCurso)
+        .subscribe(async agenda => {
+          if (agenda.exito) {
+            this.cursoSelected = true;
           } else {
-            this.snackBar.open(rtdo.message, "", {
+            this.cursoSelected = false;
+            this.snackBar.open(agenda.message, "", {
               panelClass: ["snack-bar-fracaso"],
               duration: 3000
             });
           }
-          this.materias = rtdo.agenda;
-          console.log(this.materias);
+          this.materias = agenda.agenda;
           this.getMateriasDistintas();
           this.getColorVector();
-          resolve(rtdo.agenda);
+          resolve(agenda.agenda);
         });
     });
   }
 
   //Muestran en la interfaz los diferentes horarios de la materia
-  actualizarInterfaz() {
+  actualizarInterfaz(idCurso) {
     (async () => {
-      let agenda: any = await this.obtenerAgenda();
+      let agenda: any = await this.obtenerAgenda(idCurso);
       agenda.forEach((materia, index) => {
         this.setInGrid(index.toString(), materia);
       });
