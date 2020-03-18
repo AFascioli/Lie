@@ -43,6 +43,7 @@ hr {
 .mat-sidenav{
   box-shadow: 2px 0 5px -2px #888;
   border-right: 0px !important;
+  width: 29%;
 }
 
 /* Para que el container del sidenav sea del tamaño completo del body,

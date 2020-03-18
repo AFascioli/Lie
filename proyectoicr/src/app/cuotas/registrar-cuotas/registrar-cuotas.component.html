@@ -29,7 +29,7 @@
       [disabled]="fueraPeriodoCicloLectivo || !mesSeleccionado"
       matNativeControl
       required
-      (selectionChange)="onCursoSeleccionado(curso,mes)"
+      (selectionChange)="onCursoSeleccionado(curso, mes)"
     >
       <mat-option *ngFor="let objCurso of cursos" [value]="objCurso.curso">
         {{ objCurso.curso }}
@@ -39,7 +39,7 @@
 
   <div class="ubicacionfecha">
     <b>Fecha: </b> &nbsp;
-    <mat-form-field>
+    <mat-form-field class="mat-form-Fecha">
       <input
         [disabled]="true"
         ngModel
@@ -50,7 +50,7 @@
         class="inputFecha"
       />
       {{ fechaActual | date: "EEEE" | titlecase }}
-      {{ fechaActual | date: "dd/MM/yyyy" }}
+      {{ fechaActual | date: "dd/MM/yyyy" }}&nbsp;
     </mat-form-field>
   </div>
   <!-- <p class="aviso" *ngIf="fueraPeriodoCicloLectivo==true">Atención, no se puede registrar las cuotas debido a que estamos fuera del ciclo lectivo </p>  -->
@@ -61,11 +61,7 @@
         <th class="nombreApellido" mat-header-cell *matHeaderCellDef>
           Apellido/s
         </th>
-        <td
-          class="nombreApellido"
-          mat-cell
-          *matCellDef="let cuotaXEstudiante"
-        >
+        <td class="nombreApellido" mat-cell *matCellDef="let cuotaXEstudiante">
           {{ cuotaXEstudiante.apellido }}
         </td>
       </ng-container>
@@ -73,12 +69,8 @@
         <th class="nombreApellido" mat-header-cell *matHeaderCellDef>
           Nombre/s
         </th>
-        <td
-          class="nombreApellido"
-          mat-cell
-          *matCellDef="let cuotaXEstudiante"
-        >
-        {{ cuotaXEstudiante.nombre }}
+        <td class="nombreApellido" mat-cell *matCellDef="let cuotaXEstudiante">
+          {{ cuotaXEstudiante.nombre }}
         </td>
       </ng-container>
 
@@ -100,13 +92,15 @@
       <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
     </table>
 
-    <p class="aviso" *ngIf="cuotasXEstudiante.length==0 && !cursoNotSelected">No exiten alumnos inscriptos a este curso</p>
+    <p class="aviso" *ngIf="cuotasXEstudiante.length == 0 && !cursoNotSelected">
+      No exiten alumnos inscriptos a este curso
+    </p>
   </div>
   <br />
   <div class="div-button">
     <button
       class="buttonPrimary"
-      (click)="onGuardar(mes,curso)"
+      (click)="onGuardar(mes, curso)"
       mat-raised-button
       [disabled]="cursoNotSelected"
     >

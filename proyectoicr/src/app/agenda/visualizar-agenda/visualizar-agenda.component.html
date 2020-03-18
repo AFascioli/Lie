@@ -19,82 +19,132 @@
     </mat-select>
   </mat-form-field>
 </mat-card>
+<mat-card class="card-body-componente" *ngIf="materias.length != 0">
+  <div id="parent-id" class="grid-container" *ngIf="cursoSelected">
+    <div class="cabecera" [class.texto-mobile]="mobileQuery.matches">
+      <p class="cabecera">
+        Hora
+      </p>
+    </div>
+    <div class="cabecera" [class.texto-mobile]="mobileQuery.matches">
+      <p class="cabecera">
+        Lunes
+      </p>
+    </div>
+    <div class="cabecera" [class.texto-mobile]="mobileQuery.matches">
+      <p class="cabecera">
+        Martes
+      </p>
+    </div>
+    <div class="cabecera" [class.texto-mobile]="mobileQuery.matches">
+      <p class="cabecera">
+        Miércoles
+      </p>
+    </div>
+    <div class="cabecera" [class.texto-mobile]="mobileQuery.matches">
+      <p class="cabecera">
+        Jueves
+      </p>
+    </div>
+    <div class="cabecera" [class.texto-mobile]="mobileQuery.matches">
+      <p class="cabecera">
+        Viernes
+      </p>
+    </div>
 
-<div id="parent-id" class="grid-container" *ngIf="cursoSelected">
-  <div class="cabecera">
-    <p class="cabecera">
-      Hora
-    </p>
-  </div>
-  <div class="cabecera">
-    <p class="cabecera">
-      Lunes
-    </p>
-  </div>
-  <div class="cabecera">
-    <p class="cabecera">
-      Martes
-    </p>
-  </div>
-  <div class="cabecera">
-    <p class="cabecera">
-      Miércoles
-    </p>
-  </div>
-  <div class="cabecera">
-    <p class="cabecera">
-      Jueves
-    </p>
-  </div>
-  <div class="cabecera">
-    <p class="cabecera">
-      Viernes
-    </p>
-  </div>
+    <div class="hora modulo1" [class.texto-mobile]="mobileQuery.matches">
+      <p class="modulo">
+        07:30 <br />-<br />
+        08:15
+      </p>
+    </div>
 
-  <div class="hora modulo1">
-    <p class="modulo">07:30 - 08:15</p>
-  </div>
+    <div class="hora modulo2" [class.texto-mobile]="mobileQuery.matches">
+      <p class="modulo">
+        08:15 <br />-<br />
+        09:00
+      </p>
+    </div>
 
-  <div class="hora modulo2"><p class="modulo">08:15 - 09:00</p></div>
+    <!-- <div class="hora recreo1">
+      <p class="recreo1">
+        Recreo de 10 minutos
+      </p>
+    </div> -->
+    <div class="hora modulo3" [class.texto-mobile]="mobileQuery.matches">
+      <p class="modulo">
+        09:00 <br />-<br />
+        09:45
+      </p>
+    </div>
+    <div class="hora modulo4" [class.texto-mobile]="mobileQuery.matches">
+      <p class="modulo">
+        09:45 <br />-<br />
+        10:30
+      </p>
+    </div>
+    <!-- <div class="hora recreo2">
+      <p class="recreo1">
+        Recreo de 20 minutos
+      </p>
+    </div> -->
+    <div class="hora modulo5" [class.texto-mobile]="mobileQuery.matches">
+      <p class="modulo">
+        10:30 <br />-<br />
+        11:15
+      </p>
+    </div>
+    <div class="hora modulo6" [class.texto-mobile]="mobileQuery.matches">
+      <p class="modulo">
+        11:15 <br />-<br />
+        12:00
+      </p>
+    </div>
+    <!-- <div class="hora recreo3">
+      <p class="recreo1">
+        Recreo de 20 minutos
+      </p>
+    </div> -->
+    <div class="hora modulo7" [class.texto-mobile]="mobileQuery.matches">
+      <p class="modulo">
+        12:00 <br />-<br />
+        12:45
+      </p>
+    </div>
+    <div class="hora modulo8" [class.texto-mobile]="mobileQuery.matches">
+      <p class="modulo">
+        13:30 <br />-<br />
+        14:15
+      </p>
+    </div>
+    <!-- <div class="hora recreo4">
+      <p class="recreo1">
+        Recreo de 20 minutos
+      </p>
+    </div> -->
+    <div class="hora modulo9" [class.texto-mobile]="mobileQuery.matches">
+      <p class="modulo">
+        14:05 <br />-<br />
+        14:50
+      </p>
+    </div>
 
-  <!-- <div class="hora recreo1">
-    <p class="recreo1">
-      Recreo de 10 minutos
-    </p>
-  </div> -->
-  <div class="hora modulo3"><p class="modulo">09:00 - 09:45</p></div>
-  <div class="hora modulo4"><p class="modulo">09:45 - 10:30</p></div>
-  <!-- <div class="hora recreo2">
-    <p class="recreo1">
-      Recreo de 20 minutos
-    </p>
-  </div> -->
-  <div class="hora modulo5"><p class="modulo">10:30 - 11:15</p></div>
-  <div class="hora modulo6"><p class="modulo">11:15 - 12:00</p></div>
-  <!-- <div class="hora recreo3">
-    <p class="recreo1">
-      Recreo de 20 minutos
-    </p>
-  </div> -->
-  <div class="hora modulo7"><p class="modulo">12:00 - 12:45</p></div>
-  <div class="hora modulo8"><p class="modulo">13:30 - 14:15</p></div>
-  <!-- <div class="hora recreo4">
-    <p class="recreo1">
-      Recreo de 20 minutos
-    </p>
-  </div> -->
-  <div class="hora modulo9"><p class="modulo">14:05 - 14:50</p></div>
+    <!-- <div class="hora modulo10"><p class="modulo">14:50 - 15:35</p></div> -->
 
-  <!-- <div class="hora modulo10"><p class="modulo">14:50 - 15:35</p></div> -->
-
-  <div class="materia" *ngFor="let materia of materias; let i = index" [id]="i">
     <div
       class="materia"
-      [ngStyle]="{ 'background-color': getColores(materia.nombre) }"
+      *ngFor="let materia of materias; let i = index"
+      [id]="i"
     >
-      {{ materia.nombre }}
+      <div
+        class="materia"
+        [ngStyle]="{ 'background-color': getColores(materia.nombre) }"
+        [class.texto-mobile]="mobileQuery.matches"
+      >
+        <div class="nombreMateria">{{ materia.nombre }}</div>
+        <div class="horarioMateria">{{ materia.inicio }} - {{ materia.fin }}</div>
+      </div>
     </div>
+    <!-- getColor(materia) -->
   </div>
-  <!-- getColor(materia) -->
-</div>
+</mat-card>

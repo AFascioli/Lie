@@ -288,6 +288,7 @@ export class EstudiantesService {
       message: string;
       exito: boolean;
       curso: string;
+      idCurso: string;
     }>(environment.apiUrl + "/curso/estudiante", {
       params: params
     });
@@ -302,6 +303,7 @@ export class EstudiantesService {
       message: string;
       exito: boolean;
       curso: string;
+      idCurso: string;
     }>(environment.apiUrl + "/curso/estudiante", {
       params: params
     });

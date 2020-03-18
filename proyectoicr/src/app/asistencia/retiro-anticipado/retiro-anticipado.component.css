@@ -73,3 +73,8 @@ th {
 .columnaCheckbox {
   padding-right: 12px;
 }
+
+.mat-form-Fecha
+{
+  text-align: center !important;
+}

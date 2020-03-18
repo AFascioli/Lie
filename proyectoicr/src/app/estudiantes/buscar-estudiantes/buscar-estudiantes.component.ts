@@ -5,7 +5,7 @@ import { EstudiantesService } from "../estudiante.service";
 import { Estudiante } from "../estudiante.model";
 import { MatDialog, MatDialogRef } from "@angular/material";
 import { Router } from "@angular/router";
-import { browserRefresh } from 'src/app/app.component';
+import { browserRefresh } from "src/app/app.component";
 
 @Component({
   selector: "app-buscar-estudiantes",
@@ -25,24 +25,19 @@ export class BuscarEstudiantesComponent implements OnInit {
     public dialog: MatDialog,
     public servicioAR: AdultoResponsableService,
     private router: Router
-  ) {
-
-  }
+  ) {}
 
   ngOnInit() {
     //Para que al recargar la pagina se actualice correctamente
-    if(browserRefresh )
-    {
-       this.router.navigate(["/buscar"]);
-      this.servicio.estudianteSeleccionado=null;
-      this.servicio.retornoDesdeAcciones= false;
+    if (browserRefresh) {
+      this.router.navigate(["/buscar"]);
+      this.servicio.estudianteSeleccionado = null;
+      this.servicio.retornoDesdeAcciones = false;
     }
     if (!this.servicio.retornoDesdeAcciones) {
       this.nombreEstSelec = "";
       this.apellidoEstSelec = "";
-    } else if (
-      this.servicio.busquedaEstudianteXNombre
-    ) {
+    } else if (this.servicio.busquedaEstudianteXNombre) {
       this.servicio.buscarEstudiantesNombreApellido(
         this.servicio.estudianteSeleccionado.nombre,
         this.servicio.estudianteSeleccionado.apellido
@@ -58,7 +53,6 @@ export class BuscarEstudiantesComponent implements OnInit {
       this.tipoDocEstSelec = this.servicio.estudianteSeleccionado.tipoDocumento;
       this.buscarPorNomYAp = false;
     }
-
   }
 
   // Si el formulario no es valido no hace nada, luego controla que tipo de busqueda es
@@ -67,8 +61,8 @@ export class BuscarEstudiantesComponent implements OnInit {
       if (this.buscarPorNomYAp) {
         this.servicio.busquedaEstudianteXNombre = true;
         this.servicio.buscarEstudiantesNombreApellido(
-          form.value.nombre,
-          form.value.apellido
+          form.value.nombre.trim(),
+          form.value.apellido.trim()
         );
       } else {
         this.servicio.buscarEstudiantesDocumento(
@@ -115,6 +109,7 @@ export class BuscarPopupComponent {
     this.dialogRef.close();
   }
   onNoClick(): void {
+    console.log(this.dialogRef);
     this.dialogRef.close();
   }
 

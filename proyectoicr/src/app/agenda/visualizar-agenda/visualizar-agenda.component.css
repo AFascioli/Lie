@@ -1,29 +1,41 @@
 .grid-container {
-  width: 85%;
+  width: 95%;
   margin-left: auto;
   margin-right: auto;
   display: grid;
-  grid-template-columns: auto 18% 18% 18% 18% 18%; /*Aca se definen la cantidad de columnas*/
+  grid-template-columns: 11% auto auto auto auto auto; /*Aca se definen la cantidad de columnas*/
   /* grid-template-rows: 50px 50px 50px 0px 50px 50px 0px 50px 50px 0px 50px 50px 0px 50px 50px; Aca se definen la cantidad de filas */
   /* grid-template-rows: 50px 50px 50px 50px 50px 50px 50px 50px 50px 50px 50px; */
-  grid-template-rows: 50px 50px 50px 50px 50px 50px 50px 50px 50px;
+  /* grid-template-rows: 5% auto auto auto auto auto auto auto auto ; */
+  grid-template-rows: auto 70px 70px 70px 70px 70px 70px 70px 70px 70px;
+  /* Aparentemente si se elimina la propiedad grid-template-rows, quedan del tamaño perfecto */
   grid-gap: 8px;
-  background-color: #c3c8cc;/*2196F3*/
   padding: 10px;
+  background-color: #c3c8cc;/*2196F3*/
+  border-radius: 4px;
 }
+
+.texto-mobile,.texto-mobile > *{
+    word-wrap: break-word;
+    font-size: 15px !important;
+  }
 
 .grid-container > div {
   background-color: rgb(85, 92, 94, 0.7);
   padding: 0px;
   display: flex;
   align-items: stretch;
-  grid-column-gap: 50px;
+  grid-column-gap: 30px;
+  border-radius: 4px;
+}
+
+.hora, .modulo{
+  line-height: 120%;
 }
 
 .hora {
   font-size: 15px !important;
-  line-height: 25px;
-  text-align: center;
+  text-align: left;
   color: beige;
 }
 
@@ -37,6 +49,7 @@ hr {
 .modulo{
   display: flex;
   align-items: center;
+  text-align: center;
 }
 
 /* En cada uno de estos, se define desde que linea arranca y en cual termina */
@@ -159,4 +172,16 @@ hr {
   width: -webkit-fill-available;
   font-size: 20px;
   color: beige;
+  border-radius: 4px;
+}
+
+.horarioMateria{
+  font-size: 13px;
+  position: absolute;
+  align-self: end;
+}
+
+.nombreMateria{
+  position: absolute;
+  align-self: center;
 }

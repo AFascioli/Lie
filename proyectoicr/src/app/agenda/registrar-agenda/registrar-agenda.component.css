@@ -3,9 +3,26 @@
   margin-right: 0.5rem;
 }
 
+.materiaYDocente{
+  width: 30%;
+}
+
+.divMateriaDocente{
+  margin-top: 2%;
+  margin-bottom: 2%;
+}
+
+.horario{
+  margin-top: 3%;
+}
+
 .matFormHora
 {
-  width: 29%;
+  width: 31%;
+}
+
+.selectDia{
+  width: 20%;
 }
 
 div{
@@ -19,7 +36,7 @@ div{
 hr{
   display: block;
   margin: 10px 0 10px 0;
-  border-top: 1px solid rgba(0, 0, 0, .12);
+  border-top: 2px solid rgba(0, 0, 0, 0.34);
   width: 100%
 }
 

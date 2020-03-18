@@ -6,9 +6,9 @@ const Curso = require("../models/curso");
 const Estado = require("../models/estado");
 const Inscripcion = require("../models/inscripcion");
 const CalificacionesXTrimestre = require("../models/calificacionesXTrimestre");
-const CalificacionesXMateria = require("../models/calificacionesXMateria");
+//const CalificacionesXMateria = require("../models/calificacionesXMateria");
 const Estudiante = require("../models/estudiante");
-const Cuota = require("../models/inscripcion");
+//const Cuota = require("../models/inscripcion");
 const Horario = require("../models/horario");
 const MateriaXCurso = require("../models/materiasXCurso");
 const ClaseInscripcion = require("../classes/inscripcion");
@@ -28,6 +28,11 @@ router.get("/", checkAuthMiddleware, (req, res) => {
         respuesta.push(cursoConId);
       });
       res.status(200).json({ cursos: respuesta });
+    })
+    .catch(() => {
+      res.status(500).json({
+        message: "Mensaje de error especifico"
+      });
     });
 });
 
@@ -35,17 +40,30 @@ router.post("/registrarSancion", checkAuthMiddleware, (req, res) => {
   Inscripcion.findOne({
     idEstudiante: req.body.idEstudiante,
     activa: true
-  }).then(inscripcion => {
-    inscripcion.sanciones[req.body.tipoSancion].cantidad += parseInt(
-      req.body.cantidad
-    );
-    inscripcion.save().then(
-      res.status(200).json({
-        message: "Se ha registrado la sanción del estudiante correctamente",
-        exito: true
-      })
-    );
-  });
+  })
+    .then(inscripcion => {
+      inscripcion.sanciones[req.body.tipoSancion].cantidad += parseInt(
+        req.body.cantidad
+      );
+      inscripcion
+        .save()
+        .then(
+          res.status(200).json({
+            message: "Se ha registrado la sanción del estudiante correctamente",
+            exito: true
+          })
+        )
+        .catch(() => {
+          res.status(500).json({
+            message: "Mensaje de error especifico"
+          });
+        });
+    })
+    .catch(() => {
+      res.status(500).json({
+        message: "Mensaje de error especifico"
+      });
+    });
 });
 
 //Obtiene el estado de las cuotas de todos los estudiantes de un curso
@@ -53,67 +71,79 @@ router.post("/registrarSancion", checkAuthMiddleware, (req, res) => {
 //@params: mes de la cuota
 router.get("/estadoCuotas", checkAuthMiddleware, (req, res) => {
   let fechaActual = new Date();
-  let añoActual = fechaActual.getFullYear();
-  Curso.findOne({ curso: req.query.idCurso }).then(curso => {
-    Inscripcion.aggregate([
-      {
-        $unwind: {
-          path: "$cuotas"
-        }
-      },
-      {
-        $match: {
-          activa: true,
-          idCurso: mongoose.Types.ObjectId(curso._id),
-          "cuotas.mes": parseInt(req.query.mes, 10)
-        }
-      },
-      {
-        $lookup: {
-          from: "estudiante",
-          localField: "idEstudiante",
-          foreignField: "_id",
-          as: "estudiante"
-        }
-      },
-      {
-        $project: {
-          "estudiante.apellido": 1,
-          "estudiante.nombre": 1,
-          cuotas: 1
-        }
-      }
-    ]).then(estadoCuotas => {
-      if (estadoCuotas.length == 0) {
-        res.status(200).json({
-          message: "No se han obtenido alumnos de dicho curso",
-          exito: true
-        });
-      } else {
-        cuotasXEstudiantes = [];
-        let cuotaXEstudiante;
-        final = estadoCuotas.length - 1;
-        for (let i = 0; i <= final; i++) {
-          if (i <= estadoCuotas.length - 1) {
-            cuotaXEstudiante = {
-              _id: estadoCuotas[i]._id,
-              apellido: estadoCuotas[i].estudiante[0].apellido,
-              nombre: estadoCuotas[i].estudiante[0].nombre,
-              pagado: estadoCuotas[i].cuotas.pagado,
-              mes: estadoCuotas[i].cuotas.mes
-            };
-            cuotasXEstudiantes.push(cuotaXEstudiante);
+  // let añoActual = fechaActual.getFullYear();
+  Curso.findOne({ curso: req.query.idCurso })
+    .then(curso => {
+      Inscripcion.aggregate([
+        {
+          $unwind: {
+            path: "$cuotas"
+          }
+        },
+        {
+          $match: {
+            activa: true,
+            idCurso: mongoose.Types.ObjectId(curso._id),
+            "cuotas.mes": parseInt(req.query.mes, 10)
+          }
+        },
+        {
+          $lookup: {
+            from: "estudiante",
+            localField: "idEstudiante",
+            foreignField: "_id",
+            as: "estudiante"
+          }
+        },
+        {
+          $project: {
+            "estudiante.apellido": 1,
+            "estudiante.nombre": 1,
+            cuotas: 1
           }
         }
-        res.status(200).json({
-          message:
-            "Se ha obtenido el estado de las cuotas de un curso exitosamente",
-          exito: true,
-          cuotasXEstudiante: cuotasXEstudiantes
+      ])
+        .then(estadoCuotas => {
+          if (estadoCuotas.length == 0) {
+            res.status(200).json({
+              message: "No se han obtenido alumnos de dicho curso",
+              exito: true
+            });
+          } else {
+            cuotasXEstudiantes = [];
+            let cuotaXEstudiante;
+            final = estadoCuotas.length - 1;
+            for (let i = 0; i <= final; i++) {
+              if (i <= estadoCuotas.length - 1) {
+                cuotaXEstudiante = {
+                  _id: estadoCuotas[i]._id,
+                  apellido: estadoCuotas[i].estudiante[0].apellido,
+                  nombre: estadoCuotas[i].estudiante[0].nombre,
+                  pagado: estadoCuotas[i].cuotas.pagado,
+                  mes: estadoCuotas[i].cuotas.mes
+                };
+                cuotasXEstudiantes.push(cuotaXEstudiante);
+              }
+            }
+            res.status(200).json({
+              message:
+                "Se ha obtenido el estado de las cuotas de un curso exitosamente",
+              exito: true,
+              cuotasXEstudiante: cuotasXEstudiantes
+            });
+          }
+        })
+        .catch(() => {
+          res.status(500).json({
+            message: "Mensaje de error especifico"
+          });
         });
-      }
+    })
+    .catch(() => {
+      res.status(500).json({
+        message: "Mensaje de error especifico"
+      });
     });
-  });
 });
 
 //Publica el estado de las cuotas de todos los estudiantes de un curso
@@ -121,13 +151,18 @@ router.get("/estadoCuotas", checkAuthMiddleware, (req, res) => {
 router.post("/publicarEstadoCuotas", checkAuthMiddleware, (req, res) => {
   final = req.body.length - 1;
   for (let i = 0; i <= final; i++) {
-    let rtdo;
-    Inscripcion.findById(req.body[i]._id).then(inscripcion => {
-      inscripcion.cuotas[req.body[i].mes - 1].pagado = !inscripcion.cuotas[
-        req.body[i].mes - 1
-      ].pagado;
-      inscripcion.save();
-    });
+    Inscripcion.findById(req.body[i]._id)
+      .then(inscripcion => {
+        inscripcion.cuotas[req.body[i].mes - 1].pagado = !inscripcion.cuotas[
+          req.body[i].mes - 1
+        ].pagado;
+        inscripcion.save();
+      })
+      .catch(() => {
+        res.status(500).json({
+          message: "Mensaje de error especifico"
+        });
+      });
   }
   res.status(200).json({
     message:
@@ -139,13 +174,19 @@ router.post("/publicarEstadoCuotas", checkAuthMiddleware, (req, res) => {
 // Obtiene la capacidad de un curso pasado por parámetro
 // @params: id del curso
 router.get("/capacidad", checkAuthMiddleware, (req, res) => {
-  Curso.findById(req.query.idCurso).then(curso => {
-    res.status(200).json({
-      message: "Operación exitosa",
-      exito: true,
-      capacidad: curso.capacidad
+  Curso.findById(req.query.idCurso)
+    .then(curso => {
+      res.status(200).json({
+        message: "Operación exitosa",
+        exito: true,
+        capacidad: curso.capacidad
+      });
+    })
+    .catch(() => {
+      res.status(500).json({
+        message: "Mensaje de error especifico"
+      });
     });
-  });
 });
 
 //Obtiene los cursos a los que se puede inscribir un estudiante de acuerdo al estado actual (promovido o libre)
@@ -180,41 +221,52 @@ router.get("/cursosDeEstudiante", checkAuthMiddleware, (req, res) => {
         "cursoActual.curso": 1
       }
     }
-  ]).then(inscripcion => {
-    if (inscripcion.length != 0) {
-      //El estudiante está inscripto a un curso y por ende se fija al curso al que se puede inscribir
-      let siguiente;
-      siguiente = ClaseInscripcion.obtenerAñoHabilitado(inscripcion);
+  ])
+    .then(inscripcion => {
+      if (inscripcion.length != 0) {
+        //El estudiante está inscripto a un curso y por ende se fija al curso al que se puede inscribir
+        let siguiente;
+        siguiente = ClaseInscripcion.obtenerAñoHabilitado(inscripcion);
 
-      //Buscamos los cursos que corresponden al que se puede inscribir el estudiante
-      Curso.find({ curso: { $regex: siguiente } }).then(cursos => {
-        return res.status(200).json({
-          message: "Devolvio los cursos correctamente",
-          exito: true,
-          cursos: cursos
-        });
-      });
-    } else {
-      //El estudiante no está inscripto a ningun curso, devuelve todos los cursos almacenados
-      Curso.find()
-        .select({ curso: 1, _id: 1 })
-        .then(cursos => {
-          var respuesta = [];
-          cursos.forEach(curso => {
-            var cursoConId = {
-              _id: curso._id,
-              curso: curso.curso
-            };
-            respuesta.push(cursoConId);
-          });
+        //Buscamos los cursos que corresponden al que se puede inscribir el estudiante
+        Curso.find({ curso: { $regex: siguiente } }).then(cursos => {
           return res.status(200).json({
             message: "Devolvio los cursos correctamente",
             exito: true,
-            cursos: respuesta
+            cursos: cursos
           });
         });
-    }
-  });
+      } else {
+        //El estudiante no está inscripto a ningun curso, devuelve todos los cursos almacenados
+        Curso.find()
+          .select({ curso: 1, _id: 1 })
+          .then(cursos => {
+            var respuesta = [];
+            cursos.forEach(curso => {
+              var cursoConId = {
+                _id: curso._id,
+                curso: curso.curso
+              };
+              respuesta.push(cursoConId);
+            });
+            return res.status(200).json({
+              message: "Devolvio los cursos correctamente",
+              exito: true,
+              cursos: respuesta
+            });
+          })
+          .catch(() => {
+            res.status(500).json({
+              message: "Mensaje de error especifico"
+            });
+          });
+      }
+    })
+    .catch(() => {
+      res.status(500).json({
+        message: "Mensaje de error especifico"
+      });
+    });
 });
 
 //Obtiene todos los cursos asignados a un docente
@@ -234,22 +286,28 @@ router.get("/docente", checkAuthMiddleware, (req, res) => {
         "mxc.idDocente": mongoose.Types.ObjectId(req.query.idDocente)
       }
     }
-  ]).then(cursos => {
-    var respuesta = [];
-    cursos.forEach(curso => {
-      var cursoConId = {
-        id: curso._id,
-        curso: curso.curso
-      };
-      respuesta.push(cursoConId);
-    });
+  ])
+    .then(cursos => {
+      var respuesta = [];
+      cursos.forEach(curso => {
+        var cursoConId = {
+          id: curso._id,
+          curso: curso.curso
+        };
+        respuesta.push(cursoConId);
+      });
 
-    res.status(200).json({
-      cursos: respuesta,
-      message: "Se devolvio los cursos que dicta la docente correctamente",
-      exito: true
+      res.status(200).json({
+        cursos: respuesta,
+        message: "Se devolvio los cursos que dicta la docente correctamente",
+        exito: true
+      });
+    })
+    .catch(() => {
+      res.status(500).json({
+        message: "Mensaje de error especifico"
+      });
     });
-  });
 });
 
 //Obtiene los documentos con su estado de entrega (true en el caso de que fue entregado) de los estudiantes de un curso dado
@@ -286,14 +344,20 @@ router.get("/documentos", checkAuthMiddleware, (req, res) => {
         "datosEstudiante.nombre": 1
       }
     }
-  ]).then(estudiantes => {
-    res.status(200).json({
-      documentos: estudiantes,
-      message:
-        "Se devolvieron los documentos junto con su estado de entrega correctamente",
-      exito: true
+  ])
+    .then(estudiantes => {
+      res.status(200).json({
+        documentos: estudiantes,
+        message:
+          "Se devolvieron los documentos junto con su estado de entrega correctamente",
+        exito: true
+      });
+    })
+    .catch(() => {
+      res.status(500).json({
+        message: "Mensaje de error especifico"
+      });
     });
-  });
 });
 
 //Obtiene las calificaciones de los estudiantes para un trimestre dado un curso y una materia
@@ -395,25 +459,31 @@ router.get(
           "notasXTrimestre.calificaciones": 1
         }
       }
-    ]).then(documentos => {
-      var respuesta = [];
-      documentos.forEach(califEst => {
-        var calificacionesEstudiante = {
-          idEstudiante: califEst.datosEstudiante[0]._id,
-          apellido: califEst.datosEstudiante[0].apellido,
-          nombre: califEst.datosEstudiante[0].nombre,
-          calificaciones: califEst.notasXTrimestre[0].calificaciones
-        };
-        respuesta.push(calificacionesEstudiante);
-      });
+    ])
+      .then(documentos => {
+        var respuesta = [];
+        documentos.forEach(califEst => {
+          var calificacionesEstudiante = {
+            idEstudiante: califEst.datosEstudiante[0]._id,
+            apellido: califEst.datosEstudiante[0].apellido,
+            nombre: califEst.datosEstudiante[0].nombre,
+            calificaciones: califEst.notasXTrimestre[0].calificaciones
+          };
+          respuesta.push(calificacionesEstudiante);
+        });
 
-      res.status(200).json({
-        estudiantes: respuesta,
-        message:
-          "Se obtuvieron las calificaciones para una materia, un curso y un trimestre determinado correctamente",
-        exito: true
+        res.status(200).json({
+          estudiantes: respuesta,
+          message:
+            "Se obtuvieron las calificaciones para una materia, un curso y un trimestre determinado correctamente",
+          exito: true
+        });
+      })
+      .catch(() => {
+        res.status(500).json({
+          message: "Mensaje de error especifico"
+        });
       });
-    });
   }
 );
 
@@ -438,7 +508,8 @@ router.get("/estudiante", checkAuthMiddleware, (req, res) => {
     {
       $project: {
         _id: 0,
-        "cursosDeEstudiante.curso": 1
+        "cursosDeEstudiante.curso": 1, 
+        "cursosDeEstudiante._id": 1
       }
     }
   ])
@@ -446,11 +517,12 @@ router.get("/estudiante", checkAuthMiddleware, (req, res) => {
       return res.status(200).json({
         message: "Se obtuvo el curso del estudiante exitosamente",
         exito: true,
-        curso: cursoDeEstudiante[0].cursosDeEstudiante[0].curso
+        curso: cursoDeEstudiante[0].cursosDeEstudiante[0].curso,
+        idCurso: cursoDeEstudiante[0].cursosDeEstudiante[0]._id
       });
     })
     .catch(() => {
-      res.status(200).json({
+      res.status(500).json({
         message:
           "Ocurrieron errores al querer obtener el curso del estudiante: ",
         exito: false
@@ -494,21 +566,27 @@ router.get("/materiasDeCurso", checkAuthMiddleware, (req, res) => {
         materias: 1
       }
     }
-  ]).then(rtdoMaterias => {
-    var respuesta = [];
-    rtdoMaterias[0].materias.forEach(materia => {
-      var datosMateria = {
-        id: materia._id,
-        nombre: materia.nombre
-      };
-      respuesta.push(datosMateria);
+  ])
+    .then(rtdoMaterias => {
+      var respuesta = [];
+      rtdoMaterias[0].materias.forEach(materia => {
+        var datosMateria = {
+          id: materia._id,
+          nombre: materia.nombre
+        };
+        respuesta.push(datosMateria);
+      });
+      res.status(200).json({
+        materias: respuesta,
+        message: "Se obtieron exitosamente las materias de un curso",
+        exito: true
+      });
+    })
+    .catch(() => {
+      res.status(500).json({
+        message: "Mensaje de error especifico"
+      });
     });
-    res.status(200).json({
-      materias: respuesta,
-      message: "Se obtieron exitosamente las materias de un curso",
-      exito: true
-    });
-  });
 });
 
 //Obtiene todas las materias que son dictadas por una docente en un curso determinado
@@ -561,25 +639,31 @@ router.get("/materias", checkAuthMiddleware, (req, res) => {
         materias: 1
       }
     }
-  ]).then(rtdoMaterias => {
-    var respuesta = [];
-    rtdoMaterias.forEach(materia => {
-      var datosMateria = {
-        id: materia.materias[0]._id,
-        nombre: materia.materias[0].nombre
-      };
-      respuesta.push(datosMateria);
+  ])
+    .then(rtdoMaterias => {
+      var respuesta = [];
+      rtdoMaterias.forEach(materia => {
+        var datosMateria = {
+          id: materia.materias[0]._id,
+          nombre: materia.materias[0].nombre
+        };
+        respuesta.push(datosMateria);
+      });
+      res.status(200).json({
+        materias: respuesta,
+        message:
+          "Se obtuvieron todas las materias que son dictadas por un docente para un curso exitosamente",
+        exito: true
+      });
+    })
+    .catch(() => {
+      res.status(500).json({
+        message: "Mensaje de error especifico"
+      });
     });
-    res.status(200).json({
-      materias: respuesta,
-      message:
-        "Se obtuvieron todas las materias que son dictadas por un docente para un curso exitosamente",
-      exito: true
-    });
-  });
 });
 
-router.get("/estadoCuotas", checkAuthMiddleware, (req, res) => {});
+//router.get("/estadoCuotas", checkAuthMiddleware, (req, res) => {});
 
 //Inscribe a un estudiante a un curso y los documentos entregados durante la inscripción
 //@params: id estudiante que se quiere inscribir
@@ -600,9 +684,15 @@ router.post("/inscripciontest", checkAuthMiddleware, async (req, res) => {
       Estado.findOne({
         nombre: "Inscripto",
         ambito: "Inscripcion"
-      }).then(estado => {
-        resolve(estado);
-      });
+      })
+        .then(estado => {
+          resolve(estado);
+        })
+        .catch(() => {
+          res.status(500).json({
+            message: "Mensaje de error especifico"
+          });
+        });
     });
   };
 
@@ -611,9 +701,15 @@ router.post("/inscripciontest", checkAuthMiddleware, async (req, res) => {
       Inscripcion.findOne({
         idEstudiante: req.body.idEstudiante,
         activa: true
-      }).then(inscripcion => {
-        resolve(inscripcion);
-      });
+      })
+        .then(inscripcion => {
+          resolve(inscripcion);
+        })
+        .catch(() => {
+          res.status(500).json({
+            message: "Mensaje de error especifico"
+          });
+        });
     });
   };
 
@@ -622,9 +718,15 @@ router.post("/inscripciontest", checkAuthMiddleware, async (req, res) => {
       Estado.findOne({
         nombre: "Desaprobada",
         ambito: "CalificacionesXMateria"
-      }).then(estado => {
-        resolve(estado);
-      });
+      })
+        .then(estado => {
+          resolve(estado);
+        })
+        .catch(() => {
+          res.status(500).json({
+            message: "Mensaje de error especifico"
+          });
+        });
     });
   };
 
@@ -633,9 +735,15 @@ router.post("/inscripciontest", checkAuthMiddleware, async (req, res) => {
       Estado.findOne({
         nombre: "Cursando",
         ambito: "CalificacionesXMateria"
-      }).then(estado => {
-        resolve(estado);
-      });
+      })
+        .then(estado => {
+          resolve(estado);
+        })
+        .catch(() => {
+          res.status(500).json({
+            message: "Mensaje de error especifico"
+          });
+        });
     });
   };
 
@@ -665,9 +773,15 @@ router.post("/inscripciontest", checkAuthMiddleware, async (req, res) => {
             _id: 0
           }
         }
-      ]).then(materiasDelCurso => {
-        resolve(materiasDelCurso);
-      });
+      ])
+        .then(materiasDelCurso => {
+          resolve(materiasDelCurso);
+        })
+        .catch(() => {
+          res.status(500).json({
+            message: "Mensaje de error especifico"
+          });
+        });
     });
   };
 
@@ -745,24 +859,43 @@ router.post("/inscripciontest", checkAuthMiddleware, async (req, res) => {
     sanciones: sanciones
   });
 
-  nuevaInscripcion.save().then(() => {
-    cursoSeleccionado.capacidad = cursoSeleccionado.capacidad - 1;
-    cursoSeleccionado.save();
-    //Le cambiamos el estado al estudiante
-    Estado.findOne({
-      nombre: "Inscripto",
-      ambito: "Estudiante"
-    }).then(async estadoEstudiante => {
-      await Estudiante.findByIdAndUpdate(req.body.idEstudiante, {
-        estado: estadoEstudiante._id
-      }).then(async () => {
-        await res.status(201).json({
-          message: "Estudiante inscripto exitosamente",
-          exito: true
+  nuevaInscripcion
+    .save()
+    .then(() => {
+      cursoSeleccionado.capacidad = cursoSeleccionado.capacidad - 1;
+      cursoSeleccionado.save();
+      //Le cambiamos el estado al estudiante
+      Estado.findOne({
+        nombre: "Inscripto",
+        ambito: "Estudiante"
+      })
+        .then(async estadoEstudiante => {
+          await Estudiante.findByIdAndUpdate(req.body.idEstudiante, {
+            estado: estadoEstudiante._id
+          })
+            .then(async () => {
+              await res.status(201).json({
+                message: "Estudiante inscripto exitosamente",
+                exito: true
+              });
+            })
+            .catch(() => {
+              res.status(500).json({
+                message: "Mensaje de error especifico"
+              });
+            });
+        })
+        .catch(() => {
+          res.status(500).json({
+            message: "Mensaje de error especifico"
+          });
         });
+    })
+    .catch(() => {
+      res.status(500).json({
+        message: "Mensaje de error especifico"
       });
     });
-  });
 });
 
 //Registra las calificaciones todos los estudiantes de un curso para una materia
@@ -824,18 +957,24 @@ router.post(
             "calXTrimestre._id": 1
           }
         }
-      ]).then(resultado => {
-        CalificacionesXTrimestre.findByIdAndUpdate(
-          resultado[0].calXTrimestre._id,
-          {
-            $set: {
-              calificaciones: estudiante.calificaciones
+      ])
+        .then(resultado => {
+          CalificacionesXTrimestre.findByIdAndUpdate(
+            resultado[0].calXTrimestre._id,
+            {
+              $set: {
+                calificaciones: estudiante.calificaciones
+              }
             }
-          }
-        )
-          .exec()
-          .catch(e => console.log(e));
-      });
+          )
+            .exec()
+            .catch(e => console.log(e));
+        })
+        .catch(() => {
+          res.status(500).json({
+            message: "Mensaje de error especifico"
+          });
+        });
     });
     res.json({
       message: "Calificaciones registradas correctamente",
@@ -898,41 +1037,54 @@ router.get("/agenda", checkAuthMiddleware, (req, res) => {
     {
       $project: {
         "nombreMateria.nombre": 1,
+        "nombreMateria._id": 1,
         horarios: 1,
         "docente.nombre": 1,
-        "docente.apellido": 1
+        "docente.apellido": 1,
+        "docente._id": 1,
+        "MXC._id": 1
       }
     }
-  ]).then(agendaCompleta => {
-    if (agendaCompleta[0].horarios[0] == null) {
-      return res.json({
-        exito: false,
-        message: "No existen horarios registrados para este curso",
-        agenda: []
-      });
-    } else {
-      let agenda = [];
-      for (let i = 0; i < agendaCompleta.length; i++) {
-        let valor = {
-          nombre: agendaCompleta[i].nombreMateria[0].nombre,
-          dia: agendaCompleta[i].horarios[0].dia,
-          inicio: agendaCompleta[i].horarios[0].horaInicio,
-          fin: agendaCompleta[i].horarios[0].horaFin,
-          nombreDocente: agendaCompleta[i].docente[0].nombre,
-          apellidoDocente: agendaCompleta[i].docente[0].apellido,
-          idHorarios: agendaCompleta[i].horarios[0]._id,
-          modificado: false
-        };
-        agenda.push(valor);
+  ])
+    .then(agendaCompleta => {
+      if (agendaCompleta[0].horarios[0] == null) {
+        return res.json({
+          exito: false,
+          message: "No existen horarios registrados para este curso",
+          agenda: []
+        });
+      } else {
+        let agenda = [];
+        for (let i = 0; i < agendaCompleta.length; i++) {
+          let valor = {
+            nombre: agendaCompleta[i].nombreMateria[0].nombre,
+            idMXC: agendaCompleta[i].MXC._id,
+            dia: agendaCompleta[i].horarios[0].dia,
+            inicio: agendaCompleta[i].horarios[0].horaInicio,
+            fin: agendaCompleta[i].horarios[0].horaFin,
+            idDocente: agendaCompleta[i].docente[0]._id,
+            idMateria: agendaCompleta[i].nombreMateria[0]._id,
+            idHorarios: agendaCompleta[i].horarios[0]._id,
+            modificado: false
+          };
+          agenda.push(valor);
+        }
+        res.json({
+          exito: true,
+          message: "Se ha obtenido la agenda correctamente",
+          agenda: agenda
+        });
       }
-      res.json({
-        exito: true,
-        message: "Se ha obtenido la agenda correctamente",
-        agenda: agenda
+    })
+    .catch(() => {
+      res.status(500).json({
+        message: "Mensaje de error especifico"
       });
-    }
-  });
+    });
 });
+
+//Recibimos : idCXM, idHorarios,
+router.post("/modificarAgenda", checkAuthMiddleware, (req, res) => {});
 
 //Elimina ciertos horarios registrados para un curso y una materia
 //@params: id del curso
@@ -985,58 +1137,64 @@ router.post("/eliminarHorarios", checkAuthMiddleware, (req, res) => {
         _id: mongoose.Types.ObjectId(req.body.idCurso)
       }
     }
-  ]).then(horariosDeMateria => {
-    //Valido que haya mas de un horario, sino tengo que borrar la MateriaXCurso
-    if (horariosDeMateria.length > 1) {
-      // console.log('entro');
-      // let crearHorario = (MXC) => {
-      //   return new Promise((resolve, reject) => {
-      //     for (var i = 0; i < MXC.horarios.length; i++) {
-      //       if (MXC.horarios[i] === req.body.idHorario) {
-      //         MXC.horarios.splice(i, 1);
-      //         console.log('encontro y ahora manda resolve');
-      //         resolve(true);
-      //       }
-      //     }
-      //   });
-      // };
-      // let guardarMXC = (MXC) => {
-      //   return new Promise((resolve, reject) => {
-      //     MXC.save().then(()=> {resolve(true);})
-      //   });
-      // };
-      // Horario.findByIdAndDelete(req.body.idHorario).then(() => {
-      //   MateriaXCurso.findById(horariosDeMateria[0].MXC._id).then(MXC => {
-      //     crearHorario(MXC).then(() => {
-      //       console.log('mando resolve efect');
-      //       guardarMXC(MXC).then(() => {
-      //         res.json({
-      //           exito: true,
-      //           message: "Se ha eliminado el horario correctamente"
-      //         });
-      //       });
-      //     });
-      //   });
-      // });
-    } else {
-      console.log("mando por aca");
-      // MateriaXCurso.findByIdAndDelete(horariosDeMateria[0].MXC._id).then(() => {
-      //   Curso.findById(req.body.idCurso).then(curso => {
-      //     for (var i = 0; i < curso.materias.length; i++) {
-      //       if (curso.materias[i] === horariosDeMateria[0].MXC._id) {
-      //         MXC.horarios.splice(i, 1);
-      //       }
-      //     }
-      //     MXC.save().then(() => {
-      //       res.json({
-      //         exito: true,
-      //         message: "Se ha eliminado el horario correctamente"
-      //       });
-      //     });
-      //   });
-      // });
-    }
-  });
+  ])
+    .then(horariosDeMateria => {
+      //Valido que haya mas de un horario, sino tengo que borrar la MateriaXCurso
+      if (horariosDeMateria.length > 1) {
+        // console.log('entro');
+        // let crearHorario = (MXC) => {
+        //   return new Promise((resolve, reject) => {
+        //     for (var i = 0; i < MXC.horarios.length; i++) {
+        //       if (MXC.horarios[i] === req.body.idHorario) {
+        //         MXC.horarios.splice(i, 1);
+        //         console.log('encontro y ahora manda resolve');
+        //         resolve(true);
+        //       }
+        //     }
+        //   });
+        // };
+        // let guardarMXC = (MXC) => {
+        //   return new Promise((resolve, reject) => {
+        //     MXC.save().then(()=> {resolve(true);})
+        //   });
+        // };
+        // Horario.findByIdAndDelete(req.body.idHorario).then(() => {
+        //   MateriaXCurso.findById(horariosDeMateria[0].MXC._id).then(MXC => {
+        //     crearHorario(MXC).then(() => {
+        //       console.log('mando resolve efect');
+        //       guardarMXC(MXC).then(() => {
+        //         res.json({
+        //           exito: true,
+        //           message: "Se ha eliminado el horario correctamente"
+        //         });
+        //       });
+        //     });
+        //   });
+        // });
+      } else {
+        // console.log("mando por aca");
+        // MateriaXCurso.findByIdAndDelete(horariosDeMateria[0].MXC._id).then(() => {
+        //   Curso.findById(req.body.idCurso).then(curso => {
+        //     for (var i = 0; i < curso.materias.length; i++) {
+        //       if (curso.materias[i] === horariosDeMateria[0].MXC._id) {
+        //         MXC.horarios.splice(i, 1);
+        //       }
+        //     }
+        //     MXC.save().then(() => {
+        //       res.json({
+        //         exito: true,
+        //         message: "Se ha eliminado el horario correctamente"
+        //       });
+        //     });
+        //   });
+        // });
+      }
+    })
+    .catch(() => {
+      res.status(500).json({
+        message: "Mensaje de error especifico"
+      });
+    });
 });
 
 //Registra las materiasXCurso de un curso dado, cada una de estas tiene su propio horario.
@@ -1045,17 +1203,31 @@ router.post("/eliminarHorarios", checkAuthMiddleware, (req, res) => {
 router.post("/agenda", checkAuthMiddleware, async (req, res) => {
   var crearHorario = horario => {
     return new Promise((resolve, reject) => {
-      horario.save().then(horarioGuardado => {
-        resolve(horarioGuardado._id);
-      });
+      horario
+        .save()
+        .then(horarioGuardado => {
+          resolve(horarioGuardado._id);
+        })
+        .catch(() => {
+          res.status(500).json({
+            message: "Mensaje de error especifico"
+          });
+        });
     });
   };
 
   var crearMateriaXCurso = mxc => {
     return new Promise((resolve, reject) => {
-      mxc.save().then(mxcGuardada => {
-        resolve(mxcGuardada._id);
-      });
+      mxc
+        .save()
+        .then(mxcGuardada => {
+          resolve(mxcGuardada._id);
+        })
+        .catch(() => {
+          res.status(500).json({
+            message: "Mensaje de error especifico"
+          });
+        });
     });
   };
 
@@ -1082,11 +1254,15 @@ router.post("/agenda", checkAuthMiddleware, async (req, res) => {
     let idMXC = await crearMateriaXCurso(nuevaMateriaXCurso);
     vectorIdsMXC.push(idMXC);
   }
-  Curso.findByIdAndUpdate(req.body.idCurso, { materias: vectorIdsMXC }).then(
-    () => {
-      res.json({ exito: true, message: "nice" });
-    }
-  );
+  Curso.findByIdAndUpdate(req.body.idCurso, { materias: vectorIdsMXC })
+    .then(() => {
+      res.json({ exito: true, message: "Se registró la agenda correctamente" });
+    })
+    .catch(() => {
+      res.status(500).json({
+        message: "Mensaje de error especifico"
+      });
+    });
 });
 
 //Se fija cada objeto del vector agenda, si es una mxc nueva la registra
