@@ -1,4 +1,4 @@
-import { MatSnackBar, MatDialog } from "@angular/material";
+import { MatSnackBar, MatDialog, MatDialogRef } from "@angular/material";
 import { AutenticacionService } from "src/app/login/autenticacionService.service";
 import { Component, OnInit } from "@angular/core";
 import { EventosService } from "../eventos.service";
@@ -16,9 +16,9 @@ import { EstudiantesService } from "src/app/estudiantes/estudiante.service";
 })
 export class VisualizarEventoComponent implements OnInit {
   evento: Evento;
-  comentarios: any[];
   descripcionComentario: String;
   comentarioIsEmpty: Boolean = true;
+  permisos: Boolean[] = [];
 
   constructor(
     public eventoService: EventosService,
@@ -35,7 +35,15 @@ export class VisualizarEventoComponent implements OnInit {
     }
     this.evento = this.eventoService.eventoSeleccionado;
     this.eventoService.obtenerComentariosDeEvento().subscribe(rtdo => {
-      this.comentarios = rtdo.comentarios.reverse();
+      this.eventoService.comentarios = rtdo.comentarios.reverse();
+      for (let i = 0; i < rtdo.comentarios.length; i++) {
+        if (
+          rtdo.comentarios[i].idUsuario == this.autenticacionService.getId() ||
+          this.autenticacionService.getRol() == "Admin"
+        )
+          this.permisos[i] = true;
+        else this.permisos[i] = false;
+      }
     });
   }
 
@@ -90,7 +98,7 @@ export class VisualizarEventoComponent implements OnInit {
             });
             this.descripcionComentario = "";
             this.eventoService.obtenerComentariosDeEvento().subscribe(rtdo => {
-              this.comentarios = rtdo.comentarios.reverse();
+              this.eventoService.comentarios = rtdo.comentarios.reverse();
             });
           } else {
             this.snackBar.open(
@@ -104,5 +112,20 @@ export class VisualizarEventoComponent implements OnInit {
           }
         });
     }
+  }
+  onEliminar(): void {
+    this.eventoService.eliminarComentario(
+      this.eventoService.idComentarioSeleccionado
+    );
+    this.eventoService.obtenerComentariosDeEvento().subscribe(rtdo => {
+      this.eventoService.comentarios = rtdo.comentarios.reverse();
+      console.log("borrado");
+    });
+  }
+
+  onReportar(): void {}
+
+  onOpciones(id) {
+    this.eventoService.idComentarioSeleccionado = id;
   }
 }

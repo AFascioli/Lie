@@ -61,8 +61,8 @@ export class BuscarEstudiantesComponent implements OnInit {
       if (this.buscarPorNomYAp) {
         this.servicio.busquedaEstudianteXNombre = true;
         this.servicio.buscarEstudiantesNombreApellido(
-          form.value.nombre,
-          form.value.apellido
+          form.value.nombre.trim(),
+          form.value.apellido.trim()
         );
       } else {
         this.servicio.buscarEstudiantesDocumento(

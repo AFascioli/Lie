@@ -12,6 +12,11 @@
  width: 150px;
 }
 
+.mat-form-Fecha
+{
+  text-align: center !important;
+}
+
 .inputFecha{
   width: 0%;
   color: black !important;

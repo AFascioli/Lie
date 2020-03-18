@@ -116,11 +116,11 @@
             <mat-form-field [class.mat-form-field-mobile]="mobileQuery.matches">
               <input
                 matInput
+                [matDatepicker]="picker"
                 name="fechaNac"
                 ngModel
                 #fechaNac="ngModel"
                 [max]="maxDate"
-                [matDatepicker]="picker"
                 placeholder="Sel. fecha de nacimiento"
                 required
               />
@@ -129,6 +129,7 @@
                 [for]="picker"
               ></mat-datepicker-toggle>
               <mat-datepicker
+                touchUi
                 #picker
                 startView="multi-year"
                 disabled="false"

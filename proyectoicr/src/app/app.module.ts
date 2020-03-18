@@ -1,4 +1,6 @@
-import { ReadMoreComponent } from "./eventos/visualizar-evento/read-more.component";
+
+import { Evento } from './eventos/evento.model';
+import { ReadMoreComponent } from './eventos/visualizar-evento/read-more.component';
 import { AuthInterceptor } from "./login/auth-interceptor";
 import { BrowserModule } from "@angular/platform-browser";
 import { NgModule } from "@angular/core";

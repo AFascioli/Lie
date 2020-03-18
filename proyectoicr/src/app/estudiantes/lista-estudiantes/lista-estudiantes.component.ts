@@ -16,6 +16,7 @@ import { Router } from "@angular/router";
 export class ListaEstudiantesComponent implements OnInit {
   estudiantes: Estudiante[] = [];
   curso: any[] = [];
+
   permisos = {
     notas: 0,
     asistencia: 0,

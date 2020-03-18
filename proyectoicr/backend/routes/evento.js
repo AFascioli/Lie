@@ -332,4 +332,22 @@ router.delete("/eliminarEvento", checkAuthMiddleware, (req, res, next) => {
   });
 });
 
+router.delete("/eliminarComentario", checkAuthMiddleware, (req, res, next) => {
+  Evento.findByIdAndUpdate({
+    _id: req.query.idEvento
+  }).then(eventoEncontrado => {
+    for (let i = 0; i < eventoEncontrado.comentarios.length; i++) {
+      if (eventoEncontrado.comentarios[i]._id == req.query.idComentario) {
+        eventoEncontrado.comentarios.splice(i, 1);
+        eventoEncontrado.save();
+      }
+    }
+  });
+
+  return res.status(202).json({
+    message: "Cometario eliminado exitosamente",
+    exito: true
+  });
+});
+
 module.exports = router;
