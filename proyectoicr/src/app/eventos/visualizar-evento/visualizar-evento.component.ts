@@ -1,5 +1,4 @@
-import { VolverPopupComponent } from './../../popup-genericos/volver-popup/volver-popup.component';
-import { MatSnackBar, MatDialog } from "@angular/material";
+import { MatSnackBar, MatDialog, MatDialogRef } from "@angular/material";
 import { AutenticacionService } from "src/app/login/autenticacionService.service";
 import { Component, OnInit } from "@angular/core";
 import { EventosService } from "../eventos.service";
@@ -7,7 +6,7 @@ import { Evento } from "../evento.model";
 import { Comentario } from "../comentario.model";
 import { Router } from "@angular/router";
 import { environment } from "src/environments/environment";
-import { EstudiantesService } from 'src/app/estudiantes/estudiante.service';
+import { EstudiantesService } from "src/app/estudiantes/estudiante.service";
 // declare var require: any;
 
 @Component({
@@ -17,9 +16,9 @@ import { EstudiantesService } from 'src/app/estudiantes/estudiante.service';
 })
 export class VisualizarEventoComponent implements OnInit {
   evento: Evento;
-  comentarios: any[];
   descripcionComentario: String;
   comentarioIsEmpty: Boolean = true;
+  permisos: Boolean[] = [];
 
   constructor(
     public eventoService: EventosService,
@@ -36,7 +35,15 @@ export class VisualizarEventoComponent implements OnInit {
     }
     this.evento = this.eventoService.eventoSeleccionado;
     this.eventoService.obtenerComentariosDeEvento().subscribe(rtdo => {
-      this.comentarios = rtdo.comentarios.reverse();
+      this.eventoService.comentarios = rtdo.comentarios.reverse();
+      for (let i = 0; i < rtdo.comentarios.length; i++) {
+        if (
+          rtdo.comentarios[i].idUsuario == this.autenticacionService.getId() ||
+          this.autenticacionService.getRol() == "Admin"
+        )
+          this.permisos[i] = true;
+        else this.permisos[i] = false;
+      }
     });
   }
 
@@ -63,7 +70,6 @@ export class VisualizarEventoComponent implements OnInit {
     }
   }
 
-
   onGuardar(descripcion) {
     if (!this.descripcionComentario || !this.descripcionComentario.trim()) {
       this.snackBar.open("El comentario esta vacío", "", {
@@ -71,7 +77,6 @@ export class VisualizarEventoComponent implements OnInit {
         panelClass: ["snack-bar-fracaso"]
       });
     } else {
-
       const comentario: Comentario = {
         idUsuario: null,
         comentario: descripcion,
@@ -93,7 +98,7 @@ export class VisualizarEventoComponent implements OnInit {
             });
             this.descripcionComentario = "";
             this.eventoService.obtenerComentariosDeEvento().subscribe(rtdo => {
-              this.comentarios = rtdo.comentarios.reverse();
+              this.eventoService.comentarios = rtdo.comentarios.reverse();
             });
           } else {
             this.snackBar.open(
@@ -107,5 +112,20 @@ export class VisualizarEventoComponent implements OnInit {
           }
         });
     }
+  }
+  onEliminar(): void {
+    this.eventoService.eliminarComentario(
+      this.eventoService.idComentarioSeleccionado
+    );
+    this.eventoService.obtenerComentariosDeEvento().subscribe(rtdo => {
+      this.eventoService.comentarios = rtdo.comentarios.reverse();
+      console.log("borrado");
+    });
+  }
+
+  onReportar(): void {}
+
+  onOpciones(id) {
+    this.eventoService.idComentarioSeleccionado = id;
   }
 }

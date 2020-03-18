@@ -12,6 +12,9 @@ import { Evento } from "./evento.model";
 export class EventosService {
   public evento: Evento;
   public tituloABorrar: string;
+  public idComentarioSeleccionado: string;
+  public comentarios: any[]
+  public ImgCargada: string;
 
   constructor(
     public snackBar: MatSnackBar,
@@ -125,9 +128,9 @@ export class EventosService {
   //Obtiene la imagen de un evento dada su url
   public obtenerImagenEvento(imgUrl: string) {
     let params = new HttpParams().set("imgUrl", imgUrl);
-    return this.http.get<File>(
-      environment.apiUrl + "/evento/imagenes",{params: params}
-    );
+    return this.http.get<File>(environment.apiUrl + "/evento/imagenes", {
+      params: params
+    });
   }
 
   //Obtiene todos los comentarios de un evento que estan almacenados en la base de datos
@@ -135,7 +138,7 @@ export class EventosService {
   public obtenerComentariosDeEvento() {
     let params = new HttpParams().set("idEvento", this.eventoSeleccionado._id);
     return this.http.get<{
-      comentarios: Comentario[];
+      comentarios: any[];
       message: string;
       exito: string;
     }>(environment.apiUrl + "/evento/comentarios", { params: params });
@@ -159,5 +162,43 @@ export class EventosService {
       nombre: string;
       apellido: string;
     }>(environment.apiUrl + "/evento/registrarComentario", datosComentario);
+  }
+  public eliminarComentario(id) {
+    let params = new HttpParams()
+      .set("idEvento", this.eventoSeleccionado._id)
+      .append("idComentario", this.idComentarioSeleccionado);
+    this.http
+      .delete<{ message: string; exito: boolean }>(
+        environment.apiUrl + "/evento/eliminarComentario",
+        { params: params }
+      )
+      .subscribe(response => {
+        if (response.exito) {
+          this.snackBar.open(response.message, "", {
+            panelClass: ["snack-bar-exito"],
+            duration: 4500
+          });
+        }
+      });
+  }
+
+  public eliminarImagen (imgUrl: string) {
+    let params = new HttpParams()
+    .set("imgUrl", imgUrl)
+    .append ("idImg", this.ImgCargada);
+    this.http
+      .delete<{ message: string; exito: boolean }>(
+        environment.apiUrl + "/evento/eliminarImagen",
+        { params: params }
+      )
+      .subscribe(response => {
+        if (response.exito) {
+          this.snackBar.open(response.message, "", {
+            panelClass: ["snack-bar-exito"],
+            duration: 4500
+          });
+        }
+      });
+
   }
 }

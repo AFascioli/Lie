@@ -85,7 +85,7 @@ export class ModificarEventoComponent implements OnInit {
       const value = event.value;
 
       if ((value || "").trim()) {
-        this.chips.push(value.trim());
+        if (this.allChips.includes(value)) this.chips.push(value.trim());
       }
 
       if (input) {

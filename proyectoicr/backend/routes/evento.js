@@ -156,8 +156,8 @@ router.get("", (req, res, next) => {
 });
 
 //Retorna la imagen de un evento dada su url
-router.get("/imagenes",(req, res, next) => {
-  res.sendFile(path.join(__dirname, '../images', req.query.imgUrl));
+router.get("/imagenes", (req, res, next) => {
+  res.sendFile(path.join(__dirname, "../images", req.query.imgUrl));
 });
 
 //Obtiene todos los comentarios de un evento que estan almacenados en la base de datos
@@ -243,8 +243,9 @@ router.patch("/editar", upload, (req, res, next) => {
     tags: req.body.tags,
     imgUrl: req.file.filename,
     autor: req.body.autor
-  })
-  console.log(horaFin)
+  });
+  console
+    .log(horaFin)
     .then(() => {
       res.status(200).json({
         message: "Evento modificado exitosamente",
@@ -265,6 +266,24 @@ router.delete("/eliminarEvento", checkAuthMiddleware, (req, res, next) => {
   }).exec();
   return res.status(202).json({
     message: "Evento eliminado exitosamente",
+    exito: true
+  });
+});
+
+router.delete("/eliminarComentario", checkAuthMiddleware, (req, res, next) => {
+  Evento.findByIdAndUpdate({
+    _id: req.query.idEvento
+  }).then(eventoEncontrado => {
+    for (let i = 0; i < eventoEncontrado.comentarios.length; i++) {
+      if (eventoEncontrado.comentarios[i]._id == req.query.idComentario) {
+        eventoEncontrado.comentarios.splice(i, 1);
+        eventoEncontrado.save();
+      }
+    }
+  });
+
+  return res.status(202).json({
+    message: "Cometario eliminado exitosamente",
     exito: true
   });
 });

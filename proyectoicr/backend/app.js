@@ -32,17 +32,17 @@ app.use(express.static('../images'));
    lo que corresponda*/
 
 //Conexión a base de producción
-//  mongoose
-//   .connect(
-//       "mongodb+srv://ComandanteJr:SNcjNuPBMG42lOh1@cluster0-qvosw.mongodb.net/icrdev?retryWrites=true",
-//       { useNewUrlParser: true, useUnifiedTopology: true }
-//     )
-//     .then(() => {
-//       console.log("Conexión a base de datos de producción exitosa");
-//    })
-//     .catch(() => {
-//       console.log("Fallo conexión a la base de datos de producción");
-//    });
+  //mongoose
+  // .connect(
+     //  "mongodb+srv://ComandanteJr:SNcjNuPBMG42lOh1@cluster0-qvosw.mongodb.net/icrdev?retryWrites=true",
+     //  { useNewUrlParser: true, useUnifiedTopology: true }
+   //  )
+    // .then(() => {
+    //   console.log("Conexión a base de datos de producción exitosa");
+  //  })
+    // .catch(() => {
+     //  console.log("Fallo conexión a la base de datos de producción");
+  //  });
 
 // //Conexión a base local
 mongoose.connect('mongodb://127.0.0.1:27017/icr-local',{useNewUrlParser: true, useUnifiedTopology: true  })
@@ -50,7 +50,7 @@ mongoose.connect('mongodb://127.0.0.1:27017/icr-local',{useNewUrlParser: true, u
  console.log('Conexión a base de datos local exitosa');
 })
 .catch(() => {
- console.log('Fallo conexión a la base de datos local');
+console.log('Fallo conexión a la base de datos local');
 });
 
 
