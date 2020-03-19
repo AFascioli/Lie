@@ -1,4 +1,4 @@
-import { environment } from 'src/environments/environment';
+import { environment } from "src/environments/environment";
 import { async } from "@angular/core/testing";
 import { EventosService } from "./../eventos/eventos.service";
 import { Component, OnInit } from "@angular/core";
@@ -33,8 +33,8 @@ export class HomeComponent implements OnInit {
     public dialog: MatDialog
   ) {}
 
-  getImage(imgUrl){
-      return `${environment.apiUrl}/evento/imagenes?imgUrl=${imgUrl}`
+  getImage(filename) {
+    return `http://localhost:3000/imagen/${filename}`;
   }
 
   obtenerMes(fechaEvento) {
@@ -68,9 +68,6 @@ export class HomeComponent implements OnInit {
     this.servicioEvento.eventoSeleccionado = evento;
     this.router.navigate(["/visualizarEvento"]);
   }
-
-  // obra = require("../../img/acto.jpg");
-  // desfile = require("../../img/desfile.jpg");
 
   subscribeToNotifications() {
     if (Notification.permission === "granted") {
@@ -120,15 +117,11 @@ export class HomeComponent implements OnInit {
   ]
 })
 export class BorrarPopupComponent {
- // titulo: string;
-
   constructor(
     public dialogRef: MatDialogRef<BorrarPopupComponent>,
     public router: Router,
     public servicioEvento: EventosService
-  ) {
-    //this.eve = this.servicioEvento.evento.titulo;
-  }
+  ) {}
 
   onYesClick(): void {
     this.servicioEvento.eliminarEvento(this.servicioEvento.evento._id);

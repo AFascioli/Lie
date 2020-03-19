@@ -21,6 +21,10 @@ export class VisualizarEventoComponent implements OnInit {
   permisos: Boolean[] = [];
   imgURL: any;
   filename: any;
+  tituloEvento: string;
+  descripcionDelEvento: string;
+  fechaDelEvento: Date;
+  horaFinal: string;
 
   constructor(
     public eventoService: EventosService,
@@ -32,7 +36,9 @@ export class VisualizarEventoComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.evento = this.eventoService.eventoSeleccionado;
+    this.tituloEvento = this.eventoService.evento.titulo;
+    this.descripcionDelEvento = this.eventoService.evento.descripcion;
+    this.fechaDelEvento = this.eventoService.evento.fechaEvento;
     this.filename = this.eventoService.evento.filename;
     this.imgURL = `http://localhost:3000/imagen/${this.filename}`;
     this.eventoService.obtenerComentariosDeEvento().subscribe(rtdo => {

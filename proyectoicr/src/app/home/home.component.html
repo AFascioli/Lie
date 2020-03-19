@@ -2,7 +2,10 @@
   Instituto Cristo Rey
 </h1>
 
-<mat-card class="card-body-componente" *ngFor="let evento of eventos; let i = index">
+<mat-card
+  class="card-body-componente"
+  *ngFor="let evento of eventos; let i = index"
+>
   <mat-card-title>
     <button (click)="eventoSeleccionado(evento)" class="titulo">
       {{ evento.titulo }}
@@ -18,7 +21,7 @@
     >{{ evento.horaInicio }} - {{ evento.horaFin }}</mat-card-subtitle
   >
   <div class="containerImg">
-    <img mat-card-image [src]="getImage(evento.imgUrl)" />
+    <img mat-card-image [src]="getImage(evento.filename)" />
     <button
       type="button"
       mat-icon-button
@@ -53,45 +56,3 @@
     </button>
   </div>
 </mat-card>
-
-<!-- <mat-card class="card-body-componente">
-  <mat-card-title>Acto 25 de Mayo</mat-card-title>
-  <mat-card-subtitle>Acto de caracter obligatorio</mat-card-subtitle>
-  <img mat-card-image src="{{ desfile }}" />
-  <mat-card-content>
-    <p class="parrafo">
-      El día 25 de mayo se realizará en la institución el acto correspondiente,
-      en conmemoración de la Revolución de Mayo. El mismo se encuentra a cargo
-      del curso 4 "A" y se llevara a cabo a las 10 am en las instalaciones del
-      colegio.
-    </p>
-  </mat-card-content>
-  <mat-card-actions>
-    <button mat-button>Allí estaré</button>
-    <button mat-button>No podré asistir</button>
-  </mat-card-actions>
-</mat-card>
-
-<mat-card class="card-body-componente">
-    <mat-card-title>Obras de Teatro</mat-card-title>
-    <mat-card-subtitle>Acto de caracter no obligatorio</mat-card-subtitle>
-    <img
-      mat-card-image
-      src="{{obra}}"
-    />
-    <mat-card-content>
-      <p class="parrafo">
-        El día viernes 22 de noviembre se realizará en la institución la
-        presentación de las obras de teatro que fueron desarrolladas en el marco
-        de la asignatura "Teatro" a lo largo del presente año. El evento va a ser
-        presentado por los dos cursos que se encuentran cursando sexto año. La
-        obra a presentar por 6 "A" se llama "Bernarnarda Alba" y la del 6 "B" "se
-        llama "Fahrenheit 451". Esperamos que puedan acompañarnos y disfrutarlas
-        junto a nosotros!
-      </p>
-    </mat-card-content>
-    <mat-card-actions>
-      <button mat-button>Allí estaré</button>
-      <button mat-button>No podré asistir</button>
-    </mat-card-actions>
-  </mat-card> -->
