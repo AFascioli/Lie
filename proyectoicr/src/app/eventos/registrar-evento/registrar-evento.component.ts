@@ -24,7 +24,7 @@ export class RegistrarEventoComponent implements OnInit {
   >;
   @ViewChild("auto", { static: false }) matAutocomplete: MatAutocomplete;
   fechaActual: Date;
-  imagePath: File;
+  imageFile: File;
   imgURL: any;
   message: string;
   selectable = true;
@@ -143,7 +143,7 @@ export class RegistrarEventoComponent implements OnInit {
     }
 
     var reader = new FileReader();
-    this.imagePath = files;
+    this.imageFile = files;
     reader.readAsDataURL(files[0]);
     reader.onload = _event => {
       this.imgURL = reader.result;
@@ -162,7 +162,7 @@ export class RegistrarEventoComponent implements OnInit {
             this.horaInicio,
             this.horaFin,
             this.chips,
-            this.imagePath
+            this.imageFile
           )
           .subscribe(rtdo => {
             if (rtdo.exito) {
@@ -186,7 +186,7 @@ export class RegistrarEventoComponent implements OnInit {
             this.horaInicio,
             this.horaFin,
             this.chips,
-            this.imagePath
+            this.imageFile
           )
           .subscribe(rtdo => {
             if (rtdo.exito) {

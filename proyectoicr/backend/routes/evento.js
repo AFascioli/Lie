@@ -8,32 +8,35 @@ const multer = require("multer");
 const Usuario = require("../models/usuario");
 const path = require("path");
 const Admin = require("../models/administrador");
+const GridFsStorage = require("multer-gridfs-storage");
 //const Suscripcion = require("../classes/suscripcion");
 //const Inscripcion = require("../models/inscripcion");
 //const mongoose = require("mongoose");
 
-const MIME_TYPE_MAPA = {
-  "image/png": "png",
-  "image/jpeg": "jpg",
-  "image/jpg": "jpg"
-};
+// const MIME_TYPE_MAPA = {
+//   "image/png": "png",
+//   "image/jpeg": "jpg",
+//   "image/jpg": "jpg"
+// };
 
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    const isValid = MIME_TYPE_MAPA[file.mimetype];
-    let error = new Error("El tipo de archivo es invalido");
-    if (isValid) {
-      error = null;
-    }
-    cb(error, "backend/images");
+const storage = new GridFsStorage({
+  url: "mongodb://127.0.0.1:27017/icr-local",
+  options: {
+    useNewUrlParser: true,
+    useUnsifiedTopology: true
   },
-  filename: (req, file, cb) => {
-    const name = file.originalname
-      .toLowerCase()
-      .split(" ")
-      .join("-");
-    const ext = MIME_TYPE_MAPA[file.mimetype];
-    cb(null, name + "-" + Date.now() + "." + ext);
+  file: (req, file) => {
+    const match = ["image/png", "image/jpeg"];
+
+    if (match.indexOf(file.mimetype) === -1) {
+      const filename = `${Date.now()}-${file.originalname}`;
+      return filename;
+    }
+
+    return {
+      bucketName: "imagen",
+      filename: `${Date.now()}-${file.originalname}`
+    };
   }
 });
 
@@ -42,6 +45,7 @@ var upload = multer({ storage: storage }).single("image");
 //Registra el evento en la base de datos
 //@params: evento a publicar
 router.post("/registrar", upload, (req, res, next) => {
+  console.log(req.file);
   Usuario.findOne({ email: req.body.autor })
     .then(usuario => {
       const evento = new Evento({
@@ -51,90 +55,9 @@ router.post("/registrar", upload, (req, res, next) => {
         horaInicio: req.body.horaInicio,
         horaFin: req.body.horaFin,
         tags: req.body.tags,
-        imgUrl: req.file.filename,
+        idImagen: req.file.filename,
         autor: usuario._id
       });
-      var cuerpo =
-        "El evento se realizará en la fecha " + evento.fechaEvento + ".";
-      var idtutores;
-      // NOTIFICACIÓN
-      //Construcción de cuerpo de la notificación
-
-      // Notificar a los adultos que correspondan a los cursos de los tags/chips
-      // if (evento.tags.includes("Todos los cursos")) {
-      //   Suscripcion.notificacionMasiva(evento.titulo, this.cuerpo);
-      // } else {
-      //   Inscripcion.agreggate([
-      //     {
-      //       '$lookup': {
-      //         'from': 'curso',
-      //         'localField': 'idCurso',
-      //         'foreignField': '_id',
-      //         'as': 'icurso'
-      //       }
-      //     }, {
-      //       '$unwind': {
-      //         'path': '$icurso',
-      //         'preserveNullAndEmptyArrays': false
-      //       }
-      //     }, {
-      //       '$match': {
-      //         '$expr': {
-      //           '$in': [
-      //             '$icurso.curso', [
-      //               '5A'
-      //             ]
-      //           ]
-      //         }
-      //       }
-      //     }, {
-      //       '$lookup': {
-      //         'from': 'estudiante',
-      //         'localField': 'idEstudiante',
-      //         'foreignField': '_id',
-      //         'as': 'conest'
-      //       }
-      //     }, {
-      //       '$unwind': {
-      //         'path': '$conest',
-      //         'preserveNullAndEmptyArrays': false
-      //       }
-      //     }, {
-      //       '$unwind': {
-      //         'path': '$conest.adultoResponsable',
-      //         'preserveNullAndEmptyArrays': false
-      //       }
-      //     }, {
-      //       '$lookup': {
-      //         'from': 'adultoResponsable',
-      //         'localField': 'idAdulto',
-      //         'foreignField': 'string',
-      //         'as': 'conadulto'
-      //       }
-      //     }, {
-      //       '$unwind': {
-      //         'path': '$conadulto',
-      //         'preserveNullAndEmptyArrays': false
-      //       }
-      //     }, {
-      //       '$project': {
-      //         '_id': 0,
-      //         'conadulto.idUsuario': 1
-      //       }
-      //     }
-      //   ]).then(response =>{
-      //     response.forEach(conadulto => {
-      //       idtutores.push(conadulto[0].idUsuario);
-      //     });
-      //     Suscripcion.notificacionGrupal(
-      //       idtutores, // Tutores de los cursos seleccionados
-      //       evento.titulo,
-      //       this.cuerpo
-      //     );
-      //   })
-
-      // }
-
       evento
         .save()
         .then(() => {
@@ -155,6 +78,28 @@ router.post("/registrar", upload, (req, res, next) => {
         message: "Mensaje de error especifico"
       });
     });
+});
+
+router.get("/imagen", (req, res) => {
+  gfs.files.findOne({ filename: req.params.filename }, (err, file) => {
+    // Check if file
+    if (!file || file.length === 0) {
+      return res.status(404).json({
+        err: "No file exists"
+      });
+    }
+
+    // Check if image
+    if (file.contentType === "image/jpeg" || file.contentType === "image/png") {
+      // Read output to browser
+      const readstream = gfs.createReadStream(file.filename);
+      readstream.pipe(res);
+    } else {
+      res.status(404).json({
+        err: "Not an image"
+      });
+    }
+  });
 });
 
 //Obtiene todos los eventos que estan almacenados en la base de datos
