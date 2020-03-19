@@ -13,7 +13,7 @@ export class EventosService {
   public evento: Evento;
   public tituloABorrar: string;
   public idComentarioSeleccionado: string;
-  public comentarios: any[]
+  public comentarios: any[];
   public ImgCargada: string;
 
   constructor(
@@ -118,6 +118,7 @@ export class EventosService {
         }
       });
   }
+
   //Obtiene todos los eventos que estan almacenados en la base de datos
   public obtenerEvento() {
     return this.http.get<{ eventos: Evento[]; message: string; exito: string }>(
@@ -182,10 +183,10 @@ export class EventosService {
       });
   }
 
-  public eliminarImagen (imgUrl: string) {
+  public eliminarImagen(imgUrl: string) {
     let params = new HttpParams()
-    .set("imgUrl", imgUrl)
-    .append ("idImg", this.ImgCargada);
+      .set("imgUrl", imgUrl)
+      .append("idImg", this.ImgCargada);
     this.http
       .delete<{ message: string; exito: boolean }>(
         environment.apiUrl + "/evento/eliminarImagen",
@@ -199,6 +200,5 @@ export class EventosService {
           });
         }
       });
-
   }
 }

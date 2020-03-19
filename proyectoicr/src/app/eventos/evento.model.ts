@@ -7,6 +7,6 @@ export interface Evento {
   horaFin: string;
   tags: string[];
   autor: string;
-  imgUrl: any;
+  filename: any;
   comentarios: string[];
 }

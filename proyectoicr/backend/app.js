@@ -16,33 +16,50 @@ const asistenciaRoutes = require("./routes/asistencia");
 const calificacionesRoutes = require("./routes/calificacion");
 const eventoRoutes = require("./routes/evento");
 const materiasRoutes = require("./routes/materia");
-//const Grid = require("mongodb").Grid;
+var Grid = require("gridfs-stream");
+let gfs;
+//Grid.mongo = mongoose.mongo;
 
 // Logramos que se suban las imagenes
-// No podemos definir el grid y por lo tanto no podemos obtener las imagenes
-// Grid parece ser que es de mongo
+// No podemos obtener las imagenes
 //Ver donde va a quedar el endpoint de obtener imagen
 
 const app = express(); // Creo la app express
 
-app.use("/images", express.static(path.join("../images")));
+// app.use("/images", express.static(path.join("../images")));
 
-app.use("/static", express.static(path.join("images", "public")));
+// app.use("/static", express.static(path.join("images", "public")));
 
-app.use(express.static("../images"));
+// app.use(express.static("../images"));
 
 const conn = mongoose.createConnection("mongodb://127.0.0.1:27017/icr-local");
 
-// conn.once('open', () => {
-//   console.log('Connection Successful local database')
-// });
-
-let gfs;
-
 conn.once("open", () => {
   gfs = Grid(conn.db, mongoose.mongo);
-  gfs.collection("uploads");
+  gfs.collection("imagen");
   console.log("Connection Successful to database");
+});
+
+app.get("/imagen/:filename", (req, res) => {
+  gfs.files.findOne({ filename: req.params.filename }, (err, file) => {
+    // Check if file
+    if (!file || file.length === 0) {
+      return res.status(404).json({
+        err: "No file exists"
+      });
+    }
+
+    // Check if image
+    if (file.contentType === "image/jpeg" || file.contentType === "image/png") {
+      // Read output to browser
+      const readstream = gfs.createReadStream(file.filename);
+      readstream.pipe(res);
+    } else {
+      res.status(404).json({
+        err: "Not an image"
+      });
+    }
+  });
 });
 
 // app.use(express.static("backend/images", 'public'));
@@ -65,19 +82,19 @@ conn.once("open", () => {
 //  });
 
 // //Conexión a base local
-// mongoose
-//   .connect("mongodb://127.0.0.1:27017/icr-local", {
-//     useNewUrlParser: true,
-//     useUnifiedTopology: true
-//   })
-//   .then(() => {
-//     console.log("Conexión a base de datos local exitosa");
-//   })
-//   .catch(() => {
-//     console.log("Fallo conexión a la base de datos local");
-//   });
+mongoose
+  .connect("mongodb://127.0.0.1:27017/icr-local", {
+    useNewUrlParser: true,
+    useUnifiedTopology: true
+  })
+  .then(() => {
+    console.log("Conexión a base de datos local exitosa");
+  })
+  .catch(() => {
+    console.log("Fallo conexión a la base de datos local");
+  });
 
-//Para sacar el deprecation warning de la consola
+// //Para sacar el deprecation warning de la consola
 mongoose.set("useFindAndModify", false);
 
 // Usamos el body parser para poder extraer datos del request body

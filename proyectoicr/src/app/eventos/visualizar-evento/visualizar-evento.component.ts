@@ -19,6 +19,8 @@ export class VisualizarEventoComponent implements OnInit {
   descripcionComentario: String;
   comentarioIsEmpty: Boolean = true;
   permisos: Boolean[] = [];
+  imgURL: any;
+  filename: any;
 
   constructor(
     public eventoService: EventosService,
@@ -30,10 +32,9 @@ export class VisualizarEventoComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    if (this.eventoService.eventoSeleccionado == null) {
-      this.router.navigate(["/home"]);
-    }
     this.evento = this.eventoService.eventoSeleccionado;
+    this.filename = this.eventoService.evento.filename;
+    this.imgURL = `http://localhost:3000/imagen/${this.filename}`;
     this.eventoService.obtenerComentariosDeEvento().subscribe(rtdo => {
       this.eventoService.comentarios = rtdo.comentarios.reverse();
       for (let i = 0; i < rtdo.comentarios.length; i++) {
@@ -46,6 +47,8 @@ export class VisualizarEventoComponent implements OnInit {
       }
     });
   }
+
+  ngAfterViewInit() {}
 
   getImage(imgUrl) {
     return `${environment.apiUrl}/evento/imagenes?imgUrl=${imgUrl}`;
@@ -119,7 +122,6 @@ export class VisualizarEventoComponent implements OnInit {
     );
     this.eventoService.obtenerComentariosDeEvento().subscribe(rtdo => {
       this.eventoService.comentarios = rtdo.comentarios.reverse();
-      console.log("borrado");
     });
   }
 

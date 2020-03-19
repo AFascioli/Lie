@@ -115,7 +115,7 @@
       </mat-autocomplete>
     </mat-form-field>
     <div>
-      <img [src]="imgURL" class="image-preview" *ngIf="imgURL" />
+      <img id="imagen" [src]="imgURL" class="image-preview" *ngIf="imgURL" />
       <button
         mat-stroked-button
         class="boton-seleccionar"
@@ -138,6 +138,7 @@
       <button
         class="buttonPrimary"
         (click)="onGuardarEvento(form)"
+        [disabled]="true"
         mat-raised-button
       >
         Guardar

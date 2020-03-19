@@ -13,9 +13,6 @@ import { MatSnackBar, MatDialog } from "@angular/material";
 import Rolldate from "../../../assets/rolldate.min.js";
 import { CancelPopupComponent } from "src/app/popup-genericos/cancel-popup.component";
 
-//Parche para la demo #resolve
-declare var require: any;
-
 @Component({
   selector: "app-modificar-evento",
   templateUrl: "./modificar-evento.component.html",
@@ -27,7 +24,7 @@ export class ModificarEventoComponent implements OnInit {
   >;
   @ViewChild("auto", { static: false }) matAutocomplete: MatAutocomplete;
   fechaActual: Date;
-  imagePath: File;
+  imageFile: File;
   imgURL: any;
   message: string;
   selectable = true;
@@ -40,7 +37,6 @@ export class ModificarEventoComponent implements OnInit {
   allChips: string[] = ["1A", "2A", "3A", "4A", "5A", "6A", "Todos los cursos"];
   horaInicio = "";
   horaFin = "";
-  //HTML
 
   tituloEvento: string;
   descripcionDelEvento: string;
@@ -48,7 +44,7 @@ export class ModificarEventoComponent implements OnInit {
   horaInicial: string;
   horaFinal: string;
   cursos: string[];
-  imagenEvento: string;
+  filename: string;
 
   constructor(
     public eventoService: EventosService,
@@ -62,10 +58,10 @@ export class ModificarEventoComponent implements OnInit {
     this.horaFinal = this.eventoService.evento.horaFin;
     this.cursos = this.eventoService.evento.tags;
     this.chips = this.eventoService.evento.tags;
-    this.imagenEvento = this.eventoService.evento.imgUrl;
-    this.imgURL = this.getImage(this.imagenEvento);
-    //Hace que funcione el autocomplete, filtra
+    this.filename = this.eventoService.evento.filename;
+    this.imgURL = `http://localhost:3000/imagen/${this.filename}`;
 
+    //Hace que funcione el autocomplete, filtra
     this.filteredChips = this.chipsCtrl.valueChanges.pipe(
       startWith(null),
       map((chip: string | null) =>
@@ -164,7 +160,7 @@ export class ModificarEventoComponent implements OnInit {
     }
 
     var reader = new FileReader();
-    this.imagePath = files;
+    this.imageFile = files;
     reader.readAsDataURL(files[0]);
     reader.onload = _event => {
       this.imgURL = reader.result;
@@ -185,7 +181,7 @@ export class ModificarEventoComponent implements OnInit {
             this.horaFinal,
             this.chips,
             this.eventoService.evento.autor,
-            this.imagePath,
+            this.eventoService.evento.filename,
             this.eventoService.evento.comentarios
           )
           .subscribe(rtdo => {
@@ -212,7 +208,7 @@ export class ModificarEventoComponent implements OnInit {
             this.horaFin,
             this.chips,
             this.eventoService.evento.autor,
-            this.imagePath,
+            this.eventoService.evento.filename,
             this.eventoService.evento.comentarios
           )
           .subscribe(rtdo => {
@@ -257,8 +253,5 @@ export class ModificarEventoComponent implements OnInit {
     this.dialog.open(CancelPopupComponent, {
       width: "250px"
     });
-  }
-  getImage(imgUrl) {
-    return require("backend/images/" + imgUrl);
   }
 }

@@ -10,7 +10,7 @@
   <p>
     <b>Hora inicio y fin:</b> {{ evento.horaInicio }} - {{ evento.horaFin }}
   </p>
-  <mat-carousel
+  <!-- <mat-carousel
     interval="5000"
     maxWidth="auto"
     proportion="75"
@@ -20,14 +20,13 @@
   >
     <mat-carousel-slide
       overlayColor="transparent"
-      [image]="getImage(evento.imgUrl)"
-    ></mat-carousel-slide>
-    <mat-carousel-slide
-      overlayColor="transparent"
-      [image]="getImage('acto.6a876ba866add45c1f70.jpg-1577996177889.jpg')"
-    ></mat-carousel-slide>
-  </mat-carousel>
-  <!-- <img class="imagenEvento" [src]="getImage(evento.imgUrl)" /> -->
+      [image]="imgURL"
+      *ngIf="imgURL"
+    >
+      ></mat-carousel-slide
+    >
+  </mat-carousel> -->
+  <img id="imagen" [src]="imgURL" class="image-preview" *ngIf="imgURL" />
   <mat-chip-list>
     <p class="textoParticipan"><b>Participan:</b></p>
     <mat-chip *ngFor="let tag of evento.tags">
