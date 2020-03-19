@@ -1087,9 +1087,8 @@ router.get("/agenda", checkAuthMiddleware, (req, res) => {
 router.post("/modificarAgenda", checkAuthMiddleware, (req, res) => {});
 
 //Elimina un horario para un curso y una materia
-//@params: id del curso
-//@params: id horario
-//@params: nombre de la materia
+//@params: agenda, que se usa solo idHorario y la idMXC
+//@params: idCurso
 router.post("/eliminarHorario", checkAuthMiddleware, (req, res) => {
   Horario.findByIdAndDelete(req.body.agenda.idHorarios).then(() => {
     MateriaXCurso.findByIdAndDelete(req.body.agenda.idMXC).then(() => {
@@ -1099,7 +1098,11 @@ router.post("/eliminarHorario", checkAuthMiddleware, (req, res) => {
         res.json({ exito: true, message: "Horario borrado exitosamente" });
       });
     });
-  })
+  }).catch(() => {
+    res.status(500).json({
+      message: "Mensaje de error especifico"
+    });
+  });
 });
 
 // METODO OBSOLETO!!!
