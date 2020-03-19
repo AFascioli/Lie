@@ -187,9 +187,9 @@ export class RegistrarAgendaComponent implements OnInit {
         .registrarAgenda(materiasXCurso, form.value.curso)
         .subscribe(response => {
           if (response.exito) {
-            this.openSnackBar(response.mensaje, "snack-bar-exito");
+            this.openSnackBar(response.message, "snack-bar-exito");
           } else {
-            this.openSnackBar(response.mensaje, "snack-bar-fracaso");
+            this.openSnackBar(response.message, "snack-bar-fracaso");
           }
         });
     } else {

@@ -86,6 +86,7 @@ export class ModificarAgendaComponent implements OnInit {
 
   obtenerAgenda(idCurso) {
     this.cursoSelected = true;
+    this.idCursoSeleccionado=idCurso.value;
     this.servicioAgenda.obtenerAgendaDeCurso(idCurso.value).subscribe(rtdo => {
       this.dataSource.data = rtdo.agenda;
     });
@@ -102,11 +103,12 @@ export class ModificarAgendaComponent implements OnInit {
 
   onGuardar() {
     if (this.agendaValida) {
-      console.log(JSON.stringify(this.dataSource.data));
       this.servicioAgenda.registrarAgenda(
         this.dataSource.data,
         this.idCursoSeleccionado
-      );
+      ).subscribe(response =>{
+        console.log(response.message);
+      });
     } else {
       this.openSnackBar(this.mensajeError, "snack-bar-fracaso");
     }

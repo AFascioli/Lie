@@ -508,7 +508,7 @@ router.get("/estudiante", checkAuthMiddleware, (req, res) => {
     {
       $project: {
         _id: 0,
-        "cursosDeEstudiante.curso": 1, 
+        "cursosDeEstudiante.curso": 1,
         "cursosDeEstudiante._id": 1
       }
     }
@@ -1197,6 +1197,7 @@ router.post("/eliminarHorarios", checkAuthMiddleware, (req, res) => {
     });
 });
 
+// METODO OBSOLETO!!!
 //Registra las materiasXCurso de un curso dado, cada una de estas tiene su propio horario.
 //@params: id del curso
 //@params: agenda, que es un objeto que tiene idMateria, idDocente y el vector de horarios
@@ -1263,6 +1264,102 @@ router.post("/agenda", checkAuthMiddleware, async (req, res) => {
         message: "Mensaje de error especifico"
       });
     });
+});
+
+//Se fija cada objeto del vector agenda, si es una mxc nueva la registra
+//para un curso dado, sino se modifica el horario de la mxc existente.
+//@params: id del curso
+//@params: agenda, que es un vector que tiene objetos con idMateria, idDocente, modificado  y el vector de horarios
+router.post("/agendaTEST", checkAuthMiddleware, async (req, res) => {
+  var crearHorario = horario => {
+    return new Promise((resolve, reject) => {
+      horario.save().then(horarioGuardado => {
+        resolve(horarioGuardado._id);
+      });
+    });
+  };
+
+  var crearMateriaXCurso = mxc => {
+    return new Promise((resolve, reject) => {
+      mxc.save().then(mxcGuardada => {
+        resolve(mxcGuardada._id);
+      });
+    });
+  };
+  var mxcNuevas = [];
+  let vectorIdsMXC = [];
+  for (const materia of req.body.agenda) {
+    //Recorrer agenda del front
+    if (materia.idHorarios == null) {
+      //vemos si la mxc es nueva o una modificada
+      if (mxcNuevas.length != 0) {
+        for (const mxcNueva of mxcNuevas) {
+          //Recorrer mxcNuevas para saber si es una mxc nueva o es una ya creada que tiene un nuevo horario
+          if (mxcNueva.idMateria == materia.idMateria) {
+            mxcNueva.horaInicio.push({
+              dia: materia.dia,
+              inicio: materia.inicio,
+              fin: materia.fin
+            });
+          } else {
+            mxcNuevas.push({
+              idMateria: materia.idMateria,
+              idDocente: materia.idDocente,
+              horarios: [
+                { dia: materia.dia, inicio: materia.inicio, fin: materia.fin }
+              ]
+            });
+          }
+        }
+      } else {
+        mxcNuevas.push({
+          idMateria: materia.idMateria,
+          idDocente: materia.idDocente,
+          horarios: [
+            { dia: materia.dia, inicio: materia.inicio, fin: materia.fin }
+          ]
+        });
+      }
+    } else if (materia.modificado) {
+      //Se actualiza el nuevo horario para una mxc dada
+      Horario.findByIdAndUpdate(materia.idHorarios, {
+        dia: materia.dia,
+        horaInicio: materia.inicio,
+        horaFin: materia.fin
+      }).exec();
+    }
+  }
+
+  if (mxcNuevas.length != 0) {
+    //Hay mxc nuevas para guarda en la bd
+    for (const mxcNueva of mxcNuevas) {
+      let vectorIdsHorarios = [];
+      for (const horario of mxcNueva.horarios) {
+        let nuevoHorario = new Horario({
+          dia: horario.dia,
+          horaInicio: horario.inicio,
+          horaFin: horario.fin
+        });
+        let idHorarioGuardado = await crearHorario(nuevoHorario);
+        vectorIdsHorarios.push(idHorarioGuardado);
+      }
+      let nuevaMateriaXCurso = new MateriaXCurso({
+        materia: mxcNueva.idMateria,
+        idDocente: mxcNueva.idDocente,
+        horarios: vectorIdsHorarios
+      });
+
+      let idMXC = await crearMateriaXCurso(nuevaMateriaXCurso);
+      vectorIdsMXC.push(idMXC);
+    }
+    Curso.findByIdAndUpdate(req.body.idCurso, {
+      $push: { materias: { $each: vectorIdsMXC } }
+    }).then((curso) => {
+      res.json({ exito: true, message: "Materias agregadas" });
+    });
+  } else {
+    res.json({ exito: true, message: "nice" });
+  }
 });
 
 //Obtiene la agenda de un curso (materias, horario y día dictadas)
