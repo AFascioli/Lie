@@ -86,7 +86,7 @@ export class ModificarAgendaComponent implements OnInit {
 
   obtenerAgenda(idCurso) {
     this.cursoSelected = true;
-    this.idCursoSeleccionado=idCurso.value;
+    this.idCursoSeleccionado = idCurso.value;
     this.servicioAgenda.obtenerAgendaDeCurso(idCurso.value).subscribe(rtdo => {
       this.dataSource.data = rtdo.agenda;
     });
@@ -103,12 +103,11 @@ export class ModificarAgendaComponent implements OnInit {
 
   onGuardar() {
     if (this.agendaValida) {
-      this.servicioAgenda.registrarAgenda(
-        this.dataSource.data,
-        this.idCursoSeleccionado
-      ).subscribe(response =>{
-        console.log(response.message);
-      });
+      this.servicioAgenda
+        .registrarAgenda(this.dataSource.data, this.idCursoSeleccionado)
+        .subscribe(response => {
+          console.log(response.message);
+        });
     } else {
       this.openSnackBar(this.mensajeError, "snack-bar-fracaso");
     }
@@ -217,9 +216,14 @@ export class ModificarAgendaComponent implements OnInit {
   }
 
   eliminarHorarios(index) {
-    this.removedDataSource.data.push(this.dataSource.data.splice(index, 1)[0]);
-    this.dataSource._updateChangeSubscription();
-    console.log("RemovedDataSource", this.removedDataSource.data);
+    this.servicioAgenda.eliminarHorario(
+      this.dataSource.data[index],
+      this.idCursoSeleccionado
+    ).subscribe(response=>{
+      this.openSnackBar(response.message, "snack-bar-exito");
+      this.removedDataSource.data.push(this.dataSource.data.splice(index, 1)[0]);
+      this.dataSource._updateChangeSubscription();
+    });
   }
 
   openSnackBar(mensaje: string, exito: string) {

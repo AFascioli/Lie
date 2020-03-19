@@ -1086,115 +1086,20 @@ router.get("/agenda", checkAuthMiddleware, (req, res) => {
 //Recibimos : idCXM, idHorarios,
 router.post("/modificarAgenda", checkAuthMiddleware, (req, res) => {});
 
-//Elimina ciertos horarios registrados para un curso y una materia
+//Elimina un horario para un curso y una materia
 //@params: id del curso
 //@params: id horario
 //@params: nombre de la materia
-router.post("/eliminarHorarios", checkAuthMiddleware, (req, res) => {
-  Curso.aggregate([
-    {
-      $match: {
-        _id: mongoose.Types.ObjectId(req.body.idCurso)
-      }
-    },
-    {
-      $lookup: {
-        from: "materiasXCurso",
-        localField: "materias",
-        foreignField: "_id",
-        as: "MXC"
-      }
-    },
-    {
-      $unwind: {
-        path: "$MXC"
-      }
-    },
-    {
-      $lookup: {
-        from: "materia",
-        localField: "MXC.materia",
-        foreignField: "_id",
-        as: "nombreMateria"
-      }
-    },
-    {
-      $unwind: {
-        path: "$MXC.horarios"
-      }
-    },
-    {
-      $lookup: {
-        from: "horario",
-        localField: "MXC.horarios",
-        foreignField: "_id",
-        as: "horarios"
-      }
-    },
-    {
-      $match: {
-        "nombreMateria.nombre": req.body.nombreMateria,
-        _id: mongoose.Types.ObjectId(req.body.idCurso)
-      }
-    }
-  ])
-    .then(horariosDeMateria => {
-      //Valido que haya mas de un horario, sino tengo que borrar la MateriaXCurso
-      if (horariosDeMateria.length > 1) {
-        // console.log('entro');
-        // let crearHorario = (MXC) => {
-        //   return new Promise((resolve, reject) => {
-        //     for (var i = 0; i < MXC.horarios.length; i++) {
-        //       if (MXC.horarios[i] === req.body.idHorario) {
-        //         MXC.horarios.splice(i, 1);
-        //         console.log('encontro y ahora manda resolve');
-        //         resolve(true);
-        //       }
-        //     }
-        //   });
-        // };
-        // let guardarMXC = (MXC) => {
-        //   return new Promise((resolve, reject) => {
-        //     MXC.save().then(()=> {resolve(true);})
-        //   });
-        // };
-        // Horario.findByIdAndDelete(req.body.idHorario).then(() => {
-        //   MateriaXCurso.findById(horariosDeMateria[0].MXC._id).then(MXC => {
-        //     crearHorario(MXC).then(() => {
-        //       console.log('mando resolve efect');
-        //       guardarMXC(MXC).then(() => {
-        //         res.json({
-        //           exito: true,
-        //           message: "Se ha eliminado el horario correctamente"
-        //         });
-        //       });
-        //     });
-        //   });
-        // });
-      } else {
-        // console.log("mando por aca");
-        // MateriaXCurso.findByIdAndDelete(horariosDeMateria[0].MXC._id).then(() => {
-        //   Curso.findById(req.body.idCurso).then(curso => {
-        //     for (var i = 0; i < curso.materias.length; i++) {
-        //       if (curso.materias[i] === horariosDeMateria[0].MXC._id) {
-        //         MXC.horarios.splice(i, 1);
-        //       }
-        //     }
-        //     MXC.save().then(() => {
-        //       res.json({
-        //         exito: true,
-        //         message: "Se ha eliminado el horario correctamente"
-        //       });
-        //     });
-        //   });
-        // });
-      }
-    })
-    .catch(() => {
-      res.status(500).json({
-        message: "Mensaje de error especifico"
+router.post("/eliminarHorario", checkAuthMiddleware, (req, res) => {
+  Horario.findByIdAndDelete(req.body.agenda.idHorarios).then(() => {
+    MateriaXCurso.findByIdAndDelete(req.body.agenda.idMXC).then(() => {
+      Curso.findByIdAndUpdate(req.body.idCurso, {
+        $pull: { materias: { $in: req.body.agenda.idMXC } }
+      }).then(() => {
+        res.json({ exito: true, message: "Horario borrado exitosamente" });
       });
     });
+  })
 });
 
 // METODO OBSOLETO!!!
@@ -1354,7 +1259,7 @@ router.post("/agendaTEST", checkAuthMiddleware, async (req, res) => {
     }
     Curso.findByIdAndUpdate(req.body.idCurso, {
       $push: { materias: { $each: vectorIdsMXC } }
-    }).then((curso) => {
+    }).then(curso => {
       res.json({ exito: true, message: "Materias agregadas" });
     });
   } else {

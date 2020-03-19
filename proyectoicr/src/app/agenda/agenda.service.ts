@@ -51,6 +51,12 @@ export class AgendaService {
     );
   }
 
+  public eliminarHorario(agenda: any, curso: string){
+    return this.http.post<{ exito: boolean; message: string }>(
+      environment.apiUrl + "/curso/eliminarHorario",
+      { agenda: agenda, idCurso: curso }
+    );
+  }
   //Retorna todas las materias de la institucion
   public obtenerMaterias() {
     return this.http.get<{ materias: any[] }>(environment.apiUrl + "/materia");
