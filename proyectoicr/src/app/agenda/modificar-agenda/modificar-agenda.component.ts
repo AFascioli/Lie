@@ -10,6 +10,8 @@ import {
 } from "@angular/material";
 import { EstudiantesService } from "src/app/estudiantes/estudiante.service";
 import { AgendaService } from "../agenda.service";
+import { CancelPopupComponent } from 'src/app/popup-genericos/cancel-popup.component';
+import { Router } from '@angular/router';
 
 @Component({
   selector: "app- modificar-agenda",
@@ -56,7 +58,8 @@ export class ModificarAgendaComponent implements OnInit {
     public servicioEstudiante: EstudiantesService,
     public servicioAgenda: AgendaService,
     public dialog: MatDialog,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    public router: Router
   ) {}
 
   @ViewChild(MatSort, { static: true }) sort: MatSort;
@@ -137,7 +140,15 @@ export class ModificarAgendaComponent implements OnInit {
     }
   }
 
-  popUpCancelar() {}
+  popUpCancelar() {
+    if(!this.cursoSelected){
+      this.router.navigate(["./home"]);
+    }else{
+      this.dialog.open(CancelPopupComponent, {
+        width: "250px"
+      });
+    }
+  }
 
   validarHorario(
     { nombreMateria, dia, inicio, fin, docente, idHorarios },
