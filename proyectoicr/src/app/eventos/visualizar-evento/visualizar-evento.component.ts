@@ -7,7 +7,6 @@ import { Comentario } from "../comentario.model";
 import { Router } from "@angular/router";
 import { environment } from "src/environments/environment";
 import { EstudiantesService } from "src/app/estudiantes/estudiante.service";
-// declare var require: any;
 
 @Component({
   selector: "app-visualizar-evento",
@@ -36,25 +35,30 @@ export class VisualizarEventoComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.tituloEvento = this.eventoService.evento.titulo;
-    this.descripcionDelEvento = this.eventoService.evento.descripcion;
-    this.fechaDelEvento = this.eventoService.evento.fechaEvento;
-    this.filename = this.eventoService.evento.filename;
-    this.imgURL = `http://localhost:3000/imagen/${this.filename}`;
+    this.evento = this.eventoService.eventoSeleccionado;
+    //Es el evento seleccionado en el home
+
+    if (this.evento == null) {
+      this.router.navigate(["./home"]);
+    }
+    this.imgURL = `http://localhost:3000/imagen/${this.evento.filename}`;
     this.eventoService.obtenerComentariosDeEvento().subscribe(rtdo => {
       this.eventoService.comentarios = rtdo.comentarios.reverse();
-      for (let i = 0; i < rtdo.comentarios.length; i++) {
-        if (
-          rtdo.comentarios[i].idUsuario == this.autenticacionService.getId() ||
-          this.autenticacionService.getRol() == "Admin"
-        )
-          this.permisos[i] = true;
-        else this.permisos[i] = false;
-      }
+      this.actualizarPermisos();
     });
   }
 
-  ngAfterViewInit() {}
+  actualizarPermisos() {
+    for (let i = 0; i < this.eventoService.comentarios.length; i++) {
+      if (
+        this.eventoService.comentarios[i].idUsuario ==
+          this.autenticacionService.getId() ||
+        this.autenticacionService.getRol() == "Admin"
+      )
+        this.permisos[i] = true;
+      else this.permisos[i] = false;
+    }
+  }
 
   getImage(imgUrl) {
     return `${environment.apiUrl}/evento/imagenes?imgUrl=${imgUrl}`;
@@ -72,9 +76,7 @@ export class VisualizarEventoComponent implements OnInit {
   }
 
   onCambiosComentario() {
-    console.log("se ejecuto");
     if (this.descripcionComentario || this.descripcionComentario.trim()) {
-      console.log("2");
       this.comentarioIsEmpty = false;
     }
   }
@@ -108,6 +110,7 @@ export class VisualizarEventoComponent implements OnInit {
             this.descripcionComentario = "";
             this.eventoService.obtenerComentariosDeEvento().subscribe(rtdo => {
               this.eventoService.comentarios = rtdo.comentarios.reverse();
+              this.actualizarPermisos();
             });
           } else {
             this.snackBar.open(
@@ -122,18 +125,20 @@ export class VisualizarEventoComponent implements OnInit {
         });
     }
   }
-  onEliminar(): void {
-    this.eventoService.eliminarComentario(
-      this.eventoService.idComentarioSeleccionado
-    );
-    this.eventoService.obtenerComentariosDeEvento().subscribe(rtdo => {
-      this.eventoService.comentarios = rtdo.comentarios.reverse();
+  onEliminar(idComentario): void {
+    this.eventoService.eliminarComentario(idComentario).subscribe(response => {
+      if (response.exito) {
+        this.snackBar.open(response.message, "", {
+          panelClass: ["snack-bar-exito"],
+          duration: 4500
+        });
+      }
+      this.eventoService.obtenerComentariosDeEvento().subscribe(rtdo => {
+        this.eventoService.comentarios = rtdo.comentarios.reverse();
+        console.log(this.eventoService.comentarios);
+      });
     });
   }
 
   onReportar(): void {}
-
-  onOpciones(id) {
-    this.eventoService.idComentarioSeleccionado = id;
-  }
 }

@@ -13,7 +13,7 @@ export class EventosService {
   public evento: Evento;
   public tituloABorrar: string;
   public idComentarioSeleccionado: string;
-  public comentarios: any[];
+  public comentarios: any[] = [];
   public ImgCargada: string;
 
   constructor(
@@ -164,23 +164,15 @@ export class EventosService {
       apellido: string;
     }>(environment.apiUrl + "/evento/registrarComentario", datosComentario);
   }
+
   public eliminarComentario(id) {
     let params = new HttpParams()
       .set("idEvento", this.eventoSeleccionado._id)
-      .append("idComentario", this.idComentarioSeleccionado);
-    this.http
-      .delete<{ message: string; exito: boolean }>(
-        environment.apiUrl + "/evento/eliminarComentario",
-        { params: params }
-      )
-      .subscribe(response => {
-        if (response.exito) {
-          this.snackBar.open(response.message, "", {
-            panelClass: ["snack-bar-exito"],
-            duration: 4500
-          });
-        }
-      });
+      .append("idComentario", id);
+    return this.http.delete<{ message: string; exito: boolean }>(
+      environment.apiUrl + "/evento/eliminarComentario",
+      { params: params }
+    );
   }
 
   public eliminarImagen(imgUrl: string) {
