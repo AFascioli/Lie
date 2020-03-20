@@ -3,7 +3,7 @@
   margin:0;
 }
 
-.tituloMenu, .mat-icon-button, .homeButton, .dropDown{
+.tituloMenu, .mat-icon-button, .homeButton, .homeButtonAR, .dropDown{
   color: #ffff;
 }
 
@@ -63,6 +63,7 @@ hr {
 .homeButton{
   margin-left: auto !important;
 }
+
 
 .cierreSesion{
   position: absolute;
@@ -147,6 +148,17 @@ hr {
   font-size: 40px;
   font-weight: bold;
   background-color: rgb(47, 100, 131);
+  text-shadow: 2px 2px 4px #000000;
+}
+
+.titulo-rowAR{
+  text-align: center;
+  opacity: 0.8;
+  color: #ffffff;
+  /* Para poder alinear el parrafo al centro */
+  flex: 1 1 auto;
+  font-size: 40px;
+  font-weight: bold;
   text-shadow: 2px 2px 4px #000000;
 }
 

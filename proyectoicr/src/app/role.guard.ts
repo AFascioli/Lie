@@ -17,14 +17,18 @@ export class RoleGuard implements CanActivate {
     state: RouterStateSnapshot
   ): boolean | Observable<boolean> | Promise<boolean> {
     let flag: boolean = false;
-
+    const rolLogueado=this.servicio.getRol();
     route.data.rolesValidos.forEach(rol => {
-      if (rol == this.servicio.getRol()) {
+      if (rol == rolLogueado) {
         flag = true;
       }
     });
     if (!flag) {
-      this.router.navigate(["./home"]);
+      if(rolLogueado=="AdultoResponsable"){
+        this.router.navigate(["./menuPrincipal"]);
+      }else{
+        this.router.navigate(["./home"]);
+      }
     }
     return flag;
   }

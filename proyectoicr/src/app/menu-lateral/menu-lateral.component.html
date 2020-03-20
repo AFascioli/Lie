@@ -1,19 +1,45 @@
 <div class="contenedor-total" [class.es-mobile]="mobileQuery.matches">
   <mat-toolbar class="fixed-header">
-    <mat-toolbar-row>
+    <mat-toolbar-row *ngIf="rol!='AdultoResponsable'">
       <button
         type="button"
         aria-label="Toggle sidenav"
         mat-icon-button
         (click)="sideNav.toggle()"
+        *ngIf="rol != 'AdultoResponsable'"
       >
         <mat-icon aria-label="Side nav toggle icon">menu</mat-icon>
       </button>
       <!-- <h3 class="tituloMenu">Menú</h3> -->
-      <p class="titulo-row">L I É</p>
-      <button mat-button class="homeButton" (click)="onClickHome()">
+      <span class="titulo-row">L I É</span>
+      <button
+        mat-button
+        class="homeButton"
+        (click)="onClickHome()"
+      >
         <mat-icon>home </mat-icon>
       </button>
+      <button mat-button [matMenuTriggerFor]="menu" class="dropDown">
+        <mat-icon>arrow_drop_down</mat-icon>
+      </button>
+      <mat-menu #menu="matMenu">
+        <button mat-menu-item routerLink="/preferencias">
+          <mat-icon>settings</mat-icon> Preferencias
+        </button>
+        <button mat-menu-item (click)="cierreSesion()">
+          <mat-icon>exit_to_app</mat-icon> Cerrar sesión
+        </button>
+      </mat-menu>
+    </mat-toolbar-row>
+    <mat-toolbar-row *ngIf="rol=='AdultoResponsable'">
+      <button
+        mat-button
+        class="homeButtonAR"
+        (click)="onClickHome()"
+      >
+        <mat-icon>home</mat-icon>
+      </button>
+      <span class="titulo-rowAR">L I É</span>
       <button mat-button [matMenuTriggerFor]="menu" class="dropDown">
         <mat-icon>arrow_drop_down</mat-icon>
       </button>
@@ -39,6 +65,7 @@
       [opened]="!mobileQuery.matches"
       [disableClose]="!mobileQuery.matches"
       [mode]="mobileQuery.matches ? 'over' : 'side'"
+      *ngIf="rol != 'AdultoResponsable'"
     >
       <mat-nav-list>
         <mat-accordion>
@@ -66,8 +93,7 @@
             >
               Registrar agenda de curso
             </a>
-            <mat-divider *ngIf="permisos.agendaCursos > 1"
-            ></mat-divider>
+            <mat-divider *ngIf="permisos.agendaCursos > 1"></mat-divider>
             <a
               mat-list-item
               class="opciones-expansion"
@@ -77,9 +103,7 @@
             >
               Visualizar agenda de curso
             </a>
-            <mat-divider
-              *ngIf="permisos.agendaCursos > 1"
-            ></mat-divider>
+            <mat-divider *ngIf="permisos.agendaCursos > 1"></mat-divider>
             <a
               mat-list-item
               class="opciones-expansion"

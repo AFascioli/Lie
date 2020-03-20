@@ -123,6 +123,7 @@ import { RegistrarSancionesComponent } from "./sanciones/registrar-sanciones/reg
 import { SancionesEstudianteComponent } from "./perfil-estudiante/sanciones-estudiante/sanciones-estudiante.component";
 import { ErrorInterceptor } from "./error-interceptor";
 import { ErrorComponent } from "./error/error.component";
+import { MenuPrincipalARComponent } from './menu-principal-ar/menu-principal-ar.component';
 
 @NgModule({
   declarations: [
@@ -177,7 +178,8 @@ import { ErrorComponent } from "./error/error.component";
     ModificarAgendaComponent,
     AgendaPopupComponent,
     RegistrarSancionesComponent,
-    SancionesEstudianteComponent
+    SancionesEstudianteComponent,
+    MenuPrincipalARComponent
   ],
   //entryComponents declara los componentes que se generan dinamicamente dentro de otros.
   entryComponents: [

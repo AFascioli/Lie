@@ -1,3 +1,4 @@
+import { MenuPrincipalARComponent } from './menu-principal-ar/menu-principal-ar.component';
 import { RegistrarSancionesComponent } from "./sanciones/registrar-sanciones/registrar-sanciones.component";
 import { RegistrarCuotasComponent } from "./cuotas/registrar-cuotas/registrar-cuotas.component";
 import { RegistrarEventoComponent } from "./eventos/registrar-evento/registrar-evento.component";
@@ -49,11 +50,25 @@ const routes: Routes = [
       {
         path: "",
         pathMatch: "full",
-        redirectTo: "home"
+        redirectTo: "home",
+        data: {
+          rolesValidos: ["Admin", "Preceptor", "Director", "Docente"]
+        }
       },
       { path: "registrarAgenda", component: RegistrarAgendaComponent },
       { path: "modificarAgenda", component: ModificarAgendaComponent },
-      { path: "home", component: HomeComponent },
+      {
+        path: "home",
+        canActivate: [RoleGuard],
+        data: { rolesValidos: ["Admin", "Preceptor", "Director", "Docente"] },
+        component: HomeComponent
+      },
+      {
+        path: "menuPrincipal",
+        canActivate: [RoleGuard],
+        data: { rolesValidos: ["Admin","AdultoResponsable"] },
+        component: MenuPrincipalARComponent
+      },
       { path: "visualizarEvento", component: VisualizarEventoComponent },
       {
         path: "alta",
@@ -274,7 +289,17 @@ const routes: Routes = [
       },
       {
         path: "preferencias",
-        component: PreferenciasComponent
+        component: PreferenciasComponent,
+        canActivate: [RoleGuard],
+        data: {
+          rolesValidos: [
+            "Admin",
+            "Preceptor",
+            "Director",
+            "Docente",
+            "AdultoResponsable"
+          ]
+        }
       },
       {
         path: "visualizarAgenda",
