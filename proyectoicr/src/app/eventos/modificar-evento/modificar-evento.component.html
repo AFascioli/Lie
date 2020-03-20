@@ -6,7 +6,7 @@
   <form #form="ngForm">
     <mat-form-field>
       <input
-        [(ngModel)]="tituloEvento"
+        [(ngModel)]="evento.titulo"
         name="titulo"
         ngModel
         #titulo="ngModel"
@@ -19,7 +19,7 @@
     <br />
     <mat-form-field>
       <textarea
-        [(ngModel)]="descripcionDelEvento"
+        [(ngModel)]="evento.descripcion"
         matInput
         name="descripcion"
         ngModel
@@ -33,7 +33,7 @@
     <br />
     <mat-form-field>
       <input
-        [(ngModel)]="fechaDelEvento"
+        [(ngModel)]="evento.fechaEvento"
         matInput
         name="fechaEvento"
         ngModel
@@ -52,7 +52,7 @@
       <mat-form-field class="matFormHora">
         <div class="hora">
           <input
-            [(ngModel)]="horaInicial"
+            [(ngModel)]="evento.horaInicio"
             matInput
             name="horaInicio"
             ngModel
@@ -67,7 +67,7 @@
       <mat-form-field class="matFormHora">
         <div class="hora">
           <input
-            [(ngModel)]="horaFinal"
+            [(ngModel)]="evento.horaFin"
             matInput
             name="horaFin"
             ngModel
@@ -83,7 +83,7 @@
     <mat-form-field class="chip-list">
       <mat-chip-list #chipList aria-label="Seleccion de chips">
         <mat-chip
-          *ngFor="let chip of chips"
+          *ngFor="let chip of evento.tags"
           [selectable]="selectable"
           [removable]="removable"
           (removed)="remove(chip)"
@@ -138,7 +138,6 @@
       <button
         class="buttonPrimary"
         (click)="onGuardarEvento(form)"
-        [disabled]="true"
         mat-raised-button
       >
         Guardar

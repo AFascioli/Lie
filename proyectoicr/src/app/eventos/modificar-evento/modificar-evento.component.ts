@@ -24,7 +24,7 @@ export class ModificarEventoComponent implements OnInit {
   >;
   @ViewChild("auto", { static: false }) matAutocomplete: MatAutocomplete;
   fechaActual: Date;
-  imageFile: File;
+  imageFile: File = null;
   imgURL: any;
   message: string;
   selectable = true;
@@ -37,29 +37,15 @@ export class ModificarEventoComponent implements OnInit {
   allChips: string[] = ["1A", "2A", "3A", "4A", "5A", "6A", "Todos los cursos"];
   horaInicio = "";
   horaFin = "";
-
-  tituloEvento: string;
-  descripcionDelEvento: string;
-  fechaDelEvento: Date;
-  horaInicial: string;
-  horaFinal: string;
-  cursos: string[];
-  filename: string;
+  evento;
 
   constructor(
     public eventoService: EventosService,
     public dialog: MatDialog,
     public snackBar: MatSnackBar
   ) {
-    this.tituloEvento = this.eventoService.evento.titulo;
-    this.descripcionDelEvento = this.eventoService.evento.descripcion;
-    this.fechaDelEvento = this.eventoService.evento.fechaEvento;
-    this.horaInicial = this.eventoService.evento.horaInicio;
-    this.horaFinal = this.eventoService.evento.horaFin;
-    this.cursos = this.eventoService.evento.tags;
-    this.chips = this.eventoService.evento.tags;
-    this.filename = this.eventoService.evento.filename;
-    this.imgURL = `http://localhost:3000/imagen/${this.filename}`;
+    this.evento = this.eventoService.evento;
+    this.imgURL = `http://localhost:3000/imagen/${this.evento.filename}`;
 
     //Hace que funcione el autocomplete, filtra
     this.filteredChips = this.chipsCtrl.valueChanges.pipe(
@@ -130,7 +116,7 @@ export class ModificarEventoComponent implements OnInit {
       this.chips.push(event.option.viewValue);
     } else if (
       !this.chips.includes(event.option.viewValue) &&
-      !this.cursos.includes(event.option.viewValue) &&
+      !this.evento.cursos.includes(event.option.viewValue) &&
       !this.chips.includes("Todos los cursos")
     )
       this.chips.push(event.option.viewValue);
@@ -168,21 +154,25 @@ export class ModificarEventoComponent implements OnInit {
   }
 
   onGuardarEvento(form: NgForm) {
-    if (form.valid && this.chips.length != 0) {
-      const fechaEvento = form.value.fechaEvento.toString();
-      if (this.horaInicio == "" && this.horaFin == "") {
+    if (form.valid && this.evento.tags.length != 0) {
+      //const fechaEvento = form.value.fechaEvento.toString();
+      if (
+        (this.horaInicio == "" && this.horaFin == "") ||
+        this.horaEventoEsValido(this.horaInicio, this.horaFin)
+      ) {
+        let fechaEvento = new Date(this.evento.fechaEvento);
         this.eventoService
-          .ModificarEvento(
-            this.eventoService.evento._id,
-            form.value.titulo,
-            form.value.descripcion,
+          .modificarEvento(
+            this.evento.titulo,
+            this.evento.descripcion,
             fechaEvento,
-            this.horaInicial,
-            this.horaFinal,
-            this.chips,
-            this.eventoService.evento.autor,
-            this.eventoService.evento.filename,
-            this.eventoService.evento.comentarios
+            this.evento.horaInicio,
+            this.evento.horaFin,
+            this.evento.tags,
+            this.imageFile,
+            this.evento.filename,
+            this.evento._id,
+            this.evento.autor
           )
           .subscribe(rtdo => {
             if (rtdo.exito) {
@@ -197,34 +187,7 @@ export class ModificarEventoComponent implements OnInit {
               });
             }
           });
-      } else if (this.horaEventoEsValido(this.horaInicio, this.horaFin)) {
-        this.eventoService
-          .ModificarEvento(
-            this.eventoService.evento._id,
-            form.value.titulo,
-            form.value.descripcion,
-            fechaEvento,
-            this.horaInicio,
-            this.horaFin,
-            this.chips,
-            this.eventoService.evento.autor,
-            this.eventoService.evento.filename,
-            this.eventoService.evento.comentarios
-          )
-          .subscribe(rtdo => {
-            if (rtdo.exito) {
-              this.snackBar.open(rtdo.message, "", {
-                panelClass: ["snack-bar-exito"],
-                duration: 4500
-              });
-            } else {
-              this.snackBar.open(rtdo.message, "", {
-                duration: 4500,
-                panelClass: ["snack-bar-fracaso"]
-              });
-            }
-          });
-      } else {
+      } else if (!this.horaEventoEsValido(this.horaInicio, this.horaFin)) {
         this.snackBar.open(
           "La hora de finalización del evento es menor que la hora de inicio",
           "",

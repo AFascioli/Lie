@@ -13,12 +13,6 @@ const GridFsStorage = require("multer-gridfs-storage");
 //const Inscripcion = require("../models/inscripcion");
 //const mongoose = require("mongoose");
 
-// const MIME_TYPE_MAPA = {
-//   "image/png": "png",
-//   "image/jpeg": "jpg",
-//   "image/jpg": "jpg"
-// };
-
 const storage = new GridFsStorage({
   url: "mongodb://127.0.0.1:27017/icr-local",
   options: {
@@ -45,7 +39,6 @@ var upload = multer({ storage: storage }).single("image");
 //Registra el evento en la base de datos
 //@params: evento a publicar
 router.post("/registrar", upload, (req, res, next) => {
-  console.log(req.file);
   Usuario.findOne({ email: req.body.autor })
     .then(usuario => {
       const evento = new Evento({
@@ -78,6 +71,60 @@ router.post("/registrar", upload, (req, res, next) => {
         message: "Mensaje de error especifico"
       });
     });
+});
+
+//Registra el evento en la base de datos
+//@params: evento a publicar
+router.post("/modificar", (req, res, next) => {
+  if (req.body.image != null) {
+    upload;
+    Evento.findByIdAndUpdate(req.body._id, {
+      titulo: req.body.titulo,
+      descripcion: req.body.descripcion,
+      fechaEvento: req.body.fechaEvento,
+      horaInicio: req.body.horaInicio,
+      horaFin: req.body.horaFin,
+      tags: req.body.tags,
+      filename: req.file.filename,
+      autor: req.body.idAutor
+    })
+      .exec()
+      .then(() => {
+        //Completar con código de la notificación COMPLETAR CON LO DE ARRIBA
+        res.status(201).json({
+          message: "Evento creado existosamente",
+          exito: true
+        });
+      })
+      .catch(() => {
+        res.status(500).json({
+          message: "No se pudo modificar el evento correctamente"
+        });
+      });
+  } else {
+    Evento.findByIdAndUpdate(req.body._id, {
+      titulo: req.body.titulo,
+      descripcion: req.body.descripcion,
+      fechaEvento: req.body.fechaEvento,
+      horaInicio: req.body.horaInicio,
+      horaFin: req.body.horaFin,
+      tags: req.body.tags,
+      autor: req.body.idAutor
+    })
+      .exec()
+      .then(() => {
+        //Completar con código de la notificación COMPLETAR CON LO DE ARRIBA
+        res.status(201).json({
+          message: "Evento creado existosamente",
+          exito: true
+        });
+      })
+      .catch(() => {
+        res.status(500).json({
+          message: "No se pudo modificar el evento correctamente"
+        });
+      });
+  }
 });
 
 //Obtiene todos los eventos que estan almacenados en la base de datos
@@ -210,34 +257,34 @@ router.post("/registrarComentario", async (req, res, next) => {
   });
 });
 
-//Modifica el evento en la base de datos
-//@params: evento a publicar
-router.patch("/editar", upload, (req, res, next) => {
-  Evento.findByIdAndUpdate(req.body._id, {
-    titulo: req.body.titulo,
-    descripcion: req.body.descripcion,
-    fechaEvento: req.body.fechaEvento,
-    horaInicio: req.body.horaInicio,
-    horaFin: req.body.horaFin,
-    tags: req.body.tags,
-    imgUrl: req.file.filename,
-    autor: req.body.autor
-  });
-  console
-    .log(horaFin)
-    .then(() => {
-      res.status(200).json({
-        message: "Evento modificado exitosamente",
-        exito: true
-      });
-    })
-    .catch(() => {
-      res.status(200).json({
-        message: "Ocurrió un problema al intentar modificar el evento",
-        exito: false
-      });
-    });
-});
+// //Modifica el evento en la base de datos
+// //@params: evento a publicar
+// router.patch("/editar", upload, (req, res, next) => {
+//   Evento.findByIdAndUpdate(req.body._id, {
+//     titulo: req.body.titulo,
+//     descripcion: req.body.descripcion,
+//     fechaEvento: req.body.fechaEvento,
+//     horaInicio: req.body.horaInicio,
+//     horaFin: req.body.horaFin,
+//     tags: req.body.tags,
+//     imgUrl: req.file.filename,
+//     autor: req.body.autor
+//   });
+//   console
+//     .log(horaFin)
+//     .then(() => {
+//       res.status(200).json({
+//         message: "Evento modificado exitosamente",
+//         exito: true
+//       });
+//     })
+//     .catch(() => {
+//       res.status(200).json({
+//         message: "Ocurrió un problema al intentar modificar el evento",
+//         exito: false
+//       });
+//     });
+// });
 
 router.delete("/eliminarEvento", checkAuthMiddleware, (req, res, next) => {
   Evento.findByIdAndDelete({

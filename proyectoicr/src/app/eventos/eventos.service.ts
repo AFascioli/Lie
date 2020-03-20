@@ -57,38 +57,41 @@ export class EventosService {
   }
 
   //Modifica el evento en la base de datos
-  public ModificarEvento(
-    _id: string,
+  public modificarEvento(
     titulo: string,
     descripcion: string,
     fechaEvento: Date,
     horaInicio: string,
     horaFin: string,
     tags: any[],
-    autor: string,
     image: File,
-    comentarios: any[]
+    filename: string,
+    _id: string,
+    autor: string
   ) {
-    let imgUrl = image[0].name;
-    const fechaEventoS = fechaEvento.toString();
     const eventoModificado = new FormData();
+    if (image == null) {
+      eventoModificado.append("image", null);
+    } else {
+      let imgUrl = image[0].name;
+      eventoModificado.append("image", image[0], imgUrl);
+    }
+
+    const fechaEventoString = fechaEvento.toString();
+
     eventoModificado.append("_id", _id);
-    eventoModificado.append("image", image[0], imgUrl);
     eventoModificado.append("titulo", titulo);
     eventoModificado.append("descripcion", descripcion);
-    eventoModificado.append("fechaEvento", fechaEventoS);
+    eventoModificado.append("fechaEvento", fechaEventoString);
     eventoModificado.append("horaInicio", horaInicio);
     eventoModificado.append("horaFin", horaFin);
-    eventoModificado.append("imgUrl", imgUrl);
+    eventoModificado.append("filename", filename);
     for (var i = 0; i < tags.length; i++) {
       eventoModificado.append("tags", tags[i]);
     }
-    eventoModificado.append("autor", autor);
-    for (var i = 0; i < comentarios.length; i++) {
-      eventoModificado.append("comentarios", comentarios[i]);
-    }
-    return this.http.patch<{ message: string; exito: boolean }>(
-      environment.apiUrl + "/evento/editar",
+    eventoModificado.append("idAutor", autor);
+    return this.http.post<{ message: string; exito: boolean }>(
+      environment.apiUrl + "/evento/modificar",
       eventoModificado
     );
   }
