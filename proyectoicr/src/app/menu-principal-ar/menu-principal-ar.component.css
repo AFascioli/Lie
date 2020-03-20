@@ -1,0 +1,87 @@
+.grid-layout {
+  width: 90%;
+  margin-left: auto;
+  margin-right: auto;
+  display: grid;
+  grid-template-columns:  auto auto auto;
+  grid-gap: 40px;
+  padding: 10px;
+}
+
+.grid-layout > mat-card{
+height: 250px;
+text-align: center;
+}
+
+.iconEstudiante{
+  font-size: 120px;
+  margin: auto;
+  display: table;
+}
+
+.nombre-estudiante, .titulo-evento{
+  text-align: center;
+  font-size: 20px;
+  font-weight: bold;
+}
+
+mat-chip{
+font-size: 20px;
+}
+
+.curso{
+  /* Para que se ponga a la derecha el chip */
+  display: flex;
+  flex-direction: row-reverse;
+  margin-right: 5%;
+}
+
+time.icon {
+  font-size: 15px;
+  display: block;
+  position: relative;
+  width: 6em;
+  height: 6em;
+  background-color: #fff;
+  border-radius: 0.6em;
+  box-shadow: 0 1px 0 #bdbdbd, 0 2px 0 #fff, 0 3px 0 #bdbdbd, 0 4px 0 #fff,
+    0 5px 0 #bdbdbd, 0 0 0 1px #bdbdbd;
+  overflow: hidden;
+}
+
+time.icon * {
+  display: block;
+  width: 100%;
+  font-size: 1em;
+  font-weight: bold;
+  font-style: normal;
+  text-align: center;
+}
+
+time.icon strong {
+  position: absolute;
+  top: 0;
+  padding: 0.4em 0;
+  color: #fff;
+  background-color: #5c49bb;
+  border-bottom: 1px dashed rgb(146, 132, 214);
+  box-shadow: 0 2px 0 #5c49bb;
+}
+
+time.icon em {
+  position: absolute;
+  /* bottom: 0.3em; */
+  color: #5c49bb;
+}
+
+time.icon span {
+  font-size: 2.8em;
+  letter-spacing: -0.05em;
+  padding-top: 0.8em;
+  color: #2f2f2f;
+}
+
+.fechaEvento{
+  display: inline-block;
+  margin-top: 4% !important;
+}
