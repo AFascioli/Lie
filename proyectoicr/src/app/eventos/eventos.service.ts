@@ -69,8 +69,7 @@ export class EventosService {
     _id: string,
     autor: string
   ) {
-    const eventoModificado = new FormData();
-    console.log(horaInicio);
+    let eventoModificado = new FormData();
     if (image == null) {
       eventoModificado.append("image", null);
     } else {
@@ -79,7 +78,6 @@ export class EventosService {
     }
 
     const fechaEventoString = fechaEvento.toString();
-
     eventoModificado.append("_id", _id);
     eventoModificado.append("titulo", titulo);
     eventoModificado.append("descripcion", descripcion);
@@ -91,6 +89,7 @@ export class EventosService {
       eventoModificado.append("tags", tags[i]);
     }
     eventoModificado.append("idAutor", autor);
+
     return this.http.post<{ message: string; exito: boolean }>(
       environment.apiUrl + "/evento/modificar",
       eventoModificado

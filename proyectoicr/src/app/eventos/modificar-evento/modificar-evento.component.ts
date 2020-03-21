@@ -58,6 +58,7 @@ export class ModificarEventoComponent implements OnInit {
   ngOnInit() {
     this.fechaActual = new Date();
     this.evento = this.eventoService.evento;
+    console.log(this.evento.horaInicio);
     // if (this.evento == null) {
     //   this.router.navigate(["./home"]);
     // }
@@ -94,7 +95,7 @@ export class ModificarEventoComponent implements OnInit {
         min: ""
       },
       confirm: date => {
-        this.horaInicio = date;
+        this.evento.horaInicio = date;
       }
     });
     new Rolldate({
@@ -103,7 +104,7 @@ export class ModificarEventoComponent implements OnInit {
       minStep: 15,
       lang: { title: "Seleccione hora de fin del evento", hour: "", min: "" },
       confirm: date => {
-        this.horaFin = date;
+        this.evento.horaFin = date;
       }
     });
   }

@@ -75,7 +75,7 @@ router.post("/registrar", upload, (req, res, next) => {
 
 //Registra el evento en la base de datos
 //@params: evento a publicar
-router.post("/modificar", (req, res, next) => {
+router.post("/modificar", (req, res) => {
   if (req.body.image != null) {
     upload;
     Evento.findByIdAndUpdate(req.body._id, {
