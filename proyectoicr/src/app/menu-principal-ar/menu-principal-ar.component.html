@@ -1,43 +1,27 @@
-
-<div class="grid-layout" >
+<div class="grid-layout">
   <mat-card *ngFor="let estudiante of estudiantes">
     <mat-icon class="iconEstudiante">account_circle</mat-icon>
-    <p class="nombre-estudiante">{{estudiante.nombre}} {{estudiante.apellido}}</p>
+    <p class="nombre-estudiante">
+      {{ estudiante.nombre }} {{ estudiante.apellido }}
+    </p>
     <div class="curso">
       <mat-chip-list>
-        <mat-chip>{{estudiante.curso}}</mat-chip>
+        <mat-chip>{{ estudiante.curso }}</mat-chip>
       </mat-chip-list>
     </div>
   </mat-card>
-  <!-- <mat-card>
-    <mat-icon class="iconEstudiante">account_circle</mat-icon>
-    <p class="nombre-estudiante">Nombre Apellido</p>
-    <div class="curso">
-      <mat-chip-list>
-        <mat-chip>Curso</mat-chip>
-      </mat-chip-list>
-    </div>
-  </mat-card>
-  <mat-card>
-    <mat-icon class="iconEstudiante">account_circle</mat-icon>
-    <p class="nombre-estudiante">Nombre Apellido</p>
-    <div class="curso">
-      <mat-chip-list>
-        <mat-chip>Curso</mat-chip>
-      </mat-chip-list>
-    </div>
-  </mat-card> -->
   <mat-card *ngFor="let evento of eventos">
     <div class="fechaEvento">
       <time datetime="evento.fechaEvento" class="icon">
-        <strong>{{obtenerMes(evento.fechaEvento)}}</strong>
-        <span>{{obtenerDia(evento.fechaEvento)}}</span>
+        <strong>{{ obtenerMes(evento.fechaEvento) }}</strong>
+        <span>{{ obtenerDia(evento.fechaEvento) }}</span>
       </time>
     </div>
-    <p class="titulo-evento">{{evento.titulo}}</p>
-    <p class="textoParticipan"><b>Participan:</b></p>
+    <p class="hora">{{ evento.horaInicio }} - {{ evento.horaFin }}</p>
+    <p class="titulo-evento">{{ evento.titulo }}</p>
     <mat-chip-list *ngFor="let curso of evento.tags">
-      <mat-chip>{{curso}}</mat-chip>
+      <p class="textoParticipan"><b>Participan:</b></p>
+      <mat-chip>{{ curso }}</mat-chip>
     </mat-chip-list>
   </mat-card>
 </div>

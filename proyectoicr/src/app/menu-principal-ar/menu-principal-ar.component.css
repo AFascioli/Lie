@@ -25,6 +25,11 @@ text-align: center;
   font-weight: bold;
 }
 
+.titulo-evento{
+  margin-top: 1%;
+  margin-bottom: 1%;
+}
+
 mat-chip{
 font-size: 20px;
 }
@@ -87,4 +92,11 @@ time.icon span {
 
 .textoParticipan{
   text-align: left;
+  margin-left: 3%;
+  margin-right: 1%;
+}
+
+.hora{
+  margin-top: 2%;
+  margin-bottom: 0%;
 }
