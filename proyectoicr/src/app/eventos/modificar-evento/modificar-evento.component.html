@@ -83,7 +83,7 @@
     <mat-form-field class="chip-list">
       <mat-chip-list #chipList aria-label="Seleccion de chips">
         <mat-chip
-          *ngFor="let chip of evento.tags"
+          *ngFor="let chip of chips"
           [selectable]="selectable"
           [removable]="removable"
           (removed)="remove(chip)"

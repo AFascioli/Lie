@@ -92,7 +92,7 @@ router.post("/modificar", (req, res, next) => {
       .then(() => {
         //Completar con código de la notificación COMPLETAR CON LO DE ARRIBA
         res.status(201).json({
-          message: "Evento creado existosamente",
+          message: "Evento modificado existosamente",
           exito: true
         });
       })
@@ -115,7 +115,7 @@ router.post("/modificar", (req, res, next) => {
       .then(() => {
         //Completar con código de la notificación COMPLETAR CON LO DE ARRIBA
         res.status(201).json({
-          message: "Evento creado existosamente",
+          message: "Evento modificado existosamente",
           exito: true
         });
       })

@@ -70,6 +70,7 @@ export class EventosService {
     autor: string
   ) {
     const eventoModificado = new FormData();
+    console.log(horaInicio);
     if (image == null) {
       eventoModificado.append("image", null);
     } else {

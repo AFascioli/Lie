@@ -116,7 +116,7 @@ export class ModificarEventoComponent implements OnInit {
       this.chips.push(event.option.viewValue);
     } else if (
       !this.chips.includes(event.option.viewValue) &&
-      !this.evento.cursos.includes(event.option.viewValue) &&
+      !this.evento.tags.includes(event.option.viewValue) &&
       !this.chips.includes("Todos los cursos")
     )
       this.chips.push(event.option.viewValue);
@@ -154,11 +154,12 @@ export class ModificarEventoComponent implements OnInit {
   }
 
   onGuardarEvento(form: NgForm) {
+    console.log(this.evento);
     if (form.valid && this.evento.tags.length != 0) {
       //const fechaEvento = form.value.fechaEvento.toString();
       if (
-        (this.horaInicio == "" && this.horaFin == "") ||
-        this.horaEventoEsValido(this.horaInicio, this.horaFin)
+        (this.evento.horaInicio == "" && this.evento.horaFin == "") ||
+        this.horaEventoEsValido(this.evento.horaInicio, this.evento.horaFin)
       ) {
         let fechaEvento = new Date(this.evento.fechaEvento);
         this.eventoService
@@ -187,7 +188,9 @@ export class ModificarEventoComponent implements OnInit {
               });
             }
           });
-      } else if (!this.horaEventoEsValido(this.horaInicio, this.horaFin)) {
+      } else if (
+        !this.horaEventoEsValido(this.evento.horaInicio, this.evento.horaFin)
+      ) {
         this.snackBar.open(
           "La hora de finalización del evento es menor que la hora de inicio",
           "",
