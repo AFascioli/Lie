@@ -80,24 +80,24 @@
       </mat-form-field>
     </div>
 
-    <mat-form-field class="chip-list">
-      <mat-chip-list #chipList aria-label="Seleccion de chips">
+    <mat-form-field class="tag-list">
+      <mat-chip-list #tagList aria-label="Seleccion de tags">
         <mat-chip
-          *ngFor="let chip of chips"
+          *ngFor="let tag of tags"
           [selectable]="selectable"
           [removable]="removable"
-          (removed)="remove(chip)"
+          (removed)="remove(tag)"
         >
-          {{ chip }}
+          {{ tag }}
           <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
         </mat-chip>
         <input
           placeholder="Seleccione los cursos *"
-          name="chipsInput"
-          #chipsInput
-          [formControl]="chipsCtrl"
+          name="tagsInput"
+          #tagsInput
+          [formControl]="tagsCtrl"
           [matAutocomplete]="auto"
-          [matChipInputFor]="chipList"
+          [matChipInputFor]="tagList"
           [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
           [matChipInputAddOnBlur]="addOnBlur"
           (matChipInputTokenEnd)="add($event)"
@@ -109,8 +109,8 @@
         #auto="matAutocomplete"
         (optionSelected)="selected($event)"
       >
-        <mat-option *ngFor="let chip of filteredChips | async" [value]="chip">
-          {{ chip }}
+        <mat-option *ngFor="let tag of filteredTags | async" [value]="tag">
+          {{ tag }}
         </mat-option>
       </mat-autocomplete>
     </mat-form-field>

@@ -87,10 +87,13 @@ export class HomeComponent implements OnInit {
         );
     }
   }
+
   onEditar(evento) {
     this.servicioEvento.evento = evento;
-    this.router.navigate(["./verEvento"]);
+    this.servicioEvento.eventoSeleccionado = evento;
+    this.router.navigate(["./modificarEvento"]);
   }
+
   onBorrar(evento) {
     this.servicioEvento.evento = evento;
     this.dialog.open(BorrarPopupComponent, {

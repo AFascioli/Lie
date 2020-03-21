@@ -38,6 +38,7 @@ import { VisualizarAgendaComponent } from "./agenda/visualizar-agenda/visualizar
 import { RegistrarAgendaComponent } from "./agenda/registrar-agenda/registrar-agenda.component";
 import { ModificarAgendaComponent } from "./agenda/modificar-agenda/modificar-agenda.component";
 import { SancionesEstudianteComponent } from "./perfil-estudiante/sanciones-estudiante/sanciones-estudiante.component";
+import { RouteEventoGuard } from "./routeEvento.guard";
 
 const routes: Routes = [
   { path: "login", component: LoginComponent },
@@ -54,7 +55,11 @@ const routes: Routes = [
       { path: "registrarAgenda", component: RegistrarAgendaComponent },
       { path: "modificarAgenda", component: ModificarAgendaComponent },
       { path: "home", component: HomeComponent },
-      { path: "visualizarEvento", component: VisualizarEventoComponent },
+      {
+        path: "visualizarEvento",
+        component: VisualizarEventoComponent,
+        canActivate: [RoleGuard, RouteEventoGuard]
+      },
       {
         path: "alta",
         component: AltaEstudiantesComponent,
@@ -267,9 +272,9 @@ const routes: Routes = [
         data: { rolesValidos: ["Admin", "Director", "Preceptor", "Docente"] }
       },
       {
-        path: "verEvento",
+        path: "modificarEvento",
         component: ModificarEventoComponent,
-        canActivate: [RoleGuard],
+        canActivate: [RoleGuard, RouteEventoGuard],
         data: { rolesValidos: ["Admin", "Director", "Preceptor", "Docente"] }
       },
       {
@@ -287,6 +292,6 @@ const routes: Routes = [
 @NgModule({
   imports: [RouterModule.forRoot(routes)],
   exports: [RouterModule],
-  providers: [AuthGuard, RouteGuard, RoleGuard]
+  providers: [AuthGuard, RouteGuard, RoleGuard, RouteEventoGuard]
 })
 export class AppRoutingModule {}

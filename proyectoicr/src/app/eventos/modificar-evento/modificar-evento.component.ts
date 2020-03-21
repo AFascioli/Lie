@@ -9,6 +9,7 @@ import { MatChipInputEvent } from "@angular/material/chips";
 import { Observable } from "rxjs";
 import { map, startWith } from "rxjs/operators";
 import { EventosService } from "../eventos.service";
+import { Router } from "@angular/router";
 import { MatSnackBar, MatDialog } from "@angular/material";
 import Rolldate from "../../../assets/rolldate.min.js";
 import { CancelPopupComponent } from "src/app/popup-genericos/cancel-popup.component";
@@ -19,7 +20,7 @@ import { CancelPopupComponent } from "src/app/popup-genericos/cancel-popup.compo
   styleUrls: ["./modificar-evento.component.css"]
 })
 export class ModificarEventoComponent implements OnInit {
-  @ViewChild("chipsInput", { static: false }) chipsInput: ElementRef<
+  @ViewChild("tagsInput", { static: false }) tagsInput: ElementRef<
     HTMLInputElement
   >;
   @ViewChild("auto", { static: false }) matAutocomplete: MatAutocomplete;
@@ -31,10 +32,10 @@ export class ModificarEventoComponent implements OnInit {
   removable = true;
   addOnBlur = true;
   separatorKeysCodes: number[] = [ENTER, COMMA];
-  chipsCtrl = new FormControl();
-  filteredChips: Observable<string[]>;
-  chips: string[] = [];
-  allChips: string[] = ["1A", "2A", "3A", "4A", "5A", "6A", "Todos los cursos"];
+  tagsCtrl = new FormControl();
+  filteredTags: Observable<string[]>;
+  tags: string[] = [];
+  allTags: string[] = ["1A", "2A", "3A", "4A", "5A", "6A", "Todos los cursos"];
   horaInicio = "";
   horaFin = "";
   evento;
@@ -42,22 +43,26 @@ export class ModificarEventoComponent implements OnInit {
   constructor(
     public eventoService: EventosService,
     public dialog: MatDialog,
-    public snackBar: MatSnackBar
+    public snackBar: MatSnackBar,
+    public router: Router
   ) {
-    this.evento = this.eventoService.evento;
-    this.imgURL = `http://localhost:3000/imagen/${this.evento.filename}`;
-
     //Hace que funcione el autocomplete, filtra
-    this.filteredChips = this.chipsCtrl.valueChanges.pipe(
+    this.filteredTags = this.tagsCtrl.valueChanges.pipe(
       startWith(null),
-      map((chip: string | null) =>
-        chip ? this._filter(chip) : this.allChips.slice()
+      map((tag: string | null) =>
+        tag ? this._filter(tag) : this.allTags.slice()
       )
     );
   }
 
   ngOnInit() {
     this.fechaActual = new Date();
+    this.evento = this.eventoService.evento;
+    // if (this.evento == null) {
+    //   this.router.navigate(["./home"]);
+    // }
+    this.imgURL = `http://localhost:3000/imagen/${this.evento.filename}`;
+    this.tags = this.evento.tags;
     this.inicializarPickers();
   }
 
@@ -67,14 +72,14 @@ export class ModificarEventoComponent implements OnInit {
       const value = event.value;
 
       if ((value || "").trim()) {
-        if (this.allChips.includes(value)) this.chips.push(value.trim());
+        if (this.allTags.includes(value)) this.tags.push(value.trim());
       }
 
       if (input) {
         input.value = "";
       }
 
-      this.chipsCtrl.setValue(null);
+      this.tagsCtrl.setValue(null);
     }
   }
 
@@ -103,36 +108,36 @@ export class ModificarEventoComponent implements OnInit {
     });
   }
   remove(fruit: string): void {
-    const index = this.chips.indexOf(fruit);
+    const index = this.tags.indexOf(fruit);
 
     if (index >= 0) {
-      this.chips.splice(index, 1);
+      this.tags.splice(index, 1);
     }
   }
 
   selected(event: MatAutocompleteSelectedEvent): void {
     if (event.option.viewValue == "Todos los cursos") {
-      this.chips = [];
-      this.chips.push(event.option.viewValue);
+      this.tags = [];
+      this.tags.push(event.option.viewValue);
     } else if (
-      !this.chips.includes(event.option.viewValue) &&
+      !this.tags.includes(event.option.viewValue) &&
       !this.evento.tags.includes(event.option.viewValue) &&
-      !this.chips.includes("Todos los cursos")
+      !this.tags.includes("Todos los cursos")
     )
-      this.chips.push(event.option.viewValue);
-    if (this.chips.length == this.allChips.length - 1) {
-      this.chips = [];
-      this.chips.push("Todos los cursos");
+      this.tags.push(event.option.viewValue);
+    if (this.tags.length == this.allTags.length - 1) {
+      this.tags = [];
+      this.tags.push("Todos los cursos");
     }
-    this.chipsInput.nativeElement.value = "";
-    this.chipsCtrl.setValue(null);
+    this.tagsInput.nativeElement.value = "";
+    this.tagsCtrl.setValue(null);
   }
 
   private _filter(value: string): string[] {
     const filterValue = value.toLowerCase();
 
-    return this.allChips.filter(
-      chip => chip.toLowerCase().indexOf(filterValue) === 0
+    return this.allTags.filter(
+      tag => tag.toLowerCase().indexOf(filterValue) === 0
     );
   }
 

@@ -10,21 +10,15 @@ import { Observable } from "rxjs";
 import { EventosService } from "./eventos/eventos.service";
 
 @Injectable()
-export class RouteGuard implements CanActivate {
-  constructor(
-    private router: Router,
-    private servicioEstudiante: EstudiantesService,
-    private servicioEvento: EventosService
-  ) {}
+export class RouteEventoGuard implements CanActivate {
+  constructor(private router: Router, private servicioEvento: EventosService) {}
 
   canActivate(
     route: ActivatedRouteSnapshot,
     state: RouterStateSnapshot
   ): boolean | Observable<boolean> | Promise<boolean> {
-    console.log(!this.servicioEstudiante.estudianteSeleccionado);
-    console.log(!this.servicioEvento.eventoSeleccionado);
-    if (!this.servicioEstudiante.estudianteSeleccionado) {
-      this.router.navigate(["/buscar"]);
+    if (!this.servicioEvento.eventoSeleccionado) {
+      this.router.navigate(["/home"]);
     }
     return true;
   }
