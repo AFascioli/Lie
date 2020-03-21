@@ -84,3 +84,7 @@ time.icon span {
   display: inline-block;
   margin-top: 4% !important;
 }
+
+.textoParticipan{
+  text-align: left;
+}

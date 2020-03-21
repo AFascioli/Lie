@@ -1,3 +1,4 @@
+import { environment } from "src/environments/environment";
 import { AdultoResponsable } from "./adultoResponsable.model";
 import { HttpClient, HttpParams } from "@angular/common/http";
 import { Injectable } from "@angular/core";
@@ -47,14 +48,14 @@ export class AdultoResponsableService {
             tutor,
             idUsuario
           };
-          let datos= {
+          let datos = {
             AR: adultoResponsable,
             idEstudiante: idEstudiante
-          }
+          };
           this.http
             .post<{ message: string; exito: boolean }>(
               "http://localhost:3000/adultoResponsable",
-              {  datos: datos }
+              { datos: datos }
             )
             .subscribe(response => {
               subject.next(response);
@@ -64,5 +65,16 @@ export class AdultoResponsableService {
         }
       });
     return subject.asObservable();
+  }
+
+  getDatosEstudiantes(idUsuario: string) {
+    let params = new HttpParams().set("idUsuario", idUsuario);
+    return this.http.get<{
+      estudiantes: any[],
+      exito: boolean,
+      message: string
+    }>(environment.apiUrl + "/adultoResponsable/estudiantes", {
+      params: params
+    });
   }
 }

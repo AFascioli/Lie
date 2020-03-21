@@ -1,3 +1,4 @@
+// import { environment } from "./../../environments/environment.prod";
 import { MatSnackBar } from "@angular/material";
 import { Comentario } from "./comentario.model";
 import { AutenticacionService } from "src/app/login/autenticacionService.service";
@@ -13,7 +14,7 @@ export class EventosService {
   public evento: Evento;
   public tituloABorrar: string;
   public idComentarioSeleccionado: string;
-  public comentarios: any[]
+  public comentarios: any[];
   public ImgCargada: string;
 
   constructor(
@@ -182,10 +183,10 @@ export class EventosService {
       });
   }
 
-  public eliminarImagen (imgUrl: string) {
+  public eliminarImagen(imgUrl: string) {
     let params = new HttpParams()
-    .set("imgUrl", imgUrl)
-    .append ("idImg", this.ImgCargada);
+      .set("imgUrl", imgUrl)
+      .append("idImg", this.ImgCargada);
     this.http
       .delete<{ message: string; exito: boolean }>(
         environment.apiUrl + "/evento/eliminarImagen",
@@ -199,6 +200,12 @@ export class EventosService {
           });
         }
       });
+  }
 
+  public obtenerEventosDeCursos(cursos: string) {
+    let params= new HttpParams().set("cursos",cursos)
+    return this.http.get<{ eventos: any[]; exito: boolean; message: string }>(
+      environment.apiUrl + "/evento/curso"
+    , {params: params});
   }
 }

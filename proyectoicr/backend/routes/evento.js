@@ -350,4 +350,17 @@ router.delete("/eliminarComentario", checkAuthMiddleware, (req, res, next) => {
   });
 });
 
+//Retorna datos de los eventos dado una string que tienen multiples cursos
+//@params: cursos (ej: "2A,5A")
+router.get("/curso", checkAuthMiddleware, (req, res) => {
+  let cursos=req.query.cursos.split(",");
+  cursos.push("Todos los cursos");
+  Evento.find(
+    { tags: { $in: cursos } },
+    { tags: 1, titulo: 1, fechaEvento: 1, horaInicio:1, horaFin: 1}
+  ).then(eventos => {
+    res.json({ eventos: eventos, exito: true, message: "exito" });
+  });
+});
+
 module.exports = router;
