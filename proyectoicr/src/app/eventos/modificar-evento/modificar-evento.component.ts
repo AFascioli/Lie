@@ -12,6 +12,7 @@ import { EventosService } from "../eventos.service";
 import { MatSnackBar, MatDialog } from "@angular/material";
 import Rolldate from "../../../assets/rolldate.min.js";
 import { CancelPopupComponent } from "src/app/popup-genericos/cancel-popup.component";
+import { Router } from '@angular/router';
 
 //Parche para la demo #resolve
 declare var require: any;
@@ -53,6 +54,7 @@ export class ModificarEventoComponent implements OnInit {
   constructor(
     public eventoService: EventosService,
     public dialog: MatDialog,
+    public router: Router,
     public snackBar: MatSnackBar
   ) {
     this.tituloEvento = this.eventoService.evento.titulo;
@@ -199,6 +201,7 @@ export class ModificarEventoComponent implements OnInit {
                 panelClass: ["snack-bar-exito"],
                 duration: 4500
               });
+              this.router.navigate(["./home"]);
             } else {
               this.snackBar.open(rtdo.message, "", {
                 duration: 4500,
