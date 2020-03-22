@@ -174,42 +174,20 @@ export class ModificarEventoComponent implements OnInit {
   onGuardarEvento(form: NgForm) {
     if (form.valid && this.chips.length != 0) {
       const fechaEvento = form.value.fechaEvento.toString();
-      if (this.horaInicio == "" && this.horaFin == "") {
+      if (
+        this.horaEventoEsValido(
+          this.verHoraATomar(this.horaInicio, this.horaInicial),
+          this.verHoraATomar(this.horaFin, this.horaFinal)
+        )
+      ) {
         this.eventoService
           .ModificarEvento(
             this.eventoService.evento._id,
             form.value.titulo,
             form.value.descripcion,
             fechaEvento,
-            this.horaInicial,
-            this.horaFinal,
-            this.chips,
-            this.eventoService.evento.autor,
-            this.imagePath,
-            this.eventoService.evento.comentarios
-          )
-          .subscribe(rtdo => {
-            if (rtdo.exito) {
-              this.snackBar.open(rtdo.message, "", {
-                panelClass: ["snack-bar-exito"],
-                duration: 4500
-              });
-            } else {
-              this.snackBar.open(rtdo.message, "", {
-                duration: 4500,
-                panelClass: ["snack-bar-fracaso"]
-              });
-            }
-          });
-      } else if (this.horaEventoEsValido(this.horaInicio, this.horaFin)) {
-        this.eventoService
-          .ModificarEvento(
-            this.eventoService.evento._id,
-            form.value.titulo,
-            form.value.descripcion,
-            fechaEvento,
-            this.horaInicio,
-            this.horaFin,
+            this.verHoraATomar(this.horaInicio, this.horaInicial),
+            this.verHoraATomar(this.horaFin, this.horaFinal),
             this.chips,
             this.eventoService.evento.autor,
             this.imagePath,
@@ -244,6 +222,11 @@ export class ModificarEventoComponent implements OnInit {
         panelClass: ["snack-bar-fracaso"]
       });
     }
+  }
+
+  verHoraATomar(h1, h2): string {
+    if (h1 == "") return h2;
+    else return h1;
   }
 
   //Valida que la hora inicio sea menor que la hora fin.

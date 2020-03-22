@@ -115,12 +115,13 @@
       </mat-autocomplete>
     </mat-form-field>
     <div>
-      <img [src]="imgURL" class="image-preview" *ngIf="imgURL" />
+      <img [src]="imgURL" #img class="image-preview" *ngIf="imgURL" />
       <button
         mat-stroked-button
         class="boton-seleccionar"
         type="button"
         (click)="file.click()"
+
       >
         Seleccionar imagen *
       </button>
