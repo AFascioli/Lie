@@ -1,3 +1,4 @@
+import { environment } from './../../environments/environment';
 import { Injectable } from "@angular/core";
 import { Estudiante } from "./estudiante.model";
 import { HttpClient, HttpParams } from "@angular/common/http";
@@ -5,7 +6,6 @@ import { Provincia } from "../ubicacion/provincias.model";
 import { Subject } from "rxjs";
 import { Localidad } from "../ubicacion/localidades.model";
 import { Nacionalidad } from "../ubicacion/nacionalidades.model";
-import { environment } from "src/environments/environment";
 
 @Injectable({
   providedIn: "root"
@@ -307,5 +307,16 @@ export class EstudiantesService {
     }>(environment.apiUrl + "/curso/estudiante", {
       params: params
     });
+  }
+
+  //Obtiene un estudiante dada su id
+  //@params: id del estudiante
+  public obtenerEstudiantePorId(idEstudiante: string) {
+    let params = new HttpParams().set("idEstudiante", idEstudiante);
+    return this.http.get<{
+      estudiante: Estudiante;
+      exito: boolean;
+      message: string;
+    }>(environment.apiUrl+"/estudiante/id",{params: params});
   }
 }

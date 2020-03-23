@@ -9,7 +9,7 @@
 }
 
 .grid-layout > mat-card{
-height: 250px;
+height: auto;
 text-align: center;
 }
 
@@ -31,7 +31,7 @@ text-align: center;
 }
 
 mat-chip{
-font-size: 20px;
+font-size: 1em;;
 }
 
 .curso{
@@ -99,4 +99,9 @@ time.icon span {
 .hora{
   margin-top: 2%;
   margin-bottom: 0%;
+}
+
+.recordatorio{
+  margin-top: -11%;
+  margin-bottom: 6%;
 }

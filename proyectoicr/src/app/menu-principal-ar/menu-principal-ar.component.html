@@ -1,5 +1,9 @@
 <div class="grid-layout">
-  <mat-card *ngFor="let estudiante of estudiantes">
+  <mat-card
+    *ngFor="let estudiante of estudiantes"
+    style="cursor: pointer;"
+    (click)="onEstudianteClick(estudiante.idEstudiante)"
+  >
     <mat-icon class="iconEstudiante">account_circle</mat-icon>
     <p class="nombre-estudiante">
       {{ estudiante.nombre }} {{ estudiante.apellido }}
@@ -12,6 +16,7 @@
   </mat-card>
   <mat-card *ngFor="let evento of eventos">
     <div class="fechaEvento">
+      <p class="recordatorio"><b>Recordatorio</b></p>
       <time datetime="evento.fechaEvento" class="icon">
         <strong>{{ obtenerMes(evento.fechaEvento) }}</strong>
         <span>{{ obtenerDia(evento.fechaEvento) }}</span>
