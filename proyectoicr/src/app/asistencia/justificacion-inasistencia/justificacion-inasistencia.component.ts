@@ -18,6 +18,7 @@ export class JustificacionInasistenciaComponent implements OnInit {
   ultimasInasistencias = [];
   inasistenciasAJustificar = [];
   fueraDeCursado = false;
+  isLoading: boolean = true;
 
   constructor(
     private servicioAsistencia: AsistenciaService,
@@ -35,6 +36,7 @@ export class JustificacionInasistenciaComponent implements OnInit {
         .obtenerUltimasInasistencias()
         .subscribe(response => {
           this.ultimasInasistencias = response.inasistencias;
+          this.isLoading = false;
         });
     } else {
       this.fueraDeCursado = true;
