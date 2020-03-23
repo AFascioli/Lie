@@ -6,9 +6,10 @@ import { AsistenciaService } from './../asistencia/asistencia.service';
 import { EstudiantesService } from './../estudiantes/estudiante.service';
 import { EventosService } from './../eventos/eventos.service';
 import { AutenticacionService } from "./../login/autenticacionService.service";
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, ChangeDetectorRef } from "@angular/core";
 import { AdultoResponsableService } from "../adulto-responsable/adultoResponsable.service";
 import { Estudiante } from '../estudiantes/estudiante.model';
+import { MediaMatcher } from '@angular/cdk/layout';
 
 @Component({
   selector: "app-menu-principal-ar",
@@ -18,6 +19,9 @@ import { Estudiante } from '../estudiantes/estudiante.model';
 export class MenuPrincipalARComponent implements OnInit {
   estudiantes;
   eventos;
+  _mobileQueryListener: () => void;
+  mobileQuery: MediaQueryList;
+
   constructor(
     public authService: AutenticacionService,
     public servicioAR: AdultoResponsableService,
@@ -27,8 +31,14 @@ export class MenuPrincipalARComponent implements OnInit {
     public servicioAsistencia: AsistenciaService,
     public servicioInscripcion: InscripcionService,
     public servicioUbicacion: UbicacionService,
-    public router: Router
-  ) {}
+    public router: Router,
+    public changeDetectorRef: ChangeDetectorRef,
+    public media: MediaMatcher
+  ) {
+    this.mobileQuery = media.matchMedia('(max-width: 1000px)');
+    this._mobileQueryListener = () => changeDetectorRef.detectChanges();
+    this.mobileQuery.addListener(this._mobileQueryListener);
+  }
 
   ngOnInit() {
     let cursos = [];
