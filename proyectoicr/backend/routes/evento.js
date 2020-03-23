@@ -41,30 +41,64 @@ var upload = multer({ storage: storage }).single("image");
 router.post("/registrar", upload, (req, res, next) => {
   Usuario.findOne({ email: req.body.autor })
     .then(usuario => {
-      const evento = new Evento({
-        titulo: req.body.titulo,
-        descripcion: req.body.descripcion,
-        fechaEvento: req.body.fechaEvento,
-        horaInicio: req.body.horaInicio,
-        horaFin: req.body.horaFin,
-        tags: req.body.tags,
-        filename: req.file.filename,
-        autor: usuario._id
-      });
-      evento
-        .save()
-        .then(() => {
-          //Completar con código de la notificación COMPLETAR CON LO DE ARRIBA
-          res.status(201).json({
-            message: "Evento creado existosamente",
-            exito: true
-          });
-        })
-        .catch(() => {
-          res.status(500).json({
-            message: "Mensaje de error especifico"
-          });
+      if (req.file != null && req.file.filename != null) {
+        const evento = new Evento({
+          titulo: req.body.titulo,
+          descripcion: req.body.descripcion,
+          fechaEvento: req.body.fechaEvento,
+          horaInicio: req.body.horaInicio,
+          horaFin: req.body.horaFin,
+          tags: req.body.tags,
+          filename: req.file.filename,
+          autor: usuario._id
         });
+        evento
+          .save()
+          .then(() => {
+            //Completar con código de la notificación COMPLETAR CON LO DE ARRIBA
+            res.status(201).json({
+              message: "Evento creado existosamente",
+              exito: true
+            });
+          })
+          .catch(() => {
+            res.status(500).json({
+              message: "Mensaje de error especifico"
+            });
+          });
+      } else {
+        Usuario.findOne({ email: req.body.autor })
+          .then(usuario => {
+            const evento = new Evento({
+              titulo: req.body.titulo,
+              descripcion: req.body.descripcion,
+              fechaEvento: req.body.fechaEvento,
+              horaInicio: req.body.horaInicio,
+              horaFin: req.body.horaFin,
+              tags: req.body.tags,
+              autor: usuario._id
+            });
+            evento
+              .save()
+              .then(() => {
+                //Completar con código de la notificación COMPLETAR CON LO DE ARRIBA
+                res.status(201).json({
+                  message: "Evento creado existosamente",
+                  exito: true
+                });
+              })
+              .catch(() => {
+                res.status(500).json({
+                  message: "Mensaje de error especifico"
+                });
+              });
+          })
+          .catch(() => {
+            res.status(500).json({
+              message: "Mensaje de error especifico"
+            });
+          });
+      }
     })
     .catch(() => {
       res.status(500).json({
@@ -75,9 +109,9 @@ router.post("/registrar", upload, (req, res, next) => {
 
 //Registra el evento en la base de datos
 //@params: evento a publicar
-router.post("/modificar", (req, res) => {
-  if (req.body.image != null) {
-    upload;
+router.post("/modificar", upload, (req, res) => {
+  if (req.file != null && req.file.filename != null) {
+    //console.log(req.body);
     Evento.findByIdAndUpdate(req.body._id, {
       titulo: req.body.titulo,
       descripcion: req.body.descripcion,

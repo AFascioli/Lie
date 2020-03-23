@@ -35,15 +35,25 @@ export class EventosService {
     tags: any[],
     image: File
   ) {
-    let imgName = image[0].name;
+    let imgUrl;
+    //let imgName = image[0].name;
     const datosEvento = new FormData();
-    datosEvento.append("image", image[0], imgName);
+    //datosEvento.append("image", image[0], imgName);
     datosEvento.append("titulo", titulo);
     datosEvento.append("descripcion", descripcion);
     datosEvento.append("fechaEvento", fechaEvento);
     datosEvento.append("horaInicio", horaInicio);
     datosEvento.append("horaFin", horaFin);
-    datosEvento.append("imgUrl", imgName);
+    if (image != null) {
+      imgUrl = image[0].name;
+      datosEvento.append("image", image[0], imgUrl);
+      datosEvento.append("imgUrl", imgUrl);
+    } else {
+      datosEvento.append("image", null);
+      datosEvento.append("imgUrl", null);
+    }
+
+    //datosEvento.append("imgUrl", imgName);
     for (var i = 0; i < tags.length; i++) {
       datosEvento.append("tags", tags[i]);
     }
@@ -70,13 +80,7 @@ export class EventosService {
     autor: string
   ) {
     let eventoModificado = new FormData();
-    if (image == null) {
-      eventoModificado.append("image", null);
-    } else {
-      let imgUrl = image[0].name;
-      eventoModificado.append("image", image[0], imgUrl);
-    }
-
+    let imgUrl;
     const fechaEventoString = fechaEvento.toString();
     eventoModificado.append("_id", _id);
     eventoModificado.append("titulo", titulo);
@@ -85,6 +89,16 @@ export class EventosService {
     eventoModificado.append("horaInicio", horaInicio);
     eventoModificado.append("horaFin", horaFin);
     eventoModificado.append("filename", filename);
+
+    if (image != null) {
+      imgUrl = image[0].name;
+      eventoModificado.append("image", image[0], imgUrl);
+      eventoModificado.append("imgUrl", imgUrl);
+    } else {
+      eventoModificado.append("image", null);
+      eventoModificado.append("imgUrl", null);
+    }
+
     for (var i = 0; i < tags.length; i++) {
       eventoModificado.append("tags", tags[i]);
     }

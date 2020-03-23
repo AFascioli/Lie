@@ -21,12 +21,16 @@
     >{{ evento.horaInicio }} - {{ evento.horaFin }}</mat-card-subtitle
   >
   <div class="containerImg">
-    <img mat-card-image [src]="getImage(evento.filename)" />
+    <img
+      mat-card-image
+      [src]="getImage(evento.filename)"
+      *ngIf="evento.filename"
+    />
     <button
       type="button"
       mat-icon-button
       class="botonEditar"
-      *ngIf="conocerUsuarioLogueado(i)"
+      *ngIf="conocerUsuarioLogueado(i) && evento.filename"
     >
       <mat-icon (click)="onEditar(evento)">mode_edit </mat-icon>
     </button>
@@ -34,7 +38,7 @@
       type="button"
       mat-icon-button
       class="botonBorrar"
-      *ngIf="conocerUsuarioLogueado(i)"
+      *ngIf="conocerUsuarioLogueado(i) && evento.filename"
     >
       <mat-icon (click)="onBorrar(evento)">delete </mat-icon>
     </button>
