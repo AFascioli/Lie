@@ -232,13 +232,4 @@ export class RegistrarEventoComponent implements OnInit {
       width: "250px"
     });
   }
-
-  onEliminarImg(imgUrl: string) : void {
-    this.eventoService.eliminarImagen(
-      this.eventoService.ImgCargada
-    );
-    
-}
-
-
 }
