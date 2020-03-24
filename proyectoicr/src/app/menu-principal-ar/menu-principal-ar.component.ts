@@ -75,12 +75,20 @@ export class MenuPrincipalARComponent implements OnInit {
     });
   }
 
+  onEventoClick(idEvento: string){
+    this.servicioEvento.obtenerEventoPorId(idEvento).subscribe(response => {
+       if(response.exito){
+         this.servicioEvento.eventoSeleccionado=response.evento;
+         this.router.navigate(["./visualizarEvento"]);
+       }
+    });
+  }
+
   asignarEstudianteSeleccionado(estudiante: Estudiante) {
     this.servicioEstudiante.estudianteSeleccionado =estudiante;
     this.servicioCalificaciones.estudianteSeleccionado = this.servicioEstudiante.estudianteSeleccionado;
     this.servicioAsistencia.estudianteSeleccionado = this.servicioEstudiante.estudianteSeleccionado;
     this.servicioInscripcion.estudianteSeleccionado = this.servicioEstudiante.estudianteSeleccionado;
     this.servicioUbicacion.estudianteSeleccionado = this.servicioEstudiante.estudianteSeleccionado;
-    // this.servicioEstudiante.retornoDesdeAcciones = true;
   }
 }

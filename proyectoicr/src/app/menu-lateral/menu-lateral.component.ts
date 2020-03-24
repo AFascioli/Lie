@@ -47,7 +47,6 @@ export class MenuLateralComponent implements OnInit {
       this.permisos=response.permisos;
     });
     this.rol= this.authService.getRol();
-    console.log(this.rol);
     this.usuario = this.authService.getUsuarioAutenticado();
   }
 

@@ -208,4 +208,12 @@ export class EventosService {
       environment.apiUrl + "/evento/curso"
     , {params: params});
   }
+
+  //Dada una id de evento, retorna un evento con todos sus datos
+  public obtenerEventoPorId(idEvento: string){
+    let params= new HttpParams().set("idEvento",idEvento)
+    return this.http.get<{ evento: Evento; exito: boolean; message: string }>(
+      environment.apiUrl + "/evento/id"
+    , {params: params});
+  }
 }

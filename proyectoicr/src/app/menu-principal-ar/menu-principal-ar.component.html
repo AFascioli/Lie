@@ -14,7 +14,11 @@
       </mat-chip-list>
     </div>
   </mat-card>
-  <mat-card *ngFor="let evento of eventos">
+  <mat-card
+    *ngFor="let evento of eventos"
+    style="cursor: pointer;"
+    (click)="onEventoClick(evento._id)"
+  >
     <div class="fechaEvento">
       <p class="recordatorio"><b>Recordatorio</b></p>
       <time datetime="evento.fechaEvento" class="icon">

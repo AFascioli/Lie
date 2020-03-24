@@ -363,4 +363,20 @@ router.get("/curso", checkAuthMiddleware, (req, res) => {
   });
 });
 
+//Dada una id de evento retorna todos sus datos
+//@params: idEvento
+router.get("/id", checkAuthMiddleware, (req,res) => {
+   Evento.findById(req.query.idEvento).then(evento => {
+     if(evento){
+       res.json({ evento: evento, exito: true, message: "exito" });
+     }else{
+      res.json({ evento: null, exito: true, message: "exito" });
+     }
+  }).catch(() => {
+    res.status(500).json({
+      message: "Mensaje de error especifico"
+    });
+  });
+});
+
 module.exports = router;
