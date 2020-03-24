@@ -36,9 +36,7 @@ export class EventosService {
     image: File
   ) {
     let imgUrl;
-    //let imgName = image[0].name;
     const datosEvento = new FormData();
-    //datosEvento.append("image", image[0], imgName);
     datosEvento.append("titulo", titulo);
     datosEvento.append("descripcion", descripcion);
     datosEvento.append("fechaEvento", fechaEvento);
@@ -46,14 +44,14 @@ export class EventosService {
     datosEvento.append("horaFin", horaFin);
     if (image != null) {
       imgUrl = image[0].name;
-      datosEvento.append("image", image[0], imgUrl);
+      //datosEvento.append("image", image[0], imgUrl);
+      datosEvento.append("image", image[0]);
       datosEvento.append("imgUrl", imgUrl);
     } else {
       datosEvento.append("image", null);
       datosEvento.append("imgUrl", null);
     }
 
-    //datosEvento.append("imgUrl", imgName);
     for (var i = 0; i < tags.length; i++) {
       datosEvento.append("tags", tags[i]);
     }

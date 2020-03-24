@@ -55,11 +55,11 @@ router.post("/registrar", upload, (req, res, next) => {
         evento
           .save()
           .then(() => {
-            this.notificarPorEvento(
-              this.evento.tags,
-              this.evento.titulo,
-              "El evento se realizará en la fecha " + evento.fechaEvento + "."
-            );
+            // this.notificarPorEvento(
+            //   this.evento.tags,
+            //   this.evento.titulo,
+            //   "El evento se realizará en la fecha " + evento.fechaEvento + "."
+            // );
 
             res.status(201).json({
               message: "Evento creado existosamente",
