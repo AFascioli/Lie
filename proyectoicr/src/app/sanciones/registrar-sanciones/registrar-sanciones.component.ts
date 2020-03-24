@@ -62,7 +62,7 @@ export class RegistrarSancionesComponent implements OnInit {
       cantidad = 1;
     }
     this.servicioSancion
-      .registrarSancion(cantidad, tipoSancion, this.idEstudiante)
+      .registrarSancion(this.fechaActual,cantidad, tipoSancion, this.idEstudiante)
       .subscribe(rtdo => {
         if (rtdo.exito) {
           this.snackBar.open(rtdo.message, "", {

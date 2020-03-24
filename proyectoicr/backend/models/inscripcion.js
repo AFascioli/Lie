@@ -13,7 +13,8 @@ const cuotasSchema = mongoose.Schema({
 const sancionSchema = mongoose.Schema({
   id: Number,
   tipo: String,
-  cantidad: Number
+  cantidad: Number,
+  fecha: [Date]
 });
 
 const inscripcionSchema = mongoose.Schema({

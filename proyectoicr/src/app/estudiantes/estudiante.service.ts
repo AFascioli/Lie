@@ -174,7 +174,6 @@ export class EstudiantesService {
       params: params
     });
   }
-
   //Obtiene todos los tutores (tutores y adultos responsables) de un estudiante pasado por parámetro
   //@params: id del estudiante
   public getTutoresDeEstudiante() {

@@ -37,6 +37,7 @@ router.get("/", checkAuthMiddleware, (req, res) => {
 });
 
 router.post("/registrarSancion", checkAuthMiddleware, (req, res) => {
+
   Inscripcion.findOne({
     idEstudiante: req.body.idEstudiante,
     activa: true
@@ -45,6 +46,7 @@ router.post("/registrarSancion", checkAuthMiddleware, (req, res) => {
       inscripcion.sanciones[req.body.tipoSancion].cantidad += parseInt(
         req.body.cantidad
       );
+      inscripcion.sanciones[req.body.tipoSancion].fecha.push(req.body.fecha);
       inscripcion
         .save()
         .then(
