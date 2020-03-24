@@ -9,6 +9,10 @@
   margin-bottom: 20px;
 }
 
+.titulo{
+  text-align: center !important;
+}
+
 .titulo:hover {
   text-decoration: underline;
 }
@@ -28,6 +32,10 @@ button {
   top: 9px;
   right: 20px;
   width: 6em;
+}
+
+.botones {
+  display: flex;
 }
 
 .textoParticipan {
@@ -89,7 +97,6 @@ time.icon span {
 
 .botonEditar,
 .botonBorrar {
-  margin-left: auto !important;
   display: flex;
 }
 

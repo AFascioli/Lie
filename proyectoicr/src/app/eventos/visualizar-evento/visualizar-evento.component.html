@@ -26,7 +26,12 @@
       ></mat-carousel-slide
     >
   </mat-carousel> -->
-  <img id="imagen" [src]="imgURL" class="image-preview" *ngIf="imgURL" />
+  <img
+    id="imagen"
+    [src]="imgURL"
+    class="image-preview"
+    *ngIf="imgURL != 'http://localhost:3000/imagen/undefined'"
+  />
   <mat-chip-list>
     <p class="textoParticipan"><b>Participan:</b></p>
     <mat-chip *ngFor="let tag of evento.tags">

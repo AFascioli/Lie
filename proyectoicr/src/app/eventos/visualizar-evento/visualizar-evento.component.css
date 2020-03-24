@@ -32,6 +32,7 @@ textarea {
 
 .mat-chip {
   font-size: 19px;
+  margin-bottom: 0% !important;
 }
 
 .fechaEvento {
@@ -46,14 +47,20 @@ textarea {
   display: flex;
 }
 
+div.mat-chip-list-wrapper {
+  display: block;
+  margin: 0px !important;
+}
+
 .textoParticipan {
   font-size: 20px;
+  margin: 25px;
   /* margin-left: 5px !important; */
 }
 
 .descripcion {
   font-size: 20px;
-  margin-left: 20px;
+  margin-left: 25px;
 }
 
 .comentario {
