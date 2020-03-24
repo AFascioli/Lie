@@ -60,14 +60,13 @@
             <a
               mat-list-item
               class="opciones-expansion"
-              routerLink="/registrarAgenda"
+              routerLink="/definirAgenda"
               *ngIf="permisos.agendaCursos > 1"
               (click)="cerrarMenuLateral(sideNav)"
             >
-              Registrar agenda de curso
+              Definir agenda de curso
             </a>
-            <mat-divider *ngIf="permisos.agendaCursos > 1"
-            ></mat-divider>
+            <mat-divider *ngIf="permisos.agendaCursos > 1"></mat-divider>
             <a
               mat-list-item
               class="opciones-expansion"
@@ -77,9 +76,7 @@
             >
               Visualizar agenda de curso
             </a>
-            <mat-divider
-              *ngIf="permisos.agendaCursos > 1"
-            ></mat-divider>
+            <mat-divider *ngIf="permisos.agendaCursos > 1"></mat-divider>
             <a
               mat-list-item
               class="opciones-expansion"

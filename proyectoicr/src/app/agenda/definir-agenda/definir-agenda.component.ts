@@ -12,11 +12,11 @@ import { EstudiantesService } from "src/app/estudiantes/estudiante.service";
 import { AgendaService } from "../agenda.service";
 
 @Component({
-  selector: "app- modificar-agenda",
-  templateUrl: "./modificar-agenda.component.html",
-  styleUrls: ["./modificar-agenda.component.css"]
+  selector: "app-definir-agenda",
+  templateUrl: "./definir-agenda.component.html",
+  styleUrls: ["./definir-agenda.component.css"]
 })
-export class ModificarAgendaComponent implements OnInit {
+export class DefinirAgendaComponent implements OnInit {
   cursos: any[];
   idCursoSeleccionado: string;
   materias: any[];
@@ -244,7 +244,7 @@ export class ModificarAgendaComponent implements OnInit {
 @Component({
   selector: "app-agenda-popup",
   templateUrl: "./agenda-popup.component.html",
-  styleUrls: ["./modificar-agenda.component.css"]
+  styleUrls: ["./definir-agenda.component.css"]
 })
 export class AgendaPopupComponent {
   index: number;

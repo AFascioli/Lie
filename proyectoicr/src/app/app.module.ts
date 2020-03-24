@@ -1,6 +1,5 @@
-
-import { Evento } from './eventos/evento.model';
-import { ReadMoreComponent } from './eventos/visualizar-evento/read-more.component';
+import { Evento } from "./eventos/evento.model";
+import { ReadMoreComponent } from "./eventos/visualizar-evento/read-more.component";
 import { AuthInterceptor } from "./login/auth-interceptor";
 import { BrowserModule } from "@angular/platform-browser";
 import { NgModule } from "@angular/core";
@@ -113,12 +112,11 @@ import { ModificarEventoComponent } from "./eventos/modificar-evento/modificar-e
 import { VisualizarEventoComponent } from "./eventos/visualizar-evento/visualizar-evento.component";
 import { MatCarouselModule } from "@ngmodule/material-carousel";
 import { VisualizarAgendaComponent } from "./agenda/visualizar-agenda/visualizar-agenda.component";
-import { RegistrarAgendaComponent } from "./agenda/registrar-agenda/registrar-agenda.component";
 import { RegistrarCuotasComponent } from "./cuotas/registrar-cuotas/registrar-cuotas.component";
 import {
-  ModificarAgendaComponent,
+  DefinirAgendaComponent,
   AgendaPopupComponent
-} from "./agenda/modificar-agenda/modificar-agenda.component";
+} from "./agenda/definir-agenda/definir-agenda.component";
 import { RegistrarSancionesComponent } from "./sanciones/registrar-sanciones/registrar-sanciones.component";
 import { SancionesEstudianteComponent } from "./perfil-estudiante/sanciones-estudiante/sanciones-estudiante.component";
 import { ErrorInterceptor } from "./error-interceptor";
@@ -170,12 +168,11 @@ import { ErrorComponent } from "./error/error.component";
     RegistrarEventoComponent,
     ModificarEventoComponent,
     VisualizarEventoComponent,
+    AgendaPopupComponent,
     ReadMoreComponent,
     VisualizarAgendaComponent,
-    RegistrarAgendaComponent,
     RegistrarCuotasComponent,
-    ModificarAgendaComponent,
-    AgendaPopupComponent,
+    DefinirAgendaComponent,
     RegistrarSancionesComponent,
     SancionesEstudianteComponent
   ],

@@ -35,10 +35,9 @@ import { TutoresEstudianteComponent } from "./perfil-estudiante/tutores-estudian
 import { ModificarEventoComponent } from "./eventos/modificar-evento/modificar-evento.component";
 import { VisualizarEventoComponent } from "./eventos/visualizar-evento/visualizar-evento.component";
 import { VisualizarAgendaComponent } from "./agenda/visualizar-agenda/visualizar-agenda.component";
-import { RegistrarAgendaComponent } from "./agenda/registrar-agenda/registrar-agenda.component";
-import { ModificarAgendaComponent } from "./agenda/modificar-agenda/modificar-agenda.component";
 import { SancionesEstudianteComponent } from "./perfil-estudiante/sanciones-estudiante/sanciones-estudiante.component";
 import { RouteEventoGuard } from "./routeEvento.guard";
+import { DefinirAgendaComponent } from "./agenda/definir-agenda/definir-agenda.component";
 
 const routes: Routes = [
   { path: "login", component: LoginComponent },
@@ -52,8 +51,7 @@ const routes: Routes = [
         pathMatch: "full",
         redirectTo: "home"
       },
-      { path: "registrarAgenda", component: RegistrarAgendaComponent },
-      { path: "modificarAgenda", component: ModificarAgendaComponent },
+      { path: "definirAgenda", component: DefinirAgendaComponent },
       { path: "home", component: HomeComponent },
       {
         path: "visualizarEvento",

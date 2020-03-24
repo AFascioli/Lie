@@ -2,8 +2,8 @@ import { AgendaService } from "../agenda.service";
 import { Component, OnInit, ChangeDetectorRef } from "@angular/core";
 import { EstudiantesService } from "src/app/estudiantes/estudiante.service";
 import { delay } from "q";
-import { MatSnackBar } from '@angular/material';
-import { MediaMatcher } from '@angular/cdk/layout';
+import { MatSnackBar } from "@angular/material";
+import { MediaMatcher } from "@angular/cdk/layout";
 
 @Component({
   selector: "app-visualizar-agenda",
@@ -11,7 +11,8 @@ import { MediaMatcher } from '@angular/cdk/layout';
   styleUrls: ["./visualizar-agenda.component.css"]
 })
 export class VisualizarAgendaComponent implements OnInit {
-  dias = ["Hora", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes"]; //Agrego Hora en los dos vectores para que el calculo sea siempre +1 +2
+  dias = ["Hora", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes"];
+  //Agrego Hora en los dos vectores para que el calculo sea siempre +1 +2
   modulo = [
     "Hora",
     "07:30",
@@ -41,14 +42,14 @@ export class VisualizarAgendaComponent implements OnInit {
     public changeDetectorRef: ChangeDetectorRef,
     public media: MediaMatcher
   ) {
-    this.mobileQuery = media.matchMedia('(max-width: 880px)');
+    this.mobileQuery = media.matchMedia("(max-width: 880px)");
     this._mobileQueryListener = () => changeDetectorRef.detectChanges();
     this.mobileQuery.addListener(this._mobileQueryListener);
   }
 
   ngOnInit() {
     this.obtenerCursos();
-    console.log('se ejecuto');
+    console.log("se ejecuto");
     // this.materias = this.servicioAgenda.obtenerMaterias();
     // this.getMateriasDistintas();
     // this.getColorVector();
@@ -60,10 +61,9 @@ export class VisualizarAgendaComponent implements OnInit {
       this.servicioAgenda
         .obtenerAgendaDeCurso(idCurso)
         .subscribe(async agenda => {
-          if(agenda.exito){
-              this.cursoSelected = true;
-          }
-          else{
+          if (agenda.exito) {
+            this.cursoSelected = true;
+          } else {
             this.cursoSelected = false;
             this.snackBar.open(agenda.message, "", {
               panelClass: ["snack-bar-fracaso"],

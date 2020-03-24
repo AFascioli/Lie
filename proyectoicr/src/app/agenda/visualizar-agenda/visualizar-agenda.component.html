@@ -65,12 +65,6 @@
         09:00
       </p>
     </div>
-
-    <!-- <div class="hora recreo1">
-      <p class="recreo1">
-        Recreo de 10 minutos
-      </p>
-    </div> -->
     <div class="hora modulo3" [class.texto-mobile]="mobileQuery.matches">
       <p class="modulo">
         09:00 <br />-<br />
@@ -83,11 +77,6 @@
         10:30
       </p>
     </div>
-    <!-- <div class="hora recreo2">
-      <p class="recreo1">
-        Recreo de 20 minutos
-      </p>
-    </div> -->
     <div class="hora modulo5" [class.texto-mobile]="mobileQuery.matches">
       <p class="modulo">
         10:30 <br />-<br />
@@ -100,11 +89,6 @@
         12:00
       </p>
     </div>
-    <!-- <div class="hora recreo3">
-      <p class="recreo1">
-        Recreo de 20 minutos
-      </p>
-    </div> -->
     <div class="hora modulo7" [class.texto-mobile]="mobileQuery.matches">
       <p class="modulo">
         12:00 <br />-<br />
@@ -117,20 +101,12 @@
         14:15
       </p>
     </div>
-    <!-- <div class="hora recreo4">
-      <p class="recreo1">
-        Recreo de 20 minutos
-      </p>
-    </div> -->
     <div class="hora modulo9" [class.texto-mobile]="mobileQuery.matches">
       <p class="modulo">
         14:05 <br />-<br />
         14:50
       </p>
     </div>
-
-    <!-- <div class="hora modulo10"><p class="modulo">14:50 - 15:35</p></div> -->
-
     <div
       class="materia"
       *ngFor="let materia of materias; let i = index"
@@ -142,9 +118,10 @@
         [class.texto-mobile]="mobileQuery.matches"
       >
         <div class="nombreMateria">{{ materia.nombre }}</div>
-        <div class="horarioMateria">{{ materia.inicio }} - {{ materia.fin }}</div>
+        <div class="horarioMateria">
+          {{ materia.inicio }} - {{ materia.fin }}
+        </div>
       </div>
     </div>
-    <!-- getColor(materia) -->
   </div>
 </mat-card>
