@@ -37,10 +37,6 @@ export class VisualizarEventoComponent implements OnInit {
   ngOnInit() {
     this.evento = this.eventoService.eventoSeleccionado;
     //Es el evento seleccionado en el home
-
-    // if (this.evento == null) {
-    //   this.router.navigate(["./home"]);
-    // }
     this.imgURL = `http://localhost:3000/imagen/${this.evento.filename}`;
     this.eventoService.obtenerComentariosDeEvento().subscribe(rtdo => {
       this.eventoService.comentarios = rtdo.comentarios.reverse();

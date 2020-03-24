@@ -15,7 +15,7 @@ const eventoSchema = mongoose.Schema({
   horaInicio: String,
   horaFin: String,
   tags: [String],
-  filename: String,
+  filename: [String],
   autor: { type: mongoose.Schema.Types.ObjectId, ref: "usuario" },
   comentarios: [comentarioSchema]
 });

@@ -83,7 +83,6 @@ export class VisualizarAgendaComponent implements OnInit {
   actualizarInterfaz(idCurso) {
     (async () => {
       let agenda: any = await this.obtenerAgenda(idCurso.value);
-      console.log(agenda);
       agenda.forEach((materia, index) => {
         this.setInGrid(index.toString(), materia);
       });

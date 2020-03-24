@@ -58,11 +58,9 @@ export class ModificarEventoComponent implements OnInit {
   ngOnInit() {
     this.fechaActual = new Date();
     this.evento = this.eventoService.evento;
-    console.log(this.evento.horaInicio);
-    // if (this.evento == null) {
-    //   this.router.navigate(["./home"]);
-    // }
-    this.imgURL = `http://localhost:3000/imagen/${this.evento.filename}`;
+    if (this.evento.filename != null) {
+      this.imgURL = `http://localhost:3000/imagen/${this.evento.filename}`;
+    }
     this.tags = this.evento.tags;
     this.inicializarPickers();
   }

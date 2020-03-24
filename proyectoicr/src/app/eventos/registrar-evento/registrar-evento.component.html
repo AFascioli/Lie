@@ -99,7 +99,7 @@
         />
       </mat-chip-list>
       <mat-autocomplete
-      required
+        required
         #auto="matAutocomplete"
         (optionSelected)="selected($event)"
       >
@@ -108,19 +108,27 @@
         </mat-option>
       </mat-autocomplete>
     </mat-form-field>
-    <div >
-       <img [src]="imgURL" class="image-preview" *ngIf="imgURL" />
-       <div class="contenedor-flexbox">
-      <button
-        mat-stroked-button
-        class="boton-seleccionar"
-        type="button"
-        (click)="file.click()"
-
-      >
-        Seleccionar imagen *
-      </button>
-    </div>
+    <div>
+      <img
+        [src]="imgURL[0]"
+        class="image-preview"
+        *ngIf="imgURL && imgURL[0]"
+      />
+      <img
+        [src]="imgURL[1]"
+        class="image-preview"
+        *ngIf="imgURL && imgURL[1]"
+      />
+      <div class="contenedor-flexbox">
+        <button
+          mat-stroked-button
+          class="boton-seleccionar"
+          type="button"
+          (click)="file.click()"
+        >
+          Seleccionar imagen *
+        </button>
+      </div>
       <br />
       <span class="mensaje" *ngIf="message">{{ message }}</span>
       <br />
@@ -129,6 +137,7 @@
         type="file"
         accept="image/*"
         (change)="preview(file.files)"
+        multiple
       />
     </div>
 

@@ -17,7 +17,7 @@ const storage = new GridFsStorage({
   url: "mongodb://127.0.0.1:27017/icr-local",
   options: {
     useNewUrlParser: true,
-    useUnsifiedTopology: true
+    useUnifiedTopology: true
   },
   file: (req, file) => {
     const match = ["image/png", "image/jpeg"];
