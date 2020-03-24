@@ -36,6 +36,7 @@ button {
 
 .botones {
   display: flex;
+  float: right;
 }
 
 .textoParticipan {
@@ -129,6 +130,10 @@ time.icon span {
 
 .botonVisualizar {
   text-align: center;
+}
+
+.visualizar{
+margin-left: 100px;
 }
 
 .botonComentario {

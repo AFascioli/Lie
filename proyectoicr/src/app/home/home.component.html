@@ -7,29 +7,11 @@
   *ngFor="let evento of eventos; let i = index"
 >
   <mat-card-title>
-    <div class="botones">
-      <button
-        type="button"
-        mat-icon-button
-        class="botonEditar"
-        *ngIf="conocerUsuarioLogueado(i)"
-      >
-        <mat-icon (click)="onEditar(evento)">mode_edit </mat-icon>
-      </button>
-      <button
-        type="button"
-        mat-icon-button
-        class="botonBorrar"
-        *ngIf="conocerUsuarioLogueado(i)"
-      >
-        <mat-icon (click)="onBorrar(evento)">delete </mat-icon>
+    <div class="titulo">
+      <button (click)="eventoSeleccionado(evento)" class="titulo">
+        {{ evento.titulo }}
       </button>
     </div>
-    <div class="titulo">
-    <button (click)="eventoSeleccionado(evento)" class="titulo">
-      {{ evento.titulo }}
-    </button>
-  </div>
     <div class="fechaEvento">
       <time datetime="evento.fechaEvento" class="icon">
         <strong>{{ obtenerMes(evento.fechaEvento) }}</strong>
@@ -44,8 +26,24 @@
     <img
       mat-card-image
       [src]="getImage(evento.filename)"
-      *ngIf="evento.filename"
+      *ngIf="evento.filename != ''"
     />
+    <button
+      type="button"
+      mat-icon-button
+      class="botonEditar"
+      *ngIf="conocerUsuarioLogueado(i) && evento.filename != ''"
+    >
+      <mat-icon (click)="onEditar(evento)">mode_edit </mat-icon>
+    </button>
+    <button
+      type="button"
+      mat-icon-button
+      class="botonBorrar"
+      *ngIf="conocerUsuarioLogueado(i) && evento.filename != ''"
+    >
+      <mat-icon (click)="onBorrar(evento)">delete </mat-icon>
+    </button>
   </div>
   <mat-chip-list>
     <p class="textoParticipan">Participan:</p>
@@ -58,9 +56,27 @@
       {{ evento.descripcion }}
     </p>
   </mat-card-content>
-  <div class="botonVisualizar">
+  <div class="botonVisualizar"  [ngClass]="{ visualizar: evento.filename == '' }">
     <button class="botonComentario" (click)="eventoSeleccionado(evento)">
       Ver comentarios
     </button>
+    <div class="botones">
+      <button
+        type="button"
+        mat-icon-button
+        class="botonEditar"
+        *ngIf="conocerUsuarioLogueado(i) && evento.filename == ''"
+      >
+        <mat-icon (click)="onEditar(evento)">mode_edit </mat-icon>
+      </button>
+      <button
+        type="button"
+        mat-icon-button
+        class="botonBorrar"
+        *ngIf="conocerUsuarioLogueado(i) && evento.filename == ''"
+      >
+        <mat-icon (click)="onBorrar(evento)">delete </mat-icon>
+      </button>
+    </div>
   </div>
 </mat-card>
