@@ -55,7 +55,12 @@ router.post("/registrar", upload, (req, res, next) => {
         evento
           .save()
           .then(() => {
-            //Completar con código de la notificación COMPLETAR CON LO DE ARRIBA
+            this.notificarPorEvento(
+              this.evento.tags,
+              this.evento.titulo,
+              "El evento se realizará en la fecha " + evento.fechaEvento + "."
+            );
+
             res.status(201).json({
               message: "Evento creado existosamente",
               exito: true
@@ -321,6 +326,14 @@ router.post("/registrarComentario", async (req, res, next) => {
 // });
 
 router.delete("/eliminarEvento", checkAuthMiddleware, (req, res, next) => {
+  Evento.findById(req.query._id).then(evento => {
+    this.notificarPorEvento(
+      evento.tags,
+      evento.titulo,
+      "Se ha cancelado el evento."
+    );
+  });
+
   Evento.findByIdAndDelete({
     _id: req.query._id
   })
@@ -353,5 +366,92 @@ router.delete("/eliminarComentario", checkAuthMiddleware, (req, res, next) => {
     exito: true
   });
 });
+
+notificarPorEvento = function(tags, titulo, cuerpo) {
+  //Notificar a los adultos que correspondan a los cursos de los tags/chips
+  if (tags.includes("Todos los cursos")) {
+    Suscripcion.notificacionMasiva(evento.titulo, this.cuerpo);
+  } else {
+    Inscripcion.agreggate([
+      {
+        $lookup: {
+          from: "curso",
+          localField: "idCurso",
+          foreignField: "_id",
+          as: "icurso"
+        }
+      },
+      {
+        $unwind: {
+          path: "$icurso",
+          preserveNullAndEmptyArrays: false
+        }
+      },
+      {
+        $match: {
+          $expr: {
+            $in: ["$icurso.curso", ["5A"]]
+          }
+        }
+      },
+      {
+        $lookup: {
+          from: "estudiante",
+          localField: "idEstudiante",
+          foreignField: "_id",
+          as: "conest"
+        }
+      },
+      {
+        $unwind: {
+          path: "$conest",
+          preserveNullAndEmptyArrays: false
+        }
+      },
+      {
+        $unwind: {
+          path: "$conest.adultoResponsable",
+          preserveNullAndEmptyArrays: false
+        }
+      },
+      {
+        $lookup: {
+          from: "adultoResponsable",
+          localField: "idAdulto",
+          foreignField: "string",
+          as: "conadulto"
+        }
+      },
+      {
+        $unwind: {
+          path: "$conadulto",
+          preserveNullAndEmptyArrays: false
+        }
+      },
+      {
+        $project: {
+          _id: 0,
+          "conadulto.idUsuario": 1
+        }
+      }
+    ]).then(response => {
+      let idtutores;
+      response.forEach(conadulto => {
+        idtutores.push(conadulto[0].idUsuario);
+      });
+      Suscripcion.notificacionGrupal(
+        idtutores, // Tutores de los cursos seleccionados
+        titulo,
+        cuerpo
+      );
+
+      console.log("Envío de notificación");
+      console.log("tags: ", tags);
+      console.log(titulo);
+      console.log(cuerpo);
+      console.log("Tutores a notif: ", idtutores);
+    });
+  }
+};
 
 module.exports = router;
