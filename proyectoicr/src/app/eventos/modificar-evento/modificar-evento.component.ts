@@ -58,7 +58,7 @@ export class ModificarEventoComponent implements OnInit {
   ngOnInit() {
     this.fechaActual = new Date();
     this.evento = this.eventoService.evento;
-    if (this.evento.filename != null) {
+    if (this.evento.filename.lenght != 0) {
       this.imgURL = `http://localhost:3000/imagen/${this.evento.filename}`;
     }
     this.tags = this.evento.tags;
