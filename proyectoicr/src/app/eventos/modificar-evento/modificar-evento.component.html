@@ -126,8 +126,7 @@
       >
         <div *ngFor="let imagen of imgURL">
           <mat-carousel-slide overlayColor="transparent" [image]="imagen">
-            ></mat-carousel-slide
-          >
+          </mat-carousel-slide>
         </div>
       </mat-carousel>
       <br />
@@ -147,6 +146,7 @@
         type="file"
         accept="image/*"
         (change)="preview(file.files)"
+        multiple
       />
     </div>
     <div class="div-button">

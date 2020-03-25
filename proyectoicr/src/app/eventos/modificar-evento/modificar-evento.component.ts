@@ -144,21 +144,40 @@ export class ModificarEventoComponent implements OnInit {
     );
   }
 
-  preview(files) {
+  obtenerImagen = (file, reader) => {
+    return new Promise((resolve, reject) => {
+      reader.readAsDataURL(file);
+      reader.onload = _event => {
+        resolve(reader.result);
+      };
+      if (file == null) {
+        reject("No se pudo obtener la imagen.");
+      }
+    });
+  };
+
+  async preview(files) {
+    let incorrectType = false;
+    console.log(files);
     if (files.length === 0) return;
 
-    var mimeType = files[0].type;
-    if (mimeType.match(/image\/*/) == null) {
-      this.message = "Solo se admiten archivos de imagen";
-      return;
+    for (let index = 0; index < files.length; index++) {
+      var mimeType = files[index].type;
+      if (mimeType.match(/image\/*/) == null) {
+        incorrectType = true;
+        files.splice(index, 1);
+      }
     }
 
-    var reader = new FileReader();
+    incorrectType && (this.message = "Solo se admiten archivos de imagen");
+
     this.imageFile = files;
-    reader.readAsDataURL(files[0]);
-    reader.onload = _event => {
-      this.imgURL = reader.result;
-    };
+    this.imgURL = [];
+
+    for (let index = 0; index < files.length; index++) {
+      var reader = new FileReader();
+      this.imgURL[index] = await this.obtenerImagen(files[index], reader);
+    }
   }
 
   onGuardarEvento(form: NgForm) {
