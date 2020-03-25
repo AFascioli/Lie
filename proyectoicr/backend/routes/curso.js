@@ -36,36 +36,36 @@ router.get("/", checkAuthMiddleware, (req, res) => {
     });
 });
 
+//Registra una nueva sancion de un estudiante en particular
+//@params: idEstudiante
+//@params: tipo (sancion)
+//@params: cantidad (sancion)
+//@params: fecha (sancion)
 router.post("/registrarSancion", checkAuthMiddleware, (req, res) => {
-
-  Inscripcion.findOne({
-    idEstudiante: req.body.idEstudiante,
-    activa: true
-  })
-    .then(inscripcion => {
-      inscripcion.sanciones[req.body.tipoSancion].cantidad += parseInt(
-        req.body.cantidad
-      );
-      inscripcion.sanciones[req.body.tipoSancion].fecha.push(req.body.fecha);
-      inscripcion
-        .save()
-        .then(
-          res.status(200).json({
-            message: "Se ha registrado la sanción del estudiante correctamente",
-            exito: true
-          })
-        )
-        .catch(() => {
-          res.status(500).json({
-            message: "Mensaje de error especifico"
-          });
-        });
+  Inscripcion.findOneAndUpdate(
+    {
+      idEstudiante: req.body.idEstudiante,
+      activa: true
+    },
+    {
+      $push: {
+        sanciones: {
+          tipo: req.body.tipoSancion,
+          cantidad: req.body.cantidad,
+          fecha: req.body.fecha
+        }
+      }
+    }
+  ).then(
+    res.status(200).json({
+      message: "Se ha registrado la sanción del estudiante correctamente",
+      exito: true
     })
-    .catch(() => {
-      res.status(500).json({
-        message: "Mensaje de error especifico"
-      });
+  ).catch(() => {
+    res.status(500).json({
+      message: "Mensaje de error especifico"
     });
+  });
 });
 
 //Obtiene el estado de las cuotas de todos los estudiantes de un curso
@@ -787,18 +787,6 @@ router.post("/inscripciontest", checkAuthMiddleware, async (req, res) => {
     });
   };
 
-  var crearSanciones = () => {
-    return new Promise((resolve, reject) => {
-      sanciones = [
-        { id: 1, tipo: "Llamados de atencion", cantidad: 0 },
-        { id: 2, tipo: "Apercibimiento", cantidad: 0 },
-        { id: 3, tipo: "Amonestaciones", cantidad: 0 },
-        { id: 4, tipo: "Suspension", cantidad: 0 }
-      ];
-      resolve(sanciones);
-    });
-  };
-
   var cearCuotas = () => {
     return new Promise((resolve, reject) => {
       cuotas = [];
@@ -838,7 +826,6 @@ router.post("/inscripciontest", checkAuthMiddleware, async (req, res) => {
 
   var materiasDelCurso = await obtenerMateriasDeCurso();
   var cuotas = await cearCuotas();
-  var sanciones = await crearSanciones();
   var estadoCursandoMateria = await obtenerEstadoCursandoMateria();
   var idsCXMNuevas = await ClaseCalifXMateria.crearCXM(
     materiasDelCurso,
@@ -858,7 +845,7 @@ router.post("/inscripciontest", checkAuthMiddleware, async (req, res) => {
     materiasPendientes: materiasPendientesNuevas,
     año: 2019,
     cuotas: cuotas,
-    sanciones: sanciones
+    sanciones: []
   });
 
   nuevaInscripcion
@@ -1092,19 +1079,21 @@ router.post("/modificarAgenda", checkAuthMiddleware, (req, res) => {});
 //@params: agenda, que se usa solo idHorario y la idMXC
 //@params: idCurso
 router.post("/eliminarHorario", checkAuthMiddleware, (req, res) => {
-  Horario.findByIdAndDelete(req.body.agenda.idHorarios).then(() => {
-    MateriaXCurso.findByIdAndDelete(req.body.agenda.idMXC).then(() => {
-      Curso.findByIdAndUpdate(req.body.idCurso, {
-        $pull: { materias: { $in: req.body.agenda.idMXC } }
-      }).then(() => {
-        res.json({ exito: true, message: "Horario borrado exitosamente" });
+  Horario.findByIdAndDelete(req.body.agenda.idHorarios)
+    .then(() => {
+      MateriaXCurso.findByIdAndDelete(req.body.agenda.idMXC).then(() => {
+        Curso.findByIdAndUpdate(req.body.idCurso, {
+          $pull: { materias: { $in: req.body.agenda.idMXC } }
+        }).then(() => {
+          res.json({ exito: true, message: "Horario borrado exitosamente" });
+        });
+      });
+    })
+    .catch(() => {
+      res.status(500).json({
+        message: "Mensaje de error especifico"
       });
     });
-  }).catch(() => {
-    res.status(500).json({
-      message: "Mensaje de error especifico"
-    });
-  });
 });
 
 // METODO OBSOLETO!!!

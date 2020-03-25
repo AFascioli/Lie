@@ -14,7 +14,7 @@ export class SancionService {
       tipoSancion: tipoSancion,
       cantidad: cantidad,
       idEstudiante: idEstudiante,
-      fecha
+      fecha: fecha
     };
     return this.http.post<{ message: string; exito: boolean }>(
       environment.apiUrl + "/curso/registrarSancion",

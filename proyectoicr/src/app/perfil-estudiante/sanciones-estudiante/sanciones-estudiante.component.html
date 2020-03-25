@@ -1,1 +1,44 @@
-
+<table
+  mat-table
+  [dataSource]="sanciones"
+  *ngIf="sanciones.length!=0"
+>
+  <ng-container matColumnDef="tipoSancion">
+    <th class="columnasNormales" mat-header-cell *matHeaderCellDef>
+      Tipo de sanción
+    </th>
+    <td
+      class="columnasNormales"
+      mat-cell
+      *matCellDef="let sancion;"
+    >
+      {{ sancion.tipo }}
+    </td>
+  </ng-container>
+  <ng-container matColumnDef="cantidad">
+    <th class="columnasChichas" mat-header-cell *matHeaderCellDef>
+      Cantidad
+    </th>
+    <td
+      class="columnasChichas"
+      mat-cell
+      *matCellDef="let sancion;"
+    >
+      {{ sancion.cantidad }}
+    </td>
+  </ng-container>
+  <ng-container matColumnDef="fecha">
+    <th class="columnasNormales" mat-header-cell *matHeaderCellDef>
+      Fecha
+    </th>
+    <td
+      class="columnasNormales"
+      mat-cell
+      *matCellDef="let sancion;"
+    >
+    {{ sancion.fecha | date: "dd/MM/yyyy" }}
+    </td>
+  </ng-container>
+  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+  <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+</table>

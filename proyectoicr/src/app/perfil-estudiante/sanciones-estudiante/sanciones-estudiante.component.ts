@@ -10,6 +10,11 @@ import { MatSnackBar } from "@angular/material";
 })
 export class SancionesEstudianteComponent implements OnInit {
   sanciones: any[] = [];
+  displayedColumns: string[] = [
+    "tipoSancion",
+    "cantidad",
+    "fecha",
+  ];
 
   constructor(
     public servicio: EstudiantesService,
@@ -19,11 +24,12 @@ export class SancionesEstudianteComponent implements OnInit {
   ngOnInit() {
     this.servicio.getSancionesDeEstudiante().subscribe(respuesta => {
       if (respuesta.exito) {
+        this.sanciones = respuesta.sanciones;
+        console.log(this.sanciones);
         this.snackBar.open(respuesta.message, "", {
           panelClass: ["snack-bar-exito"],
           duration: 3000
         });
-        this.sanciones = respuesta.sanciones;
       }
     });
   }

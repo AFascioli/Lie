@@ -58,11 +58,29 @@ export class RegistrarSancionesComponent implements OnInit {
   }
 
   guardar(cantidad, tipoSancion, form: NgForm) {
-    if (tipoSancion == 3) {
-      cantidad = 1;
+    let sancion="";
+    switch (tipoSancion) {
+      case 0:
+        sancion="Llamado de atencion";
+        break;
+      case 1:
+        sancion="Apercibimiento";
+        break;
+      case 2:
+        sancion="Amonestacion";
+        break;
+      case 3:
+        sancion="Suspencion";
+        cantidad=1;
+        break;
     }
     this.servicioSancion
-      .registrarSancion(this.fechaActual,cantidad, tipoSancion, this.idEstudiante)
+      .registrarSancion(
+        this.fechaActual,
+        cantidad,
+        sancion,
+        this.idEstudiante
+      )
       .subscribe(rtdo => {
         if (rtdo.exito) {
           this.snackBar.open(rtdo.message, "", {
