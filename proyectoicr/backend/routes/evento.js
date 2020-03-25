@@ -48,7 +48,6 @@ router.post("/registrar", upload, (req, res, next) => {
         filenames.push(req.files[index].filename);
       }
       if (filenames.length == req.files.length) {
-        console.log("filenames", filenames);
         resolve(filenames);
       } else {
         reject("No se pudo obtener los nombres de las imagenes.");
@@ -58,7 +57,7 @@ router.post("/registrar", upload, (req, res, next) => {
 
   Usuario.findOne({ email: req.body.autor })
     .then(async usuario => {
-      if (req.file != null && req.file.filename != null) {
+      if (req.files != null) {
         const evento = new Evento({
           titulo: req.body.titulo,
           descripcion: req.body.descripcion,

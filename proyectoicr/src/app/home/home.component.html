@@ -23,16 +23,28 @@
     >{{ evento.horaInicio }} - {{ evento.horaFin }}</mat-card-subtitle
   >
   <div class="containerImg">
-    <img
-      mat-card-image
-      [src]="getImage(evento.filename)"
-      *ngIf="evento.filename != ''"
-    />
+    <mat-carousel
+      interval="5000"
+      maxWidth="auto"
+      proportion="75"
+      color="warn"
+      [hideArrows]="false"
+      [hideIndicators]="false"
+    >
+      <div *ngFor="let filename of evento.filenames">
+        <mat-carousel-slide
+          overlayColor="transparent"
+          [image]="getImage(filename)"
+        >
+          ></mat-carousel-slide
+        >
+      </div>
+    </mat-carousel>
     <button
       type="button"
       mat-icon-button
       class="botonEditar"
-      *ngIf="conocerUsuarioLogueado(i) && evento.filename != ''"
+      *ngIf="conocerUsuarioLogueado(i) && evento.filenames.length != 0"
     >
       <mat-icon (click)="onEditar(evento)">mode_edit </mat-icon>
     </button>
@@ -40,7 +52,7 @@
       type="button"
       mat-icon-button
       class="botonBorrar"
-      *ngIf="conocerUsuarioLogueado(i) && evento.filename != ''"
+      *ngIf="conocerUsuarioLogueado(i) && evento.filenames.length != 0"
     >
       <mat-icon (click)="onBorrar(evento)">delete </mat-icon>
     </button>
@@ -56,7 +68,10 @@
       {{ evento.descripcion }}
     </p>
   </mat-card-content>
-  <div class="botonVisualizar"  [ngClass]="{ visualizar: evento.filename == '' }">
+  <div
+    class="botonVisualizar"
+    [ngClass]="{ visualizar: evento.filenames.length == 0 }"
+  >
     <button class="botonComentario" (click)="eventoSeleccionado(evento)">
       Ver comentarios
     </button>
@@ -65,7 +80,7 @@
         type="button"
         mat-icon-button
         class="botonEditar"
-        *ngIf="conocerUsuarioLogueado(i) && evento.filename == ''"
+        *ngIf="conocerUsuarioLogueado(i) && evento.filenames.length == 0"
       >
         <mat-icon (click)="onEditar(evento)">mode_edit </mat-icon>
       </button>
@@ -73,7 +88,7 @@
         type="button"
         mat-icon-button
         class="botonBorrar"
-        *ngIf="conocerUsuarioLogueado(i) && evento.filename == ''"
+        *ngIf="conocerUsuarioLogueado(i) && evento.filenames.length == 0"
       >
         <mat-icon (click)="onBorrar(evento)">delete </mat-icon>
       </button>

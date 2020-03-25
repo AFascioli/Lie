@@ -9,7 +9,7 @@
   margin-bottom: 20px;
 }
 
-.titulo{
+.titulo {
   text-align: center !important;
 }
 
@@ -132,8 +132,8 @@ time.icon span {
   text-align: center;
 }
 
-.visualizar{
-margin-left: 100px;
+.visualizar {
+  margin-left: 100px;
 }
 
 .botonComentario {
@@ -144,4 +144,21 @@ margin-left: 100px;
   padding: 10px !important;
   padding-left: 15px !important;
   padding-right: 15px !important;
+}
+
+::ng-deep
+  .mat-button-wrapper
+  > mat-icon.notranslate.material-icons.mat-icon-no-color.ng-star-inserted {
+  background: white !important;
+  border-radius: 50% !important;
+  color: black !important;
+}
+
+::ng-deep .mat-mini-fab.mat-warn[disabled],
+.mat-mini-fab[disabled][disabled] {
+  background-color: rgba(27, 11, 97, 0.938);
+}
+
+::ng-deep .mat-mini-fab.mat-warn [ng-reflect-disabled="false"] {
+  background-color: white !important;
 }

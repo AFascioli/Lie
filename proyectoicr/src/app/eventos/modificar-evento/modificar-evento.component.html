@@ -115,7 +115,22 @@
       </mat-autocomplete>
     </mat-form-field>
     <div>
-      <img id="imagen" [src]="imgURL" class="image-preview" *ngIf="imgURL" />
+      <!-- <img id="imagen" [src]="imgURL" class="image-preview" *ngIf="imgURL" /> -->
+      <mat-carousel
+        interval="5000"
+        maxWidth="auto"
+        proportion="75"
+        color="warn"
+        [hideArrows]="false"
+        [hideIndicators]="false"
+      >
+        <div *ngFor="let imagen of imgURL">
+          <mat-carousel-slide overlayColor="transparent" [image]="imagen">
+            ></mat-carousel-slide
+          >
+        </div>
+      </mat-carousel>
+      <br />
       <button
         mat-stroked-button
         class="boton-seleccionar"

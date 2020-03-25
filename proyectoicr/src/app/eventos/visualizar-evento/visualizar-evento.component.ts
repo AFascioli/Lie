@@ -38,9 +38,9 @@ export class VisualizarEventoComponent implements OnInit {
     this.evento = this.eventoService.eventoSeleccionado;
     console.log(this.evento);
     //Es el evento seleccionado en el home
-    if (this.evento.filename.lenght != 0) {
-      this.imgURL = `http://localhost:3000/imagen/${this.evento.filename}`;
-    }
+    // if (this.evento.filename.lenght != 0) {
+    //   this.imgURL = `http://localhost:3000/imagen/${this.evento.filename}`;
+    // }
     this.eventoService.obtenerComentariosDeEvento().subscribe(rtdo => {
       this.eventoService.comentarios = rtdo.comentarios.reverse();
       this.actualizarPermisos();
@@ -59,8 +59,8 @@ export class VisualizarEventoComponent implements OnInit {
     }
   }
 
-  getImage(imgUrl) {
-    return `${environment.apiUrl}/evento/imagenes?imgUrl=${imgUrl}`;
+  getImage(filename) {
+    return `http://localhost:3000/imagen/${filename}`;
   }
 
   obtenerMes(fechaEvento) {

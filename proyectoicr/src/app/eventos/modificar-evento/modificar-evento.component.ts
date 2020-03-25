@@ -26,7 +26,7 @@ export class ModificarEventoComponent implements OnInit {
   @ViewChild("auto", { static: false }) matAutocomplete: MatAutocomplete;
   fechaActual: Date;
   imageFile: File = null;
-  imgURL: any;
+  imgURL: any = [];
   message: string;
   selectable = true;
   removable = true;
@@ -58,8 +58,12 @@ export class ModificarEventoComponent implements OnInit {
   ngOnInit() {
     this.fechaActual = new Date();
     this.evento = this.eventoService.evento;
-    if (this.evento.filename.lenght != 0) {
-      this.imgURL = `http://localhost:3000/imagen/${this.evento.filename}`;
+    if (this.evento.filenames.length != 0) {
+      for (let index = 0; index < this.evento.filenames.length; index++) {
+        this.imgURL.push(
+          `http://localhost:3000/imagen/${this.evento.filenames[index]}`
+        );
+      }
     }
     this.tags = this.evento.tags;
     this.inicializarPickers();
