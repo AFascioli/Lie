@@ -13,6 +13,7 @@ const Horario = require("../models/horario");
 const MateriaXCurso = require("../models/materiasXCurso");
 const ClaseInscripcion = require("../classes/inscripcion");
 const ClaseCalifXMateria = require("../classes/calificacionXMateria");
+const ClaseAsistencia = require("../classes/asistencia");
 
 // Obtiene todos los cursos que están almacenados en la base de datos
 router.get("/", checkAuthMiddleware, (req, res) => {
@@ -56,16 +57,50 @@ router.post("/registrarSancion", checkAuthMiddleware, (req, res) => {
         }
       }
     }
-  ).then(
-    res.status(200).json({
-      message: "Se ha registrado la sanción del estudiante correctamente",
-      exito: true
-    })
-  ).catch(() => {
-    res.status(500).json({
-      message: "Mensaje de error especifico"
+  )
+    .then(
+      res.status(200).json({
+        message: "Se ha registrado la sanción del estudiante correctamente",
+        exito: true
+      })
+    )
+    .catch(() => {
+      res.status(500).json({
+        message: "Mensaje de error especifico"
+      });
     });
-  });
+  //Posible cambio a la funcionalidad
+  // let modificarSancion = false;
+  // Inscripcion.findOne({
+  //   idEstudiante: req.body.idEstudiante,
+  //   activa: true
+  // }).then(inscripcion => {
+  //   for (let index = 0; index < inscripcion.sanciones.length; index++) {
+  //     if (
+  //       ClaseAsistencia.esFechaActual(inscripcion.sanciones[index].fecha) &&
+  //       inscripcion.sanciones[index].tipo == req.body.tipoSancion
+  //     ) {
+  //       inscripcion.sanciones[index].cantidad += req.body.cantidad;
+  //       inscripcion
+  //         .save()
+  //         .then(
+  //           res.status(200).json({
+  //             message:
+  //               "Se ha registrado la sanción del estudiante correctamente",
+  //             exito: true
+  //           })
+  //         )
+  //         .catch(() => {
+  //           res.status(500).json({
+  //             message: "Mensaje de error especifico"
+  //           });
+  //         });
+  //     }
+  //   }
+  //   if (!modificarSancion) {
+  //     //Se hace el codigo de arriba de todo
+  //   }
+  // });
 });
 
 //Obtiene el estado de las cuotas de todos los estudiantes de un curso
