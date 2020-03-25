@@ -9,11 +9,19 @@ table {
 }
 
 .columnasChicas{
-  width:8%;
+  width:20%;
 }
 
 th{
   font-weight: bold;
   font-size: 15px;
   text-align: center;
+}
+
+.resumenSanciones{
+  margin-left: 4%;
+}
+
+.tituloResumen{
+  font-size: 23px;
 }

@@ -1,44 +1,38 @@
-<table
-  mat-table
-  [dataSource]="sanciones"
-  *ngIf="sanciones.length!=0"
->
-  <ng-container matColumnDef="tipoSancion">
-    <th class="columnasNormales" mat-header-cell *matHeaderCellDef>
-      Tipo de sanción
-    </th>
-    <td
-      class="columnasNormales"
-      mat-cell
-      *matCellDef="let sancion;"
-    >
-      {{ sancion.tipo }}
-    </td>
-  </ng-container>
-  <ng-container matColumnDef="cantidad">
-    <th class="columnasChichas" mat-header-cell *matHeaderCellDef>
-      Cantidad
-    </th>
-    <td
-      class="columnasChichas"
-      mat-cell
-      *matCellDef="let sancion;"
-    >
-      {{ sancion.cantidad }}
-    </td>
-  </ng-container>
+<div *ngIf="sanciones.length != 0" class="resumenSanciones">
+  <h3><b class="tituloResumen"> Resumen de sanciones</b></h3>
+  <p><b>Llamados de atención:</b> {{ sumatoriaSanciones[0] }}</p>
+  <p><b>Apercibimientos:</b> {{ sumatoriaSanciones[1] }}</p>
+  <p><b>Amonestaciones:</b> {{ sumatoriaSanciones[2] }}</p>
+  <p><b>Suspenciones:</b> {{ sumatoriaSanciones[3] }}</p>
+</div>
+
+<table mat-table [dataSource]="sanciones" *ngIf="sanciones.length != 0">
   <ng-container matColumnDef="fecha">
     <th class="columnasNormales" mat-header-cell *matHeaderCellDef>
       Fecha
     </th>
-    <td
-      class="columnasNormales"
-      mat-cell
-      *matCellDef="let sancion;"
-    >
-    {{ sancion.fecha | date: "dd/MM/yyyy" }}
+    <td class="columnasNormales" mat-cell *matCellDef="let sancion">
+      {{ sancion.fecha | date: "dd/MM/yyyy" }}
+    </td>
+  </ng-container>
+  <ng-container matColumnDef="tipoSancion">
+    <th class="columnasNormales" mat-header-cell *matHeaderCellDef>
+      Tipo de sanción
+    </th>
+    <td class="columnasNormales" mat-cell *matCellDef="let sancion">
+      {{ sancion.tipo }}
+    </td>
+  </ng-container>
+  <ng-container matColumnDef="cantidad">
+    <th class="columnasChicas" mat-header-cell *matHeaderCellDef>
+      Cantidad
+    </th>
+    <td class="columnasChichas" mat-cell *matCellDef="let sancion">
+      {{ sancion.cantidad }}
     </td>
   </ng-container>
   <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
   <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
 </table>
+
+<p *ngIf="sanciones.length == 0">El estudiante no presenta sanciones</p>

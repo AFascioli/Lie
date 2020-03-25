@@ -10,11 +10,9 @@ import { MatSnackBar } from "@angular/material";
 })
 export class SancionesEstudianteComponent implements OnInit {
   sanciones: any[] = [];
-  displayedColumns: string[] = [
-    "tipoSancion",
-    "cantidad",
-    "fecha",
-  ];
+  displayedColumns: string[] = ["fecha", "tipoSancion", "cantidad"];
+
+  sumatoriaSanciones = [0,0,0,0];
 
   constructor(
     public servicio: EstudiantesService,
@@ -25,11 +23,28 @@ export class SancionesEstudianteComponent implements OnInit {
     this.servicio.getSancionesDeEstudiante().subscribe(respuesta => {
       if (respuesta.exito) {
         this.sanciones = respuesta.sanciones;
-        console.log(this.sanciones);
-        this.snackBar.open(respuesta.message, "", {
-          panelClass: ["snack-bar-exito"],
-          duration: 3000
-        });
+        if(this.sanciones.length!=0){
+          this.calcularSumatoriaSanciones();
+        }
+      }
+    });
+  }
+
+  calcularSumatoriaSanciones() {
+    this.sanciones.forEach(sancion => {
+      switch (sancion.tipo) {
+        case "Llamado de atencion":
+          this.sumatoriaSanciones[0]+=sancion.cantidad;
+          break;
+        case "Apercibimiento":
+          this.sumatoriaSanciones[1]+=sancion.cantidad;
+          break;
+        case "Amonestacion":
+          this.sumatoriaSanciones[2]+=sancion.cantidad;
+          break;
+        case "Suspencion":
+          this.sumatoriaSanciones[3]+=sancion.cantidad;
+          break;
       }
     });
   }
