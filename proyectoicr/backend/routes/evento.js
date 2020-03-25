@@ -34,13 +34,30 @@ const storage = new GridFsStorage({
   }
 });
 
-var upload = multer({ storage: storage }).single("image");
+var upload = multer({ storage: storage }).array("images", 5);
 
 //Registra el evento en la base de datos
 //@params: evento a publicar
 router.post("/registrar", upload, (req, res, next) => {
+  // console.log(req.files);
+
+  leerFilenames = () => {
+    return new Promise((resolve, reject) => {
+      let filenames = [];
+      for (let index = 0; index < req.files.length; index++) {
+        filenames.push(req.files[index].filename);
+      }
+      if (filenames.length == req.files.length) {
+        console.log("filenames", filenames);
+        resolve(filenames);
+      } else {
+        reject("No se pudo obtener los nombres de las imagenes.");
+      }
+    });
+  };
+
   Usuario.findOne({ email: req.body.autor })
-    .then(usuario => {
+    .then(async usuario => {
       if (req.file != null && req.file.filename != null) {
         const evento = new Evento({
           titulo: req.body.titulo,
@@ -49,7 +66,7 @@ router.post("/registrar", upload, (req, res, next) => {
           horaInicio: req.body.horaInicio,
           horaFin: req.body.horaFin,
           tags: req.body.tags,
-          filename: req.file.filename,
+          filenames: await leerFilenames(),
           autor: usuario._id
         });
         evento

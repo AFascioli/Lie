@@ -33,28 +33,29 @@ export class EventosService {
     horaInicio: string,
     horaFin: string,
     tags: any[],
-    image: File
+    images: any
   ) {
-    let imgUrl;
     const datosEvento = new FormData();
     datosEvento.append("titulo", titulo);
     datosEvento.append("descripcion", descripcion);
     datosEvento.append("fechaEvento", fechaEvento);
     datosEvento.append("horaInicio", horaInicio);
     datosEvento.append("horaFin", horaFin);
-    if (image != null) {
-      imgUrl = image[0].name;
-      //datosEvento.append("image", image[0], imgUrl);
-      datosEvento.append("image", image[0]);
-      datosEvento.append("imgUrl", imgUrl);
+    if (images != null) {
+      // let imgUrl = image[0].name;
+      // datosEvento.append("imgUrl", imgUrl);
+      for (var i = 0; i < images.length; i++) {
+        datosEvento.append("images", images[i]);
+      }
     } else {
-      datosEvento.append("image", null);
+      datosEvento.append("images", null);
       datosEvento.append("imgUrl", null);
     }
 
     for (var i = 0; i < tags.length; i++) {
       datosEvento.append("tags", tags[i]);
     }
+
     const autor = this.authService.getUsuarioAutenticado();
     datosEvento.append("autor", autor);
 

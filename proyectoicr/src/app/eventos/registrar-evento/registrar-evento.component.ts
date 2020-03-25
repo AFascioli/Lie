@@ -140,7 +140,7 @@ export class RegistrarEventoComponent implements OnInit {
         resolve(reader.result);
       };
       if (file == null) {
-        reject("no funciono");
+        reject("No se pudo obtener la imagen.");
       }
     });
   };
