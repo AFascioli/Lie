@@ -39,8 +39,6 @@ var upload = multer({ storage: storage }).array("images", 5);
 //Registra el evento en la base de datos
 //@params: evento a publicar
 router.post("/registrar", upload, (req, res, next) => {
-  // console.log(req.files);
-
   leerFilenames = () => {
     return new Promise((resolve, reject) => {
       let filenames = [];
@@ -130,8 +128,22 @@ router.post("/registrar", upload, (req, res, next) => {
 
 //Registra el evento en la base de datos
 //@params: evento a publicar
-router.post("/modificar", upload, (req, res) => {
-  if (req.file != null && req.file.filename != null) {
+router.post("/modificar", upload, async (req, res) => {
+  leerFilename = () => {
+    return new Promise((resolve, reject) => {
+      let filenames = [];
+      for (let index = 0; index < req.files.length; index++) {
+        filenames.push(req.files[index].filename);
+      }
+      if (filenames.length == req.files.length) {
+        resolve(filenames);
+      } else {
+        reject("No se pudo obtener los nombres de las imagenes.");
+      }
+    });
+  };
+
+  if (req.files != null) {
     //console.log(req.body);
     Evento.findByIdAndUpdate(req.body._id, {
       titulo: req.body.titulo,
@@ -140,7 +152,7 @@ router.post("/modificar", upload, (req, res) => {
       horaInicio: req.body.horaInicio,
       horaFin: req.body.horaFin,
       tags: req.body.tags,
-      filename: req.file.filename,
+      filenames: await leerFilename(),
       autor: req.body.idAutor
     })
       .exec()

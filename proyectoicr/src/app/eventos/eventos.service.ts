@@ -42,8 +42,6 @@ export class EventosService {
     datosEvento.append("horaInicio", horaInicio);
     datosEvento.append("horaFin", horaFin);
     if (images != null) {
-      // let imgUrl = image[0].name;
-      // datosEvento.append("imgUrl", imgUrl);
       for (var i = 0; i < images.length; i++) {
         datosEvento.append("images", images[i]);
       }
@@ -73,7 +71,7 @@ export class EventosService {
     horaInicio: string,
     horaFin: string,
     tags: any[],
-    image: File,
+    images: any,
     filename: string,
     _id: string,
     autor: string
@@ -89,12 +87,12 @@ export class EventosService {
     eventoModificado.append("horaFin", horaFin);
     eventoModificado.append("filename", filename);
 
-    if (image != null) {
-      imgUrl = image[0].name;
-      eventoModificado.append("image", image[0], imgUrl);
-      eventoModificado.append("imgUrl", imgUrl);
+    if (images != null) {
+      for (var i = 0; i < images.length; i++) {
+        eventoModificado.append("images", images[i]);
+      }
     } else {
-      eventoModificado.append("image", null);
+      eventoModificado.append("images", null);
       eventoModificado.append("imgUrl", null);
     }
 

@@ -6,20 +6,19 @@
   <form #form="ngForm">
     <mat-form-field>
       <input
-        [(ngModel)]="evento.titulo"
         name="titulo"
         ngModel
         #titulo="ngModel"
         matInput
         placeholder="Ingrese título"
         type="text"
+        [(ngModel)]="evento.titulo"
         required
       />
     </mat-form-field>
     <br />
     <mat-form-field>
       <textarea
-        [(ngModel)]="evento.descripcion"
         matInput
         name="descripcion"
         ngModel
@@ -27,13 +26,13 @@
         rows="3"
         placeholder="Ingrese descripción"
         type="text"
+        [(ngModel)]="evento.descripcion"
       >
       </textarea>
     </mat-form-field>
     <br />
     <mat-form-field>
       <input
-        [(ngModel)]="evento.fechaEvento"
         matInput
         name="fechaEvento"
         ngModel
@@ -44,6 +43,7 @@
         (click)="picker.open()"
         required
         readonly
+        [(ngModel)]="evento.fechaEvento"
       />
       <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
       <mat-datepicker touchUi #picker></mat-datepicker>
@@ -52,7 +52,6 @@
       <mat-form-field class="matFormHora">
         <div class="hora">
           <input
-            [(ngModel)]="evento.horaInicio"
             matInput
             name="horaInicio"
             ngModel
@@ -60,6 +59,7 @@
             placeholder="Hora inicio *"
             id="pickerInicio"
             readonly
+            [(ngModel)]="evento.horaInicio"
           />
         </div>
       </mat-form-field>
@@ -67,7 +67,6 @@
       <mat-form-field class="matFormHora">
         <div class="hora">
           <input
-            [(ngModel)]="evento.horaFin"
             matInput
             name="horaFin"
             ngModel
@@ -75,29 +74,29 @@
             placeholder="Hora fin *"
             id="pickerFin"
             readonly
+            [(ngModel)]="evento.horaFin"
           />
         </div>
       </mat-form-field>
     </div>
 
-    <mat-form-field class="tag-list">
-      <mat-chip-list #tagList aria-label="Seleccion de tags">
+    <mat-form-field class="chip-list">
+      <mat-chip-list #chipList aria-label="Seleccion de chips">
         <mat-chip
-          *ngFor="let tag of tags"
+          *ngFor="let chip of chips"
           [selectable]="selectable"
           [removable]="removable"
-          (removed)="remove(tag)"
+          (removed)="remove(chip)"
         >
-          {{ tag }}
+          {{ chip }}
           <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
         </mat-chip>
         <input
           placeholder="Seleccione los cursos *"
-          name="tagsInput"
-          #tagsInput
-          [formControl]="tagsCtrl"
+          #chipsInput
+          [formControl]="chipsCtrl"
           [matAutocomplete]="auto"
-          [matChipInputFor]="tagList"
+          [matChipInputFor]="chipList"
           [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
           [matChipInputAddOnBlur]="addOnBlur"
           (matChipInputTokenEnd)="add($event)"
@@ -109,13 +108,12 @@
         #auto="matAutocomplete"
         (optionSelected)="selected($event)"
       >
-        <mat-option *ngFor="let tag of filteredTags | async" [value]="tag">
-          {{ tag }}
+        <mat-option *ngFor="let chip of filteredChips | async" [value]="chip">
+          {{ chip }}
         </mat-option>
       </mat-autocomplete>
     </mat-form-field>
     <div>
-      <!-- <img id="imagen" [src]="imgURL" class="image-preview" *ngIf="imgURL" /> -->
       <mat-carousel
         interval="5000"
         maxWidth="auto"
@@ -126,18 +124,20 @@
       >
         <div *ngFor="let imagen of imgURL">
           <mat-carousel-slide overlayColor="transparent" [image]="imagen">
-          </mat-carousel-slide>
+            ></mat-carousel-slide
+          >
         </div>
       </mat-carousel>
-      <br />
-      <button
-        mat-stroked-button
-        class="boton-seleccionar"
-        type="button"
-        (click)="file.click()"
-      >
-        Seleccionar imagen *
-      </button>
+      <div class="contenedor-flexbox">
+        <button
+          mat-stroked-button
+          class="boton-seleccionar"
+          type="button"
+          (click)="file.click()"
+        >
+          Seleccionar imagen *
+        </button>
+      </div>
       <br />
       <span class="mensaje" *ngIf="message">{{ message }}</span>
       <br />
@@ -149,6 +149,7 @@
         multiple
       />
     </div>
+
     <div class="div-button">
       <button
         class="buttonPrimary"
