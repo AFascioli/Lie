@@ -37,70 +37,72 @@ router.get("/", checkAuthMiddleware, (req, res) => {
     });
 });
 
-//Registra una nueva sancion de un estudiante en particular
+//Registra una nueva sancion de un estudiante en particular si es que no hay una ya registrada
+//Si hay una registrada, solo actualiza la cantidad
 //@params: idEstudiante
 //@params: tipo (sancion)
 //@params: cantidad (sancion)
 //@params: fecha (sancion)
 router.post("/registrarSancion", checkAuthMiddleware, (req, res) => {
-  Inscripcion.findOneAndUpdate(
-    {
-      idEstudiante: req.body.idEstudiante,
-      activa: true
-    },
-    {
-      $push: {
-        sanciones: {
-          tipo: req.body.tipoSancion,
-          cantidad: req.body.cantidad,
-          fecha: req.body.fecha
-        }
+  let modificarSancion = false;
+  let indice = 0;
+  Inscripcion.findOne({
+    idEstudiante: req.body.idEstudiante,
+    activa: true
+  }).then(inscripcion => {
+    for (let index = 0; index < inscripcion.sanciones.length; index++) {
+      if (
+        ClaseAsistencia.esFechaActual(inscripcion.sanciones[index].fecha) &&
+        inscripcion.sanciones[index].tipo == req.body.tipoSancion
+      ) {
+        modificarSancion = true;
+        indice = index;
       }
     }
-  )
-    .then(
-      res.status(200).json({
-        message: "Se ha registrado la sanción del estudiante correctamente",
-        exito: true
-      })
-    )
-    .catch(() => {
-      res.status(500).json({
-        message: "Mensaje de error especifico"
-      });
-    });
-  //Posible cambio a la funcionalidad
-  // let modificarSancion = false;
-  // Inscripcion.findOne({
-  //   idEstudiante: req.body.idEstudiante,
-  //   activa: true
-  // }).then(inscripcion => {
-  //   for (let index = 0; index < inscripcion.sanciones.length; index++) {
-  //     if (
-  //       ClaseAsistencia.esFechaActual(inscripcion.sanciones[index].fecha) &&
-  //       inscripcion.sanciones[index].tipo == req.body.tipoSancion
-  //     ) {
-  //       inscripcion.sanciones[index].cantidad += req.body.cantidad;
-  //       inscripcion
-  //         .save()
-  //         .then(
-  //           res.status(200).json({
-  //             message:
-  //               "Se ha registrado la sanción del estudiante correctamente",
-  //             exito: true
-  //           })
-  //         )
-  //         .catch(() => {
-  //           res.status(500).json({
-  //             message: "Mensaje de error especifico"
-  //           });
-  //         });
-  //     }
-  //   }
-  //   if (!modificarSancion) {
-  //     //Se hace el codigo de arriba de todo
-  //   }
-  // });
+    if (!modificarSancion) {
+      Inscripcion.findOneAndUpdate(
+        {
+          idEstudiante: req.body.idEstudiante,
+          activa: true
+        },
+        {
+          $push: {
+            sanciones: {
+              tipo: req.body.tipoSancion,
+              cantidad: req.body.cantidad,
+              fecha: req.body.fecha
+            }
+          }
+        }
+      )
+        .then(
+          res.status(200).json({
+            message: "Se ha registrado la sanción del estudiante correctamente",
+            exito: true
+          })
+        )
+        .catch(() => {
+          res.status(500).json({
+            message: "Mensaje de error especifico"
+          });
+        });
+    } else {
+      inscripcion.sanciones[indice].cantidad += req.body.cantidad;
+      inscripcion
+        .save()
+        .then(
+          res.status(200).json({
+            message: "Se ha registrado la sanción del estudiante correctamente",
+            exito: true
+          })
+        )
+        .catch(() => {
+          res.status(500).json({
+            message: "Mensaje de error especifico"
+          });
+        });
+    }
+  });
 });
 
 //Obtiene el estado de las cuotas de todos los estudiantes de un curso
