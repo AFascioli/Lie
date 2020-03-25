@@ -36,8 +36,11 @@ export class VisualizarEventoComponent implements OnInit {
 
   ngOnInit() {
     this.evento = this.eventoService.eventoSeleccionado;
+    console.log(this.evento);
     //Es el evento seleccionado en el home
-    this.imgURL = `http://localhost:3000/imagen/${this.evento.filename}`;
+    if (this.evento.filename.lenght != 0) {
+      this.imgURL = `http://localhost:3000/imagen/${this.evento.filename}`;
+    }
     this.eventoService.obtenerComentariosDeEvento().subscribe(rtdo => {
       this.eventoService.comentarios = rtdo.comentarios.reverse();
       this.actualizarPermisos();
@@ -131,7 +134,6 @@ export class VisualizarEventoComponent implements OnInit {
       }
       this.eventoService.obtenerComentariosDeEvento().subscribe(rtdo => {
         this.eventoService.comentarios = rtdo.comentarios.reverse();
-        console.log(this.eventoService.comentarios);
       });
     });
   }
