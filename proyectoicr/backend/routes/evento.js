@@ -1,5 +1,7 @@
 const express = require("express");
 const Evento = require("../models/evento");
+const ImagenFiles = require("../models/imagen.files");
+const ImagenChunks = require("../models/imagen.chunks");
 const router = express.Router();
 const AdultoResponsable = require("../models/adultoResponsable");
 const Empleado = require("../models/empleado");
@@ -8,6 +10,7 @@ const multer = require("multer");
 const Usuario = require("../models/usuario");
 const path = require("path");
 const Admin = require("../models/administrador");
+const mongoose = require("mongoose").Types.ObjectId;
 const GridFsStorage = require("multer-gridfs-storage");
 //const Suscripcion = require("../classes/suscripcion");
 //const Inscripcion = require("../models/inscripcion");
@@ -354,28 +357,42 @@ router.post("/registrarComentario", async (req, res, next) => {
 // });
 
 router.delete("/eliminarEvento", checkAuthMiddleware, (req, res, next) => {
-  Evento.findById(req.query._id).then(evento => {
-    this.notificarPorEvento(
-      evento.tags,
-      evento.titulo,
-      "Se ha cancelado el evento."
-    );
-  });
+  // Evento.findByIdAndDelete(req.query._id)
+  //   .then(async evento => {
+  //     let largo = evento.filenames.length;
+  //     for (let index = 0; index < largo; index++) {
+  //       console.log("borra imagen files", evento.filenames[index]);
+  //       await ImagenFiles.findOneAndDelete({
+  //         filename: evento.filenames[index]
+  //       }).then(file => {
+  //         console.log("borra chunks", file._id);
+  try {
+    ImagenChunks.remove({
+      files_id: new ObjectId("5e7d19fad2bf5c35d8ab124d")
+    }).exec();
+  } catch (e) {
+    console.log(e);
+  }
+  console.log("borrado");
+  //   });
+  // }
+  //this.notificarPorEvento(
+  //     evento.tags,
+  //     evento.titulo,
+  //     "Se ha cancelado el evento."
+  //   );
 
-  Evento.findByIdAndDelete({
-    _id: req.query._id
-  })
-    .exec()
-    .catch(() => {
-      res.status(500).json({
-        message: "Mensaje de error especifico"
-      });
-    });
   return res.status(202).json({
     message: "Evento eliminado exitosamente",
     exito: true
   });
 });
+// .catch(() => {
+//   res.status(500).json({
+//     message: "Mensaje de error especifico"
+//   });
+// });
+// });
 
 router.delete("/eliminarComentario", checkAuthMiddleware, (req, res, next) => {
   Evento.findByIdAndUpdate({

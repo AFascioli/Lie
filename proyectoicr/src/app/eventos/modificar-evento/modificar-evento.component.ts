@@ -248,7 +248,7 @@ export class ModificarEventoComponent implements OnInit {
     });
   }
 
-  onEliminarImg(imgUrl: string): void {
-    this.eventoService.eliminarImagen(this.eventoService.ImgCargada);
-  }
+  // onEliminarImg(imgUrl: string): void {
+  //   this.eventoService.eliminarImagen(this.eventoService.ImgCargada);
+  // }
 }

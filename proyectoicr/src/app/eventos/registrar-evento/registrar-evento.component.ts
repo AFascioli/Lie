@@ -12,6 +12,7 @@ import { EventosService } from "../eventos.service";
 import { MatSnackBar, MatDialog } from "@angular/material";
 import Rolldate from "../../../assets/rolldate.min.js";
 import { CancelPopupComponent } from "src/app/popup-genericos/cancel-popup.component";
+import { Router } from "@angular/router";
 
 @Component({
   selector: "app-registrar-evento",
@@ -41,7 +42,8 @@ export class RegistrarEventoComponent implements OnInit {
   constructor(
     public eventoService: EventosService,
     public dialog: MatDialog,
-    public snackBar: MatSnackBar
+    public snackBar: MatSnackBar,
+    public router: Router
   ) {
     //Hace que funcione el autocomplete, filtra
 
@@ -212,6 +214,7 @@ export class RegistrarEventoComponent implements OnInit {
                 panelClass: ["snack-bar-exito"],
                 duration: 4500
               });
+              this.router.navigate(["./home"]);
               form.resetForm();
             } else {
               this.snackBar.open(rtdo.message, "", {
@@ -251,7 +254,7 @@ export class RegistrarEventoComponent implements OnInit {
     });
   }
 
-  onEliminarImg(imgUrl: string): void {
-    this.eventoService.eliminarImagen(this.eventoService.ImgCargada);
-  }
+  // onEliminarImg(imgUrl: string): void {
+  //   this.eventoService.eliminarImagen(this.eventoService.ImgCargada);
+  // }
 }

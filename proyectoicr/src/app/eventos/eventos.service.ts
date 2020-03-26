@@ -188,23 +188,4 @@ export class EventosService {
       { params: params }
     );
   }
-
-  public eliminarImagen(imgUrl: string) {
-    let params = new HttpParams()
-      .set("imgUrl", imgUrl)
-      .append("idImg", this.ImgCargada);
-    this.http
-      .delete<{ message: string; exito: boolean }>(
-        environment.apiUrl + "/evento/eliminarImagen",
-        { params: params }
-      )
-      .subscribe(response => {
-        if (response.exito) {
-          this.snackBar.open(response.message, "", {
-            panelClass: ["snack-bar-exito"],
-            duration: 4500
-          });
-        }
-      });
-  }
 }
