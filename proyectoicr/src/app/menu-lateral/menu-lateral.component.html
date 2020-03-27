@@ -6,7 +6,6 @@
         aria-label="Toggle sidenav"
         mat-icon-button
         (click)="sideNav.toggle()"
-        *ngIf="rol != 'AdultoResponsable'"
       >
         <mat-icon aria-label="Side nav toggle icon">menu</mat-icon>
       </button>
@@ -62,10 +61,10 @@
     <mat-sidenav
       #sideNav
       class="sidenav"
-      [opened]="!mobileQuery.matches"
+      [class.sidenavMobile]="mobileQuery.matches"
+      [opened]="(rol != 'AdultoResponsable')&& !mobileQuery.matches"
       [disableClose]="!mobileQuery.matches"
       [mode]="mobileQuery.matches ? 'over' : 'side'"
-      *ngIf="rol != 'AdultoResponsable'"
     >
       <mat-nav-list>
         <mat-accordion>

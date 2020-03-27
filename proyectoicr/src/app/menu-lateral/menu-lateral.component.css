@@ -46,6 +46,12 @@ hr {
   width: 29%;
 }
 
+.sidenavMobile{
+  box-shadow: 2px 0 5px -2px #888;
+  border-right: 0px !important;
+  width: 60%;
+}
+
 /* Para que el container del sidenav sea del tamaño completo del body,
    le pongo 100% menos el tamaño del header */
 .mat-sidenav-container{
