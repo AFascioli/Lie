@@ -357,42 +357,39 @@ router.post("/registrarComentario", async (req, res, next) => {
 // });
 
 router.delete("/eliminarEvento", checkAuthMiddleware, (req, res, next) => {
-  // Evento.findByIdAndDelete(req.query._id)
-  //   .then(async evento => {
-  //     let largo = evento.filenames.length;
-  //     for (let index = 0; index < largo; index++) {
-  //       console.log("borra imagen files", evento.filenames[index]);
-  //       await ImagenFiles.findOneAndDelete({
-  //         filename: evento.filenames[index]
-  //       }).then(file => {
-  //         console.log("borra chunks", file._id);
-  try {
-    ImagenChunks.remove({
-      files_id: new ObjectId("5e7d19fad2bf5c35d8ab124d")
-    }).exec();
-  } catch (e) {
-    console.log(e);
-  }
-  console.log("borrado");
-  //   });
-  // }
-  //this.notificarPorEvento(
-  //     evento.tags,
-  //     evento.titulo,
-  //     "Se ha cancelado el evento."
-  //   );
+  Evento.findByIdAndDelete(req.query._id)
+    .then(async evento => {
+      let largo = evento.filenames.length;
+      for (let index = 0; index < largo; index++) {
+        await ImagenFiles.findOneAndDelete({
+          filename: evento.filenames[index]
+        }).then(file => {
+          try {
+            ImagenChunks.deleteMany({
+              files_id: file._id
+            }).exec();
+          } catch (e) {
+            console.log(e);
+          }
+        });
+      }
+      //this.notificarPorEvento(
+      //     evento.tags,
+      //     evento.titulo,
+      //     "Se ha cancelado el evento."
+      //   );
 
-  return res.status(202).json({
-    message: "Evento eliminado exitosamente",
-    exito: true
-  });
+      return res.status(202).json({
+        message: "Evento eliminado exitosamente",
+        exito: true
+      });
+    })
+    .catch(() => {
+      res.status(500).json({
+        message: "Mensaje de error especifico"
+      });
+    });
 });
-// .catch(() => {
-//   res.status(500).json({
-//     message: "Mensaje de error especifico"
-//   });
-// });
-// });
 
 router.delete("/eliminarComentario", checkAuthMiddleware, (req, res, next) => {
   Evento.findByIdAndUpdate({

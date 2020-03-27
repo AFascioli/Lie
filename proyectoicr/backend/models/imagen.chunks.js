@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 
 const imagenchunksSchema = mongoose.Schema({
-  files_id: String,
+  files_id: [{ type: mongoose.Schema.Types.ObjectId, ref: "imagen.files" }],
   n: Number
 });
 
