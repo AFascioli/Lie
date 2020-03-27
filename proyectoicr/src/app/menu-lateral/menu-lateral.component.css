@@ -180,7 +180,8 @@ hr {
 }
 .usuario{
   text-align: center;
-  margin: 8px 0px;
+  margin: 8px 8px;
+  word-break: break-all;
 }
 
 
