@@ -13,6 +13,8 @@ const Horario = require("../models/horario");
 const MateriaXCurso = require("../models/materiasXCurso");
 const ClaseInscripcion = require("../classes/inscripcion");
 const ClaseCalifXMateria = require("../classes/calificacionXMateria");
+const AdultoResponsable = require("../models/adultoResponsable");
+const Suscripcion = require("../classes/suscripcion");
 
 // Obtiene todos los cursos que están almacenados en la base de datos
 router.get("/", checkAuthMiddleware, (req, res) => {
@@ -36,6 +38,42 @@ router.get("/", checkAuthMiddleware, (req, res) => {
     });
 });
 
+notificarSancion = function(idEstudiante, titulo, cuerpo) {
+  AdultoResponsable.aggregate([
+    {
+      $match: {
+        estudiantes: mongoose.Types.ObjectId(idEstudiante)
+      }
+    },
+    {
+      $lookup: {
+        from: "usuario",
+        localField: "idUsuario",
+        foreignField: "_id",
+        as: "usuario"
+      }
+    },
+    {
+      $unwind: {
+        path: "$usuario"
+      }
+    },
+    {
+      $project: {
+        "usuario._id": 1,
+        _id: 0
+      }
+    }
+  ]).then(respuesta => {
+    console.log("respuesta", respuesta);
+    let idsUsuario = [];
+    for (let index = 0; index < respuesta.length; index++) {
+      idsUsuario.push(respuesta[index].usuario._id);
+    }
+    Suscripcion.notificacionGrupal(idsUsuario, titulo, cuerpo);
+  });
+};
+
 router.post("/registrarSancion", checkAuthMiddleware, (req, res) => {
   Inscripcion.findOne({
     idEstudiante: req.body.idEstudiante,
@@ -47,12 +85,17 @@ router.post("/registrarSancion", checkAuthMiddleware, (req, res) => {
       );
       inscripcion
         .save()
-        .then(
+        .then(() => {
+          notificarSancion(
+            req.body.idEstudiante,
+            "Nueva sanción",
+            "Se ha registrado una nueva sanción."
+          );
           res.status(200).json({
             message: "Se ha registrado la sanción del estudiante correctamente",
             exito: true
-          })
-        )
+          });
+        })
         .catch(() => {
           res.status(500).json({
             message: "Mensaje de error especifico"
@@ -508,7 +551,7 @@ router.get("/estudiante", checkAuthMiddleware, (req, res) => {
     {
       $project: {
         _id: 0,
-        "cursosDeEstudiante.curso": 1, 
+        "cursosDeEstudiante.curso": 1,
         "cursosDeEstudiante._id": 1
       }
     }

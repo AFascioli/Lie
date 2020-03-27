@@ -139,7 +139,10 @@ app.use("/calificacion", calificacionesRoutes);
 
 app.use("/materia", materiasRoutes);
 
+const Sus = require("./classes/suscripcion");
+
 app.get("/status", (req, res, next) => {
+  Sus.notificacionIndividual([], "Hey", "Boi");
   res.status(200).json({
     message: "Servidor Node.js Lie®"
   });
