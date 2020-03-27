@@ -1,12 +1,17 @@
 import { environment } from "src/environments/environment";
 import { async } from "@angular/core/testing";
 import { EventosService } from "./../eventos/eventos.service";
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, Inject } from "@angular/core";
 import { SwPush } from "@angular/service-worker";
 import { AutenticacionService } from "../login/autenticacionService.service";
 import { Router } from "@angular/router";
 import { Evento } from "../eventos/evento.model";
-import { MatSnackBar, MatDialogRef, MatDialog } from "@angular/material";
+import {
+  MatSnackBar,
+  MatDialogRef,
+  MatDialog,
+  MAT_DIALOG_DATA
+} from "@angular/material";
 
 //Parche para la demo #resolve
 declare var require: any;
@@ -99,6 +104,9 @@ export class HomeComponent implements OnInit {
     this.dialog.open(BorrarPopupComponent, {
       width: "250px"
     });
+    this.servicioEvento.obtenerEvento().subscribe(rtdo => {
+      this.eventos = rtdo.eventos;
+    });
   }
 
   conocerUsuarioLogueado(indiceEvento): boolean {
@@ -123,11 +131,21 @@ export class BorrarPopupComponent {
   constructor(
     public dialogRef: MatDialogRef<BorrarPopupComponent>,
     public router: Router,
-    public servicioEvento: EventosService
+    public servicioEvento: EventosService,
+    public snackBar: MatSnackBar
   ) {}
 
   onYesClick(): void {
-    this.servicioEvento.eliminarEvento(this.servicioEvento.evento._id);
+    this.servicioEvento
+      .eliminarEvento(this.servicioEvento.evento._id)
+      .subscribe(response => {
+        if (response.exito) {
+          this.snackBar.open(response.message, "", {
+            panelClass: ["snack-bar-exito"],
+            duration: 4500
+          });
+        }
+      });
     this.dialogRef.close();
   }
 

@@ -364,29 +364,26 @@ router.delete("/eliminarEvento", checkAuthMiddleware, (req, res, next) => {
         await ImagenFiles.findOneAndDelete({
           filename: evento.filenames[index]
         }).then(file => {
-          try {
-            ImagenChunks.deleteMany({
-              files_id: file._id
-            }).exec();
-          } catch (e) {
-            console.log(e);
-          }
+          ImagenChunks.deleteMany({
+            files_id: file._id
+          }).exec();
+
+          //this.notificarPorEvento(
+          //     evento.tags,
+          //     evento.titulo,
+          //     "Se ha cancelado el evento."
+          //   );
+
+          return res.status(202).json({
+            message: "Evento eliminado exitosamente",
+            exito: true
+          });
         });
       }
-      //this.notificarPorEvento(
-      //     evento.tags,
-      //     evento.titulo,
-      //     "Se ha cancelado el evento."
-      //   );
-
-      return res.status(202).json({
-        message: "Evento eliminado exitosamente",
-        exito: true
-      });
     })
     .catch(() => {
       res.status(500).json({
-        message: "Mensaje de error especifico"
+        message: "Error al eliminar el evento"
       });
     });
 });

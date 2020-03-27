@@ -205,8 +205,7 @@ export class DefinirAgendaComponent implements OnInit {
 
   popupEliminar(index) {
     const dialogoElim = this.dialog.open(AgendaPopupComponent, {
-      width: "250px",
-      data: { index: index }
+      width: "250px"
     });
 
     dialogoElim.afterClosed().subscribe(result => {
@@ -247,13 +246,7 @@ export class DefinirAgendaComponent implements OnInit {
   styleUrls: ["./definir-agenda.component.css"]
 })
 export class AgendaPopupComponent {
-  index: number;
-  constructor(
-    public dialogRef: MatDialogRef<AgendaPopupComponent>,
-    @Inject(MAT_DIALOG_DATA) data
-  ) {
-    this.index = data.index;
-  }
+  constructor(public dialogRef: MatDialogRef<AgendaPopupComponent>) {}
   onYesClick(): void {
     this.dialogRef.close(true);
   }

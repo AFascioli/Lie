@@ -118,19 +118,10 @@ export class EventosService {
 
   public eliminarEvento(_id) {
     let params = new HttpParams().set("_id", _id);
-    this.http
-      .delete<{ message: string; exito: boolean }>(
-        environment.apiUrl + "/evento/eliminarEvento",
-        { params: params }
-      )
-      .subscribe(response => {
-        if (response.exito) {
-          this.snackBar.open(response.message, "", {
-            panelClass: ["snack-bar-exito"],
-            duration: 4500
-          });
-        }
-      });
+    return this.http.delete<{ message: string; exito: boolean }>(
+      environment.apiUrl + "/evento/eliminarEvento",
+      { params: params }
+    );
   }
 
   //Obtiene todos los eventos que estan almacenados en la base de datos
