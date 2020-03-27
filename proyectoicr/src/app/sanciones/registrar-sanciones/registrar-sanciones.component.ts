@@ -1,9 +1,10 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, ChangeDetectorRef } from "@angular/core";
 import { EstudiantesService } from "src/app/estudiantes/estudiante.service";
 import { SancionService } from "../sancion.service";
 import { MatSnackBar } from "@angular/material";
 import { format } from "url";
 import { NgForm } from "@angular/forms";
+import { MediaMatcher } from '@angular/cdk/layout';
 
 @Component({
   selector: "app-registrar-sanciones",
@@ -23,12 +24,20 @@ export class RegistrarSancionesComponent implements OnInit {
   ];
   tipoSancionSelected: Boolean = false;
   suspensionSelected: Boolean = false;
+  _mobileQueryListener: () => void;
+  mobileQuery: MediaQueryList;
 
   constructor(
     public servicioEstudiante: EstudiantesService,
     public servicioSancion: SancionService,
-    public snackBar: MatSnackBar
-  ) {}
+    public snackBar: MatSnackBar,
+    public changeDetectorRef: ChangeDetectorRef,
+    public media: MediaMatcher
+  ) {
+    this.mobileQuery = media.matchMedia('(max-width: 800px)');
+    this._mobileQueryListener = () => changeDetectorRef.detectChanges();
+    this.mobileQuery.addListener(this._mobileQueryListener);
+  }
 
   ngOnInit() {
     this.fechaActual = new Date();
