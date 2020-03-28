@@ -54,13 +54,15 @@ div.mat-chip-list-wrapper {
 
 .textoParticipan {
   font-size: 20px;
-  margin: 25px;
+  margin: 10px 0px 0px 25px !important;
   /* margin-left: 5px !important; */
 }
 
 .descripcion {
   font-size: 20px;
   margin-left: 25px;
+  margin-top: 20px;
+  margin-bottom: 0px;
 }
 
 .comentario {
@@ -160,8 +162,26 @@ mat-icon {
 }
 
 .mat-chip {
-  margin-bottom: 2%;
-  margin-left: 14px;
+  margin-bottom: 0% !important;
+  margin-top: 2%;
+}
+
+.divParticipan {
+  margin-left: 4px !important;
+}
+
+.imagen {
+  margin-top: 10px !important;
+  margin-bottom: 5px !important;
+}
+
+.diaEvento
+{
+  margin-bottom: 0px;
+}
+
+.horaEvento {
+  margin-bottom: 10px !important;
 }
 
 .fechaComentario {

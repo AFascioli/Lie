@@ -3,37 +3,40 @@
   <p class="titulo">
     {{ evento.titulo }}
   </p>
-  <p>
+  <p class="diaEvento">
     <b>Día evento:</b> {{ obtenerDia(evento.fechaEvento) }} de
     {{ obtenerMes(evento.fechaEvento) }}
   </p>
-  <p>
+  <p class="horaEvento">
     <b>Hora inicio y fin:</b> {{ evento.horaInicio }} - {{ evento.horaFin }}
   </p>
-  <mat-carousel
-    interval="5000"
-    maxWidth="auto"
-    proportion="75"
-    color="warn"
-    [hideArrows]="false"
-    [hideIndicators]="false"
-  >
-    <div *ngFor="let filename of evento.filenames">
-      <mat-carousel-slide
-        overlayColor="transparent"
-        [image]="getImage(filename)"
-      >
-        ></mat-carousel-slide
-      >
-    </div>
-  </mat-carousel>
+  <div class="imagen">
+    <mat-carousel
+      interval="5000"
+      maxWidth="auto"
+      proportion="75"
+      color="warn"
+      [hideArrows]="false"
+      [hideIndicators]="false"
+    >
+      <div *ngFor="let filename of evento.filenames">
+        <mat-carousel-slide
+          overlayColor="transparent"
+          [image]="getImage(filename)"
+        >
+        </mat-carousel-slide>
+      </div>
+    </mat-carousel>
+  </div>
   <!-- <img id="imagen" [src]="imgURL" class="image-preview" *ngIf="imgURL" /> -->
-  <mat-chip-list>
-    <p class="textoParticipan"><b>Participan:</b></p>
-    <mat-chip *ngFor="let tag of evento.tags">
-      {{ tag }}
-    </mat-chip>
-  </mat-chip-list>
+  <div class="divParticipan">
+    <mat-chip-list>
+      <p class="textoParticipan"><b>Participan:</b></p>
+      <mat-chip *ngFor="let tag of evento.tags">
+        {{ tag }}
+      </mat-chip>
+    </mat-chip-list>
+  </div>
   <mat-card-content>
     <p class="descripcion">
       <b>
