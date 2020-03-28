@@ -1,23 +1,24 @@
-import { Component, OnInit, ViewChild, Inject } from "@angular/core";
+import { Component, OnInit, ViewChild, OnDestroy } from "@angular/core";
 import {
   MatSnackBar,
-  MatTable,
   MatTableDataSource,
   MatSort,
   MatDialogRef,
-  MatDialog,
-  MAT_DIALOG_DATA
+  MatDialog
 } from "@angular/material";
 import { EstudiantesService } from "src/app/estudiantes/estudiante.service";
 import { AgendaService } from "../agenda.service";
+import { Subject } from "rxjs";
+import { takeUntil } from "rxjs/operators";
 
 @Component({
   selector: "app-definir-agenda",
   templateUrl: "./definir-agenda.component.html",
   styleUrls: ["./definir-agenda.component.css"]
 })
-export class DefinirAgendaComponent implements OnInit {
+export class DefinirAgendaComponent implements OnInit, OnDestroy {
   cursos: any[];
+  private unsubscribe: Subject<void> = new Subject();
   idCursoSeleccionado: string;
   materias: any[];
   isEditing: Boolean = false;
@@ -63,9 +64,12 @@ export class DefinirAgendaComponent implements OnInit {
 
   ngOnInit() {
     this.obtenerCursos();
-    this.servicioAgenda.obtenerMaterias().subscribe(response => {
-      this.materias = response.materias;
-    });
+    this.servicioAgenda
+      .obtenerMaterias()
+      .pipe(takeUntil(this.unsubscribe))
+      .subscribe(response => {
+        this.materias = response.materias;
+      });
     this.obtenerDocentes();
   }
 
@@ -74,21 +78,27 @@ export class DefinirAgendaComponent implements OnInit {
   }
 
   obtenerDocentes() {
-    this.servicioAgenda.obtenerDocentes().subscribe(response => {
-      for (let i = 0; i < response.docentes.length; i++) {
-        this.docentes.push({
-          _id: response.docentes[i]._id,
-          nombre: `${response.docentes[i].apellido}, ${response.docentes[i].nombre}`
-        });
-      }
-    });
+    this.servicioAgenda
+      .obtenerDocentes()
+      .pipe(takeUntil(this.unsubscribe))
+      .subscribe(response => {
+        for (let i = 0; i < response.docentes.length; i++) {
+          this.docentes.push({
+            _id: response.docentes[i]._id,
+            nombre: `${response.docentes[i].apellido}, ${response.docentes[i].nombre}`
+          });
+        }
+      });
   }
 
   obtenerAgenda(idCurso) {
     this.cursoSelected = true;
-    this.servicioAgenda.obtenerAgendaDeCurso(idCurso.value).subscribe(rtdo => {
-      this.dataSource.data = rtdo.agenda;
-    });
+    this.servicioAgenda
+      .obtenerAgendaDeCurso(idCurso.value)
+      .pipe(takeUntil(this.unsubscribe))
+      .subscribe(rtdo => {
+        this.dataSource.data = rtdo.agenda;
+      });
   }
 
   reservarAgenda(indice, row) {
@@ -184,6 +194,11 @@ export class DefinirAgendaComponent implements OnInit {
     }
   }
 
+  ngOnDestroy() {
+    this.unsubscribe.next();
+    this.unsubscribe.complete();
+  }
+
   editarAgenda(indice) {
     this.agendaValida = false;
     this.mensajeError =
@@ -208,9 +223,12 @@ export class DefinirAgendaComponent implements OnInit {
       width: "250px"
     });
 
-    dialogoElim.afterClosed().subscribe(result => {
-      result && this.eliminarHorarios(index);
-    });
+    dialogoElim
+      .afterClosed()
+      .pipe(takeUntil(this.unsubscribe))
+      .subscribe(result => {
+        result && this.eliminarHorarios(index);
+      });
   }
 
   eliminarHorarios(index) {
@@ -227,16 +245,19 @@ export class DefinirAgendaComponent implements OnInit {
   }
 
   obtenerCursos() {
-    this.servicioEstudiante.obtenerCursos().subscribe(response => {
-      this.cursos = response.cursos;
-      this.cursos.sort((a, b) =>
-        a.curso.charAt(0) > b.curso.charAt(0)
-          ? 1
-          : b.curso.charAt(0) > a.curso.charAt(0)
-          ? -1
-          : 0
-      );
-    });
+    this.servicioEstudiante
+      .obtenerCursos()
+      .pipe(takeUntil(this.unsubscribe))
+      .subscribe(response => {
+        this.cursos = response.cursos;
+        this.cursos.sort((a, b) =>
+          a.curso.charAt(0) > b.curso.charAt(0)
+            ? 1
+            : b.curso.charAt(0) > a.curso.charAt(0)
+            ? -1
+            : 0
+        );
+      });
   }
 }
 

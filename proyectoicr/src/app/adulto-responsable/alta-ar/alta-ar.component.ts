@@ -5,10 +5,11 @@ import { Component, OnInit, OnDestroy, ChangeDetectorRef } from "@angular/core";
 import { MatDialog, MatDialogRef } from "@angular/material/dialog";
 import { Router } from "@angular/router";
 import { MatSnackBar } from "@angular/material";
-import { Subscription } from "rxjs";
+import { Subscription, Subject } from "rxjs";
 import { NgForm } from "@angular/forms";
 import { Nacionalidad } from "src/app/ubicacion/nacionalidades.model";
 import { MediaMatcher } from "@angular/cdk/layout";
+import { takeUntil } from "rxjs/operators";
 
 @Component({
   selector: "app-alta-ar",
@@ -16,6 +17,7 @@ import { MediaMatcher } from "@angular/cdk/layout";
   styleUrls: ["./alta-ar.component.css"]
 })
 export class AltaARComponent implements OnInit, OnDestroy {
+  private unsubscribe: Subject<void> = new Subject();
   apellidoEstudiante: string;
   nombreEstudiante: string;
   _idEstudiante: string;
@@ -47,6 +49,7 @@ export class AltaARComponent implements OnInit, OnDestroy {
     this.servicioUbicacion.getNacionalidades();
     this.suscripcion = this.servicioUbicacion
       .getNacionalidadesListener()
+      .pipe(takeUntil(this.unsubscribe))
       .subscribe(nacionalidadesActualizadas => {
         this.nacionalidades = nacionalidadesActualizadas;
       });
@@ -54,7 +57,8 @@ export class AltaARComponent implements OnInit, OnDestroy {
 
   // Cuando se destruye el componente se eliminan las suscripciones.
   ngOnDestroy() {
-    this.suscripcion.unsubscribe();
+    this.unsubscribe.next();
+    this.unsubscribe.complete();
   }
 
   onGuardar(form: NgForm) {
@@ -73,6 +77,7 @@ export class AltaARComponent implements OnInit, OnDestroy {
           this.tutor,
           this._idEstudiante
         )
+        .pipe(takeUntil(this.unsubscribe))
         .subscribe(response => {
           if (response.exito) {
             this.snackBar.open(response.message, "", {

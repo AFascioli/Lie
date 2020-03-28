@@ -1,21 +1,24 @@
 import { AutenticacionService } from "./../../login/autenticacionService.service";
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, OnDestroy } from "@angular/core";
 import { EstudiantesService } from "src/app/estudiantes/estudiante.service";
 import { AsistenciaService } from "src/app/asistencia/asistencia.service";
 import { MatSnackBar } from "@angular/material";
+import { Subject } from "rxjs";
+import { takeUntil } from "rxjs/operators";
 
 @Component({
   selector: "app-llegada-tarde",
   templateUrl: "./llegada-tarde.component.html",
   styleUrls: ["./llegada-tarde.component.css"]
 })
-export class LlegadaTardeComponent implements OnInit {
+export class LlegadaTardeComponent implements OnInit, OnDestroy {
   fechaActual: Date;
   apellidoEstudiante: string;
   nombreEstudiante: string;
   antes8am = false;
   despues8am = false;
   fueraPeriodoCicloLectivo = false;
+  private unsubscribe: Subject<void> = new Subject();
 
   constructor(
     public servicioEstudiante: EstudiantesService,
@@ -81,6 +84,7 @@ export class LlegadaTardeComponent implements OnInit {
   onGuardar() {
     this.servicioAsistencia
       .registrarLlegadaTarde(this.antes8am)
+      .pipe(takeUntil(this.unsubscribe))
       .subscribe(result => {
         if (result.exito) {
           this.snackBar.open(result.message, "", {
@@ -94,5 +98,10 @@ export class LlegadaTardeComponent implements OnInit {
           });
         }
       });
+  }
+
+  ngOnDestroy() {
+    this.unsubscribe.next();
+    this.unsubscribe.complete();
   }
 }
