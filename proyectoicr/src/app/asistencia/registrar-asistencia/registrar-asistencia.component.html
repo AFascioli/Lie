@@ -44,7 +44,7 @@
     lectivo
   </p>
   <br />
-  <div *ngIf="!cursoNotSelected">
+  <div class="contenedorTabla" *ngIf="!cursoNotSelected">
     <table mat-table [dataSource]="estudiantesXDivision">
       <ng-container matColumnDef="apellido">
         <th class="nombreApellido" mat-header-cell *matHeaderCellDef>
@@ -85,7 +85,7 @@
           >
         </td>
       </ng-container>
-      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
       <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
     </table>
 

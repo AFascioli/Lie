@@ -65,3 +65,8 @@ button {
 th.mat-sort-header-sorted {
   color: black;
 }
+
+.contenedorTabla {
+  height: 270px;
+  overflow: auto;
+}

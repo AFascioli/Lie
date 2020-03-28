@@ -225,7 +225,7 @@ export class RegistrarEventoComponent implements OnInit {
           });
       } else {
         this.snackBar.open(
-          "La hora de finalización del evento es menor que la hora de inicio",
+          "La hora de finalización del evento no es mayor a la hora de inicio",
           "",
           {
             duration: 4500,
