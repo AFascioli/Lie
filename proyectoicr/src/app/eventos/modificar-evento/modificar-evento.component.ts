@@ -47,7 +47,6 @@ export class ModificarEventoComponent implements OnInit {
     public snackBar: MatSnackBar
   ) {
     //Hace que funcione el autocomplete, filtra
-
     this.filteredChips = this.chipsCtrl.valueChanges.pipe(
       startWith(null),
       map((chip: string | null) =>
@@ -159,7 +158,6 @@ export class ModificarEventoComponent implements OnInit {
 
   async preview(files) {
     let incorrectType = false;
-    console.log(files);
     if (files.length === 0) return;
 
     for (let index = 0; index < files.length; index++) {
@@ -181,9 +179,7 @@ export class ModificarEventoComponent implements OnInit {
   }
 
   onGuardarEvento(form: NgForm) {
-    console.log(this.evento);
     if (form.valid && this.evento.tags.length != 0) {
-      //const fechaEvento = form.value.fechaEvento.toString();
       if (
         (this.evento.horaInicio == "" && this.evento.horaFin == "") ||
         this.horaEventoEsValido(this.evento.horaInicio, this.evento.horaFin)

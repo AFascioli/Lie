@@ -149,7 +149,6 @@ export class RegistrarEventoComponent implements OnInit {
 
   async preview(files) {
     let incorrectType = false;
-    console.log(files);
     if (files.length === 0) return;
 
     for (let index = 0; index < files.length; index++) {

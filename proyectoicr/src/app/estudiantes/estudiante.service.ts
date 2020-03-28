@@ -1,10 +1,7 @@
 import { Injectable } from "@angular/core";
 import { Estudiante } from "./estudiante.model";
 import { HttpClient, HttpParams } from "@angular/common/http";
-import { Provincia } from "../ubicacion/provincias.model";
 import { Subject } from "rxjs";
-import { Localidad } from "../ubicacion/localidades.model";
-import { Nacionalidad } from "../ubicacion/nacionalidades.model";
 import { environment } from "src/environments/environment";
 
 @Injectable({

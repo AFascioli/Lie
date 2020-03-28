@@ -29,7 +29,9 @@ export class UbicacionService {
   //Obtiene todas las localidades almacenadas en la base de datos
   public getLocalidades() {
     this.http
-      .get<{ localidades: Localidad[] }>(environment.apiUrl + "/localidad")
+      .get<{ localidades: Localidad[] }>(
+        environment.apiUrl + "/ubicacion/localidad"
+      )
       .subscribe(response => {
         this.localidades = response.localidades;
         this.localidadesActualizadas.next([...this.localidades]);
@@ -44,9 +46,10 @@ export class UbicacionService {
   public getNacionalidades() {
     this.http
       .get<{ nacionalidades: Nacionalidad[] }>(
-        environment.apiUrl + "/nacionalidad"
+        environment.apiUrl + "/ubicacion/nacionalidad"
       )
       .subscribe(response => {
+        console.log(response);
         this.nacionalidades = response.nacionalidades;
         this.nacionalidadesActualizadas.next([...this.nacionalidades]);
       });
@@ -55,7 +58,9 @@ export class UbicacionService {
   //Obtiene todas las provincias almacenadas en la base de datos
   public getProvincias() {
     this.http
-      .get<{ provincias: Provincia[] }>(environment.apiUrl + "/provincia")
+      .get<{ provincias: Provincia[] }>(
+        environment.apiUrl + "/ubicacion/provincia"
+      )
       .subscribe(response => {
         this.provincias = response.provincias;
         this.provinciasActualizadas.next([...this.provincias]);
@@ -65,5 +70,4 @@ export class UbicacionService {
   public getProvinciasListener() {
     return this.provinciasActualizadas.asObservable();
   }
-
 }

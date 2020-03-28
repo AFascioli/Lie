@@ -21,8 +21,6 @@ export class RouteGuard implements CanActivate {
     route: ActivatedRouteSnapshot,
     state: RouterStateSnapshot
   ): boolean | Observable<boolean> | Promise<boolean> {
-    console.log(!this.servicioEstudiante.estudianteSeleccionado);
-    console.log(!this.servicioEvento.eventoSeleccionado);
     if (!this.servicioEstudiante.estudianteSeleccionado) {
       this.router.navigate(["/buscar"]);
     }

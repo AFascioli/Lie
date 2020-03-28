@@ -10,14 +10,12 @@ const multer = require("multer");
 const Usuario = require("../models/usuario");
 const path = require("path");
 const Admin = require("../models/administrador");
-const mongoose = require("mongoose").Types.ObjectId;
+const Ambiente = require("../assets/ambiente");
 const GridFsStorage = require("multer-gridfs-storage");
 const Suscripcion = require("../classes/suscripcion");
-//const Inscripcion = require("../models/inscripcion");
-//const mongoose = require("mongoose");
 
 const storage = new GridFsStorage({
-  url: "mongodb://127.0.0.1:27017/icr-local",
+  url: Ambiente.stringDeConexion,
   options: {
     useNewUrlParser: true,
     useUnifiedTopology: true
