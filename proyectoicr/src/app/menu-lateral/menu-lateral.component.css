@@ -3,7 +3,7 @@
   margin:0;
 }
 
-.tituloMenu, .mat-icon-button, .homeButton, .homeButtonAR, .dropDown{
+.tituloMenu, .mat-icon-button, .homeButton, .homeButtonAR, .dropDown, .preferencias-ar, .cerrar-sesion-ar{
   color: #ffff;
 }
 
@@ -104,6 +104,29 @@ hr {
   margin-bottom: 42.5px !important;
   left: 0;
   bottom: 0;
+}
+
+.mat-toolbar-row{
+  display: grid;
+  grid-template-columns: 1fr repeat(1, auto) 1fr;
+  grid-template-rows: 64px;
+  grid-column-gap: 5px;
+}
+
+.mat-toolbar-row-mobile{
+  padding:0;
+}
+
+.button-mobile{
+  min-width: 56px;
+}
+
+.homeButtonAR{
+  width: fit-content;
+}
+
+.opciones{
+  text-align: right;
 }
 
 .contenedor-total {

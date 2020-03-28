@@ -1,6 +1,6 @@
 <div class="contenedor-total" [class.es-mobile]="mobileQuery.matches">
   <mat-toolbar class="fixed-header">
-    <mat-toolbar-row *ngIf="rol!='AdultoResponsable'">
+    <mat-toolbar-row *ngIf="rol!='AdultoResponsable'" [class.mat-toolbar-row-mobile]="mobileQuery.matches">
       <button
         type="button"
         aria-label="Toggle sidenav"
@@ -9,8 +9,8 @@
       >
         <mat-icon aria-label="Side nav toggle icon">menu</mat-icon>
       </button>
-      <!-- <h3 class="tituloMenu">Menú</h3> -->
       <span class="titulo-row">L I É</span>
+      <div class="opciones">
       <button
         mat-button
         class="homeButton"
@@ -18,10 +18,10 @@
       >
         <mat-icon>home </mat-icon>
       </button>
-      <button mat-button [matMenuTriggerFor]="menu" class="dropDown">
-        <mat-icon>arrow_drop_down</mat-icon>
-      </button>
-      <mat-menu #menu="matMenu">
+        <button mat-button [matMenuTriggerFor]="menu" class="dropDown">
+          <mat-icon>arrow_drop_down</mat-icon>
+        </button>
+        <mat-menu #menu="matMenu">
         <button mat-menu-item routerLink="/preferencias">
           <mat-icon>settings</mat-icon> Preferencias
         </button>
@@ -29,27 +29,26 @@
           <mat-icon>exit_to_app</mat-icon> Cerrar sesión
         </button>
       </mat-menu>
+    </div>
     </mat-toolbar-row>
-    <mat-toolbar-row *ngIf="rol=='AdultoResponsable'">
-      <button
+    <mat-toolbar-row *ngIf="rol=='AdultoResponsable'" [class.mat-toolbar-row-mobile]="mobileQuery.matches">
+        <button
         mat-button
         class="homeButtonAR"
+        [class.button-mobile]="mobileQuery.matches"
         (click)="onClickHome()"
-      >
+        >
         <mat-icon>home</mat-icon>
       </button>
-      <span class="titulo-rowAR">L I É</span>
-      <button mat-button [matMenuTriggerFor]="menu" class="dropDown">
-        <mat-icon>arrow_drop_down</mat-icon>
-      </button>
-      <mat-menu #menu="matMenu">
-        <button mat-menu-item routerLink="/preferencias">
-          <mat-icon>settings</mat-icon> Preferencias
+      <p class="titulo-rowAR">L I É</p>
+      <div class="opciones">
+        <button mat-button class="preferencias-ar" [class.button-mobile]="mobileQuery.matches" routerLink="/preferencias">
+          <mat-icon>settings</mat-icon>
         </button>
-        <button mat-menu-item (click)="cierreSesion()">
-          <mat-icon>exit_to_app</mat-icon> Cerrar sesión
+        <button mat-button class="cerrar-sesion-ar" [class.button-mobile]="mobileQuery.matches" (click)="cierreSesion()">
+          <mat-icon>exit_to_app</mat-icon>
         </button>
-      </mat-menu>
+      </div>
     </mat-toolbar-row>
   </mat-toolbar>
 
