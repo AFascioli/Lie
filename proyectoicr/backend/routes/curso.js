@@ -38,7 +38,12 @@ router.get("/", checkAuthMiddleware, (req, res) => {
     });
 });
 
-notificarSancion = function(idEstudiante, titulo, cuerpo) {
+notificarSancion = async function(idEstudiante) {
+  titulo = "Nueva sanción.";
+  await Estudiante.findById(idEstudiante).then(estudiante => {
+    cuerpo = `Se le ha registrado una nueva sanción a ${estudiante.apellido} ${estudiante.nombre}.`;
+  });
+
   AdultoResponsable.aggregate([
     {
       $match: {
@@ -65,7 +70,6 @@ notificarSancion = function(idEstudiante, titulo, cuerpo) {
       }
     }
   ]).then(respuesta => {
-    console.log("respuesta", respuesta);
     let idsUsuario = [];
     for (let index = 0; index < respuesta.length; index++) {
       idsUsuario.push(respuesta[index].usuario._id);
@@ -86,11 +90,7 @@ router.post("/registrarSancion", checkAuthMiddleware, (req, res) => {
       inscripcion
         .save()
         .then(() => {
-          notificarSancion(
-            req.body.idEstudiante,
-            "Nueva sanción",
-            "Se ha registrado una nueva sanción."
-          );
+          notificarSancion(req.body.idEstudiante);
           res.status(200).json({
             message: "Se ha registrado la sanción del estudiante correctamente",
             exito: true

@@ -20,24 +20,14 @@ var Grid = require("gridfs-stream");
 let gfs;
 //Grid.mongo = mongoose.mongo;
 
-// Logramos que se suban las imagenes
-// No podemos obtener las imagenes
-//Ver donde va a quedar el endpoint de obtener imagen
-
 const app = express(); // Creo la app express
-
-// app.use("/images", express.static(path.join("../images")));
-
-// app.use("/static", express.static(path.join("images", "public")));
-
-// app.use(express.static("../images"));
 
 const conn = mongoose.createConnection("mongodb://127.0.0.1:27017/icr-local");
 
 conn.once("open", () => {
   gfs = Grid(conn.db, mongoose.mongo);
   gfs.collection("imagen");
-  console.log("Connection Successful to database");
+  console.log("Conexión por imagenes a basede datos local.");
 });
 
 app.get("/imagen/:filename", (req, res) => {
@@ -139,10 +129,7 @@ app.use("/calificacion", calificacionesRoutes);
 
 app.use("/materia", materiasRoutes);
 
-const Sus = require("./classes/suscripcion");
-
 app.get("/status", (req, res, next) => {
-  Sus.notificacionIndividual([], "Hey", "Boi");
   res.status(200).json({
     message: "Servidor Node.js Lie®"
   });
