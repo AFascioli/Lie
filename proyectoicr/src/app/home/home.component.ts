@@ -1,7 +1,7 @@
 import { environment } from "src/environments/environment";
 import { async } from "@angular/core/testing";
 import { EventosService } from "./../eventos/eventos.service";
-import { Component, OnInit, Inject } from "@angular/core";
+import { Component, OnInit, Inject, OnDestroy } from "@angular/core";
 import { SwPush } from "@angular/service-worker";
 import { AutenticacionService } from "../login/autenticacionService.service";
 import { Router } from "@angular/router";
@@ -12,23 +12,23 @@ import {
   MatDialog,
   MAT_DIALOG_DATA
 } from "@angular/material";
-
-//Parche para la demo #resolve
-declare var require: any;
+import { Subject } from "rxjs";
+import { takeUntil } from "rxjs/operators";
 
 @Component({
   selector: "app-home",
   templateUrl: "./home.component.html",
   styleUrls: ["./home.component.css"]
 })
-export class HomeComponent implements OnInit {
+export class HomeComponent implements OnInit, OnDestroy {
+  private unsubscribe: Subject<void> = new Subject();
   eventos: Evento[];
   imagen;
   fechaActual;
   readonly VAPID_PUBLIC =
     "BMlC2dLJTBP6T1GCl3S3sDBmhERNVcjN7ff2a6JAoOg8bA_qXjikveleRwjz0Zn8c9-58mnrNo2K4p07UPK0DKQ";
-
   evento: Evento;
+
   constructor(
     public snackBar: MatSnackBar,
     private swPush: SwPush,
@@ -53,11 +53,19 @@ export class HomeComponent implements OnInit {
     return fecha.getDate();
   }
 
+  ngOnDestroy() {
+    this.unsubscribe.next();
+    this.unsubscribe.complete();
+  }
+
   ngOnInit() {
     this.fechaActual = new Date();
-    this.servicioEvento.obtenerEvento().subscribe(rtdo => {
-      this.eventos = rtdo.eventos;
-    });
+    this.servicioEvento
+      .obtenerEvento()
+      .pipe(takeUntil(this.unsubscribe))
+      .subscribe(rtdo => {
+        this.eventos = rtdo.eventos;
+      });
     if ("serviceWorker" in navigator) {
       navigator.serviceWorker.register("ngsw-worker.js").then(swreg => {
         if (swreg.active) {
@@ -83,9 +91,12 @@ export class HomeComponent implements OnInit {
           serverPublicKey: this.VAPID_PUBLIC
         })
         .then(pushsub => {
-          this.servicioAuth.addPushSubscriber(pushsub).subscribe(res => {
-            console.log("Se suscribió a recibir notificaciones push.");
-          });
+          this.servicioAuth
+            .addPushSubscriber(pushsub)
+            .pipe(takeUntil(this.unsubscribe))
+            .subscribe(res => {
+              console.log("Se suscribió a recibir notificaciones push.");
+            });
         })
         .catch(err =>
           console.error("No se pudo suscribir a las notificaciones push.", err)
@@ -104,9 +115,12 @@ export class HomeComponent implements OnInit {
     this.dialog.open(BorrarPopupComponent, {
       width: "250px"
     });
-    this.servicioEvento.obtenerEvento().subscribe(rtdo => {
-      this.eventos = rtdo.eventos;
-    });
+    this.servicioEvento
+      .obtenerEvento()
+      .pipe(takeUntil(this.unsubscribe))
+      .subscribe(rtdo => {
+        this.eventos = rtdo.eventos;
+      });
   }
 
   conocerUsuarioLogueado(indiceEvento): boolean {
@@ -127,7 +141,8 @@ export class HomeComponent implements OnInit {
     "../estudiantes/mostrar-estudiantes/mostrar-estudiantes.component.css"
   ]
 })
-export class BorrarPopupComponent {
+export class BorrarPopupComponent implements OnDestroy {
+  private unsubscribe: Subject<void> = new Subject();
   constructor(
     public dialogRef: MatDialogRef<BorrarPopupComponent>,
     public router: Router,
@@ -135,9 +150,15 @@ export class BorrarPopupComponent {
     public snackBar: MatSnackBar
   ) {}
 
+  ngOnDestroy() {
+    this.unsubscribe.next();
+    this.unsubscribe.complete();
+  }
+
   onYesClick(): void {
     this.servicioEvento
       .eliminarEvento(this.servicioEvento.evento._id)
+      .pipe(takeUntil(this.unsubscribe))
       .subscribe(response => {
         if (response.exito) {
           this.snackBar.open(response.message, "", {

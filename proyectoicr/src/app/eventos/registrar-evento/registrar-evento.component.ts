@@ -1,4 +1,10 @@
-import { Component, OnInit, ElementRef, ViewChild } from "@angular/core";
+import {
+  Component,
+  OnInit,
+  ElementRef,
+  ViewChild,
+  OnDestroy
+} from "@angular/core";
 import { COMMA, ENTER } from "@angular/cdk/keycodes";
 import { FormControl, NgForm } from "@angular/forms";
 import {
@@ -6,8 +12,8 @@ import {
   MatAutocomplete
 } from "@angular/material/autocomplete";
 import { MatChipInputEvent } from "@angular/material/chips";
-import { Observable } from "rxjs";
-import { map, startWith } from "rxjs/operators";
+import { Observable, Subject } from "rxjs";
+import { map, startWith, takeUntil } from "rxjs/operators";
 import { EventosService } from "../eventos.service";
 import { MatSnackBar, MatDialog } from "@angular/material";
 import Rolldate from "../../../assets/rolldate.min.js";
@@ -19,7 +25,7 @@ import { Router } from "@angular/router";
   templateUrl: "./registrar-evento.component.html",
   styleUrls: ["./registrar-evento.component.css"]
 })
-export class RegistrarEventoComponent implements OnInit {
+export class RegistrarEventoComponent implements OnInit, OnDestroy {
   @ViewChild("chipsInput", { static: false }) chipsInput: ElementRef<
     HTMLInputElement
   >;
@@ -38,6 +44,7 @@ export class RegistrarEventoComponent implements OnInit {
   allChips: string[] = ["1A", "2A", "3A", "4A", "5A", "6A", "Todos los cursos"];
   horaInicio = "";
   horaFin = "";
+  private unsubscribe: Subject<void> = new Subject();
 
   constructor(
     public eventoService: EventosService,
@@ -53,6 +60,11 @@ export class RegistrarEventoComponent implements OnInit {
         chip ? this._filter(chip) : this.allChips.slice()
       )
     );
+  }
+
+  ngOnDestroy() {
+    this.unsubscribe.next();
+    this.unsubscribe.complete();
   }
 
   ngOnInit() {
@@ -183,6 +195,7 @@ export class RegistrarEventoComponent implements OnInit {
             this.chips,
             this.imageFile
           )
+          .pipe(takeUntil(this.unsubscribe))
           .subscribe(rtdo => {
             if (rtdo.exito) {
               this.snackBar.open(rtdo.message, "", {
@@ -207,6 +220,7 @@ export class RegistrarEventoComponent implements OnInit {
             this.chips,
             this.imageFile
           )
+          .pipe(takeUntil(this.unsubscribe))
           .subscribe(rtdo => {
             if (rtdo.exito) {
               this.snackBar.open(rtdo.message, "", {
@@ -252,8 +266,4 @@ export class RegistrarEventoComponent implements OnInit {
       width: "250px"
     });
   }
-
-  // onEliminarImg(imgUrl: string): void {
-  //   this.eventoService.eliminarImagen(this.eventoService.ImgCargada);
-  // }
 }

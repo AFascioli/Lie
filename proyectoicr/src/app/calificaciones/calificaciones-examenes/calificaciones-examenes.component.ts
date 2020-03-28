@@ -2,15 +2,17 @@ import { CalificacionesService } from "../calificaciones.service";
 import { MatSnackBar } from "@angular/material";
 import { AutenticacionService } from "../../login/autenticacionService.service";
 import { EstudiantesService } from "src/app/estudiantes/estudiante.service";
-import { Component, OnInit, ChangeDetectorRef } from "@angular/core";
+import { Component, OnInit, ChangeDetectorRef, OnDestroy } from "@angular/core";
 import { MediaMatcher } from "@angular/cdk/layout";
+import { Subject } from "rxjs";
+import { takeUntil } from "rxjs/operators";
 
 @Component({
   selector: "app-calificaciones-examenes",
   templateUrl: "./calificaciones-examenes.component.html",
   styleUrls: ["./calificaciones-examenes.component.css"]
 })
-export class CalificacionesExamenesComponent implements OnInit {
+export class CalificacionesExamenesComponent implements OnInit, OnDestroy {
   apellidoEstudiante: string;
   nombreEstudiante: string;
   _mobileQueryListener: () => void;
@@ -21,6 +23,7 @@ export class CalificacionesExamenesComponent implements OnInit {
   idMateriaSeleccionada: string;
   tieneMateriasDesaprobadas: boolean = false;
   notaExamen: any;
+  private unsubscribe: Subject<void> = new Subject();
 
   constructor(
     public estudianteService: EstudiantesService,
@@ -35,11 +38,17 @@ export class CalificacionesExamenesComponent implements OnInit {
     this.mobileQuery.addListener(this._mobileQueryListener);
   }
 
+  ngOnDestroy() {
+    this.unsubscribe.next();
+    this.unsubscribe.complete();
+  }
+
   ngOnInit() {
     this.apellidoEstudiante = this.estudianteService.estudianteSeleccionado.apellido;
     this.nombreEstudiante = this.estudianteService.estudianteSeleccionado.nombre;
     this.servicioCalificaciones
       .obtenerMateriasDesaprobadasEstudiante()
+      .pipe(takeUntil(this.unsubscribe))
       .subscribe(materias => {
         if (materias.materiasDesaprobadas != null) {
           this.materiasDesaprobadas = materias.materiasDesaprobadas;
@@ -105,11 +114,12 @@ export class CalificacionesExamenesComponent implements OnInit {
 
   guardar() {
     if (this.notaExamen > 5) {
-     this.servicioCalificaciones
+      this.servicioCalificaciones
         .registrarCalificacionExamen(
           this.idMateriaSeleccionada,
           this.notaExamen
         )
+        .pipe(takeUntil(this.unsubscribe))
         .subscribe(rtdo => {
           if (rtdo.exito) {
             this.snackBar.open(rtdo.message, "", {

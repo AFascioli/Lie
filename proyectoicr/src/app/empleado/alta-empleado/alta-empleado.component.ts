@@ -2,12 +2,13 @@ import { UbicacionService } from "src/app/ubicacion/ubicacion.service";
 import { Component, OnInit, OnDestroy, ChangeDetectorRef } from "@angular/core";
 import { MatDialog, MatDialogRef } from "@angular/material/dialog";
 import { Router } from "@angular/router";
-import { Subscription } from "rxjs";
+import { Subscription, Subject } from "rxjs";
 import { Nacionalidad } from "src/app/ubicacion/nacionalidades.model";
 import { EmpleadoService } from "../empleado.service";
 import { MatSnackBar } from "@angular/material";
 import { NgForm } from "@angular/forms";
 import { MediaMatcher } from "@angular/cdk/layout";
+import { takeUntil } from "rxjs/operators";
 
 @Component({
   selector: "app-alta-empleado",
@@ -20,6 +21,7 @@ export class AltaEmpleadoComponent implements OnInit, OnDestroy {
   suscripcion: Subscription;
   _mobileQueryListener: () => void;
   mobileQuery: MediaQueryList;
+  private unsubscribe: Subject<void> = new Subject();
 
   constructor(
     public servicio: EmpleadoService,
@@ -38,6 +40,7 @@ export class AltaEmpleadoComponent implements OnInit, OnDestroy {
     this.servicioUbicacion.getNacionalidades();
     this.suscripcion = this.servicioUbicacion
       .getNacionalidadesListener()
+      .pipe(takeUntil(this.unsubscribe))
       .subscribe(nacionalidadesActualizadas => {
         this.nacionalidades = nacionalidadesActualizadas;
       });
@@ -45,7 +48,8 @@ export class AltaEmpleadoComponent implements OnInit, OnDestroy {
 
   // Cuando se destruye el componente se eliminan las suscripciones.
   ngOnDestroy() {
-    this.suscripcion.unsubscribe();
+    this.unsubscribe.next();
+    this.unsubscribe.complete();
   }
 
   onGuardar(form: NgForm) {
@@ -63,6 +67,7 @@ export class AltaEmpleadoComponent implements OnInit, OnDestroy {
           form.value.email,
           form.value.tipoEmpleado
         )
+        .pipe(takeUntil(this.unsubscribe))
         .subscribe(response => {
           if (response.exito) {
             this.snackBar.open(response.message, "", {
@@ -96,9 +101,11 @@ export class AltaEmpleadoComponent implements OnInit, OnDestroy {
     if (
       !(
         (inputValue >= 65 && inputValue <= 122) ||
-        inputValue == 209 || inputValue == 241
+        inputValue == 209 ||
+        inputValue == 241
       ) &&
-      inputValue != 32 && inputValue != 0
+      inputValue != 32 &&
+      inputValue != 0
     ) {
       event.preventDefault();
     }
@@ -109,7 +116,8 @@ export class AltaEmpleadoComponent implements OnInit, OnDestroy {
     var inputValue = event.which;
     if (
       !(inputValue >= 48 && inputValue <= 57) &&
-      inputValue != 32 && inputValue != 0
+      inputValue != 32 &&
+      inputValue != 0
     ) {
       event.preventDefault();
     }

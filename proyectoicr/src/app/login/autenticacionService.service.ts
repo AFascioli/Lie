@@ -1,11 +1,12 @@
-import { Injectable } from "@angular/core";
+import { Injectable, OnDestroy } from "@angular/core";
 import { HttpClient, HttpParams } from "@angular/common/http";
 import { Router } from "@angular/router";
 import { Subject } from "rxjs";
 import { environment } from "src/environments/environment";
+import { takeUntil } from "rxjs/operators";
 
 @Injectable({ providedIn: "root" })
-export class AutenticacionService {
+export class AutenticacionService implements OnDestroy {
   private estaAutenticado = false;
   private token: string;
   private tokenTimer: any;
@@ -14,6 +15,7 @@ export class AutenticacionService {
   private rol: string;
   private id: string;
   private fechasCicloLectivo: any;
+  private unsubscribe: Subject<void> = new Subject();
 
   constructor(private http: HttpClient, private router: Router) {}
 
@@ -23,6 +25,11 @@ export class AutenticacionService {
       environment.apiUrl + "/usuario/suscripcion",
       { sub: sus, email: this.usuarioAutenticado }
     );
+  }
+
+  ngOnDestroy() {
+    this.unsubscribe.next();
+    this.unsubscribe.complete();
   }
 
   public asignarFechasAutomaticamente() {
@@ -65,7 +72,7 @@ export class AutenticacionService {
     return this.http.post<{
       exito: boolean;
       message: string;
-    }>(environment.apiUrl+"/usuario/cambiarPassword", datosContraseña);
+    }>(environment.apiUrl + "/usuario/cambiarPassword", datosContraseña);
   }
 
   //Registra a un usuario con el rol, contraseña e email
@@ -208,6 +215,7 @@ export class AutenticacionService {
         message: string;
         rol: string;
       }>(environment.apiUrl + "/usuario/login", authData)
+      .pipe(takeUntil(this.unsubscribe))
       .subscribe(response => {
         respuesta = response;
         if (response.token) {
@@ -231,11 +239,13 @@ export class AutenticacionService {
             this.id
           );
           if (response.rol != "Adulto Responsable") {
-            this.getCicloLectivo().subscribe(response => {
-              this.limpiarFechasCicloLectivo();
-              this.guardarFechasCicloLectivo(response.cicloLectivo);
-              this.fechasCicloLectivo = response.cicloLectivo;
-            });
+            this.getCicloLectivo()
+              .pipe(takeUntil(this.unsubscribe))
+              .subscribe(response => {
+                this.limpiarFechasCicloLectivo();
+                this.guardarFechasCicloLectivo(response.cicloLectivo);
+                this.fechasCicloLectivo = response.cicloLectivo;
+              });
           }
           this.router.navigate(["/"]);
         }
@@ -345,7 +355,7 @@ export class AutenticacionService {
 
   //Metodo sign up que crea un usuario segun un rol dado
   public signUp(mail: string, password: string, rol: string) {
-    return this.http.post(environment.apiUrl+"/usuario/signup", {
+    return this.http.post(environment.apiUrl + "/usuario/signup", {
       mail: mail,
       password: password,
       rol: rol

@@ -1,8 +1,14 @@
 import { UbicacionService } from "src/app/ubicacion/ubicacion.service";
 import { AutenticacionService } from "./../../login/autenticacionService.service";
-import { Component, OnInit, Input, ChangeDetectorRef } from "@angular/core";
+import {
+  Component,
+  OnInit,
+  Input,
+  ChangeDetectorRef,
+  OnDestroy
+} from "@angular/core";
 import { EstudiantesService } from "../estudiante.service";
-import { Subscription } from "rxjs";
+import { Subscription, Subject } from "rxjs";
 import { Provincia } from "../../ubicacion/provincias.model";
 import { NgForm } from "@angular/forms";
 import { Estudiante } from "../estudiante.model";
@@ -11,13 +17,14 @@ import { Localidad } from "../../ubicacion/localidades.model";
 import { MatDialog, MatDialogRef, MatSnackBar } from "@angular/material";
 import { Router } from "@angular/router";
 import { MediaMatcher } from "@angular/cdk/layout";
+import { takeUntil } from "rxjs/operators";
 
 @Component({
   selector: "app-mostrar-estudiantes",
   templateUrl: "./mostrar-estudiantes.component.html",
   styleUrls: ["./mostrar-estudiantes.component.css"]
 })
-export class MostrarEstudiantesComponent implements OnInit {
+export class MostrarEstudiantesComponent implements OnInit, OnDestroy {
   nacionalidades: Nacionalidad[] = [];
   provincias: Provincia[] = [];
   localidades: Localidad[] = [];
@@ -27,7 +34,7 @@ export class MostrarEstudiantesComponent implements OnInit {
   maxDate = new Date();
   primeraVez = true;
   modoEditar = false;
-
+  private unsubscribe: Subject<void> = new Subject();
   //Atributos Estudiantes del HTML
   apellidoEstudiante: string;
   nombreEstudiante: string;
@@ -91,18 +98,25 @@ export class MostrarEstudiantesComponent implements OnInit {
     this.mobileQuery.addListener(this._mobileQueryListener);
   }
 
+  ngOnDestroy() {
+    this.unsubscribe.next();
+    this.unsubscribe.complete();
+  }
+
   ngOnInit() {
     this.servicioEstudiante.formInvalidoEstudiante = true;
     this.servicioEstudiante.formEstudianteModificada = false;
     this.servicioUbicacion.getProvincias();
     this.suscripcion = this.servicioUbicacion
       .getProvinciasListener()
+      .pipe(takeUntil(this.unsubscribe))
       .subscribe(provinciasActualizadas => {
         this.provincias = provinciasActualizadas;
       });
     this.servicioUbicacion.getLocalidades();
     this.suscripcion = this.servicioUbicacion
       .getLocalidadesListener()
+      .pipe(takeUntil(this.unsubscribe))
       .subscribe(localidadesActualizadas => {
         this.localidades = localidadesActualizadas;
         this.FiltrarLocalidades();
@@ -110,12 +124,16 @@ export class MostrarEstudiantesComponent implements OnInit {
     this.servicioUbicacion.getNacionalidades();
     this.suscripcion = this.servicioUbicacion
       .getNacionalidadesListener()
+      .pipe(takeUntil(this.unsubscribe))
       .subscribe(nacionalidadesActualizadas => {
         this.nacionalidades = nacionalidadesActualizadas;
       });
-    this.authService.obtenerPermisosDeRol().subscribe(response => {
-      this.permisos = response.permisos;
-    });
+    this.authService
+      .obtenerPermisosDeRol()
+      .pipe(takeUntil(this.unsubscribe))
+      .subscribe(response => {
+        this.permisos = response.permisos;
+      });
   }
 
   FiltrarLocalidades() {
@@ -126,11 +144,6 @@ export class MostrarEstudiantesComponent implements OnInit {
     this.localidadesFiltradas = this.localidadesFiltradas.filter(
       localidad => localidad.id_provincia == idProvinciaSeleccionada
     );
-  }
-
-  // Cuando se destruye el componente se eliminan las suscripciones.
-  ngOnDestroy() {
-    this.suscripcion.unsubscribe();
   }
 
   onEditar() {
@@ -160,6 +173,7 @@ export class MostrarEstudiantesComponent implements OnInit {
           this.estadoCivilEstudiante,
           this.telefonoEstudiante
         )
+        .pipe(takeUntil(this.unsubscribe))
         .subscribe(resultado => {
           if (resultado.exito) {
             this.modoEditar = false;

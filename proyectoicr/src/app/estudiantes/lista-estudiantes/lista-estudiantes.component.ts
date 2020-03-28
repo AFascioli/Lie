@@ -3,20 +3,22 @@ import { UbicacionService } from "src/app/ubicacion/ubicacion.service";
 import { CalificacionesService } from "../../calificaciones/calificaciones.service";
 import { InscripcionService } from "../../inscripcion/inscripcion.service";
 import { AutenticacionService } from "./../../login/autenticacionService.service";
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, OnDestroy } from "@angular/core";
 import { EstudiantesService } from "../estudiante.service";
 import { Estudiante } from "../estudiante.model";
 import { Router } from "@angular/router";
+import { Subject } from "rxjs";
+import { takeUntil } from "rxjs/operators";
 
 @Component({
   selector: "app-lista-estudiantes",
   templateUrl: "./lista-estudiantes.component.html",
   styleUrls: ["./lista-estudiantes.component.css"]
 })
-export class ListaEstudiantesComponent implements OnInit {
+export class ListaEstudiantesComponent implements OnInit, OnDestroy {
   estudiantes: Estudiante[] = [];
   curso: any[] = [];
-
+  private unsubscribe: Subject<void> = new Subject();
   permisos = {
     notas: 0,
     asistencia: 0,
@@ -39,28 +41,40 @@ export class ListaEstudiantesComponent implements OnInit {
     public authService: AutenticacionService
   ) {}
 
+  ngOnDestroy() {
+    this.unsubscribe.next();
+    this.unsubscribe.complete();
+  }
+
   ngOnInit() {
     if ((this.servicio.retornoDesdeAcciones = false)) {
       this.isLoading = true;
     } else {
-      this.servicio.getEstudiantesListener().subscribe(estudiantesBuscados => {
-        this.estudiantes = estudiantesBuscados;
-        this.isLoading = false;
-        for (let i = 0; i < estudiantesBuscados.length; i++) {
-          this.servicio
-            .obtenerCursoDeEstudianteById(this.estudiantes[i]._id)
-            .subscribe(response => {
-              this.curso[i] = response.curso;
-            });
-        }
-      });
+      this.servicio
+        .getEstudiantesListener()
+        .pipe(takeUntil(this.unsubscribe))
+        .subscribe(estudiantesBuscados => {
+          this.estudiantes = estudiantesBuscados;
+          this.isLoading = false;
+          for (let i = 0; i < estudiantesBuscados.length; i++) {
+            this.servicio
+              .obtenerCursoDeEstudianteById(this.estudiantes[i]._id)
+              .pipe(takeUntil(this.unsubscribe))
+              .subscribe(response => {
+                this.curso[i] = response.curso;
+              });
+          }
+        });
 
       if (this.servicio.retornoDesdeAcciones) {
         this.servicio.retornoDesdeAcciones = false;
       }
-      this.authService.obtenerPermisosDeRol().subscribe(response => {
-        this.permisos = response.permisos;
-      });
+      this.authService
+        .obtenerPermisosDeRol()
+        .pipe(takeUntil(this.unsubscribe))
+        .subscribe(response => {
+          this.permisos = response.permisos;
+        });
     }
   }
 
@@ -101,7 +115,7 @@ export class ListaEstudiantesComponent implements OnInit {
     this.router.navigate(["./perfilEstudiante"]);
   }
 
-  onSancion(indice){
+  onSancion(indice) {
     this.asignarEstudianteSeleccionado(indice);
     this.router.navigate(["./registrarSancion"]);
   }

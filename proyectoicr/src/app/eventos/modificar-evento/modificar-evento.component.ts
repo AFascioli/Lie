@@ -1,4 +1,10 @@
-import { Component, OnInit, ElementRef, ViewChild } from "@angular/core";
+import {
+  Component,
+  OnInit,
+  ElementRef,
+  ViewChild,
+  OnDestroy
+} from "@angular/core";
 import { COMMA, ENTER } from "@angular/cdk/keycodes";
 import { FormControl, NgForm } from "@angular/forms";
 import {
@@ -6,8 +12,8 @@ import {
   MatAutocomplete
 } from "@angular/material/autocomplete";
 import { MatChipInputEvent } from "@angular/material/chips";
-import { Observable } from "rxjs";
-import { map, startWith } from "rxjs/operators";
+import { Observable, Subject } from "rxjs";
+import { map, startWith, takeUntil } from "rxjs/operators";
 import { EventosService } from "../eventos.service";
 import { Router } from "@angular/router";
 import { MatSnackBar, MatDialog } from "@angular/material";
@@ -20,7 +26,7 @@ import { Evento } from "../evento.model";
   templateUrl: "./modificar-evento.component.html",
   styleUrls: ["./modificar-evento.component.css"]
 })
-export class ModificarEventoComponent implements OnInit {
+export class ModificarEventoComponent implements OnInit, OnDestroy {
   @ViewChild("chipsInput", { static: false }) chipsInput: ElementRef<
     HTMLInputElement
   >;
@@ -40,6 +46,7 @@ export class ModificarEventoComponent implements OnInit {
   horaInicio = "";
   horaFin = "";
   evento: Evento;
+  private unsubscribe: Subject<void> = new Subject();
 
   constructor(
     public eventoService: EventosService,
@@ -53,6 +60,11 @@ export class ModificarEventoComponent implements OnInit {
         chip ? this._filter(chip) : this.allChips.slice()
       )
     );
+  }
+
+  ngOnDestroy() {
+    this.unsubscribe.next();
+    this.unsubscribe.complete();
   }
 
   ngOnInit() {
@@ -198,6 +210,7 @@ export class ModificarEventoComponent implements OnInit {
             this.evento._id,
             this.evento.autor
           )
+          .pipe(takeUntil(this.unsubscribe))
           .subscribe(rtdo => {
             if (rtdo.exito) {
               this.snackBar.open(rtdo.message, "", {
@@ -243,8 +256,4 @@ export class ModificarEventoComponent implements OnInit {
       width: "250px"
     });
   }
-
-  // onEliminarImg(imgUrl: string): void {
-  //   this.eventoService.eliminarImagen(this.eventoService.ImgCargada);
-  // }
 }

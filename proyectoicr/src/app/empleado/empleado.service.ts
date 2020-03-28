@@ -1,17 +1,24 @@
 import { AutenticacionService } from "./../login/autenticacionService.service";
 import { HttpClient, HttpParams } from "@angular/common/http";
-import { Injectable } from "@angular/core";
+import { Injectable, OnDestroy } from "@angular/core";
 import { Empleado } from "./empleado.model";
-import { Subject } from 'rxjs';
+import { Subject } from "rxjs";
+import { takeUntil } from "rxjs/operators";
 
 @Injectable({
   providedIn: "root"
 })
-export class EmpleadoService {
+export class EmpleadoService implements OnDestroy {
   constructor(
     public http: HttpClient,
     public authServicio: AutenticacionService
   ) {}
+  private unsubscribe: Subject<void> = new Subject();
+
+  ngOnDestroy() {
+    this.unsubscribe.next();
+    this.unsubscribe.complete();
+  }
 
   registrarEmpleado(
     apellido: string,
@@ -25,9 +32,10 @@ export class EmpleadoService {
     email: string,
     tipoEmpleado: string
   ) {
-    let subject= new Subject<any>();
+    let subject = new Subject<any>();
     this.authServicio
       .crearUsuario(email, numeroDocumento.toString(), tipoEmpleado)
+      .pipe(takeUntil(this.unsubscribe))
       .subscribe(res => {
         if (res.exito) {
           let idUsuario = res.id;
@@ -45,10 +53,11 @@ export class EmpleadoService {
             idUsuario
           };
           this.http
-            .post<{ message: string; exito: boolean}>(
+            .post<{ message: string; exito: boolean }>(
               "http://localhost:3000/empleado",
               empleado
             )
+            .pipe(takeUntil(this.unsubscribe))
             .subscribe(response => {
               subject.next(response);
             });

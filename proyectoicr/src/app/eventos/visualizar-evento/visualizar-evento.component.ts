@@ -1,19 +1,20 @@
 import { MatSnackBar, MatDialog, MatDialogRef } from "@angular/material";
 import { AutenticacionService } from "src/app/login/autenticacionService.service";
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, OnDestroy } from "@angular/core";
 import { EventosService } from "../eventos.service";
 import { Evento } from "../evento.model";
 import { Comentario } from "../comentario.model";
 import { Router } from "@angular/router";
-import { environment } from "src/environments/environment";
 import { EstudiantesService } from "src/app/estudiantes/estudiante.service";
+import { Subject } from "rxjs";
+import { takeUntil } from "rxjs/operators";
 
 @Component({
   selector: "app-visualizar-evento",
   templateUrl: "./visualizar-evento.component.html",
   styleUrls: ["./visualizar-evento.component.css"]
 })
-export class VisualizarEventoComponent implements OnInit {
+export class VisualizarEventoComponent implements OnInit, OnDestroy {
   evento: Evento;
   descripcionComentario: String;
   comentarioIsEmpty: Boolean = true;
@@ -24,6 +25,7 @@ export class VisualizarEventoComponent implements OnInit {
   descripcionDelEvento: string;
   fechaDelEvento: Date;
   horaFinal: string;
+  private unsubscribe: Subject<void> = new Subject();
 
   constructor(
     public eventoService: EventosService,
@@ -36,10 +38,18 @@ export class VisualizarEventoComponent implements OnInit {
 
   ngOnInit() {
     this.evento = this.eventoService.eventoSeleccionado;
-    this.eventoService.obtenerComentariosDeEvento().subscribe(rtdo => {
-      this.eventoService.comentarios = rtdo.comentarios.reverse();
-      this.actualizarPermisos();
-    });
+    this.eventoService
+      .obtenerComentariosDeEvento()
+      .pipe(takeUntil(this.unsubscribe))
+      .subscribe(rtdo => {
+        this.eventoService.comentarios = rtdo.comentarios.reverse();
+        this.actualizarPermisos();
+      });
+  }
+
+  ngOnDestroy() {
+    this.unsubscribe.next();
+    this.unsubscribe.complete();
   }
 
   actualizarPermisos() {
@@ -95,6 +105,7 @@ export class VisualizarEventoComponent implements OnInit {
           this.autenticacionService.getUsuarioAutenticado(),
           this.autenticacionService.getRol()
         )
+        .pipe(takeUntil(this.unsubscribe))
         .subscribe(rtdo => {
           if (rtdo.exito) {
             this.snackBar.open(rtdo.message, "", {
@@ -102,10 +113,13 @@ export class VisualizarEventoComponent implements OnInit {
               panelClass: ["snack-bar-exito"]
             });
             this.descripcionComentario = "";
-            this.eventoService.obtenerComentariosDeEvento().subscribe(rtdo => {
-              this.eventoService.comentarios = rtdo.comentarios.reverse();
-              this.actualizarPermisos();
-            });
+            this.eventoService
+              .obtenerComentariosDeEvento()
+              .pipe(takeUntil(this.unsubscribe))
+              .subscribe(rtdo => {
+                this.eventoService.comentarios = rtdo.comentarios.reverse();
+                this.actualizarPermisos();
+              });
           } else {
             this.snackBar.open(
               "Ocurrio un error al querer publicar el comentario",
@@ -119,18 +133,25 @@ export class VisualizarEventoComponent implements OnInit {
         });
     }
   }
+
   onEliminar(idComentario): void {
-    this.eventoService.eliminarComentario(idComentario).subscribe(response => {
-      if (response.exito) {
-        this.snackBar.open(response.message, "", {
-          panelClass: ["snack-bar-exito"],
-          duration: 4500
-        });
-      }
-      this.eventoService.obtenerComentariosDeEvento().subscribe(rtdo => {
-        this.eventoService.comentarios = rtdo.comentarios.reverse();
+    this.eventoService
+      .eliminarComentario(idComentario)
+      .pipe(takeUntil(this.unsubscribe))
+      .subscribe(response => {
+        if (response.exito) {
+          this.snackBar.open(response.message, "", {
+            panelClass: ["snack-bar-exito"],
+            duration: 4500
+          });
+        }
+        this.eventoService
+          .obtenerComentariosDeEvento()
+          .pipe(takeUntil(this.unsubscribe))
+          .subscribe(rtdo => {
+            this.eventoService.comentarios = rtdo.comentarios.reverse();
+          });
       });
-    });
   }
 
   onReportar(): void {}

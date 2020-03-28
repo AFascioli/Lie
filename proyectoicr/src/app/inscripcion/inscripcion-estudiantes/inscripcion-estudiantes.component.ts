@@ -1,6 +1,12 @@
 import { InscripcionService } from "../inscripcion.service";
 import { EstudiantesService } from "../../estudiantes/estudiante.service";
-import { OnInit, Component, Inject, ChangeDetectorRef } from "@angular/core";
+import {
+  OnInit,
+  Component,
+  Inject,
+  ChangeDetectorRef,
+  OnDestroy
+} from "@angular/core";
 import { Router } from "@angular/router";
 import {
   MatDialogRef,
@@ -12,13 +18,15 @@ import {
 import { NgForm } from "@angular/forms";
 import { MediaMatcher } from "@angular/cdk/layout";
 import { AutenticacionService } from "src/app/login/autenticacionService.service";
+import { Subject } from "rxjs";
+import { takeUntil } from "rxjs/operators";
 
 @Component({
   selector: "app-inscripcion-estudiantes",
   templateUrl: "./inscripcion-estudiantes.component.html",
   styleUrls: ["./inscripcion-estudiantes.component.css"]
 })
-export class InscripcionEstudianteComponent implements OnInit {
+export class InscripcionEstudianteComponent implements OnInit, OnDestroy {
   cursos: any[];
   diaActual: string;
   cursoSeleccionado: string;
@@ -38,6 +46,7 @@ export class InscripcionEstudianteComponent implements OnInit {
   _mobileQueryListener: () => void;
   mobileQuery: MediaQueryList;
   fechaDentroDeRangoInscripcion: boolean = true;
+  private unsubscribe: Subject<void> = new Subject();
 
   constructor(
     public servicioEstudiante: EstudiantesService,
@@ -51,6 +60,11 @@ export class InscripcionEstudianteComponent implements OnInit {
     this.mobileQuery = media.matchMedia("(max-width: 1000px)");
     this._mobileQueryListener = () => changeDetectorRef.detectChanges();
     this.mobileQuery.addListener(this._mobileQueryListener);
+  }
+
+  ngOnDestroy() {
+    this.unsubscribe.next();
+    this.unsubscribe.complete();
   }
 
   ngOnInit() {
@@ -67,11 +81,13 @@ export class InscripcionEstudianteComponent implements OnInit {
     this._idEstudiante = this.servicioEstudiante.estudianteSeleccionado._id;
     this.servicioEstudiante
       .estudianteEstaInscripto(this._idEstudiante)
+      .pipe(takeUntil(this.unsubscribe))
       .subscribe(response => {
         this.estudianteEstaInscripto = response.exito;
       });
     this.servicioInscripcion
       .obtenerCursosInscripcionEstudiante()
+      .pipe(takeUntil(this.unsubscribe))
       .subscribe(response => {
         this.cursos = response.cursos;
         this.cursos.sort((a, b) =>
@@ -103,6 +119,7 @@ export class InscripcionEstudianteComponent implements OnInit {
     this.cursoSeleccionado = curso.value;
     this.servicioInscripcion
       .obtenerCapacidadCurso(curso.value)
+      .pipe(takeUntil(this.unsubscribe))
       .subscribe(response => {
         this.capacidadCurso = response.capacidad;
       });
@@ -143,16 +160,20 @@ export class InscripcionEstudianteComponent implements OnInit {
           InscripcionPopupComponent,
           this.matConfig
         );
-        dialogRef.afterClosed().subscribe(result => {
-          if (result.data) {
-            this.estudianteEstaInscripto = true;
-            this.servicioInscripcion
-              .obtenerCapacidadCurso(this.cursoSeleccionado)
-              .subscribe(response => {
-                this.capacidadCurso = response.capacidad;
-              });
-          }
-        });
+        dialogRef
+          .afterClosed()
+          .pipe(takeUntil(this.unsubscribe))
+          .subscribe(result => {
+            if (result.data) {
+              this.estudianteEstaInscripto = true;
+              this.servicioInscripcion
+                .obtenerCapacidadCurso(this.cursoSeleccionado)
+                .pipe(takeUntil(this.unsubscribe))
+                .subscribe(response => {
+                  this.capacidadCurso = response.capacidad;
+                });
+            }
+          });
       }
     }
   }
@@ -166,7 +187,7 @@ export class InscripcionEstudianteComponent implements OnInit {
     "../../app.component.css"
   ]
 })
-export class InscripcionPopupComponent {
+export class InscripcionPopupComponent implements OnDestroy {
   tipoPopup: string;
   formValido: boolean;
   IdEstudiante: string;
@@ -176,6 +197,7 @@ export class InscripcionPopupComponent {
   documentosEntregados: any[];
   isLoading: Boolean = false;
   fechaActual: Date;
+  private unsubscribe: Subject<void> = new Subject();
 
   constructor(
     public dialogRef: MatDialogRef<InscripcionPopupComponent>,
@@ -192,6 +214,11 @@ export class InscripcionPopupComponent {
     this.documentosEntregados = data.documentosEntregados;
   }
 
+  ngOnDestroy() {
+    this.unsubscribe.next();
+    this.unsubscribe.complete();
+  }
+
   onNoCancelarConfirmarClick(): void {
     this.dialogRef.close();
   }
@@ -205,6 +232,7 @@ export class InscripcionPopupComponent {
         this.curso,
         this.documentosEntregados
       )
+      .pipe(takeUntil(this.unsubscribe))
       .subscribe(response => {
         this.exito = response.exito;
         if (this.exito) {

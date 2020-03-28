@@ -1,16 +1,18 @@
 import { AutenticacionService } from "./../../login/autenticacionService.service";
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, OnDestroy } from "@angular/core";
 import { MatSnackBar, MatDialog } from "@angular/material";
 import { EstudiantesService } from "src/app/estudiantes/estudiante.service";
 import { CuotasService } from "../cuotas.service";
-import { CancelPopupComponent } from 'src/app/popup-genericos/cancel-popup.component';
+import { CancelPopupComponent } from "src/app/popup-genericos/cancel-popup.component";
+import { takeUntil } from "rxjs/operators";
+import { Subject } from "rxjs";
 
 @Component({
   selector: "app-registrar-cuotas",
   templateUrl: "./registrar-cuotas.component.html",
   styleUrls: ["./registrar-cuotas.component.css"]
 })
-export class RegistrarCuotasComponent implements OnInit {
+export class RegistrarCuotasComponent implements OnInit, OnDestroy {
   constructor(
     public autenticacionService: AutenticacionService,
     public servicioEstudiante: EstudiantesService,
@@ -41,6 +43,7 @@ export class RegistrarCuotasComponent implements OnInit {
   cursoNotSelected: Boolean = true;
   cuotasXEstudiante: any[] = [];
   displayedColumns: string[] = ["apellido", "nombre", "accion"];
+  private unsubscribe: Subject<void> = new Subject();
 
   ngOnInit() {
     this.fechaActual = new Date();
@@ -67,6 +70,11 @@ export class RegistrarCuotasComponent implements OnInit {
     // }
   }
 
+  ngOnDestroy() {
+    this.unsubscribe.next();
+    this.unsubscribe.complete();
+  }
+
   //Busca los estudiantes segun el curso que se selecciono en pantalla. Los orden alfabeticamente
   onCursoSeleccionado(curso, mes) {
     this.cursoNotSelected = false;
@@ -80,6 +88,7 @@ export class RegistrarCuotasComponent implements OnInit {
     }
     this.cuotasService
       .obtenerEstadoCuotasDeCurso(curso.value, nroMes)
+      .pipe(takeUntil(this.unsubscribe))
       .subscribe(rtdo => {
         this.cuotasXEstudiante = rtdo.cuotasXEstudiante.sort((a, b) =>
           a.apellido > b.apellido ? 1 : b.apellido > a.apellido ? -1 : 0
@@ -117,16 +126,19 @@ export class RegistrarCuotasComponent implements OnInit {
   onMesSeleccionado(mes) {
     this.cursoNotSelected = true;
     this.mesSeleccionado = mes.value;
-    this.servicioEstudiante.obtenerCursos().subscribe(response => {
-      this.cursos = response.cursos;
-      this.cursos.sort((a, b) =>
-        a.curso.charAt(0) > b.curso.charAt(0)
-          ? 1
-          : b.curso.charAt(0) > a.curso.charAt(0)
-          ? -1
-          : 0
-      );
-    });
+    this.servicioEstudiante
+      .obtenerCursos()
+      .pipe(takeUntil(this.unsubscribe))
+      .subscribe(response => {
+        this.cursos = response.cursos;
+        this.cursos.sort((a, b) =>
+          a.curso.charAt(0) > b.curso.charAt(0)
+            ? 1
+            : b.curso.charAt(0) > a.curso.charAt(0)
+            ? -1
+            : 0
+        );
+      });
     this.cursoEstudiante = "";
   }
 
@@ -139,6 +151,7 @@ export class RegistrarCuotasComponent implements OnInit {
     });
     this.cuotasService
       .publicarEstadoCuotasDeCurso(cuotasCambiadas)
+      .pipe(takeUntil(this.unsubscribe))
       .subscribe(rtdo => {
         if (cuotasCambiadas.length == 0) {
           this.snackBar.open(
@@ -162,5 +175,4 @@ export class RegistrarCuotasComponent implements OnInit {
     this.servicioEstudiante.tipoPopUp = "cancelar";
     this.popup.open(CancelPopupComponent);
   }
-
 }
