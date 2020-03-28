@@ -4,7 +4,8 @@
     style="cursor: pointer;"
     (click)="onEstudianteClick(estudiante.idEstudiante)"
   >
-    <mat-icon class="iconEstudiante">account_circle</mat-icon>
+    <!-- <mat-icon class="iconEstudiante">account_circle</mat-icon> -->
+    <mat-icon class="iconEstudiante">face</mat-icon>
     <p class="nombre-estudiante">
       {{ estudiante.nombre }} {{ estudiante.apellido }}
     </p>
@@ -20,7 +21,6 @@
     (click)="onEventoClick(evento._id)"
   >
     <div class="fechaEvento">
-      <p class="recordatorio"><b>Recordatorio</b></p>
       <time datetime="evento.fechaEvento" class="icon">
         <strong>{{ obtenerMes(evento.fechaEvento) }}</strong>
         <span>{{ obtenerDia(evento.fechaEvento) }}</span>
@@ -28,8 +28,7 @@
     </div>
     <p class="hora">{{ evento.horaInicio }} - {{ evento.horaFin }}</p>
     <p class="titulo-evento">{{ evento.titulo }}</p>
-    <mat-chip-list *ngFor="let curso of evento.tags">
-      <p class="textoParticipan"><b>Participan:</b></p>
+    <mat-chip-list class="curso" *ngFor="let curso of evento.tags">
       <mat-chip>{{ curso }}</mat-chip>
     </mat-chip-list>
   </mat-card>
