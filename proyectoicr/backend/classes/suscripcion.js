@@ -1,6 +1,6 @@
 const webpush = require("web-push");
 const Usuario = require("../models/usuario");
-const vapidKeys = require("../assets/vapid_keys");
+const Keys = require("../assets/keys");
 
 // Notifica al conjunto de suscripciones con el contenido provisto.
 // @params {Array<Subscriptions>} allSubscriptions
@@ -27,8 +27,8 @@ notificar = function(allSubscriptions, titulo, cuerpo) {
 
   webpush.setVapidDetails(
     "https://my-site.com/contact",
-    vapidKeys.vapid_public_key,
-    vapidKeys.vapid_private_key
+    Keys.vapid_public_key,
+    Keys.vapid_private_key
   );
 
   if (allSubscriptions) {

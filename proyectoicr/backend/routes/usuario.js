@@ -6,6 +6,7 @@ const Rol = require("../models/rol");
 const Empleado = require("../models/empleado");
 const Suscripcion = require("../classes/suscripcion");
 const router = express.Router();
+const Keys = require("../assets/keys");
 
 //Compara la contraseña ingresada por el usuario con la contraseña pasada por parametro
 //si coinciden entonces le permite cambiar la contraseña, sino se lo deniega
@@ -69,7 +70,7 @@ router.post("/login", (req, res) => {
               userId: usuarioEncontrado._id,
               rol: usuarioEncontrado.rol
             },
-            "aca_va_el_secreto_que_es_una_string_larga",
+            Keys.token_key,
             { expiresIn: "12h" }
           );
           Rol.findById(usuarioEncontrado.rol)
@@ -78,7 +79,6 @@ router.post("/login", (req, res) => {
               if (rol.tipo == "Docente") {
                 Empleado.findOne({ idUsuario: usuarioEncontrado._id })
                   .then(async empleado => {
-                    // idPersona = empleado._id;
                     idPersona = empleado.idUsuario;
                     await res.status(200).json({
                       token: token,
