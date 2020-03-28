@@ -12,7 +12,7 @@ table {
 }
 
 th {
-  font-weight: bold;
+  /* font-weight: bold; */
   font-size: 15px;
 }
 
@@ -65,14 +65,12 @@ input:focus {
   background-color: #fc7978;
 }
 
-.paginator
-{
-  display:flex;
+.paginator {
+  display: flex;
   justify-content: center;
 }
 
-.filtro
-{
+.filtro {
   font-size: 14px;
   width: 100%;
 }

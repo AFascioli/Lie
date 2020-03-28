@@ -3,21 +3,19 @@
 }
 
 .ubicacionfecha {
-  margin-top: 0.5rem;
+  /* margin-top: 0.5rem; */
   float: right;
 }
 
-.mat-form-Fecha
-{
+.mat-form-Fecha {
   text-align: center !important;
 }
 
-.mat-form-field-infix
-{
- width: 150px;
+.mat-form-field-infix {
+  width: 150px;
 }
 
-.inputFecha{
+.inputFecha {
   width: 0%;
   color: black !important;
 }
@@ -27,7 +25,7 @@ table {
   margin: 0 auto;
 }
 
-.mes{
+.mes {
   margin-left: 1rem;
 }
 
@@ -44,17 +42,22 @@ table {
   text-align: right;
 }
 
-th{
+th {
   font-weight: bold;
   font-size: 15px;
 }
 
-.parrafo{
+.parrafo {
   text-align: center;
 }
 
-.aviso{
+.aviso {
   margin-bottom: 0;
   text-align: center;
   font-size: 19px;
+}
+
+.contenedorTabla {
+  height: 270px;
+  overflow: auto;
 }

@@ -12,7 +12,7 @@ const path = require("path");
 const Admin = require("../models/administrador");
 const mongoose = require("mongoose").Types.ObjectId;
 const GridFsStorage = require("multer-gridfs-storage");
-//const Suscripcion = require("../classes/suscripcion");
+const Suscripcion = require("../classes/suscripcion");
 //const Inscripcion = require("../models/inscripcion");
 //const mongoose = require("mongoose");
 

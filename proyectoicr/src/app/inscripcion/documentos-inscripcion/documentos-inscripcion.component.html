@@ -1,4 +1,7 @@
-<h1 class="componente-titulo">Registrar documentación inscripción ciclo lectivo {{fechaActual.getFullYear()}}</h1>
+<h1 class="componente-titulo">
+  Registrar documentación inscripción ciclo lectivo
+  {{ fechaActual.getFullYear() }}
+</h1>
 <mat-card class="card-body-componente">
   <br />
   <div class="div-selects">
@@ -13,17 +16,17 @@
         required
         (selectionChange)="onCursoSeleccionado(curso)"
       >
-        <mat-option
-          *ngFor="let objCurso of cursos"
-          [value]="objCurso.curso"
-        >
+        <mat-option *ngFor="let objCurso of cursos" [value]="objCurso.curso">
           {{ objCurso.curso }}
         </mat-option>
       </mat-select>
     </mat-form-field>
   </div>
-  <p class="aviso" *ngIf="fueraPeriodoCicloLectivo==true">Atención, no se puede registrar documentación debido a que estamos fuera de las fechas autorizadas</p>
-  <div *ngIf="estudiantesConDocumentos.length != 0">
+  <p class="aviso" *ngIf="fueraPeriodoCicloLectivo == true">
+    Atención, no se puede registrar documentación debido a que estamos fuera de
+    las fechas autorizadas
+  </p>
+  <div class="contenedorTabla" *ngIf="estudiantesConDocumentos.length != 0">
     <table mat-table [dataSource]="estudiantesConDocumentos">
       <ng-container matColumnDef="apellido">
         <th class="columnasTabla" mat-header-cell *matHeaderCellDef>
@@ -79,7 +82,7 @@
         </td>
       </ng-container>
 
-      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
       <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
     </table>
   </div>
@@ -93,11 +96,7 @@
     >
       Guardar
     </button>
-    <button
-      mat-raised-button
-      (click)="onCancelar()"
-      class="buttonWarn"
-    >
+    <button mat-raised-button (click)="onCancelar()" class="buttonWarn">
       Cancelar
     </button>
   </div>

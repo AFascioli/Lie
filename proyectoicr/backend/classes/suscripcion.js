@@ -4,7 +4,7 @@ const vapidKeys = require("../assets/vapid_keys");
 
 // Notifica al conjunto de suscripciones con el contenido provisto.
 // @params {Array<Subscriptions>} allSubscriptions
-function notificar(allSubscriptions, titulo, cuerpo) {
+notificar = function(allSubscriptions, titulo, cuerpo) {
   const notificationPayload = {
     notification: {
       title: titulo,
@@ -47,7 +47,7 @@ function notificar(allSubscriptions, titulo, cuerpo) {
   } else {
     console.log("No hay suscripciones para este usuario.");
   }
-}
+};
 
 // #resolve Considerar en el futuro pasar las acciones que se quieren y la url a donde redirigir.
 function notificacionIndividual(idusuario, titulo, cuerpo) {
@@ -55,7 +55,7 @@ function notificacionIndividual(idusuario, titulo, cuerpo) {
   Usuario.findOne({ _id: idusuario })
     .then(usuario => {
       const allSubscriptions = usuario.suscripciones;
-      this.notificar(allSubscriptions, titulo, cuerpo);
+      notificar(allSubscriptions, titulo, cuerpo);
     })
     .catch(e => {
       console.log(e);
@@ -71,7 +71,7 @@ function notificacionGrupal(idusuarios, titulo, cuerpo) {
       usuarios.forEach(usuario => {
         allSubscriptions = allSubscriptions.concat(usuario.suscripciones);
       });
-      this.notificar(allSubscriptions, titulo, cuerpo);
+      notificar(allSubscriptions, titulo, cuerpo);
     })
     .catch(e => {
       console.log(e);
@@ -86,7 +86,7 @@ function notificacionMasiva(titulo, cuerpo) {
       usuarios.forEach(usuario => {
         allSubscriptions = allSubscriptions.concat(usuario.suscripciones);
       });
-      this.notificar(allSubscriptions, titulo, cuerpo);
+      notificar(allSubscriptions, titulo, cuerpo);
     })
     .catch(e => {
       console.log(e);

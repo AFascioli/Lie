@@ -152,3 +152,30 @@ input[type="number"] {
   padding-right: 8px;
 }
 
+.contenedorTablaSticky {
+  height: 260px;
+  overflow: auto;
+}
+
+/* Barra de scroll */
+/* width */
+::-webkit-scrollbar {
+  width: 12px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 5px grey;
+  border-radius: 10px;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: rgb(197, 197, 197);
+  border-radius: 12px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #727272;
+}
