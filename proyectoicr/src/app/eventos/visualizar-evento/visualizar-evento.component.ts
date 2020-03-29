@@ -8,6 +8,7 @@ import { Router } from "@angular/router";
 import { EstudiantesService } from "src/app/estudiantes/estudiante.service";
 import { Subject } from "rxjs";
 import { takeUntil } from "rxjs/operators";
+import { environment } from "src/environments/environment";
 
 @Component({
   selector: "app-visualizar-evento",
@@ -65,7 +66,7 @@ export class VisualizarEventoComponent implements OnInit, OnDestroy {
   }
 
   getImage(filename) {
-    return `http://localhost:3000/imagen/${filename}`;
+    return environment.apiUrl + `/imagen/${filename}`;
   }
 
   obtenerMes(fechaEvento) {

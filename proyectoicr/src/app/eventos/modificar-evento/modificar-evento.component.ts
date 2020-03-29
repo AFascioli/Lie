@@ -20,6 +20,7 @@ import { MatSnackBar, MatDialog } from "@angular/material";
 import Rolldate from "../../../assets/rolldate.min.js";
 import { CancelPopupComponent } from "src/app/popup-genericos/cancel-popup.component";
 import { Evento } from "../evento.model";
+import { environment } from "src/environments/environment";
 
 @Component({
   selector: "app-modificar-evento",
@@ -73,7 +74,7 @@ export class ModificarEventoComponent implements OnInit, OnDestroy {
     if (this.evento.filenames.length != 0) {
       for (let index = 0; index < this.evento.filenames.length; index++) {
         this.imgURL.push(
-          `http://localhost:3000/imagen/${this.evento.filenames[index]}`
+          environment.apiUrl + `/imagen/${this.evento.filenames[index]}`
         );
       }
     }

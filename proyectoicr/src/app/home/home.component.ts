@@ -1,17 +1,11 @@
 import { environment } from "src/environments/environment";
-import { async } from "@angular/core/testing";
 import { EventosService } from "./../eventos/eventos.service";
-import { Component, OnInit, Inject, OnDestroy } from "@angular/core";
+import { Component, OnInit, OnDestroy } from "@angular/core";
 import { SwPush } from "@angular/service-worker";
 import { AutenticacionService } from "../login/autenticacionService.service";
 import { Router } from "@angular/router";
 import { Evento } from "../eventos/evento.model";
-import {
-  MatSnackBar,
-  MatDialogRef,
-  MatDialog,
-  MAT_DIALOG_DATA
-} from "@angular/material";
+import { MatSnackBar, MatDialogRef, MatDialog } from "@angular/material";
 import { Subject } from "rxjs";
 import { takeUntil } from "rxjs/operators";
 
@@ -39,7 +33,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   ) {}
 
   getImage(filename) {
-    return `http://localhost:3000/imagen/${filename}`;
+    return environment.apiUrl + `/imagen/${filename}`;
   }
 
   obtenerMes(fechaEvento) {
