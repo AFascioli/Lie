@@ -148,32 +148,21 @@ router.delete("/borrar", checkAuthMiddleware, (req, res, next) => {
       Estudiante.findOneAndUpdate(
         { _id: req.query._id },
         { activo: false, estado: estado._id }
-      )
-        .then(() => {
-          Inscripcion.findOne({
-            idEstudiante: req.query._id,
-            activa: true
-          })
-            .then(inscripcion => {
-              if (inscripcion) {
-                inscripcion.activa = false;
-                inscripcion.save();
-              }
-              res.status(202).json({
-                message: "Estudiante exitosamente borrado"
-              });
-            })
-            .catch(() => {
-              res.status(500).json({
-                message: "Mensaje de error especifico"
-              });
-            });
-        })
-        .catch(() => {
-          res.status(500).json({
-            message: "Mensaje de error especifico"
+      ).then(() => {
+        Inscripcion.findOne({
+          idEstudiante: req.query._id,
+          activa: true
+        }).then(inscripcion => {
+          if (inscripcion) {
+            inscripcion.activa = false;
+            inscripcion.save();
+          }
+          res.status(202).json({
+            message: "Estudiante exitosamente borrado",
+            exito: true
           });
         });
+      });
     })
     .catch(() => {
       res.status(500).json({

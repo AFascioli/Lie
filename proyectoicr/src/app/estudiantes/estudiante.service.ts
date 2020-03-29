@@ -83,7 +83,7 @@ export class EstudiantesService implements OnDestroy {
   //@params: id del estudiante
   public borrarEstudiante(_id) {
     let params = new HttpParams().set("_id", _id);
-    this.http.delete<{ message: string }>(
+    return this.http.delete<{ message: string; exito: boolean }>(
       environment.apiUrl + "/estudiante/borrar",
       {
         params: params

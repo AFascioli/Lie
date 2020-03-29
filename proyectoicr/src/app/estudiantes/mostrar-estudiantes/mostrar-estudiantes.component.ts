@@ -235,7 +235,8 @@ export class MostrarPopupComponent {
   constructor(
     public dialogRef: MatDialogRef<MostrarPopupComponent>,
     public router: Router,
-    public servicioEstudiante: EstudiantesService
+    public servicioEstudiante: EstudiantesService,
+    public snackBar: MatSnackBar
   ) {
     this.tipoPopup = this.servicioEstudiante.tipoPopUp;
     this.formInvalido = servicioEstudiante.formInvalidoEstudiante;
@@ -264,8 +265,14 @@ export class MostrarPopupComponent {
 
   onYesDeleteClick() {
     this.borrar = "El estudiante fue borrado exitosamente";
-    this.servicioEstudiante.borrarEstudiante(
-      this.servicioEstudiante.estudianteSeleccionado._id
-    );
+    this.servicioEstudiante
+      .borrarEstudiante(this.servicioEstudiante.estudianteSeleccionado._id)
+      .subscribe(rta => {
+        rta.exito &&
+          this.snackBar.open(rta.message, "", {
+            panelClass: ["snack-bar-exito"],
+            duration: 4000
+          });
+      });
   }
 }
