@@ -154,6 +154,4 @@ export class VisualizarEventoComponent implements OnInit, OnDestroy {
           });
       });
   }
-
-  onReportar(): void {}
 }

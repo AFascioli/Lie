@@ -121,6 +121,7 @@ import { RegistrarSancionesComponent } from "./sanciones/registrar-sanciones/reg
 import { SancionesEstudianteComponent } from "./perfil-estudiante/sanciones-estudiante/sanciones-estudiante.component";
 import { ErrorInterceptor } from "./error-interceptor";
 import { ErrorComponent } from "./error/error.component";
+import { Ng2ImgMaxModule } from "ng2-img-max";
 
 @NgModule({
   declarations: [
@@ -197,6 +198,7 @@ import { ErrorComponent } from "./error/error.component";
   ],
   imports: [
     MatChipsModule,
+    Ng2ImgMaxModule,
     BrowserModule,
     MatInputModule,
     ReactiveFormsModule,

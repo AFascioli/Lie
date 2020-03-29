@@ -57,6 +57,7 @@ export class RegistrarAsistenciaComponent implements OnInit, OnDestroy {
         .obtenerCursos()
         .pipe(takeUntil(this.unsubscribe))
         .subscribe(response => {
+          console.log(response.cursos);
           this.cursos = response.cursos;
           this.cursos.sort((a, b) =>
             a.curso.charAt(0) > b.curso.charAt(0)
