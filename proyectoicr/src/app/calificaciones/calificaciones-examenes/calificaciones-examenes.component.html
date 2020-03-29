@@ -52,13 +52,31 @@
             (selectionChange)="onMateriaChange(materiaRendida.value)"
             required
           >
-            <mat-option *ngFor="let materiaDesaprobada of materiasDesaprobadas" [value]="materiaDesaprobada._id">
+            <mat-option
+              *ngFor="let materiaDesaprobada of materiasDesaprobadas"
+              [value]="materiaDesaprobada._id"
+            >
               {{ materiaDesaprobada.nombre }}
             </mat-option>
           </mat-select>
         </mat-form-field>
         <br />
         <mat-form-field>
+          <mat-select
+            placeholder="Seleccione condición"
+            name="condicion"
+            ngModel
+            #condicion="ngModel"
+            (selectionChange)="onCondicionChage(condicion.viewModel)"
+            matNativeControl
+            required
+          >
+            <mat-option value="aprobado">Aprobado</mat-option>
+            <mat-option value="desaprobado">Desaprobado</mat-option>
+          </mat-select>
+        </mat-form-field>
+        <br />
+        <mat-form-field *ngIf="condicion.viewModel == 'aprobado'">
           <input
             ngModel
             #notaMateria="ngModel"

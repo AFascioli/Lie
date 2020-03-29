@@ -21,6 +21,7 @@ export class CalificacionesExamenesComponent implements OnInit {
   idMateriaSeleccionada: string;
   tieneMateriasDesaprobadas: boolean = false;
   notaExamen: any;
+  condicionExamen: string;
 
   constructor(
     public estudianteService: EstudiantesService,
@@ -58,6 +59,10 @@ export class CalificacionesExamenesComponent implements OnInit {
 
   onMateriaChange(idMateria) {
     this.idMateriaSeleccionada = idMateria;
+  }
+
+  onCondicionChage(condicion) {
+    this.condicionExamen = condicion;
   }
 
   checkNotas(event) {
@@ -104,8 +109,8 @@ export class CalificacionesExamenesComponent implements OnInit {
   }
 
   guardar() {
-    if (this.notaExamen > 5) {
-     this.servicioCalificaciones
+    if (this.condicionExamen == "aprobado" && this.notaExamen > 5) {
+      this.servicioCalificaciones
         .registrarCalificacionExamen(
           this.idMateriaSeleccionada,
           this.notaExamen
@@ -123,6 +128,20 @@ export class CalificacionesExamenesComponent implements OnInit {
             });
           }
         });
+    } else if (this.condicionExamen == "aprobado" && this.notaExamen < 6) {
+      this.snackBar.open(
+        "La calificación ingresada debe ser mayor o igual a 6.",
+        "",
+        {
+          panelClass: ["snack-bar-fracaso"],
+          duration: 3000
+        }
+      );
+    } else {
+      this.snackBar.open("Se ha registrado la materia desaprobada.", "", {
+        panelClass: ["snack-bar-exito"],
+        duration: 3000
+      });
     }
   }
 }
