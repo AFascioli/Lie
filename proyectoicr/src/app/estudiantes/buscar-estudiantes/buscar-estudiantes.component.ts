@@ -3,7 +3,7 @@ import { Component, OnInit } from "@angular/core";
 import { NgForm } from "@angular/forms";
 import { EstudiantesService } from "../estudiante.service";
 import { Estudiante } from "../estudiante.model";
-import { MatDialog, MatDialogRef } from "@angular/material";
+import { MatDialog, MatDialogRef, MatSnackBar } from "@angular/material";
 import { Router } from "@angular/router";
 import { browserRefresh } from "src/app/app.component";
 
@@ -24,7 +24,8 @@ export class BuscarEstudiantesComponent implements OnInit {
     public servicio: EstudiantesService,
     public dialog: MatDialog,
     public servicioAR: AdultoResponsableService,
-    private router: Router
+    private router: Router,
+    private snackBar: MatSnackBar
   ) {}
 
   ngOnInit() {
@@ -57,7 +58,7 @@ export class BuscarEstudiantesComponent implements OnInit {
 
   // Si el formulario no es valido no hace nada, luego controla que tipo de busqueda es
   OnBuscar(form: NgForm) {
-    if (!form.invalid) {
+    if (form.valid) {
       if (this.buscarPorNomYAp) {
         this.servicio.busquedaEstudianteXNombre = true;
         this.servicio.buscarEstudiantesNombreApellido(
@@ -71,6 +72,13 @@ export class BuscarEstudiantesComponent implements OnInit {
         );
         this.servicio.busquedaEstudianteXNombre = false;
       }
+      this.router.navigate(["/buscar/lista"]);
+    }else{
+      this.snackBar.open("Datos ingresados incorrectos","",{
+        panelClass: ["snack-bar-fracaso"],
+        duration: 4000
+      });
+      console.log(this.servicio.retornoDesdeAcciones);
     }
   }
 

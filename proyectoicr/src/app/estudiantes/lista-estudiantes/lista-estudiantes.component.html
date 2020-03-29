@@ -14,94 +14,78 @@
           </b>
         </mat-panel-title>
       </mat-expansion-panel-header>
-      <h3 class="tituloAcciones">Acciones</h3>
-      <div class="botonesAcciones">
-        <button
-          mat-raised-button
-          class="button"
-          class="buttonPrimary"
+      <div
+        class="grid-container"
+        [class.grid-container-mobile]="mobileQuery.matches"
+      >
+        <mat-card
+        class="opcion"
+          [class.opcion-mobile]="mobileQuery.matches"
           (click)="onInscribir(i)"
           *ngIf="permisos.inscribirEstudiante > 1"
+          ><b>Inscribir estudiante a un curso</b></mat-card
         >
-          Inscribir estudiante a un curso
-        </button>
-        <button
-          mat-raised-button
-          class="button"
-          class="buttonPrimary"
+        <mat-card
+        class="opcion"
+          [class.opcion-mobile]="mobileQuery.matches"
           (click)="onJustificar(i)"
           *ngIf="permisos.asistencia > 1"
+          ><b>Justificar inasistencia</b></mat-card
         >
-          Justificar inasistencia
-        </button>
-        <button
-          mat-raised-button
-          class="button"
-          class="buttonPrimary"
+        <mat-card
+        class="opcion"
+          [class.opcion-mobile]="mobileQuery.matches"
           (click)="onRegistrarAR(i)"
           *ngIf="permisos.inscribirEstudiante > 1"
+          ><b>Registrar adulto responsable</b></mat-card
         >
-          Registrar adulto responsable
-        </button>
-        <button
-          mat-raised-button
-          class="button"
-          class="buttonPrimary"
+        <mat-card
+        class="opcion"
+          [class.opcion-mobile]="mobileQuery.matches"
           (click)="onRegistrarExamenes(i)"
           *ngIf="permisos.notas > 1"
+          ><b>Registrar examen</b></mat-card
         >
-          Registrar examen
-        </button>
-        <button
-          mat-raised-button
-          class="button"
-          class="buttonPrimary"
+        <mat-card
+        class="opcion"
+          [class.opcion-mobile]="mobileQuery.matches"
           (click)="onLlegadaTarde(i)"
           *ngIf="permisos.asistencia > 1"
+          ><b>Registrar llegada tarde</b></mat-card
         >
-          Registrar llegada tarde
-        </button>
-        <button
-          mat-raised-button
-          class="button"
-          class="buttonPrimary"
+        <mat-card
+        class="opcion"
+          [class.opcion-mobile]="mobileQuery.matches"
           (click)="onRetiro(i)"
           *ngIf="permisos.asistencia > 1"
+          ><b>Registrar retiro anticipado</b></mat-card
         >
-          Registrar retiro anticipado
-        </button>
-        <button
-          mat-raised-button
-          class="button"
-          class="buttonPrimary"
+        <mat-card
+        class="opcion"
+          [class.opcion-mobile]="mobileQuery.matches"
           (click)="onSancion(i)"
           *ngIf="permisos.inscribirEstudiante >= 1"
+          ><b>Registrar sanción</b></mat-card
         >
-          Registrar sanción
-        </button>
-        <button
-          mat-raised-button
-          class="button"
-          class="buttonPrimary"
+        <mat-card
+        class="opcion"
+          [class.opcion-mobile]="mobileQuery.matches"
           (click)="onMostrar(i)"
           *ngIf="permisos.inscribirEstudiante >= 1"
+          ><b>Visualizar estudiante</b></mat-card
         >
-          Visualizar estudiante
-        </button>
-        <button
-          mat-raised-button
-          class="button"
-          class="buttonPrimary"
+        <mat-card
+        class="opcion"
+          [class.opcion-mobile]="mobileQuery.matches"
           (click)="onVisualizarPerfil(i)"
           *ngIf="permisos.inscribirEstudiante >= 1"
+          ><b>Visualizar perfil de estudiante</b></mat-card
         >
-          Visualizar perfil de estudiante
-        </button>
       </div>
     </mat-expansion-panel>
   </div>
 </mat-card>
 
-<mat-card *ngIf="estudiantes.length <= 0 && !isLoading">
+<mat-card *ngIf="estudiantes.length == 0 && !isLoading">
   <p>No se encontraron estudiantes</p>
 </mat-card>

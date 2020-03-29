@@ -3,10 +3,11 @@ import { UbicacionService } from "src/app/ubicacion/ubicacion.service";
 import { CalificacionesService } from "../../calificaciones/calificaciones.service";
 import { InscripcionService } from "../../inscripcion/inscripcion.service";
 import { AutenticacionService } from "./../../login/autenticacionService.service";
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, ChangeDetectorRef } from "@angular/core";
 import { EstudiantesService } from "../estudiante.service";
 import { Estudiante } from "../estudiante.model";
 import { Router } from "@angular/router";
+import { MediaMatcher } from '@angular/cdk/layout';
 
 @Component({
   selector: "app-lista-estudiantes",
@@ -28,6 +29,8 @@ export class ListaEstudiantesComponent implements OnInit {
     cuotas: 0
   };
   isLoading: boolean = true;
+  _mobileQueryListener: () => void;
+  mobileQuery: MediaQueryList;
 
   constructor(
     public servicio: EstudiantesService,
@@ -36,32 +39,34 @@ export class ListaEstudiantesComponent implements OnInit {
     public servicioInscripcion: InscripcionService,
     public servicioUbicacion: UbicacionService,
     public router: Router,
-    public authService: AutenticacionService
-  ) {}
+    public authService: AutenticacionService,
+    public changeDetectorRef: ChangeDetectorRef,
+    public media: MediaMatcher
+  ) {
+    this.mobileQuery = media.matchMedia('(max-width: 700px)');
+    this._mobileQueryListener = () => changeDetectorRef.detectChanges();
+    this.mobileQuery.addListener(this._mobileQueryListener);
+  }
 
   ngOnInit() {
-    if ((this.servicio.retornoDesdeAcciones = false)) {
-      this.isLoading = true;
-    } else {
-      this.servicio.getEstudiantesListener().subscribe(estudiantesBuscados => {
-        this.estudiantes = estudiantesBuscados;
-        this.isLoading = false;
-        for (let i = 0; i < estudiantesBuscados.length; i++) {
-          this.servicio
-            .obtenerCursoDeEstudianteById(this.estudiantes[i]._id)
-            .subscribe(response => {
-              this.curso[i] = response.curso;
-            });
-        }
-      });
-
-      if (this.servicio.retornoDesdeAcciones) {
-        this.servicio.retornoDesdeAcciones = false;
+    this.servicio.getEstudiantesListener().subscribe(estudiantesBuscados => {
+      this.estudiantes = estudiantesBuscados;
+      this.isLoading = false;
+      for (let i = 0; i < estudiantesBuscados.length; i++) {
+        this.servicio
+          .obtenerCursoDeEstudianteById(this.estudiantes[i]._id)
+          .subscribe(response => {
+            this.curso[i] = response.curso;
+          });
       }
-      this.authService.obtenerPermisosDeRol().subscribe(response => {
-        this.permisos = response.permisos;
-      });
+    });
+
+    if (!this.servicio.retornoDesdeAcciones) {
+      this.servicio.retornoDesdeAcciones = false;
     }
+    this.authService.obtenerPermisosDeRol().subscribe(response => {
+      this.permisos = response.permisos;
+    });
   }
 
   asignarEstudianteSeleccionado(indice) {
@@ -101,7 +106,7 @@ export class ListaEstudiantesComponent implements OnInit {
     this.router.navigate(["./perfilEstudiante"]);
   }
 
-  onSancion(indice){
+  onSancion(indice) {
     this.asignarEstudianteSeleccionado(indice);
     this.router.navigate(["./registrarSancion"]);
   }

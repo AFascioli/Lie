@@ -3,7 +3,7 @@
   margin-left: auto;
   margin-right: auto;
   display: grid;
-  grid-template-columns:  repeat(3, 1fr);
+  grid-template-columns: repeat(1, 1fr);
   grid-gap: 40px;
   padding: 10px;
 }
@@ -18,33 +18,34 @@
   padding: 10px;
 }
 
-.grid-layout > mat-card{
-height: auto;
-text-align: center;
+.grid-layout > mat-card {
+  height: auto;
+  text-align: center;
 }
 
-.iconEstudiante{
+.iconEstudiante {
   font-size: 120px;
   margin: auto;
   display: table;
 }
 
-.nombre-estudiante, .titulo-evento{
+.nombre-estudiante,
+.titulo-evento {
   text-align: center;
   font-size: 20px;
   font-weight: bold;
 }
 
-.titulo-evento{
+.titulo-evento {
   margin-top: 1%;
   margin-bottom: 1%;
 }
 
-mat-chip{
-font-size: 1em;;
+mat-chip {
+  font-size: 1em;
 }
 
-.curso{
+.curso {
   display: inline-block;
 }
 
@@ -92,14 +93,12 @@ time.icon span {
   color: #2f2f2f;
 }
 
-.fechaEvento{
+.fechaEvento {
   display: inline-block;
   margin-top: 4% !important;
 }
 
-
-.hora{
+.hora {
   margin-top: 2%;
   margin-bottom: 0%;
 }
-

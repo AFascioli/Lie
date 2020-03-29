@@ -1,3 +1,49 @@
+.grid-container {
+  width: 95%;
+  margin-left: auto;
+  margin-right: auto;
+  display: grid;
+  grid-template-columns:  auto auto auto;
+  grid-template-rows:  150px 150px 150px;
+  grid-gap: 8px;
+  padding: 10px;
+  border-radius: 4px;
+}
+
+.grid-container-mobile {
+  width: 95%;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 2%;
+  display: grid;
+  grid-template-columns:  auto;
+  grid-template-rows: repeat(9, 1fr); /* El 9 es la cantidad de opciones que hay */
+  grid-gap: 8px;
+  padding: 10px;
+  border-radius: 4px;
+}
+
+.grid-container > .mat-card {
+  display: flex;
+  align-items: stretch;
+  grid-column-gap: 30px;
+  border-radius: 4px;
+  width: 80%;
+  text-align: center;
+  justify-content: center;
+  align-items: center;
+}
+
+.opcion-mobile {
+  padding: 0;
+  width: 100% !important;
+  height: 80%;
+}
+
+.opcion{
+  cursor: pointer;
+}
+
 .mat-card {
   margin: auto;
   margin-top: 1rem;
