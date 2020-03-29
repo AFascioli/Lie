@@ -1,16 +1,19 @@
 import { CalificacionesService } from "../../calificaciones/calificaciones.service";
 //import { Estudiante } from "src/app/estudiantes/estudiante.model";
 import { EstudiantesService } from "src/app/estudiantes/estudiante.service";
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, OnDestroy } from "@angular/core";
 import { Router } from "@angular/router";
 import { AutenticacionService } from "src/app/login/autenticacionService.service";
+import { Subject } from "rxjs";
+import { takeUntil } from "rxjs/operators";
 
 @Component({
   selector: "app-calificaciones-perfil-estudiante",
   templateUrl: "./calificaciones-perfil-estudiante.component.html",
   styleUrls: ["./calificaciones-perfil-estudiante.component.css"]
 })
-export class CalificacionesPerfilEstudianteComponent implements OnInit {
+export class CalificacionesPerfilEstudianteComponent
+  implements OnInit, OnDestroy {
   apellidoEstudiante: string;
   nombreEstudiante: string;
   curso: string;
@@ -28,6 +31,7 @@ export class CalificacionesPerfilEstudianteComponent implements OnInit {
   trimestreActual: string;
   fechaActual: Date;
   promedio = 0;
+  private unsubscribe: Subject<void> = new Subject();
 
   constructor(
     public servicioEstudiante: EstudiantesService,
@@ -35,6 +39,11 @@ export class CalificacionesPerfilEstudianteComponent implements OnInit {
     public router: Router,
     public servicioEstudianteAutenticacion: AutenticacionService
   ) {}
+
+  ngOnDestroy() {
+    this.unsubscribe.next();
+    this.unsubscribe.complete();
+  }
 
   ngOnInit() {
     this.fechaActual = new Date();
@@ -44,16 +53,18 @@ export class CalificacionesPerfilEstudianteComponent implements OnInit {
     this.apellidoEstudiante = this.servicioEstudiante.estudianteSeleccionado.apellido;
     this.nombreEstudiante = this.servicioEstudiante.estudianteSeleccionado.nombre;
     this.obtenerTrimestrePorDefecto();
-   this.servicioCalificaciones
+    this.servicioCalificaciones
       .obtenerCalificacionesXMateriaXEstudiante(this.trimestreActual)
+      .pipe(takeUntil(this.unsubscribe))
       .subscribe(res => {
         this.calificacionesXMateria = res.vectorCalXMat;
       });
   }
 
   onChangeTrimestre() {
-   this.servicioCalificaciones
+    this.servicioCalificaciones
       .obtenerCalificacionesXMateriaXEstudiante(this.trimestreActual)
+      .pipe(takeUntil(this.unsubscribe))
       .subscribe(res => {
         this.calificacionesXMateria = res.vectorCalXMat;
       });

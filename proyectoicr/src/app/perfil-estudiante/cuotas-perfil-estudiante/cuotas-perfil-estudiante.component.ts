@@ -1,25 +1,35 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, OnDestroy } from "@angular/core";
 import { EstudiantesService } from "../../estudiantes/estudiante.service";
 import { Estudiante } from "../../estudiantes/estudiante.model";
+import { takeUntil } from "rxjs/operators";
+import { Subject } from "rxjs";
 
 @Component({
   selector: "app-datos-estudiante",
   templateUrl: "./cuotas-perfil-estudiante.component.html",
   styleUrls: ["./cuotas-perfil-estudiante.component.css"]
 })
-export class CuotasPerfilEstudianteComponent implements OnInit {
+export class CuotasPerfilEstudianteComponent implements OnInit, OnDestroy {
   estudiante: Estudiante;
   cuotasV: any[] = [];
   datasource: any[] = [];
   displayedColumns: string[] = ["Mes", "Pagado"];
+  private unsubscribe: Subject<void> = new Subject();
 
   constructor(public servicio: EstudiantesService) {}
 
   ngOnInit() {
-    this.servicio.getCuotasDeEstudiante().subscribe(respuesta => {
-      this.cuotasV = respuesta.cuotas;
-      console.log(respuesta.cuotas);
-    });
+    this.servicio
+      .getCuotasDeEstudiante()
+      .pipe(takeUntil(this.unsubscribe))
+      .subscribe(respuesta => {
+        this.cuotasV = respuesta.cuotas;
+      });
+  }
+
+  ngOnDestroy() {
+    this.unsubscribe.next();
+    this.unsubscribe.complete();
   }
 
   //ver de hacerlo mejor

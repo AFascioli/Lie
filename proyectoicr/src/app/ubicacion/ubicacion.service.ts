@@ -1,4 +1,4 @@
-import { Injectable } from "@angular/core";
+import { Injectable, OnDestroy } from "@angular/core";
 import { Estudiante } from "../estudiantes/estudiante.model";
 import { HttpClient, HttpParams } from "@angular/common/http";
 import { Provincia } from "./provincias.model";
@@ -6,11 +6,12 @@ import { Subject } from "rxjs";
 import { Localidad } from "./localidades.model";
 import { Nacionalidad } from "../ubicacion/nacionalidades.model";
 import { environment } from "src/environments/environment";
+import { takeUntil } from "rxjs/operators";
 
 @Injectable({
   providedIn: "root"
 })
-export class UbicacionService {
+export class UbicacionService implements OnDestroy {
   estudianteSeleccionado: Estudiante;
   provincias: Provincia[] = [];
   localidades: Localidad[] = [];
@@ -19,6 +20,7 @@ export class UbicacionService {
   private provinciasActualizadas = new Subject<Provincia[]>();
   private localidadesActualizadas = new Subject<Localidad[]>();
   private nacionalidadesActualizadas = new Subject<Nacionalidad[]>();
+  private unsubscribe: Subject<void> = new Subject();
 
   constructor(public http: HttpClient) {}
 
@@ -32,10 +34,16 @@ export class UbicacionService {
       .get<{ localidades: Localidad[] }>(
         environment.apiUrl + "/ubicacion/localidad"
       )
+      .pipe(takeUntil(this.unsubscribe))
       .subscribe(response => {
         this.localidades = response.localidades;
         this.localidadesActualizadas.next([...this.localidades]);
       });
+  }
+
+  ngOnDestroy() {
+    this.unsubscribe.next();
+    this.unsubscribe.complete();
   }
 
   public getNacionalidadesListener() {
@@ -48,8 +56,8 @@ export class UbicacionService {
       .get<{ nacionalidades: Nacionalidad[] }>(
         environment.apiUrl + "/ubicacion/nacionalidad"
       )
+      .pipe(takeUntil(this.unsubscribe))
       .subscribe(response => {
-        console.log(response);
         this.nacionalidades = response.nacionalidades;
         this.nacionalidadesActualizadas.next([...this.nacionalidades]);
       });
@@ -61,6 +69,7 @@ export class UbicacionService {
       .get<{ provincias: Provincia[] }>(
         environment.apiUrl + "/ubicacion/provincia"
       )
+      .pipe(takeUntil(this.unsubscribe))
       .subscribe(response => {
         this.provincias = response.provincias;
         this.provinciasActualizadas.next([...this.provincias]);
