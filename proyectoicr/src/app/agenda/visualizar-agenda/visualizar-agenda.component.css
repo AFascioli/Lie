@@ -185,3 +185,7 @@ hr {
   position: absolute;
   align-self: center;
 }
+
+.div-button {
+  text-align: right;
+}
