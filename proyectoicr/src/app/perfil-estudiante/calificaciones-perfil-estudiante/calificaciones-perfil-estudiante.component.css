@@ -6,41 +6,55 @@ mat-card-content{
   text-indent: 34%;
 } */
 
+mat-icon {
+  display: flex;
+  margin-left: auto;
+}
 
 table {
   width: 95%;
   margin: 2rem;
 }
 
-.columnasNormales{
-  width:22% !important;
+.columnasNormales {
+  width: 22% !important;
 }
 
-.columnasChicas{
-  width:8%;
+.columnasChicas {
+  width: 8%;
 }
 
-th{
+th {
   font-weight: bold;
   font-size: 15px;
 }
 
-.mat-form-field{
+.mat-form-field {
   margin-left: 5% !important;
 }
 
-.titulo{
+.titulo {
   text-align: center;
 }
 
-.promedio{
+.promedio {
   text-align: center;
 }
 
-.bajoPromedio{
+.bajoPromedio {
   background-color: #fc7978;
- }
+}
 
- .div-button{
-   text-align: right;
- }
+.div-button {
+  text-align: right;
+}
+
+.lista {
+  list-style-type: disc;
+  margin-left: 20px;
+}
+
+.expansion-panel {
+  width: 95%;
+  margin-left: 30px;
+}

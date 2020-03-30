@@ -28,6 +28,7 @@ export class CalificacionesPerfilEstudianteComponent implements OnInit {
   trimestreActual: string;
   fechaActual: Date;
   promedio = 0;
+  materiasPendientes = [{ nombre: "Biologia" }, { nombre: "Fisica" }];
 
   constructor(
     public servicioEstudiante: EstudiantesService,
@@ -44,15 +45,22 @@ export class CalificacionesPerfilEstudianteComponent implements OnInit {
     this.apellidoEstudiante = this.servicioEstudiante.estudianteSeleccionado.apellido;
     this.nombreEstudiante = this.servicioEstudiante.estudianteSeleccionado.nombre;
     this.obtenerTrimestrePorDefecto();
-   this.servicioCalificaciones
+    this.servicioCalificaciones
       .obtenerCalificacionesXMateriaXEstudiante(this.trimestreActual)
       .subscribe(res => {
         this.calificacionesXMateria = res.vectorCalXMat;
       });
+    this.servicioCalificaciones
+      .obtenerMateriasDesaprobadasEstudiante()
+      .subscribe(materias => {
+        if (materias.materiasDesaprobadas != null) {
+          this.materiasPendientes = materias.materiasDesaprobadas;
+        }
+      });
   }
 
   onChangeTrimestre() {
-   this.servicioCalificaciones
+    this.servicioCalificaciones
       .obtenerCalificacionesXMateriaXEstudiante(this.trimestreActual)
       .subscribe(res => {
         this.calificacionesXMateria = res.vectorCalXMat;

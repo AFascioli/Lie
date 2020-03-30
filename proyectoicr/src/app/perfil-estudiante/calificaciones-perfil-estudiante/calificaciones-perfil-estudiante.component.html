@@ -1,4 +1,6 @@
-<h1 class="componente-titulo">Calificaciones de {{apellidoEstudiante}}, {{nombreEstudiante}}</h1>
+<h1 class="componente-titulo">
+  Calificaciones de {{ apellidoEstudiante }}, {{ nombreEstudiante }}
+</h1>
 <mat-card class="card-body-componente">
   <mat-form-field>
     <mat-select
@@ -49,7 +51,10 @@
         [ngClass]="{ bajoPromedio: this.promedio < 6 }"
       >
         <p
-          *ngIf="calificacionesXMateria.calificaciones[0] != 0; else noTieneNotas"
+          *ngIf="
+            calificacionesXMateria.calificaciones[0] != 0;
+            else noTieneNotas
+          "
         >
           {{ calificacionesXMateria.calificaciones[0] }}
         </p>
@@ -70,7 +75,10 @@
         [ngClass]="{ bajoPromedio: this.promedio < 6 }"
       >
         <p
-          *ngIf="calificacionesXMateria.calificaciones[1] != 0; else noTieneNotas"
+          *ngIf="
+            calificacionesXMateria.calificaciones[1] != 0;
+            else noTieneNotas
+          "
         >
           {{ calificacionesXMateria.calificaciones[1] }}
         </p>
@@ -91,7 +99,10 @@
         [ngClass]="{ bajoPromedio: this.promedio < 6 }"
       >
         <p
-          *ngIf="calificacionesXMateria.calificaciones[2] != 0; else noTieneNotas"
+          *ngIf="
+            calificacionesXMateria.calificaciones[2] != 0;
+            else noTieneNotas
+          "
         >
           {{ calificacionesXMateria.calificaciones[2] }}
         </p>
@@ -112,7 +123,10 @@
         [ngClass]="{ bajoPromedio: this.promedio < 6 }"
       >
         <p
-          *ngIf="calificacionesXMateria.calificaciones[3] != 0; else noTieneNotas"
+          *ngIf="
+            calificacionesXMateria.calificaciones[3] != 0;
+            else noTieneNotas
+          "
         >
           {{ calificacionesXMateria.calificaciones[3] }}
         </p>
@@ -133,7 +147,10 @@
         [ngClass]="{ bajoPromedio: this.promedio < 6 }"
       >
         <p
-          *ngIf="calificacionesXMateria.calificaciones[4] != 0; else noTieneNotas"
+          *ngIf="
+            calificacionesXMateria.calificaciones[4] != 0;
+            else noTieneNotas
+          "
         >
           {{ calificacionesXMateria.calificaciones[4] }}
         </p>
@@ -154,7 +171,10 @@
         [ngClass]="{ bajoPromedio: this.promedio < 6 }"
       >
         <p
-          *ngIf="calificacionesXMateria.calificaciones[5] != 0; else noTieneNotas"
+          *ngIf="
+            calificacionesXMateria.calificaciones[5] != 0;
+            else noTieneNotas
+          "
         >
           {{ calificacionesXMateria.calificaciones[5] }}
         </p>
@@ -186,12 +206,39 @@
     <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
     <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
   </table>
+
+  <mat-accordion
+    class="example-headers-align"
+    *ngIf="materiasPendientes.length != 0"
+  >
+    <mat-expansion-panel hideToggle class="expansion-panel">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          <b>Resumen de materias desaprobadas o pendientes</b>
+        </mat-panel-title>
+        <mat-panel-description>
+          <mat-icon>menu_book</mat-icon>
+        </mat-panel-description>
+      </mat-expansion-panel-header>
+      <div *ngFor="let materiaPendiente of materiasPendientes">
+        <br />
+        <ul>
+          <li class="lista">
+            {{ materiaPendiente.nombre }}
+          </li>
+        </ul>
+      </div>
+      <br />
+    </mat-expansion-panel>
+  </mat-accordion>
+  <br />
   <div class="div-button">
     <button
-    mat-raised-button
-    [routerLink]="['/perfilEstudiante']"
-    class="buttonWarn" >
-       Volver
+      mat-raised-button
+      [routerLink]="['/perfilEstudiante']"
+      class="buttonWarn"
+    >
+      Volver
     </button>
   </div>
 </mat-card>
