@@ -71,6 +71,7 @@ export class VisualizarEventoComponent implements OnInit {
   }
 
   onGuardar(descripcion) {
+    console.log(descripcion);
     if (!this.descripcionComentario || !this.descripcionComentario.trim()) {
       this.snackBar.open("El comentario esta vacío", "", {
         duration: 4500,
@@ -79,7 +80,7 @@ export class VisualizarEventoComponent implements OnInit {
     } else {
       const comentario: Comentario = {
         idUsuario: null,
-        comentario: descripcion,
+        cuerpo: descripcion,
         nombre: null,
         apellido: null,
         fecha: new Date()
