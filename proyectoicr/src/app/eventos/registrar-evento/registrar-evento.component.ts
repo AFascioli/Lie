@@ -149,12 +149,12 @@ export class RegistrarEventoComponent implements OnInit, OnDestroy {
     );
   }
 
-  aplicarResize = files => {
+  aplicarResize = file => {
     return new Promise((resolve, reject) => {
-      this.ng2ImgMax.resize(files, 10000, 600).subscribe(result => {
+      this.ng2ImgMax.resizeImage(file, 20000, 375).subscribe(result => {
         resolve(new File([result], result.name));
       });
-      if (files == null) {
+      if (file == null) {
         reject("No se pudo realizar el resize");
       }
     });
@@ -188,14 +188,13 @@ export class RegistrarEventoComponent implements OnInit, OnDestroy {
 
     //ver de aplicar resize individual
     incorrectType && (this.message = "Solo se admiten archivos de imagen");
-    fileResize = await this.aplicarResize([...fileResize]);
-    console.log("despues resize", fileResize);
-    // this.imageFile = fileResize;
+    console.log(fileResize);
+    this.imageFile = fileResize;
 
-    // for (let index = 0; index < fileResize.length; index++) {
-    //   var reader = new FileReader();
-    //   this.imgURL[index] = await this.obtenerImagen(fileResize[index], reader);
-    // }
+    for (let index = 0; index < fileResize.length; index++) {
+      var reader = new FileReader();
+      this.imgURL[index] = await this.obtenerImagen(fileResize[index], reader);
+    }
   }
 
   onGuardarEvento(form: NgForm) {
