@@ -2,7 +2,11 @@
   Instituto Cristo Rey
 </h1>
 
-<mat-card class="card-body-componente" *ngFor="let evento of eventos; let i = index">
+<mat-card
+  class="card-body-componente"
+  *ngFor="let evento of eventos; let i = index"
+  ngIf="eventos.length == 0"
+>
   <mat-card-title>
     <button (click)="eventoSeleccionado(evento)" class="titulo">
       {{ evento.titulo }}
@@ -54,4 +58,6 @@
   </div>
 </mat-card>
 
-
+<mat-card class="card-body-componente" *ngIf="eventos.length == 0">
+  <h1 class="tituloAviso">No existen eventos publicados por la institución</h1>
+</mat-card>

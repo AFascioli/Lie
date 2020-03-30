@@ -1,4 +1,4 @@
-import { environment } from 'src/environments/environment';
+import { environment } from "src/environments/environment";
 import { async } from "@angular/core/testing";
 import { EventosService } from "./../eventos/eventos.service";
 import { Component, OnInit } from "@angular/core";
@@ -17,7 +17,7 @@ declare var require: any;
   styleUrls: ["./home.component.css"]
 })
 export class HomeComponent implements OnInit {
-  eventos: Evento[];
+  eventos: Evento[] = [];
   imagen;
   fechaActual;
   readonly VAPID_PUBLIC =
@@ -33,8 +33,8 @@ export class HomeComponent implements OnInit {
     public dialog: MatDialog
   ) {}
 
-  getImage(imgUrl){
-      return `${environment.apiUrl}/evento/imagenes?imgUrl=${imgUrl}`
+  getImage(imgUrl) {
+    return `${environment.apiUrl}/evento/imagenes?imgUrl=${imgUrl}`;
   }
 
   obtenerMes(fechaEvento) {
@@ -120,7 +120,7 @@ export class HomeComponent implements OnInit {
   ]
 })
 export class BorrarPopupComponent {
- // titulo: string;
+  // titulo: string;
 
   constructor(
     public dialogRef: MatDialogRef<BorrarPopupComponent>,
