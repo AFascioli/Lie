@@ -1013,7 +1013,7 @@ router.post(
 //@params: idCurso
 router.get("/agenda", checkAuthMiddleware, (req, res) => {
   Curso.findById(req.query.idCurso).then(curso => {
-     if(curso.materias.length!=0){
+    if (curso.materias.length != 0) {
       Curso.aggregate([
         {
           $match: {
@@ -1109,16 +1109,14 @@ router.get("/agenda", checkAuthMiddleware, (req, res) => {
             message: "Mensaje de error especifico"
           });
         });
-     }
-     else{
+    } else {
       res.json({
         exito: true,
         message: "Se ha obtenido la agenda correctamente",
         agenda: []
       });
-     }
+    }
   });
-
 });
 
 //Recibimos : idCXM, idHorarios,
@@ -1144,7 +1142,6 @@ router.post("/eliminarHorario", checkAuthMiddleware, (req, res) => {
       });
     });
 });
-
 
 //Se fija cada objeto del vector agenda, si es una mxc nueva la registra
 //para un curso dado, sino se modifica el horario de la mxc existente.
@@ -1235,7 +1232,7 @@ router.post("/agenda", checkAuthMiddleware, async (req, res) => {
     Curso.findByIdAndUpdate(req.body.idCurso, {
       $push: { materias: { $each: vectorIdsMXC } }
     }).then(curso => {
-      res.json({ exito: true, message: "Materias agregadas" });
+      res.json({ exito: true, message: "Materias agregadas correctamente" });
     });
   } else {
     res.json({ exito: true, message: "Horarios modificados correctamente" });
