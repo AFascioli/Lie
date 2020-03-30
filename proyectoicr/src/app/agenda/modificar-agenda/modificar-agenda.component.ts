@@ -109,7 +109,7 @@ export class ModificarAgendaComponent implements OnInit {
       this.servicioAgenda
         .registrarAgenda(this.dataSource.data, this.idCursoSeleccionado)
         .subscribe(response => {
-          console.log(response.message);
+          this.openSnackBar(response.message, "snack-bar-exito");
         });
     } else {
       this.openSnackBar(this.mensajeError, "snack-bar-fracaso");

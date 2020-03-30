@@ -1,18 +1,20 @@
-<div *ngIf="sanciones.length != 0" class="resumenSanciones">
-  <h3><b class="tituloResumen"> Resumen de sanciones</b></h3>
-  <p><b>Llamados de atención:</b> {{ sumatoriaSanciones[0] }}</p>
-  <p><b>Apercibimientos:</b> {{ sumatoriaSanciones[1] }}</p>
-  <p><b>Amonestaciones:</b> {{ sumatoriaSanciones[2] }}</p>
-  <p><b>Suspenciones:</b> {{ sumatoriaSanciones[3] }}</p>
-</div>
+<h1 class="componente-titulo">Sanciones de {{apellidoEstudiante}}, {{nombreEstudiante}}</h1>
+<mat-card class="card-body-componente">
+  <div *ngIf="sanciones.length != 0" class="resumenSanciones">
+    <h3><b class="tituloResumen"> Resumen de sanciones</b></h3>
+    <p><b>Llamados de atención:</b> {{ sumatoriaSanciones[0] }}</p>
+    <p><b>Apercibimientos:</b> {{ sumatoriaSanciones[1] }}</p>
+    <p><b>Amonestaciones:</b> {{ sumatoriaSanciones[2] }}</p>
+    <p><b>Suspenciones:</b> {{ sumatoriaSanciones[3] }}</p>
+  </div>
 
-<table mat-table [dataSource]="sanciones" *ngIf="sanciones.length != 0">
-  <ng-container matColumnDef="fecha">
-    <th class="columnasNormales" mat-header-cell *matHeaderCellDef>
-      Fecha
-    </th>
-    <td class="columnasNormales" mat-cell *matCellDef="let sancion">
-      {{ sancion.fecha | date: "dd/MM/yyyy" }}
+  <table mat-table [dataSource]="sanciones" *ngIf="sanciones.length != 0">
+    <ng-container matColumnDef="fecha">
+      <th class="columnasNormales" mat-header-cell *matHeaderCellDef>
+        Fecha
+      </th>
+      <td class="columnasNormales" mat-cell *matCellDef="let sancion">
+        {{ sancion.fecha | date: "dd/MM/yyyy" }}
     </td>
   </ng-container>
   <ng-container matColumnDef="tipoSancion">
@@ -33,6 +35,16 @@
   </ng-container>
   <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
   <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
-</table>
+  </table>
 
-<p *ngIf="sanciones.length == 0" class="sinSanciones">El estudiante no presenta sanciones</p>
+  <p *ngIf="sanciones.length == 0" class="sinSanciones">El estudiante no presenta sanciones</p>
+  <div class="div-button">
+    <button
+    mat-raised-button
+    [routerLink]="['/perfilEstudiante']"
+    class="buttonWarn" >
+       Volver
+    </button>
+  </div>
+</mat-card>
+

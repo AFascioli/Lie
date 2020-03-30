@@ -1,8 +1,39 @@
-    <div *ngIf="contadorInasistenciaInjustificada && contadorInasistenciaInjustificada!=0" style="display: block">
-      <canvas baseChart [data]="barChartData" [labels]="barChartLabels" [options]="barChartOptions"
-      [plugins]="barChartPlugins" [legend]="barChartLegend" [chartType]="barChartType"
-      ></canvas>
-      <p *ngIf="contadorInasistenciaInjustificada<15" class="mensajeReincorporacion"> <b>Le quedan {{(15-contadorInasistenciaInjustificada)}} inasistencias injustificadas para la reincorporación </b></p>
-    </div>
-    <p *ngIf="contadorInasistenciaInjustificada==0"> <b> El estudiante no presenta ninguna inasistencia </b></p>
-
+<h1 class="componente-titulo">Inasistencias</h1>
+<mat-card class="card-body-componente">
+  <div
+    *ngIf="
+      contadorInasistenciaInjustificada && contadorInasistenciaInjustificada != 0
+    "
+    style="display: block"
+  >
+    <canvas
+      baseChart
+      [data]="barChartData"
+      [labels]="barChartLabels"
+      [options]="barChartOptions"
+      [plugins]="barChartPlugins"
+      [legend]="barChartLegend"
+      [chartType]="barChartType"
+    ></canvas>
+    <p
+      *ngIf="contadorInasistenciaInjustificada < 15"
+      class="mensajeReincorporacion"
+    >
+      <b
+        >Le quedan {{ 15 - contadorInasistenciaInjustificada }} inasistencias
+        injustificadas para la reincorporación
+      </b>
+    </p>
+  </div>
+  <p *ngIf="contadorInasistenciaInjustificada == 0">
+    <b> El estudiante no presenta ninguna inasistencia </b>
+  </p>
+  <div class="div-button">
+    <button
+    mat-raised-button
+    [routerLink]="['/perfilEstudiante']"
+    class="buttonWarn" >
+       Volver
+    </button>
+  </div>
+</mat-card>

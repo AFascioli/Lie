@@ -78,7 +78,6 @@ export class BuscarEstudiantesComponent implements OnInit {
         panelClass: ["snack-bar-fracaso"],
         duration: 4000
       });
-      console.log(this.servicio.retornoDesdeAcciones);
     }
   }
 
@@ -117,7 +116,6 @@ export class BuscarPopupComponent {
     this.dialogRef.close();
   }
   onNoClick(): void {
-    console.log(this.dialogRef);
     this.dialogRef.close();
   }
 

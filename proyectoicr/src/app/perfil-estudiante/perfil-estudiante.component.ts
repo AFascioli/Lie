@@ -29,19 +29,38 @@ export class PerfilEstudianteComponent implements OnInit {
     this.apellidoEstudiante = this.servicio.estudianteSeleccionado.apellido;
     this.nombreEstudiante = this.servicio.estudianteSeleccionado.nombre;
     this._idEstudiante = this.servicio.estudianteSeleccionado._id;
-
-    this.calificacionesSelected= true;
-    let botonCalificaciones = document.getElementById('calificaciones') as HTMLElement;
-    botonCalificaciones.click();
-  }
-
-
-  onClickCalificaciones(){
-    this.router.navigate(["/perfilEstudiante/calificacionesEstudiante"]);
   }
 
   onCancelar(){
     this.popup.open(PerfilEstudiantePopupComponent);
+  }
+
+  onClickCalificaciones(){
+    this.router.navigate(["./calificacionesPerfilEstudiante"]);
+  }
+
+  onClickInasistencias(){
+    this.router.navigate(["./inasistenciasPerfilEstudiante"]);
+  }
+
+  onClickCuotas(){
+    this.router.navigate(["./cuotasPerfilEstudiante"]);
+  }
+
+  onClickHorarios(){
+    this.router.navigate(["./agendaCursoPerfilEstudiante"]);
+  }
+
+  onClickSanciones(){
+    this.router.navigate(["./sancionesPerfilEstudiante"]);
+  }
+
+  onClickTutores(){
+    this.router.navigate(["./tutoresPerfilEstudiante"]);
+  }
+
+  onClickDatosEstudiante(){
+    this.router.navigate(["./datosPerfilEstudiante"]);
   }
 
 }

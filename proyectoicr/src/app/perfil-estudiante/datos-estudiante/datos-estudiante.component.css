@@ -1,7 +1,3 @@
-h1{
-  font-size: larger;
-}
-
 .datosEstudiante{
   margin-left: 15%;
 }
@@ -10,4 +6,8 @@ li {
   font-size: 14px;
   margin-left: 10px;
   list-style-type: circle;
+}
+
+.div-button{
+  text-align: right;
 }

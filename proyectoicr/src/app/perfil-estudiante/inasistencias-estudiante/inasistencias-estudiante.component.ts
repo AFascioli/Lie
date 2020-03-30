@@ -15,6 +15,21 @@ export class InasistenciasEstudianteComponent implements OnInit {
   contadorInasistenciaInjustificada: number;
   barChartData: any[];
   barChartLabels: Label[];
+  public barChartOptions: ChartOptions = {
+    responsive: true,
+    plugins: {
+      datalabels: {
+        font: {
+          size: 20,
+          weight: "bold"
+        }
+      }
+    }
+  };
+
+  public barChartType: ChartType = "pie";
+  public barChartPlugins = [pluginDataLabels];
+  public barChartLegend;
 
   constructor(public servicioAsistencia: AsistenciaService) {}
 
@@ -38,20 +53,4 @@ export class InasistenciasEstudianteComponent implements OnInit {
         ];
       });
   }
-
-  public barChartOptions: ChartOptions = {
-    responsive: true,
-    plugins: {
-      datalabels: {
-        font: {
-          size: 20,
-          weight: "bold"
-        }
-      }
-    }
-  };
-
-  public barChartType: ChartType = "pie";
-  public barChartPlugins = [pluginDataLabels];
-  public barChartLegend;
 }

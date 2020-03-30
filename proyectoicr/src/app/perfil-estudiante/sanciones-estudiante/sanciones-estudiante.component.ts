@@ -12,7 +12,9 @@ export class SancionesEstudianteComponent implements OnInit {
   sanciones: any[] = [];
   displayedColumns: string[] = ["fecha", "tipoSancion", "cantidad"];
 
-  sumatoriaSanciones = [0,0,0,0];
+  sumatoriaSanciones = [0, 0, 0, 0];
+  apellidoEstudiante: string;
+  nombreEstudiante: string;
 
   constructor(
     public servicio: EstudiantesService,
@@ -23,9 +25,11 @@ export class SancionesEstudianteComponent implements OnInit {
     this.servicio.getSancionesDeEstudiante().subscribe(respuesta => {
       if (respuesta.exito) {
         this.sanciones = respuesta.sanciones;
-        if(this.sanciones.length!=0){
+        if (this.sanciones.length != 0) {
           this.calcularSumatoriaSanciones();
         }
+        this.apellidoEstudiante = this.servicio.estudianteSeleccionado.apellido;
+        this.nombreEstudiante = this.servicio.estudianteSeleccionado.nombre;
       }
     });
   }
@@ -34,16 +38,16 @@ export class SancionesEstudianteComponent implements OnInit {
     this.sanciones.forEach(sancion => {
       switch (sancion.tipo) {
         case "Llamado de atencion":
-          this.sumatoriaSanciones[0]+=sancion.cantidad;
+          this.sumatoriaSanciones[0] += sancion.cantidad;
           break;
         case "Apercibimiento":
-          this.sumatoriaSanciones[1]+=sancion.cantidad;
+          this.sumatoriaSanciones[1] += sancion.cantidad;
           break;
         case "Amonestacion":
-          this.sumatoriaSanciones[2]+=sancion.cantidad;
+          this.sumatoriaSanciones[2] += sancion.cantidad;
           break;
         case "Suspencion":
-          this.sumatoriaSanciones[3]+=sancion.cantidad;
+          this.sumatoriaSanciones[3] += sancion.cantidad;
           break;
       }
     });

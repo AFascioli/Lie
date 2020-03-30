@@ -27,7 +27,7 @@ export class AgendaCursoPerfilEstudianteComponent implements OnInit {
     "14:15"
   ];
   idCurso: any;
-  cursos: any[];
+  curso: string;
   materiasDistintas = [];
   cursoSelected: Boolean = false;
   colores = [];
@@ -55,7 +55,7 @@ export class AgendaCursoPerfilEstudianteComponent implements OnInit {
     this.nombreEstudiante = this.servicio.estudianteSeleccionado.nombre;
     this._idEstudiante = this.servicio.estudianteSeleccionado._id;
     this.servicio.obtenerCursoDeEstudiante().subscribe(result => {
-      console.log(result);
+      this.curso=result.curso;
       this.actualizarInterfaz(result.idCurso);
     });
   }

@@ -46,7 +46,7 @@ export class AgendaService {
   //@params: agenda del curso (dia, hora inicio y hora fin)
   public registrarAgenda(agenda: any[], curso: string) {
     return this.http.post<{ exito: boolean; message: string }>(
-      environment.apiUrl + "/curso/agendaTEST",
+      environment.apiUrl + "/curso/agenda",
       { agenda: agenda, idCurso: curso }
     );
   }

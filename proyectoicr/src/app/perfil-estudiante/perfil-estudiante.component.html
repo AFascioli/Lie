@@ -1,20 +1,29 @@
 <h1 class="componente-titulo">
-  Resumen académico {{fechaActual.getFullYear()}} de: {{ apellidoEstudiante }}, {{ nombreEstudiante }}
+  Resumen académico {{ fechaActual.getFullYear() }} de:
+  {{ apellidoEstudiante }}, {{ nombreEstudiante }}
 </h1>
-<mat-card class="card-body-componente">
-  <mat-toolbar class="fixed-header">
-    <mat-toolbar-row>
-      <button id="calificaciones" mat-button routerLinkActive="mat-accent" (click)="onClickCalificaciones()" routerLink="./calificacionesEstudiante" >Calificaciones</button>
-      <button mat-button routerLinkActive="mat-accent" routerLink="./inasistenciasEstudiante">Inasistencias</button>
-      <button mat-button routerLinkActive="mat-accent" routerLink="./cuotasEstudiante">Historial de cuotas</button>
-      <button mat-button routerLinkActive="mat-accent" routerLink="./agendaCursoEstudiante">Agenda de curso</button>
-      <button mat-button routerLinkActive="mat-accent" routerLink="./sancionesEstudiante">Sanciones aplicadas</button>
-      <button mat-button routerLinkActive="mat-accent" routerLink="./tutoresEstudiante">Tutores</button>
-      <button mat-button routerLinkActive="mat-accent" routerLink="./datosEstudiante" >Datos del estudiante</button>
-    </mat-toolbar-row>
-  </mat-toolbar>
-  <router-outlet></router-outlet>
-
+<div class="grid-container ">
+  <mat-card class="opcion" (click)="onClickCalificaciones()"
+    ><mat-icon [inline]="true">assignment_turned_in</mat-icon><br><b>Calificaciones</b></mat-card
+  >
+  <mat-card class="opcion" (click)="onClickInasistencias()"
+    ><mat-icon [inline]="true">import_contacts</mat-icon><br><b>Inasistencias</b></mat-card
+  >
+  <mat-card class="opcion" (click)="onClickCuotas()"
+    ><mat-icon [inline]="true">attach_money</mat-icon><br><b>Historial de cuotas</b></mat-card
+  >
+  <!-- considerar local_atm -->
+  <mat-card class="opcion" (click)="onClickHorarios()"
+    ><mat-icon [inline]="true">schedule</mat-icon><br><b>Horarios</b></mat-card
+  >
+  <mat-card class="opcion" (click)="onClickSanciones()"
+    ><mat-icon [inline]="true">announcement</mat-icon><br><b>Sanciones</b></mat-card
+  >
+  <mat-card class="opcion" (click)="onClickTutores()"><mat-icon [inline]="true">wc</mat-icon><br><b>Tutores</b></mat-card>
+  <mat-card class="opcion" (click)="onClickDatosEstudiante()"
+    ><mat-icon [inline]="true">face</mat-icon><br><b>Datos estudiante</b></mat-card
+  >
+</div>
  <div class="div-button">
   <button
   mat-raised-button
@@ -22,6 +31,3 @@
   class="buttonWarn" >
      Volver
   </button>
-
-</div>
-</mat-card>

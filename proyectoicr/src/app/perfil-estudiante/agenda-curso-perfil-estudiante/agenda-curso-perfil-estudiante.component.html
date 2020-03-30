@@ -1,3 +1,4 @@
+<h1 class="componente-titulo">Horarios de {{curso}}</h1>
 <mat-card class="card-body-componente" *ngIf="materias.length != 0">
   <div id="parent-id" class="grid-container" *ngIf="cursoSelected">
     <div class="cabecera" [class.texto-mobile]="mobileQuery.matches">
@@ -107,5 +108,13 @@
         </div>
       </div>
     </div>
+  </div>
+  <div class="div-button">
+    <button
+    mat-raised-button
+    [routerLink]="['/perfilEstudiante']"
+    class="buttonWarn" >
+       Volver
+    </button>
   </div>
 </mat-card>

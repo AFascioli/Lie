@@ -13,9 +13,13 @@ th{
 }
 
 td, th{
-  text-align: center;
+  text-align: center !important;
 }
 
 .aviso{
   text-align: center;
+}
+
+.div-button{
+  text-align: right;
 }
