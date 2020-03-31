@@ -20,12 +20,9 @@ textarea {
 }
 
 .image-preview {
-  height: 20rem;
   margin: auto;
   display: flex;
   border: 3px solid black;
-  padding: 5px;
-  margin-bottom: 20px !important;
 }
 
 mat-datepicker-toggle {

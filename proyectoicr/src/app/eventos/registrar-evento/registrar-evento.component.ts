@@ -46,6 +46,7 @@ export class RegistrarEventoComponent implements OnInit, OnDestroy {
   horaInicio = "";
   horaFin = "";
   src;
+  indiceImagen = 0;
   private unsubscribe: Subject<void> = new Subject();
 
   constructor(
@@ -245,5 +246,17 @@ export class RegistrarEventoComponent implements OnInit, OnDestroy {
     this.dialog.open(CancelPopupComponent, {
       width: "250px"
     });
+  }
+
+  mostrarImagenSiguiente() {
+    this.indiceImagen += 1;
+  }
+
+  mostrarImagenAnterior() {
+    this.indiceImagen -= 1;
+  }
+
+  obtenerImagen() {
+    return this.imgURL[this.indiceImagen];
   }
 }

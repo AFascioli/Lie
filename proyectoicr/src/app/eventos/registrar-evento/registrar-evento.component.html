@@ -109,49 +109,6 @@
       </mat-autocomplete>
     </mat-form-field>
     <div>
-      <!-- <mat-carousel
-        interval="5000"
-        color="warn"
-        maintainAspectRatio="false"
-        proportion="120"
-        [hideIndicators]="false"
-      >
-        <div *ngFor="let src of imgURL">
-          <mat-carousel-slide overlayColor="transparent" [image]="src">
-          </mat-carousel-slide>
-        </div>
-      </mat-carousel> -->
-      <!-- <div
-        id="carouselExampleControls"
-        class="carousel slide"
-        data-ride="carousel"
-      >
-        <div class="carousel-inner">
-          <div class="carousel-item active" *ngFor="let src of imgURL">
-            <img class="d-block w-100" src="imgURL[0]" />
-          </div>
-        </div>
-        <a
-          class="carousel-control-prev"
-          href="#carouselExampleControls"
-          role="button"
-          data-slide="prev"
-        >
-          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-          <span class="sr-only">Previous</span>
-        </a>
-        <a
-          class="carousel-control-next"
-          href="#carouselExampleControls"
-          role="button"
-          data-slide="next"
-        >
-          <span class="carousel-control-next-icon" aria-hidden="true"></span>
-          <span class="sr-only">Next</span>
-        </a>
-      </div> -->
-      <img [src]="imgURL[0]" [hidden]="!imgURL[0]" />
-      <img [src]="imgURL[1]" [hidden]="!imgURL[1]" />
       <div class="contenedor-flexbox">
         <button
           mat-stroked-button
@@ -161,6 +118,33 @@
         >
           Seleccionar imagen
         </button>
+      </div>
+      <br />
+      <div *ngIf="imgURL.length != 0">
+        <mat-card>
+          <img
+            [src]="obtenerImagen()"
+            [hidden]="imgURL.length != 0"
+            class="image-preview"
+          />
+          <br />
+          <button
+            id="beforeArrow"
+            class="botonBefore"
+            mat-icon-button
+            (click)="mostrarImagenAnterior()"
+          >
+            <mat-icon>navigate_before</mat-icon>
+          </button>
+          <button
+            id="afterArrow"
+            class="botonBefore"
+            mat-icon-button
+            (click)="mostrarImagenSiguiente()"
+          >
+            <mat-icon>navigate_next</mat-icon>
+          </button>
+        </mat-card>
       </div>
       <br />
       <span class="mensaje" *ngIf="message">{{ message }}</span>
