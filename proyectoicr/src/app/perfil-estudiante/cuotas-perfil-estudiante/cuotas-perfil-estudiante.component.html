@@ -1,6 +1,6 @@
 <h1 class="componente-titulo">Historial de cuotas</h1>
 <mat-card class="card-body-componente">
-  <table mat-table [dataSource]="cuotasV">
+  <table mat-table [dataSource]="cuotasV" [class.table-mobile]="mobileQuery.matches">
     <ng-container matColumnDef="Mes">
       <th class="columnasNormales" mat-header-cell *matHeaderCellDef>
         Mes

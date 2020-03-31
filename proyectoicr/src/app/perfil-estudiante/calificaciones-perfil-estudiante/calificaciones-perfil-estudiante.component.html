@@ -21,6 +21,7 @@
   </mat-form-field>
   <table
     mat-table
+    [class.table-mobile]="mobileQuery.matches"
     [dataSource]="calificacionesXMateria"
     *ngIf="calificacionesXMateria"
   >
@@ -211,7 +212,7 @@
     class="example-headers-align"
     *ngIf="materiasPendientes.length != 0"
   >
-    <mat-expansion-panel hideToggle class="expansion-panel">
+    <mat-expansion-panel hideToggle class="expansion-panel" [class.expansion-panel-mobile]="mobileQuery.matches">
       <mat-expansion-panel-header>
         <mat-panel-title>
           <b>Resumen de materias desaprobadas o pendientes</b>

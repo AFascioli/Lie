@@ -1,6 +1,7 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, ChangeDetectorRef } from "@angular/core";
 import { EstudiantesService } from "../../estudiantes/estudiante.service";
 import { Estudiante } from "../../estudiantes/estudiante.model";
+import { MediaMatcher } from '@angular/cdk/layout';
 
 @Component({
   selector: "app-datos-estudiante",
@@ -12,8 +13,17 @@ export class CuotasPerfilEstudianteComponent implements OnInit {
   cuotasV: any[] = [];
   datasource: any[] = [];
   displayedColumns: string[] = ["Mes", "Pagado"];
+  _mobileQueryListener: () => void;
+  mobileQuery: MediaQueryList;
 
-  constructor(public servicio: EstudiantesService) {}
+  constructor(public servicio: EstudiantesService,
+    public changeDetectorRef: ChangeDetectorRef,
+    public media: MediaMatcher
+  ) {
+    this.mobileQuery = media.matchMedia('(max-width: 880px)');
+    this._mobileQueryListener = () => changeDetectorRef.detectChanges();
+    this.mobileQuery.addListener(this._mobileQueryListener);
+  }
 
   ngOnInit() {
     this.servicio.getCuotasDeEstudiante().subscribe(respuesta => {

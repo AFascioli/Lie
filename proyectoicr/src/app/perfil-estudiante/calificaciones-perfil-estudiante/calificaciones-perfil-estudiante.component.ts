@@ -1,9 +1,10 @@
 import { CalificacionesService } from "../../calificaciones/calificaciones.service";
 //import { Estudiante } from "src/app/estudiantes/estudiante.model";
 import { EstudiantesService } from "src/app/estudiantes/estudiante.service";
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, ChangeDetectorRef } from "@angular/core";
 import { Router } from "@angular/router";
 import { AutenticacionService } from "src/app/login/autenticacionService.service";
+import { MediaMatcher } from '@angular/cdk/layout';
 
 @Component({
   selector: "app-calificaciones-perfil-estudiante",
@@ -29,13 +30,21 @@ export class CalificacionesPerfilEstudianteComponent implements OnInit {
   fechaActual: Date;
   promedio = 0;
   materiasPendientes = [{ nombre: "Biologia" }, { nombre: "Fisica" }];
+  _mobileQueryListener: () => void;
+  mobileQuery: MediaQueryList;
 
   constructor(
     public servicioEstudiante: EstudiantesService,
     public servicioCalificaciones: CalificacionesService,
     public router: Router,
-    public servicioEstudianteAutenticacion: AutenticacionService
-  ) {}
+    public servicioEstudianteAutenticacion: AutenticacionService,
+    public changeDetectorRef: ChangeDetectorRef,
+    public media: MediaMatcher
+  ) {
+    this.mobileQuery = media.matchMedia("(max-width: 880px)");
+    this._mobileQueryListener = () => changeDetectorRef.detectChanges();
+    this.mobileQuery.addListener(this._mobileQueryListener);
+  }
 
   ngOnInit() {
     this.fechaActual = new Date();

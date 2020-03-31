@@ -27,7 +27,7 @@ mat-card-content {
 
 .texto-mobile,
 .texto-mobile > * {
-  word-wrap: break-word;
+  overflow-wrap: break-word;
   font-size: 15px !important;
 }
 

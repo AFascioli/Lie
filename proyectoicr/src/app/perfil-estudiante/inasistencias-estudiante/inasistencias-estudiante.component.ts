@@ -17,6 +17,11 @@ export class InasistenciasEstudianteComponent implements OnInit {
   barChartLabels: Label[];
   public barChartOptions: ChartOptions = {
     responsive: true,
+    legend:{
+      labels:{
+        fontSize:18
+      }
+    },
     plugins: {
       datalabels: {
         font: {

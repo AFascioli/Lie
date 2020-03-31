@@ -4,6 +4,10 @@ table {
   margin: 2rem;
 }
 
+.table-mobile{
+  margin: auto;
+}
+
 .columnasNormales {
   width: 22% !important;
 }
@@ -13,7 +17,7 @@ table {
 }
 
 th {
-  text-align: center;
+  text-align: center !important;
   font-weight: bold;
   font-size: 15px;
 }
