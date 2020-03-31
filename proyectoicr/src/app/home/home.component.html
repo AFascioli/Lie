@@ -1,12 +1,11 @@
 <h1 class="componente-titulo">
   Instituto Cristo Rey
 </h1>
-
-<mat-card
+<ng-container  *ngIf="eventos.length != 0">
+  <mat-card
   class="card-body-componente"
   *ngFor="let evento of eventos; let i = index"
-  ngIf="eventos.length == 0"
->
+  >
   <mat-card-title>
     <button (click)="eventoSeleccionado(evento)" class="titulo">
       {{ evento.titulo }}
@@ -19,44 +18,45 @@
     </div>
   </mat-card-title>
   <mat-card-subtitle
-    >{{ evento.horaInicio }} - {{ evento.horaFin }}</mat-card-subtitle
+  >{{ evento.horaInicio }} - {{ evento.horaFin }}</mat-card-subtitle
   >
   <div class="containerImg">
     <img mat-card-image [src]="getImage(evento.imgUrl)" />
     <button
-      type="button"
-      mat-icon-button
-      class="botonEditar"
-      *ngIf="conocerUsuarioLogueado(i)"
+    type="button"
+    mat-icon-button
+    class="botonEditar"
+    *ngIf="conocerUsuarioLogueado(i)"
     >
-      <mat-icon (click)="onEditar(evento)">mode_edit </mat-icon>
-    </button>
-    <button
-      type="button"
-      mat-icon-button
-      class="botonBorrar"
-      *ngIf="conocerUsuarioLogueado(i)"
-    >
-      <mat-icon (click)="onBorrar(evento)">delete </mat-icon>
-    </button>
-  </div>
-  <mat-chip-list>
-    <p class="textoParticipan">Participan:</p>
-    <mat-chip *ngFor="let tag of evento.tags">
-      {{ tag }}
-    </mat-chip>
-  </mat-chip-list>
-  <mat-card-content>
-    <p class="descripcion">
-      {{ evento.descripcion }}
-    </p>
-  </mat-card-content>
-  <div class="botonVisualizar">
-    <button class="botonComentario" (click)="eventoSeleccionado(evento)">
-      Ver comentarios
-    </button>
-  </div>
+    <mat-icon (click)="onEditar(evento)">mode_edit </mat-icon>
+  </button>
+  <button
+  type="button"
+  mat-icon-button
+  class="botonBorrar"
+  *ngIf="conocerUsuarioLogueado(i)"
+  >
+  <mat-icon (click)="onBorrar(evento)">delete </mat-icon>
+</button>
+</div>
+<mat-chip-list>
+  <p class="textoParticipan">Participan:</p>
+  <mat-chip *ngFor="let tag of evento.tags">
+    {{ tag }}
+  </mat-chip>
+</mat-chip-list>
+<mat-card-content>
+  <p class="descripcion">
+    {{ evento.descripcion }}
+  </p>
+</mat-card-content>
+<div class="botonVisualizar">
+  <button class="botonComentario" (click)="eventoSeleccionado(evento)">
+    Ver comentarios
+  </button>
+</div>
 </mat-card>
+</ng-container>
 
 <mat-card class="card-body-componente" *ngIf="eventos.length == 0">
   <h1 class="tituloAviso">No existen eventos publicados por la institución</h1>

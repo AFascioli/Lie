@@ -1,8 +1,9 @@
-import { Component, OnInit, ElementRef, ViewChild } from '@angular/core';
+import { Component, OnInit, ElementRef, ViewChild, ChangeDetectorRef } from '@angular/core';
 import { EstudiantesService } from "../estudiantes/estudiante.service";
 import { Estudiante } from '../estudiantes/estudiante.model';
 import { Router } from '@angular/router';
 import { MatDialogRef, MatDialog } from '@angular/material';
+import { MediaMatcher } from '@angular/cdk/layout';
 
 
 @Component({
@@ -18,11 +19,20 @@ export class PerfilEstudianteComponent implements OnInit {
   idUsuario: string;
   calificacionesSelected: boolean;
   fechaActual: Date;
+  _mobileQueryListener: () => void;
+  mobileQuery: MediaQueryList;
 
   constructor(
     public servicio: EstudiantesService,
     public router: Router,
-    public popup: MatDialog) { }
+    public popup: MatDialog,
+    public changeDetectorRef: ChangeDetectorRef,
+    public media: MediaMatcher
+  ) {
+    this.mobileQuery = media.matchMedia("(max-width: 880px)");
+    this._mobileQueryListener = () => changeDetectorRef.detectChanges();
+    this.mobileQuery.addListener(this._mobileQueryListener);
+  }
 
   ngOnInit() {
     this.fechaActual = new Date();

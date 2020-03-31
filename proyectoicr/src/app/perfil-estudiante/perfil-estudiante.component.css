@@ -90,9 +90,19 @@ button{
   cursor: pointer;
   margin: auto;
   margin-top: 1rem;
-  margin-bottom: 1.5rem;
+  margin-bottom: 0.7rem;
   max-width: 800px;
   box-shadow: 0px 0px 8px 0px rgba(0, 0, 0, 0.71) !important;
+}
+
+.grid-container-mobile {
+  grid-template-columns: repeat(1,1fr);
+  grid-template-rows: auto;
+}
+
+.grid-container-mobile > .mat-card{
+  margin-bottom: 0.2rem;
+  margin-top: 0;
 }
 
 .mat-icon{
@@ -101,4 +111,8 @@ button{
 
 .div-button{
   width: 94%;
+}
+
+.div-button-mobile{
+  width: 88%;
 }
