@@ -51,6 +51,7 @@ export class ModificarAgendaComponent implements OnInit {
     "14:15"
   ];
   nuevo: number;
+  isLoading = true;
 
   constructor(
     public servicioEstudiante: EstudiantesService,
@@ -237,6 +238,7 @@ export class ModificarAgendaComponent implements OnInit {
           ? -1
           : 0
       );
+      this.isLoading = false;
     });
   }
 }

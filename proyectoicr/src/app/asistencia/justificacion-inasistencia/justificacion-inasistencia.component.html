@@ -1,8 +1,10 @@
 <mat-card class="cardSpinner" *ngIf="isLoading">
-  <mat-spinner class="spinner"></mat-spinner>
+  <mat-spinner class="spinner" [diameter]="60" ></mat-spinner>
 </mat-card>
-<h1 class="componente-titulo">Justificar inasistencia</h1>
-<mat-card class="card-body-componente">
+
+<h1 *ngIf="!isLoading" class="componente-titulo">Justificar inasistencia</h1>
+
+<mat-card class="card-body-componente" *ngIf="!isLoading">
   <form #form="ngForm">
     <p class="aviso" *ngIf="fueraDeCursado" >
         No se permiten realizar justificaciones debido a que se encuentra fuera

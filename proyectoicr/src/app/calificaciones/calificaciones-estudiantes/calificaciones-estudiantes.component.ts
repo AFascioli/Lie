@@ -32,7 +32,7 @@ export class CalificacionesEstudiantesComponent implements OnInit {
   trimestreSeleccionado: string;
   trimestreActual: string = "fuera";
   rolConPermisosEdicion = false;
-  isLoading = true;
+ isLoading = true;
   fechaActual: Date;
   calificacionesChange = false;
   puedeEditarCalificaciones = false;
@@ -200,7 +200,7 @@ export class CalificacionesEstudiantesComponent implements OnInit {
   //Recibe la palabra que escribe el usuario y filtra tabla de html
   aplicarFiltro(valorFiltro: string) {
     valorFiltro = valorFiltro.trim();
-    valorFiltro = valorFiltro.toLowerCase(); 
+    valorFiltro = valorFiltro.toLowerCase();
     this.dataSource.filter = valorFiltro;
   }
 

@@ -20,6 +20,7 @@ export class RegistrarAsistenciaComponent implements OnInit {
   asistenciaNueva: string = "true";
   agent: any;
   fueraPeriodoCicloLectivo = false;
+  isLoading = true;
 
   constructor(
     private servicioEstudiante: EstudiantesService,
@@ -59,6 +60,7 @@ export class RegistrarAsistenciaComponent implements OnInit {
             ? -1
             : 0
         );
+        this.isLoading = false;
       });
     } else {
       this.fueraPeriodoCicloLectivo = true;
@@ -90,6 +92,7 @@ export class RegistrarAsistenciaComponent implements OnInit {
         this.estudiantesXDivision = respuesta.estudiantes.sort((a, b) =>
           a.apellido > b.apellido ? 1 : b.apellido > a.apellido ? -1 : 0
         );
+
       });
   }
 
