@@ -19,7 +19,7 @@ import { MatSnackBar, MatDialog } from "@angular/material";
 import Rolldate from "../../../assets/rolldate.min.js";
 import { CancelPopupComponent } from "src/app/popup-genericos/cancel-popup.component";
 import { Router } from "@angular/router";
-import { Ng2ImgMaxService } from "ng2-img-max";
+import { ImageResult, ResizeOptions } from "ng2-imageupload";
 
 @Component({
   selector: "app-registrar-evento",
@@ -32,7 +32,7 @@ export class RegistrarEventoComponent implements OnInit, OnDestroy {
   >;
   @ViewChild("auto", { static: false }) matAutocomplete: MatAutocomplete;
   fechaActual: Date;
-  imageFile: File;
+  imagesFile: any = [];
   imgURL: any[] = [];
   message: string;
   selectable = true;
@@ -45,17 +45,15 @@ export class RegistrarEventoComponent implements OnInit, OnDestroy {
   allChips: string[] = ["1A", "2A", "3A", "4A", "5A", "6A", "Todos los cursos"];
   horaInicio = "";
   horaFin = "";
+  src;
   private unsubscribe: Subject<void> = new Subject();
 
   constructor(
     public eventoService: EventosService,
     public dialog: MatDialog,
     public snackBar: MatSnackBar,
-    public router: Router,
-    private ng2ImgMax: Ng2ImgMaxService
+    public router: Router
   ) {
-    //Hace que funcione el autocomplete, filtra
-
     this.filteredChips = this.chipsCtrl.valueChanges.pipe(
       startWith(null),
       map((chip: string | null) =>
@@ -149,52 +147,18 @@ export class RegistrarEventoComponent implements OnInit, OnDestroy {
     );
   }
 
-  aplicarResize = file => {
-    return new Promise((resolve, reject) => {
-      this.ng2ImgMax.resizeImage(file, 20000, 375).subscribe(result => {
-        resolve(new File([result], result.name));
-      });
-      if (file == null) {
-        reject("No se pudo realizar el resize");
-      }
-    });
+  resizeOptions: ResizeOptions = {
+    resizeMaxHeight: 600,
+    resizeMaxWidth: 600
   };
 
-  obtenerImagen = (file, reader) => {
-    return new Promise((resolve, reject) => {
-      reader.readAsDataURL(file);
-      reader.onload = _event => {
-        resolve(reader.result);
-      };
-      if (file == null) {
-        reject("No se pudo obtener la imagen");
-      }
-    });
-  };
-
-  async preview(files) {
-    let fileResize: any = [];
-    let incorrectType = false;
-    if (files.length === 0) return;
-
-    for (let index = 0; index < files.length; index++) {
-      fileResize.push(files[index]);
-      var mimeType = files[index].type;
-      if (mimeType.match(/image\/*/) == null) {
-        incorrectType = true;
-        files.splice(index, 1);
-      }
-    }
-
-    //ver de aplicar resize individual
-    incorrectType && (this.message = "Solo se admiten archivos de imagen");
-    console.log(fileResize);
-    this.imageFile = fileResize;
-
-    for (let index = 0; index < fileResize.length; index++) {
-      var reader = new FileReader();
-      this.imgURL[index] = await this.obtenerImagen(fileResize[index], reader);
-    }
+  async selectedImage(imagenCargada: ImageResult) {
+    this.imagesFile.push(imagenCargada.file);
+    console.log(imagenCargada);
+    this.imgURL.push(
+      (imagenCargada.resized && imagenCargada.resized.dataURL) ||
+        imagenCargada.dataURL
+    );
   }
 
   onGuardarEvento(form: NgForm) {
@@ -209,7 +173,7 @@ export class RegistrarEventoComponent implements OnInit, OnDestroy {
             this.horaInicio,
             this.horaFin,
             this.chips,
-            this.imageFile
+            this.imagesFile
           )
           .pipe(takeUntil(this.unsubscribe))
           .subscribe(rtdo => {
@@ -234,7 +198,7 @@ export class RegistrarEventoComponent implements OnInit, OnDestroy {
             this.horaInicio,
             this.horaFin,
             this.chips,
-            this.imageFile
+            this.imagesFile
           )
           .pipe(takeUntil(this.unsubscribe))
           .subscribe(rtdo => {

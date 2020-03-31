@@ -109,19 +109,49 @@
       </mat-autocomplete>
     </mat-form-field>
     <div>
-      <mat-carousel
+      <!-- <mat-carousel
         interval="5000"
-        maxWidth="auto"
-        proportion="75"
         color="warn"
-        [hideArrows]="false"
+        maintainAspectRatio="false"
+        proportion="120"
         [hideIndicators]="false"
       >
-        <div *ngFor="let imagen of imgURL">
-          <mat-carousel-slide overlayColor="transparent" [image]="imagen">
+        <div *ngFor="let src of imgURL">
+          <mat-carousel-slide overlayColor="transparent" [image]="src">
           </mat-carousel-slide>
         </div>
-      </mat-carousel>
+      </mat-carousel> -->
+      <!-- <div
+        id="carouselExampleControls"
+        class="carousel slide"
+        data-ride="carousel"
+      >
+        <div class="carousel-inner">
+          <div class="carousel-item active" *ngFor="let src of imgURL">
+            <img class="d-block w-100" src="imgURL[0]" />
+          </div>
+        </div>
+        <a
+          class="carousel-control-prev"
+          href="#carouselExampleControls"
+          role="button"
+          data-slide="prev"
+        >
+          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+          <span class="sr-only">Previous</span>
+        </a>
+        <a
+          class="carousel-control-next"
+          href="#carouselExampleControls"
+          role="button"
+          data-slide="next"
+        >
+          <span class="carousel-control-next-icon" aria-hidden="true"></span>
+          <span class="sr-only">Next</span>
+        </a>
+      </div> -->
+      <img [src]="imgURL[0]" [hidden]="!imgURL[0]" />
+      <img [src]="imgURL[1]" [hidden]="!imgURL[1]" />
       <div class="contenedor-flexbox">
         <button
           mat-stroked-button
@@ -139,7 +169,9 @@
         #file
         type="file"
         accept="image/*"
-        (change)="preview(file.files)"
+        (imageSelected)="selectedImage($event)"
+        imageUpload
+        [resizeOptions]="resizeOptions"
         multiple
       />
     </div>

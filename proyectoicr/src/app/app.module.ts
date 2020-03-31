@@ -121,7 +121,7 @@ import { RegistrarSancionesComponent } from "./sanciones/registrar-sanciones/reg
 import { SancionesEstudianteComponent } from "./perfil-estudiante/sanciones-estudiante/sanciones-estudiante.component";
 import { ErrorInterceptor } from "./error-interceptor";
 import { ErrorComponent } from "./error/error.component";
-import { Ng2ImgMaxModule } from "ng2-img-max";
+import { ImageUploadModule } from "ng2-imageupload";
 
 @NgModule({
   declarations: [
@@ -198,7 +198,6 @@ import { Ng2ImgMaxModule } from "ng2-img-max";
   ],
   imports: [
     MatChipsModule,
-    Ng2ImgMaxModule,
     BrowserModule,
     MatInputModule,
     ReactiveFormsModule,
@@ -230,6 +229,7 @@ import { Ng2ImgMaxModule } from "ng2-img-max";
     ChartsModule,
     MatPaginatorModule,
     NgxMaterialTimepickerModule,
+    ImageUploadModule,
     MatTooltipModule,
     MatCarouselModule.forRoot(),
     ServiceWorkerModule.register("ngsw-worker.js", {

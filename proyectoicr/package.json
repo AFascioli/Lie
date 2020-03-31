@@ -47,6 +47,7 @@
     "multer": "^1.4.2",
     "multer-gridfs-storage": "^4.0.2",
     "ng2-charts": "^2.3.0",
+    "ng2-imageupload": "^1.4.2",
     "ng2-img-max": "^2.2.4",
     "ngx-material-timepicker": "^5.3.0",
     "node-cron": "^2.0.3",
