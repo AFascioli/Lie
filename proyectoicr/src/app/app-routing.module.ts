@@ -93,7 +93,7 @@ const routes: Routes = [
         component: RegistrarAsistenciaComponent
       },
       {
-        path: "curso", //resolve: ruta inscribir estudiante a un curso
+        path: "curso", //#resolve: ruta inscribir estudiante a un curso
         component: InscripcionEstudianteComponent,
         canActivate: [RouteGuard, RoleGuard],
         data: { rolesValidos: ["Admin", "Preceptor", "Director"] }
