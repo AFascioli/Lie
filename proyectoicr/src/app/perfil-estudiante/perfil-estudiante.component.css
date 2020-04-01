@@ -62,3 +62,57 @@ button{
   color: black;
 }
 
+/* ---------------- */
+.grid-container {
+  width: 95%;
+  margin-left: auto;
+  margin-right: auto;
+  display: grid;
+  grid-template-columns:  repeat(3,1fr);
+  grid-template-rows:  150px 150px 150px;
+  grid-gap: 8px;
+  padding: 10px;
+  border-radius: 4px;
+}
+
+.grid-container > .mat-card {
+  display: inline-block;
+  align-items: stretch;
+  grid-column-gap: 30px;
+  border-radius: 4px;
+  width: 80%;
+  text-align: center;
+  justify-content: center;
+  align-items: center;
+}
+
+.opcion{
+  cursor: pointer;
+  margin: auto;
+  margin-top: 1rem;
+  margin-bottom: 0.7rem;
+  max-width: 800px;
+  box-shadow: 0px 0px 8px 0px rgba(0, 0, 0, 0.71) !important;
+}
+
+.grid-container-mobile {
+  grid-template-columns: repeat(1,1fr);
+  grid-template-rows: auto;
+}
+
+.grid-container-mobile > .mat-card{
+  margin-bottom: 0.2rem;
+  margin-top: 0;
+}
+
+.mat-icon{
+  font-size: 45px;
+}
+
+.div-button{
+  width: 94%;
+}
+
+.div-button-mobile{
+  width: 88%;
+}

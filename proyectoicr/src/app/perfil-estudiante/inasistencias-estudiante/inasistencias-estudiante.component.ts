@@ -18,6 +18,26 @@ export class InasistenciasEstudianteComponent implements OnInit, OnDestroy {
   barChartData: any[];
   barChartLabels: Label[];
   private unsubscribe: Subject<void> = new Subject();
+  public barChartOptions: ChartOptions = {
+    responsive: true,
+    legend: {
+      labels: {
+        fontSize: 18
+      }
+    },
+    plugins: {
+      datalabels: {
+        font: {
+          size: 20,
+          weight: "bold"
+        }
+      }
+    }
+  };
+
+  public barChartType: ChartType = "pie";
+  public barChartPlugins = [pluginDataLabels];
+  public barChartLegend;
 
   constructor(public servicioAsistencia: AsistenciaService) {}
 
@@ -46,20 +66,4 @@ export class InasistenciasEstudianteComponent implements OnInit, OnDestroy {
         ];
       });
   }
-
-  public barChartOptions: ChartOptions = {
-    responsive: true,
-    plugins: {
-      datalabels: {
-        font: {
-          size: 20,
-          weight: "bold"
-        }
-      }
-    }
-  };
-
-  public barChartType: ChartType = "pie";
-  public barChartPlugins = [pluginDataLabels];
-  public barChartLegend;
 }

@@ -1,11 +1,12 @@
 import { CalificacionesService } from "../../calificaciones/calificaciones.service";
 //import { Estudiante } from "src/app/estudiantes/estudiante.model";
 import { EstudiantesService } from "src/app/estudiantes/estudiante.service";
-import { Component, OnInit, OnDestroy } from "@angular/core";
+import { Component, OnInit, OnDestroy, ChangeDetectorRef } from "@angular/core";
 import { Router } from "@angular/router";
 import { AutenticacionService } from "src/app/login/autenticacionService.service";
 import { Subject } from "rxjs";
 import { takeUntil } from "rxjs/operators";
+import { MediaMatcher } from "@angular/cdk/layout";
 
 @Component({
   selector: "app-calificaciones-perfil-estudiante",
@@ -32,13 +33,22 @@ export class CalificacionesPerfilEstudianteComponent
   fechaActual: Date;
   promedio = 0;
   private unsubscribe: Subject<void> = new Subject();
+  materiasPendientes = [{ nombre: "Biologia" }, { nombre: "Fisica" }];
+  _mobileQueryListener: () => void;
+  mobileQuery: MediaQueryList;
 
   constructor(
     public servicioEstudiante: EstudiantesService,
     public servicioCalificaciones: CalificacionesService,
     public router: Router,
-    public servicioEstudianteAutenticacion: AutenticacionService
-  ) {}
+    public servicioEstudianteAutenticacion: AutenticacionService,
+    public changeDetectorRef: ChangeDetectorRef,
+    public media: MediaMatcher
+  ) {
+    this.mobileQuery = media.matchMedia("(max-width: 880px)");
+    this._mobileQueryListener = () => changeDetectorRef.detectChanges();
+    this.mobileQuery.addListener(this._mobileQueryListener);
+  }
 
   ngOnDestroy() {
     this.unsubscribe.next();
@@ -58,6 +68,13 @@ export class CalificacionesPerfilEstudianteComponent
       .pipe(takeUntil(this.unsubscribe))
       .subscribe(res => {
         this.calificacionesXMateria = res.vectorCalXMat;
+      });
+    this.servicioCalificaciones
+      .obtenerMateriasDesaprobadasEstudiante()
+      .subscribe(materias => {
+        if (materias.materiasDesaprobadas != null) {
+          this.materiasPendientes = materias.materiasDesaprobadas;
+        }
       });
   }
 

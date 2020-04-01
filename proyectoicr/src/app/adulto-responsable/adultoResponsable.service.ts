@@ -1,3 +1,4 @@
+import { environment } from "src/environments/environment";
 import { AdultoResponsable } from "./adultoResponsable.model";
 import { HttpClient, HttpParams } from "@angular/common/http";
 import { Injectable, OnDestroy } from "@angular/core";
@@ -73,5 +74,16 @@ export class AdultoResponsableService implements OnDestroy {
   ngOnDestroy() {
     this.unsubscribe.next();
     this.unsubscribe.complete();
+  }
+
+  getDatosEstudiantes(idUsuario: string) {
+    let params = new HttpParams().set("idUsuario", idUsuario);
+    return this.http.get<{
+      estudiantes: any[];
+      exito: boolean;
+      message: string;
+    }>(environment.apiUrl + "/adultoResponsable/estudiantes", {
+      params: params
+    });
   }
 }

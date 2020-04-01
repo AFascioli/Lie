@@ -1,24 +1,38 @@
-<table mat-table [dataSource]="cuotasV">
-  <ng-container matColumnDef="Mes">
-    <th class="columnasNormales" mat-header-cell *matHeaderCellDef>
-      Mes
-    </th>
-    <td class="columnasNormales" mat-cell *matCellDef="let i = index">
-      {{ getMes(cuotasV[i][0]) }}
-    </td>
-  </ng-container>
+<h1 class="componente-titulo">Historial de cuotas</h1>
+<mat-card class="card-body-componente">
+  <table mat-table [dataSource]="cuotasV" [class.table-mobile]="mobileQuery.matches">
+    <ng-container matColumnDef="Mes">
+      <th class="columnasNormales" mat-header-cell *matHeaderCellDef>
+        Mes
+      </th>
+      <td class="columnasNormales" mat-cell *matCellDef="let i = index">
+        {{ getMes(cuotasV[i][0]) }}
+      </td>
+    </ng-container>
 
-  <ng-container matColumnDef="Pagado">
-    <th class="columnasNormales" mat-header-cell *matHeaderCellDef>
-      Pagado
-    </th>
-    <td class="columnasNormales" mat-cell *matCellDef="let i = index">
-      <mat-checkbox [checked]="cuotasV[i][1]" [disabled]="true"></mat-checkbox>
-      <ng-template #noTieneNotas>
-        <p>-</p>
-      </ng-template>
-    </td>
-  </ng-container>
-  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-  <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
-</table>
+    <ng-container matColumnDef="Pagado">
+      <th class="columnasNormales" mat-header-cell *matHeaderCellDef>
+        Pagado
+      </th>
+      <td class="columnasNormales" mat-cell *matCellDef="let i = index">
+        <mat-checkbox
+          [checked]="cuotasV[i][1]"
+          [disabled]="true"
+        ></mat-checkbox>
+        <ng-template #noTieneNotas>
+          <p>-</p>
+        </ng-template>
+      </td>
+    </ng-container>
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+  </table>
+  <div class="div-button">
+    <button
+    mat-raised-button
+    [routerLink]="['/perfilEstudiante']"
+    class="buttonWarn" >
+       Volver
+    </button>
+  </div>
+</mat-card>

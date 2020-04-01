@@ -10,6 +10,8 @@ import { EstudiantesService } from "src/app/estudiantes/estudiante.service";
 import { AgendaService } from "../agenda.service";
 import { Subject } from "rxjs";
 import { takeUntil } from "rxjs/operators";
+import { CancelPopupComponent } from "src/app/popup-genericos/cancel-popup.component";
+import { Router } from "@angular/router";
 
 @Component({
   selector: "app-definir-agenda",
@@ -58,7 +60,8 @@ export class DefinirAgendaComponent implements OnInit, OnDestroy {
     public servicioEstudiante: EstudiantesService,
     public servicioAgenda: AgendaService,
     public dialog: MatDialog,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    public router: Router
   ) {}
 
   @ViewChild(MatSort, { static: true }) sort: MatSort;
@@ -94,6 +97,7 @@ export class DefinirAgendaComponent implements OnInit, OnDestroy {
 
   obtenerAgenda(idCurso) {
     this.cursoSelected = true;
+    this.idCursoSeleccionado = idCurso.value;
     this.servicioAgenda
       .obtenerAgendaDeCurso(idCurso.value)
       .pipe(takeUntil(this.unsubscribe))
@@ -113,11 +117,11 @@ export class DefinirAgendaComponent implements OnInit, OnDestroy {
 
   onGuardar() {
     if (this.agendaValida) {
-      console.log(JSON.stringify(this.dataSource.data));
-      this.servicioAgenda.registrarAgenda(
-        this.dataSource.data,
-        this.idCursoSeleccionado
-      );
+      this.servicioAgenda
+        .registrarAgenda(this.dataSource.data, this.idCursoSeleccionado)
+        .subscribe(response => {
+          this.openSnackBar(response.message, "snack-bar-exito");
+        });
     } else {
       this.openSnackBar(this.mensajeError, "snack-bar-fracaso");
     }
@@ -147,7 +151,15 @@ export class DefinirAgendaComponent implements OnInit, OnDestroy {
     }
   }
 
-  popUpCancelar() {}
+  popUpCancelar() {
+    if (!this.cursoSelected) {
+      this.router.navigate(["./home"]);
+    } else {
+      this.dialog.open(CancelPopupComponent, {
+        width: "250px"
+      });
+    }
+  }
 
   validarHorario(
     { nombreMateria, dia, inicio, fin, docente, idHorarios },
@@ -233,9 +245,15 @@ export class DefinirAgendaComponent implements OnInit, OnDestroy {
   }
 
   eliminarHorarios(index) {
-    this.removedDataSource.data.push(this.dataSource.data.splice(index, 1)[0]);
-    this.dataSource._updateChangeSubscription();
-    console.log("RemovedDataSource", this.removedDataSource.data);
+    this.servicioAgenda
+      .eliminarHorario(this.dataSource.data[index], this.idCursoSeleccionado)
+      .subscribe(response => {
+        this.openSnackBar(response.message, "snack-bar-exito");
+        this.removedDataSource.data.push(
+          this.dataSource.data.splice(index, 1)[0]
+        );
+        this.dataSource._updateChangeSubscription();
+      });
   }
 
   openSnackBar(mensaje: string, exito: string) {

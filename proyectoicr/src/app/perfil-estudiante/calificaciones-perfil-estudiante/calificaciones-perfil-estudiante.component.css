@@ -6,9 +6,20 @@ mat-card-content{
   text-indent: 34%;
 } */
 
+mat-icon {
+  display: flex;
+  margin-left: auto;
+}
+
 table {
   width: 95%;
   margin: 2rem;
+}
+
+.table-mobile {
+  width: 100%;
+  margin: 0;
+  margin-bottom: 1rem;
 }
 
 .columnasNormales {
@@ -38,4 +49,32 @@ th {
 
 .bajoPromedio {
   background-color: #fc7978;
+}
+
+.div-button {
+  text-align: right;
+}
+
+.lista {
+  list-style-type: disc;
+  margin-left: 20px;
+}
+
+.expansion-panel {
+  width: 95%;
+  margin-left: 30px;
+}
+
+.expansion-panel-mobile {
+  width: 100%;
+  margin-left: 0px;
+}
+
+th.mat-header-cell:last-of-type,
+td.mat-cell:last-of-type {
+  padding-right: 15px;
+}
+th.mat-header-cell:first-of-type,
+td.mat-cell:first-of-type {
+  padding-left: 10px;
 }

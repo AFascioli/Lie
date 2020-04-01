@@ -1,4 +1,5 @@
 import { environment } from "src/environments/environment";
+import { async } from "@angular/core/testing";
 import { EventosService } from "./../eventos/eventos.service";
 import { Component, OnInit, OnDestroy } from "@angular/core";
 import { SwPush } from "@angular/service-worker";
@@ -16,7 +17,7 @@ import { takeUntil } from "rxjs/operators";
 })
 export class HomeComponent implements OnInit, OnDestroy {
   private unsubscribe: Subject<void> = new Subject();
-  eventos: Evento[];
+  eventos: Evento[] = [];
   imagen;
   fechaActual;
   readonly VAPID_PUBLIC =

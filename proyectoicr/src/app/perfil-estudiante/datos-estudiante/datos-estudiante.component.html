@@ -1,25 +1,37 @@
-<div class="datosEstudiante">
-  <ul style="list-style-type:disc;">
-    <li>
-      <p><b> Apellido: </b> {{ estudiante.apellido }}</p>
-    </li>
-    <li>
-      <p><b> Nombre: </b> {{ estudiante.nombre }}</p>
-    </li>
-    <li>
-      <p><b> Tipo de documento: </b> {{ estudiante.tipoDocumento }}</p>
-    </li>
-    <li>
-      <p><b> Número de documento: </b> {{ estudiante.numeroDocumento }}</p>
-    </li>
-    <li>
-      <p><b> Calle: </b> {{ estudiante.calle }}</p>
-    </li>
-    <li>
-      <p><b> Número: </b> {{ estudiante.numeroCalle }}</p>
-    </li>
-    <li>
-      <p><b> Fecha de nacimiento: </b>   {{ fechaNacimiento | date: "dd/MM/yyyy" }}</p>
-    </li>
-  </ul>
-</div>
+<h1 class="componente-titulo">Datos personales de {{estudiante.apellido}}, {{estudiante.nombre}}</h1>
+<mat-card class="card-body-componente">
+
+  <div class="datosEstudiante">
+    <ul style="list-style-type:disc;">
+      <li>
+        <p><b> Apellido: </b> {{ estudiante.apellido }}</p>
+      </li>
+      <li>
+        <p><b> Nombre: </b> {{ estudiante.nombre }}</p>
+      </li>
+      <li>
+        <p><b> Tipo de documento: </b> {{ estudiante.tipoDocumento }}</p>
+      </li>
+      <li>
+        <p><b> Número de documento: </b> {{ estudiante.numeroDocumento }}</p>
+      </li>
+      <li>
+        <p><b> Calle: </b> {{ estudiante.calle }}</p>
+      </li>
+      <li>
+        <p><b> Número: </b> {{ estudiante.numeroCalle }}</p>
+      </li>
+      <li>
+        <p><b> Fecha de nacimiento: </b>   {{ fechaNacimiento | date: "dd/MM/yyyy" }}</p>
+      </li>
+    </ul>
+  </div>
+  <div class="div-button">
+    <button
+    mat-raised-button
+    [routerLink]="['/perfilEstudiante']"
+    class="buttonWarn" >
+       Volver
+    </button>
+  </div>
+</mat-card>

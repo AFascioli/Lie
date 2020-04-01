@@ -1,4 +1,6 @@
 const Estudiante = require("../models/estudiante");
+const Inscripcion = require("../models/inscripcion");
+const Curso = require("../models/curso");
 
 exports.CrearEstudiante = async function(
   apellido,

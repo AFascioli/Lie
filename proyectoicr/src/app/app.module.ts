@@ -122,6 +122,7 @@ import { SancionesEstudianteComponent } from "./perfil-estudiante/sanciones-estu
 import { ErrorInterceptor } from "./error-interceptor";
 import { ErrorComponent } from "./error/error.component";
 import { ImageUploadModule } from "ng2-imageupload";
+import { MenuPrincipalARComponent } from "./menu-principal-ar/menu-principal-ar.component";
 
 @NgModule({
   declarations: [
@@ -175,7 +176,8 @@ import { ImageUploadModule } from "ng2-imageupload";
     RegistrarCuotasComponent,
     DefinirAgendaComponent,
     RegistrarSancionesComponent,
-    SancionesEstudianteComponent
+    SancionesEstudianteComponent,
+    MenuPrincipalARComponent
   ],
   //entryComponents declara los componentes que se generan dinamicamente dentro de otros.
   entryComponents: [

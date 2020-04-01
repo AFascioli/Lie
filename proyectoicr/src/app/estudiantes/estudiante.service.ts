@@ -1,9 +1,11 @@
 import { Injectable, OnDestroy } from "@angular/core";
+import { environment } from "./../../environments/environment";
 import { Estudiante } from "./estudiante.model";
 import { HttpClient, HttpParams } from "@angular/common/http";
 import { Subject } from "rxjs";
-import { environment } from "src/environments/environment";
 import { takeUntil } from "rxjs/operators";
+import { Localidad } from "../ubicacion/localidades.model";
+import { Nacionalidad } from "../ubicacion/nacionalidades.model";
 
 @Injectable({
   providedIn: "root"
@@ -181,7 +183,6 @@ export class EstudiantesService implements OnDestroy {
       params: params
     });
   }
-
   //Obtiene todos los tutores (tutores y adultos responsables) de un estudiante pasado por parámetro
   //@params: id del estudiante
   public getTutoresDeEstudiante() {
@@ -314,5 +315,16 @@ export class EstudiantesService implements OnDestroy {
     }>(environment.apiUrl + "/curso/estudiante", {
       params: params
     });
+  }
+
+  //Obtiene un estudiante dada su id
+  //@params: id del estudiante
+  public obtenerEstudiantePorId(idEstudiante: string) {
+    let params = new HttpParams().set("idEstudiante", idEstudiante);
+    return this.http.get<{
+      estudiante: Estudiante;
+      exito: boolean;
+      message: string;
+    }>(environment.apiUrl + "/estudiante/id", { params: params });
   }
 }

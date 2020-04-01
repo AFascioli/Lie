@@ -9,11 +9,12 @@ import { environment } from "src/environments/environment";
 export class SancionService {
   constructor(public http: HttpClient) {}
 
-  public registrarSancion(cantidad, tipoSancion, idEstudiante) {
+  public registrarSancion(fecha,cantidad, tipoSancion, idEstudiante) {
     const datosSancion = {
       tipoSancion: tipoSancion,
       cantidad: cantidad,
-      idEstudiante: idEstudiante
+      idEstudiante: idEstudiante,
+      fecha: fecha
     };
     return this.http.post<{ message: string; exito: boolean }>(
       environment.apiUrl + "/curso/registrarSancion",

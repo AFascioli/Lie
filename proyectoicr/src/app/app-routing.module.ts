@@ -1,3 +1,4 @@
+import { MenuPrincipalARComponent } from "./menu-principal-ar/menu-principal-ar.component";
 import { RegistrarSancionesComponent } from "./sanciones/registrar-sanciones/registrar-sanciones.component";
 import { RegistrarCuotasComponent } from "./cuotas/registrar-cuotas/registrar-cuotas.component";
 import { RegistrarEventoComponent } from "./eventos/registrar-evento/registrar-evento.component";
@@ -49,10 +50,24 @@ const routes: Routes = [
       {
         path: "",
         pathMatch: "full",
-        redirectTo: "home"
+        redirectTo: "home",
+        data: {
+          rolesValidos: ["Admin", "Preceptor", "Director", "Docente"]
+        }
       },
       { path: "definirAgenda", component: DefinirAgendaComponent },
-      { path: "home", component: HomeComponent },
+      {
+        path: "home",
+        canActivate: [RoleGuard],
+        data: { rolesValidos: ["Admin", "Preceptor", "Director", "Docente"] },
+        component: HomeComponent
+      },
+      {
+        path: "menuPrincipal",
+        canActivate: [RoleGuard],
+        data: { rolesValidos: ["Admin", "AdultoResponsable"] },
+        component: MenuPrincipalARComponent
+      },
       {
         path: "visualizarEvento",
         component: VisualizarEventoComponent,
@@ -152,97 +167,105 @@ const routes: Routes = [
             "Docente",
             "AdultoResponsable"
           ]
-        },
-        children: [
-          {
-            path: "calificacionesEstudiante",
-            component: CalificacionesPerfilEstudianteComponent,
-            canActivate: [RouteGuard, RoleGuard],
-            data: {
-              rolesValidos: [
-                "Admin",
-                "Preceptor",
-                "Director",
-                "Docente",
-                "AdultoResponsable"
-              ]
-            }
-          },
-          {
-            path: "inasistenciasEstudiante",
-            component: InasistenciasEstudianteComponent,
-            canActivate: [RouteGuard, RoleGuard],
-            data: {
-              rolesValidos: [
-                "Admin",
-                "Preceptor",
-                "Director",
-                "Docente",
-                "AdultoResponsable"
-              ]
-            }
-          },
-          {
-            path: "cuotasEstudiante",
-            component: CuotasPerfilEstudianteComponent
-          },
-          {
-            path: "agendaCursoEstudiante",
-            component: AgendaCursoPerfilEstudianteComponent,
-            canActivate: [RoleGuard, RouteGuard],
-            data: {
-              rolesValidos: [
-                "Admin",
-                "Preceptor",
-                "Director",
-                "Docente",
-                "AdultoResponsable"
-              ]
-            }
-          },
-          {
-            path: "sancionesEstudiante",
-            component: SancionesEstudianteComponent,
-            canActivate: [RoleGuard, RouteGuard],
-            data: {
-              rolesValidos: [
-                "Admin",
-                "Preceptor",
-                "Director",
-                "Docente",
-                "AdultoResponsable"
-              ]
-            }
-          },
-          {
-            path: "tutoresEstudiante",
-            component: TutoresEstudianteComponent,
-            canActivate: [RouteGuard, RoleGuard],
-            data: {
-              rolesValidos: [
-                "Admin",
-                "Preceptor",
-                "Director",
-                "Docente",
-                "AdultoResponsable"
-              ]
-            }
-          },
-          {
-            path: "datosEstudiante",
-            component: DatosEstudianteComponent,
-            canActivate: [RouteGuard, RoleGuard],
-            data: {
-              rolesValidos: [
-                "Admin",
-                "Preceptor",
-                "Director",
-                "Docente",
-                "AdultoResponsable"
-              ]
-            }
-          }
-        ]
+        }
+      },
+      {
+        path: "calificacionesPerfilEstudiante",
+        component: CalificacionesPerfilEstudianteComponent,
+        canActivate: [RouteGuard, RoleGuard],
+        data: {
+          rolesValidos: [
+            "Admin",
+            "Preceptor",
+            "Director",
+            "Docente",
+            "AdultoResponsable"
+          ]
+        }
+      },
+      {
+        path: "inasistenciasPerfilEstudiante",
+        component: InasistenciasEstudianteComponent,
+        canActivate: [RouteGuard, RoleGuard],
+        data: {
+          rolesValidos: [
+            "Admin",
+            "Preceptor",
+            "Director",
+            "Docente",
+            "AdultoResponsable"
+          ]
+        }
+      },
+      {
+        path: "cuotasPerfilEstudiante",
+        component: CuotasPerfilEstudianteComponent,
+        canActivate: [RouteGuard, RoleGuard],
+        data: {
+          rolesValidos: [
+            "Admin",
+            "Preceptor",
+            "Director",
+            "Docente",
+            "AdultoResponsable"
+          ]
+        }
+      },
+      {
+        path: "agendaCursoPerfilEstudiante",
+        component: AgendaCursoPerfilEstudianteComponent,
+        canActivate: [RoleGuard, RouteGuard],
+        data: {
+          rolesValidos: [
+            "Admin",
+            "Preceptor",
+            "Director",
+            "Docente",
+            "AdultoResponsable"
+          ]
+        }
+      },
+      {
+        path: "sancionesPerfilEstudiante",
+        component: SancionesEstudianteComponent,
+        canActivate: [RoleGuard, RouteGuard],
+        data: {
+          rolesValidos: [
+            "Admin",
+            "Preceptor",
+            "Director",
+            "Docente",
+            "AdultoResponsable"
+          ]
+        }
+      },
+      {
+        path: "tutoresPerfilEstudiante",
+        component: TutoresEstudianteComponent,
+        canActivate: [RouteGuard, RoleGuard],
+        data: {
+          rolesValidos: [
+            "Admin",
+            "Preceptor",
+            "Director",
+            "Docente",
+            "AdultoResponsable"
+          ]
+        }
+      },
+      {
+        path: "datosPerfilEstudiante",
+        component: DatosEstudianteComponent,
+        canActivate: [RouteGuard, RoleGuard],
+        data: {
+          rolesValidos: [
+            "Admin",
+            "Preceptor",
+            "Director",
+            "Docente",
+            "AdultoResponsable"
+          ]
+        }
       },
       {
         path: "justificarInasistencia",
@@ -277,7 +300,17 @@ const routes: Routes = [
       },
       {
         path: "preferencias",
-        component: PreferenciasComponent
+        component: PreferenciasComponent,
+        canActivate: [RoleGuard],
+        data: {
+          rolesValidos: [
+            "Admin",
+            "Preceptor",
+            "Director",
+            "Docente",
+            "AdultoResponsable"
+          ]
+        }
       },
       {
         path: "visualizarAgenda",

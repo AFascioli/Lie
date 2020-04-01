@@ -244,6 +244,7 @@ router.post("/registrarComentario", async (req, res, next) => {
   let idUsuario = "";
 
   var obtenerDatosUsuario = (rol, emailUsuario) => {
+    console.log(req.body.comentario);
     return new Promise((resolve, reject) => {
       if (rol == "Adulto Responsable") {
         AdultoResponsable.findOne({ email: emailUsuario })
@@ -310,7 +311,7 @@ router.post("/registrarComentario", async (req, res, next) => {
       comentarios: {
         apellido: datosUsuario.apellido,
         nombre: datosUsuario.nombre,
-        comentario: req.body.comentario.comentario,
+        cuerpo: req.body.comentario.cuerpo,
         fecha: req.body.comentario.fecha,
         idUsuario: datosUsuario.idUsuario
       }
@@ -512,5 +513,35 @@ notificarPorEvento = function(tags, titulo, cuerpo) {
     });
   }
 };
+//Retorna datos de los eventos dado una string que tienen multiples cursos
+//@params: cursos (ej: "2A,5A")
+router.get("/curso", checkAuthMiddleware, (req, res) => {
+  let cursos = req.query.cursos.split(",");
+  cursos.push("Todos los cursos");
+  Evento.find(
+    { tags: { $in: cursos } },
+    { tags: 1, titulo: 1, fechaEvento: 1, horaInicio: 1, horaFin: 1 }
+  ).then(eventos => {
+    res.json({ eventos: eventos, exito: true, message: "exito" });
+  });
+});
+
+//Dada una id de evento retorna todos sus datos
+//@params: idEvento
+router.get("/id", checkAuthMiddleware, (req, res) => {
+  Evento.findById(req.query.idEvento)
+    .then(evento => {
+      if (evento) {
+        res.json({ evento: evento, exito: true, message: "exito" });
+      } else {
+        res.json({ evento: null, exito: true, message: "exito" });
+      }
+    })
+    .catch(() => {
+      res.status(500).json({
+        message: "Mensaje de error especifico"
+      });
+    });
+});
 
 module.exports = router;

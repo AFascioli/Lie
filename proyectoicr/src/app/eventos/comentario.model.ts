@@ -1,7 +1,7 @@
 export interface Comentario {
-  idUsuario: string,
-  comentario: string,
-  nombre: string,
-  apellido: string,
-  fecha: Date
+  idUsuario: string;
+  cuerpo: string;
+  nombre: string;
+  apellido: string;
+  fecha: Date;
 }

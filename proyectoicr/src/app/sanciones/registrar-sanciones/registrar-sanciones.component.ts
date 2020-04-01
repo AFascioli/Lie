@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from "@angular/core";
+import { Component, OnInit, ChangeDetectorRef, OnDestroy } from "@angular/core";
 import { EstudiantesService } from "src/app/estudiantes/estudiante.service";
 import { SancionService } from "../sancion.service";
 import { MatSnackBar } from "@angular/material";
@@ -6,6 +6,7 @@ import { format } from "url";
 import { NgForm } from "@angular/forms";
 import { takeUntil } from "rxjs/operators";
 import { Subject } from "rxjs";
+import { MediaMatcher } from "@angular/cdk/layout";
 
 @Component({
   selector: "app-registrar-sanciones",
@@ -26,12 +27,20 @@ export class RegistrarSancionesComponent implements OnInit, OnDestroy {
   tipoSancionSelected: Boolean = false;
   suspensionSelected: Boolean = false;
   private unsubscribe: Subject<void> = new Subject();
+  _mobileQueryListener: () => void;
+  mobileQuery: MediaQueryList;
 
   constructor(
     public servicioEstudiante: EstudiantesService,
     public servicioSancion: SancionService,
-    public snackBar: MatSnackBar
-  ) {}
+    public snackBar: MatSnackBar,
+    public changeDetectorRef: ChangeDetectorRef,
+    public media: MediaMatcher
+  ) {
+    this.mobileQuery = media.matchMedia("(max-width: 800px)");
+    this._mobileQueryListener = () => changeDetectorRef.detectChanges();
+    this.mobileQuery.addListener(this._mobileQueryListener);
+  }
 
   ngOnDestroy() {
     this.unsubscribe.next();
@@ -66,11 +75,24 @@ export class RegistrarSancionesComponent implements OnInit, OnDestroy {
   }
 
   guardar(cantidad, tipoSancion, form: NgForm) {
-    if (tipoSancion == 3) {
-      cantidad = 1;
+    let sancion = "";
+    switch (tipoSancion) {
+      case 0:
+        sancion = "Llamado de atencion";
+        break;
+      case 1:
+        sancion = "Apercibimiento";
+        break;
+      case 2:
+        sancion = "Amonestacion";
+        break;
+      case 3:
+        sancion = "Suspencion";
+        cantidad = 1;
+        break;
     }
     this.servicioSancion
-      .registrarSancion(cantidad, tipoSancion, this.idEstudiante)
+      .registrarSancion(this.fechaActual, cantidad, sancion, this.idEstudiante)
       .pipe(takeUntil(this.unsubscribe))
       .subscribe(rtdo => {
         if (rtdo.exito) {

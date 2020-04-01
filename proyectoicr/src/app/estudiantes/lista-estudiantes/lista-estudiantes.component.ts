@@ -3,12 +3,13 @@ import { UbicacionService } from "src/app/ubicacion/ubicacion.service";
 import { CalificacionesService } from "../../calificaciones/calificaciones.service";
 import { InscripcionService } from "../../inscripcion/inscripcion.service";
 import { AutenticacionService } from "./../../login/autenticacionService.service";
-import { Component, OnInit, OnDestroy } from "@angular/core";
+import { Component, OnInit, OnDestroy, ChangeDetectorRef } from "@angular/core";
 import { EstudiantesService } from "../estudiante.service";
 import { Estudiante } from "../estudiante.model";
 import { Router } from "@angular/router";
 import { Subject } from "rxjs";
 import { takeUntil } from "rxjs/operators";
+import { MediaMatcher } from "@angular/cdk/layout";
 
 @Component({
   selector: "app-lista-estudiantes",
@@ -30,6 +31,8 @@ export class ListaEstudiantesComponent implements OnInit, OnDestroy {
     cuotas: 0
   };
   isLoading: boolean = true;
+  _mobileQueryListener: () => void;
+  mobileQuery: MediaQueryList;
 
   constructor(
     public servicio: EstudiantesService,
@@ -38,8 +41,14 @@ export class ListaEstudiantesComponent implements OnInit, OnDestroy {
     public servicioInscripcion: InscripcionService,
     public servicioUbicacion: UbicacionService,
     public router: Router,
-    public authService: AutenticacionService
-  ) {}
+    public authService: AutenticacionService,
+    public changeDetectorRef: ChangeDetectorRef,
+    public media: MediaMatcher
+  ) {
+    this.mobileQuery = media.matchMedia("(max-width: 700px)");
+    this._mobileQueryListener = () => changeDetectorRef.detectChanges();
+    this.mobileQuery.addListener(this._mobileQueryListener);
+  }
 
   ngOnDestroy() {
     this.unsubscribe.next();
@@ -66,7 +75,7 @@ export class ListaEstudiantesComponent implements OnInit, OnDestroy {
           }
         });
 
-      if (this.servicio.retornoDesdeAcciones) {
+      if (!this.servicio.retornoDesdeAcciones) {
         this.servicio.retornoDesdeAcciones = false;
       }
       this.authService
@@ -76,6 +85,9 @@ export class ListaEstudiantesComponent implements OnInit, OnDestroy {
           this.permisos = response.permisos;
         });
     }
+    this.authService.obtenerPermisosDeRol().subscribe(response => {
+      this.permisos = response.permisos;
+    });
   }
 
   asignarEstudianteSeleccionado(indice) {

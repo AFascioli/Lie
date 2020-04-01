@@ -162,3 +162,7 @@ time.icon span {
 ::ng-deep .mat-mini-fab.mat-warn [ng-reflect-disabled="false"] {
   background-color: white !important;
 }
+
+.tituloAviso {
+  text-align: center;
+}

@@ -60,10 +60,8 @@ exports.crearCalifXTrimestre = async function(califXMateriaNueva) {
       await idsCalificacionMatXTrim.push(calXMateriaXTrimestre._id);
       califXMateriaNueva.calificacionesXTrimestre = idsCalificacionMatXTrim;
       califXMateriaNueva.save();
-      console.log("lo pusheo");
     });
     if ((i = 3)) {
-      console.log("ahora se ejecuto");
       idsCalXMateria.push(califXMateriaNueva._id);
 
       return idsCalXMateria;
@@ -83,8 +81,6 @@ exports.crearDocsCalif = async function(materiasDelCurso, estado) {
     //Creamos las califXMateria
     this.crearCalifXTrimestre(califXMateriaNueva).then(
       async idsCalificacionMat => {
-        console.log("se ejecuto");
-        console.log(idsCalificacionMat);
         return await idsCalificacionMat;
       }
     );

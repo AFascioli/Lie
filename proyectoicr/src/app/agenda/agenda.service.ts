@@ -45,12 +45,18 @@ export class AgendaService {
   //@params: id del curso
   //@params: agenda del curso (dia, hora inicio y hora fin)
   public registrarAgenda(agenda: any[], curso: string) {
-    return this.http.post<{ exito: boolean; mensaje: string }>(
+    return this.http.post<{ exito: boolean; message: string }>(
       environment.apiUrl + "/curso/agenda",
       { agenda: agenda, idCurso: curso }
     );
   }
 
+  public eliminarHorario(agenda: any, curso: string){
+    return this.http.post<{ exito: boolean; message: string }>(
+      environment.apiUrl + "/curso/eliminarHorario",
+      { agenda: agenda, idCurso: curso }
+    );
+  }
   //Retorna todas las materias de la institucion
   public obtenerMaterias() {
     return this.http.get<{ materias: any[] }>(environment.apiUrl + "/materia");

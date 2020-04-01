@@ -1,188 +1,245 @@
-<h1 class="titulo">El estudiante se encuentra cursando en: {{ curso }}</h1>
-<mat-form-field>
-  <mat-select
-    name="trimestre"
-    ngModel
-    #trimestreElegido="ngModel"
-    matNativeControl
-    required
-    placeholder="Seleccione trimestre"
-    name="trimestre"
-    [(ngModel)]="trimestreActual"
-    (selectionChange)="onChangeTrimestre()"
+<h1 class="componente-titulo">
+  Calificaciones de {{ apellidoEstudiante }}, {{ nombreEstudiante }}
+</h1>
+<mat-card class="card-body-componente">
+  <mat-form-field>
+    <mat-select
+      name="trimestre"
+      ngModel
+      #trimestreElegido="ngModel"
+      matNativeControl
+      required
+      placeholder="Seleccione trimestre"
+      name="trimestre"
+      [(ngModel)]="trimestreActual"
+      (selectionChange)="onChangeTrimestre()"
+    >
+      <mat-option value="1">Primer</mat-option>
+      <mat-option value="2">Segundo</mat-option>
+      <mat-option value="3">Tercer</mat-option>
+    </mat-select>
+  </mat-form-field>
+  <table
+    mat-table
+    [class.table-mobile]="mobileQuery.matches"
+    [dataSource]="calificacionesXMateria"
+    *ngIf="calificacionesXMateria"
   >
-    <mat-option value="1">Primer</mat-option>
-    <mat-option value="2">Segundo</mat-option>
-    <mat-option value="3">Tercer</mat-option>
-  </mat-select>
-</mat-form-field>
-
-<table
-  mat-table
-  [dataSource]="calificacionesXMateria"
-  *ngIf="calificacionesXMateria"
->
-  <ng-container matColumnDef="materia">
-    <th class="columnasNormales" mat-header-cell *matHeaderCellDef>
-      Materia
-    </th>
-    <td
-      class="columnasNormales"
-      mat-cell
-      *matCellDef="let calificacionesXMateria; let i = index"
-      [ngClass]="{
-        bajoPromedio: calcularPromedio(i, contadorNotasValidas(i)) < 6
-      }"
-    >
-      {{ calificacionesXMateria.materia }}
-    </td>
-  </ng-container>
-
-  <ng-container matColumnDef="calif1">
-    <th class="columnasChicas" mat-header-cell *matHeaderCellDef>
-      1º
-    </th>
-    <td
-      class="columnasChicas"
-      mat-cell
-      *matCellDef="let calificacionesXMateria"
-      [ngClass]="{ bajoPromedio: this.promedio < 6 }"
-    >
-      <p
-        *ngIf="calificacionesXMateria.calificaciones[0] != 0; else noTieneNotas"
+    <ng-container matColumnDef="materia">
+      <th class="columnasNormales" mat-header-cell *matHeaderCellDef>
+        Materia
+      </th>
+      <td
+        class="columnasNormales"
+        mat-cell
+        *matCellDef="let calificacionesXMateria; let i = index"
+        [ngClass]="{
+          bajoPromedio: calcularPromedio(i, contadorNotasValidas(i)) < 6
+        }"
       >
-        {{ calificacionesXMateria.calificaciones[0] }}
-      </p>
-      <ng-template #noTieneNotas>
-        <p>-</p>
-      </ng-template>
-    </td>
-  </ng-container>
+        {{ calificacionesXMateria.materia }}
+      </td>
+    </ng-container>
 
-  <ng-container matColumnDef="calif2">
-    <th class="columnasChicas" mat-header-cell *matHeaderCellDef>
-      2º
-    </th>
-    <td
-      class="columnasChicas"
-      mat-cell
-      *matCellDef="let calificacionesXMateria"
-      [ngClass]="{ bajoPromedio: this.promedio < 6 }"
-    >
-      <p
-        *ngIf="calificacionesXMateria.calificaciones[1] != 0; else noTieneNotas"
+    <ng-container matColumnDef="calif1">
+      <th class="columnasChicas" mat-header-cell *matHeaderCellDef>
+        1º
+      </th>
+      <td
+        class="columnasChicas"
+        mat-cell
+        *matCellDef="let calificacionesXMateria"
+        [ngClass]="{ bajoPromedio: this.promedio < 6 }"
       >
-        {{ calificacionesXMateria.calificaciones[1] }}
-      </p>
-      <ng-template #noTieneNotas>
-        <p>-</p>
-      </ng-template>
-    </td>
-  </ng-container>
+        <p
+          *ngIf="
+            calificacionesXMateria.calificaciones[0] != 0;
+            else noTieneNotas
+          "
+        >
+          {{ calificacionesXMateria.calificaciones[0] }}
+        </p>
+        <ng-template #noTieneNotas>
+          <p>-</p>
+        </ng-template>
+      </td>
+    </ng-container>
 
-  <ng-container matColumnDef="calif3">
-    <th class="columnasChicas" mat-header-cell *matHeaderCellDef>
-      3º
-    </th>
-    <td
-      class="columnasChicas"
-      mat-cell
-      *matCellDef="let calificacionesXMateria"
-      [ngClass]="{ bajoPromedio: this.promedio < 6 }"
-    >
-      <p
-        *ngIf="calificacionesXMateria.calificaciones[2] != 0; else noTieneNotas"
+    <ng-container matColumnDef="calif2">
+      <th class="columnasChicas" mat-header-cell *matHeaderCellDef>
+        2º
+      </th>
+      <td
+        class="columnasChicas"
+        mat-cell
+        *matCellDef="let calificacionesXMateria"
+        [ngClass]="{ bajoPromedio: this.promedio < 6 }"
       >
-        {{ calificacionesXMateria.calificaciones[2] }}
-      </p>
-      <ng-template #noTieneNotas>
-        <p>-</p>
-      </ng-template>
-    </td>
-  </ng-container>
+        <p
+          *ngIf="
+            calificacionesXMateria.calificaciones[1] != 0;
+            else noTieneNotas
+          "
+        >
+          {{ calificacionesXMateria.calificaciones[1] }}
+        </p>
+        <ng-template #noTieneNotas>
+          <p>-</p>
+        </ng-template>
+      </td>
+    </ng-container>
 
-  <ng-container matColumnDef="calif4">
-    <th class="columnasChicas" mat-header-cell *matHeaderCellDef>
-      4º
-    </th>
-    <td
-      class="columnasChicas"
-      mat-cell
-      *matCellDef="let calificacionesXMateria"
-      [ngClass]="{ bajoPromedio: this.promedio < 6 }"
-    >
-      <p
-        *ngIf="calificacionesXMateria.calificaciones[3] != 0; else noTieneNotas"
+    <ng-container matColumnDef="calif3">
+      <th class="columnasChicas" mat-header-cell *matHeaderCellDef>
+        3º
+      </th>
+      <td
+        class="columnasChicas"
+        mat-cell
+        *matCellDef="let calificacionesXMateria"
+        [ngClass]="{ bajoPromedio: this.promedio < 6 }"
       >
-        {{ calificacionesXMateria.calificaciones[3] }}
-      </p>
-      <ng-template #noTieneNotas>
-        <p>-</p>
-      </ng-template>
-    </td>
-  </ng-container>
+        <p
+          *ngIf="
+            calificacionesXMateria.calificaciones[2] != 0;
+            else noTieneNotas
+          "
+        >
+          {{ calificacionesXMateria.calificaciones[2] }}
+        </p>
+        <ng-template #noTieneNotas>
+          <p>-</p>
+        </ng-template>
+      </td>
+    </ng-container>
 
-  <ng-container matColumnDef="calif5">
-    <th class="columnasChicas" mat-header-cell *matHeaderCellDef>
-      5º
-    </th>
-    <td
-      class="columnasChicas"
-      mat-cell
-      *matCellDef="let calificacionesXMateria"
-      [ngClass]="{ bajoPromedio: this.promedio < 6 }"
-    >
-      <p
-        *ngIf="calificacionesXMateria.calificaciones[4] != 0; else noTieneNotas"
+    <ng-container matColumnDef="calif4">
+      <th class="columnasChicas" mat-header-cell *matHeaderCellDef>
+        4º
+      </th>
+      <td
+        class="columnasChicas"
+        mat-cell
+        *matCellDef="let calificacionesXMateria"
+        [ngClass]="{ bajoPromedio: this.promedio < 6 }"
       >
-        {{ calificacionesXMateria.calificaciones[4] }}
-      </p>
-      <ng-template #noTieneNotas>
-        <p>-</p>
-      </ng-template>
-    </td>
-  </ng-container>
+        <p
+          *ngIf="
+            calificacionesXMateria.calificaciones[3] != 0;
+            else noTieneNotas
+          "
+        >
+          {{ calificacionesXMateria.calificaciones[3] }}
+        </p>
+        <ng-template #noTieneNotas>
+          <p>-</p>
+        </ng-template>
+      </td>
+    </ng-container>
 
-  <ng-container matColumnDef="calif6">
-    <th class="columnasChicas" mat-header-cell *matHeaderCellDef>
-      6º
-    </th>
-    <td
-      class="columnasChicas"
-      mat-cell
-      *matCellDef="let calificacionesXMateria"
-      [ngClass]="{ bajoPromedio: this.promedio < 6 }"
-    >
-      <p
-        *ngIf="calificacionesXMateria.calificaciones[5] != 0; else noTieneNotas"
+    <ng-container matColumnDef="calif5">
+      <th class="columnasChicas" mat-header-cell *matHeaderCellDef>
+        5º
+      </th>
+      <td
+        class="columnasChicas"
+        mat-cell
+        *matCellDef="let calificacionesXMateria"
+        [ngClass]="{ bajoPromedio: this.promedio < 6 }"
       >
-        {{ calificacionesXMateria.calificaciones[5] }}
-      </p>
-      <ng-template #noTieneNotas>
-        <p>-</p>
-      </ng-template>
-    </td>
-  </ng-container>
+        <p
+          *ngIf="
+            calificacionesXMateria.calificaciones[4] != 0;
+            else noTieneNotas
+          "
+        >
+          {{ calificacionesXMateria.calificaciones[4] }}
+        </p>
+        <ng-template #noTieneNotas>
+          <p>-</p>
+        </ng-template>
+      </td>
+    </ng-container>
 
-  <ng-container matColumnDef="prom">
-    <th class="columnasChicas promedio" mat-header-cell *matHeaderCellDef>
-      Promedio
-    </th>
-    <td
-      class="columnasChicas promedio"
-      mat-cell
-      *matCellDef="let estudiante; let i = index"
-      [ngClass]="{
-        bajoPromedio: calcularPromedio(i, contadorNotasValidas(i)) < 6
-      }"
+    <ng-container matColumnDef="calif6">
+      <th class="columnasChicas" mat-header-cell *matHeaderCellDef>
+        6º
+      </th>
+      <td
+        class="columnasChicas"
+        mat-cell
+        *matCellDef="let calificacionesXMateria"
+        [ngClass]="{ bajoPromedio: this.promedio < 6 }"
+      >
+        <p
+          *ngIf="
+            calificacionesXMateria.calificaciones[5] != 0;
+            else noTieneNotas
+          "
+        >
+          {{ calificacionesXMateria.calificaciones[5] }}
+        </p>
+        <ng-template #noTieneNotas>
+          <p>-</p>
+        </ng-template>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="prom">
+      <th class="columnasChicas promedio" mat-header-cell *matHeaderCellDef>
+        Promedio
+      </th>
+      <td
+        class="columnasChicas promedio"
+        mat-cell
+        *matCellDef="let estudiante; let i = index"
+        [ngClass]="{
+          bajoPromedio: calcularPromedio(i, contadorNotasValidas(i)) < 6
+        }"
+      >
+        <p *ngIf="!(contadorNotasValidas(i) == 0); else sinNotas">
+          {{ this.promedio.toFixed(2) }}
+        </p>
+        <ng-template #sinNotas>-</ng-template>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+  </table>
+
+  <mat-accordion
+    class="example-headers-align"
+    *ngIf="materiasPendientes.length != 0"
+  >
+    <mat-expansion-panel hideToggle class="expansion-panel" [class.expansion-panel-mobile]="mobileQuery.matches">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          <b>Resumen de materias desaprobadas o pendientes</b>
+        </mat-panel-title>
+        <mat-panel-description>
+          <mat-icon>menu_book</mat-icon>
+        </mat-panel-description>
+      </mat-expansion-panel-header>
+      <div *ngFor="let materiaPendiente of materiasPendientes">
+        <br />
+        <ul>
+          <li class="lista">
+            {{ materiaPendiente.nombre }}
+          </li>
+        </ul>
+      </div>
+      <br />
+    </mat-expansion-panel>
+  </mat-accordion>
+  <br />
+  <div class="div-button">
+    <button
+      mat-raised-button
+      [routerLink]="['/perfilEstudiante']"
+      class="buttonWarn"
     >
-      <p *ngIf="!(contadorNotasValidas(i) == 0); else sinNotas">
-        {{ this.promedio.toFixed(2) }}
-      </p>
-      <ng-template #sinNotas>-</ng-template>
-    </td>
-  </ng-container>
-
-  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-  <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
-</table>
+      Volver
+    </button>
+  </div>
+</mat-card>

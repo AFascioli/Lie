@@ -3,6 +3,7 @@ import { EstudiantesService } from "../../estudiantes/estudiante.service";
 import { Component, OnInit } from "@angular/core";
 import { Subject } from "rxjs";
 import { takeUntil } from "rxjs/operators";
+import { AdultoResponsable } from "src/app/adulto-responsable/adultoResponsable.model";
 
 @Component({
   selector: "app-tutores-estudiante",
@@ -13,6 +14,8 @@ export class TutoresEstudianteComponent implements OnInit, OnDestroy {
   tutores: any[] = [];
   private unsubscribe: Subject<void> = new Subject();
   displayedColumns: string[] = ["apellido", "nombre", "telefono", "email"];
+  apellidoEstudiante: string;
+  nombreEstudiante: string;
 
   constructor(public servicio: EstudiantesService) {}
 
@@ -27,6 +30,8 @@ export class TutoresEstudianteComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.unsubscribe))
       .subscribe(respuesta => {
         this.tutores = respuesta.tutores;
+        this.apellidoEstudiante = this.servicio.estudianteSeleccionado.apellido;
+        this.nombreEstudiante = this.servicio.estudianteSeleccionado.nombre;
       });
   }
 }

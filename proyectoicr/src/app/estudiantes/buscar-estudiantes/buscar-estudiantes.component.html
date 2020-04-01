@@ -1,19 +1,23 @@
 <h1 class="componente-titulo">Buscar estudiante</h1>
 
 <mat-card class="card-body-componente">
-  <form #form="ngForm" (submit)="OnBuscar(form)">
+  <form #form="ngForm">
     <mat-radio-group aria-label="Select an option">
       <mat-radio-button
         [checked]="buscarPorNomYAp"
         (change)="DeshabilitarInputs(form)"
         value="1"
-        ><span class="label-radio-button">Buscar por nombre y apellido</span></mat-radio-button
+        ><span class="label-radio-button"
+          >Buscar por nombre y apellido</span
+        ></mat-radio-button
       >
       <mat-radio-button
-      (change)="DeshabilitarInputs(form)"
-      value="2"
-      [checked]="!buscarPorNomYAp"
-        ><span class="label-radio-button"> Buscar por documento</span></mat-radio-button
+        (change)="DeshabilitarInputs(form)"
+        value="2"
+        [checked]="!buscarPorNomYAp"
+        ><span class="label-radio-button">
+          Buscar por documento</span
+        ></mat-radio-button
       >
     </mat-radio-group>
     <br />
@@ -24,8 +28,6 @@
         #apellido="ngModel"
         matInput
         name="apellido"
-        minlength="2"
-        maxlength="30"
         placeholder="Ingrese apellido"
         type="text"
         [(ngModel)]="apellidoEstSelec"
@@ -40,8 +42,6 @@
         #nombre="ngModel"
         matInput
         name="nombre"
-        minlength="2"
-        maxlength="30"
         placeholder="Ingrese nombre"
         type="text"
         [(ngModel)]="nombreEstSelec"
@@ -85,12 +85,7 @@
     </mat-form-field>
     <br />
     <div class="div-button">
-      <button
-      class="buttonPrimary"
-        routerLink="./lista"
-        type="submit"
-        mat-raised-button
-      >
+      <button class="buttonPrimary" (click)="OnBuscar(form)" mat-raised-button>
         Buscar
       </button>
       <button mat-raised-button (click)="onCancelar()" class="buttonWarn">

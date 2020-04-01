@@ -1,3 +1,4 @@
+// import { environment } from "./../../environments/environment.prod";
 import { MatSnackBar } from "@angular/material";
 import { Comentario } from "./comentario.model";
 import { AutenticacionService } from "src/app/login/autenticacionService.service";
@@ -173,9 +174,54 @@ export class EventosService {
   public eliminarComentario(id) {
     let params = new HttpParams()
       .set("idEvento", this.eventoSeleccionado._id)
-      .append("idComentario", id);
-    return this.http.delete<{ message: string; exito: boolean }>(
-      environment.apiUrl + "/evento/eliminarComentario",
+      .append("idComentario", this.idComentarioSeleccionado);
+    this.http
+      .delete<{ message: string; exito: boolean }>(
+        environment.apiUrl + "/evento/eliminarComentario",
+        { params: params }
+      )
+      .subscribe(response => {
+        if (response.exito) {
+          this.snackBar.open(response.message, "", {
+            panelClass: ["snack-bar-exito"],
+            duration: 4500
+          });
+        }
+      });
+  }
+
+  public eliminarImagen(imgUrl: string) {
+    let params = new HttpParams()
+      .set("imgUrl", imgUrl)
+      .append("idImg", this.ImgCargada);
+    this.http
+      .delete<{ message: string; exito: boolean }>(
+        environment.apiUrl + "/evento/eliminarImagen",
+        { params: params }
+      )
+      .subscribe(response => {
+        if (response.exito) {
+          this.snackBar.open(response.message, "", {
+            panelClass: ["snack-bar-exito"],
+            duration: 4500
+          });
+        }
+      });
+  }
+
+  public obtenerEventosDeCursos(cursos: string) {
+    let params = new HttpParams().set("cursos", cursos);
+    return this.http.get<{ eventos: any[]; exito: boolean; message: string }>(
+      environment.apiUrl + "/evento/curso",
+      { params: params }
+    );
+  }
+
+  //Dada una id de evento, retorna un evento con todos sus datos
+  public obtenerEventoPorId(idEvento: string) {
+    let params = new HttpParams().set("idEvento", idEvento);
+    return this.http.get<{ evento: Evento; exito: boolean; message: string }>(
+      environment.apiUrl + "/evento/id",
       { params: params }
     );
   }

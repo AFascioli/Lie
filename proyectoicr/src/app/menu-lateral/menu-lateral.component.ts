@@ -5,7 +5,14 @@ import {
   MatDrawer,
   MatSidenav
 } from "@angular/material";
-import { Component, OnInit, ChangeDetectorRef, OnDestroy } from "@angular/core";
+import {
+  Component,
+  OnInit,
+  ChangeDetectorRef,
+  OnDestroy,
+  QueryList,
+  ViewChildren
+} from "@angular/core";
 import { Router } from "@angular/router";
 import { AutenticacionService } from "../login/autenticacionService.service";
 import { EstudiantesService } from "../estudiantes/estudiante.service";

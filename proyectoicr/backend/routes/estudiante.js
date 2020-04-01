@@ -85,6 +85,18 @@ router.post("", checkAuthMiddleware, (req, res, next) => {
     });
 });
 
+router.get("/id",checkAuthMiddleware, (req, res) => {
+   Estudiante.findById(req.query.idEstudiante).then(estudiante => {
+      if(estudiante){
+        res.json({estudiante: estudiante, exito: true, message: "Estudiante encontrado exitosamente"});
+      }else{
+        res.json({estudiante: null, exito: false, message: "Estudiante no registrado"});
+      }
+   }).catch(() => {
+      res.status(500).json({
+        message: "Mensaje de error especifico"
+      })});
+});
 //Obtiene los adultos responsable de un estudiante
 router.get("/adultosResponsables", (req, res) => {
   Estudiante.aggregate([

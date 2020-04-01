@@ -1,0 +1,35 @@
+<div class="grid-layout" [class.grid-layout-mobile]="mobileQuery.matches">
+  <mat-card
+    *ngFor="let estudiante of estudiantes"
+    style="cursor: pointer;"
+    (click)="onEstudianteClick(estudiante.idEstudiante)"
+  >
+    <!-- <mat-icon class="iconEstudiante">account_circle</mat-icon> -->
+    <mat-icon class="iconEstudiante">face</mat-icon>
+    <p class="nombre-estudiante">
+      {{ estudiante.nombre }} {{ estudiante.apellido }}
+    </p>
+    <div class="curso">
+      <mat-chip-list>
+        <mat-chip>{{ estudiante.curso }}</mat-chip>
+      </mat-chip-list>
+    </div>
+  </mat-card>
+  <mat-card
+    *ngFor="let evento of eventos"
+    style="cursor: pointer;"
+    (click)="onEventoClick(evento._id)"
+  >
+    <div class="fechaEvento">
+      <time datetime="evento.fechaEvento" class="icon">
+        <strong>{{ obtenerMes(evento.fechaEvento) }}</strong>
+        <span>{{ obtenerDia(evento.fechaEvento) }}</span>
+      </time>
+    </div>
+    <p class="hora">{{ evento.horaInicio }} - {{ evento.horaFin }}</p>
+    <p class="titulo-evento">{{ evento.titulo }}</p>
+    <mat-chip-list class="curso" *ngFor="let curso of evento.tags">
+      <mat-chip>{{ curso }}</mat-chip>
+    </mat-chip-list>
+  </mat-card>
+</div>
