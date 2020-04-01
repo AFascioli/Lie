@@ -20,11 +20,8 @@ export class JustificacionInasistenciaComponent implements OnInit, OnDestroy {
   ultimasInasistencias = [];
   inasistenciasAJustificar = [];
   fueraDeCursado = false;
-<<<<<<< HEAD
   isLoading: boolean = true;
-=======
   private unsubscribe: Subject<void> = new Subject();
->>>>>>> actualizareventos
 
   constructor(
     private servicioAsistencia: AsistenciaService,
