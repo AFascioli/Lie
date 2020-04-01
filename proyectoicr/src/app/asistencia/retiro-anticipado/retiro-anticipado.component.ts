@@ -39,6 +39,7 @@ export class RetiroAnticipadoComponent implements OnInit {
   tutores: any[] = [];
   fueraPeriodoCicloLectivo = false;
   seleccion = new SelectionModel(true, []);
+  isLoading = true;
 
   constructor(
     public snackBar: MatSnackBar,
@@ -79,6 +80,7 @@ export class RetiroAnticipadoComponent implements OnInit {
       this.validarHora();
       this.servicioEstudiante.getTutoresDeEstudiante().subscribe(respuesta => {
         this.tutores = respuesta.tutores;
+        this.isLoading = false;
       });
     } else {
       this.fueraPeriodoCicloLectivo = true;

@@ -1,7 +1,12 @@
-<h1 class="componente-titulo">
+<mat-card class="cardSpinner" *ngIf="isLoading">
+  <mat-spinner class="spinner"  [diameter]="60" ></mat-spinner>
+</mat-card>
+
+<h1 *ngIf="!isLoading" class="componente-titulo">
   Visualizar agenda de curso
 </h1>
-<mat-card class="card-body-componente">
+
+<mat-card class="card-body-componente" *ngIf="!isLoading">
   <mat-form-field>
     <mat-select
       placeholder="Seleccione curso"
@@ -146,5 +151,14 @@
       </div>
     </div>
     <!-- getColor(materia) -->
+  </div>
+  <div class="div-button">
+    <button
+    mat-raised-button
+    [routerLink]="['/home']"
+    class="buttonWarn" >
+       Volver
+    </button>
+
   </div>
 </mat-card>

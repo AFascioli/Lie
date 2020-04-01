@@ -400,19 +400,19 @@ router.get("/inasistencias", (req, res) => {
 
   CicloLectivo.findOne({ año: fechaActual.getFullYear() })
     .then(cicloLectivo => {
-      if (ClaseAsistencia.validarFechasJustificar(cicloLectivo)) {
-        return res.status(200).json({
-          exito: true,
-          message:
-            "La fecha actual se encuentra dentro de las fechas permitidas para justificar inasistencias"
-        });
-      } else {
+      if (!ClaseAsistencia.validarFechasJustificar(cicloLectivo)) {
         return res.status(200).json({
           exito: false,
           message:
             "La fecha actual no se encuentra dentro de las fechas permitidas para justificar inasistencias"
         });
       }
+      //else{
+      // return res.status(200).json({
+      //   exito: true,
+      //   message:
+      //     "La fecha actual se encuentra dentro de las fechas permitidas para justificar inasistencias"
+      // });}
     })
     .catch(() => {
       res.status(500).json({
@@ -465,10 +465,12 @@ router.get("/inasistencias", (req, res) => {
   ])
     .then(response => {
       if (response.length > 0) {
+        fechalimiteInferior = new Date(new Date() - 24 * 60 * 60 * 1000 * 5);
+        fechalimiteSuperior = new Date();
         response.forEach(objeto => {
           if (
-            objeto.presentismo[0].fecha > fechaLimiteInferior &&
-            objeto.presentismo[0].fecha < fechaLimiteSuperior
+            objeto.presentismo[0].fecha > fechalimiteInferior &&
+            objeto.presentismo[0].fecha <= fechalimiteSuperior
           ) {
             ultimasInasistencias.push({
               idAsistencia: objeto.presentismo[0]._id,

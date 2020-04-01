@@ -1,5 +1,5 @@
 <mat-card *ngIf="isLoading">
-  <mat-spinner class="spinner"></mat-spinner>
+  <mat-spinner class="spinner" [diameter]="60"></mat-spinner>
 </mat-card>
 
 <mat-card *ngIf="estudiantes.length > 0 && !isLoading">

@@ -13,7 +13,7 @@ export class EventosService {
   public evento: Evento;
   public tituloABorrar: string;
   public idComentarioSeleccionado: string;
-  public comentarios: any[]
+  public comentarios: any[];
   public ImgCargada: string;
 
   constructor(
@@ -69,17 +69,23 @@ export class EventosService {
     image: File,
     comentarios: any[]
   ) {
-    let imgUrl = image[0].name;
+    let imgUrl;
     const fechaEventoS = fechaEvento.toString();
     const eventoModificado = new FormData();
     eventoModificado.append("_id", _id);
-    eventoModificado.append("image", image[0], imgUrl);
     eventoModificado.append("titulo", titulo);
     eventoModificado.append("descripcion", descripcion);
     eventoModificado.append("fechaEvento", fechaEventoS);
     eventoModificado.append("horaInicio", horaInicio);
     eventoModificado.append("horaFin", horaFin);
-    eventoModificado.append("imgUrl", imgUrl);
+    if (image != null) {
+      imgUrl = image[0].name;
+      eventoModificado.append("image", image[0], imgUrl);
+      eventoModificado.append("imgUrl", imgUrl);
+    } else {
+      eventoModificado.append("image", null);
+      eventoModificado.append("imgUrl", null);
+    }
     for (var i = 0; i < tags.length; i++) {
       eventoModificado.append("tags", tags[i]);
     }
@@ -182,10 +188,10 @@ export class EventosService {
       });
   }
 
-  public eliminarImagen (imgUrl: string) {
+  public eliminarImagen(imgUrl: string) {
     let params = new HttpParams()
-    .set("imgUrl", imgUrl)
-    .append ("idImg", this.ImgCargada);
+      .set("imgUrl", imgUrl)
+      .append("idImg", this.ImgCargada);
     this.http
       .delete<{ message: string; exito: boolean }>(
         environment.apiUrl + "/evento/eliminarImagen",
@@ -199,6 +205,5 @@ export class EventosService {
           });
         }
       });
-
   }
 }

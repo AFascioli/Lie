@@ -33,6 +33,7 @@ export class VisualizarAgendaComponent implements OnInit {
   materias: any[] = [];
   _mobileQueryListener: () => void;
   mobileQuery: MediaQueryList;
+  isLoading = true;
 
   constructor(
     public servicioEstudiante: EstudiantesService,
@@ -75,6 +76,7 @@ export class VisualizarAgendaComponent implements OnInit {
           this.getMateriasDistintas();
           this.getColorVector();
           resolve(agenda.agenda);
+
         });
     });
   }
@@ -100,6 +102,7 @@ export class VisualizarAgendaComponent implements OnInit {
           ? -1
           : 0
       );
+      this.isLoading = false;
     });
   }
 

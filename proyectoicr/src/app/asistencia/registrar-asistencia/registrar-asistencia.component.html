@@ -1,7 +1,11 @@
-<h1 class="componente-titulo">
+<mat-card class="cardSpinner" *ngIf="isLoading">
+  <mat-spinner class="spinner" [diameter]="60" ></mat-spinner>
+</mat-card>
+
+<h1 *ngIf="!isLoading" class="componente-titulo">
   Tomar asistencia ciclo lectivo {{ fechaActual.getFullYear() }}
 </h1>
-<mat-card class="card-body-componente">
+<mat-card class="card-body-componente" *ngIf="!isLoading">
   <mat-form-field class="curso">
     <mat-select
       placeholder="Seleccione curso"

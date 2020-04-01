@@ -185,3 +185,15 @@ hr {
   position: absolute;
   align-self: center;
 }
+
+.div-button {
+  text-align: right;
+}
+
+.cardSpinner {
+  margin: auto;
+  margin-top: 1rem;
+  margin-bottom: 1.5rem;
+  max-width: 800px;
+  box-shadow: 0px 0px 8px 0px rgba(0, 0, 0, 0.71) !important;
+}
