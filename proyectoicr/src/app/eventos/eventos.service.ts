@@ -175,19 +175,10 @@ export class EventosService {
     let params = new HttpParams()
       .set("idEvento", this.eventoSeleccionado._id)
       .append("idComentario", this.idComentarioSeleccionado);
-    this.http
-      .delete<{ message: string; exito: boolean }>(
-        environment.apiUrl + "/evento/eliminarComentario",
-        { params: params }
-      )
-      .subscribe(response => {
-        if (response.exito) {
-          this.snackBar.open(response.message, "", {
-            panelClass: ["snack-bar-exito"],
-            duration: 4500
-          });
-        }
-      });
+    return this.http.delete<{ message: string; exito: boolean }>(
+      environment.apiUrl + "/evento/eliminarComentario",
+      { params: params }
+    );
   }
 
   public eliminarImagen(imgUrl: string) {
