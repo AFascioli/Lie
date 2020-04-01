@@ -73,8 +73,8 @@ export class BuscarEstudiantesComponent implements OnInit {
         this.servicio.busquedaEstudianteXNombre = false;
       }
       this.router.navigate(["/buscar/lista"]);
-    }else{
-      this.snackBar.open("Datos ingresados incorrectos","",{
+    } else {
+      this.snackBar.open("Faltan campos por completar", "", {
         panelClass: ["snack-bar-fracaso"],
         duration: 4000
       });

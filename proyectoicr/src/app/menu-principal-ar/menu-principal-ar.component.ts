@@ -1,15 +1,15 @@
-import { Router } from '@angular/router';
-import { UbicacionService } from './../ubicacion/ubicacion.service';
-import { InscripcionService } from './../inscripcion/inscripcion.service';
-import { CalificacionesService } from './../calificaciones/calificaciones.service';
-import { AsistenciaService } from './../asistencia/asistencia.service';
-import { EstudiantesService } from './../estudiantes/estudiante.service';
-import { EventosService } from './../eventos/eventos.service';
+import { Router } from "@angular/router";
+import { UbicacionService } from "./../ubicacion/ubicacion.service";
+import { InscripcionService } from "./../inscripcion/inscripcion.service";
+import { CalificacionesService } from "./../calificaciones/calificaciones.service";
+import { AsistenciaService } from "./../asistencia/asistencia.service";
+import { EstudiantesService } from "./../estudiantes/estudiante.service";
+import { EventosService } from "./../eventos/eventos.service";
 import { AutenticacionService } from "./../login/autenticacionService.service";
 import { Component, OnInit, ChangeDetectorRef } from "@angular/core";
 import { AdultoResponsableService } from "../adulto-responsable/adultoResponsable.service";
-import { Estudiante } from '../estudiantes/estudiante.model';
-import { MediaMatcher } from '@angular/cdk/layout';
+import { Estudiante } from "../estudiantes/estudiante.model";
+import { MediaMatcher } from "@angular/cdk/layout";
 
 @Component({
   selector: "app-menu-principal-ar",
@@ -35,7 +35,7 @@ export class MenuPrincipalARComponent implements OnInit {
     public changeDetectorRef: ChangeDetectorRef,
     public media: MediaMatcher
   ) {
-    this.mobileQuery = media.matchMedia('(max-width: 1000px)');
+    this.mobileQuery = media.matchMedia("(max-width: 1000px)");
     this._mobileQueryListener = () => changeDetectorRef.detectChanges();
     this.mobileQuery.addListener(this._mobileQueryListener);
   }
@@ -49,9 +49,11 @@ export class MenuPrincipalARComponent implements OnInit {
         this.estudiantes.forEach(estudiante => {
           cursos.push(estudiante.curso);
         });
-        this.servicioEvento.obtenerEventosDeCursos(cursos.join(",")).subscribe(response => {
-           this.eventos=response.eventos;
-        });
+        this.servicioEvento
+          .obtenerEventosDeCursos(cursos.join(","))
+          .subscribe(response => {
+            this.eventos = response.eventos;
+          });
       });
   }
 
@@ -66,26 +68,28 @@ export class MenuPrincipalARComponent implements OnInit {
     return fecha.getDate();
   }
 
-  onEstudianteClick(idEstudiante: string){
-    this.servicioEstudiante.obtenerEstudiantePorId(idEstudiante).subscribe(response => {
-       if(response.exito){
-         this.asignarEstudianteSeleccionado(response.estudiante);
-         this.router.navigate(["./perfilEstudiante"]);
-       }
-    });
+  onEstudianteClick(idEstudiante: string) {
+    this.servicioEstudiante
+      .obtenerEstudiantePorId(idEstudiante)
+      .subscribe(response => {
+        if (response.exito) {
+          this.asignarEstudianteSeleccionado(response.estudiante);
+          this.router.navigate(["./perfilEstudiante"]);
+        }
+      });
   }
 
-  onEventoClick(idEvento: string){
+  onEventoClick(idEvento: string) {
     this.servicioEvento.obtenerEventoPorId(idEvento).subscribe(response => {
-       if(response.exito){
-         this.servicioEvento.eventoSeleccionado=response.evento;
-         this.router.navigate(["./visualizarEvento"]);
-       }
+      if (response.exito) {
+        this.servicioEvento.eventoSeleccionado = response.evento;
+        this.router.navigate(["./visualizarEvento"]);
+      }
     });
   }
 
   asignarEstudianteSeleccionado(estudiante: Estudiante) {
-    this.servicioEstudiante.estudianteSeleccionado =estudiante;
+    this.servicioEstudiante.estudianteSeleccionado = estudiante;
     this.servicioCalificaciones.estudianteSeleccionado = this.servicioEstudiante.estudianteSeleccionado;
     this.servicioAsistencia.estudianteSeleccionado = this.servicioEstudiante.estudianteSeleccionado;
     this.servicioInscripcion.estudianteSeleccionado = this.servicioEstudiante.estudianteSeleccionado;
