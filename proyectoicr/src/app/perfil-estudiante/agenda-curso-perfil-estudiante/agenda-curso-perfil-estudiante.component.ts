@@ -1,17 +1,17 @@
-import { Component, OnInit, ChangeDetectorRef } from "@angular/core";
-import { Estudiante } from "src/app/estudiantes/estudiante.model";
+import { Component, OnInit, ChangeDetectorRef, OnDestroy } from "@angular/core";
 import { EstudiantesService } from "src/app/estudiantes/estudiante.service";
-import { Router } from "@angular/router";
 import { AgendaService } from "src/app/agenda/agenda.service";
 import { MatSnackBar } from "@angular/material";
 import { MediaMatcher } from "@angular/cdk/layout";
+import { Subject } from "rxjs";
+import { takeUntil } from "rxjs/operators";
 
 @Component({
   selector: "app-agenda-curso-perfil-estudiante",
   templateUrl: "./agenda-curso-perfil-estudiante.component.html",
   styleUrls: ["./agenda-curso-perfil-estudiante.component.css"]
 })
-export class AgendaCursoPerfilEstudianteComponent implements OnInit {
+export class AgendaCursoPerfilEstudianteComponent implements OnInit, OnDestroy {
   dias = ["Hora", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes"]; //Agrego Hora en los dos vectores para que el calculo sea siempre +1 +2
   modulo = [
     "Hora",
@@ -37,6 +37,7 @@ export class AgendaCursoPerfilEstudianteComponent implements OnInit {
   apellidoEstudiante: any;
   nombreEstudiante: any;
   _idEstudiante: any;
+  private unsubscribe: Subject<void> = new Subject();
 
   constructor(
     public servicio: EstudiantesService,
@@ -54,10 +55,17 @@ export class AgendaCursoPerfilEstudianteComponent implements OnInit {
     this.apellidoEstudiante = this.servicio.estudianteSeleccionado.apellido;
     this.nombreEstudiante = this.servicio.estudianteSeleccionado.nombre;
     this._idEstudiante = this.servicio.estudianteSeleccionado._id;
-    this.servicio.obtenerCursoDeEstudiante().subscribe(result => {
-      console.log(result);
-      this.actualizarInterfaz(result.idCurso);
-    });
+    this.servicio
+      .obtenerCursoDeEstudiante()
+      .pipe(takeUntil(this.unsubscribe))
+      .subscribe(result => {
+        this.actualizarInterfaz(result.idCurso);
+      });
+  }
+
+  ngOnDestroy() {
+    this.unsubscribe.next();
+    this.unsubscribe.complete();
   }
 
   // Obtiene la agenda de un curso y le asigna a las materias un color distinto
@@ -65,6 +73,7 @@ export class AgendaCursoPerfilEstudianteComponent implements OnInit {
     return new Promise((resolve, reject) => {
       this.servicioAgenda
         .obtenerAgendaDeCurso(idCurso)
+        .pipe(takeUntil(this.unsubscribe))
         .subscribe(async agenda => {
           if (agenda.exito) {
             this.cursoSelected = true;

@@ -1,16 +1,18 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, OnDestroy } from "@angular/core";
 import { EstudiantesService } from "src/app/estudiantes/estudiante.service";
 import { SancionService } from "../sancion.service";
 import { MatSnackBar } from "@angular/material";
 import { format } from "url";
 import { NgForm } from "@angular/forms";
+import { takeUntil } from "rxjs/operators";
+import { Subject } from "rxjs";
 
 @Component({
   selector: "app-registrar-sanciones",
   templateUrl: "./registrar-sanciones.component.html",
   styleUrls: ["./registrar-sanciones.component.css"]
 })
-export class RegistrarSancionesComponent implements OnInit {
+export class RegistrarSancionesComponent implements OnInit, OnDestroy {
   fechaActual: Date;
   apellidoEstudiante: String;
   nombreEstudiante: String;
@@ -23,12 +25,18 @@ export class RegistrarSancionesComponent implements OnInit {
   ];
   tipoSancionSelected: Boolean = false;
   suspensionSelected: Boolean = false;
+  private unsubscribe: Subject<void> = new Subject();
 
   constructor(
     public servicioEstudiante: EstudiantesService,
     public servicioSancion: SancionService,
     public snackBar: MatSnackBar
   ) {}
+
+  ngOnDestroy() {
+    this.unsubscribe.next();
+    this.unsubscribe.complete();
+  }
 
   ngOnInit() {
     this.fechaActual = new Date();
@@ -63,6 +71,7 @@ export class RegistrarSancionesComponent implements OnInit {
     }
     this.servicioSancion
       .registrarSancion(cantidad, tipoSancion, this.idEstudiante)
+      .pipe(takeUntil(this.unsubscribe))
       .subscribe(rtdo => {
         if (rtdo.exito) {
           this.snackBar.open(rtdo.message, "", {

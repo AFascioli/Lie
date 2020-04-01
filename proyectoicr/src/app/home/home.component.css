@@ -9,6 +9,10 @@
   margin-bottom: 20px;
 }
 
+.titulo {
+  text-align: center !important;
+}
+
 .titulo:hover {
   text-decoration: underline;
 }
@@ -28,6 +32,11 @@ button {
   top: 9px;
   right: 20px;
   width: 6em;
+}
+
+.botones {
+  display: flex;
+  float: right;
 }
 
 .textoParticipan {
@@ -89,7 +98,6 @@ time.icon span {
 
 .botonEditar,
 .botonBorrar {
-  margin-left: auto !important;
   display: flex;
 }
 
@@ -124,6 +132,10 @@ time.icon span {
   text-align: center;
 }
 
+.visualizar {
+  margin-left: 100px;
+}
+
 .botonComentario {
   background: rgba(0, 0, 0, 0.79) !important;
   color: white;
@@ -132,4 +144,21 @@ time.icon span {
   padding: 10px !important;
   padding-left: 15px !important;
   padding-right: 15px !important;
+}
+
+::ng-deep
+  .mat-button-wrapper
+  > mat-icon.notranslate.material-icons.mat-icon-no-color.ng-star-inserted {
+  background: white !important;
+  border-radius: 50% !important;
+  color: black !important;
+}
+
+::ng-deep .mat-mini-fab.mat-warn[disabled],
+.mat-mini-fab[disabled][disabled] {
+  background-color: rgba(27, 11, 97, 0.938);
+}
+
+::ng-deep .mat-mini-fab.mat-warn [ng-reflect-disabled="false"] {
+  background-color: white !important;
 }

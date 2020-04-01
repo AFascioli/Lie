@@ -1,29 +1,32 @@
-import { EstudiantesService } from '../../estudiantes/estudiante.service';
-import { Component, OnInit } from '@angular/core';
-import { AdultoResponsable } from 'src/app/adulto-responsable/adultoResponsable.model';
+import { OnDestroy } from "@angular/core";
+import { EstudiantesService } from "../../estudiantes/estudiante.service";
+import { Component, OnInit } from "@angular/core";
+import { Subject } from "rxjs";
+import { takeUntil } from "rxjs/operators";
 
 @Component({
-  selector: 'app-tutores-estudiante',
-  templateUrl: './tutores-estudiante.component.html',
-  styleUrls: ['./tutores-estudiante.component.css']
+  selector: "app-tutores-estudiante",
+  templateUrl: "./tutores-estudiante.component.html",
+  styleUrls: ["./tutores-estudiante.component.css"]
 })
-export class TutoresEstudianteComponent implements OnInit {
-  tutores: any[]= [];
-  displayedColumns: string[] = [
-    "apellido",
-    "nombre",
-    "telefono",
-    "email"
-  ];
+export class TutoresEstudianteComponent implements OnInit, OnDestroy {
+  tutores: any[] = [];
+  private unsubscribe: Subject<void> = new Subject();
+  displayedColumns: string[] = ["apellido", "nombre", "telefono", "email"];
 
-  constructor(public servicio: EstudiantesService) { }
+  constructor(public servicio: EstudiantesService) {}
 
-  ngOnInit()
-  {
-    this.servicio.getTutoresDeEstudiante().subscribe(respuesta =>
-      {
-        this.tutores= respuesta.tutores;
-      });
+  ngOnDestroy() {
+    this.unsubscribe.next();
+    this.unsubscribe.complete();
   }
 
+  ngOnInit() {
+    this.servicio
+      .getTutoresDeEstudiante()
+      .pipe(takeUntil(this.unsubscribe))
+      .subscribe(respuesta => {
+        this.tutores = respuesta.tutores;
+      });
+  }
 }

@@ -1,15 +1,17 @@
 import { AutenticacionService } from "./../../login/autenticacionService.service";
 import { AsistenciaService } from "src/app/asistencia/asistencia.service";
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, OnDestroy } from "@angular/core";
 import { MatSnackBar } from "@angular/material";
 import { MatDialog } from "@angular/material";
+import { takeUntil } from "rxjs/operators";
+import { Subject } from "rxjs";
 
 @Component({
   selector: "app-justificacion-inasistencia",
   templateUrl: "./justificacion-inasistencia.component.html",
   styleUrls: ["./justificacion-inasistencia.component.css"]
 })
-export class JustificacionInasistenciaComponent implements OnInit {
+export class JustificacionInasistenciaComponent implements OnInit, OnDestroy {
   fechaActual = new Date();
   fechaUnica = new Date();
   fechaInicio = new Date();
@@ -18,7 +20,11 @@ export class JustificacionInasistenciaComponent implements OnInit {
   ultimasInasistencias = [];
   inasistenciasAJustificar = [];
   fueraDeCursado = false;
+<<<<<<< HEAD
   isLoading: boolean = true;
+=======
+  private unsubscribe: Subject<void> = new Subject();
+>>>>>>> actualizareventos
 
   constructor(
     private servicioAsistencia: AsistenciaService,
@@ -34,6 +40,7 @@ export class JustificacionInasistenciaComponent implements OnInit {
     ) {
       this.servicioAsistencia
         .obtenerUltimasInasistencias()
+        .pipe(takeUntil(this.unsubscribe))
         .subscribe(response => {
           this.ultimasInasistencias = response.inasistencias;
           this.isLoading = false;
@@ -46,6 +53,7 @@ export class JustificacionInasistenciaComponent implements OnInit {
   justificarInasistencia() {
     this.servicioAsistencia
       .justificarInasistencia(this.ultimasInasistencias)
+      .pipe(takeUntil(this.unsubscribe))
       .subscribe(response => {
         let tipoSnackBar = "snack-bar-fracaso";
         if (response.exito) {
@@ -78,5 +86,10 @@ export class JustificacionInasistenciaComponent implements OnInit {
     this.ultimasInasistencias[index].justificado = !this.ultimasInasistencias[
       index
     ].justificado;
+  }
+
+  ngOnDestroy() {
+    this.unsubscribe.next();
+    this.unsubscribe.complete();
   }
 }

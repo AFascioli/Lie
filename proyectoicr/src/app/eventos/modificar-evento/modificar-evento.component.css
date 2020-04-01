@@ -2,7 +2,7 @@
   border-color: black;
 }
 
-.chip-list {
+.tag-list {
   width: 100%;
 }
 
@@ -35,7 +35,6 @@ mat-datepicker-toggle {
 .mensaje {
   color: red;
 }
-
 
 /* .mat-expansion-panel{
   width: 80%;

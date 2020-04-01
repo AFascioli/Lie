@@ -1,7 +1,7 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
-const comentarioSchema= mongoose.Schema({
-  idUsuario: {type: mongoose.Schema.Types.ObjectId, ref: 'usuario'},
+const comentarioSchema = mongoose.Schema({
+  idUsuario: { type: mongoose.Schema.Types.ObjectId, ref: "usuario" },
   comentario: String,
   nombre: String,
   apellido: String,
@@ -15,9 +15,9 @@ const eventoSchema = mongoose.Schema({
   horaInicio: String,
   horaFin: String,
   tags: [String],
-  imgUrl: String,
-  autor: {type: mongoose.Schema.Types.ObjectId, ref: "usuario"},
+  filenames: [String],
+  autor: { type: mongoose.Schema.Types.ObjectId, ref: "usuario" },
   comentarios: [comentarioSchema]
 });
 
-module.exports= mongoose.model('evento', eventoSchema, "evento");
+module.exports = mongoose.model("evento", eventoSchema, "evento");

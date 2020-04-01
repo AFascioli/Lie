@@ -18,6 +18,9 @@ export class RoleGuard implements CanActivate {
   ): boolean | Observable<boolean> | Promise<boolean> {
     let flag: boolean = false;
 
+    if (route.data.rolesValidos == null) {
+      return true;
+    }
     route.data.rolesValidos.forEach(rol => {
       if (rol == this.servicio.getRol()) {
         flag = true;

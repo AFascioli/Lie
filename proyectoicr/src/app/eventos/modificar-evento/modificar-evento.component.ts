@@ -1,4 +1,10 @@
-import { Component, OnInit, ElementRef, ViewChild } from "@angular/core";
+import {
+  Component,
+  OnInit,
+  ElementRef,
+  ViewChild,
+  OnDestroy
+} from "@angular/core";
 import { COMMA, ENTER } from "@angular/cdk/keycodes";
 import { FormControl, NgForm } from "@angular/forms";
 import {
@@ -6,30 +12,29 @@ import {
   MatAutocomplete
 } from "@angular/material/autocomplete";
 import { MatChipInputEvent } from "@angular/material/chips";
-import { Observable } from "rxjs";
-import { map, startWith } from "rxjs/operators";
+import { Observable, Subject } from "rxjs";
+import { map, startWith, takeUntil } from "rxjs/operators";
 import { EventosService } from "../eventos.service";
+import { Router } from "@angular/router";
 import { MatSnackBar, MatDialog } from "@angular/material";
 import Rolldate from "../../../assets/rolldate.min.js";
 import { CancelPopupComponent } from "src/app/popup-genericos/cancel-popup.component";
-import { Router } from '@angular/router';
-
-//Parche para la demo #resolve
-declare var require: any;
+import { Evento } from "../evento.model";
+import { environment } from "src/environments/environment";
 
 @Component({
   selector: "app-modificar-evento",
   templateUrl: "./modificar-evento.component.html",
   styleUrls: ["./modificar-evento.component.css"]
 })
-export class ModificarEventoComponent implements OnInit {
+export class ModificarEventoComponent implements OnInit, OnDestroy {
   @ViewChild("chipsInput", { static: false }) chipsInput: ElementRef<
     HTMLInputElement
   >;
   @ViewChild("auto", { static: false }) matAutocomplete: MatAutocomplete;
   fechaActual: Date;
-  imagePath: File;
-  imgURL: any;
+  imageFile: File;
+  imgURL: any[] = [];
   message: string;
   selectable = true;
   removable = true;
@@ -41,15 +46,8 @@ export class ModificarEventoComponent implements OnInit {
   allChips: string[] = ["1A", "2A", "3A", "4A", "5A", "6A", "Todos los cursos"];
   horaInicio = "";
   horaFin = "";
-  //HTML
-
-  tituloEvento: string;
-  descripcionDelEvento: string;
-  fechaDelEvento: Date;
-  horaInicial: string;
-  horaFinal: string;
-  cursos: string[];
-  imagenEvento: string;
+  evento: Evento;
+  private unsubscribe: Subject<void> = new Subject();
 
   constructor(
     public eventoService: EventosService,
@@ -57,17 +55,7 @@ export class ModificarEventoComponent implements OnInit {
     public router: Router,
     public snackBar: MatSnackBar
   ) {
-    this.tituloEvento = this.eventoService.evento.titulo;
-    this.descripcionDelEvento = this.eventoService.evento.descripcion;
-    this.fechaDelEvento = this.eventoService.evento.fechaEvento;
-    this.horaInicial = this.eventoService.evento.horaInicio;
-    this.horaFinal = this.eventoService.evento.horaFin;
-    this.cursos = this.eventoService.evento.tags;
-    this.chips = this.eventoService.evento.tags;
-    this.imagenEvento = this.eventoService.evento.imgUrl;
-    this.imgURL = this.getImage(this.imagenEvento);
     //Hace que funcione el autocomplete, filtra
-
     this.filteredChips = this.chipsCtrl.valueChanges.pipe(
       startWith(null),
       map((chip: string | null) =>
@@ -76,8 +64,22 @@ export class ModificarEventoComponent implements OnInit {
     );
   }
 
+  ngOnDestroy() {
+    this.unsubscribe.next();
+    this.unsubscribe.complete();
+  }
+
   ngOnInit() {
+    this.evento = this.eventoService.evento;
     this.fechaActual = new Date();
+    if (this.evento.filenames.length != 0) {
+      for (let index = 0; index < this.evento.filenames.length; index++) {
+        this.imgURL.push(
+          environment.apiUrl + `/imagen/${this.evento.filenames[index]}`
+        );
+      }
+    }
+    this.chips = this.evento.tags;
     this.inicializarPickers();
   }
 
@@ -122,8 +124,9 @@ export class ModificarEventoComponent implements OnInit {
       }
     });
   }
-  remove(fruit: string): void {
-    const index = this.chips.indexOf(fruit);
+
+  remove(chip: string): void {
+    const index = this.chips.indexOf(chip);
 
     if (index >= 0) {
       this.chips.splice(index, 1);
@@ -136,7 +139,6 @@ export class ModificarEventoComponent implements OnInit {
       this.chips.push(event.option.viewValue);
     } else if (
       !this.chips.includes(event.option.viewValue) &&
-      !this.cursos.includes(event.option.viewValue) &&
       !this.chips.includes("Todos los cursos")
     )
       this.chips.push(event.option.viewValue);
@@ -156,45 +158,61 @@ export class ModificarEventoComponent implements OnInit {
     );
   }
 
-  preview(files) {
+  obtenerImagen = (file, reader) => {
+    return new Promise((resolve, reject) => {
+      reader.readAsDataURL(file);
+      reader.onload = _event => {
+        resolve(reader.result);
+      };
+      if (file == null) {
+        reject("No se pudo obtener la imagen.");
+      }
+    });
+  };
+
+  async preview(files) {
+    let incorrectType = false;
     if (files.length === 0) return;
 
-    var mimeType = files[0].type;
-    if (mimeType.match(/image\/*/) == null) {
-      this.message = "Solo se admiten archivos de imagen";
-      return;
+    for (let index = 0; index < files.length; index++) {
+      var mimeType = files[index].type;
+      if (mimeType.match(/image\/*/) == null) {
+        incorrectType = true;
+        files.splice(index, 1);
+      }
     }
 
-    var reader = new FileReader();
-    this.imagePath = files;
-    reader.readAsDataURL(files[0]);
-    reader.onload = _event => {
-      this.imgURL = reader.result;
-    };
+    incorrectType && (this.message = "Solo se admiten archivos de imagen");
+
+    this.imageFile = files;
+    this.imgURL = [];
+    for (let index = 0; index < files.length; index++) {
+      var reader = new FileReader();
+      this.imgURL[index] = await this.obtenerImagen(files[index], reader);
+    }
   }
 
   onGuardarEvento(form: NgForm) {
-    if (form.valid && this.chips.length != 0) {
-      const fechaEvento = form.value.fechaEvento.toString();
+    if (form.valid && this.evento.tags.length != 0) {
       if (
-        this.horaEventoEsValido(
-          this.verHoraATomar(this.horaInicio, this.horaInicial),
-          this.verHoraATomar(this.horaFin, this.horaFinal)
-        )
+        (this.evento.horaInicio == "" && this.evento.horaFin == "") ||
+        this.horaEventoEsValido(this.evento.horaInicio, this.evento.horaFin)
       ) {
+        let fechaEvento = new Date(this.evento.fechaEvento);
         this.eventoService
-          .ModificarEvento(
-            this.eventoService.evento._id,
-            form.value.titulo,
-            form.value.descripcion,
+          .modificarEvento(
+            this.evento.titulo,
+            this.evento.descripcion,
             fechaEvento,
-            this.verHoraATomar(this.horaInicio, this.horaInicial),
-            this.verHoraATomar(this.horaFin, this.horaFinal),
-            this.chips,
-            this.eventoService.evento.autor,
-            this.imagePath,
-            this.eventoService.evento.comentarios
+            this.evento.horaInicio,
+            this.evento.horaFin,
+            this.evento.tags,
+            this.imageFile,
+            this.evento.filenames,
+            this.evento._id,
+            this.evento.autor
           )
+          .pipe(takeUntil(this.unsubscribe))
           .subscribe(rtdo => {
             if (rtdo.exito) {
               this.snackBar.open(rtdo.message, "", {
@@ -209,7 +227,9 @@ export class ModificarEventoComponent implements OnInit {
               });
             }
           });
-      } else {
+      } else if (
+        !this.horaEventoEsValido(this.evento.horaInicio, this.evento.horaFin)
+      ) {
         this.snackBar.open(
           "La hora de finalización del evento es menor que la hora de inicio",
           "",
@@ -243,8 +263,5 @@ export class ModificarEventoComponent implements OnInit {
     this.dialog.open(CancelPopupComponent, {
       width: "250px"
     });
-  }
-  getImage(imgUrl) {
-    return require("backend/images/" + imgUrl);
   }
 }

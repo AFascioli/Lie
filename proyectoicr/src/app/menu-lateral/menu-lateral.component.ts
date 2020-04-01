@@ -1,29 +1,37 @@
-import { CambiarPassword } from './../login/cambiar-password.component';
-import { MatDialog, MatDialogRef, MatDrawer, MatSidenav } from "@angular/material";
-import { Component, OnInit, ChangeDetectorRef } from "@angular/core";
+import { CambiarPassword } from "./../login/cambiar-password.component";
+import {
+  MatDialog,
+  MatDialogRef,
+  MatDrawer,
+  MatSidenav
+} from "@angular/material";
+import { Component, OnInit, ChangeDetectorRef, OnDestroy } from "@angular/core";
 import { Router } from "@angular/router";
 import { AutenticacionService } from "../login/autenticacionService.service";
-import { EstudiantesService } from '../estudiantes/estudiante.service';
-import { MediaMatcher } from '@angular/cdk/layout';
+import { EstudiantesService } from "../estudiantes/estudiante.service";
+import { MediaMatcher } from "@angular/cdk/layout";
+import { Subject } from "rxjs";
+import { takeUntil } from "rxjs/operators";
 
 @Component({
   selector: "app-menu-lateral",
   templateUrl: "./menu-lateral.component.html",
   styleUrls: ["./menu-lateral.component.css"]
 })
-export class MenuLateralComponent implements OnInit {
-  rol:string;
-  usuario:string;
+export class MenuLateralComponent implements OnInit, OnDestroy {
+  rol: string;
+  usuario: string;
+  private unsubscribe: Subject<void> = new Subject();
   //Lo inicializo porque sino salta error en la consola del browser
-  permisos={
-    notas:0,
-    asistencia:0,
-    eventos:0,
-    sanciones:0,
-    agendaCursos:0,
-    inscribirEstudiante:0,
-    registrarEmpleado:0,
-    cuotas:0
+  permisos = {
+    notas: 0,
+    asistencia: 0,
+    eventos: 0,
+    sanciones: 0,
+    agendaCursos: 0,
+    inscribirEstudiante: 0,
+    registrarEmpleado: 0,
+    cuotas: 0
   };
   _mobileQueryListener: () => void;
   mobileQuery: MediaQueryList;
@@ -37,16 +45,24 @@ export class MenuLateralComponent implements OnInit {
     public changeDetectorRef: ChangeDetectorRef,
     public media: MediaMatcher
   ) {
-    this.mobileQuery = media.matchMedia('(max-width: 1000px)');//Estaba en 800, lo tiro a 1000
+    this.mobileQuery = media.matchMedia("(max-width: 1000px)"); //Estaba en 800, lo tiro a 1000
     this._mobileQueryListener = () => changeDetectorRef.detectChanges();
     this.mobileQuery.addListener(this._mobileQueryListener);
   }
 
+  ngOnDestroy() {
+    this.unsubscribe.next();
+    this.unsubscribe.complete();
+  }
+
   ngOnInit() {
-    this.authService.obtenerPermisosDeRol().subscribe(response=>{
-      this.permisos=response.permisos;
-    });
-    this.rol= this.authService.getRol();
+    this.authService
+      .obtenerPermisosDeRol()
+      .pipe(takeUntil(this.unsubscribe))
+      .subscribe(response => {
+        this.permisos = response.permisos;
+      });
+    this.rol = this.authService.getRol();
     this.usuario = this.authService.getUsuarioAutenticado();
   }
 
@@ -62,10 +78,9 @@ export class MenuLateralComponent implements OnInit {
     });
   }
 
-
-  cerrarMenuLateral(sideNav: MatSidenav){
-    this.estudianteService.retornoDesdeAcciones=false;
-    if(this.mobileQuery.matches){
+  cerrarMenuLateral(sideNav: MatSidenav) {
+    this.estudianteService.retornoDesdeAcciones = false;
+    if (this.mobileQuery.matches) {
       sideNav.toggle();
     }
   }

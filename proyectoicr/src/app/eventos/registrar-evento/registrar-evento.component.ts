@@ -1,4 +1,10 @@
-import { Component, OnInit, ElementRef, ViewChild } from "@angular/core";
+import {
+  Component,
+  OnInit,
+  ElementRef,
+  ViewChild,
+  OnDestroy
+} from "@angular/core";
 import { COMMA, ENTER } from "@angular/cdk/keycodes";
 import { FormControl, NgForm } from "@angular/forms";
 import {
@@ -6,26 +12,28 @@ import {
   MatAutocomplete
 } from "@angular/material/autocomplete";
 import { MatChipInputEvent } from "@angular/material/chips";
-import { Observable } from "rxjs";
-import { map, startWith } from "rxjs/operators";
+import { Observable, Subject } from "rxjs";
+import { map, startWith, takeUntil } from "rxjs/operators";
 import { EventosService } from "../eventos.service";
 import { MatSnackBar, MatDialog } from "@angular/material";
 import Rolldate from "../../../assets/rolldate.min.js";
 import { CancelPopupComponent } from "src/app/popup-genericos/cancel-popup.component";
+import { Router } from "@angular/router";
+import { ImageResult, ResizeOptions } from "ng2-imageupload";
 
 @Component({
   selector: "app-registrar-evento",
   templateUrl: "./registrar-evento.component.html",
   styleUrls: ["./registrar-evento.component.css"]
 })
-export class RegistrarEventoComponent implements OnInit {
+export class RegistrarEventoComponent implements OnInit, OnDestroy {
   @ViewChild("chipsInput", { static: false }) chipsInput: ElementRef<
     HTMLInputElement
   >;
   @ViewChild("auto", { static: false }) matAutocomplete: MatAutocomplete;
   fechaActual: Date;
-  imagePath: File;
-  imgURL: any;
+  imagesFile: any = [];
+  imgURL: any[] = [];
   message: string;
   selectable = true;
   removable = true;
@@ -37,20 +45,27 @@ export class RegistrarEventoComponent implements OnInit {
   allChips: string[] = ["1A", "2A", "3A", "4A", "5A", "6A", "Todos los cursos"];
   horaInicio = "";
   horaFin = "";
+  src;
+  indiceImagen = 0;
+  private unsubscribe: Subject<void> = new Subject();
 
   constructor(
     public eventoService: EventosService,
     public dialog: MatDialog,
-    public snackBar: MatSnackBar
+    public snackBar: MatSnackBar,
+    public router: Router
   ) {
-    //Hace que funcione el autocomplete, filtra
-
     this.filteredChips = this.chipsCtrl.valueChanges.pipe(
       startWith(null),
       map((chip: string | null) =>
         chip ? this._filter(chip) : this.allChips.slice()
       )
     );
+  }
+
+  ngOnDestroy() {
+    this.unsubscribe.next();
+    this.unsubscribe.complete();
   }
 
   ngOnInit() {
@@ -133,21 +148,18 @@ export class RegistrarEventoComponent implements OnInit {
     );
   }
 
-  preview(files) {
-    if (files.length === 0) return;
+  resizeOptions: ResizeOptions = {
+    resizeMaxHeight: 600,
+    resizeMaxWidth: 600
+  };
 
-    var mimeType = files[0].type;
-    if (mimeType.match(/image\/*/) == null) {
-      this.message = "Solo se admiten archivos de imagen";
-      return;
-    }
-
-    var reader = new FileReader();
-    this.imagePath = files;
-    reader.readAsDataURL(files[0]);
-    reader.onload = _event => {
-      this.imgURL = reader.result;
-    };
+  async selectedImage(imagenCargada: ImageResult) {
+    this.imagesFile.push(imagenCargada.file);
+    console.log(imagenCargada);
+    this.imgURL.push(
+      (imagenCargada.resized && imagenCargada.resized.dataURL) ||
+        imagenCargada.dataURL
+    );
   }
 
   onGuardarEvento(form: NgForm) {
@@ -162,8 +174,9 @@ export class RegistrarEventoComponent implements OnInit {
             this.horaInicio,
             this.horaFin,
             this.chips,
-            this.imagePath
+            this.imagesFile
           )
+          .pipe(takeUntil(this.unsubscribe))
           .subscribe(rtdo => {
             if (rtdo.exito) {
               this.snackBar.open(rtdo.message, "", {
@@ -186,14 +199,16 @@ export class RegistrarEventoComponent implements OnInit {
             this.horaInicio,
             this.horaFin,
             this.chips,
-            this.imagePath
+            this.imagesFile
           )
+          .pipe(takeUntil(this.unsubscribe))
           .subscribe(rtdo => {
             if (rtdo.exito) {
               this.snackBar.open(rtdo.message, "", {
                 panelClass: ["snack-bar-exito"],
                 duration: 4500
               });
+              this.router.navigate(["./home"]);
               form.resetForm();
             } else {
               this.snackBar.open(rtdo.message, "", {
@@ -204,7 +219,7 @@ export class RegistrarEventoComponent implements OnInit {
           });
       } else {
         this.snackBar.open(
-          "La hora de finalización del evento es menor que la hora de inicio",
+          "La hora de finalización del evento no es mayor a la hora de inicio",
           "",
           {
             duration: 4500,
@@ -231,5 +246,17 @@ export class RegistrarEventoComponent implements OnInit {
     this.dialog.open(CancelPopupComponent, {
       width: "250px"
     });
+  }
+
+  mostrarImagenSiguiente() {
+    this.indiceImagen += 1;
+  }
+
+  mostrarImagenAnterior() {
+    this.indiceImagen -= 1;
+  }
+
+  obtenerImagen() {
+    return this.imgURL[this.indiceImagen];
   }
 }

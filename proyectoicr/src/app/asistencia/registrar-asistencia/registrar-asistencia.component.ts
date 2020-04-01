@@ -1,16 +1,18 @@
 import { AutenticacionService } from "./../../login/autenticacionService.service";
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, OnDestroy } from "@angular/core";
 import { EstudiantesService } from "src/app/estudiantes/estudiante.service";
 import { AsistenciaService } from "src/app/asistencia/asistencia.service";
 import { MatDialogRef, MatDialog, MatSnackBar } from "@angular/material";
 import { Router } from "@angular/router";
+import { takeUntil } from "rxjs/operators";
+import { Subject } from "rxjs";
 
 @Component({
   selector: "app-registrar-asistencia",
   templateUrl: "./registrar-asistencia.component.html",
   styleUrls: ["./registrar-asistencia.component.css"]
 })
-export class RegistrarAsistenciaComponent implements OnInit {
+export class RegistrarAsistenciaComponent implements OnInit, OnDestroy {
   cursos: any[];
   cursoNotSelected: boolean;
   diaActual: string;
@@ -21,6 +23,7 @@ export class RegistrarAsistenciaComponent implements OnInit {
   agent: any;
   fueraPeriodoCicloLectivo = false;
   isLoading = true;
+  private unsubscribe: Subject<void> = new Subject();
 
   constructor(
     private servicioEstudiante: EstudiantesService,
@@ -51,17 +54,21 @@ export class RegistrarAsistenciaComponent implements OnInit {
       this.fechaActualEnCicloLectivo() ||
       this.autenticacionService.getRol() == "Admin"
     ) {
-      this.servicioEstudiante.obtenerCursos().subscribe(response => {
-        this.cursos = response.cursos;
-        this.cursos.sort((a, b) =>
-          a.curso.charAt(0) > b.curso.charAt(0)
-            ? 1
-            : b.curso.charAt(0) > a.curso.charAt(0)
-            ? -1
-            : 0
-        );
-        this.isLoading = false;
-      });
+      this.servicioEstudiante
+        .obtenerCursos()
+        .pipe(takeUntil(this.unsubscribe))
+        .subscribe(response => {
+          console.log(response.cursos);
+          this.cursos = response.cursos;
+          this.cursos.sort((a, b) =>
+            a.curso.charAt(0) > b.curso.charAt(0)
+              ? 1
+              : b.curso.charAt(0) > a.curso.charAt(0)
+              ? -1
+              : 0
+          );
+          this.isLoading = false;
+        });
     } else {
       this.fueraPeriodoCicloLectivo = true;
     }
@@ -87,12 +94,12 @@ export class RegistrarAsistenciaComponent implements OnInit {
     this.cursoNotSelected = false;
     this.servicioAsistencia
       .cargarAsistencia(curso.value)
+      .pipe(takeUntil(this.unsubscribe))
       .subscribe(respuesta => {
         this.asistenciaNueva = respuesta.asistenciaNueva;
         this.estudiantesXDivision = respuesta.estudiantes.sort((a, b) =>
           a.apellido > b.apellido ? 1 : b.apellido > a.apellido ? -1 : 0
         );
-
       });
   }
 
@@ -109,12 +116,18 @@ export class RegistrarAsistenciaComponent implements OnInit {
   onGuardar() {
     this.servicioAsistencia
       .registrarAsistencia(this.estudiantesXDivision, this.asistenciaNueva)
+      .pipe(takeUntil(this.unsubscribe))
       .subscribe(response => {
         this.snackBar.open(response.message, "", {
           panelClass: ["snack-bar-exito"],
           duration: 4500
         });
       });
+  }
+
+  ngOnDestroy() {
+    this.unsubscribe.next();
+    this.unsubscribe.complete();
   }
 
   onCancelar() {

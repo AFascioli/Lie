@@ -1,17 +1,20 @@
 import { AgendaService } from "../agenda.service";
-import { Component, OnInit, ChangeDetectorRef } from "@angular/core";
+import { Component, OnInit, ChangeDetectorRef, OnDestroy } from "@angular/core";
 import { EstudiantesService } from "src/app/estudiantes/estudiante.service";
 import { delay } from "q";
-import { MatSnackBar } from '@angular/material';
-import { MediaMatcher } from '@angular/cdk/layout';
+import { MatSnackBar } from "@angular/material";
+import { MediaMatcher } from "@angular/cdk/layout";
+import { takeUntil } from "rxjs/operators";
+import { Subject } from "rxjs";
 
 @Component({
   selector: "app-visualizar-agenda",
   templateUrl: "./visualizar-agenda.component.html",
   styleUrls: ["./visualizar-agenda.component.css"]
 })
-export class VisualizarAgendaComponent implements OnInit {
-  dias = ["Hora", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes"]; //Agrego Hora en los dos vectores para que el calculo sea siempre +1 +2
+export class VisualizarAgendaComponent implements OnInit, OnDestroy {
+  dias = ["Hora", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes"];
+  //Agrego Hora en los dos vectores para que el calculo sea siempre +1 +2
   modulo = [
     "Hora",
     "07:30",
@@ -33,6 +36,7 @@ export class VisualizarAgendaComponent implements OnInit {
   materias: any[] = [];
   _mobileQueryListener: () => void;
   mobileQuery: MediaQueryList;
+  private unsubscribe: Subject<void> = new Subject();
   isLoading = true;
 
   constructor(
@@ -42,14 +46,14 @@ export class VisualizarAgendaComponent implements OnInit {
     public changeDetectorRef: ChangeDetectorRef,
     public media: MediaMatcher
   ) {
-    this.mobileQuery = media.matchMedia('(max-width: 880px)');
+    this.mobileQuery = media.matchMedia("(max-width: 880px)");
     this._mobileQueryListener = () => changeDetectorRef.detectChanges();
     this.mobileQuery.addListener(this._mobileQueryListener);
   }
 
   ngOnInit() {
     this.obtenerCursos();
-    console.log('se ejecuto');
+    console.log("se ejecuto");
     // this.materias = this.servicioAgenda.obtenerMaterias();
     // this.getMateriasDistintas();
     // this.getColorVector();
@@ -60,11 +64,11 @@ export class VisualizarAgendaComponent implements OnInit {
     return new Promise((resolve, reject) => {
       this.servicioAgenda
         .obtenerAgendaDeCurso(idCurso)
+        .pipe(takeUntil(this.unsubscribe))
         .subscribe(async agenda => {
-          if(agenda.exito){
-              this.cursoSelected = true;
-          }
-          else{
+          if (agenda.exito) {
+            this.cursoSelected = true;
+          } else {
             this.cursoSelected = false;
             this.snackBar.open(agenda.message, "", {
               panelClass: ["snack-bar-fracaso"],
@@ -76,7 +80,6 @@ export class VisualizarAgendaComponent implements OnInit {
           this.getMateriasDistintas();
           this.getColorVector();
           resolve(agenda.agenda);
-
         });
     });
   }
@@ -85,7 +88,6 @@ export class VisualizarAgendaComponent implements OnInit {
   actualizarInterfaz(idCurso) {
     (async () => {
       let agenda: any = await this.obtenerAgenda(idCurso.value);
-      console.log(agenda);
       agenda.forEach((materia, index) => {
         this.setInGrid(index.toString(), materia);
       });
@@ -93,17 +95,25 @@ export class VisualizarAgendaComponent implements OnInit {
   }
 
   obtenerCursos() {
-    this.servicioEstudiante.obtenerCursos().subscribe(response => {
-      this.cursos = response.cursos;
-      this.cursos.sort((a, b) =>
-        a.curso.charAt(0) > b.curso.charAt(0)
-          ? 1
-          : b.curso.charAt(0) > a.curso.charAt(0)
-          ? -1
-          : 0
-      );
-      this.isLoading = false;
-    });
+    this.servicioEstudiante
+      .obtenerCursos()
+      .pipe(takeUntil(this.unsubscribe))
+      .subscribe(response => {
+        this.cursos = response.cursos;
+        this.cursos.sort((a, b) =>
+          a.curso.charAt(0) > b.curso.charAt(0)
+            ? 1
+            : b.curso.charAt(0) > a.curso.charAt(0)
+            ? -1
+            : 0
+        );
+        this.isLoading = false;
+      });
+  }
+
+  ngOnDestroy() {
+    this.unsubscribe.next();
+    this.unsubscribe.complete();
   }
 
   //Dada la id de un elemento HTML, le asocia el estilo correspondiente (css) para su correcta

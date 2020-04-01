@@ -4,9 +4,7 @@ const mongoose = require("mongoose");
 const path = require("path");
 const cron = require("node-schedule");
 const estudiantesRoutes = require("./routes/estudiante");
-const provinciasRoutes = require("./routes/provincia");
-const localidadesRoutes = require("./routes/localidad");
-const nacionalidadesRoutes = require("./routes/nacionalidad");
+const ubicacionRoutes = require("./routes/ubicacion");
 const cursoRoutes = require("./routes/curso");
 const usuarioRoutes = require("./routes/usuario");
 const adultoResponsableRoutes = require("./routes/adultoResponsable");
@@ -16,49 +14,55 @@ const asistenciaRoutes = require("./routes/asistencia");
 const calificacionesRoutes = require("./routes/calificacion");
 const eventoRoutes = require("./routes/evento");
 const materiasRoutes = require("./routes/materia");
+const Ambiente = require("./assets/ambiente");
+var Grid = require("gridfs-stream");
+let gfs;
 
 const app = express(); // Creo la app express
 
-app.use("/images", express.static(path.join("../images")));
+const conn = mongoose.createConnection(Ambiente.stringDeConexion);
 
-app.use("/static", express.static(path.join("images", "public")));
+conn.once("open", () => {
+  gfs = Grid(conn.db, mongoose.mongo);
+  gfs.collection("imagen");
+  console.log("Conexión por imagenes a base de datos local.");
+});
 
-app.use(express.static("../images"));
+app.get("/imagen/:filename", (req, res) => {
+  gfs.files.findOne({ filename: req.params.filename }, (err, file) => {
+    // Check if file
+    if (!file || file.length === 0) {
+      return res.status(404).json({
+        err: "No file exists"
+      });
+    }
 
-// app.use(express.static("backend/images", 'public'));
+    // Check if image
+    if (file.contentType === "image/jpeg" || file.contentType === "image/png") {
+      // Read output to browser
+      const readstream = gfs.createReadStream(file.filename);
+      readstream.pipe(res);
+    } else {
+      res.status(404).json({
+        err: "Not an image"
+      });
+    }
+  });
+});
 
-// Mongodb password: SNcjNuPBMG42lOh1
-/* Conectamos a la bd y segun lo que responda ese metodo (la promesa) imprimimos en consola
-   lo que corresponda*/
-
-//Conexión a base de producción
-  // mongoose
-  //  .connect(
-  //      "mongodb+srv://ComandanteJr:SNcjNuPBMG42lOh1@cluster0-qvosw.mongodb.net/icrdev?retryWrites=true",
-  //      { useNewUrlParser: true, useUnifiedTopology: true }
-  //    )
-  //    .then(() => {
-  //      console.log("Conexión a base de datos de producción exitosa");
-  //   })
-  //    .catch(() => {
-  //      console.log("Fallo conexión a la base de datos de producción");
-  //   });
-
-// //Conexión a base local
 mongoose
-  .connect("mongodb://127.0.0.1:27017/icr-local", {
+  .connect(Ambiente.stringDeConexion, {
     useNewUrlParser: true,
     useUnifiedTopology: true
- })
+  })
   .then(() => {
-    console.log("Conexión a base de datos local exitosa");
+    console.log("Conexión a base de datos exitosa");
   })
   .catch(() => {
-    console.log("Fallo conexión a la base de datos local");
- });
+    console.log("Fallo conexión a la base de datos");
+  });
 
-
-//Para sacar el deprecation warning de la consola
+// //Para sacar el deprecation warning de la consola
 mongoose.set("useFindAndModify", false);
 
 // Usamos el body parser para poder extraer datos del request body
@@ -81,11 +85,7 @@ app.use((req, res, next) => {
 
 app.use("/estudiante", estudiantesRoutes);
 
-app.use("/provincia", provinciasRoutes);
-
-app.use("/localidad", localidadesRoutes);
-
-app.use("/nacionalidad", nacionalidadesRoutes);
+app.use("/ubicacion", ubicacionRoutes);
 
 app.use("/curso", cursoRoutes);
 

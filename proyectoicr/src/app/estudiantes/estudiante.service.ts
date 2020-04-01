@@ -1,16 +1,14 @@
-import { Injectable } from "@angular/core";
+import { Injectable, OnDestroy } from "@angular/core";
 import { Estudiante } from "./estudiante.model";
 import { HttpClient, HttpParams } from "@angular/common/http";
-import { Provincia } from "../ubicacion/provincias.model";
 import { Subject } from "rxjs";
-import { Localidad } from "../ubicacion/localidades.model";
-import { Nacionalidad } from "../ubicacion/nacionalidades.model";
 import { environment } from "src/environments/environment";
+import { takeUntil } from "rxjs/operators";
 
 @Injectable({
   providedIn: "root"
 })
-export class EstudiantesService {
+export class EstudiantesService implements OnDestroy {
   estudiantes: Estudiante[] = [];
   divisionesXAño: any[];
   estudiantesXDivision: any[];
@@ -23,9 +21,15 @@ export class EstudiantesService {
   tipoPopUp: string;
   formEstudianteModificada: boolean;
   busquedaEstudianteXNombre: boolean;
+  private unsubscribe: Subject<void> = new Subject();
 
   constructor(public http: HttpClient) {
     this.retornoDesdeAcciones = false;
+  }
+
+  ngOnDestroy() {
+    this.unsubscribe.next();
+    this.unsubscribe.complete();
   }
 
   //Registra en la base de datos un nuevo estudiante con todos sus datos
@@ -79,11 +83,12 @@ export class EstudiantesService {
   //@params: id del estudiante
   public borrarEstudiante(_id) {
     let params = new HttpParams().set("_id", _id);
-    this.http
-      .delete<{ message: string }>(environment.apiUrl + "/estudiante/borrar", {
+    return this.http.delete<{ message: string; exito: boolean }>(
+      environment.apiUrl + "/estudiante/borrar",
+      {
         params: params
-      })
-      .subscribe(response => {});
+      }
+    );
   }
 
   //Me retorna todos los estudiantes cuyo tipo y numero de documento coinciden con los pasados por parámetro
@@ -98,6 +103,7 @@ export class EstudiantesService {
         environment.apiUrl + "/estudiante/documento",
         { params: params }
       )
+      .pipe(takeUntil(this.unsubscribe))
       .subscribe(response => {
         this.estudiantes = response.estudiantes;
         this.estudiantesBuscados.next([...this.estudiantes]);
@@ -116,6 +122,7 @@ export class EstudiantesService {
         environment.apiUrl + "/estudiante/nombreyapellido",
         { params: params }
       )
+      .pipe(takeUntil(this.unsubscribe))
       .subscribe(response => {
         this.estudiantes = response.estudiantes;
         this.estudiantesBuscados.next([...this.estudiantes]);

@@ -12,6 +12,8 @@ import {
 import { Router } from "@angular/router";
 import { MediaMatcher } from "@angular/cdk/layout";
 import { SelectionModel } from "@angular/cdk/collections";
+import { takeUntil } from "rxjs/operators";
+import { Subject } from "rxjs";
 
 @Component({
   selector: "app-retiro-anticipado",
@@ -40,6 +42,7 @@ export class RetiroAnticipadoComponent implements OnInit {
   fueraPeriodoCicloLectivo = false;
   seleccion = new SelectionModel(true, []);
   isLoading = true;
+  private unsubscribe: Subject<void> = new Subject();
 
   constructor(
     public snackBar: MatSnackBar,
@@ -78,13 +81,21 @@ export class RetiroAnticipadoComponent implements OnInit {
       this.nombreEstudiante = this.servicioEstudiante.estudianteSeleccionado.nombre;
       this._idEstudiante = this.servicioEstudiante.estudianteSeleccionado._id;
       this.validarHora();
-      this.servicioEstudiante.getTutoresDeEstudiante().subscribe(respuesta => {
-        this.tutores = respuesta.tutores;
-        this.isLoading = false;
-      });
+      this.servicioEstudiante
+        .getTutoresDeEstudiante()
+        .pipe(takeUntil(this.unsubscribe))
+        .subscribe(respuesta => {
+          this.tutores = respuesta.tutores;
+          this.isLoading = false;
+        });
     } else {
       this.fueraPeriodoCicloLectivo = true;
     }
+  }
+
+  ngOnDestroy() {
+    this.unsubscribe.next();
+    this.unsubscribe.complete();
   }
 
   fechaActualEnCicloLectivo() {
@@ -134,6 +145,7 @@ export class RetiroPopupComponent {
   antes10am: Boolean;
   resultado: string;
   tutoresSeleccionados: Array<any>;
+  private unsubscribe: Subject<void> = new Subject();
 
   constructor(
     public dialogRef: MatDialogRef<RetiroPopupComponent>,
@@ -162,7 +174,12 @@ export class RetiroPopupComponent {
   //Confirma el retiro anticipado para el estudiante
   onYesConfirmarClick(): void {
     this.servicioAsistencia
-      .registrarRetiroAnticipado(this.IdEstudiante, this.antes10am, this.tutoresSeleccionados)
+      .registrarRetiroAnticipado(
+        this.IdEstudiante,
+        this.antes10am,
+        this.tutoresSeleccionados
+      )
+      .pipe(takeUntil(this.unsubscribe))
       .subscribe(response => {
         this.resultado = response.exito;
         this.dialogRef.close();
@@ -204,5 +221,10 @@ export class RetiroPopupComponent {
           );
         }
       });
+  }
+
+  ngOnDestroy() {
+    this.unsubscribe.next();
+    this.unsubscribe.complete();
   }
 }

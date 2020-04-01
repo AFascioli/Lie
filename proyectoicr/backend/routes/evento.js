@@ -1,5 +1,7 @@
 const express = require("express");
 const Evento = require("../models/evento");
+const ImagenFiles = require("../models/imagen.files");
+const ImagenChunks = require("../models/imagen.chunks");
 const router = express.Router();
 const AdultoResponsable = require("../models/adultoResponsable");
 const Empleado = require("../models/empleado");
@@ -8,153 +10,189 @@ const multer = require("multer");
 const Usuario = require("../models/usuario");
 const path = require("path");
 const Admin = require("../models/administrador");
-//const Suscripcion = require("../classes/suscripcion");
-//const Inscripcion = require("../models/inscripcion");
-//const mongoose = require("mongoose");
+const Ambiente = require("../assets/ambiente");
+const GridFsStorage = require("multer-gridfs-storage");
+const Suscripcion = require("../classes/suscripcion");
 
-const MIME_TYPE_MAPA = {
-  "image/png": "png",
-  "image/jpeg": "jpg",
-  "image/jpg": "jpg"
-};
-
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    const isValid = MIME_TYPE_MAPA[file.mimetype];
-    let error = new Error("El tipo de archivo es invalido");
-    if (isValid) {
-      error = null;
-    }
-    cb(error, "backend/images");
+const storage = new GridFsStorage({
+  url: Ambiente.stringDeConexion,
+  options: {
+    useNewUrlParser: true,
+    useUnifiedTopology: true
   },
-  filename: (req, file, cb) => {
-    const name = file.originalname
-      .toLowerCase()
-      .split(" ")
-      .join("-");
-    const ext = MIME_TYPE_MAPA[file.mimetype];
-    cb(null, name + "-" + Date.now() + "." + ext);
+  file: (req, file) => {
+    const match = ["image/png", "image/jpeg"];
+
+    if (match.indexOf(file.mimetype) === -1) {
+      const filename = `${Date.now()}-${file.originalname}`;
+      return filename;
+    }
+
+    return {
+      bucketName: "imagen",
+      filename: `${Date.now()}-${file.originalname}`
+    };
   }
 });
 
-var upload = multer({ storage: storage }).single("image");
+var upload = multer({ storage: storage }).array("images", 5);
 
 //Registra el evento en la base de datos
 //@params: evento a publicar
 router.post("/registrar", upload, (req, res, next) => {
+  leerFilenames = () => {
+    return new Promise((resolve, reject) => {
+      let filenames = [];
+      for (let index = 0; index < req.files.length; index++) {
+        filenames.push(req.files[index].filename);
+      }
+      if (filenames.length == req.files.length) {
+        resolve(filenames);
+      } else {
+        reject("No se pudo obtener los nombres de las imagenes.");
+      }
+    });
+  };
+
   Usuario.findOne({ email: req.body.autor })
-    .then(usuario => {
-      const evento = new Evento({
-        titulo: req.body.titulo,
-        descripcion: req.body.descripcion,
-        fechaEvento: req.body.fechaEvento,
-        horaInicio: req.body.horaInicio,
-        horaFin: req.body.horaFin,
-        tags: req.body.tags,
-        imgUrl: req.file.filename,
-        autor: usuario._id
-      });
-      var cuerpo =
-        "El evento se realizará en la fecha " + evento.fechaEvento + ".";
-      var idtutores;
-      // NOTIFICACIÓN
-      //Construcción de cuerpo de la notificación
-
-      // Notificar a los adultos que correspondan a los cursos de los tags/chips
-      // if (evento.tags.includes("Todos los cursos")) {
-      //   Suscripcion.notificacionMasiva(evento.titulo, this.cuerpo);
-      // } else {
-      //   Inscripcion.agreggate([
-      //     {
-      //       '$lookup': {
-      //         'from': 'curso',
-      //         'localField': 'idCurso',
-      //         'foreignField': '_id',
-      //         'as': 'icurso'
-      //       }
-      //     }, {
-      //       '$unwind': {
-      //         'path': '$icurso',
-      //         'preserveNullAndEmptyArrays': false
-      //       }
-      //     }, {
-      //       '$match': {
-      //         '$expr': {
-      //           '$in': [
-      //             '$icurso.curso', [
-      //               '5A'
-      //             ]
-      //           ]
-      //         }
-      //       }
-      //     }, {
-      //       '$lookup': {
-      //         'from': 'estudiante',
-      //         'localField': 'idEstudiante',
-      //         'foreignField': '_id',
-      //         'as': 'conest'
-      //       }
-      //     }, {
-      //       '$unwind': {
-      //         'path': '$conest',
-      //         'preserveNullAndEmptyArrays': false
-      //       }
-      //     }, {
-      //       '$unwind': {
-      //         'path': '$conest.adultoResponsable',
-      //         'preserveNullAndEmptyArrays': false
-      //       }
-      //     }, {
-      //       '$lookup': {
-      //         'from': 'adultoResponsable',
-      //         'localField': 'idAdulto',
-      //         'foreignField': 'string',
-      //         'as': 'conadulto'
-      //       }
-      //     }, {
-      //       '$unwind': {
-      //         'path': '$conadulto',
-      //         'preserveNullAndEmptyArrays': false
-      //       }
-      //     }, {
-      //       '$project': {
-      //         '_id': 0,
-      //         'conadulto.idUsuario': 1
-      //       }
-      //     }
-      //   ]).then(response =>{
-      //     response.forEach(conadulto => {
-      //       idtutores.push(conadulto[0].idUsuario);
-      //     });
-      //     Suscripcion.notificacionGrupal(
-      //       idtutores, // Tutores de los cursos seleccionados
-      //       evento.titulo,
-      //       this.cuerpo
-      //     );
-      //   })
-
-      // }
-
-      evento
-        .save()
-        .then(() => {
-          //Completar con código de la notificación COMPLETAR CON LO DE ARRIBA
-          res.status(201).json({
-            message: "Evento creado existosamente",
-            exito: true
-          });
-        })
-        .catch(() => {
-          res.status(500).json({
-            message: "Mensaje de error especifico"
-          });
+    .then(async usuario => {
+      if (req.files != null) {
+        const evento = new Evento({
+          titulo: req.body.titulo,
+          descripcion: req.body.descripcion,
+          fechaEvento: req.body.fechaEvento,
+          horaInicio: req.body.horaInicio,
+          horaFin: req.body.horaFin,
+          tags: req.body.tags,
+          filenames: await leerFilenames(),
+          autor: usuario._id
         });
+        evento
+          .save()
+          .then(() => {
+            // this.notificarPorEvento(
+            //   this.evento.tags,
+            //   this.evento.titulo,
+            //   "El evento se realizará en la fecha " + evento.fechaEvento + "."
+            // );
+
+            res.status(201).json({
+              message: "Evento creado existosamente",
+              exito: true
+            });
+          })
+          .catch(() => {
+            res.status(500).json({
+              message: "Mensaje de error especifico"
+            });
+          });
+      } else {
+        Usuario.findOne({ email: req.body.autor })
+          .then(usuario => {
+            const evento = new Evento({
+              titulo: req.body.titulo,
+              descripcion: req.body.descripcion,
+              fechaEvento: req.body.fechaEvento,
+              horaInicio: req.body.horaInicio,
+              horaFin: req.body.horaFin,
+              tags: req.body.tags,
+              autor: usuario._id
+            });
+            evento
+              .save()
+              .then(() => {
+                //Completar con código de la notificación COMPLETAR CON LO DE ARRIBA
+                res.status(201).json({
+                  message: "Evento creado existosamente",
+                  exito: true
+                });
+              })
+              .catch(() => {
+                res.status(500).json({
+                  message: "Mensaje de error especifico"
+                });
+              });
+          })
+          .catch(() => {
+            res.status(500).json({
+              message: "Mensaje de error especifico"
+            });
+          });
+      }
     })
     .catch(() => {
       res.status(500).json({
         message: "Mensaje de error especifico"
       });
     });
+});
+
+//Registra el evento en la base de datos
+//@params: evento a publicar
+router.post("/modificar", upload, async (req, res) => {
+  leerFilename = () => {
+    return new Promise((resolve, reject) => {
+      let filenames = [];
+      for (let index = 0; index < req.files.length; index++) {
+        filenames.push(req.files[index].filename);
+      }
+      if (filenames.length == req.files.length) {
+        resolve(filenames);
+      } else {
+        reject("No se pudo obtener los nombres de las imagenes.");
+      }
+    });
+  };
+
+  if (req.files != null) {
+    //console.log(req.body);
+    Evento.findByIdAndUpdate(req.body._id, {
+      titulo: req.body.titulo,
+      descripcion: req.body.descripcion,
+      fechaEvento: req.body.fechaEvento,
+      horaInicio: req.body.horaInicio,
+      horaFin: req.body.horaFin,
+      tags: req.body.tags,
+      filenames: await leerFilename(),
+      autor: req.body.idAutor
+    })
+      .exec()
+      .then(() => {
+        //Completar con código de la notificación COMPLETAR CON LO DE ARRIBA
+        res.status(201).json({
+          message: "Evento modificado existosamente",
+          exito: true
+        });
+      })
+      .catch(() => {
+        res.status(500).json({
+          message: "No se pudo modificar el evento correctamente"
+        });
+      });
+  } else {
+    Evento.findByIdAndUpdate(req.body._id, {
+      titulo: req.body.titulo,
+      descripcion: req.body.descripcion,
+      fechaEvento: req.body.fechaEvento,
+      horaInicio: req.body.horaInicio,
+      horaFin: req.body.horaFin,
+      tags: req.body.tags,
+      autor: req.body.idAutor
+    })
+      .exec()
+      .then(() => {
+        //Completar con código de la notificación COMPLETAR CON LO DE ARRIBA
+        res.status(201).json({
+          message: "Evento modificado existosamente",
+          exito: true
+        });
+      })
+      .catch(() => {
+        res.status(500).json({
+          message: "No se pudo modificar el evento correctamente"
+        });
+      });
+  }
 });
 
 //Obtiene todos los eventos que estan almacenados en la base de datos
@@ -287,6 +325,7 @@ router.post("/registrarComentario", async (req, res, next) => {
   });
 });
 
+<<<<<<< HEAD
 //Modifica el evento en la base de datos
 //@params: evento a publicar
 router.patch("/editar", upload, (req, res, next) => {
@@ -337,21 +376,67 @@ router.patch("/editar", upload, (req, res, next) => {
       });
   }
 });
+=======
+// //Modifica el evento en la base de datos
+// //@params: evento a publicar
+// router.patch("/editar", upload, (req, res, next) => {
+//   Evento.findByIdAndUpdate(req.body._id, {
+//     titulo: req.body.titulo,
+//     descripcion: req.body.descripcion,
+//     fechaEvento: req.body.fechaEvento,
+//     horaInicio: req.body.horaInicio,
+//     horaFin: req.body.horaFin,
+//     tags: req.body.tags,
+//     imgUrl: req.file.filename,
+//     autor: req.body.autor
+//   });
+//   console
+//     .log(horaFin)
+//     .then(() => {
+//       res.status(200).json({
+//         message: "Evento modificado exitosamente",
+//         exito: true
+//       });
+//     })
+//     .catch(() => {
+//       res.status(200).json({
+//         message: "Ocurrió un problema al intentar modificar el evento",
+//         exito: false
+//       });
+//     });
+// });
+>>>>>>> actualizareventos
 
 router.delete("/eliminarEvento", checkAuthMiddleware, (req, res, next) => {
-  Evento.findByIdAndDelete({
-    _id: req.query._id
-  })
-    .exec()
+  Evento.findByIdAndDelete(req.query._id)
+    .then(async evento => {
+      let largo = evento.filenames.length;
+      for (let index = 0; index < largo; index++) {
+        await ImagenFiles.findOneAndDelete({
+          filename: evento.filenames[index]
+        }).then(file => {
+          ImagenChunks.deleteMany({
+            files_id: file._id
+          }).exec();
+
+          //this.notificarPorEvento(
+          //     evento.tags,
+          //     evento.titulo,
+          //     "Se ha cancelado el evento."
+          //   );
+
+          return res.status(202).json({
+            message: "Evento eliminado exitosamente",
+            exito: true
+          });
+        });
+      }
+    })
     .catch(() => {
       res.status(500).json({
-        message: "Mensaje de error especifico"
+        message: "Error al eliminar el evento"
       });
     });
-  return res.status(202).json({
-    message: "Evento eliminado exitosamente",
-    exito: true
-  });
 });
 
 router.delete("/eliminarComentario", checkAuthMiddleware, (req, res, next) => {
@@ -371,5 +456,92 @@ router.delete("/eliminarComentario", checkAuthMiddleware, (req, res, next) => {
     exito: true
   });
 });
+
+notificarPorEvento = function(tags, titulo, cuerpo) {
+  //Notificar a los adultos que correspondan a los cursos de los tags/chips
+  if (tags.includes("Todos los cursos")) {
+    Suscripcion.notificacionMasiva(evento.titulo, this.cuerpo);
+  } else {
+    Inscripcion.agreggate([
+      {
+        $lookup: {
+          from: "curso",
+          localField: "idCurso",
+          foreignField: "_id",
+          as: "icurso"
+        }
+      },
+      {
+        $unwind: {
+          path: "$icurso",
+          preserveNullAndEmptyArrays: false
+        }
+      },
+      {
+        $match: {
+          $expr: {
+            $in: ["$icurso.curso", ["5A"]]
+          }
+        }
+      },
+      {
+        $lookup: {
+          from: "estudiante",
+          localField: "idEstudiante",
+          foreignField: "_id",
+          as: "conest"
+        }
+      },
+      {
+        $unwind: {
+          path: "$conest",
+          preserveNullAndEmptyArrays: false
+        }
+      },
+      {
+        $unwind: {
+          path: "$conest.adultoResponsable",
+          preserveNullAndEmptyArrays: false
+        }
+      },
+      {
+        $lookup: {
+          from: "adultoResponsable",
+          localField: "idAdulto",
+          foreignField: "string",
+          as: "conadulto"
+        }
+      },
+      {
+        $unwind: {
+          path: "$conadulto",
+          preserveNullAndEmptyArrays: false
+        }
+      },
+      {
+        $project: {
+          _id: 0,
+          "conadulto.idUsuario": 1
+        }
+      }
+    ]).then(response => {
+      let idtutores;
+      response.forEach(conadulto => {
+        idtutores.push(conadulto[0].idUsuario);
+      });
+      Suscripcion.notificacionGrupal(
+        idtutores, // Tutores de los cursos seleccionados
+        titulo,
+        cuerpo
+      );
+
+      console.log("Envío de notificación");
+      console.log("tags: ", tags);
+      console.log(titulo);
+      console.log(cuerpo);
+      console.log("Tutores a notif: ", idtutores);
+    });
+  }
+};
 
 module.exports = router;

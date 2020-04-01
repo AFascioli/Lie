@@ -55,7 +55,7 @@
   </div>
   <!-- <p class="aviso" *ngIf="fueraPeriodoCicloLectivo==true">Atención, no se puede registrar las cuotas debido a que estamos fuera del ciclo lectivo </p>  -->
   <br />
-  <div *ngIf="!cursoNotSelected">
+  <div class="contenedorTabla" *ngIf="!cursoNotSelected">
     <table mat-table [dataSource]="cuotasXEstudiante">
       <ng-container matColumnDef="apellido">
         <th class="nombreApellido" mat-header-cell *matHeaderCellDef>
@@ -88,7 +88,7 @@
           >
         </td>
       </ng-container>
-      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
       <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
     </table>
 

@@ -15,6 +15,15 @@ textarea {
   font-size: 20px;
 } */
 
+.image-preview {
+  height: 20rem;
+  margin: auto;
+  display: flex;
+  border: 3px solid black;
+  padding: 5px;
+  margin-bottom: 20px !important;
+}
+
 .titulo {
   text-align: center;
   font-size: 35px;
@@ -23,6 +32,7 @@ textarea {
 
 .mat-chip {
   font-size: 19px;
+  margin-bottom: 0% !important;
 }
 
 .fechaEvento {
@@ -37,14 +47,22 @@ textarea {
   display: flex;
 }
 
+div.mat-chip-list-wrapper {
+  display: block;
+  margin: 0px !important;
+}
+
 .textoParticipan {
   font-size: 20px;
+  margin: 10px 0px 0px 25px !important;
   /* margin-left: 5px !important; */
 }
 
 .descripcion {
   font-size: 20px;
-  margin-left: 20px;
+  margin-left: 25px;
+  margin-top: 20px;
+  margin-bottom: 0px;
 }
 
 .comentario {
@@ -144,8 +162,26 @@ mat-icon {
 }
 
 .mat-chip {
-  margin-bottom: 2%;
-  margin-left: 14px;
+  margin-bottom: 0% !important;
+  margin-top: 2%;
+}
+
+.divParticipan {
+  margin-left: 4px !important;
+}
+
+.imagen {
+  margin-top: 10px !important;
+  margin-bottom: 5px !important;
+}
+
+.diaEvento
+{
+  margin-bottom: 0px;
+}
+
+.horaEvento {
+  margin-bottom: 10px !important;
 }
 
 .fechaComentario {

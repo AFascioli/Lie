@@ -13,7 +13,7 @@ export class EventosService {
   public evento: Evento;
   public tituloABorrar: string;
   public idComentarioSeleccionado: string;
-  public comentarios: any[];
+  public comentarios: any[] = [];
   public ImgCargada: string;
 
   constructor(
@@ -33,20 +33,27 @@ export class EventosService {
     horaInicio: string,
     horaFin: string,
     tags: any[],
-    image: File
+    images: any
   ) {
-    let imgName = image[0].name;
     const datosEvento = new FormData();
-    datosEvento.append("image", image[0], imgName);
     datosEvento.append("titulo", titulo);
     datosEvento.append("descripcion", descripcion);
     datosEvento.append("fechaEvento", fechaEvento);
     datosEvento.append("horaInicio", horaInicio);
     datosEvento.append("horaFin", horaFin);
-    datosEvento.append("imgUrl", imgName);
+    if (images != null) {
+      for (var i = 0; i < images.length; i++) {
+        datosEvento.append("images", images[i]);
+      }
+    } else {
+      datosEvento.append("images", null);
+      datosEvento.append("imgUrl", null);
+    }
+
     for (var i = 0; i < tags.length; i++) {
       datosEvento.append("tags", tags[i]);
     }
+
     const autor = this.authService.getUsuarioAutenticado();
     datosEvento.append("autor", autor);
 
@@ -57,44 +64,45 @@ export class EventosService {
   }
 
   //Modifica el evento en la base de datos
-  public ModificarEvento(
-    _id: string,
+  public modificarEvento(
     titulo: string,
     descripcion: string,
     fechaEvento: Date,
     horaInicio: string,
     horaFin: string,
     tags: any[],
-    autor: string,
-    image: File,
-    comentarios: any[]
+    images: any,
+    filename: string,
+    _id: string,
+    autor: string
   ) {
+    let eventoModificado = new FormData();
     let imgUrl;
-    const fechaEventoS = fechaEvento.toString();
-    const eventoModificado = new FormData();
+    const fechaEventoString = fechaEvento.toString();
     eventoModificado.append("_id", _id);
     eventoModificado.append("titulo", titulo);
     eventoModificado.append("descripcion", descripcion);
-    eventoModificado.append("fechaEvento", fechaEventoS);
+    eventoModificado.append("fechaEvento", fechaEventoString);
     eventoModificado.append("horaInicio", horaInicio);
     eventoModificado.append("horaFin", horaFin);
-    if (image != null) {
-      imgUrl = image[0].name;
-      eventoModificado.append("image", image[0], imgUrl);
-      eventoModificado.append("imgUrl", imgUrl);
+    eventoModificado.append("filename", filename);
+
+    if (images != null) {
+      for (var i = 0; i < images.length; i++) {
+        eventoModificado.append("images", images[i]);
+      }
     } else {
-      eventoModificado.append("image", null);
+      eventoModificado.append("images", null);
       eventoModificado.append("imgUrl", null);
     }
+
     for (var i = 0; i < tags.length; i++) {
       eventoModificado.append("tags", tags[i]);
     }
-    eventoModificado.append("autor", autor);
-    for (var i = 0; i < comentarios.length; i++) {
-      eventoModificado.append("comentarios", comentarios[i]);
-    }
-    return this.http.patch<{ message: string; exito: boolean }>(
-      environment.apiUrl + "/evento/editar",
+    eventoModificado.append("idAutor", autor);
+
+    return this.http.post<{ message: string; exito: boolean }>(
+      environment.apiUrl + "/evento/modificar",
       eventoModificado
     );
   }
@@ -110,20 +118,12 @@ export class EventosService {
 
   public eliminarEvento(_id) {
     let params = new HttpParams().set("_id", _id);
-    this.http
-      .delete<{ message: string; exito: boolean }>(
-        environment.apiUrl + "/evento/eliminarEvento",
-        { params: params }
-      )
-      .subscribe(response => {
-        if (response.exito) {
-          this.snackBar.open(response.message, "", {
-            panelClass: ["snack-bar-exito"],
-            duration: 4500
-          });
-        }
-      });
+    return this.http.delete<{ message: string; exito: boolean }>(
+      environment.apiUrl + "/evento/eliminarEvento",
+      { params: params }
+    );
   }
+
   //Obtiene todos los eventos que estan almacenados en la base de datos
   public obtenerEvento() {
     return this.http.get<{ eventos: Evento[]; message: string; exito: string }>(
@@ -169,41 +169,14 @@ export class EventosService {
       apellido: string;
     }>(environment.apiUrl + "/evento/registrarComentario", datosComentario);
   }
+
   public eliminarComentario(id) {
     let params = new HttpParams()
       .set("idEvento", this.eventoSeleccionado._id)
-      .append("idComentario", this.idComentarioSeleccionado);
-    this.http
-      .delete<{ message: string; exito: boolean }>(
-        environment.apiUrl + "/evento/eliminarComentario",
-        { params: params }
-      )
-      .subscribe(response => {
-        if (response.exito) {
-          this.snackBar.open(response.message, "", {
-            panelClass: ["snack-bar-exito"],
-            duration: 4500
-          });
-        }
-      });
-  }
-
-  public eliminarImagen(imgUrl: string) {
-    let params = new HttpParams()
-      .set("imgUrl", imgUrl)
-      .append("idImg", this.ImgCargada);
-    this.http
-      .delete<{ message: string; exito: boolean }>(
-        environment.apiUrl + "/evento/eliminarImagen",
-        { params: params }
-      )
-      .subscribe(response => {
-        if (response.exito) {
-          this.snackBar.open(response.message, "", {
-            panelClass: ["snack-bar-exito"],
-            duration: 4500
-          });
-        }
-      });
+      .append("idComentario", id);
+    return this.http.delete<{ message: string; exito: boolean }>(
+      environment.apiUrl + "/evento/eliminarComentario",
+      { params: params }
+    );
   }
 }

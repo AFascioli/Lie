@@ -2,15 +2,17 @@ import { CancelPopupComponent } from "src/app/popup-genericos/cancel-popup.compo
 import { InscripcionService } from "../inscripcion.service";
 import { AutenticacionService } from "src/app/login/autenticacionService.service";
 import { EstudiantesService } from "src/app/estudiantes/estudiante.service";
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, OnDestroy } from "@angular/core";
 import { MatDialog, MatDialogConfig, MatSnackBar } from "@angular/material";
+import { takeUntil } from "rxjs/operators";
+import { Subject } from "rxjs";
 
 @Component({
   selector: "app-documentos-inscripcion",
   templateUrl: "./documentos-inscripcion.component.html",
   styleUrls: ["./documentos-inscripcion.component.css"]
 })
-export class DocumentosInscripcionComponent implements OnInit {
+export class DocumentosInscripcionComponent implements OnInit, OnDestroy {
   cursos: any[];
   cursoSeleccionado: boolean = false;
   estudiantesConDocumentos: any[] = [];
@@ -25,6 +27,7 @@ export class DocumentosInscripcionComponent implements OnInit {
   documentosEntregadosOnChange = false;
   fueraPeriodoCicloLectivo = false;
   fechaActual: Date;
+  private unsubscribe: Subject<void> = new Subject();
 
   constructor(
     public servicioEstudiante: EstudiantesService,
@@ -33,6 +36,11 @@ export class DocumentosInscripcionComponent implements OnInit {
     public popup: MatDialog,
     private snackBar: MatSnackBar
   ) {}
+
+  ngOnDestroy() {
+    this.unsubscribe.next();
+    this.unsubscribe.complete();
+  }
 
   //Sort ordena solo por año de curso, para ordenar bien, deberia dsp de el sort que esta ahora
   //tomar de a dos cursos y ordenarlos alfabeticamente, de esa forma quedan ordenados por año y
@@ -43,16 +51,19 @@ export class DocumentosInscripcionComponent implements OnInit {
       this.fechaActualEnCicloLectivo() ||
       this.autenticacionService.getRol() == "Admin"
     ) {
-      this.servicioEstudiante.obtenerCursos().subscribe(response => {
-        this.cursos = response.cursos;
-        this.cursos.sort((a, b) =>
-          a.curso.charAt(0) > b.curso.charAt(0)
-            ? 1
-            : b.curso.charAt(0) > a.curso.charAt(0)
-            ? -1
-            : 0
-        );
-      });
+      this.servicioEstudiante
+        .obtenerCursos()
+        .pipe(takeUntil(this.unsubscribe))
+        .subscribe(response => {
+          this.cursos = response.cursos;
+          this.cursos.sort((a, b) =>
+            a.curso.charAt(0) > b.curso.charAt(0)
+              ? 1
+              : b.curso.charAt(0) > a.curso.charAt(0)
+              ? -1
+              : 0
+          );
+        });
     } else {
       this.fueraPeriodoCicloLectivo = true;
     }
@@ -77,6 +88,7 @@ export class DocumentosInscripcionComponent implements OnInit {
     this.cursoSeleccionado = true;
     this.servicioInscripcion
       .obtenerDocumentosDeEstudiantesXCurso(curso.value)
+      .pipe(takeUntil(this.unsubscribe))
       .subscribe(estudiantes => {
         this.estudiantesConDocumentos = estudiantes.documentos;
         this.estudiantesConDocumentos = this.estudiantesConDocumentos.sort(
@@ -102,6 +114,7 @@ export class DocumentosInscripcionComponent implements OnInit {
   onGuardar() {
     this.servicioInscripcion
       .registrarDocumentosInscripcion(this.estudiantesConDocumentos)
+      .pipe(takeUntil(this.unsubscribe))
       .subscribe(response => {
         if (response.exito) {
           this.snackBar.open(

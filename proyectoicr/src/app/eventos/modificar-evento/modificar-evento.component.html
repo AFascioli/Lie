@@ -6,20 +6,19 @@
   <form #form="ngForm">
     <mat-form-field>
       <input
-        [(ngModel)]="tituloEvento"
         name="titulo"
         ngModel
         #titulo="ngModel"
         matInput
         placeholder="Ingrese título"
         type="text"
+        [(ngModel)]="evento.titulo"
         required
       />
     </mat-form-field>
     <br />
     <mat-form-field>
       <textarea
-        [(ngModel)]="descripcionDelEvento"
         matInput
         name="descripcion"
         ngModel
@@ -27,13 +26,13 @@
         rows="3"
         placeholder="Ingrese descripción"
         type="text"
+        [(ngModel)]="evento.descripcion"
       >
       </textarea>
     </mat-form-field>
     <br />
     <mat-form-field>
       <input
-        [(ngModel)]="fechaDelEvento"
         matInput
         name="fechaEvento"
         ngModel
@@ -44,6 +43,7 @@
         (click)="picker.open()"
         required
         readonly
+        [(ngModel)]="evento.fechaEvento"
       />
       <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
       <mat-datepicker touchUi #picker></mat-datepicker>
@@ -52,7 +52,6 @@
       <mat-form-field class="matFormHora">
         <div class="hora">
           <input
-            [(ngModel)]="horaInicial"
             matInput
             name="horaInicio"
             ngModel
@@ -60,6 +59,7 @@
             placeholder="Hora inicio *"
             id="pickerInicio"
             readonly
+            [(ngModel)]="evento.horaInicio"
           />
         </div>
       </mat-form-field>
@@ -67,7 +67,6 @@
       <mat-form-field class="matFormHora">
         <div class="hora">
           <input
-            [(ngModel)]="horaFinal"
             matInput
             name="horaFin"
             ngModel
@@ -75,6 +74,7 @@
             placeholder="Hora fin *"
             id="pickerFin"
             readonly
+            [(ngModel)]="evento.horaFin"
           />
         </div>
       </mat-form-field>
@@ -93,7 +93,6 @@
         </mat-chip>
         <input
           placeholder="Seleccione los cursos *"
-          name="chipsInput"
           #chipsInput
           [formControl]="chipsCtrl"
           [matAutocomplete]="auto"
@@ -115,15 +114,30 @@
       </mat-autocomplete>
     </mat-form-field>
     <div>
-      <img [src]="imgURL" class="image-preview" *ngIf="imgURL" />
-      <button
-        mat-stroked-button
-        class="boton-seleccionar"
-        type="button"
-        (click)="file.click()"
+      <mat-carousel
+        interval="5000"
+        maxWidth="auto"
+        proportion="75"
+        color="warn"
+        [hideArrows]="false"
+        [hideIndicators]="false"
       >
-        Seleccionar imagen *
-      </button>
+        <div *ngFor="let imagen of imgURL">
+          <mat-carousel-slide overlayColor="transparent" [image]="imagen">
+            ></mat-carousel-slide
+          >
+        </div>
+      </mat-carousel>
+      <div class="contenedor-flexbox">
+        <button
+          mat-stroked-button
+          class="boton-seleccionar"
+          type="button"
+          (click)="file.click()"
+        >
+          Seleccionar imagen
+        </button>
+      </div>
       <br />
       <span class="mensaje" *ngIf="message">{{ message }}</span>
       <br />
@@ -132,8 +146,10 @@
         type="file"
         accept="image/*"
         (change)="preview(file.files)"
+        multiple
       />
     </div>
+
     <div class="div-button">
       <button
         class="buttonPrimary"

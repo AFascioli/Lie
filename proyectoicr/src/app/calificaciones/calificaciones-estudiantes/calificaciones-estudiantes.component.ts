@@ -1,20 +1,22 @@
 import { CancelPopupComponent } from "src/app/popup-genericos/cancel-popup.component";
 import { AutenticacionService } from "../../login/autenticacionService.service";
 import { EstudiantesService } from "src/app/estudiantes/estudiante.service";
-import { Component, OnInit, ViewChild } from "@angular/core";
+import { Component, OnInit, ViewChild, OnDestroy } from "@angular/core";
 import { MatDialog, MatSnackBar } from "@angular/material";
 import { NgForm, NgModel } from "@angular/forms";
 import { MatPaginator, PageEvent } from "@angular/material/paginator";
 import { MatTableDataSource } from "@angular/material/table";
 import { CalificacionesService } from "../calificaciones.service";
-import { MatPaginatorIntl } from '@angular/material';
+import { MatPaginatorIntl } from "@angular/material";
+import { Subject } from "rxjs";
+import { takeUntil } from "rxjs/operators";
 
 @Component({
   selector: "app-calificaciones-estudiantes",
   templateUrl: "./calificaciones-estudiantes.component.html",
   styleUrls: ["./calificaciones-estudiantes.component.css"]
 })
-export class CalificacionesEstudiantesComponent implements OnInit {
+export class CalificacionesEstudiantesComponent implements OnInit, OnDestroy {
   cursos: any[];
   materias: any[];
   estudiantes: any[];
@@ -39,6 +41,7 @@ export class CalificacionesEstudiantesComponent implements OnInit {
   promedio = 0;
   dataSource: MatTableDataSource<any>;
   indexEst = 0;
+  private unsubscribe: Subject<void> = new Subject();
 
   @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
 
@@ -57,9 +60,15 @@ export class CalificacionesEstudiantesComponent implements OnInit {
     this.obtenerCursos();
   }
 
+  ngOnDestroy() {
+    this.unsubscribe.next();
+    this.unsubscribe.complete();
+  }
+
   validarPermisos() {
     this.servicioEstudianteAutenticacion
       .obtenerPermisosDeRol()
+      .pipe(takeUntil(this.unsubscribe))
       .subscribe(res => {
         if (res.permisos.notas == 2) {
           this.rolConPermisosEdicion = true;
@@ -72,6 +81,7 @@ export class CalificacionesEstudiantesComponent implements OnInit {
     if (this.servicioEstudianteAutenticacion.getRol() == "Docente") {
       this.servicioEstudiante
         .obtenerCursosDeDocente(this.servicioEstudianteAutenticacion.getId())
+        .pipe(takeUntil(this.unsubscribe))
         .subscribe(response => {
           this.cursos = response.cursos;
           this.cursos.sort((a, b) =>
@@ -83,16 +93,19 @@ export class CalificacionesEstudiantesComponent implements OnInit {
           );
         });
     } else {
-      this.servicioEstudiante.obtenerCursos().subscribe(response => {
-        this.cursos = response.cursos;
-        this.cursos.sort((a, b) =>
-          a.curso.charAt(0) > b.curso.charAt(0)
-            ? 1
-            : b.curso.charAt(0) > a.curso.charAt(0)
-            ? -1
-            : 0
-        );
-      });
+      this.servicioEstudiante
+        .obtenerCursos()
+        .pipe(takeUntil(this.unsubscribe))
+        .subscribe(response => {
+          this.cursos = response.cursos;
+          this.cursos.sort((a, b) =>
+            a.curso.charAt(0) > b.curso.charAt(0)
+              ? 1
+              : b.curso.charAt(0) > a.curso.charAt(0)
+              ? -1
+              : 0
+          );
+        });
     }
   }
 
@@ -165,12 +178,14 @@ export class CalificacionesEstudiantesComponent implements OnInit {
           curso.value,
           this.servicioEstudianteAutenticacion.getId()
         )
+        .pipe(takeUntil(this.unsubscribe))
         .subscribe(respuesta => {
           this.materias = respuesta.materias;
         });
     } else {
       this.servicioEstudiante
         .obtenerMateriasDeCurso(curso.value)
+        .pipe(takeUntil(this.unsubscribe))
         .subscribe(respuesta => {
           this.materias = respuesta.materias;
         });
@@ -185,6 +200,7 @@ export class CalificacionesEstudiantesComponent implements OnInit {
           form.value.materia,
           form.value.trimestre
         )
+        .pipe(takeUntil(this.unsubscribe))
         .subscribe(respuesta => {
           this.estudiantes = [...respuesta.estudiantes];
           this.estudiantes = this.estudiantes.sort((a, b) =>
@@ -247,6 +263,7 @@ export class CalificacionesEstudiantesComponent implements OnInit {
           form.value.materia,
           form.value.trimestre
         )
+        .pipe(takeUntil(this.unsubscribe))
         .subscribe(respuesta => {
           if (respuesta.exito) {
             this.snackBar.open(respuesta.message, "", {
@@ -284,12 +301,11 @@ export class CalificacionesEstudiantesComponent implements OnInit {
 
 export class PaginatorOverviewExample {}
 
-
 export function getDutchPaginatorIntl() {
   const paginatorIntl = new MatPaginatorIntl();
 
-  paginatorIntl.itemsPerPageLabel = 'Items por página';
-  paginatorIntl.nextPageLabel = 'Página siguiente';
-  paginatorIntl.previousPageLabel = 'Página anterior';
+  paginatorIntl.itemsPerPageLabel = "Items por página";
+  paginatorIntl.nextPageLabel = "Página siguiente";
+  paginatorIntl.previousPageLabel = "Página anterior";
   return paginatorIntl;
 }

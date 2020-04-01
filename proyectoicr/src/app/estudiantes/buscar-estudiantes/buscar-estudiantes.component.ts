@@ -112,10 +112,4 @@ export class BuscarPopupComponent {
     console.log(this.dialogRef);
     this.dialogRef.close();
   }
-
-  //#resolve
-  onOkClick(): void {
-    this.servicio.formInvalidoEstudiante = true;
-    this.dialogRef.close();
-  }
 }

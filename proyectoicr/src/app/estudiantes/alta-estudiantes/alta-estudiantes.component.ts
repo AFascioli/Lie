@@ -5,11 +5,12 @@ import { EstudiantesService } from "../estudiante.service";
 import { NgForm } from "@angular/forms";
 import { Provincia } from "../../ubicacion/provincias.model";
 import { Localidad } from "../../ubicacion/localidades.model";
-import { Subscription } from "rxjs";
+import { Subscription, Subject } from "rxjs";
 import { MatSnackBar } from "@angular/material";
 import { MatDialog, MatDialogRef } from "@angular/material/dialog";
 import { MediaMatcher } from "@angular/cdk/layout";
 import { CancelPopupComponent } from "src/app/popup-genericos/cancel-popup.component";
+import { takeUntil } from "rxjs/operators";
 
 @Component({
   selector: "app-alta-estudiantes",
@@ -25,6 +26,7 @@ export class AltaEstudiantesComponent implements OnInit, OnDestroy {
   suscripcion: Subscription;
   _mobileQueryListener: () => void;
   mobileQuery: MediaQueryList;
+  private unsubscribe: Subject<void> = new Subject();
 
   //para asignar valores por defecto
   nombreProvinciaSeleccionada: string;
@@ -56,12 +58,14 @@ export class AltaEstudiantesComponent implements OnInit, OnDestroy {
     this.servicioUbicacion.getProvincias();
     this.suscripcion = this.servicioUbicacion
       .getProvinciasListener()
+      .pipe(takeUntil(this.unsubscribe))
       .subscribe(provinciasActualizadas => {
         this.provincias = provinciasActualizadas;
       });
     this.servicioUbicacion.getLocalidades();
     this.suscripcion = this.servicioUbicacion
       .getLocalidadesListener()
+      .pipe(takeUntil(this.unsubscribe))
       .subscribe(localidadesActualizadas => {
         this.localidades = localidadesActualizadas;
         this.nombreProvinciaSeleccionada = "Cordoba";
@@ -71,6 +75,7 @@ export class AltaEstudiantesComponent implements OnInit, OnDestroy {
     this.servicioUbicacion.getNacionalidades();
     this.suscripcion = this.servicioUbicacion
       .getNacionalidadesListener()
+      .pipe(takeUntil(this.unsubscribe))
       .subscribe(nacionalidadesActualizadas => {
         this.nacionalidades = nacionalidadesActualizadas;
         this.nacionalidades.sort((a, b) =>
@@ -81,7 +86,8 @@ export class AltaEstudiantesComponent implements OnInit, OnDestroy {
 
   // Cuando se destruye el componente se eliminan las suscripciones.
   ngOnDestroy() {
-    this.suscripcion.unsubscribe();
+    this.unsubscribe.next();
+    this.unsubscribe.complete();
   }
 
   onGuardar(form: NgForm) {
@@ -111,6 +117,7 @@ export class AltaEstudiantesComponent implements OnInit, OnDestroy {
           form.value.estadoCivil,
           form.value.telefono
         )
+        .pipe(takeUntil(this.unsubscribe))
         .subscribe(respuesta => {
           if (respuesta.exito) {
             this.snackBar.open(respuesta.message, "", {
@@ -137,20 +144,6 @@ export class AltaEstudiantesComponent implements OnInit, OnDestroy {
       localidad => localidad.id_provincia == idProvinciaSeleccionada
     );
   }
-
-  // snackBarGuardar(form: NgForm): void {
-  //   if (form.invalid) {
-  //     this.snackBar.open("Faltan campos por completar", "", {
-  //       panelClass: ['snack-bar-fracaso'],
-  //       duration: 4000
-  //     });
-  //   } else {
-  //     this.snackBar.open("El estudiante se ha registrado correctamente", "", {
-  //       panelClass: ['snack-bar-exito'],
-  //       duration: 4000
-  //     });
-  //   }
-  // }
 
   popUpCancelar() {
     this.dialog.open(CancelPopupComponent, {

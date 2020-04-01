@@ -1,14 +1,16 @@
 import { AdultoResponsable } from "./adultoResponsable.model";
 import { HttpClient, HttpParams } from "@angular/common/http";
-import { Injectable } from "@angular/core";
+import { Injectable, OnDestroy } from "@angular/core";
 import { AutenticacionService } from "../login/autenticacionService.service";
 import { Subject } from "rxjs";
+import { takeUntil } from "rxjs/operators";
 
 @Injectable({
   providedIn: "root"
 })
-export class AdultoResponsableService {
+export class AdultoResponsableService implements OnDestroy {
   adultoResponsableEstudiante: AdultoResponsable;
+  private unsubscribe: Subject<void> = new Subject();
 
   constructor(
     public http: HttpClient,
@@ -31,6 +33,7 @@ export class AdultoResponsableService {
     var subject = new Subject<any>();
     this.authServicio
       .crearUsuario(email, numeroDocumento.toString(), "AdultoResponsable")
+      .pipe(takeUntil(this.unsubscribe))
       .subscribe(res => {
         if (res.exito) {
           let idUsuario = res.id;
@@ -47,15 +50,16 @@ export class AdultoResponsableService {
             tutor,
             idUsuario
           };
-          let datos= {
+          let datos = {
             AR: adultoResponsable,
             idEstudiante: idEstudiante
-          }
+          };
           this.http
             .post<{ message: string; exito: boolean }>(
               "http://localhost:3000/adultoResponsable",
-              {  datos: datos }
+              { datos: datos }
             )
+            .pipe(takeUntil(this.unsubscribe))
             .subscribe(response => {
               subject.next(response);
             });
@@ -64,5 +68,10 @@ export class AdultoResponsableService {
         }
       });
     return subject.asObservable();
+  }
+
+  ngOnDestroy() {
+    this.unsubscribe.next();
+    this.unsubscribe.complete();
   }
 }
