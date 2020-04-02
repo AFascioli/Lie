@@ -46,6 +46,7 @@ export class RegistrarEventoComponent implements OnInit, OnDestroy {
   horaInicio = "";
   horaFin = "";
   src;
+  slideIndex = 1;
   indiceImagen = 0;
   private unsubscribe: Subject<void> = new Subject();
 
@@ -155,11 +156,14 @@ export class RegistrarEventoComponent implements OnInit, OnDestroy {
 
   async selectedImage(imagenCargada: ImageResult) {
     this.imagesFile.push(imagenCargada.file);
-    console.log(imagenCargada);
     this.imgURL.push(
       (imagenCargada.resized && imagenCargada.resized.dataURL) ||
         imagenCargada.dataURL
     );
+
+    setTimeout(() => {
+      this.showSlides(1);
+    }, 500);
   }
 
   onGuardarEvento(form: NgForm) {
@@ -248,15 +252,39 @@ export class RegistrarEventoComponent implements OnInit, OnDestroy {
     });
   }
 
-  mostrarImagenSiguiente() {
-    this.indiceImagen += 1;
-  }
-
-  mostrarImagenAnterior() {
-    this.indiceImagen -= 1;
-  }
-
   obtenerImagen() {
-    return this.imgURL[this.indiceImagen];
+    return this.imgURL[this.slideIndex - 1];
+  }
+
+  // Next/previous controls
+  plusSlides(n) {
+    this.slideIndex += n;
+    this.showSlides(this.slideIndex);
+  }
+
+  // Thumbnail image controls
+  currentSlide(n) {
+    this.slideIndex = n;
+    this.showSlides(this.slideIndex);
+  }
+
+  showSlides(n) {
+    var i;
+    var slides = document.getElementsByClassName("mySlides");
+    var dots = document.getElementsByClassName("dot");
+    if (n > slides.length) {
+      this.slideIndex = 1;
+    }
+    if (n < 1) {
+      this.slideIndex = slides.length;
+    }
+    for (i = 0; i < slides.length; i++) {
+      slides[i].setAttribute("style", "display:none;");
+    }
+    for (i = 0; i < dots.length; i++) {
+      dots[i].className = dots[i].className.replace(" active", "");
+    }
+    slides[this.slideIndex - 1].setAttribute("style", "display:block;");
+    dots[this.slideIndex - 1].className += " active";
   }
 }
