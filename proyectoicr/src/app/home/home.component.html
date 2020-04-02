@@ -1,0 +1,104 @@
+<h1 class="componente-titulo">
+  Instituto Cristo Rey
+</h1>
+<ng-container *ngIf="eventos.length != 0">
+  <mat-card
+    class="card-body-componente"
+    *ngFor="let evento of eventos; let i = index"
+  >
+    <mat-card-title>
+      <div class="titulo">
+        <button (click)="eventoSeleccionado(evento)" class="titulo">
+          {{ evento.titulo }}
+        </button>
+      </div>
+      <div class="fechaEvento">
+        <time datetime="evento.fechaEvento" class="icon">
+          <strong>{{ obtenerMes(evento.fechaEvento) }}</strong>
+          <span>{{ obtenerDia(evento.fechaEvento) }}</span>
+        </time>
+      </div>
+    </mat-card-title>
+    <mat-card-subtitle
+      >{{ evento.horaInicio }} - {{ evento.horaFin }}</mat-card-subtitle
+    >
+    <div class="containerImg">
+      <mat-carousel
+        interval="5000"
+        maxWidth="auto"
+        proportion="75"
+        color="warn"
+        [hideArrows]="false"
+        [hideIndicators]="false"
+      >
+        <div *ngFor="let filename of evento.filenames">
+          <mat-carousel-slide
+            overlayColor="transparent"
+            [image]="getImage(filename)"
+          >
+            ></mat-carousel-slide
+          >
+        </div>
+      </mat-carousel>
+      <button
+        type="button"
+        mat-icon-button
+        class="botonEditar"
+        *ngIf="conocerUsuarioLogueado(i) && evento.filenames.length != 0"
+      >
+        <mat-icon (click)="onEditar(evento)">mode_edit </mat-icon>
+      </button>
+      <button
+        type="button"
+        mat-icon-button
+        class="botonBorrar"
+        *ngIf="conocerUsuarioLogueado(i) && evento.filenames.length != 0"
+      >
+        <mat-icon (click)="onBorrar(evento)">delete </mat-icon>
+      </button>
+    </div>
+    <mat-chip-list>
+      <p class="textoParticipan">Participan:</p>
+      <mat-chip *ngFor="let tag of evento.tags">
+        {{ tag }}
+      </mat-chip>
+    </mat-chip-list>
+    <mat-card-content>
+      <p class="descripcion">
+        {{ evento.descripcion }}
+      </p>
+    </mat-card-content>
+    <div
+      class="botonVisualizar"
+      [ngClass]="{ visualizar: evento.filenames.length == 0 }"
+    >
+      <button class="botonComentario" (click)="eventoSeleccionado(evento)">
+        Ver comentarios
+      </button>
+      <div class="botones">
+        <button
+          type="button"
+          mat-icon-button
+          class="botonEditar"
+          *ngIf="conocerUsuarioLogueado(i) && evento.filenames.length == 0"
+        >
+          <mat-icon (click)="onEditar(evento)">mode_edit </mat-icon>
+        </button>
+        <button
+          type="button"
+          mat-icon-button
+          class="botonBorrar"
+          *ngIf="conocerUsuarioLogueado(i) && evento.filenames.length == 0"
+        >
+          <mat-icon (click)="onBorrar(evento)">delete </mat-icon>
+        </button>
+      </div>
+    </div>
+  </mat-card>
+
+  <mat-card class="card-body-componente" *ngIf="eventos.length == 0">
+    <h1 class="tituloAviso">
+      No existen eventos publicados por la institución
+    </h1>
+  </mat-card>
+</ng-container>

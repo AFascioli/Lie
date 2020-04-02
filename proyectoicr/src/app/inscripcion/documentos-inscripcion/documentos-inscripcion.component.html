@@ -1,0 +1,103 @@
+<h1 class="componente-titulo">
+  Registrar documentación inscripción ciclo lectivo
+  {{ fechaActual.getFullYear() }}
+</h1>
+<mat-card class="card-body-componente">
+  <br />
+  <div class="div-selects">
+    <mat-form-field>
+      <mat-select
+        placeholder="Seleccione curso"
+        name="curso"
+        [disabled]="fueraPeriodoCicloLectivo"
+        ngModel
+        #curso="ngModel"
+        matNativeControl
+        required
+        (selectionChange)="onCursoSeleccionado(curso)"
+      >
+        <mat-option *ngFor="let objCurso of cursos" [value]="objCurso.curso">
+          {{ objCurso.curso }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+  <p class="aviso" *ngIf="fueraPeriodoCicloLectivo == true">
+    Atención, no se puede registrar documentación debido a que estamos fuera de
+    las fechas autorizadas
+  </p>
+  <div class="contenedorTabla" *ngIf="estudiantesConDocumentos.length != 0">
+    <table mat-table [dataSource]="estudiantesConDocumentos">
+      <ng-container matColumnDef="apellido">
+        <th class="columnasTabla" mat-header-cell *matHeaderCellDef>
+          Apellido/s
+        </th>
+        <td class="columnasTabla" mat-cell *matCellDef="let estudiante">
+          {{ estudiante.datosEstudiante[0].apellido }}
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="nombre">
+        <th class="columnasTabla" mat-header-cell *matHeaderCellDef>
+          Nombre/s
+        </th>
+        <td class="columnasTabla" mat-cell *matCellDef="let estudiante">
+          {{ estudiante.datosEstudiante[0].nombre }}
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="fotocopiaDoc">
+        <th class="columnasTabla" mat-header-cell *matHeaderCellDef>
+          Fotocopia del documento
+        </th>
+        <td class="columnasTabla" mat-cell *matCellDef="let estudiante">
+          <mat-checkbox
+            [checked]="estudiante.documentosEntregados[0].entregado"
+            (change)="registrarCambioDocumento(estudiante, 0)"
+          ></mat-checkbox>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="fichaMed">
+        <th class="columnasTabla" mat-header-cell *matHeaderCellDef>
+          Ficha médica
+        </th>
+        <td class="columnasTabla" mat-cell *matCellDef="let estudiante">
+          <mat-checkbox
+            [checked]="estudiante.documentosEntregados[1].entregado"
+            (change)="registrarCambioDocumento(estudiante, 1)"
+          ></mat-checkbox>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="informeAnt">
+        <th class="columnasTabla" mat-header-cell *matHeaderCellDef>
+          Informe año anterior
+        </th>
+        <td class="columnasTabla" mat-cell *matCellDef="let estudiante">
+          <mat-checkbox
+            [checked]="estudiante.documentosEntregados[2].entregado"
+            (change)="registrarCambioDocumento(estudiante, 2)"
+          ></mat-checkbox>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+    </table>
+  </div>
+
+  <div class="div-button">
+    <button
+      class="buttonPrimary"
+      (click)="onGuardar()"
+      mat-raised-button
+      [disabled]="!cursoSeleccionado || !documentosEntregadosOnChange"
+    >
+      Guardar
+    </button>
+    <button mat-raised-button (click)="onCancelar()" class="buttonWarn">
+      Cancelar
+    </button>
+  </div>
+</mat-card>

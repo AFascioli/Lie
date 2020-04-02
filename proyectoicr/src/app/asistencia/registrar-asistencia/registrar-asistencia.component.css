@@ -1,0 +1,58 @@
+.curso {
+  margin-left: 1rem;
+}
+
+.ubicacionfecha {
+  float: right;
+}
+
+.mat-form-field-infix {
+  width: 150px;
+}
+
+.mat-form-Fecha {
+  text-align: center !important;
+}
+
+.inputFecha {
+  width: 0%;
+  color: black !important;
+}
+
+table {
+  width: 100%;
+  margin: 0 auto;
+}
+
+.nombreApellido {
+  width: 40%;
+  font-size: 16px;
+}
+
+.presentismo {
+  width: 20%;
+}
+
+.div-button {
+  text-align: right;
+}
+
+th {
+  font-weight: bold;
+  font-size: 15px;
+}
+
+.parrafo {
+  text-align: center;
+}
+
+.aviso {
+  margin-bottom: 0;
+  text-align: center;
+  font-size: 19px;
+}
+
+.contenedorTabla {
+  height: 270px;
+  overflow: auto;
+}

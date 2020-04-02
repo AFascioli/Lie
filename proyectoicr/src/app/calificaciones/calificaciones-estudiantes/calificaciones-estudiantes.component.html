@@ -1,0 +1,292 @@
+<mat-card class="cardSpinner" *ngIf="isLoading">
+  <mat-spinner class="spinner" [diameter]="60" ></mat-spinner>
+</mat-card>
+
+<h1 *ngIf="rolConPermisosEdicion && !isLoading" class="componente-titulo">
+  Registrar calificaciones ciclo lectivo {{fechaActual.getFullYear()}}
+<h1 *ngIf="!rolConPermisosEdicion && !isLoading" class="componente-titulo">
+  Visualizar calificaciones ciclo lectivo {{fechaActual.getFullYear()}}
+</h1>
+
+
+<mat-card class="card-body-componente" *ngIf="!isLoading">
+  <form #form="ngForm">
+    <div class="div-selects">
+      <mat-form-field>
+        <mat-select
+          name="trimestre"
+          ngModel
+          #trimestre="ngModel"
+          matNativeControl
+          required
+          placeholder="Seleccione trimestre"
+          name="trimestre"
+          [(ngModel)]="trimestreSeleccionado"
+          (selectionChange)="onTrimestreChange(form)"
+        >
+          <mat-option value="1">Primer</mat-option>
+          <mat-option value="2">Segundo</mat-option>
+          <mat-option value="3">Tercer</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field>
+        <mat-select
+          placeholder="Seleccione curso"
+          name="curso"
+          ngModel
+          #curso="ngModel"
+          matNativeControl
+          required
+          (selectionChange)="onCursoSeleccionado(curso, materia)"
+        >
+          <mat-option *ngFor="let objCurso of cursos" [value]="objCurso.id">
+            {{ objCurso.curso }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field>
+        <mat-select
+          placeholder="Seleccione materia"
+          name="materia"
+          ngModel
+          #materia="ngModel"
+          matNativeControl
+          required
+          (selectionChange)="obtenerNotas(form)"
+        >
+          <mat-option
+            *ngFor="let objMateria of materias"
+            [value]="objMateria.id"
+          >
+            {{ objMateria.nombre }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+    <mat-form-field class="filtro">
+      <mat-label>Filtrar estudiante</mat-label>
+      <input matInput (keyup)="aplicarFiltro($event.target.value)" placeholder="Estudiante">
+    </mat-form-field>
+
+    <table mat-table [dataSource]="dataSource" *ngIf="estudiantes">
+      <ng-container matColumnDef="apellido">
+        <th class="columnasNormales" mat-header-cell *matHeaderCellDef>
+          Apellido/s
+        </th>
+        <td
+          class="columnasNormales"
+          mat-cell
+          *matCellDef="let estudiante; let i = index"
+          [ngClass]="{
+            bajoPromedio:
+              calcularPromedio(
+                indexEst + i,
+                contadorNotasValidas(indexEst + i)
+              ) < 6
+          }"
+        >
+          {{ estudiante.apellido }}
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="nombre">
+        <th class="columnasNormales" mat-header-cell *matHeaderCellDef>
+          Nombre/s
+        </th>
+        <td
+          class="columnasNormales"
+          mat-cell
+          *matCellDef="let estudiante; let i = index"
+          [ngClass]="{ bajoPromedio: this.promedio < 6 }"
+        >
+          {{ estudiante.nombre }}
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="cal1">
+        <th class="columnasChicas" mat-header-cell *matHeaderCellDef>1°</th>
+        <td
+          class="columnasChicas"
+          mat-cell
+          *matCellDef="let estudiante; let i = index"
+          [ngClass]="{ bajoPromedio: this.promedio < 6 }"
+        >
+          <input
+            *ngIf="rolConPermisosEdicion && puedeEditarCalificaciones"
+            [(ngModel)]="estudiante.calificaciones[0]"
+            name="nota1{{ estudiante.calificaciones[0] }}"
+            type="number"
+            pattern="([0-9]|0[1-9]|10)"
+            (keypress)="checkNotas($event, estudiante.calificaciones[0])"
+            (change)="onCalificacionChange()"
+            [ngClass]="{ bajoPromedio: this.promedio < 6 }"
+          />
+          <p *ngIf="!rolConPermisosEdicion || !puedeEditarCalificaciones">
+            {{ estudiante.calificaciones[0] }}
+          </p>
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="cal2">
+        <th class="columnasChicas" mat-header-cell *matHeaderCellDef>2°</th>
+        <td
+          class="columnasChicas"
+          mat-cell
+          *matCellDef="let estudiante; let i = index"
+          [ngClass]="{ bajoPromedio: this.promedio < 6 }"
+        >
+          <input
+            *ngIf="rolConPermisosEdicion && puedeEditarCalificaciones"
+            [(ngModel)]="estudiante.calificaciones[1]"
+            name="nota2{{ estudiante.calificaciones[1] }}"
+            type="number"
+            pattern="([0-9]|0[1-9]|10)"
+            (keypress)="checkNotas($event, estudiante.calificaciones[1])"
+            (change)="onCalificacionChange()"
+            [ngClass]="{ bajoPromedio: this.promedio < 6 }"
+          />
+          <p *ngIf="!rolConPermisosEdicion || !puedeEditarCalificaciones">
+            {{ estudiante.calificaciones[1] }}
+          </p>
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="cal3">
+        <th class="columnasChicas" mat-header-cell *matHeaderCellDef>3°</th>
+        <td
+          class="columnasChicas"
+          mat-cell
+          *matCellDef="let estudiante; let i = index"
+          [ngClass]="{ bajoPromedio: this.promedio < 6 }"
+        >
+          <input
+            *ngIf="rolConPermisosEdicion && puedeEditarCalificaciones"
+            [(ngModel)]="estudiante.calificaciones[2]"
+            name="nota3{{ estudiante.calificaciones[2] }}"
+            type="number"
+            pattern="([0-9]|0[1-9]|10)"
+            (keypress)="checkNotas($event, estudiante.calificaciones[2])"
+            (change)="onCalificacionChange()"
+            [ngClass]="{ bajoPromedio: this.promedio < 6 }"
+          />
+          <p *ngIf="!rolConPermisosEdicion || !puedeEditarCalificaciones">
+            {{ estudiante.calificaciones[2] }}
+          </p>
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="cal4">
+        <th class="columnasChicas" mat-header-cell *matHeaderCellDef>4°</th>
+        <td
+          class="columnasChicas"
+          mat-cell
+          *matCellDef="let estudiante; let i = index"
+          [ngClass]="{ bajoPromedio: this.promedio < 6 }"
+        >
+          <input
+            *ngIf="rolConPermisosEdicion && puedeEditarCalificaciones"
+            [(ngModel)]="estudiante.calificaciones[3]"
+            name="nota4{{ estudiante.calificaciones[3] }}"
+            type="number"
+            pattern="([0-9]|0[1-9]|10)"
+            (keypress)="checkNotas($event, estudiante.calificaciones[3])"
+            (change)="onCalificacionChange()"
+            [ngClass]="{ bajoPromedio: this.promedio < 6 }"
+          />
+          <p *ngIf="!rolConPermisosEdicion || !puedeEditarCalificaciones">
+            {{ estudiante.calificaciones[3] }}
+          </p>
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="cal5">
+        <th class="columnasChicas" mat-header-cell *matHeaderCellDef>5°</th>
+        <td
+          class="columnasChicas"
+          mat-cell
+          *matCellDef="let estudiante; let i = index"
+          [ngClass]="{ bajoPromedio: this.promedio < 6 }"
+        >
+          <input
+            *ngIf="rolConPermisosEdicion && puedeEditarCalificaciones"
+            [(ngModel)]="estudiante.calificaciones[4]"
+            name="nota5{{ estudiante.calificaciones[4] }}"
+            type="number"
+            pattern="([0-9]|0[1-9]|10)"
+            (keypress)="checkNotas($event, estudiante.calificaciones[4])"
+            (change)="onCalificacionChange()"
+            [ngClass]="{ bajoPromedio: this.promedio < 6 }"
+          />
+          <p *ngIf="!rolConPermisosEdicion || !puedeEditarCalificaciones">
+            {{ estudiante.calificaciones[4] }}
+          </p>
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="cal6">
+        <th class="columnasChicas" mat-header-cell *matHeaderCellDef>6°</th>
+        <td
+          class="columnasChicas"
+          mat-cell
+          *matCellDef="let estudiante; let i = index"
+          [ngClass]="{ bajoPromedio: this.promedio < 6 }"
+        >
+          <input
+            *ngIf="rolConPermisosEdicion && puedeEditarCalificaciones"
+            [(ngModel)]="estudiante.calificaciones[5]"
+            type="number"
+            pattern="([0-9]|0[1-9]|10)"
+            name="nota6{{ estudiante.calificaciones[5] }}"
+            (keypress)="checkNotas($event, estudiante.calificaciones[5])"
+            (change)="onCalificacionChange()"
+            [ngClass]="{ bajoPromedio: this.promedio < 6 }"
+          />
+          <p *ngIf="!rolConPermisosEdicion || !puedeEditarCalificaciones">
+            {{ estudiante.calificaciones[5] }}
+          </p>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="prom">
+        <th class="columnasChicas" mat-header-cell *matHeaderCellDef>
+          Promedio
+        </th>
+        <td
+          class="columnasChicas promedio"
+          mat-cell
+          *matCellDef="let estudiante; let i = index"
+          [ngClass]="{ bajoPromedio: this.promedio < 6 }"
+        >
+          <p *ngIf="!(contadorNotasValidas(i) == 0); else sinNotas">
+            {{ this.promedio.toFixed(2) }}
+          </p>
+          <ng-template #sinNotas>0</ng-template>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+    </table>
+
+    <div [hidden]="!estudiantes">
+    <mat-paginator
+      (page)="pageEvent = indexEstudiante()"
+      [pageSizeOptions]="[10, 20, 30, 35]"
+      class="paginator"
+    >
+    </mat-paginator>
+  </div>
+    <div class="div-button">
+      <button
+        [disabled]="
+          !estudiantes || !calificacionesChange || !puedeEditarCalificaciones
+        "
+        mat-raised-button
+        class="button"
+        (click)="onGuardar(form)"
+        class="buttonPrimary"
+      >
+        Guardar
+      </button>
+      <button mat-raised-button class="buttonWarn" (click)="onCancelar()">
+        Cancelar
+      </button>
+    </div>
+  </form>
+</mat-card>

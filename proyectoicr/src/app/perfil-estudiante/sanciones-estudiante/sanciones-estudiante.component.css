@@ -1,0 +1,37 @@
+table {
+  width: 95%;
+  margin: 2rem;
+  text-align: center;
+}
+
+.columnasNormales{
+  width:22% !important;
+}
+
+.columnasChicas{
+  width:20%;
+}
+
+th{
+  font-weight: bold;
+  font-size: 15px;
+  text-align: center;
+}
+
+.resumenSanciones{
+  margin-left: 4%;
+}
+
+.tituloResumen{
+  font-size: 23px;
+}
+
+.sinSanciones{
+  text-align: center;
+}
+
+.div-button{
+  text-align: right;
+}
+
+

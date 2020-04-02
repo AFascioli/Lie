@@ -1,0 +1,185 @@
+/* You can add global styles to this file, and also import other style files */
+@import "@angular/material/prebuilt-themes/indigo-pink.css";
+html,
+body {
+  height: 100%;
+  background-color: #fafafa;
+}
+body {
+  margin: 0;
+}
+
+button {
+  margin: 0.4rem !important;
+}
+
+* {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
+    Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+  font-size: medium;
+}
+
+/* Oculta flechas en Mozilla. */
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+.componente-titulo {
+  text-align: center;
+  color: #2f6483;
+  margin-top: 0%;
+  text-shadow: 1px 1px 2px #323233;
+  font-size: 50px;
+}
+
+.card-body-componente {
+  /* Para que no se comprima al pasar a vistas mobile, y la segunda linea para que aparezca el scroll.*/
+  /* Si hay problemas con la interfaz, investigar la propiedad white-space! */
+  /* white-space: nowrap; */
+  /* normal para que se pongan uno abajo del otro en mobile */
+  white-space: normal;
+  overflow-x: auto;
+  margin: auto;
+  margin-top: 1rem;
+  margin-bottom: 1.5rem;
+  max-width: 800px;
+  box-shadow: 0px 0px 8px 0px rgba(0, 0, 0, 0.71) !important;
+}
+
+.tituloPopup {
+  text-align: center;
+  margin: 0;
+  font-size: 30px;
+}
+
+.buttonPopup {
+  text-align: center;
+}
+
+.snack-bar-exito {
+  background-color: #29dd47;
+  color: black;
+}
+
+.snack-bar-fracaso {
+  background-color: #f02626;
+}
+
+.snack-bar-aviso {
+  background-color: rgb(47, 100, 131);
+  color: white;
+}
+
+.mat-drawer-inner-container {
+  background-color: #eef0f1;
+}
+
+.mat-expansion-panel-body {
+  background-color: #eef0f1;
+  padding: 0 24px 16px;
+  padding-bottom: 0px !important;
+  padding-top: 2%;
+}
+
+.mat-expansion-panel {
+  background: #47988d59;
+  box-shadow: 0px 0px 4px 0px rgba(0, 0, 0, 0.31) !important;
+}
+
+.mat-expansion-panel-header {
+  height: 48px !important;
+}
+
+.buttonWarn {
+  background: #d62114;
+  color: #ffffff;
+}
+
+.buttonPrimary {
+  background: #2f6483;
+  color: #ffffff;
+}
+
+/* Para cambiar el color de los toggle */
+.mat-slide-toggle.mat-checked .mat-slide-toggle-thumb {
+  background-color: #2f6483 !important;
+}
+
+.mat-slide-toggle.mat-checked .mat-slide-toggle-bar {
+  background-color: rgb(47, 100, 131, 0.54) !important;
+}
+
+.mat-header-cell {
+  color: rgba(0, 0, 0);
+}
+
+/* Para cambiar el color de los checkbox */
+.mat-checkbox-checked.mat-accent .mat-checkbox-background,
+.mat-checkbox-indeterminate.mat-accent .mat-checkbox-background,
+.mat-accent .mat-pseudo-checkbox-checked,
+.mat-accent .mat-pseudo-checkbox-indeterminate,
+.mat-pseudo-checkbox-checked,
+.mat-pseudo-checkbox-indeterminate {
+  background-color: rgb(47, 100, 131) !important;
+}
+
+/* Para cambiar color de los radio buttons */
+.mat-radio-button.mat-accent.mat-radio-checked .mat-radio-outer-circle {
+  border-color: rgb(47, 100, 131) !important;
+}
+
+.mat-radio-button.mat-accent .mat-radio-inner-circle,
+.mat-radio-button.mat-accent
+  .mat-radio-ripple
+  .mat-ripple-element:not(.mat-radio-persistent-ripple),
+.mat-radio-button.mat-accent.mat-radio-checked .mat-radio-persistent-ripple,
+.mat-radio-button.mat-accent:active .mat-radio-persistent-ripple {
+  background-color: rgb(47, 100, 131) !important;
+}
+
+.spinner {
+  margin: 0 auto;
+
+ 
+
+
+}
+
+/* Para que se muestre bien el dropdown menu */
+.mat-menu-content:not(:empty) {
+  padding-right: 8px;
+}
+
+.contenedorTablaSticky {
+  height: 260px;
+  overflow: auto;
+}
+
+/* Barra de scroll */
+/* width */
+::-webkit-scrollbar {
+  width: 12px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 5px grey;
+  border-radius: 10px;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: rgb(197, 197, 197);
+  border-radius: 12px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #727272;
+}

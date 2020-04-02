@@ -1,0 +1,29 @@
+
+
+div.collapsed {
+
+  -moz-box-orient: vertical;      /* Mozilla */
+  -webkit-box-orient: vertical;   /* WebKit */
+  display: flex;                   /* As specified */
+  display: -moz-box;              /* Mozilla */
+  display: -webkit-box;           /* WebKit */
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+  text-overflow: -o-ellipsis-lastline;
+  text-overflow: ellipsis;
+
+}
+
+a.show-link {
+  color: rgb(47, 100, 131);
+  cursor: pointer;
+  display: block;
+  margin-top: 5px;
+}
+
+.summary {
+  line-height: 1.4em;
+  margin-right: 20px;
+  word-break: break-word;
+  word-wrap: break-word;      /* IE */
+}

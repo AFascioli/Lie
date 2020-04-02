@@ -1,0 +1,32 @@
+<h1 class="componente-titulo">Preferencias</h1>
+<mat-card class="card-body-componente">
+  <meta charset="utf-8" />
+  <div class="botones-preferencias">
+    <button mat-button class="buttonPrimary acciones" (click)="cambiarPassword()">
+      Cambiar contraseña
+    </button>
+    <button mat-button class="buttonPrimary acciones" (click)="pruebaNotificacion()" >
+      Notificación de prueba
+    </button>
+    <br />
+    <mat-slide-toggle
+      [checked]="notificaciones"
+      (change)="onCambioPreferenciaSuscripcion()"
+    >
+      Deseo recibir las notificaciones
+    </mat-slide-toggle>
+  </div>
+  <!-- <div class="div-button">
+    <button
+      type="submit"
+      (click)="onGuardar()"
+      class="buttonPrimary"
+      mat-raised-button
+    >
+      Guardar
+    </button>
+    <button mat-raised-button (click)="onCancelar()" class="buttonWarn">
+      Cancelar
+    </button>
+  </div> -->
+</mat-card>

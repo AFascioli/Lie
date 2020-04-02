@@ -1,0 +1,166 @@
+<h1 class="componente-titulo">
+  Modificar evento
+</h1>
+
+<mat-card class="card-body-componente">
+  <form #form="ngForm">
+    <mat-form-field>
+      <input
+        name="titulo"
+        ngModel
+        #titulo="ngModel"
+        matInput
+        placeholder="Ingrese título"
+        type="text"
+        [(ngModel)]="evento.titulo"
+        required
+      />
+    </mat-form-field>
+    <br />
+    <mat-form-field>
+      <textarea
+        matInput
+        name="descripcion"
+        ngModel
+        #descripcion="ngModel"
+        rows="3"
+        placeholder="Ingrese descripción"
+        type="text"
+        [(ngModel)]="evento.descripcion"
+      >
+      </textarea>
+    </mat-form-field>
+    <br />
+    <mat-form-field>
+      <input
+        matInput
+        name="fechaEvento"
+        ngModel
+        #fechaEvento="ngModel"
+        [min]="fechaActual"
+        [matDatepicker]="picker"
+        placeholder="Seleccione fecha de evento"
+        (click)="picker.open()"
+        required
+        readonly
+        [(ngModel)]="evento.fechaEvento"
+      />
+      <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+      <mat-datepicker touchUi #picker></mat-datepicker>
+    </mat-form-field>
+    <div>
+      <mat-form-field class="matFormHora">
+        <div class="hora">
+          <input
+            matInput
+            name="horaInicio"
+            ngModel
+            #horaInicio="ngModel"
+            placeholder="Hora inicio *"
+            id="pickerInicio"
+            readonly
+            [(ngModel)]="evento.horaInicio"
+          />
+        </div>
+      </mat-form-field>
+      &nbsp;
+      <mat-form-field class="matFormHora">
+        <div class="hora">
+          <input
+            matInput
+            name="horaFin"
+            ngModel
+            #horaFin="ngModel"
+            placeholder="Hora fin *"
+            id="pickerFin"
+            readonly
+            [(ngModel)]="evento.horaFin"
+          />
+        </div>
+      </mat-form-field>
+    </div>
+
+    <mat-form-field class="chip-list">
+      <mat-chip-list #chipList aria-label="Seleccion de chips">
+        <mat-chip
+          *ngFor="let chip of chips"
+          [selectable]="selectable"
+          [removable]="removable"
+          (removed)="remove(chip)"
+        >
+          {{ chip }}
+          <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
+        </mat-chip>
+        <input
+          placeholder="Seleccione los cursos *"
+          #chipsInput
+          [formControl]="chipsCtrl"
+          [matAutocomplete]="auto"
+          [matChipInputFor]="chipList"
+          [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+          [matChipInputAddOnBlur]="addOnBlur"
+          (matChipInputTokenEnd)="add($event)"
+          required
+        />
+      </mat-chip-list>
+      <mat-autocomplete
+        required
+        #auto="matAutocomplete"
+        (optionSelected)="selected($event)"
+      >
+        <mat-option *ngFor="let chip of filteredChips | async" [value]="chip">
+          {{ chip }}
+        </mat-option>
+      </mat-autocomplete>
+    </mat-form-field>
+    <div>
+      <mat-carousel
+        interval="5000"
+        maxWidth="auto"
+        proportion="75"
+        color="warn"
+        [hideArrows]="false"
+        [hideIndicators]="false"
+      >
+        <div *ngFor="let imagen of imgURL">
+          <mat-carousel-slide overlayColor="transparent" [image]="imagen">
+            ></mat-carousel-slide
+          >
+        </div>
+      </mat-carousel>
+      <div class="contenedor-flexbox">
+        <button
+          mat-stroked-button
+          class="boton-seleccionar"
+          type="button"
+          (click)="file.click()"
+        >
+          Seleccionar imagen
+        </button>
+      </div>
+      <br />
+      <span class="mensaje" *ngIf="message">{{ message }}</span>
+      <br />
+      <input
+        #file
+        type="file"
+        accept="image/*"
+        (change)="preview(file.files)"
+        multiple
+      />
+    </div>
+
+    <div class="div-button">
+      <button
+        class="buttonPrimary"
+        (click)="onGuardarEvento(form)"
+        mat-raised-button
+      >
+        Guardar
+      </button>
+      <button mat-raised-button (click)="popUpCancelar()" class="buttonWarn">
+        Cancelar
+      </button>
+    </div>
+  </form>
+</mat-card>

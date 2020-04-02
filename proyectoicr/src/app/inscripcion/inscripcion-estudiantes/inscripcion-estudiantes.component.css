@@ -1,0 +1,94 @@
+.mat-expansion-panel {
+  width: 70%;
+  margin: auto;
+}
+
+.mat-form-Fecha {
+  text-align: center !important;
+}
+
+.mat-expansion-panel-mobile {
+  width: 100%;
+}
+
+.expansion-panel-1 {
+  margin-top: 1rem;
+}
+
+.mat-radio-button {
+  margin: 1rem;
+}
+
+.ubicacionfecha {
+  margin-top: 0.5rem;
+  float: right;
+}
+
+.inputFecha {
+  width: 0%;
+  color: black !important;
+}
+
+.div-button {
+  text-align: right;
+}
+
+.div-selects {
+  text-align: center !important;
+}
+
+.contenido {
+  width: 41%;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 3rem !important;
+}
+
+.contenido-mobile {
+  width: 100%;
+}
+
+.card-datos {
+  margin: auto;
+  margin-top: 1rem;
+  width: 66%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.titulo-datos-est {
+  font-size: 20px;
+  font-weight: bold;
+  text-align: center;
+}
+
+.titulos-reg-doc {
+  font-size: 20px;
+}
+
+.titulos-reg-doc-mobile {
+  font-size: 11px !important;
+}
+
+.parrafo {
+  text-align: center;
+}
+
+.capacidad {
+  text-align: center;
+}
+
+.mensajeAtencion {
+  color: black;
+}
+
+.mensajeAtencioncurso {
+  color: black;
+  font-weight: bold;
+}
+
+.aviso {
+  margin-bottom: 0;
+  text-align: center;
+  font-size: 19px;
+}

@@ -1,0 +1,110 @@
+.titulo-login {
+  text-align: center;
+  opacity: 0.8;
+  font-weight: 100%;
+  margin-top: 0 !important;
+  color: #ffffff;
+  /* Para poder alinear el parrafo al centro */
+  flex: 1 1 auto;
+  font-size: 40px;
+  font-weight: bold;
+  background-color: rgb(47, 100, 131);
+  text-shadow: 2px 2px 4px #000000;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
+    Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+}
+
+.titulo {
+  text-align: center;
+  font-weight: 100%;
+  margin: 0 !important;
+  color: rgb(47, 100, 131);
+  /* Para poder alinear el parrafo al centro */
+  flex: 1 1 auto;
+  font-size: 40px;
+  font-weight: bold;
+  text-shadow: 2px 2px 2px #000000;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
+    Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+  padding-bottom: 3%;
+}
+
+.contenedor {
+  margin: auto;
+  font-weight: bold;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 2;
+  width: 80%;
+  text-align: center;
+}
+
+.fixed-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 2;
+  width: 100% !important;
+  background-color: rgb(47, 100, 131);
+  height: 64px;
+}
+
+.fondo {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  display: flex;
+  background-image: url("../../img/fondoprobando.jpg");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+mat-card {
+  padding: 0 !important;
+}
+
+.mat-form-field {
+  width: 50%;
+  margin: auto;
+  padding: 0%;
+  padding-left: 2%;
+  margin-top: 2%;
+  text-align: left;
+}
+
+.div-button {
+  text-align: center;
+}
+
+form {
+  background: rgb(252, 250, 250) !important;
+  background: rgba(252, 250, 250, 0.6) !important;
+  text-align: center;
+  padding-bottom: 5%;
+  padding-top: 5%;
+}
+
+.visibilidad {
+  padding: 0 !important;
+  min-width: 0;
+}
+
+.card-body-componente {
+  max-width: 500px !important;
+}
+
+.parrafo {
+  text-align: center;
+}
+
+.mat-card {
+  background: rgb(252, 250, 250) !important; /* Fallback color */
+  background: rgba(252, 250, 250, 0.6) !important;
+}
+
+.mat-input {
+  background-color: transparent !important;
+}

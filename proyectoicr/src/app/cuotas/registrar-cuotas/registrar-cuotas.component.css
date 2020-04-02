@@ -1,0 +1,63 @@
+.curso {
+  margin-left: 1rem;
+}
+
+.ubicacionfecha {
+  /* margin-top: 0.5rem; */
+  float: right;
+}
+
+.mat-form-Fecha {
+  text-align: center !important;
+}
+
+.mat-form-field-infix {
+  width: 150px;
+}
+
+.inputFecha {
+  width: 0%;
+  color: black !important;
+}
+
+table {
+  width: 100%;
+  margin: 0 auto;
+}
+
+.mes {
+  margin-left: 1rem;
+}
+
+.nombreApellido {
+  width: 40%;
+  font-size: 16px;
+}
+
+.cuotas {
+  width: 20%;
+}
+
+.div-button {
+  text-align: right;
+}
+
+th {
+  font-weight: bold;
+  font-size: 15px;
+}
+
+.parrafo {
+  text-align: center;
+}
+
+.aviso {
+  margin-bottom: 0;
+  text-align: center;
+  font-size: 19px;
+}
+
+.contenedorTabla {
+  height: 270px;
+  overflow: auto;
+}

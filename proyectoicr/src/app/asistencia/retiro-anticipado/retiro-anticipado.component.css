@@ -1,0 +1,80 @@
+.mat-radio-button ~ .mat-radio-button {
+  margin-left: 6%;
+}
+
+.mat-radio-group {
+  margin-left: 10%;
+  margin-right: 10%;
+}
+
+.ubicacionfecha {
+  margin-top: 0.5rem;
+  float: right;
+}
+
+.inputFecha {
+  width: 0%;
+  color: black !important;
+}
+
+.tituloTutores {
+  font-size: 21px;
+}
+
+.div-button {
+  text-align: right;
+  margin-top: 3%;
+}
+
+.contenido-mobile {
+  width: 100%;
+}
+
+.card-datos-mobile {
+  width: 90%;
+}
+
+.label-radio-button {
+  white-space: normal !important;
+}
+
+table {
+  width: 50%;
+  margin: auto;
+  margin-bottom: 3% !important;
+}
+
+.columnasNormales {
+  width: 22% !important;
+  text-align: center;
+}
+
+th {
+  font-weight: bold;
+  font-size: 15px;
+}
+
+td,
+th {
+  text-align: center;
+}
+
+.contenido {
+  text-align: center;
+  margin-top: 8%;
+}
+
+.aviso {
+  margin-bottom: 0;
+  text-align: center;
+  font-size: 19px;
+}
+
+.columnaCheckbox {
+  padding-right: 12px;
+}
+
+.mat-form-Fecha
+{
+  text-align: center !important;
+}

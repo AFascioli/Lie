@@ -1,0 +1,164 @@
+mat-card-subtitle {
+  color: black;
+}
+
+mat-card-content {
+  text-indent: 34%;
+}
+
+.button-volver {
+  text-align: right;
+  margin-left: 87% !important;
+}
+
+.grid-container {
+  width: 95%;
+  margin-left: auto;
+  margin-right: auto;
+  display: grid;
+  grid-template-columns: 11% auto auto auto auto auto; /*Aca se definen la cantidad de columnas*/
+  grid-template-rows: auto 70px 70px 70px 70px 70px 70px 70px 70px 70px;
+  /* Aparentemente si se elimina la propiedad grid-template-rows, quedan del tamaño perfecto */
+  grid-gap: 8px;
+  padding: 10px;
+  background-color: #c3c8cc; /*2196F3*/
+  border-radius: 4px;
+}
+
+.texto-mobile,
+.texto-mobile > * {
+  overflow-wrap: break-word;
+  font-size: 15px !important;
+}
+
+.grid-container > div {
+  background-color: rgb(85, 92, 94, 0.7);
+  padding: 0px;
+  display: flex;
+  align-items: stretch;
+  grid-column-gap: 30px;
+  border-radius: 4px;
+}
+
+.hora,
+.modulo {
+  line-height: 120%;
+}
+
+.hora {
+  font-size: 15px !important;
+  text-align: left;
+  color: beige;
+}
+
+hr {
+  display: block;
+  margin: 10px 0 10px 0;
+  border-top: 1px solid rgba(0, 0, 0, 0.12);
+  width: 100%;
+}
+
+.modulo {
+  display: flex;
+  align-items: center;
+  text-align: center;
+}
+
+/* En cada uno de estos, se define desde que linea arranca y en cual termina */
+/* Para mas info: https://www.w3schools.com/css/css_grid.asp */
+.modulo1 {
+  grid-row-start: 2;
+  grid-row-end: 3;
+  justify-content: center;
+  align-items: center;
+}
+
+.modulo2 {
+  grid-row-start: 3;
+  grid-row-end: 4;
+  justify-content: center;
+  align-items: center;
+}
+
+.modulo3 {
+  grid-row-start: 4;
+  grid-row-end: 5;
+  justify-content: center;
+  align-items: center;
+}
+
+.modulo4 {
+  grid-row-start: 5;
+  grid-row-end: 6;
+  justify-content: center;
+  align-items: center;
+}
+
+.modulo5 {
+  grid-row-start: 6;
+  grid-row-end: 7;
+  justify-content: center;
+  align-items: center;
+}
+
+.modulo6 {
+  grid-row-start: 7;
+  grid-row-end: 8;
+  justify-content: center;
+  align-items: center;
+}
+
+.modulo7 {
+  grid-row-start: 8;
+  grid-row-end: 9;
+  justify-content: center;
+  align-items: center;
+}
+.modulo8 {
+  grid-row-start: 9;
+  grid-row-end: 10;
+  justify-content: center;
+  align-items: center;
+}
+
+.modulo9 {
+  grid-row-start: 10;
+  grid-row-end: 11;
+  justify-content: center;
+  align-items: center;
+}
+
+.cabecera {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 25px;
+  margin-block-start: 0;
+  margin-block-end: 0;
+  color: beige;
+}
+
+.materia {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: -webkit-fill-available;
+  font-size: 20px;
+  color: beige;
+  border-radius: 4px;
+}
+
+.horarioMateria {
+  font-size: 13px;
+  position: absolute;
+  align-self: end;
+}
+
+.nombreMateria {
+  position: absolute;
+  align-self: center;
+}
+
+.div-button{
+  text-align: right;
+}

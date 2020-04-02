@@ -1,0 +1,26 @@
+
+/* Los campos de los paneles. */
+.mat-form-field{
+   width: 55%;
+}
+
+.div-button {
+  text-align: right;
+}
+
+.parrafo{
+  text-align: center;
+}
+
+.mat-expansion-panel{
+  width: 80%;
+  margin: auto;
+}
+
+.mat-expansion-panel-mobile{
+  width: 100%;
+}
+
+.mat-form-field-mobile{
+  width: 100%;
+}

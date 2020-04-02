@@ -1,0 +1,251 @@
+<div class="contenedor-total" [class.es-mobile]="mobileQuery.matches">
+  <mat-toolbar class="fixed-header">
+    <mat-toolbar-row *ngIf="rol!='AdultoResponsable'" [class.mat-toolbar-row-mobile]="mobileQuery.matches">
+      <button
+        type="button"
+        aria-label="Toggle sidenav"
+        mat-icon-button
+        (click)="sideNav.toggle()"
+      >
+        <mat-icon aria-label="Side nav toggle icon">menu</mat-icon>
+      </button>
+      <span class="titulo-row">L I É</span>
+      <div class="opciones">
+      <button
+        mat-button
+        class="homeButton"
+        (click)="onClickHome()"
+      >
+        <mat-icon>home </mat-icon>
+      </button>
+        <button mat-button [matMenuTriggerFor]="menu" class="dropDown">
+          <mat-icon>arrow_drop_down</mat-icon>
+        </button>
+        <mat-menu #menu="matMenu">
+        <button mat-menu-item routerLink="/preferencias">
+          <mat-icon>settings</mat-icon> Preferencias
+        </button>
+        <button mat-menu-item (click)="cierreSesion()">
+          <mat-icon>exit_to_app</mat-icon> Cerrar sesión
+        </button>
+      </mat-menu>
+    </div>
+    </mat-toolbar-row>
+    <mat-toolbar-row *ngIf="rol=='AdultoResponsable'" [class.mat-toolbar-row-mobile]="mobileQuery.matches">
+        <button
+        mat-button
+        class="homeButtonAR"
+        [class.button-mobile]="mobileQuery.matches"
+        (click)="onClickHome()"
+        >
+        <mat-icon>home</mat-icon>
+      </button>
+      <p class="titulo-rowAR">L I É</p>
+      <div class="opciones">
+        <button mat-button class="preferencias-ar" [class.button-mobile]="mobileQuery.matches" routerLink="/preferencias">
+          <mat-icon>settings</mat-icon>
+        </button>
+        <button mat-button class="cerrar-sesion-ar" [class.button-mobile]="mobileQuery.matches" (click)="cierreSesion()">
+          <mat-icon>exit_to_app</mat-icon>
+        </button>
+      </div>
+    </mat-toolbar-row>
+  </mat-toolbar>
+
+  <!-- Menu lateral de la aplicación -->
+  <!-- opened: para que este abierto si es desktop -->
+  <!-- disableClose: para que este no se pueda cerrar si es desktop -->
+  <!-- mode: over si es mobile, side si es desktop (ver documentacion) -->
+  <mat-sidenav-container class="contenedor-sidenav">
+    <mat-sidenav
+      #sideNav
+      class="sidenav"
+      [class.sidenavMobile]="mobileQuery.matches"
+      [opened]="(rol != 'AdultoResponsable')&& !mobileQuery.matches"
+      [disableClose]="!mobileQuery.matches"
+      [mode]="mobileQuery.matches ? 'over' : 'side'"
+    >
+      <mat-nav-list>
+        <mat-accordion>
+          <mat-icon class="iconUsuario">account_circle</mat-icon>
+          <p class="usuario">
+            <b>{{ rol }}</b>
+          </p>
+          <p class="usuario">{{ usuario }}</p>
+
+          <mat-expansion-panel class="opcion">
+            <mat-expansion-panel-header>
+              <mat-panel-title>
+                <a mat-list-item>
+                  <mat-icon>wc</mat-icon>
+                  <b class="titulo-expansion">Cursos</b>
+                </a>
+              </mat-panel-title>
+            </mat-expansion-panel-header>
+            <a
+              mat-list-item
+              class="opciones-expansion"
+              routerLink="/definirAgenda"
+              *ngIf="permisos.agendaCursos > 1"
+              (click)="cerrarMenuLateral(sideNav)"
+            >
+              Definir agenda de curso
+            </a>
+            <mat-divider *ngIf="permisos.agendaCursos > 1"></mat-divider>
+            <a
+              mat-list-item
+              class="opciones-expansion"
+              routerLink="/visualizarAgenda"
+              *ngIf="permisos.agendaCursos > 1"
+              (click)="cerrarMenuLateral(sideNav)"
+            >
+              Visualizar agenda de curso
+            </a>
+            <mat-divider *ngIf="permisos.agendaCursos > 1"></mat-divider>
+            <a
+              mat-list-item
+              class="opciones-expansion"
+              routerLink="/asistencia"
+              *ngIf="permisos.asistencia > 1"
+              (click)="cerrarMenuLateral(sideNav)"
+            >
+              Registrar asistencia
+            </a>
+            <mat-divider
+              *ngIf="permisos.asistencia > 1 && permisos.cuotas > 1"
+            ></mat-divider>
+            <a
+              mat-list-item
+              class="opciones-expansion"
+              routerLink="/registrarCuotas"
+              *ngIf="permisos.cuotas > 1"
+              (click)="cerrarMenuLateral(sideNav)"
+            >
+              Registar pago de cuotas
+            </a>
+            <mat-divider
+              *ngIf="permisos.cuotas > 1 && permisos.inscribirEstudiante > 1"
+            ></mat-divider>
+            <a
+              mat-list-item
+              class="opciones-expansion"
+              routerLink="/documentosEstudiante"
+              *ngIf="permisos.inscribirEstudiante > 1"
+              (click)="cerrarMenuLateral(sideNav)"
+            >
+              Registrar documentos inscripción
+            </a>
+            <mat-divider
+              *ngIf="permisos.inscribirEstudiante > 1 && permisos.notas >= 1"
+            ></mat-divider>
+            <a
+              mat-list-item
+              class="opciones-expansion"
+              routerLink="/calificacionesEstudiantes"
+              *ngIf="permisos.notas > 1"
+              (click)="cerrarMenuLateral(sideNav)"
+            >
+              Registrar calificaciones
+            </a>
+            <a
+              mat-list-item
+              class="opciones-expansion"
+              routerLink="/calificacionesEstudiantes"
+              *ngIf="permisos.notas == 1"
+              (click)="cerrarMenuLateral(sideNav)"
+            >
+              Visualizar calificaciones
+            </a>
+          </mat-expansion-panel>
+          <mat-expansion-panel class="opcion">
+            <!-- (opened)="panelOpenState = true"
+            (closed)="panelOpenState = false" -->
+            <mat-expansion-panel-header>
+              <mat-panel-title>
+                <a mat-list-item>
+                  <mat-icon>school</mat-icon>
+                  <b class="titulo-expansion">Estudiantes</b>
+                </a>
+              </mat-panel-title>
+            </mat-expansion-panel-header>
+            <a
+              mat-list-item
+              class="opciones-expansion"
+              routerLink="/alta"
+              *ngIf="permisos.inscribirEstudiante > 1"
+              (click)="cerrarMenuLateral(sideNav)"
+            >
+              Registrar
+            </a>
+            <mat-divider *ngIf="permisos.inscribirEstudiante > 1"></mat-divider>
+            <a
+              mat-list-item
+              class="opciones-expansion"
+              routerLink="/buscar"
+              (click)="cerrarMenuLateral(sideNav)"
+            >
+              Buscar
+            </a>
+          </mat-expansion-panel>
+          <mat-expansion-panel class="opcion">
+            <mat-expansion-panel-header>
+              <mat-panel-title>
+                <a mat-list-item ng-Focus="onSelected(this)">
+                  <mat-icon>event</mat-icon>
+                  <b class="titulo-expansion">Eventos</b>
+                </a>
+              </mat-panel-title>
+            </mat-expansion-panel-header>
+            <a
+              mat-list-item
+              class="opciones-expansion"
+              routerLink="/registrarEvento"
+              *ngIf="permisos.eventos > 1"
+              (click)="cerrarMenuLateral(sideNav)"
+            >
+              Registrar
+            </a>
+            <mat-divider *ngIf="permisos.eventos > 1"></mat-divider>
+            <a
+              mat-list-item
+              class="opciones-expansion"
+              *ngIf="permisos.eventos > 1"
+              (click)="cerrarMenuLateral(sideNav)"
+            >
+              Buscar
+            </a>
+          </mat-expansion-panel>
+          <mat-expansion-panel
+            class="opcion"
+            *ngIf="permisos.registrarEmpleado >= 1"
+          >
+            <mat-expansion-panel-header>
+              <mat-panel-title>
+                <a mat-list-item>
+                  <mat-icon>person</mat-icon>
+                  <b class="titulo-expansion">Empleados</b>
+                </a>
+              </mat-panel-title>
+            </mat-expansion-panel-header>
+            <a
+              mat-list-item
+              class="opciones-expansion"
+              routerLink="/altaEmpleado"
+              (click)="cerrarMenuLateral(sideNav)"
+            >
+              Registrar
+            </a>
+          </mat-expansion-panel>
+        </mat-accordion>
+      </mat-nav-list>
+    </mat-sidenav>
+    <mat-sidenav-content>
+      <div
+        class="body-contenido"
+        [class.body-contenido-mobile]="mobileQuery.matches"
+      >
+        <router-outlet></router-outlet>
+      </div>
+    </mat-sidenav-content>
+  </mat-sidenav-container>
+</div>

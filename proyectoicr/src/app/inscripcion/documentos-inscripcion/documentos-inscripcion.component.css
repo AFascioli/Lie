@@ -1,0 +1,42 @@
+.columnasTabla {
+  width: 18%;
+}
+
+table {
+  width: 95%;
+  margin: 1.5rem;
+  margin-top: 0rem;
+}
+
+th,
+td {
+  text-align: center !important;
+}
+
+th {
+  font-weight: bold;
+  font-size: 15px;
+}
+
+.div-button {
+  text-align: right;
+}
+
+.div-selects {
+  margin-left: 3%;
+}
+
+.parrafo {
+  text-align: center;
+}
+
+.aviso {
+  margin-bottom: 0;
+  text-align: center;
+  font-size: 19px;
+}
+
+.contenedorTabla {
+  height: 270px;
+  overflow: auto;
+}

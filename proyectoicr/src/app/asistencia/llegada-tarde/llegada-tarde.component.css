@@ -1,0 +1,68 @@
+.mat-radio-button ~ .mat-radio-button {
+  margin-left: 6%;
+}
+
+.mat-radio-group {
+  margin-left: 25%;
+  margin-top: 10%;
+}
+
+.label-radio-button {
+  white-space: normal !important;
+}
+
+.ubicacionfecha {
+  margin-top: 0.5rem;
+  float: right;
+}
+
+.div-button {
+  text-align: right;
+  margin-top: 3%;
+}
+
+.contenido-mobile {
+  width: 100%;
+}
+
+.card-datos-mobile {
+  width: 90%;
+}
+
+.contenido {
+  width: 41%;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 3rem !important;
+}
+
+.label-radio-button {
+  white-space: normal !important;
+}
+
+.titulo-datos-est{
+  font-size: 20px;
+  font-weight: bold;
+  text-align: center;
+}
+
+.parrafo{
+  text-align: center;
+}
+
+.inputFecha{
+  width: 0%;
+  color: black !important;
+}
+
+.aviso{
+  margin-bottom: 0;
+  text-align: center;
+  font-size: 19px;
+}
+
+.mat-form-Fecha
+{
+  text-align: center !important;
+}
+

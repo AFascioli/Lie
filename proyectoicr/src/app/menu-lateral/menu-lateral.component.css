@@ -1,0 +1,210 @@
+.opcion{
+  /* margin: 1rem; */
+  margin:0;
+}
+
+.tituloMenu, .mat-icon-button, .homeButton, .homeButtonAR, .dropDown, .preferencias-ar, .cerrar-sesion-ar{
+  color: #ffff;
+}
+
+.fixed-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 2;
+  width: 100%  !important;
+  /* background-color: #c12d2a; */
+  background-color: #2f6483;
+/* https://colorhunt.co/palette/157179 paleta de color para el azul */
+  height: 64px;
+}
+
+hr {
+  display: block;
+  margin: 10px 0 10px 0;
+  border-top: 1px solid rgba(0, 0, 0, .12);
+  width: 100%
+}
+
+.body-contenido{
+  padding: 2rem;
+  height: 100%;
+}
+
+.body-contenido-mobile{
+  height: 100%;
+  padding: 0rem !important;
+}
+
+.mat-expansion-panel-body{
+  padding-bottom: 0px !important;
+}
+
+.mat-sidenav{
+  box-shadow: 2px 0 5px -2px #888;
+  border-right: 0px !important;
+  width: 29%;
+}
+
+.sidenavMobile{
+  box-shadow: 2px 0 5px -2px #888;
+  border-right: 0px !important;
+  width: 60%;
+}
+
+/* Para que el container del sidenav sea del tamaño completo del body,
+   le pongo 100% menos el tamaño del header */
+.mat-sidenav-container{
+  height: calc(100% - 64px);
+}
+
+.titulo-expansion{
+  margin-left: 4%;
+}
+
+/* .opciones-expansion{
+  margin-left: 10%;
+} */
+
+.homeButton{
+  margin-left: auto !important;
+}
+
+
+.cierreSesion{
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  font-weight: bold;
+  font-size: 16px;
+  margin: 0px !important;
+  width: 100%;
+  background: #47988d59;
+  text-align: left;
+  height: 42.5px;
+  border-radius: 0% !important;
+  box-shadow: 0px 0px 4px 0px rgba(0,0,0,0.71) !important;
+  line-height: 0px !important;
+  padding-left: 23px !important;
+}
+
+.preferencias{
+  position: absolute;
+  font-weight: bold;
+  font-size: 16px;
+  margin: 0px !important;
+  width: 100%;
+  background: #47988d59;
+  text-align: left;
+  height: 42.5px;
+  border-radius: 0% !important;
+  box-shadow: 0px 0px 4px 0px rgba(0,0,0,0.71) !important;
+  line-height: 0px !important;
+  padding-left: 23px !important;
+  margin-bottom: 42.5px !important;
+  left: 0;
+  bottom: 0;
+}
+
+.mat-toolbar-row{
+  display: grid;
+  grid-template-columns: 1fr repeat(1, auto) 1fr;
+  grid-template-rows: 64px;
+  grid-column-gap: 5px;
+}
+
+.mat-toolbar-row-mobile{
+  padding:0;
+}
+
+.button-mobile{
+  min-width: 56px;
+}
+
+.homeButtonAR{
+  width: fit-content;
+}
+
+.opciones{
+  text-align: right;
+}
+
+.contenedor-total {
+  display: flex;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+
+/* top para que empiece luego del header */
+.contenedor-sidenav{
+  flex:1;
+  top:64px !important;
+  background-color: #eef0f1;
+}
+
+
+/* nuevo */
+.mat-expansion-panel{
+  border-radius: 0px !important;
+  margin:0 !important;
+  background: #47988d59;
+  /* background-color: #E6F4F1; */
+
+}
+
+.mat-expansion-panel-header{
+  padding-left: 2%;
+}
+
+/* Comiezo del menu lateral que sea luego del header */
+.mat-list-base{
+  padding-top: 0 !important;
+}
+
+.titulo-row{
+  margin: 0px;
+  padding: 0px;
+  text-align: center;
+  opacity: 0.8;
+  font-weight: 100%;
+  margin-top: 0 !important;
+  color: #ffffff;
+  /* Para poder alinear el parrafo al centro */
+  flex: 1 1 auto;
+  font-size: 40px;
+  font-weight: bold;
+  background-color: rgb(47, 100, 131);
+  text-shadow: 2px 2px 4px #000000;
+}
+
+.titulo-rowAR{
+  text-align: center;
+  opacity: 0.8;
+  color: #ffffff;
+  /* Para poder alinear el parrafo al centro */
+  flex: 1 1 auto;
+  font-size: 40px;
+  font-weight: bold;
+  text-shadow: 2px 2px 4px #000000;
+}
+
+.parrafo{
+  text-align: center;
+}
+
+.iconUsuario {
+  font-size: 80px;
+  margin: auto;
+  margin-top:8px;
+  display: table;
+}
+.usuario{
+  text-align: center;
+  margin: 8px 8px;
+  word-break: break-all;
+}
+
+

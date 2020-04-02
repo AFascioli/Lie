@@ -1,0 +1,27 @@
+table {
+  text-align: center;
+  width: 95%;
+  margin: 2rem;
+}
+
+.table-mobile{
+  margin: auto;
+}
+
+.columnasNormales {
+  width: 22% !important;
+}
+
+.columnasChicas {
+  width: 8%;
+}
+
+th {
+  text-align: center !important;
+  font-weight: bold;
+  font-size: 15px;
+}
+
+.div-button{
+  text-align: right;
+}

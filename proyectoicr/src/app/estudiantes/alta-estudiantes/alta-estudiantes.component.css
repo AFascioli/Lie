@@ -1,0 +1,28 @@
+.mat-expansion-panel{
+  width: 80%;
+  margin: auto;
+}
+
+.mat-expansion-panel-mobile{
+  width: 100%;
+}
+
+.mat-form-field{
+   width: 47%;
+}
+
+.mat-form-field-mobile{
+  width: 100%;
+}
+
+.div-button {
+  text-align: right;
+}
+
+.parrafo{
+  text-align: center;
+}
+
+.datos-personales, .domicilio{
+  margin-top: 2% !important;
+}
