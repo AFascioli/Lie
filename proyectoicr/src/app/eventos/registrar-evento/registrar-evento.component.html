@@ -116,43 +116,38 @@
           type="button"
           (click)="file.click()"
         >
-          Seleccionar imagen
+          Seleccionar imagenes
         </button>
       </div>
+      <input
+        #file
+        type="file"
+        accept="image/*"
+        (imageSelected)="cargarImagen($event)"
+        imageUpload
+        [resizeOptions]="resizeOptions"
+        multiple
+      />
     </div>
-    <br />
     <div *ngIf="imgURL.length != 0">
       <div class="slideshow-container">
-        <div class="mySlides fade">
-          <img [src]="obtenerImagen()" style="width:100%" />
+        <div *ngFor="let image of imgURL; let i = index">
+          <div class="mySlides fade">
+            <img [src]="obtenerImagen(i)" style="width:100%" />
+          </div>
         </div>
-
-        <!-- Next and previous buttons -->
-        <a class="prev" (click)="plusSlides(-1)">&#10094;</a>
-        <a class="next" (click)="plusSlides(1)">&#10095;</a>
+        <a class="prev" (click)="siguienteSlide(-1)">&#10094;</a>
+        <a class="next" (click)="siguienteSlide(1)">&#10095;</a>
       </div>
       <br />
-
-      <!-- The dots/circles -->
       <div style="text-align:center">
-        <span class="dot" (click)="currentSlide(1)"></span>
-        <span class="dot" (click)="currentSlide(2)"></span>
-        <span class="dot" (click)="currentSlide(3)"></span>
+        <span
+          class="dot"
+          (click)="dotSelected(i)"
+          *ngFor="let image of imgURL; let i = index"
+        ></span>
       </div>
     </div>
-    <br />
-    <span class="mensaje" *ngIf="message">{{ message }}</span>
-    <br />
-    <input
-      #file
-      type="file"
-      accept="image/*"
-      (imageSelected)="selectedImage($event)"
-      imageUpload
-      [resizeOptions]="resizeOptions"
-      multiple
-    />
-
     <div class="div-button">
       <button
         class="buttonPrimary"
