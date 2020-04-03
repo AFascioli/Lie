@@ -3,12 +3,8 @@
   margin-left: auto;
   margin-right: auto;
   display: grid;
-  grid-template-columns: 11% auto auto auto auto auto; /*Aca se definen la cantidad de columnas*/
-  /* grid-template-rows: 50px 50px 50px 0px 50px 50px 0px 50px 50px 0px 50px 50px 0px 50px 50px; Aca se definen la cantidad de filas */
-  /* grid-template-rows: 50px 50px 50px 50px 50px 50px 50px 50px 50px 50px 50px; */
-  /* grid-template-rows: 5% auto auto auto auto auto auto auto auto ; */
+  grid-template-columns: 11% repeat(5, 1fr);
   grid-template-rows: auto 70px 70px 70px 70px 70px 70px 70px 70px 70px;
-  /* Aparentemente si se elimina la propiedad grid-template-rows, quedan del tamaño perfecto */
   grid-gap: 8px;
   padding: 10px;
   background-color: #c3c8cc;/*2196F3*/
@@ -27,6 +23,10 @@
   align-items: stretch;
   grid-column-gap: 30px;
   border-radius: 4px;
+}
+
+.grid-container-mobile{
+  grid-gap: 4px;
 }
 
 .hora, .modulo{
@@ -175,13 +175,13 @@ hr {
   border-radius: 4px;
 }
 
-.horarioMateria{
+.horario-materia{
   font-size: 13px;
   position: absolute;
   align-self: end;
 }
 
-.nombreMateria{
+.nombre-materia{
   position: absolute;
   align-self: center;
 }
@@ -190,10 +190,18 @@ hr {
   text-align: right;
 }
 
-.cardSpinner {
+.card-spinner {
   margin: auto;
   margin-top: 1rem;
   margin-bottom: 1.5rem;
   max-width: 800px;
   box-shadow: 0px 0px 8px 0px rgba(0, 0, 0, 0.71) !important;
+}
+
+.card-body-componente-mobile{
+  padding: 5px;
+}
+
+.select-curso{
+  margin-left: 2%;
 }

@@ -4,7 +4,7 @@
     <p class="parrafo">Asistencia registrada exitosamente</p>
   </div>
   <div mat-dialog-actions class="buttonPopup">
-    <button mat-raised-button class="buttonPrimary" (click)="onOkClick()"> Ok </button>
+    <button mat-raised-button class="button-primary" (click)="onOkClick()"> Ok </button>
   </div>
 </div>
 <div *ngIf="tipoPopup === 'cancelar'" class="cancelar">
@@ -13,9 +13,9 @@
     <p class="parrafo">¿Está seguro que desea cancelar?</p>
   </div>
   <div mat-dialog-actions class="buttonPopup">
-    <button mat-raised-button class="buttonPrimary" (click)="onYesClick()" cdkFocusInitial>
+    <button mat-raised-button class="button-primary" (click)="onYesClick()" cdkFocusInitial>
       Sí
     </button>
-    <button mat-raised-button class="buttonWarn" (click)="onNoClick()">No</button>
+    <button mat-raised-button class="button-warn" (click)="onNoClick()">No</button>
   </div>
 </div>

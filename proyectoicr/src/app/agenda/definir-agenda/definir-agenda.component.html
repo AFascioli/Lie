@@ -1,7 +1,6 @@
 <h1 class="componente-titulo">
   Definir agenda de curso
 </h1>
-<!-- Selector de curso -->
 <mat-card class="card-body-componente">
   <form #form="ngForm">
     <mat-form-field>
@@ -20,18 +19,18 @@
         </mat-option>
       </mat-select>
     </mat-form-field>
-    <div class="contenedorTabla">
+    <div class="contenedor-tabla">
       <table
         #tabla
         mat-table
         matSort
         [dataSource]="dataSource"
         [hidden]="!cursoSelected"
+        [class.table-mobile]="mobileQuery.matches"
       >
-        <!-- Selector de materia -->
         <ng-container matColumnDef="Materia">
           <th
-            class="columnasNormales"
+            class="columnas-normales"
             mat-header-cell
             *matHeaderCellDef
             mat-sort-header
@@ -39,11 +38,11 @@
             Materia
           </th>
           <td
-            class="columnasNormales"
+            class="columnas-normales"
             mat-cell
             *matCellDef="let agendaCurso; let i = index"
           >
-            <mat-form-field class="matFormMateria">
+            <mat-form-field class="mat-form-materia">
               <mat-select
                 name="materia{{ i }}"
                 id="materia{{ i }}"
@@ -63,10 +62,9 @@
             </mat-form-field>
           </td>
         </ng-container>
-        <!-- Selector de docente -->
         <ng-container matColumnDef="Docente">
           <th
-            class="columnasNormales"
+            class="columnas-normales"
             mat-header-cell
             *matHeaderCellDef
             mat-sort-header
@@ -74,11 +72,11 @@
             Docente
           </th>
           <td
-            class="columnasNormales"
+            class="columnas-normales"
             mat-cell
             *matCellDef="let agendaCurso; let i = index"
           >
-            <mat-form-field class="matFormDocente">
+            <mat-form-field class="mat-form-docente">
               <mat-select
                 name="docente{{ i }}"
                 ngModel
@@ -97,10 +95,9 @@
             </mat-form-field>
           </td>
         </ng-container>
-        <!-- Dia -->
         <ng-container matColumnDef="Dia">
           <th
-            class="columnasNormales"
+            class="columnas-normales"
             mat-header-cell
             *matHeaderCellDef
             mat-sort-header
@@ -108,11 +105,11 @@
             Día
           </th>
           <td
-            class="columnasNormales"
+            class="columnas-normales"
             mat-cell
             *matCellDef="let agendaCurso; let i = index"
           >
-            <mat-form-field class="matFormDia">
+            <mat-form-field class="mat-form-dia">
               <mat-select
                 name="dia{{ i }}"
                 ngModel
@@ -128,10 +125,9 @@
             </mat-form-field>
           </td>
         </ng-container>
-        <!-- Time picker de hora inicio -->
         <ng-container matColumnDef="HoraInicio">
           <th
-            class="columnasNormales"
+            class="columnas-normales"
             mat-header-cell
             *matHeaderCellDef
             mat-sort-header
@@ -139,11 +135,11 @@
             Inicio
           </th>
           <td
-            class="columnasNormales"
+            class="columnas-normales"
             mat-cell
             *matCellDef="let agendaCurso; let i = index"
           >
-            <mat-form-field class="matFormHora">
+            <mat-form-field class="mat-form-hora">
               <div class="hora">
                 <input
                   [name]="'horaInicio' + i"
@@ -166,10 +162,9 @@
             </mat-form-field>
           </td>
         </ng-container>
-        <!-- Time picker de hora inicio -->
         <ng-container matColumnDef="HoraFin">
           <th
-            class="columnasNormales"
+            class="columnas-normales"
             mat-header-cell
             *matHeaderCellDef
             mat-sort-header
@@ -177,11 +172,11 @@
             Fin
           </th>
           <td
-            class="columnasNormales"
+            class="columnas-normales"
             mat-cell
             *matCellDef="let agendaCurso; let i = index"
           >
-            <mat-form-field class="matFormHora">
+            <mat-form-field class="mat-form-hora">
               <div class="hora">
                 <input
                   [name]="'horaFin' + i"
@@ -204,17 +199,16 @@
             </mat-form-field>
           </td>
         </ng-container>
-        <!-- Botones/Acciones -->
         <ng-container matColumnDef="Accion">
-          <th class="columnasNormales" mat-header-cell *matHeaderCellDef>
+          <th class="columnas-normales" mat-header-cell *matHeaderCellDef>
             Acción
           </th>
           <td
-            class="columnasNormales"
+            class="columnas-normales"
             mat-cell
             *matCellDef="let row; let i = index"
           >
-            <p class="botonesAccion">
+            <p class="botones-accion">
               <button
                 id="editar{{ i }}"
                 [disabled]="indice == i"
@@ -246,10 +240,10 @@
       </table>
     </div>
   </form>
-  <div class="divAgregar">
+  <div class="div-agregar" [class.div-agregar-mobile]="mobileQuery.matches">
     <button
       mat-raised-button
-      class="buttonAgregar"
+      class="button-agregar"
       (click)="onAgregar()"
       *ngIf="cursoSelected"
     >
@@ -257,16 +251,16 @@
       Agregar horario
     </button>
   </div>
-  <div class="divGuardar">
+  <div class="div-guardar">
     <button
       mat-raised-button
-      class="buttonPrimary"
+      class="button-primary"
       (click)="onGuardar(form)"
       *ngIf="cursoSelected"
     >
       Guardar
     </button>
-    <button mat-raised-button (click)="popUpCancelar()" class="buttonWarn">
+    <button mat-raised-button (click)="popUpCancelar()" class="button-warn">
       Cancelar
     </button>
   </div>

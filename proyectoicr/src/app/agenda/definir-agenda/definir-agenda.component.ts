@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, OnDestroy } from "@angular/core";
+import { Component, OnInit, ViewChild, OnDestroy, ChangeDetectorRef } from "@angular/core";
 import {
   MatSnackBar,
   MatTableDataSource,
@@ -12,6 +12,7 @@ import { Subject } from "rxjs";
 import { takeUntil } from "rxjs/operators";
 import { CancelPopupComponent } from "src/app/popup-genericos/cancel-popup.component";
 import { Router } from "@angular/router";
+import { MediaMatcher } from '@angular/cdk/layout';
 
 @Component({
   selector: "app-definir-agenda",
@@ -55,14 +56,22 @@ export class DefinirAgendaComponent implements OnInit, OnDestroy {
   ];
   nuevo: number;
   isLoading = true;
+  _mobileQueryListener: () => void;
+  mobileQuery: MediaQueryList;
 
   constructor(
     public servicioEstudiante: EstudiantesService,
     public servicioAgenda: AgendaService,
     public dialog: MatDialog,
     private snackBar: MatSnackBar,
-    public router: Router
-  ) {}
+    public router: Router,
+    public changeDetectorRef: ChangeDetectorRef,
+    public media: MediaMatcher
+  ) {
+    this.mobileQuery = media.matchMedia("(max-width: 880px)");
+    this._mobileQueryListener = () => changeDetectorRef.detectChanges();
+    this.mobileQuery.addListener(this._mobileQueryListener);
+  }
 
   @ViewChild(MatSort, { static: true }) sort: MatSort;
 

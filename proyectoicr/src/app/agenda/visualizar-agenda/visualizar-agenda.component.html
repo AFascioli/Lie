@@ -1,4 +1,4 @@
-<mat-card class="cardSpinner" *ngIf="isLoading">
+<mat-card class="card-spinner" *ngIf="isLoading">
   <mat-spinner class="spinner"  [diameter]="60" ></mat-spinner>
 </mat-card>
 
@@ -7,7 +7,7 @@
 </h1>
 
 <mat-card class="card-body-componente" *ngIf="!isLoading">
-  <mat-form-field>
+  <mat-form-field class="select-curso">
     <mat-select
       placeholder="Seleccione curso"
       name="curso"
@@ -24,8 +24,8 @@
     </mat-select>
   </mat-form-field>
 </mat-card>
-<mat-card class="card-body-componente" *ngIf="materias.length != 0">
-  <div id="parent-id" class="grid-container" *ngIf="cursoSelected">
+<mat-card class="card-body-componente"  [class.card-body-componente-mobile]="mobileQuery.matches" *ngIf="materias.length != 0">
+  <div id="parent-id" class="grid-container" [class.grid-container-mobile]="mobileQuery.matches" *ngIf="cursoSelected">
     <div class="cabecera" [class.texto-mobile]="mobileQuery.matches">
       <p class="cabecera">
         Hora
@@ -122,8 +122,8 @@
         [ngStyle]="{ 'background-color': getColores(materia.nombre) }"
         [class.texto-mobile]="mobileQuery.matches"
       >
-        <div class="nombreMateria">{{ materia.nombre }}</div>
-        <div class="horarioMateria">
+        <div class="nombre-materia">{{ materia.nombre }}</div>
+        <div class="horario-materia">
           {{ materia.inicio }} - {{ materia.fin }}
         </div>
       </div>
@@ -133,7 +133,7 @@
     <button
     mat-raised-button
     [routerLink]="['/home']"
-    class="buttonWarn" >
+    class="button-warn" >
        Volver
     </button>
 

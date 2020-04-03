@@ -1,13 +1,12 @@
-<mat-card class="cardSpinner" *ngIf="isLoading">
+<mat-card class="card-spinner" *ngIf="isLoading">
   <mat-spinner class="spinner"></mat-spinner>
 </mat-card>
 
 <h1 *ngIf="!isLoading" class="componente-titulo">
   Tomar asistencia ciclo lectivo {{ fechaActual.getFullYear() }}
-  <h1 class="componente-titulo">
-    Registrar asistencia ciclo lectivo {{ fechaActual.getFullYear() }}
-  </h1>
-  <mat-card class="card-body-componente" *ngIf="!isLoading">
+</h1>
+<mat-card class="card-body-componente" *ngIf="!isLoading">
+  <div class="div-curso-fecha">
     <mat-form-field class="curso">
       <mat-select
         placeholder="Seleccione curso"
@@ -24,10 +23,9 @@
         </mat-option>
       </mat-select>
     </mat-form-field>
-
-    <div class="ubicacionfecha">
+    <div class="ubicacion-fecha">
       <b>Fecha: </b>&nbsp;
-      <mat-form-field class="mat-form-Fecha">
+      <mat-form-field class="mat-form-fecha">
         <input
           [disabled]="true"
           ngModel
@@ -36,89 +34,85 @@
           name="diaFecha"
           [(ngModel)]="diaActual"
           required
-          class="inputFecha"
+          class="input-fecha"
         />
         {{ fechaActual | date: "EEEE" | titlecase }}
         {{ fechaActual | date: "dd/MM/yyyy" }}&nbsp;
       </mat-form-field>
     </div>
-    <p class="aviso" *ngIf="asistenciaNueva != 'true'">
-      Atención, ya existe una asistencia registrada para este curso el día de
-      hoy
-    </p>
-    <p class="aviso" *ngIf="fueraPeriodoCicloLectivo == true">
-      Atención, no se puede tomar asistencia debido a que estamos fuera del
-      ciclo lectivo
-    </p>
-    <br />
-    <div class="contenedorTabla" *ngIf="!cursoNotSelected">
-      <table mat-table [dataSource]="estudiantesXDivision">
-        <ng-container matColumnDef="apellido">
-          <th class="nombreApellido" mat-header-cell *matHeaderCellDef>
-            Apellido/s
-          </th>
-          <td
-            class="nombreApellido"
-            mat-cell
-            *matCellDef="let estudiantesXDivision"
-          >
-            {{ estudiantesXDivision.apellido }}
-          </td>
-        </ng-container>
-        <ng-container matColumnDef="nombre">
-          <th class="nombreApellido" mat-header-cell *matHeaderCellDef>
-            Nombre/s
-          </th>
-          <td
-            class="nombreApellido"
-            mat-cell
-            *matCellDef="let estudiantesXDivision"
-          >
-            {{ estudiantesXDivision.nombre }}
-          </td>
-        </ng-container>
+  </div>
+  <p class="aviso" *ngIf="asistenciaNueva != 'true'">
+    Atención, ya existe una asistencia registrada para este curso el día de hoy
+  </p>
+  <p class="aviso" *ngIf="fueraPeriodoCicloLectivo == true">
+    Atención, no se puede tomar asistencia debido a que estamos fuera del ciclo
+    lectivo
+  </p>
+  <br />
+  <div class="contenedor-tabla" *ngIf="!cursoNotSelected">
+    <table mat-table [dataSource]="estudiantesXDivision">
+      <ng-container matColumnDef="apellido">
+        <th class="nombre-apellido" mat-header-cell *matHeaderCellDef>
+          Apellido/s
+        </th>
+        <td
+          class="nombre-apellido"
+          mat-cell
+          *matCellDef="let estudiantesXDivision"
+        >
+          {{ estudiantesXDivision.apellido }}
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="nombre">
+        <th class="nombre-apellido" mat-header-cell *matHeaderCellDef>
+          Nombre/s
+        </th>
+        <td
+          class="nombre-apellido"
+          mat-cell
+          *matCellDef="let estudiantesXDivision"
+        >
+          {{ estudiantesXDivision.nombre }}
+        </td>
+      </ng-container>
 
-        <ng-container matColumnDef="accion">
-          <th class="presentismo" mat-header-cell *matHeaderCellDef>
-            Presentismo
-          </th>
-          <td class="presentismo" mat-cell *matCellDef="let row">
-            <mat-slide-toggle
-              [checked]="row.presente"
-              (change)="onCambioPresentismo(row)"
-            >
-              <p *ngIf="row.presente">Presente</p>
-              <p *ngIf="!row.presente">Ausente</p></mat-slide-toggle
-            >
-          </td>
-        </ng-container>
-        <tr
-          mat-header-row
-          *matHeaderRowDef="displayedColumns; sticky: true"
-        ></tr>
-        <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
-      </table>
+      <ng-container matColumnDef="accion">
+        <th class="presentismo" mat-header-cell *matHeaderCellDef>
+          Presentismo
+        </th>
+        <td class="presentismo" mat-cell *matCellDef="let row">
+          <mat-slide-toggle
+            [checked]="row.presente"
+            (change)="onCambioPresentismo(row)"
+          >
+            <p *ngIf="row.presente">Presente</p>
+            <p *ngIf="!row.presente">Ausente</p></mat-slide-toggle
+          >
+        </td>
+      </ng-container>
+      <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+    </table>
 
-      <p
-        class="aviso"
-        *ngIf="estudiantesXDivision.length == 0 && !cursoNotSelected"
-      >
-        No exiten alumnos inscriptos a este curso
-      </p>
-    </div>
-    <br />
-    <div class="div-button">
-      <button
-        class="buttonPrimary"
-        (click)="onGuardar()"
-        mat-raised-button
-        [disabled]="cursoNotSelected"
-      >
-        Guardar
-      </button>
-      <button mat-raised-button class="buttonWarn" (click)="onCancelar()">
-        Cancelar
-      </button>
-    </div>
-  </mat-card>
-</h1>
+    <p
+      class="aviso"
+      *ngIf="estudiantesXDivision.length == 0 && !cursoNotSelected"
+    >
+      No exiten alumnos inscriptos a este curso
+    </p>
+  </div>
+  <br />
+  <div class="div-button">
+    <button
+      class="button-primary"
+      (click)="onGuardar()"
+      mat-raised-button
+      [disabled]="cursoNotSelected"
+    >
+      Guardar
+    </button>
+    <button mat-raised-button class="button-warn" (click)="onCancelar()">
+      Cancelar
+    </button>
+  </div>
+</mat-card>

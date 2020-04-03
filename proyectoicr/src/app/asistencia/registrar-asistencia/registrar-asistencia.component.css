@@ -1,20 +1,26 @@
-.curso {
-  margin-left: 1rem;
+.div-curso-fecha{
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
 }
 
-.ubicacionfecha {
-  float: right;
+.curso {
+  margin-left: 1rem;
+  width: fit-content;
+}
+
+.ubicacion-fecha {
+  text-align: end;
 }
 
 .mat-form-field-infix {
   width: 150px;
 }
 
-.mat-form-Fecha {
+.mat-form-fecha {
   text-align: center !important;
 }
 
-.inputFecha {
+.input-fecha {
   width: 0%;
   color: black !important;
 }
@@ -24,7 +30,7 @@ table {
   margin: 0 auto;
 }
 
-.nombreApellido {
+.nombre-apellido {
   width: 40%;
   font-size: 16px;
 }
@@ -52,7 +58,3 @@ th {
   font-size: 19px;
 }
 
-.contenedorTabla {
-  height: 270px;
-  overflow: auto;
-}

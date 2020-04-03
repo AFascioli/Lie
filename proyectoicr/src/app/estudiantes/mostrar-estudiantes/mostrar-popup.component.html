@@ -4,10 +4,10 @@
     <p class="parrafo">¿Está seguro que desea volver a la pantalla anterior?</p>
   </div>
   <div mat-dialog-actions class="buttonPopup">
-    <button mat-raised-button class="buttonPrimary" (click)="onYesClick()" cdkFocusInitial >
+    <button mat-raised-button class="button-primary" (click)="onYesClick()" cdkFocusInitial >
       Sí
     </button>
-    <button mat-raised-button class="buttonWarn" (click)="onNoClick()" >No</button>
+    <button mat-raised-button class="button-warn" (click)="onNoClick()" >No</button>
   </div>
 </div>
 <div *ngIf="tipoPopup === 'borrar'" class="borrar">
@@ -18,16 +18,16 @@
   <div
     *ngIf="borrar != 'El estudiante fue borrado exitosamente'"
     mat-dialog-actions class="buttonPopup">
-    <button mat-raised-button class="buttonWarn" (click)="onYesDeleteClick()" cdkFocusInitial >
+    <button mat-raised-button class="button-warn" (click)="onYesDeleteClick()" cdkFocusInitial >
       Sí
     </button>
-    <button mat-raised-button class="buttonPrimary" (click)="onNoClick()">No</button>
+    <button mat-raised-button class="button-primary" (click)="onNoClick()">No</button>
   </div>
   <div
     *ngIf="borrar === 'El estudiante fue borrado exitosamente'"
     mat-dialog-actions>
     <div mat-dialog-actions class="buttonPopup">
-      <button mat-raised-button class="buttonPrimary" (click)="onOkClickBorrar()" >Ok</button>
+      <button mat-raised-button class="button-primary" (click)="onOkClickBorrar()" >Ok</button>
     </div>
   </div>
 </div>

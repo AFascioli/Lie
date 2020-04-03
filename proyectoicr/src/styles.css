@@ -96,12 +96,12 @@ input[type="number"] {
   height: 48px !important;
 }
 
-.buttonWarn {
+.button-warn {
   background: #d62114;
   color: #ffffff;
 }
 
-.buttonPrimary {
+.button-primary {
   background: #2f6483;
   color: #ffffff;
 }
@@ -146,7 +146,7 @@ input[type="number"] {
 .spinner {
   margin: 0 auto;
 
- 
+
 
 
 }
