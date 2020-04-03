@@ -224,20 +224,17 @@ export class RegistrarEventoComponent implements OnInit, OnDestroy {
       (imagenCargada.resized && imagenCargada.resized.dataURL) ||
         imagenCargada.dataURL
     );
-    this.showSlide(1);
+    setTimeout(() => {
+      this.showSlide(1);
+    }, 500);
   }
 
   obtenerImagen(index) {
     return this.imgURL[index];
   }
 
-  siguienteSlide(n) {
+  moveFromCurrentSlide(n) {
     this.slideIndex += n;
-    this.showSlide(this.slideIndex);
-  }
-
-  dotSelected(n) {
-    this.slideIndex = n;
     this.showSlide(this.slideIndex);
   }
 
