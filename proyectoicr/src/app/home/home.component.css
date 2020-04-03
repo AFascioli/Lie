@@ -27,11 +27,8 @@ button {
   font-size: 19px;
 }
 
-.fechaEvento {
-  position: absolute;
-  top: 9px;
-  right: 20px;
-  width: 6em;
+.fecha-evento {
+  margin: 0 auto;
 }
 
 .botones {
@@ -39,7 +36,7 @@ button {
   float: right;
 }
 
-.textoParticipan {
+.texto-participan {
   font-size: 20px;
   margin-left: 10px;
 }
@@ -96,8 +93,8 @@ time.icon span {
   color: #2f2f2f;
 }
 
-.botonEditar,
-.botonBorrar {
+.boton-editar,
+.boton-borrar {
   display: flex;
 }
 
@@ -106,29 +103,29 @@ time.icon span {
   margin-bottom: 5px !important;
 }
 
-.botonEditar:hover,
-.botonBorrar:hover {
+.boton-editar:hover,
+.boton-borrar:hover {
   background-color: #bbded6;
 }
 
-.containerImg .botonEditar {
+.container-img .boton-editar {
   position: absolute;
   right: 8%;
   bottom: 4%;
   margin-right: 20px !important;
 }
 
-.containerImg .botonBorrar {
+.container-img .boton-borrar {
   position: absolute;
   right: 1%;
   bottom: 4%;
 }
 
-.containerImg {
+.container-img {
   position: relative;
 }
 
-.botonVisualizar {
+.boton-visualizar {
   text-align: center;
 }
 
@@ -136,7 +133,7 @@ time.icon span {
   margin-left: 100px;
 }
 
-.botonComentario {
+.boton-comentario {
   background: rgba(0, 0, 0, 0.79) !important;
   color: white;
   font-size: 20px;
@@ -163,6 +160,6 @@ time.icon span {
   background-color: white !important;
 }
 
-.tituloAviso {
+.titulo-aviso {
   text-align: center;
 }

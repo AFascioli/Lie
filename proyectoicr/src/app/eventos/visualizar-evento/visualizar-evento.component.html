@@ -3,11 +3,11 @@
   <p class="titulo">
     {{ evento.titulo }}
   </p>
-  <p class="diaEvento">
+  <p class="dia-evento">
     <b>Día evento:</b> {{ obtenerDia(evento.fechaEvento) }} de
     {{ obtenerMes(evento.fechaEvento) }}
   </p>
-  <p class="horaEvento">
+  <p class="hora-evento">
     <b>Hora inicio y fin:</b> {{ evento.horaInicio }} - {{ evento.horaFin }}
   </p>
   <div class="imagen">
@@ -28,10 +28,9 @@
       </div>
     </mat-carousel>
   </div>
-  <!-- <img id="imagen" [src]="imgURL" class="image-preview" *ngIf="imgURL" /> -->
-  <div class="divParticipan">
+  <div class="div-participan">
     <mat-chip-list>
-      <p class="textoParticipan"><b>Participan:</b></p>
+      <p class="texto-participan"><b>Participan:</b></p>
       <mat-chip *ngFor="let tag of evento.tags">
         {{ tag }}
       </mat-chip>
@@ -76,7 +75,7 @@
   <div *ngIf="eventoService.comentarios.length != 0">
     <br />
     <mat-divider class="divisor"></mat-divider>
-    <p class="tituloComentarios">
+    <p class="titulo-comentarios">
       <b style="font-size: 28px;">Comentarios</b>
     </p>
     <mat-accordion class="example-headers-align">
@@ -93,19 +92,15 @@
           class="test"
           *ngFor="let comentario of eventoService.comentarios; let i = index"
         >
-          <!-- <button mat-icon-button class="botonOpciones">
-          <mat-icon>more_horiz</mat-icon>
-        </button> -->
-          <div class="datosComentario">
-            <p class="nombreAutor">
+          <div class="datos-comentario">
+            <p class="nombre-autor">
               <b>{{ comentario.apellido }}, {{ comentario.nombre }} </b>
             </p>
             <p></p>
             <button
               mat-button
               [matMenuTriggerFor]="menu"
-              class="dropDown"
-              class="botonOpciones"
+              class="boton-opciones"
             >
               <mat-icon>more_horiz</mat-icon>
             </button>
@@ -123,14 +118,14 @@
               </button>
             </mat-menu>
           </div>
-          <p class="textoComentario">
+          <p class="texto-comentario">
             <app-read-more
-              [text]="comentario.comentario"
+              [text]="comentario.cuerpo"
               [maxHeight]="40"
               [readAll]="false"
             ></app-read-more>
           </p>
-          <p class="fechaComentario">
+          <p class="fecha-comentario">
             {{ obtenerDia(comentario.fecha) }}
             {{ obtenerMes(comentario.fecha) }}
           </p>
