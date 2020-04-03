@@ -1,4 +1,4 @@
-.columnasTabla {
+.columnas-tabla {
   width: 18%;
 }
 
@@ -6,6 +6,11 @@ table {
   width: 95%;
   margin: 1.5rem;
   margin-top: 0rem;
+}
+
+.table-mobile{
+  width: 100%;
+  margin: 0;
 }
 
 th,
@@ -36,7 +41,13 @@ th {
   font-size: 19px;
 }
 
-.contenedorTabla {
-  height: 270px;
-  overflow: auto;
+.th.mat-header-cell:first-of-type,  th.mat-header-cell:first-of-type,
+.td.mat-cell:first-of-type,  td.mat-cell:first-of-type{
+  padding-left: 0;
+}
+
+
+.th.mat-header-cell:last-of-type,  th.mat-header-cell:last-of-type,
+.td.mat-cell:last-of-type,  td.mat-cell:last-of-type{
+  padding-right: 0;
 }

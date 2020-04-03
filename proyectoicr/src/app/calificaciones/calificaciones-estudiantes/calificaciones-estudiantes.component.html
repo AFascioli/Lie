@@ -1,11 +1,9 @@
-<mat-card class="cardSpinner" *ngIf="isLoading">
+<mat-card class="card-spinner" *ngIf="isLoading">
   <mat-spinner class="spinner" [diameter]="60" ></mat-spinner>
 </mat-card>
 
 <h1 *ngIf="rolConPermisosEdicion && !isLoading" class="componente-titulo">
   Registrar calificaciones ciclo lectivo {{fechaActual.getFullYear()}}
-<h1 *ngIf="!rolConPermisosEdicion && !isLoading" class="componente-titulo">
-  Visualizar calificaciones ciclo lectivo {{fechaActual.getFullYear()}}
 </h1>
 
 
@@ -69,13 +67,13 @@
       <input matInput (keyup)="aplicarFiltro($event.target.value)" placeholder="Estudiante">
     </mat-form-field>
 
-    <table mat-table [dataSource]="dataSource" *ngIf="estudiantes">
+    <table mat-table [class.table-mobile]="mobileQuery.matches" [dataSource]="dataSource" *ngIf="estudiantes">
       <ng-container matColumnDef="apellido">
-        <th class="columnasNormales" mat-header-cell *matHeaderCellDef>
+        <th class="columnas-normales" mat-header-cell *matHeaderCellDef>
           Apellido/s
         </th>
         <td
-          class="columnasNormales"
+          class="columnas-normales"
           mat-cell
           *matCellDef="let estudiante; let i = index"
           [ngClass]="{
@@ -91,11 +89,11 @@
       </ng-container>
 
       <ng-container matColumnDef="nombre">
-        <th class="columnasNormales" mat-header-cell *matHeaderCellDef>
+        <th class="columnas-normales" mat-header-cell *matHeaderCellDef>
           Nombre/s
         </th>
         <td
-          class="columnasNormales"
+          class="columnas-normales"
           mat-cell
           *matCellDef="let estudiante; let i = index"
           [ngClass]="{ bajoPromedio: this.promedio < 6 }"
@@ -105,9 +103,9 @@
       </ng-container>
 
       <ng-container matColumnDef="cal1">
-        <th class="columnasChicas" mat-header-cell *matHeaderCellDef>1°</th>
+        <th class="columnas-chicas" mat-header-cell *matHeaderCellDef>1°</th>
         <td
-          class="columnasChicas"
+          class="columnas-chicas"
           mat-cell
           *matCellDef="let estudiante; let i = index"
           [ngClass]="{ bajoPromedio: this.promedio < 6 }"
@@ -128,9 +126,9 @@
         </td>
       </ng-container>
       <ng-container matColumnDef="cal2">
-        <th class="columnasChicas" mat-header-cell *matHeaderCellDef>2°</th>
+        <th class="columnas-chicas" mat-header-cell *matHeaderCellDef>2°</th>
         <td
-          class="columnasChicas"
+          class="columnas-chicas"
           mat-cell
           *matCellDef="let estudiante; let i = index"
           [ngClass]="{ bajoPromedio: this.promedio < 6 }"
@@ -151,9 +149,9 @@
         </td>
       </ng-container>
       <ng-container matColumnDef="cal3">
-        <th class="columnasChicas" mat-header-cell *matHeaderCellDef>3°</th>
+        <th class="columnas-chicas" mat-header-cell *matHeaderCellDef>3°</th>
         <td
-          class="columnasChicas"
+          class="columnas-chicas"
           mat-cell
           *matCellDef="let estudiante; let i = index"
           [ngClass]="{ bajoPromedio: this.promedio < 6 }"
@@ -174,9 +172,9 @@
         </td>
       </ng-container>
       <ng-container matColumnDef="cal4">
-        <th class="columnasChicas" mat-header-cell *matHeaderCellDef>4°</th>
+        <th class="columnas-chicas" mat-header-cell *matHeaderCellDef>4°</th>
         <td
-          class="columnasChicas"
+          class="columnas-chicas"
           mat-cell
           *matCellDef="let estudiante; let i = index"
           [ngClass]="{ bajoPromedio: this.promedio < 6 }"
@@ -197,9 +195,9 @@
         </td>
       </ng-container>
       <ng-container matColumnDef="cal5">
-        <th class="columnasChicas" mat-header-cell *matHeaderCellDef>5°</th>
+        <th class="columnas-chicas" mat-header-cell *matHeaderCellDef>5°</th>
         <td
-          class="columnasChicas"
+          class="columnas-chicas"
           mat-cell
           *matCellDef="let estudiante; let i = index"
           [ngClass]="{ bajoPromedio: this.promedio < 6 }"
@@ -220,9 +218,9 @@
         </td>
       </ng-container>
       <ng-container matColumnDef="cal6">
-        <th class="columnasChicas" mat-header-cell *matHeaderCellDef>6°</th>
+        <th class="columnas-chicas" mat-header-cell *matHeaderCellDef>6°</th>
         <td
-          class="columnasChicas"
+          class="columnas-chicas"
           mat-cell
           *matCellDef="let estudiante; let i = index"
           [ngClass]="{ bajoPromedio: this.promedio < 6 }"
@@ -244,11 +242,11 @@
       </ng-container>
 
       <ng-container matColumnDef="prom">
-        <th class="columnasChicas" mat-header-cell *matHeaderCellDef>
+        <th class="columnas-chicas" mat-header-cell *matHeaderCellDef>
           Promedio
         </th>
         <td
-          class="columnasChicas promedio"
+          class="columnas-chicas promedio"
           mat-cell
           *matCellDef="let estudiante; let i = index"
           [ngClass]="{ bajoPromedio: this.promedio < 6 }"

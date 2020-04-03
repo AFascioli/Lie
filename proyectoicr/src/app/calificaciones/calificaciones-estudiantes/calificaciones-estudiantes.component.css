@@ -3,11 +3,16 @@ table {
   margin: 2rem;
 }
 
-.columnasNormales {
+.table-mobile {
+  width: 100%;
+  margin: 0;
+}
+
+.columnas-normales {
   width: 22% !important;
 }
 
-.columnasChicas {
+.columnas-chicas {
   width: 8%;
 }
 
@@ -53,7 +58,7 @@ input:focus {
   font-size: medium !important;
 }
 
-.cardSpinner {
+.card-spinner {
   margin: auto;
   margin-top: 1rem;
   margin-bottom: 1.5rem;

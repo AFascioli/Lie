@@ -2,10 +2,11 @@ import { CancelPopupComponent } from "src/app/popup-genericos/cancel-popup.compo
 import { InscripcionService } from "../inscripcion.service";
 import { AutenticacionService } from "src/app/login/autenticacionService.service";
 import { EstudiantesService } from "src/app/estudiantes/estudiante.service";
-import { Component, OnInit, OnDestroy } from "@angular/core";
+import { Component, OnInit, OnDestroy, ChangeDetectorRef } from "@angular/core";
 import { MatDialog, MatDialogConfig, MatSnackBar } from "@angular/material";
 import { takeUntil } from "rxjs/operators";
 import { Subject } from "rxjs";
+import { MediaMatcher } from '@angular/cdk/layout';
 
 @Component({
   selector: "app-documentos-inscripcion",
@@ -28,14 +29,22 @@ export class DocumentosInscripcionComponent implements OnInit, OnDestroy {
   fueraPeriodoCicloLectivo = false;
   fechaActual: Date;
   private unsubscribe: Subject<void> = new Subject();
+  _mobileQueryListener: () => void;
+  mobileQuery: MediaQueryList;
 
   constructor(
     public servicioEstudiante: EstudiantesService,
     public servicioInscripcion: InscripcionService,
     public autenticacionService: AutenticacionService,
     public popup: MatDialog,
-    private snackBar: MatSnackBar
-  ) {}
+    private snackBar: MatSnackBar,
+    public changeDetectorRef: ChangeDetectorRef,
+    public media: MediaMatcher
+  ) {
+    this.mobileQuery = media.matchMedia("(max-width: 880px)");
+    this._mobileQueryListener = () => changeDetectorRef.detectChanges();
+    this.mobileQuery.addListener(this._mobileQueryListener);
+  }
 
   ngOnDestroy() {
     this.unsubscribe.next();
