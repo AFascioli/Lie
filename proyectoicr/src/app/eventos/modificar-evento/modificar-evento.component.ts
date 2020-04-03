@@ -21,6 +21,7 @@ import Rolldate from "../../../assets/rolldate.min.js";
 import { CancelPopupComponent } from "src/app/popup-genericos/cancel-popup.component";
 import { Evento } from "../evento.model";
 import { environment } from "src/environments/environment";
+import { ResizeOptions, ImageResult } from "ng2-imageupload";
 
 @Component({
   selector: "app-modificar-evento",
@@ -28,12 +29,15 @@ import { environment } from "src/environments/environment";
   styleUrls: ["./modificar-evento.component.css"]
 })
 export class ModificarEventoComponent implements OnInit, OnDestroy {
+  _filter(chip: string): any {
+    throw new Error("Method not implemented.");
+  }
   @ViewChild("chipsInput", { static: false }) chipsInput: ElementRef<
     HTMLInputElement
   >;
   @ViewChild("auto", { static: false }) matAutocomplete: MatAutocomplete;
   fechaActual: Date;
-  imageFile: File;
+  imagesFile: any;
   imgURL: any[] = [];
   message: string;
   selectable = true;
@@ -44,9 +48,10 @@ export class ModificarEventoComponent implements OnInit, OnDestroy {
   filteredChips: Observable<string[]>;
   chips: string[] = [];
   allChips: string[] = ["1A", "2A", "3A", "4A", "5A", "6A", "Todos los cursos"];
-  horaInicio = "";
-  horaFin = "";
+  horaInicio: string;
+  horaFin: string;
   evento: Evento;
+  slideIndex = 1;
   private unsubscribe: Subject<void> = new Subject();
 
   constructor(
@@ -55,18 +60,21 @@ export class ModificarEventoComponent implements OnInit, OnDestroy {
     public router: Router,
     public snackBar: MatSnackBar
   ) {
-    //Hace que funcione el autocomplete, filtra
+    this.filtrarChips();
+  }
+
+  ngOnDestroy() {
+    this.unsubscribe.next();
+    this.unsubscribe.complete();
+  }
+
+  filtrarChips() {
     this.filteredChips = this.chipsCtrl.valueChanges.pipe(
       startWith(null),
       map((chip: string | null) =>
         chip ? this._filter(chip) : this.allChips.slice()
       )
     );
-  }
-
-  ngOnDestroy() {
-    this.unsubscribe.next();
-    this.unsubscribe.complete();
   }
 
   ngOnInit() {
@@ -98,6 +106,23 @@ export class ModificarEventoComponent implements OnInit, OnDestroy {
 
       this.chipsCtrl.setValue(null);
     }
+  }
+
+  selected(event: MatAutocompleteSelectedEvent): void {
+    if (event.option.viewValue == "Todos los cursos") {
+      this.chips = [];
+      this.chips.push(event.option.viewValue);
+    } else if (
+      !this.chips.includes(event.option.viewValue) &&
+      !this.chips.includes("Todos los cursos")
+    )
+      this.chips.push(event.option.viewValue);
+    if (this.chips.length == this.allChips.length - 1) {
+      this.chips = [];
+      this.chips.push("Todos los cursos");
+    }
+    this.chipsInput.nativeElement.value = "";
+    this.chipsCtrl.setValue(null);
   }
 
   inicializarPickers() {
@@ -133,100 +158,97 @@ export class ModificarEventoComponent implements OnInit, OnDestroy {
     }
   }
 
-  selected(event: MatAutocompleteSelectedEvent): void {
-    if (event.option.viewValue == "Todos los cursos") {
-      this.chips = [];
-      this.chips.push(event.option.viewValue);
-    } else if (
-      !this.chips.includes(event.option.viewValue) &&
-      !this.chips.includes("Todos los cursos")
-    )
-      this.chips.push(event.option.viewValue);
-    if (this.chips.length == this.allChips.length - 1) {
-      this.chips = [];
-      this.chips.push("Todos los cursos");
-    }
-    this.chipsInput.nativeElement.value = "";
-    this.chipsCtrl.setValue(null);
-  }
-
-  private _filter(value: string): string[] {
-    const filterValue = value.toLowerCase();
-
-    return this.allChips.filter(
-      chip => chip.toLowerCase().indexOf(filterValue) === 0
-    );
-  }
-
-  obtenerImagen = (file, reader) => {
-    return new Promise((resolve, reject) => {
-      reader.readAsDataURL(file);
-      reader.onload = _event => {
-        resolve(reader.result);
-      };
-      if (file == null) {
-        reject("No se pudo obtener la imagen.");
-      }
-    });
+  resizeOptions: ResizeOptions = {
+    resizeMaxHeight: 600,
+    resizeMaxWidth: 600
   };
 
-  async preview(files) {
-    let incorrectType = false;
-    if (files.length === 0) return;
+  async cargarImagen(imagenCargada: ImageResult) {
+    this.imagesFile.push(imagenCargada.file);
+    this.imgURL.push(
+      (imagenCargada.resized && imagenCargada.resized.dataURL) ||
+        imagenCargada.dataURL
+    );
+    setTimeout(() => {
+      this.showSlide(1);
+    }, 500);
+  }
 
-    for (let index = 0; index < files.length; index++) {
-      var mimeType = files[index].type;
-      if (mimeType.match(/image\/*/) == null) {
-        incorrectType = true;
-        files.splice(index, 1);
-      }
+  obtenerImagen(index) {
+    return this.imgURL[index];
+  }
+
+  moveFromCurrentSlide(n) {
+    this.slideIndex += n;
+    this.showSlide(this.slideIndex);
+  }
+
+  showSlide(n) {
+    var slides = document.getElementsByClassName("mySlides");
+    var dots = document.getElementsByClassName("dot");
+    this.esSlideValido(n, slides);
+    for (let i = 0; i < slides.length; i++) {
+      slides[i].setAttribute("style", "display:none;");
     }
+    for (let i = 0; i < dots.length; i++) {
+      dots[i].className = dots[i].className.replace(" active", "");
+    }
+    this.setAttributesCurrentSlide(slides, dots);
+  }
 
-    incorrectType && (this.message = "Solo se admiten archivos de imagen");
+  setAttributesCurrentSlide(slides, dots) {
+    slides[this.slideIndex - 1].setAttribute("style", "display:block;");
+    dots[this.slideIndex - 1].className += " active";
+  }
 
-    this.imageFile = files;
-    this.imgURL = [];
-    for (let index = 0; index < files.length; index++) {
-      var reader = new FileReader();
-      this.imgURL[index] = await this.obtenerImagen(files[index], reader);
+  esSlideValido(n, slides) {
+    if (n > slides.length) {
+      this.slideIndex = 1;
+    }
+    if (n < 1) {
+      this.slideIndex = slides.length;
     }
   }
 
-  onGuardarEvento(form: NgForm) {
+  modificarEvento() {
+    let fechaEvento = new Date(this.evento.fechaEvento);
+    this.eventoService
+      .modificarEvento(
+        this.evento.titulo,
+        this.evento.descripcion,
+        fechaEvento,
+        this.evento.horaInicio,
+        this.evento.horaFin,
+        this.evento.tags,
+        this.imagesFile,
+        this.evento.filenames,
+        this.evento._id,
+        this.evento.autor
+      )
+      .pipe(takeUntil(this.unsubscribe))
+      .subscribe(rtdo => {
+        if (rtdo.exito) {
+          this.snackBar.open(rtdo.message, "", {
+            panelClass: ["snack-bar-exito"],
+            duration: 4500
+          });
+          this.router.navigate(["./home"]);
+        } else {
+          this.snackBar.open(rtdo.message, "", {
+            duration: 4500,
+            panelClass: ["snack-bar-fracaso"]
+          });
+        }
+      });
+  }
+
+  onGuardar(form: NgForm) {
     if (form.valid && this.evento.tags.length != 0) {
       if (
-        (this.evento.horaInicio == "" && this.evento.horaFin == "") ||
+        (this.evento.horaInicio && this.evento.horaFin) ||
         this.horaEventoEsValido(this.evento.horaInicio, this.evento.horaFin)
       ) {
-        let fechaEvento = new Date(this.evento.fechaEvento);
-        this.eventoService
-          .modificarEvento(
-            this.evento.titulo,
-            this.evento.descripcion,
-            fechaEvento,
-            this.evento.horaInicio,
-            this.evento.horaFin,
-            this.evento.tags,
-            this.imageFile,
-            this.evento.filenames,
-            this.evento._id,
-            this.evento.autor
-          )
-          .pipe(takeUntil(this.unsubscribe))
-          .subscribe(rtdo => {
-            if (rtdo.exito) {
-              this.snackBar.open(rtdo.message, "", {
-                panelClass: ["snack-bar-exito"],
-                duration: 4500
-              });
-              this.router.navigate(["./home"]);
-            } else {
-              this.snackBar.open(rtdo.message, "", {
-                duration: 4500,
-                panelClass: ["snack-bar-fracaso"]
-              });
-            }
-          });
+        this.modificarEvento();
       } else if (
         !this.horaEventoEsValido(this.evento.horaInicio, this.evento.horaFin)
       ) {

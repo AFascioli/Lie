@@ -114,20 +114,6 @@
       </mat-autocomplete>
     </mat-form-field>
     <div>
-      <mat-carousel
-        interval="5000"
-        maxWidth="auto"
-        proportion="75"
-        color="warn"
-        [hideArrows]="false"
-        [hideIndicators]="false"
-      >
-        <div *ngFor="let imagen of imgURL">
-          <mat-carousel-slide overlayColor="transparent" [image]="imagen">
-            ></mat-carousel-slide
-          >
-        </div>
-      </mat-carousel>
       <div class="contenedor-flexbox">
         <button
           mat-stroked-button
@@ -135,27 +121,36 @@
           type="button"
           (click)="file.click()"
         >
-          Seleccionar imagen
+          Seleccionar imagenes
         </button>
       </div>
-      <br />
-      <span class="mensaje" *ngIf="message">{{ message }}</span>
-      <br />
       <input
         #file
         type="file"
         accept="image/*"
-        (change)="preview(file.files)"
+        (imageSelected)="cargarImagen($event)"
+        imageUpload
+        [resizeOptions]="resizeOptions"
         multiple
       />
     </div>
-
+    <div *ngIf="imgURL.length != 0">
+      <div class="slideshow-container">
+        <div *ngFor="let image of imgURL; let i = index">
+          <div class="mySlides fade">
+            <img [src]="obtenerImagen(i)" style="width:100%" />
+          </div>
+        </div>
+        <a class="prev" (click)="moveFromCurrentSlide(-1)">&#10094;</a>
+        <a class="next" (click)="moveFromCurrentSlide(1)">&#10095;</a>
+      </div>
+      <br />
+      <div style="text-align:center">
+        <span class="dot" *ngFor="let image of imgURL; let i = index"></span>
+      </div>
+    </div>
     <div class="div-button">
-      <button
-        class="buttonPrimary"
-        (click)="onGuardarEvento(form)"
-        mat-raised-button
-      >
+      <button class="buttonPrimary" (click)="onGuardar(form)" mat-raised-button>
         Guardar
       </button>
       <button mat-raised-button (click)="popUpCancelar()" class="buttonWarn">
