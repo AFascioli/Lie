@@ -16,9 +16,8 @@ mat-card-content {
   margin-left: auto;
   margin-right: auto;
   display: grid;
-  grid-template-columns: 11% auto auto auto auto auto; /*Aca se definen la cantidad de columnas*/
-  grid-template-rows: auto 70px 70px 70px 70px 70px 70px 70px 70px 70px;
-  /* Aparentemente si se elimina la propiedad grid-template-rows, quedan del tamaño perfecto */
+  grid-template-columns: 11% repeat(5,1fr); /*Aca se definen la cantidad de columnas*/
+  grid-template-rows: auto repeat(9,70px);
   grid-gap: 8px;
   padding: 10px;
   background-color: #c3c8cc; /*2196F3*/
@@ -148,13 +147,13 @@ hr {
   border-radius: 4px;
 }
 
-.horarioMateria {
+.horario-materia {
   font-size: 13px;
   position: absolute;
   align-self: end;
 }
 
-.nombreMateria {
+.nombre-materia {
   position: absolute;
   align-self: center;
 }

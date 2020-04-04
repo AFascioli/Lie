@@ -4,7 +4,7 @@
   margin-right: auto;
 }
 
-.contenidoMobile {
+.contenido-mobile {
   width: 61%;
   margin-left: auto;
   margin-right: auto;
@@ -16,11 +16,11 @@
   font-size: 19px;
 }
 
-.ubicacionfecha {
+.ubicacion-fecha {
   text-align: right;
 }
 
-.inputFecha {
+.input-fecha {
   width: 0%;
   color: black !important;
 }

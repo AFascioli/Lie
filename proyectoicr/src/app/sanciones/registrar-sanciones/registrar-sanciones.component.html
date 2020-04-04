@@ -3,7 +3,7 @@
 </h1>
 <mat-card class="card-body-componente">
   <form #form="ngForm">
-    <div class="ubicacionfecha">
+    <div class="ubicacion-fecha">
       <b>Fecha: </b>
       <mat-form-field class="mat-form-Fecha" [class.mat-form-field-mobile]="mobileQuery.matches">
         <input
@@ -13,13 +13,13 @@
           matInput
           name="diaFecha"
           required
-          class="inputFecha"
+          class="input-fecha"
         />
         {{ fechaActual | date: "EEEE" | titlecase }}
         {{ fechaActual | date: "dd/MM/yyyy" }}&nbsp;
       </mat-form-field>
     </div>
-    <div class="contenido" [class.contenidoMobile]="mobileQuery.matches">
+    <div class="contenido" [class.contenido-mobile]="mobileQuery.matches">
       <mat-card>
         <p class="titulo-datos-est">Datos del estudiante</p>
         <mat-card-subtitle>

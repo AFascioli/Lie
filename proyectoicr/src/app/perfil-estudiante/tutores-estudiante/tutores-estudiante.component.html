@@ -2,34 +2,34 @@
 <mat-card class="card-body-componente">
   <table mat-table [dataSource]="tutores" *ngIf="tutores.length!=0">
     <ng-container matColumnDef="apellido">
-      <th class="columnasNormales" mat-header-cell *matHeaderCellDef>
+      <th class="columnas-normales" mat-header-cell *matHeaderCellDef>
         Apellido/s
       </th>
-      <td class="columnasNormales" mat-cell *matCellDef="let tutor">
+      <td class="columnas-normales" mat-cell *matCellDef="let tutor">
         {{ tutor.apellido }}
       </td>
     </ng-container>
     <ng-container matColumnDef="nombre">
-      <th class="columnasNormales" mat-header-cell *matHeaderCellDef>
+      <th class="columnas-normales" mat-header-cell *matHeaderCellDef>
         Nombre/s
       </th>
-      <td class="columnasNormales" mat-cell *matCellDef="let tutor">
+      <td class="columnas-normales" mat-cell *matCellDef="let tutor">
         {{ tutor.nombre }}
       </td>
     </ng-container>
     <ng-container matColumnDef="telefono">
-      <th class="columnasNormales" mat-header-cell *matHeaderCellDef>
+      <th class="columnas-normales" mat-header-cell *matHeaderCellDef>
         Teléfono
       </th>
-      <td class="columnasNormales" mat-cell *matCellDef="let tutor">
+      <td class="columnas-normales" mat-cell *matCellDef="let tutor">
         {{ tutor.telefono }}
       </td>
     </ng-container>
     <ng-container matColumnDef="email">
-        <th class="columnasNormales" mat-header-cell *matHeaderCellDef>
+        <th class="columnas-normales" mat-header-cell *matHeaderCellDef>
           Email
         </th>
-        <td class="columnasNormales" mat-cell *matCellDef="let tutor">
+        <td class="columnas-normales" mat-cell *matCellDef="let tutor">
           {{ tutor.email }}
         </td>
       </ng-container>
