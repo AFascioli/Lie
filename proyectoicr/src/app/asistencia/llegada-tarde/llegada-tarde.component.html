@@ -2,10 +2,9 @@
 <mat-card class="card-body-componente">
   <p class="aviso" *ngIf="fueraPeriodoCicloLectivo">Atención, no se puede registrar la llegada tarde debido a que estamos fuera del ciclo lectivo </p>
   <div *ngIf="!fueraPeriodoCicloLectivo" >
-  <div class="ubicacionfecha">
+  <div class="ubicacion-fecha">
     <b>Fecha: </b>
-    &nbsp;
-    <mat-form-field class="mat-form-Fecha">
+    <mat-form-field class="mat-form-fecha">
       <input
         [disabled]="true"
         ngModel
@@ -13,7 +12,7 @@
         matInput
         name="diaFecha"
         required
-        class="inputFecha"
+        class="input-fecha"
       />
       {{ fechaActual | date: "EEEE" | titlecase }}
       {{ fechaActual | date: "dd/MM/yyyy" }}&nbsp;
@@ -21,7 +20,7 @@
   </div>
   <br />
   <div class="contenido">
-    <mat-card>
+    <mat-card class="datos-estudiante" [class.datos-estudiante-mobile]="mobileQuery.matches">
       <p class="titulo-datos-est">Datos del estudiante</p>
       <mat-card-subtitle>
         <b>Apellido/s: </b> {{ apellidoEstudiante }}
@@ -31,7 +30,7 @@
     </mat-card>
   </div>
   <br />
-    <mat-radio-group aria-label="Selecciona una de las opciones">
+    <mat-radio-group aria-label="Selecciona una de las opciones" class="opciones" [class.opciones-mobile]="mobileQuery.matches">
     <mat-radio-button
       (change)="radioButtonChange()"
       [checked]="antes8am"
