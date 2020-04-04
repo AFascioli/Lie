@@ -33,15 +33,6 @@ mat-datepicker-toggle {
   color: red;
 }
 
-/* .mat-expansion-panel{
-  width: 80%;
-  margin: auto;
-}
-
-.mat-expansion-panel-mobile{
-  width: 100%;
-} */
-
 .mat-form-field {
   width: 60%;
 }
@@ -72,7 +63,7 @@ mat-datepicker-toggle {
   padding: 25px 50px;
 }
 
-.matFormHora {
+.mat-form-hora {
   width: 29%;
 }
 
@@ -80,4 +71,12 @@ mat-datepicker-toggle {
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.mat-form-field-mobile{
+  width: 75%;
+}
+
+.mat-form-field-hora-mobile{
+  width: 36%;
 }

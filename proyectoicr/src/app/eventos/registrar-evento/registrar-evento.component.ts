@@ -3,7 +3,8 @@ import {
   OnInit,
   ElementRef,
   ViewChild,
-  OnDestroy
+  OnDestroy,
+  ChangeDetectorRef
 } from "@angular/core";
 import { COMMA, ENTER } from "@angular/cdk/keycodes";
 import { FormControl, NgForm } from "@angular/forms";
@@ -20,6 +21,7 @@ import Rolldate from "../../../assets/rolldate.min.js";
 import { CancelPopupComponent } from "src/app/popup-genericos/cancel-popup.component";
 import { Router } from "@angular/router";
 import { ImageResult, ResizeOptions } from "ng2-imageupload";
+import { MediaMatcher } from '@angular/cdk/layout';
 
 @Component({
   selector: "app-registrar-evento",
@@ -48,13 +50,21 @@ export class RegistrarEventoComponent implements OnInit, OnDestroy {
   src;
   indiceImagen = 0;
   private unsubscribe: Subject<void> = new Subject();
+  _mobileQueryListener: () => void;
+  mobileQuery: MediaQueryList;
 
   constructor(
     public eventoService: EventosService,
     public dialog: MatDialog,
     public snackBar: MatSnackBar,
-    public router: Router
+    public router: Router,
+    public changeDetectorRef: ChangeDetectorRef,
+    public media: MediaMatcher
   ) {
+
+    this.mobileQuery = media.matchMedia("(max-width: 800px)"); //Estaba en 800, lo tiro a 1000
+    this._mobileQueryListener = () => changeDetectorRef.detectChanges();
+    this.mobileQuery.addListener(this._mobileQueryListener);
     this.filteredChips = this.chipsCtrl.valueChanges.pipe(
       startWith(null),
       map((chip: string | null) =>

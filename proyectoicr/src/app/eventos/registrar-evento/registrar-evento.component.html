@@ -4,7 +4,7 @@
 
 <mat-card class="card-body-componente">
   <form #form="ngForm">
-    <mat-form-field>
+    <mat-form-field [class.mat-form-field-mobile]="mobileQuery.matches">
       <input
         name="titulo"
         ngModel
@@ -16,7 +16,7 @@
       />
     </mat-form-field>
     <br />
-    <mat-form-field>
+    <mat-form-field [class.mat-form-field-mobile]="mobileQuery.matches">
       <textarea
         matInput
         name="descripcion"
@@ -29,7 +29,7 @@
       </textarea>
     </mat-form-field>
     <br />
-    <mat-form-field>
+    <mat-form-field [class.mat-form-field-mobile]="mobileQuery.matches">
       <input
         matInput
         name="fechaEvento"
@@ -46,7 +46,7 @@
       <mat-datepicker touchUi #picker></mat-datepicker>
     </mat-form-field>
     <div>
-      <mat-form-field class="matFormHora">
+      <mat-form-field class="mat-form-hora" [class.mat-form-field-hora-mobile]="mobileQuery.matches">
         <div class="hora">
           <input
             matInput
@@ -60,7 +60,7 @@
         </div>
       </mat-form-field>
       &nbsp;
-      <mat-form-field class="matFormHora">
+      <mat-form-field class="mat-form-hora" [class.mat-form-field-hora-mobile]="mobileQuery.matches">
         <div class="hora">
           <input
             matInput
@@ -75,7 +75,7 @@
       </mat-form-field>
     </div>
 
-    <mat-form-field class="chip-list">
+    <mat-form-field class="chip-list" [class.mat-form-field-mobile]="mobileQuery.matches">
       <mat-chip-list #chipList aria-label="Seleccion de chips">
         <mat-chip
           *ngFor="let chip of chips"

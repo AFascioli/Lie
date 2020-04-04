@@ -145,10 +145,12 @@ input[type="number"] {
 
 .spinner {
   margin: 0 auto;
+}
 
-
-
-
+/* Para que el expansion panel cuando se abre y se cierra tenga el color que debe */
+.mat-expansion-panel:not(.mat-expanded):not([aria-disabled="true"])
+  .mat-expansion-panel-header:hover {
+    background-color:  #47988d59 !important;
 }
 
 /* Para que se muestre bien el dropdown menu */

@@ -1,11 +1,18 @@
-.mat-form-field {
-  width: 78.5%;
-  /* Considerar a cambiarlo de 58.5 a 78.5 */
+.opciones-busqueda{
+  margin: 0 auto;
+  margin-top: 2%;
+  width: 80%;
+  display: grid;
+  grid-template-columns: repeat(2,1fr);
 }
 
+.mat-form-field {
+  width: 78.5%;
+}
+/*
 .mat-radio-button ~ .mat-radio-button {
   margin-left: 20px;
-}
+} */
 
 .mat-radio-button  {
   margin-bottom: 20px;
