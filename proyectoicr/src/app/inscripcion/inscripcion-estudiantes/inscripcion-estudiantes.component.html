@@ -8,9 +8,8 @@
       fuera de las fechas
     </p>
     <div *ngIf="fechaDentroDeRangoInscripcion">
-      <div class="ubicacionfecha">
+      <div class="ubicacion-fecha">
         <b>Fecha: </b>
-        &nbsp;
         <mat-form-field class="mat-form-Fecha">
           <input
             [disabled]="true"
@@ -20,13 +19,12 @@
             name="diaFecha"
             [(ngModel)]="diaActual"
             required
-            class="inputFecha"
+            class="input-fecha"
           />
           {{ fechaActual | date: "EEEE" | titlecase }}
           {{ fechaActual | date: "dd/MM/yyyy" }}&nbsp;
         </mat-form-field>
       </div>
-      <br />
       <div class="contenido" [class.contenido-mobile]="mobileQuery.matches">
         <mat-card>
           <p class="titulo-datos-est">Datos del estudiante</p>
@@ -34,19 +32,17 @@
             <b>Apellido/s: </b> {{ apellidoEstudiante }}
             <br />
             <b>Nombre/s: </b> {{ nombreEstudiante }}
-            <p class="mensajeAtencion" *ngIf="estudianteEstaInscripto">
+            <p class="mensaje-atencion" *ngIf="estudianteEstaInscripto">
               <b
                 >Atención, el estudiante seleccionado ya esta inscripto en el
                 curso
               </b>
-              <label *ngFor="let curso of cursos" [innerHTML]= "curso.curso"  class="mensajeAtencioncurso"> </label>
+              <label *ngFor="let curso of cursos" [innerHTML]= "curso.curso"  class="mensaje-atencion-curso"> </label>
             </p>
           </mat-card-subtitle>
         </mat-card>
       </div>
-      <br />
-      <br />
-      <div class="div-selects">
+      <div class="div-select">
         <mat-form-field class="curso">
           <mat-select
             placeholder="Seleccione curso"
