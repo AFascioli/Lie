@@ -3,13 +3,13 @@ import {
   OnInit,
   ElementRef,
   ViewChild,
-  OnDestroy
+  OnDestroy,
 } from "@angular/core";
 import { COMMA, ENTER } from "@angular/cdk/keycodes";
 import { FormControl, NgForm } from "@angular/forms";
 import {
   MatAutocompleteSelectedEvent,
-  MatAutocomplete
+  MatAutocomplete,
 } from "@angular/material/autocomplete";
 import { MatChipInputEvent } from "@angular/material/chips";
 import { Observable, Subject } from "rxjs";
@@ -26,7 +26,7 @@ import { ResizeOptions, ImageResult } from "ng2-imageupload";
 @Component({
   selector: "app-modificar-evento",
   templateUrl: "./modificar-evento.component.html",
-  styleUrls: ["./modificar-evento.component.css"]
+  styleUrls: ["./modificar-evento.component.css"],
 })
 export class ModificarEventoComponent implements OnInit, OnDestroy {
   _filter(chip: string): any {
@@ -37,8 +37,9 @@ export class ModificarEventoComponent implements OnInit, OnDestroy {
   >;
   @ViewChild("auto", { static: false }) matAutocomplete: MatAutocomplete;
   fechaActual: Date;
-  imagesFile: any;
-  imgURL: any[] = [];
+  imagesFile: any = [];
+  imagenesCargadas: any[] = [];
+  imagenesEnBD: any[] = [];
   message: string;
   selectable = true;
   removable = true;
@@ -82,13 +83,16 @@ export class ModificarEventoComponent implements OnInit, OnDestroy {
     this.fechaActual = new Date();
     if (this.evento.filenames.length != 0) {
       for (let index = 0; index < this.evento.filenames.length; index++) {
-        this.imgURL.push(
+        this.imagenesEnBD.push(
           environment.apiUrl + `/imagen/${this.evento.filenames[index]}`
         );
       }
     }
     this.chips = this.evento.tags;
     this.inicializarPickers();
+    setTimeout(() => {
+      this.showSlide(1);
+    }, 500);
   }
 
   add(event: MatChipInputEvent): void {
@@ -133,20 +137,20 @@ export class ModificarEventoComponent implements OnInit, OnDestroy {
       lang: {
         title: "Seleccione hora de inicio del evento",
         hour: "",
-        min: ""
+        min: "",
       },
-      confirm: date => {
+      confirm: (date) => {
         this.horaInicio = date;
-      }
+      },
     });
     new Rolldate({
       el: "#pickerFin",
       format: "hh:mm",
       minStep: 15,
       lang: { title: "Seleccione hora de fin del evento", hour: "", min: "" },
-      confirm: date => {
+      confirm: (date) => {
         this.horaFin = date;
-      }
+      },
     });
   }
 
@@ -160,12 +164,13 @@ export class ModificarEventoComponent implements OnInit, OnDestroy {
 
   resizeOptions: ResizeOptions = {
     resizeMaxHeight: 600,
-    resizeMaxWidth: 600
+    resizeMaxWidth: 600,
   };
 
   async cargarImagen(imagenCargada: ImageResult) {
+    console.log(imagenCargada);
     this.imagesFile.push(imagenCargada.file);
-    this.imgURL.push(
+    this.imagenesCargadas.push(
       (imagenCargada.resized && imagenCargada.resized.dataURL) ||
         imagenCargada.dataURL
     );
@@ -175,7 +180,7 @@ export class ModificarEventoComponent implements OnInit, OnDestroy {
   }
 
   obtenerImagen(index) {
-    return this.imgURL[index];
+    return this.imagenesCargadas[index];
   }
 
   moveFromCurrentSlide(n) {
@@ -226,17 +231,17 @@ export class ModificarEventoComponent implements OnInit, OnDestroy {
         this.evento.autor
       )
       .pipe(takeUntil(this.unsubscribe))
-      .subscribe(rtdo => {
+      .subscribe((rtdo) => {
         if (rtdo.exito) {
           this.snackBar.open(rtdo.message, "", {
             panelClass: ["snack-bar-exito"],
-            duration: 4500
+            duration: 4500,
           });
           this.router.navigate(["./home"]);
         } else {
           this.snackBar.open(rtdo.message, "", {
             duration: 4500,
-            panelClass: ["snack-bar-fracaso"]
+            panelClass: ["snack-bar-fracaso"],
           });
         }
       });
@@ -257,14 +262,14 @@ export class ModificarEventoComponent implements OnInit, OnDestroy {
           "",
           {
             duration: 4500,
-            panelClass: ["snack-bar-fracaso"]
+            panelClass: ["snack-bar-fracaso"],
           }
         );
       }
     } else {
       this.snackBar.open("Faltan campos por completar", "", {
         duration: 4500,
-        panelClass: ["snack-bar-fracaso"]
+        panelClass: ["snack-bar-fracaso"],
       });
     }
   }
@@ -283,7 +288,7 @@ export class ModificarEventoComponent implements OnInit, OnDestroy {
 
   popUpCancelar() {
     this.dialog.open(CancelPopupComponent, {
-      width: "250px"
+      width: "250px",
     });
   }
 }

@@ -3,13 +3,13 @@ import {
   OnInit,
   ElementRef,
   ViewChild,
-  OnDestroy
+  OnDestroy,
 } from "@angular/core";
 import { COMMA, ENTER } from "@angular/cdk/keycodes";
 import { FormControl, NgForm } from "@angular/forms";
 import {
   MatAutocompleteSelectedEvent,
-  MatAutocomplete
+  MatAutocomplete,
 } from "@angular/material/autocomplete";
 import { MatChipInputEvent } from "@angular/material/chips";
 import { Observable, Subject } from "rxjs";
@@ -24,7 +24,7 @@ import { ImageResult, ResizeOptions } from "ng2-imageupload";
 @Component({
   selector: "app-registrar-evento",
   templateUrl: "./registrar-evento.component.html",
-  styleUrls: ["./registrar-evento.component.css"]
+  styleUrls: ["./registrar-evento.component.css"],
 })
 export class RegistrarEventoComponent implements OnInit, OnDestroy {
   @ViewChild("chipsInput", { static: false }) chipsInput: ElementRef<
@@ -75,18 +75,18 @@ export class RegistrarEventoComponent implements OnInit, OnDestroy {
         this.imagesFile
       )
       .pipe(takeUntil(this.unsubscribe))
-      .subscribe(rtdo => {
+      .subscribe((rtdo) => {
         if (rtdo.exito) {
           this.snackBar.open(rtdo.message, "", {
             panelClass: ["snack-bar-exito"],
-            duration: 4500
+            duration: 4500,
           });
           this.router.navigate(["./home"]);
           form.resetForm();
         } else {
           this.snackBar.open(rtdo.message, "", {
             duration: 4500,
-            panelClass: ["snack-bar-fracaso"]
+            panelClass: ["snack-bar-fracaso"],
           });
         }
       });
@@ -105,14 +105,14 @@ export class RegistrarEventoComponent implements OnInit, OnDestroy {
           "",
           {
             duration: 4500,
-            panelClass: ["snack-bar-fracaso"]
+            panelClass: ["snack-bar-fracaso"],
           }
         );
       }
     } else {
       this.snackBar.open("Faltan campos por completar", "", {
         duration: 4500,
-        panelClass: ["snack-bar-fracaso"]
+        panelClass: ["snack-bar-fracaso"],
       });
     }
   }
@@ -125,7 +125,7 @@ export class RegistrarEventoComponent implements OnInit, OnDestroy {
 
   popUpCancelar() {
     this.dialog.open(CancelPopupComponent, {
-      width: "250px"
+      width: "250px",
     });
   }
 
@@ -184,7 +184,7 @@ export class RegistrarEventoComponent implements OnInit, OnDestroy {
     const filterValue = value.toLowerCase();
 
     return this.allChips.filter(
-      chip => chip.toLowerCase().indexOf(filterValue) === 0
+      (chip) => chip.toLowerCase().indexOf(filterValue) === 0
     );
   }
 
@@ -196,26 +196,26 @@ export class RegistrarEventoComponent implements OnInit, OnDestroy {
       lang: {
         title: "Seleccione hora de inicio del evento",
         hour: "",
-        min: ""
+        min: "",
       },
-      confirm: date => {
+      confirm: (date) => {
         this.horaInicio = date;
-      }
+      },
     });
     new Rolldate({
       el: "#pickerFin",
       format: "hh:mm",
       minStep: 15,
       lang: { title: "Seleccione hora de fin del evento", hour: "", min: "" },
-      confirm: date => {
+      confirm: (date) => {
         this.horaFin = date;
-      }
+      },
     });
   }
 
   resizeOptions: ResizeOptions = {
-    resizeMaxHeight: 600,
-    resizeMaxWidth: 600
+    resizeMaxHeight: 400,
+    resizeMaxWidth: 400,
   };
 
   async cargarImagen(imagenCargada: ImageResult) {
