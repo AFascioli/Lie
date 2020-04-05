@@ -3,7 +3,7 @@ import {
   MatDialog,
   MatDialogRef,
   MatDrawer,
-  MatSidenav
+  MatSidenav,
 } from "@angular/material";
 import {
   Component,
@@ -11,7 +11,7 @@ import {
   ChangeDetectorRef,
   OnDestroy,
   QueryList,
-  ViewChildren
+  ViewChildren,
 } from "@angular/core";
 import { Router } from "@angular/router";
 import { AutenticacionService } from "../login/autenticacionService.service";
@@ -23,11 +23,12 @@ import { takeUntil } from "rxjs/operators";
 @Component({
   selector: "app-menu-lateral",
   templateUrl: "./menu-lateral.component.html",
-  styleUrls: ["./menu-lateral.component.css"]
+  styleUrls: ["./menu-lateral.component.css"],
 })
 export class MenuLateralComponent implements OnInit, OnDestroy {
   rol: string;
   usuario: string;
+  apellidoNombre: string;
   private unsubscribe: Subject<void> = new Subject();
   //Lo inicializo porque sino salta error en la consola del browser
   permisos = {
@@ -38,7 +39,7 @@ export class MenuLateralComponent implements OnInit, OnDestroy {
     agendaCursos: 0,
     inscribirEstudiante: 0,
     registrarEmpleado: 0,
-    cuotas: 0
+    cuotas: 0,
   };
   _mobileQueryListener: () => void;
   mobileQuery: MediaQueryList;
@@ -66,9 +67,13 @@ export class MenuLateralComponent implements OnInit, OnDestroy {
     this.authService
       .obtenerPermisosDeRol()
       .pipe(takeUntil(this.unsubscribe))
-      .subscribe(response => {
+      .subscribe((response) => {
         this.permisos = response.permisos;
       });
+    this.authService.obtenerNombreApellido().subscribe((user) => {
+      this.apellidoNombre=user.usuario.apellido + " " + user.usuario.nombre;
+    });
+
     this.rol = this.authService.getRol();
     this.usuario = this.authService.getUsuarioAutenticado();
   }
@@ -81,7 +86,7 @@ export class MenuLateralComponent implements OnInit, OnDestroy {
     // this.authService.logout();
     // this.router.navigate(["./login"]);
     this.dialog.open(CerrarSesionPopupComponent, {
-      width: "250px"
+      width: "250px",
     });
   }
 
@@ -96,7 +101,7 @@ export class MenuLateralComponent implements OnInit, OnDestroy {
 @Component({
   selector: "app-cerrar-sesion-popup",
   templateUrl: "./cerrar-sesion-popup.component.html",
-  styleUrls: ["./menu-lateral.component.css"]
+  styleUrls: ["./menu-lateral.component.css"],
 })
 export class CerrarSesionPopupComponent {
   formInvalido: Boolean;
