@@ -78,8 +78,6 @@ export class EventosService {
     autor: string
   ) {
     let eventoModificado = new FormData();
-    //let imgUrl;
-    console.log(filenames);
     const fechaEventoString = fechaEvento.toString();
     eventoModificado.append("_id", _id);
     eventoModificado.append("titulo", titulo);
@@ -88,9 +86,9 @@ export class EventosService {
     eventoModificado.append("horaInicio", horaInicio);
     eventoModificado.append("horaFin", horaFin);
 
-    // for (var i = 0; i < filenames.length; i++) {
-    //   eventoModificado.append("filename", filenames[i]);
-    // }
+    for (var i = 0; i < filenames.length; i++) {
+      eventoModificado.append("filenames", filenames[i]);
+    }
 
     if (images != null) {
       for (var i = 0; i < images.length; i++) {

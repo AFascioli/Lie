@@ -19,42 +19,42 @@ router.get("", checkAuthMiddleware, (req, res) => {
         from: "curso",
         localField: "idCurso",
         foreignField: "_id",
-        as: "curso"
-      }
+        as: "curso",
+      },
     },
     {
       $match: {
         "curso.curso": req.query.curso,
-        activa: true
-      }
+        activa: true,
+      },
     },
     {
       //#resolve porque capaz no funciona si no tiene asistencias y salta error
       $project: {
         ultimaAsistencia: {
-          $slice: ["$asistenciaDiaria", -1]
-        }
-      }
+          $slice: ["$asistenciaDiaria", -1],
+        },
+      },
     },
     {
       $lookup: {
         from: "asistenciaDiaria",
         localField: "ultimaAsistencia",
         foreignField: "_id",
-        as: "asistencia"
-      }
+        as: "asistencia",
+      },
     },
     {
       $project: {
         _id: 0,
-        "asistencia.fecha": 1
-      }
+        "asistencia.fecha": 1,
+      },
     },
     {
-      $limit: 1
-    }
+      $limit: 1,
+    },
   ])
-    .then(ultimaAsistencia => {
+    .then((ultimaAsistencia) => {
       var fechaHoy = new Date();
       fechaHoy.setHours(fechaHoy.getHours() - 3);
       //Compara si la ultima asistencia fue el dia de hoy
@@ -68,112 +68,95 @@ router.get("", checkAuthMiddleware, (req, res) => {
               from: "curso",
               localField: "idCurso",
               foreignField: "_id",
-              as: "curso"
-            }
+              as: "curso",
+            },
           },
           {
             $lookup: {
               from: "estudiante",
               localField: "idEstudiante",
               foreignField: "_id",
-              as: "datosEstudiante"
-            }
+              as: "datosEstudiante",
+            },
           },
           {
             $match: {
               "curso.curso": req.query.curso,
-              activa: true
-            }
+              activa: true,
+            },
           },
           {
             $project: {
               ultimaAsistencia: {
-                $slice: ["$asistenciaDiaria", -1]
+                $slice: ["$asistenciaDiaria", -1],
               },
               "datosEstudiante._id": 1,
               "datosEstudiante.nombre": 1,
-              "datosEstudiante.apellido": 1
-            }
+              "datosEstudiante.apellido": 1,
+            },
           },
           {
             $lookup: {
               from: "asistenciaDiaria",
               localField: "ultimaAsistencia",
               foreignField: "_id",
-              as: "asistencia"
-            }
+              as: "asistencia",
+            },
           },
           {
             $project: {
               datosEstudiante: 1,
               "asistencia.presente": 1,
-              "asistencia._id": 1
+              "asistencia._id": 1,
+            },
+          },
+        ]).then(async (asistenciaCurso) => {
+          var respuesta = [];
+          for (const estudiante of asistenciaCurso) {
+            if (estudiante.asistencia.length == 0) {
+              //Para el caso de que se haya inscripto un estudiante nuevo, este no tiene asistencia
+              //diaria, entonces la creamos y actualizamos su inscripcion
+              var asistenciaNuevaEstudiante = new AsistenciaDiaria({
+                idInscripcion: estudiante._id,
+                fecha: fechaHoy,
+                presente: true,
+                valorInasistencia: 0,
+                justificado: false,
+                llegadaTarde: 0,
+              });
+              await asistenciaNuevaEstudiante
+                .save()
+                .then((asistenciaGuardada) => {
+                  Inscripcion.findByIdAndUpdate(estudiante._id, {
+                    $push: { asistenciaDiaria: asistenciaGuardada._id },
+                  }).then(() => {
+                    var estudianteRefinado = {
+                      _id: estudiante.datosEstudiante[0]._id,
+                      nombre: estudiante.datosEstudiante[0].nombre,
+                      apellido: estudiante.datosEstudiante[0].apellido,
+                      idAsistencia: asistenciaGuardada._id,
+                      fecha: fechaHoy,
+                      presente: true,
+                    };
+                    respuesta.push(estudianteRefinado);
+                  });
+                });
+            } else {
+              var estudianteRefinado = {
+                _id: estudiante.datosEstudiante[0]._id,
+                nombre: estudiante.datosEstudiante[0].nombre,
+                apellido: estudiante.datosEstudiante[0].apellido,
+                idAsistencia: estudiante.asistencia[0]._id,
+                fecha: fechaHoy,
+                presente: estudiante.asistencia[0].presente,
+              };
+              respuesta.push(estudianteRefinado);
             }
           }
-        ])
-          .then(async asistenciaCurso => {
-            var respuesta = [];
-            for (const estudiante of asistenciaCurso) {
-              if (estudiante.asistencia.length == 0) {
-                //Para el caso de que se haya inscripto un estudiante nuevo, este no tiene asistencia
-                //diaria, entonces la creamos y actualizamos su inscripcion
-                var asistenciaNuevaEstudiante = new AsistenciaDiaria({
-                  idInscripcion: estudiante._id,
-                  fecha: fechaHoy,
-                  presente: true,
-                  valorInasistencia: 0,
-                  justificado: false,
-                  llegadaTarde: 0
-                });
-                await asistenciaNuevaEstudiante
-                  .save()
-                  .then(asistenciaGuardada => {
-                    Inscripcion.findByIdAndUpdate(estudiante._id, {
-                      $push: { asistenciaDiaria: asistenciaGuardada._id }
-                    })
-                      .then(() => {
-                        var estudianteRefinado = {
-                          _id: estudiante.datosEstudiante[0]._id,
-                          nombre: estudiante.datosEstudiante[0].nombre,
-                          apellido: estudiante.datosEstudiante[0].apellido,
-                          idAsistencia: asistenciaGuardada._id,
-                          fecha: fechaHoy,
-                          presente: true
-                        };
-                        respuesta.push(estudianteRefinado);
-                      })
-                      .catch(() => {
-                        res.status(500).json({
-                          message: "Mensaje de error especifico"
-                        });
-                      });
-                  })
-                  .catch(() => {
-                    res.status(500).json({
-                      message: "Mensaje de error especifico"
-                    });
-                  });
-              } else {
-                var estudianteRefinado = {
-                  _id: estudiante.datosEstudiante[0]._id,
-                  nombre: estudiante.datosEstudiante[0].nombre,
-                  apellido: estudiante.datosEstudiante[0].apellido,
-                  idAsistencia: estudiante.asistencia[0]._id,
-                  fecha: fechaHoy,
-                  presente: estudiante.asistencia[0].presente
-                };
-                respuesta.push(estudianteRefinado);
-              }
-            }
-            res
-              .status(200)
-              .json({ estudiantes: respuesta, asistenciaNueva: "false" });
-          })
-          .catch(() => {
-            res.status(500).json({
-              message: "Mensaje de error especifico"
-            });
-          });
+          res
+            .status(200)
+            .json({ estudiantes: respuesta, asistenciaNueva: "false" });
+        });
       } else {
         Inscripcion.aggregate([
           {
@@ -181,58 +164,52 @@ router.get("", checkAuthMiddleware, (req, res) => {
               from: "curso",
               localField: "idCurso",
               foreignField: "_id",
-              as: "curso"
-            }
+              as: "curso",
+            },
           },
           {
             $lookup: {
               from: "estudiante",
               localField: "idEstudiante",
               foreignField: "_id",
-              as: "estudiante"
-            }
+              as: "estudiante",
+            },
           },
           {
-            $match: { "curso.curso": req.query.curso, activa: true }
+            $match: { "curso.curso": req.query.curso, activa: true },
           },
           {
             $project: {
               _id: 0,
               "estudiante._id": 1,
               "estudiante.nombre": 1,
-              "estudiante.apellido": 1
-            }
-          }
-        ])
-          .then(documents => {
-            const fechaActual = new Date();
-            fechaActual.setHours(fechaActual.getHours());
-            var estudiantesRedux = [];
-            documents.forEach(objConEstudiante => {
-              let estudianteRedux = {
-                _id: objConEstudiante.estudiante[0]._id,
-                nombre: objConEstudiante.estudiante[0].nombre,
-                apellido: objConEstudiante.estudiante[0].apellido,
-                fecha: fechaHoy,
-                presente: true
-              };
-              estudiantesRedux.push(estudianteRedux);
-            });
-            return res.status(200).json({
-              estudiantes: estudiantesRedux,
-              asistenciaNueva: "true"
-            });
-          })
-          .catch(() => {
-            res.status(500).json({
-              message: "Mensaje de error especifico"
-            });
+              "estudiante.apellido": 1,
+            },
+          },
+        ]).then((documents) => {
+          const fechaActual = new Date();
+          fechaActual.setHours(fechaActual.getHours());
+          var estudiantesRedux = [];
+          documents.forEach((objConEstudiante) => {
+            let estudianteRedux = {
+              _id: objConEstudiante.estudiante[0]._id,
+              nombre: objConEstudiante.estudiante[0].nombre,
+              apellido: objConEstudiante.estudiante[0].apellido,
+              fecha: fechaHoy,
+              presente: true,
+            };
+            estudiantesRedux.push(estudianteRedux);
           });
+          return res.status(200).json({
+            estudiantes: estudiantesRedux,
+            asistenciaNueva: "true",
+          });
+        });
       }
     })
     .catch(() => {
       res.status(500).json({
-        message: "Mensaje de error especifico"
+        message: "Mensaje de error especifico",
       });
     });
 });
@@ -243,25 +220,25 @@ router.get("", checkAuthMiddleware, (req, res) => {
 // Si ya se tomo asistencia en el dia, se actualiza el valor presente de la asistencia individual.
 router.post("", checkAuthMiddleware, (req, res) => {
   if (req.query.asistenciaNueva == "true") {
-    req.body.forEach(estudiante => {
+    req.body.forEach((estudiante) => {
       var valorInasistencia = 0;
       if (!estudiante.presente) {
         valorInasistencia = 1;
       }
       Inscripcion.findOne({
         idEstudiante: estudiante._id,
-        activa: true
+        activa: true,
       })
-        .then(async inscripcion => {
+        .then(async (inscripcion) => {
           var asistenciaEstudiante = new AsistenciaDiaria({
             idInscripcion: inscripcion._id,
             fecha: estudiante.fecha,
             presente: estudiante.presente,
             valorInasistencia: valorInasistencia,
-            justificado: false
+            justificado: false,
           });
 
-          await asistenciaEstudiante.save().then(async asistenciaDiaria => {
+          await asistenciaEstudiante.save().then(async (asistenciaDiaria) => {
             await inscripcion.asistenciaDiaria.push(asistenciaDiaria._id);
             inscripcion.contadorInasistenciasInjustificada =
               inscripcion.contadorInasistenciasInjustificada +
@@ -271,58 +248,58 @@ router.post("", checkAuthMiddleware, (req, res) => {
         })
         .catch(() => {
           res.status(500).json({
-            message: "Mensaje de error especifico"
+            message: "Mensaje de error especifico",
           });
         });
     });
   } else {
-    req.body.forEach(estudiante => {
+    req.body.forEach((estudiante) => {
       AsistenciaDiaria.findById(estudiante.idAsistencia)
-        .then(asistencia => {
+        .then((asistencia) => {
           //si estaba presente en la bd y se cambio a ausente incrementa contador inasistencia
           if (asistencia.presente && !estudiante.presente) {
             AsistenciaDiaria.findByIdAndUpdate(estudiante.idAsistencia, {
-              presente: estudiante.presente
+              presente: estudiante.presente,
             })
               .then(() => {
                 Inscripcion.findOneAndUpdate(
                   {
                     idEstudiante: estudiante._id,
-                    activa: true
+                    activa: true,
                   },
                   { $inc: { contadorInasistenciasInjustificada: 1 } }
                 ).exec();
               })
               .catch(() => {
                 res.status(500).json({
-                  message: "Mensaje de error especifico"
+                  message: "Mensaje de error especifico",
                 });
               });
           }
           //si estaba ausente y lo pasaron a presente decrementa contador inasistencia
           else if (!asistencia.presente && estudiante.presente) {
             AsistenciaDiaria.findByIdAndUpdate(estudiante.idAsistencia, {
-              presente: estudiante.presente
+              presente: estudiante.presente,
             })
               .then(() => {
                 Inscripcion.findOneAndUpdate(
                   {
                     idEstudiante: estudiante._id,
-                    activa: true
+                    activa: true,
                   },
                   { $inc: { contadorInasistenciasInjustificada: -1 } }
                 ).exec();
               })
               .catch(() => {
                 res.status(500).json({
-                  message: "Mensaje de error especifico"
+                  message: "Mensaje de error especifico",
                 });
               });
           }
         })
         .catch(() => {
           res.status(500).json({
-            message: "Mensaje de error especifico"
+            message: "Mensaje de error especifico",
           });
         });
     });
@@ -335,19 +312,19 @@ router.post("", checkAuthMiddleware, (req, res) => {
 //Este metodo filtra las inscripciones por estudiante y retorna el contador de inasistencias (injustificada y justificada)
 router.get("/asistenciaEstudiante", (req, res) => {
   Inscripcion.findOne({ idEstudiante: req.query.idEstudiante })
-    .then(estudiante => {
+    .then((estudiante) => {
       res.status(200).json({
         message: "Operacion exitosa",
         exito: true,
         contadorInasistenciasInjustificada:
           estudiante.contadorInasistenciasInjustificada,
         contadorInasistenciasJustificada:
-          estudiante.contadorInasistenciasJustificada
+          estudiante.contadorInasistenciasJustificada,
       });
     })
     .catch(() => {
       res.status(500).json({
-        message: "Mensaje de error especifico"
+        message: "Mensaje de error especifico",
       });
     });
 });
@@ -355,17 +332,17 @@ router.get("/asistenciaEstudiante", (req, res) => {
 //Recibe vector con inasistencias, cada una tiene su _id y si fue o no justificada
 router.post("/inasistencia/justificada", checkAuthMiddleware, (req, res) => {
   let contador = 0;
-  req.body.ultimasInasistencias.forEach(inasistencia => {
+  req.body.ultimasInasistencias.forEach((inasistencia) => {
     if (inasistencia.justificado) {
       contador = contador + 1;
       AsistenciaDiaria.findByIdAndUpdate(inasistencia.idAsistencia, {
-        justificado: true
+        justificado: true,
       })
         .exec()
         .catch(() => {
           res.status(500).json({
             message: "Ocurrió un error al querer justificar la inasistencia ",
-            exito: false
+            exito: false,
           });
         });
     }
@@ -375,19 +352,19 @@ router.post("/inasistencia/justificada", checkAuthMiddleware, (req, res) => {
     {
       $inc: {
         contadorInasistenciasJustificada: contador,
-        contadorInasistenciasInjustificada: contador * -1
-      }
+        contadorInasistenciasInjustificada: contador * -1,
+      },
     }
   )
     .then(() => {
       res.status(200).json({
         message: "Inasistencias justificadas correctamente",
-        exito: true
+        exito: true,
       });
     })
     .catch(() => {
       res.status(500).json({
-        message: "Mensaje de error especifico"
+        message: "Mensaje de error especifico",
       });
     });
 });
@@ -399,12 +376,12 @@ router.get("/inasistencias", (req, res) => {
   let fechaActual = new Date();
 
   CicloLectivo.findOne({ año: fechaActual.getFullYear() })
-    .then(cicloLectivo => {
+    .then((cicloLectivo) => {
       if (!ClaseAsistencia.validarFechasJustificar(cicloLectivo)) {
         return res.status(200).json({
           exito: false,
           message:
-            "La fecha actual no se encuentra dentro de las fechas permitidas para justificar inasistencias"
+            "La fecha actual no se encuentra dentro de las fechas permitidas para justificar inasistencias",
         });
       }
       //else{
@@ -416,7 +393,7 @@ router.get("/inasistencias", (req, res) => {
     })
     .catch(() => {
       res.status(500).json({
-        message: "Mensaje de error especifico"
+        message: "Mensaje de error especifico",
       });
     });
 
@@ -424,50 +401,50 @@ router.get("/inasistencias", (req, res) => {
   Inscripcion.aggregate([
     {
       $match: {
-        idEstudiante: mongoose.Types.ObjectId(req.query.idEstudiante)
-      }
+        idEstudiante: mongoose.Types.ObjectId(req.query.idEstudiante),
+      },
     },
     {
       //#resolve, revisar cuando no tiene 5 asistenciasdiarias
       $project: {
         asistenciaDiaria: {
-          $slice: ["$asistenciaDiaria", -5]
-        }
-      }
+          $slice: ["$asistenciaDiaria", -5],
+        },
+      },
     },
     {
       $unwind: {
-        path: "$asistenciaDiaria"
-      }
+        path: "$asistenciaDiaria",
+      },
     },
     {
       $lookup: {
         from: "asistenciaDiaria",
         localField: "asistenciaDiaria",
         foreignField: "_id",
-        as: "presentismo"
-      }
+        as: "presentismo",
+      },
     },
     {
       $match: {
         "presentismo.presente": false,
-        "presentismo.justificado": false
-      }
+        "presentismo.justificado": false,
+      },
     },
     {
       $project: {
         _id: 0,
         "presentismo._id": 1,
         "presentismo.fecha": 1,
-        "presentismo.justificado": 1
-      }
-    }
+        "presentismo.justificado": 1,
+      },
+    },
   ])
-    .then(response => {
+    .then((response) => {
       if (response.length > 0) {
         fechalimiteInferior = new Date(new Date() - 24 * 60 * 60 * 1000 * 5);
         fechalimiteSuperior = new Date();
-        response.forEach(objeto => {
+        response.forEach((objeto) => {
           if (
             objeto.presentismo[0].fecha > fechalimiteInferior &&
             objeto.presentismo[0].fecha <= fechalimiteSuperior
@@ -475,25 +452,25 @@ router.get("/inasistencias", (req, res) => {
             ultimasInasistencias.push({
               idAsistencia: objeto.presentismo[0]._id,
               fecha: objeto.presentismo[0].fecha,
-              justificado: objeto.presentismo[0].justificado
+              justificado: objeto.presentismo[0].justificado,
             });
           }
         });
         return res.status(200).json({
           exito: true,
           message: "Inasistencias obtenidas con éxito",
-          inasistencias: ultimasInasistencias
+          inasistencias: ultimasInasistencias,
         });
       }
       res.status(200).json({
         exito: false,
         message: "El estudiante no tiene inasistencias en los últimos 5 días",
-        inasistencias: []
+        inasistencias: [],
       });
     })
     .catch(() => {
       res.status(500).json({
-        message: "Mensaje de error especifico"
+        message: "Mensaje de error especifico",
       });
     });
 });
@@ -504,13 +481,13 @@ router.get("/inasistencias", (req, res) => {
  de ese tipo le asigna una falta injustificada. Si es despues de las 8 am se le asigna media falta injustificada.  */
 router.post("/llegadaTarde", checkAuthMiddleware, (req, res) => {
   Inscripcion.findOne({
-    idEstudiante: req.body.idEstudiante
+    idEstudiante: req.body.idEstudiante,
   })
-    .then(inscripcion => {
+    .then((inscripcion) => {
       AsistenciaDiaria.findById(
         inscripcion.asistenciaDiaria[inscripcion.asistenciaDiaria.length - 1]
       )
-        .then(async ultimaAD => {
+        .then(async (ultimaAD) => {
           var ADcreada = null;
           var fechaHoy = new Date();
           fechaHoy.setHours(fechaHoy.getHours() - 3);
@@ -522,17 +499,17 @@ router.post("/llegadaTarde", checkAuthMiddleware, (req, res) => {
               presente: true,
               retiroAnticipado: false,
               valorInasistencia: 0,
-              justificado: false
+              justificado: false,
             });
             await nuevaAsistencia
               .save()
-              .then(ADultima => {
+              .then((ADultima) => {
                 ADcreada = ADultima;
                 ultimaAD = ADultima;
               })
               .catch(() => {
                 res.status(500).json({
-                  message: "Mensaje de error especifico"
+                  message: "Mensaje de error especifico",
                 });
               });
           } else {
@@ -543,7 +520,7 @@ router.post("/llegadaTarde", checkAuthMiddleware, (req, res) => {
               return res.status(500).json({
                 message:
                   "Ya exite una llegada tarde registrada para el estudiante seleccionado",
-                exito: false
+                exito: false,
               });
             }
           }
@@ -562,12 +539,12 @@ router.post("/llegadaTarde", checkAuthMiddleware, (req, res) => {
                 return res.status(500).json({
                   message:
                     "Llegada tarde antes de las 8 am registrada exitosamente",
-                  exito: true
+                  exito: true,
                 });
               })
               .catch(() => {
                 res.status(500).json({
-                  message: "Mensaje de error especifico"
+                  message: "Mensaje de error especifico",
                 });
               });
           } else {
@@ -587,12 +564,12 @@ router.post("/llegadaTarde", checkAuthMiddleware, (req, res) => {
                   return res.status(500).json({
                     message:
                       "Llegada tarde antes de las 8 am registrada exitosamente",
-                    exito: true
+                    exito: true,
                   });
                 })
                 .catch(() => {
                   res.status(500).json({
-                    message: "Mensaje de error especifico"
+                    message: "Mensaje de error especifico",
                   });
                 });
             } else {
@@ -610,12 +587,12 @@ router.post("/llegadaTarde", checkAuthMiddleware, (req, res) => {
                   return res.status(500).json({
                     message:
                       "Llegada tarde después de las 8 am registrada exitosamente",
-                    exito: true
+                    exito: true,
                   });
                 })
                 .catch(() => {
                   res.status(500).json({
-                    message: "Mensaje de error especifico"
+                    message: "Mensaje de error especifico",
                   });
                 });
             }
@@ -623,14 +600,14 @@ router.post("/llegadaTarde", checkAuthMiddleware, (req, res) => {
         })
         .catch(() => {
           res.status(500).json({
-            message: "Mensaje de error especifico"
+            message: "Mensaje de error especifico",
           });
         });
     })
-    .catch(e => {
+    .catch((e) => {
       res.status(500).json({
         message: "No se pudo asignar la llegada tarde",
-        exito: false
+        exito: false,
       });
     });
 });
@@ -641,11 +618,11 @@ router.post("/retiro", checkAuthMiddleware, (req, res) => {
     { idEstudiante: req.body.idEstudiante, activa: true },
     { asistenciaDiaria: { $slice: -1 } }
   )
-    .then(inscripcion => {
+    .then((inscripcion) => {
       if (!inscripcion) {
         res.status(200).json({
           message: "El estudiante no está inscripto en ningún curso",
-          exito: false
+          exito: false,
         });
       } else {
         var actualizacionInasistencia = 0.5;
@@ -654,26 +631,26 @@ router.post("/retiro", checkAuthMiddleware, (req, res) => {
         }
         AsistenciaDiaria.findById(inscripcion.asistenciaDiaria[0])
           .select({ retiroAnticipado: 1, presente: 1 })
-          .then(asistencia => {
+          .then((asistencia) => {
             if (asistencia) {
               if (!asistencia.presente) {
                 res.status(200).json({
                   message: "El estudiante esta ausente para el día de hoy",
-                  exito: "ausente"
+                  exito: "ausente",
                 });
               } else {
                 if (asistencia.retiroAnticipado) {
                   res.status(200).json({
                     message:
                       "El estudiante ya tiene registrado un retiro anticipado para el día de hoy",
-                    exito: "retirado"
+                    exito: "retirado",
                   });
                 } else {
                   AsistenciaDiaria.findByIdAndUpdate(
                     inscripcion.asistenciaDiaria[0],
                     {
                       retiroAnticipado: true,
-                      $inc: { valorInasistencia: actualizacionInasistencia }
+                      $inc: { valorInasistencia: actualizacionInasistencia },
                     }
                   )
                     .then(() => {
@@ -685,7 +662,7 @@ router.post("/retiro", checkAuthMiddleware, (req, res) => {
                         .then(() => {
                           //Envio de notificación a los adultos responsables del estudiante. #working
                           Estudiante.findById(req.body.idEstudiante)
-                            .then(estudiante => {
+                            .then((estudiante) => {
                               //Construcción del cuerpo de la notificación.
                               var tutores = req.body.tutoresSeleccionados;
                               var cuerpo =
@@ -732,24 +709,24 @@ router.post("/retiro", checkAuthMiddleware, (req, res) => {
                             })
                             .catch(() => {
                               res.status(500).json({
-                                message: "Mensaje de error especifico"
+                                message: "Mensaje de error especifico",
                               });
                             });
                           res.status(200).json({
                             message:
                               "Retiro anticipado exitosamente registrado",
-                            exito: "exito"
+                            exito: "exito",
                           });
                         })
                         .catch(() => {
                           res.status(500).json({
-                            message: "Mensaje de error especifico"
+                            message: "Mensaje de error especifico",
                           });
                         });
                     })
                     .catch(() => {
                       res.status(500).json({
-                        message: "Mensaje de error especifico"
+                        message: "Mensaje de error especifico",
                       });
                     });
                 }
@@ -758,20 +735,20 @@ router.post("/retiro", checkAuthMiddleware, (req, res) => {
               res.status(200).json({
                 message:
                   "El estudiante no tiene registrada la asistencia para el día de hoy",
-                exito: "faltaasistencia"
+                exito: "faltaasistencia",
               });
             }
           })
           .catch(() => {
             res.status(500).json({
-              message: "Mensaje de error especifico"
+              message: "Mensaje de error especifico",
             });
           });
       }
     })
     .catch(() => {
       res.status(500).json({
-        message: "Mensaje de error especifico"
+        message: "Mensaje de error especifico",
       });
     });
 });
