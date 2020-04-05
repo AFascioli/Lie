@@ -226,7 +226,6 @@ router.post("/registrarComentario", async (req, res, next) => {
   let idUsuario = "";
 
   var obtenerDatosUsuario = (rol, emailUsuario) => {
-    console.log(req.body.comentario);
     return new Promise((resolve, reject) => {
       if (rol == "Adulto Responsable") {
         AdultoResponsable.findOne({ email: emailUsuario })
@@ -486,12 +485,6 @@ notificarPorEvento = function (tags, titulo, cuerpo) {
         titulo,
         cuerpo
       );
-
-      console.log("Envío de notificación");
-      console.log("tags: ", tags);
-      console.log(titulo);
-      console.log(cuerpo);
-      console.log("Tutores a notif: ", idtutores);
     });
   }
 };
