@@ -18,7 +18,7 @@ const storage = new GridFsStorage({
   url: Ambiente.stringDeConexion,
   options: {
     useNewUrlParser: true,
-    useUnifiedTopology: true
+    useUnifiedTopology: true,
   },
   file: (req, file) => {
     const match = ["image/png", "image/jpeg"];
@@ -30,9 +30,9 @@ const storage = new GridFsStorage({
 
     return {
       bucketName: "imagen",
-      filename: `${Date.now()}-${file.originalname}`
+      filename: `${Date.now()}-${file.originalname}`,
     };
-  }
+  },
 });
 
 var upload = multer({ storage: storage }).array("images", 5);
@@ -55,7 +55,7 @@ router.post("/registrar", upload, (req, res, next) => {
   };
 
   Usuario.findOne({ email: req.body.autor })
-    .then(async usuario => {
+    .then(async (usuario) => {
       if (req.files != null) {
         const evento = new Evento({
           titulo: req.body.titulo,
@@ -65,64 +65,47 @@ router.post("/registrar", upload, (req, res, next) => {
           horaFin: req.body.horaFin,
           tags: req.body.tags,
           filenames: await leerFilenames(),
-          autor: usuario._id
+          autor: usuario._id,
         });
-        evento
-          .save()
-          .then(() => {
+        evento.save().then(() => {
+          // this.notificarPorEvento(
+          //   this.evento.tags,
+          //   this.evento.titulo,
+          //   "El evento se realizará en la fecha " + evento.fechaEvento + "."
+          // );
+          res.status(201).json({
+            message: "Evento creado existosamente",
+            exito: true,
+          });
+        });
+      } else {
+        Usuario.findOne({ email: req.body.autor }).then((usuario) => {
+          const evento = new Evento({
+            titulo: req.body.titulo,
+            descripcion: req.body.descripcion,
+            fechaEvento: req.body.fechaEvento,
+            horaInicio: req.body.horaInicio,
+            horaFin: req.body.horaFin,
+            tags: req.body.tags,
+            autor: usuario._id,
+          });
+          evento.save().then(() => {
             // this.notificarPorEvento(
             //   this.evento.tags,
             //   this.evento.titulo,
             //   "El evento se realizará en la fecha " + evento.fechaEvento + "."
             // );
-
             res.status(201).json({
               message: "Evento creado existosamente",
-              exito: true
-            });
-          })
-          .catch(() => {
-            res.status(500).json({
-              message: "Mensaje de error especifico"
+              exito: true,
             });
           });
-      } else {
-        Usuario.findOne({ email: req.body.autor })
-          .then(usuario => {
-            const evento = new Evento({
-              titulo: req.body.titulo,
-              descripcion: req.body.descripcion,
-              fechaEvento: req.body.fechaEvento,
-              horaInicio: req.body.horaInicio,
-              horaFin: req.body.horaFin,
-              tags: req.body.tags,
-              autor: usuario._id
-            });
-            evento
-              .save()
-              .then(() => {
-                //Completar con código de la notificación COMPLETAR CON LO DE ARRIBA
-                res.status(201).json({
-                  message: "Evento creado existosamente",
-                  exito: true
-                });
-              })
-              .catch(() => {
-                res.status(500).json({
-                  message: "Mensaje de error especifico"
-                });
-              });
-          })
-          .catch(() => {
-            res.status(500).json({
-              message: "Mensaje de error especifico"
-            });
-          });
+        });
       }
     })
     .catch(() => {
       res.status(500).json({
-        message: "Mensaje de error especifico"
+        message: "Se presentaron problemas al querer agregar un evento",
       });
     });
 });
@@ -145,7 +128,6 @@ router.post("/modificar", upload, async (req, res) => {
   };
 
   if (req.files != null) {
-    //console.log(req.body);
     Evento.findByIdAndUpdate(req.body._id, {
       titulo: req.body.titulo,
       descripcion: req.body.descripcion,
@@ -154,19 +136,19 @@ router.post("/modificar", upload, async (req, res) => {
       horaFin: req.body.horaFin,
       tags: req.body.tags,
       filenames: await leerFilename(),
-      autor: req.body.idAutor
+      autor: req.body.idAutor,
     })
       .exec()
       .then(() => {
         //Completar con código de la notificación COMPLETAR CON LO DE ARRIBA
         res.status(201).json({
           message: "Evento modificado existosamente",
-          exito: true
+          exito: true,
         });
       })
       .catch(() => {
         res.status(500).json({
-          message: "No se pudo modificar el evento correctamente"
+          message: "No se pudo modificar el evento correctamente",
         });
       });
   } else {
@@ -177,19 +159,19 @@ router.post("/modificar", upload, async (req, res) => {
       horaInicio: req.body.horaInicio,
       horaFin: req.body.horaFin,
       tags: req.body.tags,
-      autor: req.body.idAutor
+      autor: req.body.idAutor,
     })
       .exec()
       .then(() => {
         //Completar con código de la notificación COMPLETAR CON LO DE ARRIBA
         res.status(201).json({
           message: "Evento modificado existosamente",
-          exito: true
+          exito: true,
         });
       })
       .catch(() => {
         res.status(500).json({
-          message: "No se pudo modificar el evento correctamente"
+          message: "No se pudo modificar el evento correctamente",
         });
       });
   }
@@ -198,16 +180,16 @@ router.post("/modificar", upload, async (req, res) => {
 //Obtiene todos los eventos que estan almacenados en la base de datos
 router.get("", (req, res, next) => {
   Evento.find()
-    .then(eventos => {
+    .then((eventos) => {
       res.status(200).json({
         eventos: eventos,
         message: "Eventos devuelto existosamente",
-        exito: true
+        exito: true,
       });
     })
     .catch(() => {
       res.status(500).json({
-        message: "Mensaje de error especifico"
+        message: "Mensaje de error especifico",
       });
     });
 });
@@ -221,16 +203,16 @@ router.get("/imagenes", (req, res, next) => {
 //@params: id del evento
 router.get("/comentarios", (req, res, next) => {
   Evento.findById(req.query.idEvento)
-    .then(evento => {
+    .then((evento) => {
       res.status(200).json({
         comentarios: evento.comentarios,
         message: "Evento devuelto existosamente",
-        exito: true
+        exito: true,
       });
     })
     .catch(() => {
       res.status(500).json({
-        message: "Mensaje de error especifico"
+        message: "Mensaje de error especifico",
       });
     });
 });
@@ -248,53 +230,53 @@ router.post("/registrarComentario", async (req, res, next) => {
     return new Promise((resolve, reject) => {
       if (rol == "Adulto Responsable") {
         AdultoResponsable.findOne({ email: emailUsuario })
-          .then(usuario => {
+          .then((usuario) => {
             apellido = usuario.apellido;
             nombre = usuario.nombre;
             idUsuario = usuario.idUsuario;
             resolve({
               apellido: apellido,
               nombre: nombre,
-              idUsuario: idUsuario
+              idUsuario: idUsuario,
             });
           })
           .catch(() => {
             res.status(500).json({
-              message: "Mensaje de error especifico"
+              message: "Mensaje de error especifico",
             });
           });
       } else if (rol == "Admin") {
         Admin.findOne({ email: emailUsuario })
-          .then(usuario => {
+          .then((usuario) => {
             apellido = usuario.apellido;
             nombre = usuario.nombre;
             idUsuario = usuario.idUsuario;
             resolve({
               apellido: apellido,
               nombre: nombre,
-              idUsuario: idUsuario
+              idUsuario: idUsuario,
             });
           })
           .catch(() => {
             res.status(500).json({
-              message: "Mensaje de error especifico"
+              message: "Mensaje de error especifico",
             });
           });
       } else {
         Empleado.findOne({ email: emailUsuario })
-          .then(usuario => {
+          .then((usuario) => {
             apellido = usuario.apellido;
             nombre = usuario.nombre;
             idUsuario = usuario.idUsuario;
             resolve({
               apellido: apellido,
               nombre: nombre,
-              idUsuario: idUsuario
+              idUsuario: idUsuario,
             });
           })
           .catch(() => {
             res.status(500).json({
-              message: "Mensaje de error especifico"
+              message: "Mensaje de error especifico",
             });
           });
       }
@@ -313,15 +295,15 @@ router.post("/registrarComentario", async (req, res, next) => {
         nombre: datosUsuario.nombre,
         cuerpo: req.body.comentario.cuerpo,
         fecha: req.body.comentario.fecha,
-        idUsuario: datosUsuario.idUsuario
-      }
-    }
+        idUsuario: datosUsuario.idUsuario,
+      },
+    },
   }).then(() => {
     res.status(200).json({
       message: "Se ha registrado el comentario correctamente",
       exito: true,
       nombre: nombre,
-      apellido: apellido
+      apellido: apellido,
     });
   });
 });
@@ -338,18 +320,18 @@ router.patch("/editar", upload, (req, res, next) => {
       horaFin: req.body.horaFin,
       tags: req.body.tags,
       imgUrl: req.file.filename,
-      autor: req.body.autor
+      autor: req.body.autor,
     })
       .then(() => {
         res.status(200).json({
           message: "Evento modificado exitosamente",
-          exito: true
+          exito: true,
         });
       })
       .catch(() => {
         res.status(200).json({
           message: "Ocurrió un problema al intentar modificar el evento",
-          exito: false
+          exito: false,
         });
       });
   } else {
@@ -360,18 +342,18 @@ router.patch("/editar", upload, (req, res, next) => {
       horaInicio: req.body.horaInicio,
       horaFin: req.body.horaFin,
       tags: req.body.tags,
-      autor: req.body.autor
+      autor: req.body.autor,
     })
       .then(() => {
         res.status(200).json({
           message: "Evento modificado exitosamente",
-          exito: true
+          exito: true,
         });
       })
       .catch(() => {
         res.status(200).json({
           message: "Ocurrió un problema al intentar modificar el evento",
-          exito: false
+          exito: false,
         });
       });
   }
@@ -379,14 +361,14 @@ router.patch("/editar", upload, (req, res, next) => {
 
 router.delete("/eliminarEvento", checkAuthMiddleware, (req, res, next) => {
   Evento.findByIdAndDelete(req.query._id)
-    .then(async evento => {
+    .then(async (evento) => {
       let largo = evento.filenames.length;
       for (let index = 0; index < largo; index++) {
         await ImagenFiles.findOneAndDelete({
-          filename: evento.filenames[index]
-        }).then(file => {
+          filename: evento.filenames[index],
+        }).then((file) => {
           ImagenChunks.deleteMany({
-            files_id: file._id
+            files_id: file._id,
           }).exec();
 
           //this.notificarPorEvento(
@@ -397,22 +379,22 @@ router.delete("/eliminarEvento", checkAuthMiddleware, (req, res, next) => {
 
           return res.status(202).json({
             message: "Evento eliminado exitosamente",
-            exito: true
+            exito: true,
           });
         });
       }
     })
     .catch(() => {
       res.status(500).json({
-        message: "Error al eliminar el evento"
+        message: "Error al eliminar el evento",
       });
     });
 });
 
 router.delete("/eliminarComentario", checkAuthMiddleware, (req, res, next) => {
   Evento.findByIdAndUpdate({
-    _id: req.query.idEvento
-  }).then(eventoEncontrado => {
+    _id: req.query.idEvento,
+  }).then((eventoEncontrado) => {
     for (let i = 0; i < eventoEncontrado.comentarios.length; i++) {
       if (eventoEncontrado.comentarios[i]._id == req.query.idComentario) {
         eventoEncontrado.comentarios.splice(i, 1);
@@ -423,11 +405,11 @@ router.delete("/eliminarComentario", checkAuthMiddleware, (req, res, next) => {
 
   return res.status(202).json({
     message: "Cometario eliminado exitosamente",
-    exito: true
+    exito: true,
   });
 });
 
-notificarPorEvento = function(tags, titulo, cuerpo) {
+notificarPorEvento = function (tags, titulo, cuerpo) {
   //Notificar a los adultos que correspondan a los cursos de los tags/chips
   if (tags.includes("Todos los cursos")) {
     Suscripcion.notificacionMasiva(evento.titulo, this.cuerpo);
@@ -438,65 +420,65 @@ notificarPorEvento = function(tags, titulo, cuerpo) {
           from: "curso",
           localField: "idCurso",
           foreignField: "_id",
-          as: "icurso"
-        }
+          as: "icurso",
+        },
       },
       {
         $unwind: {
           path: "$icurso",
-          preserveNullAndEmptyArrays: false
-        }
+          preserveNullAndEmptyArrays: false,
+        },
       },
       {
         $match: {
           $expr: {
-            $in: ["$icurso.curso", ["5A"]]
-          }
-        }
+            $in: ["$icurso.curso", ["5A"]],
+          },
+        },
       },
       {
         $lookup: {
           from: "estudiante",
           localField: "idEstudiante",
           foreignField: "_id",
-          as: "conest"
-        }
+          as: "conest",
+        },
       },
       {
         $unwind: {
           path: "$conest",
-          preserveNullAndEmptyArrays: false
-        }
+          preserveNullAndEmptyArrays: false,
+        },
       },
       {
         $unwind: {
           path: "$conest.adultoResponsable",
-          preserveNullAndEmptyArrays: false
-        }
+          preserveNullAndEmptyArrays: false,
+        },
       },
       {
         $lookup: {
           from: "adultoResponsable",
           localField: "idAdulto",
           foreignField: "string",
-          as: "conadulto"
-        }
+          as: "conadulto",
+        },
       },
       {
         $unwind: {
           path: "$conadulto",
-          preserveNullAndEmptyArrays: false
-        }
+          preserveNullAndEmptyArrays: false,
+        },
       },
       {
         $project: {
           _id: 0,
-          "conadulto.idUsuario": 1
-        }
-      }
-    ]).then(response => {
+          "conadulto.idUsuario": 1,
+        },
+      },
+    ]).then((response) => {
       let idtutores;
-      response.forEach(conadulto => {
+      response.forEach((conadulto) => {
         idtutores.push(conadulto[0].idUsuario);
       });
       Suscripcion.notificacionGrupal(
@@ -521,7 +503,7 @@ router.get("/curso", checkAuthMiddleware, (req, res) => {
   Evento.find(
     { tags: { $in: cursos } },
     { tags: 1, titulo: 1, fechaEvento: 1, horaInicio: 1, horaFin: 1 }
-  ).then(eventos => {
+  ).then((eventos) => {
     res.json({ eventos: eventos, exito: true, message: "exito" });
   });
 });
@@ -530,7 +512,7 @@ router.get("/curso", checkAuthMiddleware, (req, res) => {
 //@params: idEvento
 router.get("/id", checkAuthMiddleware, (req, res) => {
   Evento.findById(req.query.idEvento)
-    .then(evento => {
+    .then((evento) => {
       if (evento) {
         res.json({ evento: evento, exito: true, message: "exito" });
       } else {
@@ -539,7 +521,7 @@ router.get("/id", checkAuthMiddleware, (req, res) => {
     })
     .catch(() => {
       res.status(500).json({
-        message: "Mensaje de error especifico"
+        message: "Mensaje de error especifico",
       });
     });
 });

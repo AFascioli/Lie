@@ -29,9 +29,6 @@ import { ResizeOptions, ImageResult } from "ng2-imageupload";
   styleUrls: ["./modificar-evento.component.css"],
 })
 export class ModificarEventoComponent implements OnInit, OnDestroy {
-  _filter(chip: string): any {
-    throw new Error("Method not implemented.");
-  }
   @ViewChild("chipsInput", { static: false }) chipsInput: ElementRef<
     HTMLInputElement
   >;
@@ -39,7 +36,6 @@ export class ModificarEventoComponent implements OnInit, OnDestroy {
   fechaActual: Date;
   imagesFile: any = [];
   imagenesCargadas: any[] = [];
-  imagenesEnBD: any[] = [];
   message: string;
   selectable = true;
   removable = true;
@@ -78,6 +74,14 @@ export class ModificarEventoComponent implements OnInit, OnDestroy {
     );
   }
 
+  private _filter(value: string): string[] {
+    const filterValue = value.toLowerCase();
+
+    return this.allChips.filter(
+      (chip) => chip.toLowerCase().indexOf(filterValue) === 0
+    );
+  }
+
   ngOnInit() {
     this.evento = this.eventoService.evento;
     this.fechaActual = new Date();
@@ -87,12 +91,12 @@ export class ModificarEventoComponent implements OnInit, OnDestroy {
           environment.apiUrl + `/imagen/${this.evento.filenames[index]}`
         );
       }
+      setTimeout(() => {
+        this.showSlide(1);
+      }, 500);
     }
     this.chips = this.evento.tags;
     this.inicializarPickers();
-    setTimeout(() => {
-      this.showSlide(1);
-    }, 500);
   }
 
   add(event: MatChipInputEvent): void {
@@ -168,7 +172,6 @@ export class ModificarEventoComponent implements OnInit, OnDestroy {
   };
 
   async cargarImagen(imagenCargada: ImageResult) {
-    console.log(imagenCargada);
     this.imagesFile.push(imagenCargada.file);
     this.imagenesCargadas.push(
       (imagenCargada.resized && imagenCargada.resized.dataURL) ||
