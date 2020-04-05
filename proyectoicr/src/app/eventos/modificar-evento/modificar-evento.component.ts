@@ -83,7 +83,7 @@ export class ModificarEventoComponent implements OnInit, OnDestroy {
     this.fechaActual = new Date();
     if (this.evento.filenames.length != 0) {
       for (let index = 0; index < this.evento.filenames.length; index++) {
-        this.imagenesEnBD.push(
+        this.imagenesCargadas.push(
           environment.apiUrl + `/imagen/${this.evento.filenames[index]}`
         );
       }
@@ -177,10 +177,6 @@ export class ModificarEventoComponent implements OnInit, OnDestroy {
     setTimeout(() => {
       this.showSlide(1);
     }, 500);
-  }
-
-  obtenerImagen(index) {
-    return this.imagenesCargadas[index];
   }
 
   moveFromCurrentSlide(n) {

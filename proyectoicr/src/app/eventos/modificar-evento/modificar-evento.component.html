@@ -136,18 +136,11 @@
         />
       </div>
     </div>
-    <div *ngIf="imagenesEnBD.length != 0 || imagenesCargadas.length != 0">
+    <div *ngIf="imagenesCargadas.length != 0">
       <div class="slideshow-container">
-        <div *ngFor="let image of imagenesEnBD; let i = index">
+        <div *ngFor="let image of imagenesCargadas; let i = index">
           <div class="mySlides fade">
             <img [src]="image" style="width: 100%;" />
-          </div>
-        </div>
-        <div *ngIf="imagenesCargadas.length != 0">
-          <div *ngFor="let image of imagenesCargadas; let i = index">
-            <div class="mySlides fade">
-              <img [src]="obtenerImagen(i)" style="width: 100%;" />
-            </div>
           </div>
         </div>
         <a class="prev" (click)="moveFromCurrentSlide(-1)">&#10094;</a>
@@ -155,7 +148,7 @@
       </div>
       <br />
       <div style="text-align: center;">
-        <span class="dot" *ngFor="let image of imagenesEnBD"></span>
+        <span class="dot" *ngFor="let image of imagenesCargadas"></span>
       </div>
     </div>
     <div class="div-button">
