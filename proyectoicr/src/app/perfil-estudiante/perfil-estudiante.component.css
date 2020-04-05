@@ -16,10 +16,6 @@ table {
   margin-left: 30%;
 }
 
-.tipoCantidad{
-  width:22% !important;
-}
-
 .mat-card{
 max-width: 1200px !important;
 }
@@ -35,6 +31,7 @@ th{
 
 .div-button {
   text-align: right;
+  margin-bottom: 2%;
 }
 
 button{
@@ -44,12 +41,6 @@ button{
 .mat-toolbar{
   background: #2f6483 !important;
   margin-bottom: 6%;
-}
-
-/* Cuando le pasas el cursor por arriba el fondo es blanco */
- button:hover {
-  background-color: #b4d1ce;
-  color: black;
 }
 
 .mat-button.mat-accent{

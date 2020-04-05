@@ -1,10 +1,11 @@
 table {
-  width: 95%;
-  margin: 2rem;
+  width: 98%;
+  margin: 0 auto;
 }
 
 .columnas-normales{
-  width:22% !important;
+  width: 15% !important;
+  word-break: break-all;
 }
 
 th{
@@ -22,4 +23,16 @@ td, th{
 
 .div-button{
   text-align: right;
+  margin-top: 2%;
+}
+
+.th.mat-header-cell:first-of-type,  th.mat-header-cell:first-of-type,
+.td.mat-cell:first-of-type,  td.mat-cell:first-of-type{
+  padding-left: 0;
+}
+
+
+.th.mat-header-cell:last-of-type,  th.mat-header-cell:last-of-type,
+.td.mat-cell:last-of-type,  td.mat-cell:last-of-type{
+  padding-right: 0;
 }

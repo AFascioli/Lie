@@ -26,7 +26,9 @@
 }
 
 .grid-container-mobile{
+  width: 98%;
   grid-gap: 4px;
+  padding: 5px;
 }
 
 .hora, .modulo{

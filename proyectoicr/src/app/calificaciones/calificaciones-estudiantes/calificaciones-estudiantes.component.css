@@ -1,6 +1,6 @@
 table {
   width: 95%;
-  margin: 2rem;
+  margin: 0 auto;
 }
 
 .table-mobile {
@@ -16,8 +16,12 @@ table {
   width: 8%;
 }
 
+.apellido-tabla, .nombre-tabla{
+  word-break: break-all;
+}
+
 th {
-  /* font-weight: bold; */
+  font-weight: bold;
   font-size: 15px;
 }
 
@@ -43,7 +47,7 @@ input[type="number"]::-webkit-outer-spin-button {
 
 input {
   border: none;
-  width: 40%;
+  width: 90%;
 }
 
 input:focus {
@@ -77,5 +81,16 @@ input:focus {
 
 .filtro {
   font-size: 14px;
-  width: 100%;
+  width: 97%;
+}
+
+.th.mat-header-cell:first-of-type,  th.mat-header-cell:first-of-type,
+.td.mat-cell:first-of-type,  td.mat-cell:first-of-type{
+  padding-left: 0;
+}
+
+
+.th.mat-header-cell:last-of-type,  th.mat-header-cell:last-of-type,
+.td.mat-cell:last-of-type,  td.mat-cell:last-of-type{
+  padding-right: 0;
 }

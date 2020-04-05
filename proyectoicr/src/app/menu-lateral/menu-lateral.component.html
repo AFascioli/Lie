@@ -13,12 +13,12 @@
       <div class="opciones">
       <button
         mat-button
-        class="homeButton"
+        class="home-button"
         (click)="onClickHome()"
       >
         <mat-icon>home </mat-icon>
       </button>
-        <button mat-button [matMenuTriggerFor]="menu" class="dropDown">
+        <button mat-button [matMenuTriggerFor]="menu" class="drop-down">
           <mat-icon>arrow_drop_down</mat-icon>
         </button>
         <mat-menu #menu="matMenu">
@@ -34,7 +34,7 @@
     <mat-toolbar-row *ngIf="rol=='AdultoResponsable'" [class.mat-toolbar-row-mobile]="mobileQuery.matches">
         <button
         mat-button
-        class="homeButtonAR"
+        class="home-buttonAR"
         [class.button-mobile]="mobileQuery.matches"
         (click)="onClickHome()"
         >
@@ -60,14 +60,14 @@
     <mat-sidenav
       #sideNav
       class="sidenav"
-      [class.sidenavMobile]="mobileQuery.matches"
+      [class.sidenav-mobile]="mobileQuery.matches"
       [opened]="(rol != 'AdultoResponsable')&& !mobileQuery.matches"
       [disableClose]="!mobileQuery.matches"
       [mode]="mobileQuery.matches ? 'over' : 'side'"
     >
       <mat-nav-list>
         <mat-accordion>
-          <mat-icon class="iconUsuario">account_circle</mat-icon>
+          <mat-icon class="icon-usuario">account_circle</mat-icon>
           <p class="usuario">
             <b>{{ rol }}</b>
           </p>
