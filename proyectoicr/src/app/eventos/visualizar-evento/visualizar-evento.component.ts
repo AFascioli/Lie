@@ -27,6 +27,7 @@ export class VisualizarEventoComponent implements OnInit, OnDestroy {
   fechaDelEvento: Date;
   horaFinal: string;
   private unsubscribe: Subject<void> = new Subject();
+  slideIndex: number = 1;
 
   constructor(
     public eventoService: EventosService,
@@ -39,6 +40,9 @@ export class VisualizarEventoComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.evento = this.eventoService.eventoSeleccionado;
+    setTimeout(() => {
+      this.showSlide(1);
+    }, 500);
     this.eventoService
       .obtenerComentariosDeEvento()
       .pipe(takeUntil(this.unsubscribe))
@@ -133,6 +137,42 @@ export class VisualizarEventoComponent implements OnInit, OnDestroy {
             );
           }
         });
+    }
+  }
+
+  obtenerImagen(index) {
+    return this.imgURL[index];
+  }
+
+  moveFromCurrentSlide(n) {
+    this.slideIndex += n;
+    this.showSlide(this.slideIndex);
+  }
+
+  showSlide(n) {
+    var slides = document.getElementsByClassName("mySlides");
+    var dots = document.getElementsByClassName("dot");
+    this.esSlideValido(n, slides);
+    for (let i = 0; i < slides.length; i++) {
+      slides[i].setAttribute("style", "display:none;");
+    }
+    for (let i = 0; i < dots.length; i++) {
+      dots[i].className = dots[i].className.replace(" active", "");
+    }
+    this.setAttributesCurrentSlide(slides, dots);
+  }
+
+  setAttributesCurrentSlide(slides, dots) {
+    slides[this.slideIndex - 1].setAttribute("style", "display:block;");
+    dots[this.slideIndex - 1].className += " active";
+  }
+
+  esSlideValido(n, slides) {
+    if (n > slides.length) {
+      this.slideIndex = 1;
+    }
+    if (n < 1) {
+      this.slideIndex = slides.length;
     }
   }
 
