@@ -23,6 +23,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   readonly VAPID_PUBLIC =
     "BMlC2dLJTBP6T1GCl3S3sDBmhERNVcjN7ff2a6JAoOg8bA_qXjikveleRwjz0Zn8c9-58mnrNo2K4p07UPK0DKQ";
   evento: Evento;
+  enProcesoDeBorrado: boolean = false;
 
   constructor(
     public snackBar: MatSnackBar,
@@ -34,8 +35,10 @@ export class HomeComponent implements OnInit, OnDestroy {
   ) {}
 
   eventoSeleccionado(evento: Evento) {
-    this.servicioEvento.eventoSeleccionado = evento;
-    this.router.navigate(["/visualizarEvento"]);
+    if (!this.enProcesoDeBorrado) {
+      this.servicioEvento.eventoSeleccionado = evento;
+      this.router.navigate(["/visualizarEvento"]);
+    }
   }
 
   getImage(filename) {
@@ -105,6 +108,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   }
 
   onBorrar(evento) {
+    this.enProcesoDeBorrado = true;
     this.servicioEvento.evento = evento;
     this.dialog.open(BorrarPopupComponent, {
       width: "250px",
@@ -114,6 +118,7 @@ export class HomeComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.unsubscribe))
       .subscribe((rtdo) => {
         this.eventos = rtdo.eventos;
+        this.enProcesoDeBorrado = false;
       });
   }
 
