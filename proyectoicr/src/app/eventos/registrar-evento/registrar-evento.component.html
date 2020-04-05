@@ -133,15 +133,29 @@
       <div class="slideshow-container">
         <div *ngFor="let image of imgURL; let i = index">
           <div class="mySlides fade">
-            <img [src]="obtenerImagen(i)" style="width:100%" />
+            <img [src]="obtenerImagen(i)" style="width: 100%;" />
           </div>
         </div>
-        <a class="prev" (click)="moveFromCurrentSlide(-1)">&#10094;</a>
-        <a class="next" (click)="moveFromCurrentSlide(1)">&#10095;</a>
+        <a
+          class="prev"
+          (click)="moveFromCurrentSlide(-1)"
+          *ngIf="imgURL.length != 1"
+          >&#10094;</a
+        >
+        <a
+          class="next"
+          (click)="moveFromCurrentSlide(1)"
+          *ngIf="imgURL.length != 1"
+          >&#10095;</a
+        >
       </div>
       <br />
-      <div style="text-align:center">
-        <span class="dot" *ngFor="let image of imgURL; let i = index"></span>
+      <div style="text-align: center;">
+        <span
+          class="dot"
+          *ngFor="let image of imgURL; let i = index"
+          ngIf="imgURL.length != 1"
+        ></span>
       </div>
     </div>
     <div class="div-button">

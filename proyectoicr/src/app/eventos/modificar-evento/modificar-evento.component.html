@@ -143,12 +143,26 @@
             <img [src]="image" style="width: 100%;" />
           </div>
         </div>
-        <a class="prev" (click)="moveFromCurrentSlide(-1)">&#10094;</a>
-        <a class="next" (click)="moveFromCurrentSlide(1)">&#10095;</a>
+        <a
+          class="prev"
+          (click)="moveFromCurrentSlide(-1)"
+          *ngIf="imagenesCargadas.length != 1"
+          >&#10094;</a
+        >
+        <a
+          class="next"
+          (click)="moveFromCurrentSlide(1)"
+          *ngIf="imagenesCargadas.length != 1"
+          >&#10095;</a
+        >
       </div>
       <br />
       <div style="text-align: center;">
-        <span class="dot" *ngFor="let image of imagenesCargadas"></span>
+        <span
+          class="dot"
+          *ngFor="let image of imagenesCargadas"
+          ngIf="imagenesCargadas.length != 1"
+        ></span>
       </div>
     </div>
     <div class="div-button">

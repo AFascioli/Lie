@@ -17,12 +17,26 @@
           <img [src]="getImage(filename)" style="width: 100%;" />
         </div>
       </div>
-      <a class="prev" (click)="moveFromCurrentSlide(-1)">&#10094;</a>
-      <a class="next" (click)="moveFromCurrentSlide(1)">&#10095;</a>
+      <a
+        class="prev"
+        (click)="moveFromCurrentSlide(-1)"
+        *ngIf="evento.filenames.length != 1"
+        >&#10094;</a
+      >
+      <a
+        class="next"
+        (click)="moveFromCurrentSlide(1)"
+        *ngIf="evento.filenames.length != 1"
+        >&#10095;</a
+      >
     </div>
     <br />
     <div style="text-align: center;">
-      <span class="dot" *ngFor="let filename of evento.filenames"></span>
+      <span
+        class="dot"
+        *ngFor="let filename of evento.filenames"
+        ngIf="evento.filenames.length != 1"
+      ></span>
     </div>
   </div>
   <div class="divParticipan">
@@ -89,9 +103,6 @@
           class="test"
           *ngFor="let comentario of eventoService.comentarios; let i = index"
         >
-          <!-- <button mat-icon-button class="botonOpciones">
-          <mat-icon>more_horiz</mat-icon>
-        </button> -->
           <div class="datosComentario">
             <p class="nombreAutor">
               <b>{{ comentario.apellido }}, {{ comentario.nombre }} </b>
