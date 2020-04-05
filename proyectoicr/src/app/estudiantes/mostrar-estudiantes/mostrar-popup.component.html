@@ -1,9 +1,9 @@
 <div *ngIf="tipoPopup === 'volver'" >
-  <h3 mat-dialog-title class="tituloPopup">Volver</h3>
+  <h3 mat-dialog-title class="titulo-popup">Volver</h3>
   <div mat-dialog-content>
     <p class="parrafo">¿Está seguro que desea volver a la pantalla anterior?</p>
   </div>
-  <div mat-dialog-actions class="buttonPopup">
+  <div mat-dialog-actions class="button-popup">
     <button mat-raised-button class="button-primary" (click)="onYesClick()" cdkFocusInitial >
       Sí
     </button>
@@ -11,13 +11,13 @@
   </div>
 </div>
 <div *ngIf="tipoPopup === 'borrar'" class="borrar">
-  <h3 mat-dialog-title class="tituloPopup">Borrar</h3>
+  <h3 mat-dialog-title class="titulo-popup">Borrar</h3>
   <div mat-dialog-content>
     <p class="parrafo">{{ borrar }}</p>
   </div>
   <div
     *ngIf="borrar != 'El estudiante fue borrado exitosamente'"
-    mat-dialog-actions class="buttonPopup">
+    mat-dialog-actions class="button-popup">
     <button mat-raised-button class="button-warn" (click)="onYesDeleteClick()" cdkFocusInitial >
       Sí
     </button>
@@ -26,7 +26,7 @@
   <div
     *ngIf="borrar === 'El estudiante fue borrado exitosamente'"
     mat-dialog-actions>
-    <div mat-dialog-actions class="buttonPopup">
+    <div mat-dialog-actions class="button-popup">
       <button mat-raised-button class="button-primary" (click)="onOkClickBorrar()" >Ok</button>
     </div>
   </div>
