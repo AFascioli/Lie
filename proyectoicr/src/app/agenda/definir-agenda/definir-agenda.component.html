@@ -51,6 +51,7 @@
                 [disabled]="nuevo != i || indice != i"
                 [(ngModel)]="agendaCurso.idMateria"
                 matNativeControl
+                required
               >
                 <mat-option
                   *ngFor="let materia of materias"
@@ -84,6 +85,7 @@
                 [disabled]="nuevo != i || indice != i"
                 [(ngModel)]="agendaCurso.idDocente"
                 matNativeControl
+                required
               >
                 <mat-option
                   *ngFor="let docente of docentes"
@@ -117,6 +119,7 @@
                 [disabled]="indice != i"
                 [(ngModel)]="agendaCurso.dia"
                 matNativeControl
+                required
               >
                 <mat-option *ngFor="let dia of dias" [value]="dia">
                   {{ dia }}
@@ -153,6 +156,7 @@
                   min="07:30"
                   max="13:30"
                   readonly
+                  required
                 />
                 <ngx-material-timepicker
                   [minutesGap]="15"
@@ -190,6 +194,7 @@
                   min="08:15"
                   max="13:30"
                   readonly
+                  required
                 />
                 <ngx-material-timepicker
                   [minutesGap]="15"

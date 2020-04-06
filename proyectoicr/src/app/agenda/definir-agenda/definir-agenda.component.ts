@@ -122,11 +122,18 @@ export class DefinirAgendaComponent implements OnInit, OnDestroy {
   }
 
   reservarAgenda(indice, row) {
-    this.validarHorario(row, indice);
-    if (this.agendaValida) {
-      this.indice = -1;
-      document.getElementById("editar" + indice).style.display = "block";
-      document.getElementById("reservar" + indice).style.display = "none";
+    if(row.idMateria==""||row.dia==""||row.idDocente==""){
+      this.agendaValida = false;
+      this.mensajeError =
+        "Faltan campos por completar";
+      this.openSnackBar(this.mensajeError, "snack-bar-fracaso");
+    }else{
+      this.validarHorario(row, indice);
+      if (this.agendaValida) {
+        this.indice = -1;
+        document.getElementById("editar" + indice).style.display = "block";
+        document.getElementById("reservar" + indice).style.display = "none";
+      }
     }
   }
 
