@@ -22,6 +22,7 @@ mat-card-content {
   padding: 10px;
   background-color: #c3c8cc; /*2196F3*/
   border-radius: 4px;
+  min-width: 600px;
 }
 
 .texto-mobile,
@@ -156,6 +157,7 @@ hr {
 .nombre-materia {
   position: absolute;
   align-self: center;
+  max-width: min-content;
 }
 
 .div-button{

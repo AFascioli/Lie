@@ -1,7 +1,7 @@
 
   <div *ngIf="isLoading">
     <h3 mat-dialog-title class="titulo-popup">Procesando</h3>
-    <mat-spinner class="spinner"></mat-spinner>
+    <mat-spinner class="spinner" [diameter]="60"></mat-spinner>
   </div>
 <div *ngIf="formValido && !isLoading">
   <h3 mat-dialog-title class="titulo-popup">Confirmar</h3>
