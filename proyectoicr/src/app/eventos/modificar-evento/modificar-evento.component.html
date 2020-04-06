@@ -157,12 +157,8 @@
         >
       </div>
       <br />
-      <div style="text-align: center;">
-        <span
-          class="dot"
-          *ngFor="let image of imagenesCargadas"
-          ngIf="imagenesCargadas.length != 1"
-        ></span>
+      <div *ngIf="evento.filenames.length > 1" style="text-align: center;">
+        <span class="dot" *ngFor="let image of imagenesCargadas"></span>
       </div>
     </div>
     <div class="div-button">

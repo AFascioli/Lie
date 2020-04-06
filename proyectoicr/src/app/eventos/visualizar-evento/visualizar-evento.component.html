@@ -31,12 +31,8 @@
       >
     </div>
     <br />
-    <div style="text-align: center;">
-      <span
-        class="dot"
-        *ngFor="let filename of evento.filenames"
-        ngIf="evento.filenames.length != 1"
-      ></span>
+    <div *ngIf="evento.filenames.length > 1" style="text-align: center;">
+      <span class="dot" *ngFor="let filename of evento.filenames"> </span>
     </div>
   </div>
   <div class="divParticipan">

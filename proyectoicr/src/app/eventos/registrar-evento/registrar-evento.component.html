@@ -150,12 +150,8 @@
         >
       </div>
       <br />
-      <div style="text-align: center;">
-        <span
-          class="dot"
-          *ngFor="let image of imgURL; let i = index"
-          ngIf="imgURL.length != 1"
-        ></span>
+      <div *ngIf="imgURL.length > 1" style="text-align: center;">
+        <span class="dot" *ngFor="let image of imgURL; let i = index"></span>
       </div>
     </div>
     <div class="div-button">
