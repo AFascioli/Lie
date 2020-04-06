@@ -4,8 +4,6 @@ import { Estudiante } from "./estudiante.model";
 import { HttpClient, HttpParams } from "@angular/common/http";
 import { Subject } from "rxjs";
 import { takeUntil } from "rxjs/operators";
-import { Localidad } from "../ubicacion/localidades.model";
-import { Nacionalidad } from "../ubicacion/nacionalidades.model";
 
 @Injectable({
   providedIn: "root"

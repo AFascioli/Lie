@@ -85,9 +85,12 @@ export class ListaEstudiantesComponent implements OnInit, OnDestroy {
           this.permisos = response.permisos;
         });
     }
-    this.authService.obtenerPermisosDeRol().subscribe(response => {
-      this.permisos = response.permisos;
-    });
+    this.authService
+      .obtenerPermisosDeRol()
+      .pipe(takeUntil(this.unsubscribe))
+      .subscribe(response => {
+        this.permisos = response.permisos;
+      });
   }
 
   asignarEstudianteSeleccionado(indice) {

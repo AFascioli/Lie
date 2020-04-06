@@ -21,12 +21,12 @@ const ClaseAsistencia = require("../classes/asistencia");
 router.get("/", checkAuthMiddleware, (req, res) => {
   Curso.find()
     .select({ curso: 1, _id: 1 })
-    .then((cursos) => {
+    .then(cursos => {
       var respuesta = [];
-      cursos.forEach((curso) => {
+      cursos.forEach(curso => {
         var cursoConId = {
           id: curso._id,
-          curso: curso.curso,
+          curso: curso.curso
         };
         respuesta.push(cursoConId);
       });
@@ -34,43 +34,43 @@ router.get("/", checkAuthMiddleware, (req, res) => {
     })
     .catch(() => {
       res.status(500).json({
-        message: "Mensaje de error especifico",
+        message: "Mensaje de error especifico"
       });
     });
 });
 
-notificarSancion = async function (idEstudiante) {
+notificarSancion = async function(idEstudiante) {
   titulo = "Nueva sanción.";
-  await Estudiante.findById(idEstudiante).then((estudiante) => {
+  await Estudiante.findById(idEstudiante).then(estudiante => {
     cuerpo = `Se le ha registrado una nueva sanción a ${estudiante.apellido} ${estudiante.nombre}.`;
   });
 
   AdultoResponsable.aggregate([
     {
       $match: {
-        estudiantes: mongoose.Types.ObjectId(idEstudiante),
-      },
+        estudiantes: mongoose.Types.ObjectId(idEstudiante)
+      }
     },
     {
       $lookup: {
         from: "usuario",
         localField: "idUsuario",
         foreignField: "_id",
-        as: "usuario",
-      },
+        as: "usuario"
+      }
     },
     {
       $unwind: {
-        path: "$usuario",
-      },
+        path: "$usuario"
+      }
     },
     {
       $project: {
         "usuario._id": 1,
-        _id: 0,
-      },
-    },
-  ]).then((respuesta) => {
+        _id: 0
+      }
+    }
+  ]).then(respuesta => {
     let idsUsuario = [];
     for (let index = 0; index < respuesta.length; index++) {
       idsUsuario.push(respuesta[index].usuario._id);
@@ -90,8 +90,8 @@ router.post("/registrarSancion", checkAuthMiddleware, (req, res) => {
   let indice = 0;
   Inscripcion.findOne({
     idEstudiante: req.body.idEstudiante,
-    activa: true,
-  }).then((inscripcion) => {
+    activa: true
+  }).then(inscripcion => {
     for (let index = 0; index < inscripcion.sanciones.length; index++) {
       if (
         ClaseAsistencia.esFechaActual(inscripcion.sanciones[index].fecha) &&
@@ -105,27 +105,27 @@ router.post("/registrarSancion", checkAuthMiddleware, (req, res) => {
       Inscripcion.findOneAndUpdate(
         {
           idEstudiante: req.body.idEstudiante,
-          activa: true,
+          activa: true
         },
         {
           $push: {
             sanciones: {
               tipo: req.body.tipoSancion,
               cantidad: req.body.cantidad,
-              fecha: req.body.fecha,
-            },
-          },
+              fecha: req.body.fecha
+            }
+          }
         }
       )
         .then(
           res.status(200).json({
             message: "Se ha registrado la sanción del estudiante correctamente",
-            exito: true,
+            exito: true
           })
         )
         .catch(() => {
           res.status(500).json({
-            message: "Mensaje de error especifico",
+            message: "Mensaje de error especifico"
           });
         });
     } else {
@@ -136,12 +136,12 @@ router.post("/registrarSancion", checkAuthMiddleware, (req, res) => {
           notificarSancion(req.body.idEstudiante);
           res.status(200).json({
             message: "Se ha registrado la sanción del estudiante correctamente",
-            exito: true,
+            exito: true
           });
         })
         .catch(() => {
           res.status(500).json({
-            message: "Mensaje de error especifico",
+            message: "Mensaje de error especifico"
           });
         });
     }
@@ -155,41 +155,41 @@ router.get("/estadoCuotas", checkAuthMiddleware, (req, res) => {
   let fechaActual = new Date();
   // let añoActual = fechaActual.getFullYear();
   Curso.findOne({ curso: req.query.idCurso })
-    .then((curso) => {
+    .then(curso => {
       Inscripcion.aggregate([
         {
           $unwind: {
-            path: "$cuotas",
-          },
+            path: "$cuotas"
+          }
         },
         {
           $match: {
             activa: true,
             idCurso: mongoose.Types.ObjectId(curso._id),
-            "cuotas.mes": parseInt(req.query.mes, 10),
-          },
+            "cuotas.mes": parseInt(req.query.mes, 10)
+          }
         },
         {
           $lookup: {
             from: "estudiante",
             localField: "idEstudiante",
             foreignField: "_id",
-            as: "estudiante",
-          },
+            as: "estudiante"
+          }
         },
         {
           $project: {
             "estudiante.apellido": 1,
             "estudiante.nombre": 1,
-            cuotas: 1,
-          },
-        },
+            cuotas: 1
+          }
+        }
       ])
-        .then((estadoCuotas) => {
+        .then(estadoCuotas => {
           if (estadoCuotas.length == 0) {
             res.status(200).json({
               message: "No se han obtenido alumnos de dicho curso",
-              exito: true,
+              exito: true
             });
           } else {
             cuotasXEstudiantes = [];
@@ -202,7 +202,7 @@ router.get("/estadoCuotas", checkAuthMiddleware, (req, res) => {
                   apellido: estadoCuotas[i].estudiante[0].apellido,
                   nombre: estadoCuotas[i].estudiante[0].nombre,
                   pagado: estadoCuotas[i].cuotas.pagado,
-                  mes: estadoCuotas[i].cuotas.mes,
+                  mes: estadoCuotas[i].cuotas.mes
                 };
                 cuotasXEstudiantes.push(cuotaXEstudiante);
               }
@@ -211,19 +211,19 @@ router.get("/estadoCuotas", checkAuthMiddleware, (req, res) => {
               message:
                 "Se ha obtenido el estado de las cuotas de un curso exitosamente",
               exito: true,
-              cuotasXEstudiante: cuotasXEstudiantes,
+              cuotasXEstudiante: cuotasXEstudiantes
             });
           }
         })
         .catch(() => {
           res.status(500).json({
-            message: "Mensaje de error especifico",
+            message: "Mensaje de error especifico"
           });
         });
     })
     .catch(() => {
       res.status(500).json({
-        message: "Mensaje de error especifico",
+        message: "Mensaje de error especifico"
       });
     });
 });
@@ -234,7 +234,7 @@ router.post("/publicarEstadoCuotas", checkAuthMiddleware, (req, res) => {
   final = req.body.length - 1;
   for (let i = 0; i <= final; i++) {
     Inscripcion.findById(req.body[i]._id)
-      .then((inscripcion) => {
+      .then(inscripcion => {
         inscripcion.cuotas[req.body[i].mes - 1].pagado = !inscripcion.cuotas[
           req.body[i].mes - 1
         ].pagado;
@@ -242,14 +242,14 @@ router.post("/publicarEstadoCuotas", checkAuthMiddleware, (req, res) => {
       })
       .catch(() => {
         res.status(500).json({
-          message: "Mensaje de error especifico",
+          message: "Mensaje de error especifico"
         });
       });
   }
   res.status(200).json({
     message:
       "Se ha registrado el estado de las cuotas de un curso de manera exitosa",
-    exito: true,
+    exito: true
   });
 });
 
@@ -257,16 +257,16 @@ router.post("/publicarEstadoCuotas", checkAuthMiddleware, (req, res) => {
 // @params: id del curso
 router.get("/capacidad", checkAuthMiddleware, (req, res) => {
   Curso.findById(req.query.idCurso)
-    .then((curso) => {
+    .then(curso => {
       res.status(200).json({
         message: "Operación exitosa",
         exito: true,
-        capacidad: curso.capacidad,
+        capacidad: curso.capacidad
       });
     })
     .catch(() => {
       res.status(500).json({
-        message: "Mensaje de error especifico",
+        message: "Mensaje de error especifico"
       });
     });
 });
@@ -278,75 +278,75 @@ router.get("/cursosDeEstudiante", checkAuthMiddleware, (req, res) => {
   Inscripcion.aggregate([
     {
       $match: {
-        idEstudiante: mongoose.Types.ObjectId(req.query.idEstudiante),
-      },
+        idEstudiante: mongoose.Types.ObjectId(req.query.idEstudiante)
+      }
     },
     {
       $lookup: {
         from: "curso",
         localField: "idCurso",
         foreignField: "_id",
-        as: "cursoActual",
-      },
+        as: "cursoActual"
+      }
     },
     {
       $lookup: {
         from: "estado",
         localField: "estado",
         foreignField: "_id",
-        as: "estadoInscripcion",
-      },
+        as: "estadoInscripcion"
+      }
     },
     {
       $project: {
         estadoInscripcion: 1,
-        "cursoActual.curso": 1,
-      },
-    },
+        "cursoActual.curso": 1
+      }
+    }
   ])
-    .then((inscripcion) => {
+    .then(inscripcion => {
       if (inscripcion.length != 0) {
         //El estudiante está inscripto a un curso y por ende se fija al curso al que se puede inscribir
         let siguiente;
         siguiente = ClaseInscripcion.obtenerAñoHabilitado(inscripcion);
 
         //Buscamos los cursos que corresponden al que se puede inscribir el estudiante
-        Curso.find({ curso: { $regex: siguiente } }).then((cursos) => {
+        Curso.find({ curso: { $regex: siguiente } }).then(cursos => {
           return res.status(200).json({
             message: "Devolvio los cursos correctamente",
             exito: true,
-            cursos: cursos,
+            cursos: cursos
           });
         });
       } else {
         //El estudiante no está inscripto a ningun curso, devuelve todos los cursos almacenados
         Curso.find()
           .select({ curso: 1, _id: 1 })
-          .then((cursos) => {
+          .then(cursos => {
             var respuesta = [];
-            cursos.forEach((curso) => {
+            cursos.forEach(curso => {
               var cursoConId = {
                 _id: curso._id,
-                curso: curso.curso,
+                curso: curso.curso
               };
               respuesta.push(cursoConId);
             });
             return res.status(200).json({
               message: "Devolvio los cursos correctamente",
               exito: true,
-              cursos: respuesta,
+              cursos: respuesta
             });
           })
           .catch(() => {
             res.status(500).json({
-              message: "Mensaje de error especifico",
+              message: "Mensaje de error especifico"
             });
           });
       }
     })
     .catch(() => {
       res.status(500).json({
-        message: "Mensaje de error especifico",
+        message: "Mensaje de error especifico"
       });
     });
 });
@@ -360,21 +360,21 @@ router.get("/docente", checkAuthMiddleware, (req, res) => {
         from: "materiasXCurso",
         localField: "materias",
         foreignField: "_id",
-        as: "mxc",
-      },
+        as: "mxc"
+      }
     },
     {
       $match: {
-        "mxc.idDocente": mongoose.Types.ObjectId(req.query.idDocente),
-      },
-    },
+        "mxc.idDocente": mongoose.Types.ObjectId(req.query.idDocente)
+      }
+    }
   ])
-    .then((cursos) => {
+    .then(cursos => {
       var respuesta = [];
-      cursos.forEach((curso) => {
+      cursos.forEach(curso => {
         var cursoConId = {
           id: curso._id,
-          curso: curso.curso,
+          curso: curso.curso
         };
         respuesta.push(cursoConId);
       });
@@ -382,12 +382,12 @@ router.get("/docente", checkAuthMiddleware, (req, res) => {
       res.status(200).json({
         cursos: respuesta,
         message: "Se devolvio los cursos que dicta la docente correctamente",
-        exito: true,
+        exito: true
       });
     })
     .catch(() => {
       res.status(500).json({
-        message: "Mensaje de error especifico",
+        message: "Mensaje de error especifico"
       });
     });
 });
@@ -401,21 +401,21 @@ router.get("/documentos", checkAuthMiddleware, (req, res) => {
         from: "curso",
         localField: "idCurso",
         foreignField: "_id",
-        as: "cursos",
-      },
+        as: "cursos"
+      }
     },
     {
       $lookup: {
         from: "estudiante",
         localField: "idEstudiante",
         foreignField: "_id",
-        as: "datosEstudiante",
-      },
+        as: "datosEstudiante"
+      }
     },
     {
       $match: {
-        "cursos.curso": req.query.curso,
-      },
+        "cursos.curso": req.query.curso
+      }
     },
     {
       $project: {
@@ -423,21 +423,21 @@ router.get("/documentos", checkAuthMiddleware, (req, res) => {
         idEstudiante: 1,
         documentosEntregados: 1,
         "datosEstudiante.apellido": 1,
-        "datosEstudiante.nombre": 1,
-      },
-    },
+        "datosEstudiante.nombre": 1
+      }
+    }
   ])
-    .then((estudiantes) => {
+    .then(estudiantes => {
       res.status(200).json({
         documentos: estudiantes,
         message:
           "Se devolvieron los documentos junto con su estado de entrega correctamente",
-        exito: true,
+        exito: true
       });
     })
     .catch(() => {
       res.status(500).json({
-        message: "Mensaje de error especifico",
+        message: "Mensaje de error especifico"
       });
     });
 });
@@ -456,8 +456,8 @@ router.get(
           from: "estudiante",
           localField: "idEstudiante",
           foreignField: "_id",
-          as: "datosEstudiante",
-        },
+          as: "datosEstudiante"
+        }
       },
       {
         $project: {
@@ -466,22 +466,22 @@ router.get(
           "datosEstudiante.apellido": 1,
           activa: 1,
           idCurso: 1,
-          calificacionesXMateria: 1,
-        },
+          calificacionesXMateria: 1
+        }
       },
       {
         $lookup: {
           from: "curso",
           localField: "idCurso",
           foreignField: "_id",
-          as: "curso",
-        },
+          as: "curso"
+        }
       },
       {
         $match: {
           "curso._id": mongoose.Types.ObjectId(req.query.idCurso),
-          activa: true,
-        },
+          activa: true
+        }
       },
       {
         $project: {
@@ -489,67 +489,67 @@ router.get(
           "datosEstudiante.nombre": 1,
           "datosEstudiante.apellido": 1,
           "curso.curso": 1,
-          calificacionesXMateria: 1,
-        },
+          calificacionesXMateria: 1
+        }
       },
       {
         $unwind: {
-          path: "$calificacionesXMateria",
-        },
+          path: "$calificacionesXMateria"
+        }
       },
       {
         $lookup: {
           from: "calificacionesXMateria",
           localField: "calificacionesXMateria",
           foreignField: "_id",
-          as: "calXMateria",
-        },
+          as: "calXMateria"
+        }
       },
       {
         $match: {
-          "calXMateria.idMateria": mongoose.Types.ObjectId(req.query.idMateria),
-        },
+          "calXMateria.idMateria": mongoose.Types.ObjectId(req.query.idMateria)
+        }
       },
       {
         $unwind: {
-          path: "$calXMateria",
-        },
+          path: "$calXMateria"
+        }
       },
       {
         $unwind: {
-          path: "$calXMateria.calificacionesXTrimestre",
-        },
+          path: "$calXMateria.calificacionesXTrimestre"
+        }
       },
       {
         $lookup: {
           from: "calificacionesXTrimestre",
           localField: "calXMateria.calificacionesXTrimestre",
           foreignField: "_id",
-          as: "notasXTrimestre",
-        },
+          as: "notasXTrimestre"
+        }
       },
       {
         $match: {
-          "notasXTrimestre.trimestre": parseInt(req.query.trimestre, 10),
-        },
+          "notasXTrimestre.trimestre": parseInt(req.query.trimestre, 10)
+        }
       },
       {
         $project: {
           "datosEstudiante._id": 1,
           "datosEstudiante.nombre": 1,
           "datosEstudiante.apellido": 1,
-          "notasXTrimestre.calificaciones": 1,
-        },
-      },
+          "notasXTrimestre.calificaciones": 1
+        }
+      }
     ])
-      .then((documentos) => {
+      .then(documentos => {
         var respuesta = [];
-        documentos.forEach((califEst) => {
+        documentos.forEach(califEst => {
           var calificacionesEstudiante = {
             idEstudiante: califEst.datosEstudiante[0]._id,
             apellido: califEst.datosEstudiante[0].apellido,
             nombre: califEst.datosEstudiante[0].nombre,
-            calificaciones: califEst.notasXTrimestre[0].calificaciones,
+            calificaciones: califEst.notasXTrimestre[0].calificaciones
           };
           respuesta.push(calificacionesEstudiante);
         });
@@ -558,12 +558,12 @@ router.get(
           estudiantes: respuesta,
           message:
             "Se obtuvieron las calificaciones para una materia, un curso y un trimestre determinado correctamente",
-          exito: true,
+          exito: true
         });
       })
       .catch(() => {
         res.status(500).json({
-          message: "Mensaje de error especifico",
+          message: "Mensaje de error especifico"
         });
       });
   }
@@ -572,44 +572,56 @@ router.get(
 //Obtiene el curso al que está inscripto un estudiante
 //@params: id del estudiante
 router.get("/estudiante", checkAuthMiddleware, (req, res) => {
-  Inscripcion.aggregate([
-    {
-      $match: {
-        idEstudiante: mongoose.Types.ObjectId(req.query.idEstudiante),
-        activa: true,
-      },
-    },
-    {
-      $lookup: {
-        from: "curso",
-        localField: "idCurso",
-        foreignField: "_id",
-        as: "cursosDeEstudiante",
-      },
-    },
-    {
-      $project: {
-        _id: 0,
-        "cursosDeEstudiante.curso": 1,
-        "cursosDeEstudiante._id": 1,
-      },
-    },
-  ])
-    .then((cursoDeEstudiante) => {
+  Inscripcion.findOne({
+    idEstudiante: mongoose.Types.ObjectId(req.query.idEstudiante),
+    activa: true
+  }).then(inscripcion => {
+    if (inscripcion) {
+      Inscripcion.aggregate([
+        {
+          $match: {
+            idEstudiante: mongoose.Types.ObjectId(req.query.idEstudiante),
+            activa: true
+          }
+        },
+        {
+          $lookup: {
+            from: "curso",
+            localField: "idCurso",
+            foreignField: "_id",
+            as: "cursosDeEstudiante"
+          }
+        },
+        {
+          $project: {
+            _id: 0,
+            "cursosDeEstudiante.curso": 1,
+            "cursosDeEstudiante._id": 1
+          }
+        }
+      ])
+        .then(cursoDeEstudiante => {
+          return res.status(200).json({
+            message: "Se obtuvo el curso del estudiante exitosamente",
+            exito: true,
+            curso: cursoDeEstudiante[0].cursosDeEstudiante[0].curso,
+            idCurso: cursoDeEstudiante[0].cursosDeEstudiante[0]._id
+          });
+        })
+        .catch(() => {
+          res.status(500).json({
+            message:
+              "Ocurrieron errores al querer obtener el curso del estudiante: ",
+            exito: false
+          });
+        });
+    } else {
       return res.status(200).json({
-        message: "Se obtuvo el curso del estudiante exitosamente",
-        exito: true,
-        curso: cursoDeEstudiante[0].cursosDeEstudiante[0].curso,
-        idCurso: cursoDeEstudiante[0].cursosDeEstudiante[0]._id,
+        message: "El estudiante no esta inscripto",
+        exito: false
       });
-    })
-    .catch(() => {
-      res.status(500).json({
-        message:
-          "Ocurrieron errores al querer obtener el curso del estudiante: ",
-        exito: false,
-      });
-    });
+    }
+  });
 });
 
 //Obtiene las materias de un curso que se pasa por parametro
@@ -618,55 +630,55 @@ router.get("/materiasDeCurso", checkAuthMiddleware, (req, res) => {
   Curso.aggregate([
     {
       $match: {
-        _id: mongoose.Types.ObjectId(req.query.idCurso),
-      },
+        _id: mongoose.Types.ObjectId(req.query.idCurso)
+      }
     },
     {
       $lookup: {
         from: "materiasXCurso",
         localField: "materias",
         foreignField: "_id",
-        as: "materiasDeCurso",
-      },
+        as: "materiasDeCurso"
+      }
     },
     {
       $project: {
         "materiasDeCurso.materia": 1,
-        _id: 0,
-      },
+        _id: 0
+      }
     },
     {
       $lookup: {
         from: "materia",
         localField: "materiasDeCurso.materia",
         foreignField: "_id",
-        as: "materias",
-      },
+        as: "materias"
+      }
     },
     {
       $project: {
-        materias: 1,
-      },
-    },
+        materias: 1
+      }
+    }
   ])
-    .then((rtdoMaterias) => {
+    .then(rtdoMaterias => {
       var respuesta = [];
-      rtdoMaterias[0].materias.forEach((materia) => {
+      rtdoMaterias[0].materias.forEach(materia => {
         var datosMateria = {
           id: materia._id,
-          nombre: materia.nombre,
+          nombre: materia.nombre
         };
         respuesta.push(datosMateria);
       });
       res.status(200).json({
         materias: respuesta,
         message: "Se obtieron exitosamente las materias de un curso",
-        exito: true,
+        exito: true
       });
     })
     .catch(() => {
       res.status(500).json({
-        message: "Mensaje de error especifico",
+        message: "Mensaje de error especifico"
       });
     });
 });
@@ -678,56 +690,56 @@ router.get("/materias", checkAuthMiddleware, (req, res) => {
   Curso.aggregate([
     {
       $match: {
-        _id: mongoose.Types.ObjectId(req.query.idCurso),
-      },
+        _id: mongoose.Types.ObjectId(req.query.idCurso)
+      }
     },
     {
       $lookup: {
         from: "materiasXCurso",
         localField: "materias",
         foreignField: "_id",
-        as: "materiasDeCurso",
-      },
+        as: "materiasDeCurso"
+      }
     },
     {
       $project: {
         "materiasDeCurso.materia": 1,
         "materiasDeCurso.idDocente": 1,
-        _id: 0,
-      },
+        _id: 0
+      }
     },
     {
       $unwind: {
-        path: "$materiasDeCurso",
-      },
+        path: "$materiasDeCurso"
+      }
     },
     {
       $match: {
         "materiasDeCurso.idDocente": mongoose.Types.ObjectId(
           req.query.idDocente
-        ),
-      },
+        )
+      }
     },
     {
       $lookup: {
         from: "materia",
         localField: "materiasDeCurso.materia",
         foreignField: "_id",
-        as: "materias",
-      },
+        as: "materias"
+      }
     },
     {
       $project: {
-        materias: 1,
-      },
-    },
+        materias: 1
+      }
+    }
   ])
-    .then((rtdoMaterias) => {
+    .then(rtdoMaterias => {
       var respuesta = [];
-      rtdoMaterias.forEach((materia) => {
+      rtdoMaterias.forEach(materia => {
         var datosMateria = {
           id: materia.materias[0]._id,
-          nombre: materia.materias[0].nombre,
+          nombre: materia.materias[0].nombre
         };
         respuesta.push(datosMateria);
       });
@@ -735,12 +747,12 @@ router.get("/materias", checkAuthMiddleware, (req, res) => {
         materias: respuesta,
         message:
           "Se obtuvieron todas las materias que son dictadas por un docente para un curso exitosamente",
-        exito: true,
+        exito: true
       });
     })
     .catch(() => {
       res.status(500).json({
-        message: "Mensaje de error especifico",
+        message: "Mensaje de error especifico"
       });
     });
 });
@@ -755,7 +767,7 @@ router.post("/inscripciontest", checkAuthMiddleware, async (req, res) => {
   //Dado una id de curso, encuentra todos los datos del mismo
   var obtenerCurso = () => {
     return new Promise((resolve, reject) => {
-      Curso.findOne({ _id: req.body.idCurso }).then((curso) => {
+      Curso.findOne({ _id: req.body.idCurso }).then(curso => {
         resolve(curso);
       });
     });
@@ -765,14 +777,14 @@ router.post("/inscripciontest", checkAuthMiddleware, async (req, res) => {
     return new Promise((resolve, reject) => {
       Estado.findOne({
         nombre: "Inscripto",
-        ambito: "Inscripcion",
+        ambito: "Inscripcion"
       })
-        .then((estado) => {
+        .then(estado => {
           resolve(estado);
         })
         .catch(() => {
           res.status(500).json({
-            message: "Mensaje de error especifico",
+            message: "Mensaje de error especifico"
           });
         });
     });
@@ -782,14 +794,14 @@ router.post("/inscripciontest", checkAuthMiddleware, async (req, res) => {
     return new Promise((resolve, reject) => {
       Inscripcion.findOne({
         idEstudiante: req.body.idEstudiante,
-        activa: true,
+        activa: true
       })
-        .then((inscripcion) => {
+        .then(inscripcion => {
           resolve(inscripcion);
         })
         .catch(() => {
           res.status(500).json({
-            message: "Mensaje de error especifico",
+            message: "Mensaje de error especifico"
           });
         });
     });
@@ -799,14 +811,14 @@ router.post("/inscripciontest", checkAuthMiddleware, async (req, res) => {
     return new Promise((resolve, reject) => {
       Estado.findOne({
         nombre: "Desaprobada",
-        ambito: "CalificacionesXMateria",
+        ambito: "CalificacionesXMateria"
       })
-        .then((estado) => {
+        .then(estado => {
           resolve(estado);
         })
         .catch(() => {
           res.status(500).json({
-            message: "Mensaje de error especifico",
+            message: "Mensaje de error especifico"
           });
         });
     });
@@ -816,14 +828,14 @@ router.post("/inscripciontest", checkAuthMiddleware, async (req, res) => {
     return new Promise((resolve, reject) => {
       Estado.findOne({
         nombre: "Cursando",
-        ambito: "CalificacionesXMateria",
+        ambito: "CalificacionesXMateria"
       })
-        .then((estado) => {
+        .then(estado => {
           resolve(estado);
         })
         .catch(() => {
           res.status(500).json({
-            message: "Mensaje de error especifico",
+            message: "Mensaje de error especifico"
           });
         });
     });
@@ -835,33 +847,33 @@ router.post("/inscripciontest", checkAuthMiddleware, async (req, res) => {
       Curso.aggregate([
         {
           $match: {
-            _id: mongoose.Types.ObjectId(req.body.idCurso),
-          },
+            _id: mongoose.Types.ObjectId(req.body.idCurso)
+          }
         },
         {
-          $unwind: "$materias",
+          $unwind: "$materias"
         },
         {
           $lookup: {
             from: "materiasXCurso",
             localField: "materias",
             foreignField: "_id",
-            as: "materiasDelCurso",
-          },
+            as: "materiasDelCurso"
+          }
         },
         {
           $project: {
             "materiasDelCurso.materia": 1,
-            _id: 0,
-          },
-        },
+            _id: 0
+          }
+        }
       ])
-        .then((materiasDelCurso) => {
+        .then(materiasDelCurso => {
           resolve(materiasDelCurso);
         })
         .catch(() => {
           res.status(500).json({
-            message: "Mensaje de error especifico",
+            message: "Mensaje de error especifico"
           });
         });
     });
@@ -924,7 +936,7 @@ router.post("/inscripciontest", checkAuthMiddleware, async (req, res) => {
     materiasPendientes: materiasPendientesNuevas,
     año: 2019,
     cuotas: cuotas,
-    sanciones: [],
+    sanciones: []
   });
 
   nuevaInscripcion
@@ -935,33 +947,33 @@ router.post("/inscripciontest", checkAuthMiddleware, async (req, res) => {
       //Le cambiamos el estado al estudiante
       Estado.findOne({
         nombre: "Inscripto",
-        ambito: "Estudiante",
+        ambito: "Estudiante"
       })
-        .then(async (estadoEstudiante) => {
+        .then(async estadoEstudiante => {
           await Estudiante.findByIdAndUpdate(req.body.idEstudiante, {
-            estado: estadoEstudiante._id,
+            estado: estadoEstudiante._id
           })
             .then(async () => {
               await res.status(201).json({
                 message: "Estudiante inscripto exitosamente",
-                exito: true,
+                exito: true
               });
             })
             .catch(() => {
               res.status(500).json({
-                message: "Mensaje de error especifico",
+                message: "Mensaje de error especifico"
               });
             });
         })
         .catch(() => {
           res.status(500).json({
-            message: "Mensaje de error especifico",
+            message: "Mensaje de error especifico"
           });
         });
     })
     .catch(() => {
       res.status(500).json({
-        message: "Mensaje de error especifico",
+        message: "Mensaje de error especifico"
       });
     });
 });
@@ -974,79 +986,79 @@ router.post(
   "/estudiantes/materias/calificaciones",
   checkAuthMiddleware,
   (req, res) => {
-    req.body.forEach((estudiante) => {
+    req.body.forEach(estudiante => {
       Inscripcion.aggregate([
         {
           $match: {
-            idEstudiante: mongoose.Types.ObjectId(estudiante.idEstudiante),
-          },
+            idEstudiante: mongoose.Types.ObjectId(estudiante.idEstudiante)
+          }
         },
         {
           $lookup: {
             from: "calificacionesXMateria",
             localField: "calificacionesXMateria",
             foreignField: "_id",
-            as: "calXMatEstudiante",
-          },
+            as: "calXMatEstudiante"
+          }
         },
         {
           $unwind: {
-            path: "$calXMatEstudiante",
-          },
+            path: "$calXMatEstudiante"
+          }
         },
         {
           $match: {
             "calXMatEstudiante.idMateria": mongoose.Types.ObjectId(
               req.query.idMateria
-            ),
-          },
+            )
+          }
         },
         {
           $lookup: {
             from: "calificacionesXTrimestre",
             localField: "calXMatEstudiante.calificacionesXTrimestre",
             foreignField: "_id",
-            as: "calXTrimestre",
-          },
+            as: "calXTrimestre"
+          }
         },
         {
           $unwind: {
-            path: "$calXTrimestre",
-          },
+            path: "$calXTrimestre"
+          }
         },
         {
           $match: {
-            "calXTrimestre.trimestre": parseInt(req.query.trimestre, 10),
-          },
+            "calXTrimestre.trimestre": parseInt(req.query.trimestre, 10)
+          }
         },
         {
           $project: {
             "calXTrimestre.calificaciones": 1,
-            "calXTrimestre._id": 1,
-          },
-        },
+            "calXTrimestre._id": 1
+          }
+        }
       ])
-        .then((resultado) => {
+        .then(resultado => {
           CalificacionesXTrimestre.findByIdAndUpdate(
             resultado[0].calXTrimestre._id,
             {
               $set: {
-                calificaciones: estudiante.calificaciones,
-              },
+                calificaciones: estudiante.calificaciones
+              }
             }
           )
             .exec()
-            .catch((e) => console.log(e));
+            .catch(e => console.log(e));
         })
         .catch(() => {
           res.status(500).json({
-            message: "Mensaje de error especifico",
+            message: "Mensaje de error especifico"
           });
         });
     });
     res.json({
       message: "Calificaciones registradas correctamente",
-      exito: true,
+      exito: true
     });
   }
 );
@@ -1054,55 +1066,55 @@ router.post(
 //Obtiene la agenda de un curso (materias, horario y día dictadas)
 //@params: idCurso
 router.get("/agenda", checkAuthMiddleware, (req, res) => {
-  Curso.findById(req.query.idCurso).then((curso) => {
+  Curso.findById(req.query.idCurso).then(curso => {
     if (curso.materias.length != 0) {
       Curso.aggregate([
         {
           $match: {
-            _id: mongoose.Types.ObjectId(req.query.idCurso),
-          },
+            _id: mongoose.Types.ObjectId(req.query.idCurso)
+          }
         },
         {
           $lookup: {
             from: "materiasXCurso",
             localField: "materias",
             foreignField: "_id",
-            as: "MXC",
-          },
+            as: "MXC"
+          }
         },
         {
           $unwind: {
-            path: "$MXC",
-          },
+            path: "$MXC"
+          }
         },
         {
           $lookup: {
             from: "materia",
             localField: "MXC.materia",
             foreignField: "_id",
-            as: "nombreMateria",
-          },
+            as: "nombreMateria"
+          }
         },
         {
           $lookup: {
             from: "empleado",
             localField: "MXC.idDocente",
             foreignField: "_id",
-            as: "docente",
-          },
+            as: "docente"
+          }
         },
         {
           $unwind: {
-            path: "$MXC.horarios",
-          },
+            path: "$MXC.horarios"
+          }
         },
         {
           $lookup: {
             from: "horario",
             localField: "MXC.horarios",
             foreignField: "_id",
-            as: "horarios",
-          },
+            as: "horarios"
+          }
         },
         {
           $project: {
@@ -1112,16 +1124,16 @@ router.get("/agenda", checkAuthMiddleware, (req, res) => {
             "docente.nombre": 1,
             "docente.apellido": 1,
             "docente._id": 1,
-            "MXC._id": 1,
-          },
-        },
+            "MXC._id": 1
+          }
+        }
       ])
-        .then((agendaCompleta) => {
+        .then(agendaCompleta => {
           if (agendaCompleta[0].horarios[0] == null) {
             return res.json({
               exito: false,
               message: "No existen horarios registrados para este curso",
-              agenda: [],
+              agenda: []
             });
           } else {
             let agenda = [];
@@ -1135,27 +1147,27 @@ router.get("/agenda", checkAuthMiddleware, (req, res) => {
                 idDocente: agendaCompleta[i].docente[0]._id,
                 idMateria: agendaCompleta[i].nombreMateria[0]._id,
                 idHorarios: agendaCompleta[i].horarios[0]._id,
-                modificado: false,
+                modificado: false
               };
               agenda.push(valor);
             }
             res.json({
               exito: true,
               message: "Se ha obtenido la agenda correctamente",
-              agenda: agenda,
+              agenda: agenda
             });
           }
         })
         .catch(() => {
           res.status(500).json({
-            message: "Mensaje de error especifico",
+            message: "Mensaje de error especifico"
           });
         });
     } else {
       res.json({
         exito: true,
         message: "Se ha obtenido la agenda correctamente",
-        agenda: [],
+        agenda: []
       });
     }
   });
@@ -1172,7 +1184,7 @@ router.post("/eliminarHorario", checkAuthMiddleware, (req, res) => {
     .then(() => {
       MateriaXCurso.findByIdAndDelete(req.body.agenda.idMXC).then(() => {
         Curso.findByIdAndUpdate(req.body.idCurso, {
-          $pull: { materias: { $in: req.body.agenda.idMXC } },
+          $pull: { materias: { $in: req.body.agenda.idMXC } }
         }).then(() => {
           res.json({ exito: true, message: "Horario borrado exitosamente" });
         });
@@ -1180,7 +1192,7 @@ router.post("/eliminarHorario", checkAuthMiddleware, (req, res) => {
     })
     .catch(() => {
       res.status(500).json({
-        message: "Mensaje de error especifico",
+        message: "Mensaje de error especifico"
       });
     });
 });
@@ -1190,17 +1202,17 @@ router.post("/eliminarHorario", checkAuthMiddleware, (req, res) => {
 //@params: id del curso
 //@params: agenda, que es un vector que tiene objetos con idMateria, idDocente, modificado  y el vector de horarios
 router.post("/agenda", checkAuthMiddleware, async (req, res) => {
-  var crearHorario = (horario) => {
+  var crearHorario = horario => {
     return new Promise((resolve, reject) => {
-      horario.save().then((horarioGuardado) => {
+      horario.save().then(horarioGuardado => {
         resolve(horarioGuardado._id);
       });
     });
   };
 
-  var crearMateriaXCurso = (mxc) => {
+  var crearMateriaXCurso = mxc => {
     return new Promise((resolve, reject) => {
-      mxc.save().then((mxcGuardada) => {
+      mxc.save().then(mxcGuardada => {
         resolve(mxcGuardada._id);
       });
     });
@@ -1218,15 +1230,15 @@ router.post("/agenda", checkAuthMiddleware, async (req, res) => {
             mxcNueva.horarios.push({
               dia: materia.dia,
               inicio: materia.inicio,
-              fin: materia.fin,
+              fin: materia.fin
             });
           } else {
             mxcNuevas.push({
               idMateria: materia.idMateria,
               idDocente: materia.idDocente,
               horarios: [
-                { dia: materia.dia, inicio: materia.inicio, fin: materia.fin },
-              ],
+                { dia: materia.dia, inicio: materia.inicio, fin: materia.fin }
+              ]
             });
           }
         }
@@ -1235,8 +1247,8 @@ router.post("/agenda", checkAuthMiddleware, async (req, res) => {
           idMateria: materia.idMateria,
           idDocente: materia.idDocente,
           horarios: [
-            { dia: materia.dia, inicio: materia.inicio, fin: materia.fin },
-          ],
+            { dia: materia.dia, inicio: materia.inicio, fin: materia.fin }
+          ]
         });
       }
     } else if (materia.modificado) {
@@ -1244,7 +1256,7 @@ router.post("/agenda", checkAuthMiddleware, async (req, res) => {
       Horario.findByIdAndUpdate(materia.idHorarios, {
         dia: materia.dia,
         horaInicio: materia.inicio,
-        horaFin: materia.fin,
+        horaFin: materia.fin
       }).exec();
     }
   }
@@ -1257,7 +1269,7 @@ router.post("/agenda", checkAuthMiddleware, async (req, res) => {
         let nuevoHorario = new Horario({
           dia: horario.dia,
           horaInicio: horario.inicio,
-          horaFin: horario.fin,
+          horaFin: horario.fin
         });
         let idHorarioGuardado = await crearHorario(nuevoHorario);
         vectorIdsHorarios.push(idHorarioGuardado);
@@ -1265,15 +1277,15 @@ router.post("/agenda", checkAuthMiddleware, async (req, res) => {
       let nuevaMateriaXCurso = new MateriaXCurso({
         materia: mxcNueva.idMateria,
         idDocente: mxcNueva.idDocente,
-        horarios: vectorIdsHorarios,
+        horarios: vectorIdsHorarios
       });
 
       let idMXC = await crearMateriaXCurso(nuevaMateriaXCurso);
       vectorIdsMXC.push(idMXC);
     }
     Curso.findByIdAndUpdate(req.body.idCurso, {
-      $push: { materias: { $each: vectorIdsMXC } },
-    }).then((curso) => {
+      $push: { materias: { $each: vectorIdsMXC } }
+    }).then(curso => {
       res.json({ exito: true, message: "Materias agregadas correctamente" });
     });
   } else {
@@ -1286,17 +1298,17 @@ router.post("/agenda", checkAuthMiddleware, async (req, res) => {
 //@params: id del curso
 //@params: agenda, que es un vector que tiene objetos con idMateria, idDocente, modificado  y el vector de horarios
 router.post("/agendaTEST", checkAuthMiddleware, async (req, res) => {
-  var crearHorario = (horario) => {
+  var crearHorario = horario => {
     return new Promise((resolve, reject) => {
-      horario.save().then((horarioGuardado) => {
+      horario.save().then(horarioGuardado => {
         resolve(horarioGuardado._id);
       });
     });
   };
 
-  var crearMateriaXCurso = (mxc) => {
+  var crearMateriaXCurso = mxc => {
     return new Promise((resolve, reject) => {
-      mxc.save().then((mxcGuardada) => {
+      mxc.save().then(mxcGuardada => {
         resolve(mxcGuardada._id);
       });
     });
@@ -1314,15 +1326,15 @@ router.post("/agendaTEST", checkAuthMiddleware, async (req, res) => {
             mxcNueva.horaInicio.push({
               dia: materia.dia,
               inicio: materia.inicio,
-              fin: materia.fin,
+              fin: materia.fin
             });
           } else {
             mxcNuevas.push({
               idMateria: materia.idMateria,
               idDocente: materia.idDocente,
               horarios: [
-                { dia: materia.dia, inicio: materia.inicio, fin: materia.fin },
-              ],
+                { dia: materia.dia, inicio: materia.inicio, fin: materia.fin }
+              ]
             });
           }
         }
@@ -1331,8 +1343,8 @@ router.post("/agendaTEST", checkAuthMiddleware, async (req, res) => {
           idMateria: materia.idMateria,
           idDocente: materia.idDocente,
           horarios: [
-            { dia: materia.dia, inicio: materia.inicio, fin: materia.fin },
-          ],
+            { dia: materia.dia, inicio: materia.inicio, fin: materia.fin }
+          ]
         });
       }
     } else if (materia.modificado) {
@@ -1340,7 +1352,7 @@ router.post("/agendaTEST", checkAuthMiddleware, async (req, res) => {
       Horario.findByIdAndUpdate(materia.idHorarios, {
         dia: materia.dia,
         horaInicio: materia.inicio,
-        horaFin: materia.fin,
+        horaFin: materia.fin
       }).exec();
     }
   }
@@ -1353,7 +1365,7 @@ router.post("/agendaTEST", checkAuthMiddleware, async (req, res) => {
         let nuevoHorario = new Horario({
           dia: horario.dia,
           horaInicio: horario.inicio,
-          horaFin: horario.fin,
+          horaFin: horario.fin
         });
         let idHorarioGuardado = await crearHorario(nuevoHorario);
         vectorIdsHorarios.push(idHorarioGuardado);
@@ -1361,7 +1373,7 @@ router.post("/agendaTEST", checkAuthMiddleware, async (req, res) => {
       let nuevaMateriaXCurso = new MateriaXCurso({
         materia: mxcNueva.idMateria,
         idDocente: mxcNueva.idDocente,
-        horarios: vectorIdsHorarios,
+        horarios: vectorIdsHorarios
       });
 
       let idMXC = await crearMateriaXCurso(nuevaMateriaXCurso);

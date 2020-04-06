@@ -8,12 +8,11 @@ import { environment } from "src/environments/environment";
 import { Evento } from "./evento.model";
 
 @Injectable({
-  providedIn: "root",
+  providedIn: "root"
 })
 export class EventosService {
   public evento: Evento;
   public tituloABorrar: string;
-  public idComentarioSeleccionado: string;
   public comentarios: any[] = [];
   public ImgCargada: string;
 
@@ -138,7 +137,7 @@ export class EventosService {
   public obtenerImagenEvento(imgUrl: string) {
     let params = new HttpParams().set("imgUrl", imgUrl);
     return this.http.get<File>(environment.apiUrl + "/evento/imagenes", {
-      params: params,
+      params: params
     });
   }
 
@@ -162,7 +161,7 @@ export class EventosService {
       comentario: comentario,
       emailUsuario: emailUsuario,
       rol: rol,
-      idEvento: idEvento,
+      idEvento: idEvento
     };
 
     return this.http.post<{
@@ -173,43 +172,26 @@ export class EventosService {
     }>(environment.apiUrl + "/evento/registrarComentario", datosComentario);
   }
 
-  public eliminarComentario() {
+  // Borrar cuando se sepa que no es nada a medio hacer que haya quedado por error
+  // public idComentarioSeleccionado: string;
+  // public eliminarComentario() {
+  //   let params = new HttpParams()
+  //     .set("idEvento", this.eventoSeleccionado._id)
+  //     .append("idComentario", this.idComentarioSeleccionado);
+  //   return this.http.delete<{ message: string; exito: boolean }>(
+  //     environment.apiUrl + "/evento/eliminarComentario",
+  //     { params: params }
+  //   );
+  // }
+
+  public eliminarComentariobyID(idComentario) {
     let params = new HttpParams()
       .set("idEvento", this.eventoSeleccionado._id)
-      .append("idComentario", this.idComentarioSeleccionado);
+      .set("idComentario", idComentario);
     return this.http.delete<{ message: string; exito: boolean }>(
       environment.apiUrl + "/evento/eliminarComentario",
       { params: params }
     );
-  }
-
-  public eliminarComentariobyID(id) {
-    let params = new HttpParams()
-      .set("idEvento", id)
-      .append("idComentario", id);
-    return this.http.delete<{ message: string; exito: boolean }>(
-      environment.apiUrl + "/evento/eliminarComentario",
-      { params: params }
-    );
-  }
-
-  public eliminarImagen(imgUrl: string) {
-    let params = new HttpParams()
-      .set("imgUrl", imgUrl)
-      .append("idImg", this.ImgCargada);
-    this.http
-      .delete<{ message: string; exito: boolean }>(
-        environment.apiUrl + "/evento/eliminarImagen",
-        { params: params }
-      )
-      .subscribe((response) => {
-        if (response.exito) {
-          this.snackBar.open(response.message, "", {
-            panelClass: ["snack-bar-exito"],
-            duration: 4500,
-          });
-        }
-      });
   }
 
   public obtenerEventosDeCursos(cursos: string) {
