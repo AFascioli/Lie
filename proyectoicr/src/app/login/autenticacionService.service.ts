@@ -67,7 +67,7 @@ export class AutenticacionService implements OnDestroy {
     const datosContraseña = {
       passwordVieja: passwordVieja,
       passwordNueva: passwordNueva,
-      usuario: this.usuarioAutenticado
+      usuario: this.usuarioAutenticado,
     };
     return this.http.post<{
       exito: boolean;
@@ -216,7 +216,7 @@ export class AutenticacionService implements OnDestroy {
         rol: string;
       }>(environment.apiUrl + "/usuario/login", authData)
       .pipe(takeUntil(this.unsubscribe))
-      .subscribe(response => {
+      .subscribe((response) => {
         respuesta = response;
         if (response.token) {
           this.usuarioAutenticado = email;
@@ -241,7 +241,7 @@ export class AutenticacionService implements OnDestroy {
           if (response.rol != "Adulto Responsable") {
             this.getCicloLectivo()
               .pipe(takeUntil(this.unsubscribe))
-              .subscribe(response => {
+              .subscribe((response) => {
                 this.limpiarFechasCicloLectivo();
                 this.guardarFechasCicloLectivo(response.cicloLectivo);
                 this.fechasCicloLectivo = response.cicloLectivo;
@@ -283,7 +283,7 @@ export class AutenticacionService implements OnDestroy {
       vencimientoToken: new Date(fechaVencimiento),
       usuario: usuario,
       rol: rol,
-      id: id
+      id: id,
     };
   }
 
@@ -299,7 +299,7 @@ export class AutenticacionService implements OnDestroy {
       exito: boolean;
       permisos: any;
     }>(environment.apiUrl + "/usuario/permisosDeRol", {
-      params: params
+      params: params,
     });
   }
 
@@ -339,7 +339,7 @@ export class AutenticacionService implements OnDestroy {
       fechaInicioTercerTrimestre: fechaInicioTercerTrimestre,
       fechaFinTercerTrimestre: fechaFinTercerTrimestre,
       fechaInicioExamenes: fechaInicioExamenes,
-      fechaFinExamenes: fechaFinExamenes
+      fechaFinExamenes: fechaFinExamenes,
     };
   }
 
@@ -358,7 +358,7 @@ export class AutenticacionService implements OnDestroy {
     return this.http.post(environment.apiUrl + "/usuario/signup", {
       mail: mail,
       password: password,
-      rol: rol
+      rol: rol,
     });
   }
   //Recibe la duracion en segundo y pone un timer que cuando se cumpla el tiempo desloguea al usuario
@@ -366,5 +366,18 @@ export class AutenticacionService implements OnDestroy {
     this.tokenTimer = setTimeout(() => {
       this.logout();
     }, duration * 1000);
+  }
+
+  obtenerNombreApellido() {
+    let params = new HttpParams()
+    .set("idUsuario", this.id)
+    .append("rol", this.rol);
+    return this.http.get<{
+      message: string;
+      exito: boolean;
+      usuario: any;
+    }>(environment.apiUrl + "/usuario/obtenerNombreApellido", {
+      params: params,
+    });
   }
 }

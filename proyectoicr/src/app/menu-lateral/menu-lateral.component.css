@@ -1,6 +1,6 @@
-.opcion{
+.opcion {
   /* margin: 1rem; */
-  margin:0;
+  margin: 0;
 }
 
 .tituloMenu, .mat-icon-button, .home-button, .home-buttonAR, .drop-down, .preferencias-ar, .cerrar-sesion-ar{
@@ -12,35 +12,35 @@
   top: 0;
   left: 0;
   z-index: 2;
-  width: 100%  !important;
+  width: 100% !important;
   /* background-color: #c12d2a; */
   background-color: #2f6483;
-/* https://colorhunt.co/palette/157179 paleta de color para el azul */
+  /* https://colorhunt.co/palette/157179 paleta de color para el azul */
   height: 64px;
 }
 
 hr {
   display: block;
   margin: 10px 0 10px 0;
-  border-top: 1px solid rgba(0, 0, 0, .12);
-  width: 100%
+  border-top: 1px solid rgba(0, 0, 0, 0.12);
+  width: 100%;
 }
 
-.body-contenido{
+.body-contenido {
   padding: 2rem;
   height: 100%;
 }
 
-.body-contenido-mobile{
+.body-contenido-mobile {
   height: 100%;
   padding: 0rem !important;
 }
 
-.mat-expansion-panel-body{
+.mat-expansion-panel-body {
   padding-bottom: 0px !important;
 }
 
-.mat-sidenav{
+.mat-sidenav {
   box-shadow: 2px 0 5px -2px #888;
   border-right: 0px !important;
   width: 29%;
@@ -54,11 +54,11 @@ hr {
 
 /* Para que el container del sidenav sea del tamaño completo del body,
    le pongo 100% menos el tamaño del header */
-.mat-sidenav-container{
+.mat-sidenav-container {
   height: calc(100% - 64px);
 }
 
-.titulo-expansion{
+.titulo-expansion {
   margin-left: 4%;
 }
 
@@ -69,7 +69,6 @@ hr {
 .home-button{
   margin-left: auto !important;
 }
-
 
 .cierre-sesion{
   position: absolute;
@@ -83,12 +82,12 @@ hr {
   text-align: left;
   height: 42.5px;
   border-radius: 0% !important;
-  box-shadow: 0px 0px 4px 0px rgba(0,0,0,0.71) !important;
+  box-shadow: 0px 0px 4px 0px rgba(0, 0, 0, 0.71) !important;
   line-height: 0px !important;
   padding-left: 23px !important;
 }
 
-.preferencias{
+.preferencias {
   position: absolute;
   font-weight: bold;
   font-size: 16px;
@@ -98,7 +97,7 @@ hr {
   text-align: left;
   height: 42.5px;
   border-radius: 0% !important;
-  box-shadow: 0px 0px 4px 0px rgba(0,0,0,0.71) !important;
+  box-shadow: 0px 0px 4px 0px rgba(0, 0, 0, 0.71) !important;
   line-height: 0px !important;
   padding-left: 23px !important;
   margin-bottom: 42.5px !important;
@@ -106,18 +105,18 @@ hr {
   bottom: 0;
 }
 
-.mat-toolbar-row{
+.mat-toolbar-row {
   display: grid;
   grid-template-columns: 1fr repeat(1, auto) 1fr;
   grid-template-rows: 64px;
   grid-column-gap: 5px;
 }
 
-.mat-toolbar-row-mobile{
-  padding:0;
+.mat-toolbar-row-mobile {
+  padding: 0;
 }
 
-.button-mobile{
+.button-mobile {
   min-width: 56px;
 }
 
@@ -125,7 +124,7 @@ hr {
   width: fit-content;
 }
 
-.opciones{
+.opciones {
   text-align: right;
 }
 
@@ -139,32 +138,30 @@ hr {
 }
 
 /* top para que empiece luego del header */
-.contenedor-sidenav{
-  flex:1;
-  top:64px !important;
+.contenedor-sidenav {
+  flex: 1;
+  top: 64px !important;
   background-color: #eef0f1;
 }
 
-
 /* nuevo */
-.mat-expansion-panel{
+.mat-expansion-panel {
   border-radius: 0px !important;
-  margin:0 !important;
+  margin: 0 !important;
   background: #47988d59;
   /* background-color: #E6F4F1; */
-
 }
 
-.mat-expansion-panel-header{
+.mat-expansion-panel-header {
   padding-left: 2%;
 }
 
 /* Comiezo del menu lateral que sea luego del header */
-.mat-list-base{
+.mat-list-base {
   padding-top: 0 !important;
 }
 
-.titulo-row{
+.titulo-row {
   margin: 0px;
   padding: 0px;
   text-align: center;
@@ -191,21 +188,45 @@ hr {
   text-shadow: 2px 2px 4px #000000;
 }
 
-.parrafo{
+.parrafo {
   text-align: center;
 }
 
 .icon-usuario {
-  font-size: 80px;
-  margin: auto;
-  margin-top:8px;
-  display: table;
+  font-size: 100px;
+  /* margin: auto;
+  margin-top: 8px;
+  display: table; */
+  margin: 10% 0% 0% 10%;
+  color: beige;
 }
-
-.usuario{
-  text-align: center;
+.usuario {
+  /* text-align: center;
   margin: 8px 8px;
-  word-break: break-all;
+  word-break: break-all; */
+  margin: 7px 0px 30px 55px !important;
+  color: beige;
+  font-size: 18px !important;
 }
 
+.div-usuario{
+  margin: 10px 0px 5px 0px !important;
+}
 
+.imagen-background {
+  /* background-image: url("https://conceptodefinicion.de/wp-content/uploads/2017/03/Abstracto.jpg"); */
+ background-image: url("https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcSgASpiPnEAyktT3ldWZPC1vFkZoUln8iw7-mcIU3a4MzUmVSYP&usqp=CAU");
+ background-repeat: no-repeat;
+ background-size: cover;
+  display: flow-root;
+}
+
+.sinExpansion
+{
+  background: #47988d59 !important;
+  box-shadow: 0px 0px 4px 0px rgba(0, 0, 0, 0.31) !important;
+}
+.iconSinExpansion
+{
+  margin-left: 7px;
+}
