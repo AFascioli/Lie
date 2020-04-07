@@ -1,22 +1,22 @@
 <div *ngIf="tipoPopup === 'cancelar'">
-  <h3 mat-dialog-title class="tituloPopup" >Cancelar</h3>
+  <h3 mat-dialog-title class="titulo-popup" >Cancelar</h3>
   <div mat-dialog-content class="parrafo">
     <p>¿Está seguro que desea cancelar?</p>
   </div>
-  <div mat-dialog-actions class="buttonPopup" >
-    <button mat-raised-button class="buttonPrimary" (click)="onYesCancelarClick()" cdkFocusInitial>Sí </button>
-    <button mat-raised-button class="buttonWarn" (click)="onNoCancelarConfirmarClick()">No</button>
+  <div mat-dialog-actions class="button-popup" >
+    <button mat-raised-button class="button-primary" (click)="onYesCancelarClick()" cdkFocusInitial>Sí </button>
+    <button mat-raised-button class="button-warn" (click)="onNoCancelarConfirmarClick()">No</button>
   </div>
 </div>
 
 <div *ngIf="tipoPopup==='confirmar'">
-        <h3 mat-dialog-title class="tituloPopup">Confirmar</h3>
+        <h3 mat-dialog-title class="titulo-popup">Confirmar</h3>
         <div mat-dialog-content class="parrafo">
           <p>¿Está seguro que desea confirmar la acción?</p>
         </div>
-        <div mat-dialog-actions class="buttonPopup">
-          <button mat-raised-button class="buttonPrimary"  (click)="onYesConfirmarClick()" cdkFocusInitial>Sí</button>
-          <button mat-raised-button class="buttonWarn" (click)="onNoCancelarConfirmarClick()">No </button>
+        <div mat-dialog-actions class="button-popup">
+          <button mat-raised-button class="button-primary"  (click)="onYesConfirmarClick()" cdkFocusInitial>Sí</button>
+          <button mat-raised-button class="button-warn" (click)="onNoCancelarConfirmarClick()">No </button>
         </div>
   </div>
 

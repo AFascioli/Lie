@@ -5,16 +5,17 @@ const Estudiante = require("../models/estudiante");
 const checkAuthMiddleware = require("../middleware/check-auth");
 const Inscripcion = require("../models/inscripcion");
 const Curso = require("../models/curso");
+
 //Registra un nuevo adulto responsable en la base de datos
 router.post("/", checkAuthMiddleware, (req, res) => {
   AdultoResponsable.findOne({
     tipoDocumento: req.body.datos.AR.tipoDocumento,
-    numeroDocumento: req.body.datos.AR.numeroDocumento
-  }).then(AR => {
+    numeroDocumento: req.body.datos.AR.numeroDocumento,
+  }).then((AR) => {
     if (AR) {
       return res.status(200).json({
         message: "El adulto responsable ya esta registrado",
-        exito: false
+        exito: false,
       });
     } else {
       const adultoResponsable = new AdultoResponsable({
@@ -29,74 +30,74 @@ router.post("/", checkAuthMiddleware, (req, res) => {
         email: req.body.datos.AR.email,
         tutor: req.body.datos.AR.tutor,
         idUsuario: req.body.datos.AR.idUsuario,
-        estudiantes: []
+        estudiantes: [],
       });
       adultoResponsable.estudiantes.push(req.body.datos.idEstudiante);
       adultoResponsable
         .save()
-        .then(ARGuardado => {
+        .then((ARGuardado) => {
           Estudiante.findByIdAndUpdate(req.body.datos.idEstudiante, {
-            $addToSet: { adultoResponsable: ARGuardado._id }
+            $addToSet: { adultoResponsable: ARGuardado._id },
           }).then(() => {
             res.status(201).json({
               message: "El adulto responsable fue registrado exitosamente",
-              exito: true
+              exito: true,
             });
           });
         })
-        .catch(() => {
+        .catch((e) => {
           res.status(500).json({
-            message: "Mensaje de error especifico"
+            message:
+              "Se presentó un error al querer registrar el adulto responsable. El error fue el siguiente: " +
+              e,
           });
         });
     }
   });
 });
 
-//Retorna nombre, apellido, curso e id de los estudiantes a cargo de un AR
+//Retorna nombre, apellido, curso e id de los estudiantes a cargo de un Adulto Responsable
 //@params: idUsuario (del AR)
 router.get("/estudiantes", checkAuthMiddleware, async (req, res) => {
   let estudiantes = [];
-  var obtenerIdsEstudiantes = idAR => {
+  var obtenerIdsEstudiantes = (idAR) => {
     return new Promise((resolve, reject) => {
-      AdultoResponsable.findOne({ idUsuario: idAR })
-        .then(adultoResponsable => {
+      AdultoResponsable.findOne({ idUsuario: idAR }).then(
+        (adultoResponsable) => {
           resolve(adultoResponsable.estudiantes);
-        })
-        .catch(() => {
-          res.status(500).json({
-            message: "Mensaje de error especifico"
-          });
-        });
+        }
+      );
     });
   };
-  var obtenerDatosEstudiantes = idEstudiante => {
-    return new Promise ((resolve, reject) => {
+  var obtenerDatosEstudiantes = (idEstudiante) => {
+    return new Promise((resolve, reject) => {
       let datosEstudiante;
-      Estudiante.findById(idEstudiante).then(estudiante => {
-         datosEstudiante={
+      Estudiante.findById(idEstudiante).then((estudiante) => {
+        datosEstudiante = {
           nombre: estudiante.nombre,
           apellido: estudiante.apellido,
           idEstudiante: estudiante._id,
-          curso: null
-         };
-        Inscripcion.findOne({idEstudiante: idEstudiante, activa: true}).then(inscripcion => {
-          if(inscripcion!=null){
-            Curso.findById(inscripcion.idCurso).then(curso => {
-              datosEstudiante.curso=curso.curso;
-              resolve(datosEstudiante);
-            });
-          }else{
-            resolve(null);
+          curso: null,
+        };
+        Inscripcion.findOne({ idEstudiante: idEstudiante, activa: true }).then(
+          (inscripcion) => {
+            if (inscripcion != null) {
+              Curso.findById(inscripcion.idCurso).then((curso) => {
+                datosEstudiante.curso = curso.curso;
+                resolve(datosEstudiante);
+              });
+            } else {
+              resolve(null);
+            }
           }
-        });
+        );
       });
     });
   };
   let idsEstudiantes = await obtenerIdsEstudiantes(req.query.idUsuario);
 
   for (const idEstudiante of idsEstudiantes) {
-    let datosEstudiante= await obtenerDatosEstudiantes(idEstudiante);
+    let datosEstudiante = await obtenerDatosEstudiantes(idEstudiante);
     estudiantes.push(datosEstudiante);
   }
   if (estudiantes.length != 0) {
@@ -105,4 +106,5 @@ router.get("/estudiantes", checkAuthMiddleware, async (req, res) => {
     res.json({ estudiantes: estudiantes, exito: false, message: "error" });
   }
 });
+
 module.exports = router;

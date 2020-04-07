@@ -3,7 +3,7 @@
   margin:0;
 }
 
-.tituloMenu, .mat-icon-button, .homeButton, .homeButtonAR, .dropDown, .preferencias-ar, .cerrar-sesion-ar{
+.tituloMenu, .mat-icon-button, .home-button, .home-buttonAR, .drop-down, .preferencias-ar, .cerrar-sesion-ar{
   color: #ffff;
 }
 
@@ -46,7 +46,7 @@ hr {
   width: 29%;
 }
 
-.sidenavMobile{
+.sidenav-mobile{
   box-shadow: 2px 0 5px -2px #888;
   border-right: 0px !important;
   width: 60%;
@@ -66,12 +66,12 @@ hr {
   margin-left: 10%;
 } */
 
-.homeButton{
+.home-button{
   margin-left: auto !important;
 }
 
 
-.cierreSesion{
+.cierre-sesion{
   position: absolute;
   left: 0;
   bottom: 0;
@@ -121,7 +121,7 @@ hr {
   min-width: 56px;
 }
 
-.homeButtonAR{
+.home-buttonAR{
   width: fit-content;
 }
 
@@ -180,7 +180,7 @@ hr {
   text-shadow: 2px 2px 4px #000000;
 }
 
-.titulo-rowAR{
+.titulo-row-AR{
   text-align: center;
   opacity: 0.8;
   color: #ffffff;
@@ -195,12 +195,13 @@ hr {
   text-align: center;
 }
 
-.iconUsuario {
+.icon-usuario {
   font-size: 80px;
   margin: auto;
   margin-top:8px;
   display: table;
 }
+
 .usuario{
   text-align: center;
   margin: 8px 8px;

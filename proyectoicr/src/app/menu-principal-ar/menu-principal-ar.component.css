@@ -23,7 +23,7 @@
   text-align: center;
 }
 
-.iconEstudiante {
+.icon-estudiante {
   font-size: 120px;
   margin: auto;
   display: table;
@@ -93,7 +93,7 @@ time.icon span {
   color: #2f2f2f;
 }
 
-.fechaEvento {
+.fecha-evento {
   display: inline-block;
   margin-top: 4% !important;
 }

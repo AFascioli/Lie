@@ -4,7 +4,12 @@ table {
   margin-top: 0px;
 }
 
-.columnasNormales {
+.table-mobile {
+  width: 100%;
+  margin: 0;
+}
+
+.columnas-normales {
   width: 21% !important;
 }
 
@@ -18,7 +23,7 @@ td {
   text-align: center !important;
 }
 
-.botonesAccion {
+.botones-accion {
   display: flex;
 }
 
@@ -30,43 +35,52 @@ button {
   margin-left: 15px !important;
 }
 
-.matFormHora {
+.mat-form-hora {
   width: 45px !important;
   margin-left: 0px !important;
   margin-right: 0px !important;
 }
 
-.matFormDia,
-.matFormMateria {
+.mat-form-dia,
+.mat-form-materia {
   width: 100px !important;
 }
 
-.matFormDocente {
+.mat-form-docente {
   width: 130px !important;
 }
 
-.divGuardar {
+.div-guardar {
   text-align: right;
 }
 
-.buttonPrimary {
+.button-primary {
   margin-right: 13px !important;
 }
 
-.buttonAgregar {
+.button-agregar {
   background: gainsboro;
 }
 
-.divAgregar,
+.div-agregar,
 .parrafo {
   text-align: center;
+}
+
+.div-agregar-mobile{
+  margin-bottom: 3%;
+  margin-top: 3%;
 }
 
 th.mat-sort-header-sorted {
   color: black;
 }
 
-.contenedorTabla {
-  height: 270px;
+.contenedor-tabla {
   overflow: auto;
+}
+
+.th.mat-header-cell:first-of-type,  th.mat-header-cell:first-of-type,
+.td.mat-cell:first-of-type,  td.mat-cell:first-of-type  {
+  padding-left: 0;
 }
