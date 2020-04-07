@@ -9,9 +9,8 @@
     fuera del ciclo lectivo
   </p>
   <div *ngIf="!fueraPeriodoCicloLectivo">
-    <div class="ubicacionfecha">
+    <div class="ubicacion-fecha">
       <b>Fecha: </b>
-      &nbsp;
       <mat-form-field class="mat-form-Fecha">
         <input
           [disabled]="true"
@@ -21,22 +20,21 @@
           name="diaFecha"
           [(ngModel)]="diaActual"
           required
-          class="inputFecha"
+          class="input-fecha"
         />
         {{ fechaActual | date: "EEEE" | titlecase }}
         {{ fechaActual | date: "dd/MM/yyyy" }}&nbsp;
       </mat-form-field>
     </div>
-
-    <br />
     <div class="contenido">
-      <h3 class="tituloTutores">
+      <h3 class="titulo-tutores">
         Tutores del estudiante: {{ apellidoEstudiante }}, {{ nombreEstudiante }}
       </h3>
       <p *ngIf="tutores.length == 0">
         El estudiante seleccionado no tiene registrado ningún tutor
       </p>
       <table
+      [class.table-mobile]="mobileQuery.matches"
         mat-table
         [dataSource]="tutores"
         *ngIf="tutores && tutores.length != 0"
@@ -46,7 +44,7 @@
           <th mat-header-cell *matHeaderCellDef></th>
           <td mat-cell *matCellDef="let row">
             <mat-checkbox
-              class="columnaCheckbox"
+              class="columna-checkbox"
               (click)="$event.stopPropagation()"
               (change)="$event ? seleccion.toggle(row) : null"
               [checked]="seleccion.isSelected(row)"
@@ -56,42 +54,42 @@
         </ng-container>
         <!-- Fin de prueba -->
         <ng-container matColumnDef="apellido">
-          <th class="columnasNormales" mat-header-cell *matHeaderCellDef>
+          <th class="columnas-normales" mat-header-cell *matHeaderCellDef>
             Apellido
           </th>
-          <td class="columnasNormales" mat-cell *matCellDef="let tutor">
+          <td class="columnas-normales" mat-cell *matCellDef="let tutor">
             {{ tutor.apellido }}
           </td>
         </ng-container>
         <ng-container matColumnDef="nombre">
-          <th class="columnasNormales" mat-header-cell *matHeaderCellDef>
+          <th class="columnas-normales" mat-header-cell *matHeaderCellDef>
             Nombre
           </th>
-          <td class="columnasNormales" mat-cell *matCellDef="let tutor">
+          <td class="columnas-normales" mat-cell *matCellDef="let tutor">
             {{ tutor.nombre }}
           </td>
         </ng-container>
         <ng-container matColumnDef="telefono">
-          <th class="columnasNormales" mat-header-cell *matHeaderCellDef>
+          <th class="columnas-normales" mat-header-cell *matHeaderCellDef>
             Teléfono
           </th>
-          <td class="columnasNormales" mat-cell *matCellDef="let tutor">
+          <td class="columnas-normales" mat-cell *matCellDef="let tutor">
             {{ tutor.telefono }}
           </td>
         </ng-container>
         <ng-container matColumnDef="tipoDocumento">
-          <th class="columnasNormales" mat-header-cell *matHeaderCellDef>
+          <th class="columnas-normales" mat-header-cell *matHeaderCellDef>
             Tipo
           </th>
-          <td class="columnasNormales" mat-cell *matCellDef="let tutor">
+          <td class="columnas-normales" mat-cell *matCellDef="let tutor">
             {{ tutor.tipoDocumento }}
           </td>
         </ng-container>
         <ng-container matColumnDef="nroDocumento">
-          <th class="columnasNormales" mat-header-cell *matHeaderCellDef>
+          <th class="columnas-normales" mat-header-cell *matHeaderCellDef>
             Número
           </th>
-          <td class="columnasNormales" mat-cell *matCellDef="let tutor">
+          <td class="columnas-normales" mat-cell *matCellDef="let tutor">
             {{ tutor.numeroDocumento }}
           </td>
         </ng-container>
@@ -105,7 +103,7 @@
     </div>
     <br />
 
-    <mat-radio-group aria-label="Select an option">
+    <mat-radio-group aria-label="Select an option" class="opciones" [class.opciones-mobile]="mobileQuery.matches">
       <mat-radio-button
         (change)="CambiarTipoRetiro()"
         [checked]="antes10am"
@@ -127,7 +125,7 @@
   </div>
   <div class="div-button">
     <button
-      class="buttonPrimary"
+      class="button-primary"
       (click)="openPopup('confirmar')"
       mat-raised-button
       [disabled]="fueraPeriodoCicloLectivo"
@@ -137,7 +135,7 @@
     <button
       mat-raised-button
       [routerLink]="['/buscar/lista']"
-      class="buttonWarn"
+      class="button-warn"
     >
       Volver
     </button>

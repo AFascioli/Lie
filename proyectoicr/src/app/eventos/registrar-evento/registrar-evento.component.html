@@ -4,85 +4,84 @@
 
 <mat-card class="card-body-componente">
   <form #form="ngForm">
-    <div class="camposFormulario">
-      <mat-form-field>
-        <input
-          name="titulo"
-          ngModel
-          #titulo="ngModel"
-          matInput
-          placeholder="Ingrese título"
-          type="text"
-          required
-        />
+    <mat-form-field [class.mat-form-field-mobile]="mobileQuery.matches">
+      <input
+        name="titulo"
+        ngModel
+        #titulo="ngModel"
+        matInput
+        placeholder="Ingrese título"
+        type="text"
+        required
+      />
+    </mat-form-field>
+    <br />
+    <mat-form-field [class.mat-form-field-mobile]="mobileQuery.matches">
+      <textarea
+        matInput
+        name="descripcion"
+        ngModel
+        #descripcion="ngModel"
+        rows="3"
+        placeholder="Ingrese descripción"
+        type="text"
+      >
+      </textarea>
+    </mat-form-field>
+    <br />
+    <mat-form-field [class.mat-form-field-mobile]="mobileQuery.matches">
+      <input
+        matInput
+        name="fechaEvento"
+        ngModel
+        #fechaEvento="ngModel"
+        [min]="fechaActual"
+        [matDatepicker]="picker"
+        placeholder="Seleccione fecha de evento"
+        (click)="picker.open()"
+        required
+        readonly
+      />
+      <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+      <mat-datepicker touchUi #picker></mat-datepicker>
+    </mat-form-field>
+    <div>
+      <mat-form-field class="mat-form-hora" [class.mat-form-field-hora-mobile]="mobileQuery.matches">
+        <div class="hora">
+          <input
+            matInput
+            name="horaInicio"
+            ngModel
+            #horaInicio="ngModel"
+            placeholder="Hora inicio *"
+            id="pickerInicio"
+            readonly
+          />
+        </div>
       </mat-form-field>
-      <br />
-      <mat-form-field>
-        <textarea
-          matInput
-          name="descripcion"
-          ngModel
-          #descripcion="ngModel"
-          rows="3"
-          placeholder="Ingrese descripción"
-          type="text"
-        >
-        </textarea>
+      &nbsp;
+      <mat-form-field class="mat-form-hora" [class.mat-form-field-hora-mobile]="mobileQuery.matches">
+        <div class="hora">
+          <input
+            matInput
+            name="horaFin"
+            ngModel
+            #horaFin="ngModel"
+            placeholder="Hora fin *"
+            id="pickerFin"
+            readonly
+          />
+        </div>
       </mat-form-field>
-      <br />
-      <mat-form-field>
-        <input
-          matInput
-          name="fechaEvento"
-          ngModel
-          #fechaEvento="ngModel"
-          [min]="fechaActual"
-          [matDatepicker]="picker"
-          placeholder="Seleccione fecha de evento"
-          (click)="picker.open()"
-          required
-          readonly
-        />
-        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-        <mat-datepicker touchUi #picker></mat-datepicker>
-      </mat-form-field>
-      <div>
-        <mat-form-field class="matFormHora">
-          <div class="hora">
-            <input
-              matInput
-              name="horaInicio"
-              ngModel
-              #horaInicio="ngModel"
-              placeholder="Hora inicio *"
-              id="pickerInicio"
-              readonly
-            />
-          </div>
-        </mat-form-field>
-        &nbsp;
-        <mat-form-field class="matFormHora">
-          <div class="hora">
-            <input
-              matInput
-              name="horaFin"
-              ngModel
-              #horaFin="ngModel"
-              placeholder="Hora fin *"
-              id="pickerFin"
-              readonly
-            />
-          </div>
-        </mat-form-field>
-      </div>
+    </div>
 
-      <mat-form-field class="chip-list">
-        <mat-chip-list #chipList aria-label="Seleccion de chips">
-          <mat-chip
-            *ngFor="let chip of chips"
-            [selectable]="selectable"
-            [removable]="removable"
-            (removed)="remove(chip)"
+    <mat-form-field class="chip-list" [class.mat-form-field-mobile]="mobileQuery.matches">
+      <mat-chip-list #chipList aria-label="Seleccion de chips">
+        <mat-chip
+          *ngFor="let chip of chips"
+          [selectable]="selectable"
+          [removable]="removable"
+          (removed)="remove(chip)"
           >
             {{ chip }}
             <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
@@ -156,13 +155,13 @@
     </div>
     <div class="div-button">
       <button
-        class="buttonPrimary"
+        class="button-primary"
         (click)="onGuardarEvento(form)"
         mat-raised-button
       >
         Guardar
       </button>
-      <button mat-raised-button (click)="popUpCancelar()" class="buttonWarn">
+      <button mat-raised-button (click)="popUpCancelar()" class="button-warn">
         Cancelar
       </button>
     </div>

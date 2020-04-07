@@ -23,6 +23,10 @@ mat-datepicker-toggle {
   display: none;
 }
 
+.mensaje {
+  color: red;
+}
+
 .mat-form-field {
   width: 60%;
 }
@@ -53,7 +57,7 @@ mat-datepicker-toggle {
   padding: 25px 50px;
 }
 
-.matFormHora {
+.mat-form-hora {
   width: 29%;
 }
 
@@ -62,6 +66,13 @@ mat-datepicker-toggle {
   justify-content: center;
   align-items: center;
 }
+
+.mat-form-field-mobile{
+  width: 75%;
+}
+
+.mat-form-field-hora-mobile{
+  width: 36%;
 
 * {
   box-sizing: border-box;

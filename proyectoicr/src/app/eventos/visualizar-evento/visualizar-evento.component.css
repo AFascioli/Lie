@@ -5,16 +5,6 @@ textarea {
   resize: initial;
 }
 
-/* .mat-card-title {
-  text-align: center;
-  font-size: 35px;
-}
-
-.mat-card-subtitle {
-  text-align: center;
-  font-size: 20px;
-} */
-
 .image-preview {
   height: 20rem;
   margin: auto;
@@ -42,7 +32,7 @@ textarea {
   width: 6em;
 }
 
-.botonOpciones {
+.boton-opciones {
   margin-left: auto !important;
   display: flex;
 }
@@ -52,10 +42,9 @@ div.mat-chip-list-wrapper {
   margin: 0px !important;
 }
 
-.textoParticipan {
+.texto-participan {
   font-size: 20px;
   margin: 10px 0px 0px 25px !important;
-  /* margin-left: 5px !important; */
 }
 
 .descripcion {
@@ -66,14 +55,17 @@ div.mat-chip-list-wrapper {
 }
 
 .comentario {
-  appearance: "outline" !important;
-  border-color: black !important;
-  margin-left: 30px;
+  display: block;
+    margin: 0 auto;
+    margin-top: 2%;
 }
 
 p,
 b {
   font-size: 20px;
+}
+
+.dia-evento, .hora-evento{
   margin-left: 25px;
 }
 
@@ -134,26 +126,18 @@ time.icon span {
   text-align: right;
 }
 
-.imagenEvento {
-  margin: auto;
-  display: flex;
-  border: 3px solid black;
-  padding: 5px;
-  margin-bottom: 20px !important;
-}
-
 mat-icon {
   display: flex;
   margin-left: auto;
 }
 
-.datosComentario {
+.datos-comentario {
   display: flex;
   margin-left: auto;
   justify-content: space-between; /* para que la fecha este del lado derecho */
 }
 
-.nombreAutor {
+.nombre-autor {
   margin-left: 0px;
 }
 
@@ -166,7 +150,7 @@ mat-icon {
   margin-top: 2%;
 }
 
-.divParticipan {
+.div-participan {
   margin-left: 4px !important;
 }
 
@@ -175,27 +159,27 @@ mat-icon {
   margin-bottom: 5px !important;
 }
 
-.diaEvento {
+.dia-evento
+{
   margin-bottom: 0px;
 }
 
-.horaEvento {
+.hora-evento {
   margin-bottom: 10px !important;
 }
 
-.fechaComentario {
+.fecha-comentario {
   margin-right: 5%;
   font-size: small !important;
 }
 
-.tituloComentarios {
+.titulo-comentarios {
   font-size: 27px;
   text-align: center;
   margin-left: 0%;
 }
-.textoComentario {
+.texto-comentario {
   border-radius: 25px;
-  /* background: rgb(231, 232, 230); */
   background: white;
   padding: 20px;
   margin-top: 0%;
@@ -203,10 +187,6 @@ mat-icon {
   word-wrap: break-word;
 }
 
-/* .carousel[_ngcontent-dwo-c14] > button[_ngcontent-dwo-c14] > mat-icon[_ngcontent-dwo-c14] {
-  background: white !important;
-  border-radius: 50% !important; */
-/* } */
 
 ::ng-deep
   .mat-button-wrapper

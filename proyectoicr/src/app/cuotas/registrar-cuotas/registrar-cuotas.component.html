@@ -2,74 +2,78 @@
   Registrar pago de cuotas
 </h1>
 <mat-card class="card-body-componente">
-  <mat-form-field class="mes">
-    <mat-select
-      placeholder="Seleccione mes"
-      name="mes"
-      ngModel
-      #mes="ngModel"
-      [disabled]="fueraPeriodoCicloLectivo"
-      matNativeControl
-      required
-      (selectionChange)="onMesSeleccionado(mes)"
-    >
-      <mat-option *ngFor="let objMes of meses" [value]="objMes">
-        {{ objMes }}
-      </mat-option>
-    </mat-select>
-  </mat-form-field>
+  <div class="div-mes-curso-fecha">
+    <div>
+      <mat-form-field class="mes">
+        <mat-select
+          placeholder="Seleccione mes"
+          name="mes"
+          ngModel
+          #mes="ngModel"
+          [disabled]="fueraPeriodoCicloLectivo"
+          matNativeControl
+          required
+          (selectionChange)="onMesSeleccionado(mes)"
+        >
+          <mat-option *ngFor="let objMes of meses" [value]="objMes">
+            {{ objMes }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
 
-  <mat-form-field class="curso">
-    <mat-select
-      placeholder="Seleccione curso"
-      name="curso"
-      ngModel
-      #curso="ngModel"
-      [(ngModel)]="cursoEstudiante"
-      [disabled]="fueraPeriodoCicloLectivo || !mesSeleccionado"
-      matNativeControl
-      required
-      (selectionChange)="onCursoSeleccionado(curso, mes)"
-    >
-      <mat-option *ngFor="let objCurso of cursos" [value]="objCurso.curso">
-        {{ objCurso.curso }}
-      </mat-option>
-    </mat-select>
-  </mat-form-field>
+      <mat-form-field class="curso">
+        <mat-select
+          placeholder="Seleccione curso"
+          name="curso"
+          ngModel
+          #curso="ngModel"
+          [(ngModel)]="cursoEstudiante"
+          [disabled]="fueraPeriodoCicloLectivo || !mesSeleccionado"
+          matNativeControl
+          required
+          (selectionChange)="onCursoSeleccionado(curso, mes)"
+        >
+          <mat-option *ngFor="let objCurso of cursos" [value]="objCurso.curso">
+            {{ objCurso.curso }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
 
-  <div class="ubicacionfecha">
-    <b>Fecha: </b> &nbsp;
-    <mat-form-field class="mat-form-Fecha">
-      <input
-        [disabled]="true"
-        ngModel
-        #diaFecha="ngModel"
-        matInput
-        name="diaFecha"
-        required
-        class="inputFecha"
-      />
-      {{ fechaActual | date: "EEEE" | titlecase }}
-      {{ fechaActual | date: "dd/MM/yyyy" }}&nbsp;
-    </mat-form-field>
+    <div class="ubicacion-fecha">
+      <b>Fecha: </b> &nbsp;
+      <mat-form-field class="mat-form-Fecha">
+        <input
+          [disabled]="true"
+          ngModel
+          #diaFecha="ngModel"
+          matInput
+          name="diaFecha"
+          required
+          class="input-fecha"
+        />
+        {{ fechaActual | date: "EEEE" | titlecase }}
+        {{ fechaActual | date: "dd/MM/yyyy" }}&nbsp;
+      </mat-form-field>
+    </div>
   </div>
   <!-- <p class="aviso" *ngIf="fueraPeriodoCicloLectivo==true">Atención, no se puede registrar las cuotas debido a que estamos fuera del ciclo lectivo </p>  -->
   <br />
-  <div class="contenedorTabla" *ngIf="!cursoNotSelected">
+  <div *ngIf="!cursoNotSelected">
     <table mat-table [dataSource]="cuotasXEstudiante">
       <ng-container matColumnDef="apellido">
-        <th class="nombreApellido" mat-header-cell *matHeaderCellDef>
+        <th class="nombre-apellido" mat-header-cell *matHeaderCellDef>
           Apellido/s
         </th>
-        <td class="nombreApellido" mat-cell *matCellDef="let cuotaXEstudiante">
+        <td class="nombre-apellido" mat-cell *matCellDef="let cuotaXEstudiante">
           {{ cuotaXEstudiante.apellido }}
         </td>
       </ng-container>
       <ng-container matColumnDef="nombre">
-        <th class="nombreApellido" mat-header-cell *matHeaderCellDef>
+        <th class="nombre-apellido" mat-header-cell *matHeaderCellDef>
           Nombre/s
         </th>
-        <td class="nombreApellido" mat-cell *matCellDef="let cuotaXEstudiante">
+        <td class="nombre-apellido" mat-cell *matCellDef="let cuotaXEstudiante">
           {{ cuotaXEstudiante.nombre }}
         </td>
       </ng-container>
@@ -99,14 +103,14 @@
   <br />
   <div class="div-button">
     <button
-      class="buttonPrimary"
+      class="button-primary"
       (click)="onGuardar(mes, curso)"
       mat-raised-button
       [disabled]="cursoNotSelected"
     >
       Guardar
     </button>
-    <button mat-raised-button class="buttonWarn" (click)="onCancelar()">
+    <button mat-raised-button class="button-warn" (click)="onCancelar()">
       Cancelar
     </button>
   </div>

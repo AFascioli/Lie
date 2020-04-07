@@ -91,7 +91,6 @@ export class VisualizarEventoComponent implements OnInit, OnDestroy {
   }
 
   onGuardar(descripcion) {
-    console.log(descripcion);
     if (!this.descripcionComentario || !this.descripcionComentario.trim()) {
       this.snackBar.open("El comentario esta vacío", "", {
         duration: 4500,

@@ -4,11 +4,11 @@ table {
   text-align: center;
 }
 
-.columnasNormales{
+.columnas-normales{
   width:22% !important;
 }
 
-.columnasChicas{
+.columnas-chicas{
   width:20%;
 }
 
@@ -18,15 +18,7 @@ th{
   text-align: center;
 }
 
-.resumenSanciones{
-  margin-left: 4%;
-}
-
-.tituloResumen{
-  font-size: 23px;
-}
-
-.sinSanciones{
+.sin-sanciones{
   text-align: center;
 }
 

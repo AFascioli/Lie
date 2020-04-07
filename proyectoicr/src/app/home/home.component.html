@@ -13,8 +13,8 @@
           {{ evento.titulo }}
         </button>
       </div>
-      <div class="fechaEvento">
-        <time datetime="evento.fechaEvento" class="icon">
+      <div>
+        <time datetime="evento.fechaEvento" class="icon fecha-evento">
           <strong>{{ obtenerMes(evento.fechaEvento) }}</strong>
           <span>{{ obtenerDia(evento.fechaEvento) }}</span>
         </time>
@@ -23,7 +23,8 @@
     <mat-card-subtitle
       >{{ evento.horaInicio }} - {{ evento.horaFin }}</mat-card-subtitle
     >
-    <div class="containerImg">
+
+    <div class="container-img">
       <img
         [src]="getImage(evento.filenames[0])"
         *ngIf="evento.filenames[0]"
@@ -32,7 +33,7 @@
       <button
         type="button"
         mat-icon-button
-        class="botonEditar"
+        class="boton-editar"
         *ngIf="conocerUsuarioLogueado(j) && evento.filenames.length != 0"
       >
         <mat-icon (click)="onEditar(evento)">mode_edit </mat-icon>
@@ -40,14 +41,14 @@
       <button
         type="button"
         mat-icon-button
-        class="botonBorrar"
+        class="boton-borrar"
         *ngIf="conocerUsuarioLogueado(j) && evento.filenames.length != 0"
       >
         <mat-icon (click)="onBorrar(evento)">delete </mat-icon>
       </button>
     </div>
     <mat-chip-list>
-      <p class="textoParticipan">Participan:</p>
+      <p class="texto-participan">Participan:</p>
       <mat-chip *ngFor="let tag of evento.tags">
         {{ tag }}
       </mat-chip>
@@ -58,9 +59,12 @@
       </p>
     </mat-card-content>
     <div
-      class="botonVisualizar"
+      class="boton-visualizar"
       [ngClass]="{ visualizar: evento.filenames.length == 0 }"
     >
+      <button class="boton-comentario" (click)="eventoSeleccionado(evento)">
+        Ver comentarios
+      </button>
       <div class="botones">
         <button
           type="button"
@@ -83,7 +87,7 @@
   </mat-card>
 
   <mat-card class="card-body-componente" *ngIf="eventos.length == 0">
-    <h1 class="tituloAviso">
+    <h1 class="titulo-aviso">
       No existen eventos publicados por la institución
     </h1>
   </mat-card>
