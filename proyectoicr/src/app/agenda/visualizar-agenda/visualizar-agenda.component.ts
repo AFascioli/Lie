@@ -52,7 +52,6 @@ export class VisualizarAgendaComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.obtenerCursos();
-    console.log("se ejecuto");
     // this.materias = this.servicioAgenda.obtenerMaterias();
     // this.getMateriasDistintas();
     // this.getColorVector();

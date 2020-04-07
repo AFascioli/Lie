@@ -315,17 +315,17 @@
         [disabled]="!modoEditar"
         (click)="onGuardar(form)"
         mat-raised-button
-        class="buttonPrimary"
+        class="button-primary"
       >
         Guardar
       </button>
-      <button (click)="onEditar()" mat-raised-button class="buttonPrimary" *ngIf="permisos.inscribirEstudiante > 1">
+      <button (click)="onEditar()" mat-raised-button class="button-primary" *ngIf="permisos.inscribirEstudiante > 1">
         Editar
       </button>
       <button
         mat-raised-button
         (click)="onBorrarVolver('borrar', form)"
-        class="buttonPrimary"
+        class="button-primary"
         *ngIf="permisos.inscribirEstudiante > 1"
       >
         Borrar
@@ -333,7 +333,7 @@
       <button
       mat-raised-button
       (click)="onBorrarVolver('volver', form)"
-      class="buttonWarn"
+      class="button-warn"
     >
      Volver
     </button>

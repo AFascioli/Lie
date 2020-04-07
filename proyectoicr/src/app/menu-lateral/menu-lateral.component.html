@@ -14,10 +14,14 @@
       </button>
       <span class="titulo-row">L I É</span>
       <div class="opciones">
-        <button mat-button class="homeButton" (click)="onClickHome()">
-          <mat-icon>home </mat-icon>
-        </button>
-        <button mat-button [matMenuTriggerFor]="menu" class="dropDown">
+      <button
+        mat-button
+        class="home-button"
+        (click)="onClickHome()"
+      >
+        <mat-icon>home </mat-icon>
+      </button>
+        <button mat-button [matMenuTriggerFor]="menu" class="drop-down">
           <mat-icon>arrow_drop_down</mat-icon>
         </button>
         <mat-menu #menu="matMenu">
@@ -36,13 +40,13 @@
     >
       <button
         mat-button
-        class="homeButtonAR"
+        class="home-buttonAR"
         [class.button-mobile]="mobileQuery.matches"
         (click)="onClickHome()"
       >
         <mat-icon>home</mat-icon>
       </button>
-      <p class="titulo-rowAR">L I É</p>
+      <p class="titulo-row-AR">L I É</p>
       <div class="opciones">
         <button
           mat-button
@@ -72,16 +76,16 @@
     <mat-sidenav
       #sideNav
       class="sidenav"
-      [class.sidenavMobile]="mobileQuery.matches"
-      [opened]="rol != 'AdultoResponsable' && !mobileQuery.matches"
+      [class.sidenav-mobile]="mobileQuery.matches"
+      [opened]="(rol != 'AdultoResponsable')&& !mobileQuery.matches"
       [disableClose]="!mobileQuery.matches"
       [mode]="mobileQuery.matches ? 'over' : 'side'"
     >
       <mat-nav-list>
         <mat-accordion>
-          <div class="imagenBackground">
-            <mat-icon class="iconUsuario">account_circle</mat-icon>
-            <div class="divUsuario">
+          <div class="imagen-background">
+            <mat-icon class="icon-usuario">account_circle</mat-icon>
+            <div class="div-usuario">
               <b class="usuario" *ngIf="apellidoNombre != null; else elseBlock">
                 {{ apellidoNombre }}
               </b>

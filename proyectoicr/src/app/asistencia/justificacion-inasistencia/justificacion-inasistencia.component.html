@@ -1,4 +1,4 @@
-<mat-card class="cardSpinner" *ngIf="isLoading">
+<mat-card class="card-spinner" *ngIf="isLoading">
   <mat-spinner class="spinner" [diameter]="60" ></mat-spinner>
 </mat-card>
 
@@ -33,7 +33,7 @@
       <button
         mat-raised-button
         [disabled]="ultimasInasistencias.length == 0"
-        class="buttonPrimary"
+        class="button-primary"
         mat-raised-button
         (click)="justificarInasistencia()"
       >
@@ -42,7 +42,7 @@
       <button
         mat-raised-button
         [routerLink]="['/buscar/lista']"
-        class="buttonWarn"
+        class="button-warn"
       >
         Volver
       </button>

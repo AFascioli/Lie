@@ -13,7 +13,6 @@ import { Evento } from "./evento.model";
 export class EventosService {
   public evento: Evento;
   public tituloABorrar: string;
-  public idComentarioSeleccionado: string;
   public comentarios: any[] = [];
   public ImgCargada: string;
 
@@ -73,12 +72,11 @@ export class EventosService {
     horaFin: string,
     tags: any[],
     images: any,
-    filename: string,
+    filenames: string,
     _id: string,
     autor: string
   ) {
     let eventoModificado = new FormData();
-    let imgUrl;
     const fechaEventoString = fechaEvento.toString();
     eventoModificado.append("_id", _id);
     eventoModificado.append("titulo", titulo);
@@ -86,7 +84,10 @@ export class EventosService {
     eventoModificado.append("fechaEvento", fechaEventoString);
     eventoModificado.append("horaInicio", horaInicio);
     eventoModificado.append("horaFin", horaFin);
-    eventoModificado.append("filename", filename);
+
+    for (var i = 0; i < filenames.length; i++) {
+      eventoModificado.append("filenames", filenames[i]);
+    }
 
     if (images != null) {
       for (var i = 0; i < images.length; i++) {
@@ -171,33 +172,26 @@ export class EventosService {
     }>(environment.apiUrl + "/evento/registrarComentario", datosComentario);
   }
 
-  public eliminarComentario(id) {
+  // Borrar cuando se sepa que no es nada a medio hacer que haya quedado por error
+  // public idComentarioSeleccionado: string;
+  // public eliminarComentario() {
+  //   let params = new HttpParams()
+  //     .set("idEvento", this.eventoSeleccionado._id)
+  //     .append("idComentario", this.idComentarioSeleccionado);
+  //   return this.http.delete<{ message: string; exito: boolean }>(
+  //     environment.apiUrl + "/evento/eliminarComentario",
+  //     { params: params }
+  //   );
+  // }
+
+  public eliminarComentariobyID(idComentario) {
     let params = new HttpParams()
       .set("idEvento", this.eventoSeleccionado._id)
-      .append("idComentario", this.idComentarioSeleccionado);
+      .set("idComentario", idComentario);
     return this.http.delete<{ message: string; exito: boolean }>(
       environment.apiUrl + "/evento/eliminarComentario",
       { params: params }
     );
-  }
-
-  public eliminarImagen(imgUrl: string) {
-    let params = new HttpParams()
-      .set("imgUrl", imgUrl)
-      .append("idImg", this.ImgCargada);
-    this.http
-      .delete<{ message: string; exito: boolean }>(
-        environment.apiUrl + "/evento/eliminarImagen",
-        { params: params }
-      )
-      .subscribe(response => {
-        if (response.exito) {
-          this.snackBar.open(response.message, "", {
-            panelClass: ["snack-bar-exito"],
-            duration: 4500
-          });
-        }
-      });
   }
 
   public obtenerEventosDeCursos(cursos: string) {

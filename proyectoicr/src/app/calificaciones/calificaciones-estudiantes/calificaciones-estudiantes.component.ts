@@ -1,7 +1,7 @@
 import { CancelPopupComponent } from "src/app/popup-genericos/cancel-popup.component";
 import { AutenticacionService } from "../../login/autenticacionService.service";
 import { EstudiantesService } from "src/app/estudiantes/estudiante.service";
-import { Component, OnInit, ViewChild, OnDestroy } from "@angular/core";
+import { Component, OnInit, ViewChild, OnDestroy, ChangeDetectorRef } from "@angular/core";
 import { MatDialog, MatSnackBar } from "@angular/material";
 import { NgForm, NgModel } from "@angular/forms";
 import { MatPaginator, PageEvent } from "@angular/material/paginator";
@@ -10,6 +10,7 @@ import { CalificacionesService } from "../calificaciones.service";
 import { MatPaginatorIntl } from "@angular/material";
 import { Subject } from "rxjs";
 import { takeUntil } from "rxjs/operators";
+import { MediaMatcher } from '@angular/cdk/layout';
 
 @Component({
   selector: "app-calificaciones-estudiantes",
@@ -42,6 +43,8 @@ export class CalificacionesEstudiantesComponent implements OnInit, OnDestroy {
   dataSource: MatTableDataSource<any>;
   indexEst = 0;
   private unsubscribe: Subject<void> = new Subject();
+  _mobileQueryListener: () => void;
+  mobileQuery: MediaQueryList;
 
   @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
 
@@ -50,8 +53,14 @@ export class CalificacionesEstudiantesComponent implements OnInit, OnDestroy {
     public servicioCalificaciones: CalificacionesService,
     public popup: MatDialog,
     private snackBar: MatSnackBar,
-    public servicioEstudianteAutenticacion: AutenticacionService
-  ) {}
+    public servicioEstudianteAutenticacion: AutenticacionService,
+    public changeDetectorRef: ChangeDetectorRef,
+    public media: MediaMatcher
+  ) {
+    this.mobileQuery = media.matchMedia("(max-width: 880px)");
+    this._mobileQueryListener = () => changeDetectorRef.detectChanges();
+    this.mobileQuery.addListener(this._mobileQueryListener);
+  }
 
   ngOnInit() {
     this.fechaActual = new Date();

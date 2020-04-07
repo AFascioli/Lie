@@ -3,7 +3,6 @@
   {{ fechaActual.getFullYear() }}
 </h1>
 <mat-card class="card-body-componente">
-  <br />
   <div class="div-selects">
     <mat-form-field>
       <mat-select
@@ -26,31 +25,31 @@
     Atención, no se puede registrar documentación debido a que estamos fuera de
     las fechas autorizadas
   </p>
-  <div class="contenedorTabla" *ngIf="estudiantesConDocumentos.length != 0">
-    <table mat-table [dataSource]="estudiantesConDocumentos">
+  <div *ngIf="estudiantesConDocumentos.length != 0">
+    <table mat-table [class.table-mobile]="mobileQuery.matches" [dataSource]="estudiantesConDocumentos">
       <ng-container matColumnDef="apellido">
-        <th class="columnasTabla" mat-header-cell *matHeaderCellDef>
+        <th class="columnas-tabla" mat-header-cell *matHeaderCellDef>
           Apellido/s
         </th>
-        <td class="columnasTabla" mat-cell *matCellDef="let estudiante">
+        <td class="columnas-tabla" mat-cell *matCellDef="let estudiante">
           {{ estudiante.datosEstudiante[0].apellido }}
         </td>
       </ng-container>
 
       <ng-container matColumnDef="nombre">
-        <th class="columnasTabla" mat-header-cell *matHeaderCellDef>
+        <th class="columnas-tabla" mat-header-cell *matHeaderCellDef>
           Nombre/s
         </th>
-        <td class="columnasTabla" mat-cell *matCellDef="let estudiante">
+        <td class="columnas-tabla" mat-cell *matCellDef="let estudiante">
           {{ estudiante.datosEstudiante[0].nombre }}
         </td>
       </ng-container>
 
       <ng-container matColumnDef="fotocopiaDoc">
-        <th class="columnasTabla" mat-header-cell *matHeaderCellDef>
+        <th class="columnas-tabla" mat-header-cell *matHeaderCellDef>
           Fotocopia del documento
         </th>
-        <td class="columnasTabla" mat-cell *matCellDef="let estudiante">
+        <td class="columnas-tabla" mat-cell *matCellDef="let estudiante">
           <mat-checkbox
             [checked]="estudiante.documentosEntregados[0].entregado"
             (change)="registrarCambioDocumento(estudiante, 0)"
@@ -59,10 +58,10 @@
       </ng-container>
 
       <ng-container matColumnDef="fichaMed">
-        <th class="columnasTabla" mat-header-cell *matHeaderCellDef>
+        <th class="columnas-tabla" mat-header-cell *matHeaderCellDef>
           Ficha médica
         </th>
-        <td class="columnasTabla" mat-cell *matCellDef="let estudiante">
+        <td class="columnas-tabla" mat-cell *matCellDef="let estudiante">
           <mat-checkbox
             [checked]="estudiante.documentosEntregados[1].entregado"
             (change)="registrarCambioDocumento(estudiante, 1)"
@@ -71,10 +70,10 @@
       </ng-container>
 
       <ng-container matColumnDef="informeAnt">
-        <th class="columnasTabla" mat-header-cell *matHeaderCellDef>
+        <th class="columnas-tabla" mat-header-cell *matHeaderCellDef>
           Informe año anterior
         </th>
-        <td class="columnasTabla" mat-cell *matCellDef="let estudiante">
+        <td class="columnas-tabla" mat-cell *matCellDef="let estudiante">
           <mat-checkbox
             [checked]="estudiante.documentosEntregados[2].entregado"
             (change)="registrarCambioDocumento(estudiante, 2)"
@@ -89,14 +88,14 @@
 
   <div class="div-button">
     <button
-      class="buttonPrimary"
+      class="button-primary"
       (click)="onGuardar()"
       mat-raised-button
       [disabled]="!cursoSeleccionado || !documentosEntregadosOnChange"
     >
       Guardar
     </button>
-    <button mat-raised-button (click)="onCancelar()" class="buttonWarn">
+    <button mat-raised-button (click)="onCancelar()" class="button-warn">
       Cancelar
     </button>
   </div>

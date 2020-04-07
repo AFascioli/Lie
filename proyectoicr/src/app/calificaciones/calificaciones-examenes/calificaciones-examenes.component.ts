@@ -34,7 +34,7 @@ export class CalificacionesExamenesComponent implements OnInit, OnDestroy {
     public authService: AutenticacionService,
     public snackBar: MatSnackBar
   ) {
-    this.mobileQuery = media.matchMedia("(max-width: 1000px)");
+    this.mobileQuery = media.matchMedia("(max-width: 800px)");
     this._mobileQueryListener = () => changeDetectorRef.detectChanges();
     this.mobileQuery.addListener(this._mobileQueryListener);
   }

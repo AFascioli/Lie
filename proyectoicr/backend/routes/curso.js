@@ -572,44 +572,56 @@ router.get(
 //Obtiene el curso al que está inscripto un estudiante
 //@params: id del estudiante
 router.get("/estudiante", checkAuthMiddleware, (req, res) => {
-  Inscripcion.aggregate([
-    {
-      $match: {
-        idEstudiante: mongoose.Types.ObjectId(req.query.idEstudiante),
-        activa: true
-      }
-    },
-    {
-      $lookup: {
-        from: "curso",
-        localField: "idCurso",
-        foreignField: "_id",
-        as: "cursosDeEstudiante"
-      }
-    },
-    {
-      $project: {
-        _id: 0,
-        "cursosDeEstudiante.curso": 1,
-        "cursosDeEstudiante._id": 1
-      }
-    }
-  ])
-    .then(cursoDeEstudiante => {
+  Inscripcion.findOne({
+    idEstudiante: mongoose.Types.ObjectId(req.query.idEstudiante),
+    activa: true
+  }).then(inscripcion => {
+    if (inscripcion) {
+      Inscripcion.aggregate([
+        {
+          $match: {
+            idEstudiante: mongoose.Types.ObjectId(req.query.idEstudiante),
+            activa: true
+          }
+        },
+        {
+          $lookup: {
+            from: "curso",
+            localField: "idCurso",
+            foreignField: "_id",
+            as: "cursosDeEstudiante"
+          }
+        },
+        {
+          $project: {
+            _id: 0,
+            "cursosDeEstudiante.curso": 1,
+            "cursosDeEstudiante._id": 1
+          }
+        }
+      ])
+        .then(cursoDeEstudiante => {
+          return res.status(200).json({
+            message: "Se obtuvo el curso del estudiante exitosamente",
+            exito: true,
+            curso: cursoDeEstudiante[0].cursosDeEstudiante[0].curso,
+            idCurso: cursoDeEstudiante[0].cursosDeEstudiante[0]._id
+          });
+        })
+        .catch(() => {
+          res.status(500).json({
+            message:
+              "Ocurrieron errores al querer obtener el curso del estudiante: ",
+            exito: false
+          });
+        });
+    } else {
       return res.status(200).json({
-        message: "Se obtuvo el curso del estudiante exitosamente",
-        exito: true,
-        curso: cursoDeEstudiante[0].cursosDeEstudiante[0].curso,
-        idCurso: cursoDeEstudiante[0].cursosDeEstudiante[0]._id
-      });
-    })
-    .catch(() => {
-      res.status(500).json({
-        message:
-          "Ocurrieron errores al querer obtener el curso del estudiante: ",
+        message: "El estudiante no esta inscripto",
         exito: false
       });
-    });
+    }
+  });
 });
 
 //Obtiene las materias de un curso que se pasa por parametro
@@ -1301,12 +1313,13 @@ router.post("/agendaTEST", checkAuthMiddleware, async (req, res) => {
       });
     });
   };
-  console.log(req.body);
   var mxcNuevas = [];
   let vectorIdsMXC = [];
-  for (const materia of req.body.agenda) {//Recorrer agenda del front
-    if (materia.idHorarios == null) {//vemos si la mxc es nueva o una modificada
-      if(mxcNuevas.length != 0){
+  for (const materia of req.body.agenda) {
+    //Recorrer agenda del front
+    if (materia.idHorarios == null) {
+      //vemos si la mxc es nueva o una modificada
+      if (mxcNuevas.length != 0) {
         for (const mxcNueva of mxcNuevas) {
           //Recorrer mxcNuevas para saber si es una mxc nueva o es una ya creada que tiene un nuevo horario
           if (mxcNueva.idMateria == materia.idMateria) {
@@ -1325,7 +1338,7 @@ router.post("/agendaTEST", checkAuthMiddleware, async (req, res) => {
             });
           }
         }
-      }else{
+      } else {
         mxcNuevas.push({
           idMateria: materia.idMateria,
           idDocente: materia.idDocente,
@@ -1334,7 +1347,8 @@ router.post("/agendaTEST", checkAuthMiddleware, async (req, res) => {
           ]
         });
       }
-    } else if (materia.modificado) { //Se actualiza el nuevo horario para una mxc dada
+    } else if (materia.modificado) {
+      //Se actualiza el nuevo horario para una mxc dada
       Horario.findByIdAndUpdate(materia.idHorarios, {
         dia: materia.dia,
         horaInicio: materia.inicio,
@@ -1343,7 +1357,8 @@ router.post("/agendaTEST", checkAuthMiddleware, async (req, res) => {
     }
   }
 
-  if (mxcNuevas.length != 0) {//Hay mxc nuevas para guarda en la bd
+  if (mxcNuevas.length != 0) {
+    //Hay mxc nuevas para guarda en la bd
     for (const mxcNueva of mxcNuevas) {
       let vectorIdsHorarios = [];
       for (const horario of mxcNueva.horarios) {
@@ -1369,7 +1384,7 @@ router.post("/agendaTEST", checkAuthMiddleware, async (req, res) => {
         res.json({ exito: true, message: "nice" });
       }
     );
-  }else{
+  } else {
     res.json({ exito: true, message: "nice" });
   }
 });

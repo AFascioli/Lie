@@ -8,10 +8,9 @@
       encontramos fuera de las fechas habilitadas para ese fin
     </p>
     <div *ngIf="fechaDentroDeRangoExamen">
-      <div class="ubicacionfecha">
-        <b>Fecha: </b>
-        &nbsp;
-        <mat-form-field class="mat-form-Fecha">
+      <div class="ubicacion-fecha">
+        <b>Fecha:</b>
+        <mat-form-field class="mat-form-fecha">
           <input
             [disabled]="true"
             ngModel
@@ -19,16 +18,15 @@
             matInput
             name="diaFecha"
             required
-            class="inputFecha"
+            class="input-fecha"
           />
           {{ fechaActual | date: "EEEE" | titlecase }}
           {{ fechaActual | date: "dd/MM/yyyy" }}&nbsp;
         </mat-form-field>
       </div>
-      <br />
-      <div class="contenido" [class.contenido-mobile]="mobileQuery.matches">
-        <mat-card>
-          <p class="titulo-datos-est">Datos del estudiante</p>
+      <div class="contenido">
+        <mat-card class="datos-estudiante" [class.datos-estudiante-mobile]="mobileQuery.matches">
+            <p class="titulo-datos-est">Datos del estudiante</p>
           <mat-card-subtitle>
             <b>Apellido/s: </b> {{ apellidoEstudiante }}
             <br />
@@ -36,13 +34,13 @@
           </mat-card-subtitle>
         </mat-card>
       </div>
-      <br />
-      <br />
       <p class="aviso" *ngIf="!tieneMateriasDesaprobadas">
         El estudiante seleccionado no tiene materias desaprobadas
       </p>
       <div class="div-selects" *ngIf="tieneMateriasDesaprobadas">
-        <mat-form-field>
+        <mat-form-field
+        [class.select-mobile]="mobileQuery.matches"
+        class="select">
           <mat-select
             placeholder="Seleccione materia"
             name="materiaRendida"
@@ -61,7 +59,7 @@
           </mat-select>
         </mat-form-field>
         <br />
-        <mat-form-field>
+        <mat-form-field [class.select-mobile]="mobileQuery.matches" class="select">
           <mat-select
             placeholder="Seleccione condición"
             name="condicion"
@@ -95,7 +93,7 @@
     <div class="div-button">
       <button
         mat-raised-button
-        class="buttonPrimary"
+        class="button-primary"
         (click)="guardar()"
         mat-raised-button
         [disabled]="!fechaDentroDeRangoExamen || !tieneMateriasDesaprobadas"
@@ -105,7 +103,7 @@
       <button
         mat-raised-button
         [routerLink]="['/buscar/lista']"
-        class="buttonWarn"
+        class="button-warn"
       >
         Volver
       </button>

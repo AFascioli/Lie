@@ -17,7 +17,7 @@
     ></canvas>
     <p
       *ngIf="contadorInasistenciaInjustificada < 15"
-      class="mensajeReincorporacion"
+      class="mensaje-reincorporacion"
     >
       <b
         >Le quedan {{ 15 - contadorInasistenciaInjustificada }} inasistencias
@@ -32,7 +32,7 @@
     <button
     mat-raised-button
     [routerLink]="['/perfilEstudiante']"
-    class="buttonWarn" >
+    class="button-warn" >
        Volver
     </button>
   </div>
