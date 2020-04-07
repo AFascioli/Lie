@@ -8,15 +8,14 @@ const Provincia = require("../models/provincia");
 router.get("/provincia", (req, res, next) => {
   Provincia.find()
     .sort({ nombre: "asc" })
-    .then(documents => {
-      console.log(documents);
+    .then((documents) => {
       res.status(200).json({
-        provincias: documents
+        provincias: documents,
       });
     })
     .catch(() => {
       res.status(500).json({
-        message: "No se ha podido obtener las provincias correctamente"
+        message: "No se ha podido obtener las provincias correctamente",
       });
     });
 });
@@ -25,14 +24,14 @@ router.get("/provincia", (req, res, next) => {
 router.get("/localidad", (req, res, next) => {
   Localidad.find()
     .sort({ nombre: "asc" })
-    .then(documents => {
+    .then((documents) => {
       res.status(200).json({
-        localidades: documents
+        localidades: documents,
       });
     })
     .catch(() => {
       res.status(500).json({
-        message: "No se ha podido obtener las localidades correctamente"
+        message: "No se ha podido obtener las localidades correctamente",
       });
     });
 });
@@ -40,14 +39,14 @@ router.get("/localidad", (req, res, next) => {
 //Obtiene todas las nacionalidades que están almacenadas en la base de datos
 router.get("/nacionalidad", (req, res, next) => {
   Nacionalidad.find()
-    .then(documents => {
+    .then((documents) => {
       res.status(200).json({
-        nacionalidades: documents
+        nacionalidades: documents,
       });
     })
     .catch(() => {
       res.status(500).json({
-        message: "No se ha podido obtener las nacionalidades correctamente"
+        message: "No se ha podido obtener las nacionalidades correctamente",
       });
     });
 });

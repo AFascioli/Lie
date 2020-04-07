@@ -204,7 +204,7 @@ export class DefinirAgendaComponent implements OnInit, OnDestroy {
       this.openSnackBar(this.mensajeError, "snack-bar-fracaso");
     } else if (moduloFin <= moduloInicio) {
       this.agendaValida = false;
-      this.mensajeError = "El horario de inicio es menor al horario de fin";
+      this.mensajeError = "El horario de fin no es mayor al horario de inicio";
       this.openSnackBar(this.mensajeError, "snack-bar-fracaso");
     } else {
       for (let index = 0; index < this.dataSource.data.length; index++) {

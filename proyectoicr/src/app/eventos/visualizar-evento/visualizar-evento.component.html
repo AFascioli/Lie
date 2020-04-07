@@ -10,24 +10,32 @@
   <p class="hora-evento">
     <b>Hora inicio y fin:</b> {{ evento.horaInicio }} - {{ evento.horaFin }}
   </p>
-  <div class="imagen">
-    <mat-carousel
-      interval="5000"
-      maxWidth="auto"
-      proportion="75"
-      color="warn"
-      [hideArrows]="false"
-      [hideIndicators]="false"
-    >
+  <div *ngIf="evento.filenames.length != 0">
+    <div class="slideshow-container">
       <div *ngFor="let filename of evento.filenames">
-        <mat-carousel-slide
-          overlayColor="transparent"
-          [image]="getImage(filename)"
-        >
-        </mat-carousel-slide>
+        <div class="mySlides fade">
+          <img [src]="getImage(filename)" style="width: 100%;" />
+        </div>
       </div>
-    </mat-carousel>
+      <a
+        class="prev"
+        (click)="moveFromCurrentSlide(-1)"
+        *ngIf="evento.filenames.length != 1"
+        >&#10094;</a
+      >
+      <a
+        class="next"
+        (click)="moveFromCurrentSlide(1)"
+        *ngIf="evento.filenames.length != 1"
+        >&#10095;</a
+      >
+    </div>
+    <br />
+    <div *ngIf="evento.filenames.length > 1" style="text-align: center;">
+      <span class="dot" *ngFor="let filename of evento.filenames"> </span>
+    </div>
   </div>
+
   <div class="div-participan">
     <mat-chip-list>
       <p class="texto-participan"><b>Participan:</b></p>
@@ -36,7 +44,7 @@
       </mat-chip>
     </mat-chip-list>
   </div>
-  <mat-card-content>
+  <mat-card-content *ngIf="evento.descripcion">
     <p class="descripcion">
       <b>
         Descripción:
@@ -92,6 +100,7 @@
           class="test"
           *ngFor="let comentario of eventoService.comentarios; let i = index"
         >
+
           <div class="datos-comentario">
             <p class="nombre-autor">
               <b>{{ comentario.apellido }}, {{ comentario.nombre }} </b>

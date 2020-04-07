@@ -9,9 +9,8 @@
         <mat-panel-title>
           <b class="titulo-expansion-panel">
             {{ estudiante.apellido }}, {{ estudiante.nombre }} -
-            {{ estudiante.tipoDocumento }}: {{ estudiante.numeroDocumento }} -
-            Curso: {{ this.curso[i] }}
-          </b>
+            {{ estudiante.tipoDocumento }}: {{ estudiante.numeroDocumento }} </b
+          ><b *ngIf="curso[i]">- Curso: {{ this.curso[i] }} </b>
         </mat-panel-title>
       </mat-expansion-panel-header>
       <div
@@ -19,63 +18,63 @@
         [class.grid-container-mobile]="mobileQuery.matches"
       >
         <mat-card
-        class="opcion"
+          class="opcion"
           [class.opcion-mobile]="mobileQuery.matches"
           (click)="onInscribir(i)"
           *ngIf="permisos.inscribirEstudiante > 1"
           ><b>Inscribir estudiante a un curso</b></mat-card
         >
         <mat-card
-        class="opcion"
+          class="opcion"
           [class.opcion-mobile]="mobileQuery.matches"
           (click)="onJustificar(i)"
-          *ngIf="permisos.asistencia > 1"
+          *ngIf="permisos.asistencia > 1 && curso[i]"
           ><b>Justificar inasistencia</b></mat-card
         >
         <mat-card
-        class="opcion"
+          class="opcion"
           [class.opcion-mobile]="mobileQuery.matches"
           (click)="onRegistrarAR(i)"
           *ngIf="permisos.inscribirEstudiante > 1"
           ><b>Registrar adulto responsable</b></mat-card
         >
         <mat-card
-        class="opcion"
+          class="opcion"
           [class.opcion-mobile]="mobileQuery.matches"
           (click)="onRegistrarExamenes(i)"
-          *ngIf="permisos.notas > 1"
+          *ngIf="permisos.notas > 1 && curso[i]"
           ><b>Registrar examen</b></mat-card
         >
         <mat-card
-        class="opcion"
+          class="opcion"
           [class.opcion-mobile]="mobileQuery.matches"
           (click)="onLlegadaTarde(i)"
-          *ngIf="permisos.asistencia > 1"
+          *ngIf="permisos.asistencia > 1 && curso[i]"
           ><b>Registrar llegada tarde</b></mat-card
         >
         <mat-card
-        class="opcion"
+          class="opcion"
           [class.opcion-mobile]="mobileQuery.matches"
           (click)="onRetiro(i)"
-          *ngIf="permisos.asistencia > 1"
+          *ngIf="permisos.asistencia > 1 && curso[i]"
           ><b>Registrar retiro anticipado</b></mat-card
         >
         <mat-card
-        class="opcion"
+          class="opcion"
           [class.opcion-mobile]="mobileQuery.matches"
           (click)="onSancion(i)"
-          *ngIf="permisos.inscribirEstudiante >= 1"
+          *ngIf="permisos.inscribirEstudiante >= 1 && curso[i]"
           ><b>Registrar sanción</b></mat-card
         >
         <mat-card
-        class="opcion"
+          class="opcion"
           [class.opcion-mobile]="mobileQuery.matches"
           (click)="onMostrar(i)"
           *ngIf="permisos.inscribirEstudiante >= 1"
           ><b>Visualizar estudiante</b></mat-card
         >
         <mat-card
-        class="opcion"
+          class="opcion"
           [class.opcion-mobile]="mobileQuery.matches"
           (click)="onVisualizarPerfil(i)"
           *ngIf="permisos.inscribirEstudiante >= 1"

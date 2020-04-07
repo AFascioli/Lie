@@ -163,3 +163,7 @@ time.icon span {
 .titulo-aviso {
   text-align: center;
 }
+
+.card-body-componente {
+  cursor: pointer;
+}
