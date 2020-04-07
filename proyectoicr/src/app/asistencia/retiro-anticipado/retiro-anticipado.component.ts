@@ -53,7 +53,7 @@ export class RetiroAnticipadoComponent implements OnInit {
     public autenticacionService: AutenticacionService,
     public media: MediaMatcher
   ) {
-    this.mobileQuery = media.matchMedia("(max-width: 1000px)");
+    this.mobileQuery = media.matchMedia("(max-width: 800px)");
     this._mobileQueryListener = () => changeDetectorRef.detectChanges();
     this.mobileQuery.addListener(this._mobileQueryListener);
   }

@@ -52,10 +52,6 @@
   box-shadow: 0px 0px 8px 0px rgba(0, 0, 0, 0.71) !important;
 }
 
-.btnVisualizar {
-  margin: 2%;
-}
-
 th,
 td {
   text-align: center !important;
@@ -70,21 +66,7 @@ th {
   width: 45%;
 }
 
-.botonesAcciones {
-  text-align: center;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin-bottom: 2%;
-}
-
-.tituloAcciones {
-  text-align: center;
-  font-weight: bold;
-  margin-top: 2%;
-}
-
-.buttonPrimary{
+.button-primary{
   width: 45% !important;
 }
 
@@ -92,4 +74,6 @@ th {
   white-space: normal !important;
 }
 
-
+.titulo-expansion-panel{
+  font-size: 17px;
+}

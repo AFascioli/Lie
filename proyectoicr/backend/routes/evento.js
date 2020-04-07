@@ -39,7 +39,7 @@ var upload = multer({ storage: storage }).array("images", 5);
 
 //Registra el evento en la base de datos
 //@params: evento a publicar
-router.post("/registrar", upload, (req, res, next) => {
+router.post("/registrar", upload, async (req, res, next) => {
   leerFilenames = () => {
     return new Promise((resolve, reject) => {
       let filenames = [];
@@ -67,85 +67,65 @@ router.post("/registrar", upload, (req, res, next) => {
           filenames: await leerFilenames(),
           autor: usuario._id
         });
-        evento
-          .save()
-          .then(() => {
+        evento.save().then(() => {
+          // this.notificarPorEvento(
+          //   this.evento.tags,
+          //   this.evento.titulo,
+          //   "El evento se realizará en la fecha " + evento.fechaEvento + "."
+          // );
+          res.status(201).json({
+            message: "Evento creado existosamente",
+            exito: true
+          });
+        });
+      } else {
+        Usuario.findOne({ email: req.body.autor }).then(usuario => {
+          const evento = new Evento({
+            titulo: req.body.titulo,
+            descripcion: req.body.descripcion,
+            fechaEvento: req.body.fechaEvento,
+            horaInicio: req.body.horaInicio,
+            horaFin: req.body.horaFin,
+            tags: req.body.tags,
+            autor: usuario._id
+          });
+          evento.save().then(() => {
             // this.notificarPorEvento(
             //   this.evento.tags,
             //   this.evento.titulo,
             //   "El evento se realizará en la fecha " + evento.fechaEvento + "."
             // );
-
             res.status(201).json({
               message: "Evento creado exitosamente",
               exito: true
             });
-          })
-          .catch(() => {
-            res.status(500).json({
-              message: "Mensaje de error especifico"
-            });
           });
-      } else {
-        Usuario.findOne({ email: req.body.autor })
-          .then(usuario => {
-            const evento = new Evento({
-              titulo: req.body.titulo,
-              descripcion: req.body.descripcion,
-              fechaEvento: req.body.fechaEvento,
-              horaInicio: req.body.horaInicio,
-              horaFin: req.body.horaFin,
-              tags: req.body.tags,
-              autor: usuario._id
-            });
-            evento
-              .save()
-              .then(() => {
-                //Completar con código de la notificación COMPLETAR CON LO DE ARRIBA
-                res.status(201).json({
-                  message: "Evento creado exitosamente",
-                  exito: true
-                });
-              })
-              .catch(() => {
-                res.status(500).json({
-                  message: "Mensaje de error especifico"
-                });
-              });
-          })
-          .catch(() => {
-            res.status(500).json({
-              message: "Mensaje de error especifico"
-            });
-          });
+        });
       }
     })
     .catch(() => {
       res.status(500).json({
-        message: "Mensaje de error especifico"
+        message: "Se presentaron problemas al querer agregar un evento"
       });
     });
 });
 
-//Registra el evento en la base de datos
+//Modifica el evento en la base de datos
 //@params: evento a publicar
 router.post("/modificar", upload, async (req, res) => {
+  let filenames = req.body.filenames;
+  console.log(req.body.filenames);
   leerFilename = () => {
     return new Promise((resolve, reject) => {
-      let filenames = [];
       for (let index = 0; index < req.files.length; index++) {
         filenames.push(req.files[index].filename);
       }
-      if (filenames.length == req.files.length) {
-        resolve(filenames);
-      } else {
-        reject("No se pudo obtener los nombres de las imagenes.");
-      }
+      resolve(filenames);
     });
   };
 
   if (req.files != null) {
-    //console.log(req.body);
+    console.log("entro al de con fotos");
     Evento.findByIdAndUpdate(req.body._id, {
       titulo: req.body.titulo,
       descripcion: req.body.descripcion,
@@ -244,7 +224,6 @@ router.post("/registrarComentario", async (req, res, next) => {
   let idUsuario = "";
 
   var obtenerDatosUsuario = (rol, emailUsuario) => {
-    console.log(req.body.comentario);
     return new Promise((resolve, reject) => {
       if (rol == "Adulto Responsable") {
         AdultoResponsable.findOne({ email: emailUsuario })
@@ -326,57 +305,6 @@ router.post("/registrarComentario", async (req, res, next) => {
   });
 });
 
-//Modifica el evento en la base de datos
-//@params: evento a publicar
-router.patch("/editar", upload, (req, res, next) => {
-  if (req.file != null && req.file.filename != null) {
-    Evento.findByIdAndUpdate(req.body._id, {
-      titulo: req.body.titulo,
-      descripcion: req.body.descripcion,
-      fechaEvento: req.body.fechaEvento,
-      horaInicio: req.body.horaInicio,
-      horaFin: req.body.horaFin,
-      tags: req.body.tags,
-      imgUrl: req.file.filename,
-      autor: req.body.autor
-    })
-      .then(() => {
-        res.status(200).json({
-          message: "Evento modificado exitosamente",
-          exito: true
-        });
-      })
-      .catch(() => {
-        res.status(200).json({
-          message: "Ocurrió un problema al intentar modificar el evento",
-          exito: false
-        });
-      });
-  } else {
-    Evento.findByIdAndUpdate(req.body._id, {
-      titulo: req.body.titulo,
-      descripcion: req.body.descripcion,
-      fechaEvento: req.body.fechaEvento,
-      horaInicio: req.body.horaInicio,
-      horaFin: req.body.horaFin,
-      tags: req.body.tags,
-      autor: req.body.autor
-    })
-      .then(() => {
-        res.status(200).json({
-          message: "Evento modificado exitosamente",
-          exito: true
-        });
-      })
-      .catch(() => {
-        res.status(200).json({
-          message: "Ocurrió un problema al intentar modificar el evento",
-          exito: false
-        });
-      });
-  }
-});
-
 router.delete("/eliminarEvento", checkAuthMiddleware, (req, res, next) => {
   Evento.findByIdAndDelete(req.query._id)
     .then(async evento => {
@@ -410,7 +338,7 @@ router.delete("/eliminarEvento", checkAuthMiddleware, (req, res, next) => {
 });
 
 router.delete("/eliminarComentario", checkAuthMiddleware, (req, res, next) => {
-  Evento.findByIdAndUpdate({
+  Evento.findById({
     _id: req.query.idEvento
   }).then(eventoEncontrado => {
     for (let i = 0; i < eventoEncontrado.comentarios.length; i++) {
@@ -504,12 +432,6 @@ notificarPorEvento = function(tags, titulo, cuerpo) {
         titulo,
         cuerpo
       );
-
-      console.log("Envío de notificación");
-      console.log("tags: ", tags);
-      console.log(titulo);
-      console.log(cuerpo);
-      console.log("Tutores a notif: ", idtutores);
     });
   }
 };

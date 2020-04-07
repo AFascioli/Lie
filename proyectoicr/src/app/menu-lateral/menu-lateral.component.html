@@ -1,6 +1,9 @@
 <div class="contenedor-total" [class.es-mobile]="mobileQuery.matches">
   <mat-toolbar class="fixed-header">
-    <mat-toolbar-row *ngIf="rol!='AdultoResponsable'" [class.mat-toolbar-row-mobile]="mobileQuery.matches">
+    <mat-toolbar-row
+      *ngIf="rol != 'AdultoResponsable'"
+      [class.mat-toolbar-row-mobile]="mobileQuery.matches"
+    >
       <button
         type="button"
         aria-label="Toggle sidenav"
@@ -13,39 +16,52 @@
       <div class="opciones">
       <button
         mat-button
-        class="homeButton"
+        class="home-button"
         (click)="onClickHome()"
       >
         <mat-icon>home </mat-icon>
       </button>
-        <button mat-button [matMenuTriggerFor]="menu" class="dropDown">
+        <button mat-button [matMenuTriggerFor]="menu" class="drop-down">
           <mat-icon>arrow_drop_down</mat-icon>
         </button>
         <mat-menu #menu="matMenu">
-        <button mat-menu-item routerLink="/preferencias">
-          <mat-icon>settings</mat-icon> Preferencias
-        </button>
-        <button mat-menu-item (click)="cierreSesion()">
-          <mat-icon>exit_to_app</mat-icon> Cerrar sesión
-        </button>
-      </mat-menu>
-    </div>
+          <button mat-menu-item routerLink="/preferencias">
+            <mat-icon>settings</mat-icon> Preferencias
+          </button>
+          <button mat-menu-item (click)="cierreSesion()">
+            <mat-icon>exit_to_app</mat-icon> Cerrar sesión
+          </button>
+        </mat-menu>
+      </div>
     </mat-toolbar-row>
-    <mat-toolbar-row *ngIf="rol=='AdultoResponsable'" [class.mat-toolbar-row-mobile]="mobileQuery.matches">
-        <button
+    <mat-toolbar-row
+      *ngIf="rol == 'AdultoResponsable'"
+      [class.mat-toolbar-row-mobile]="mobileQuery.matches"
+    >
+      <button
         mat-button
-        class="homeButtonAR"
+        class="home-buttonAR"
         [class.button-mobile]="mobileQuery.matches"
         (click)="onClickHome()"
-        >
+      >
         <mat-icon>home</mat-icon>
       </button>
-      <p class="titulo-rowAR">L I É</p>
+      <p class="titulo-row-AR">L I É</p>
       <div class="opciones">
-        <button mat-button class="preferencias-ar" [class.button-mobile]="mobileQuery.matches" routerLink="/preferencias">
+        <button
+          mat-button
+          class="preferencias-ar"
+          [class.button-mobile]="mobileQuery.matches"
+          routerLink="/preferencias"
+        >
           <mat-icon>settings</mat-icon>
         </button>
-        <button mat-button class="cerrar-sesion-ar" [class.button-mobile]="mobileQuery.matches" (click)="cierreSesion()">
+        <button
+          mat-button
+          class="cerrar-sesion-ar"
+          [class.button-mobile]="mobileQuery.matches"
+          (click)="cierreSesion()"
+        >
           <mat-icon>exit_to_app</mat-icon>
         </button>
       </div>
@@ -60,19 +76,27 @@
     <mat-sidenav
       #sideNav
       class="sidenav"
-      [class.sidenavMobile]="mobileQuery.matches"
+      [class.sidenav-mobile]="mobileQuery.matches"
       [opened]="(rol != 'AdultoResponsable')&& !mobileQuery.matches"
       [disableClose]="!mobileQuery.matches"
       [mode]="mobileQuery.matches ? 'over' : 'side'"
     >
       <mat-nav-list>
         <mat-accordion>
-          <mat-icon class="iconUsuario">account_circle</mat-icon>
-          <p class="usuario">
-            <b>{{ rol }}</b>
-          </p>
-          <p class="usuario">{{ usuario }}</p>
-
+          <div class="imagen-background">
+            <mat-icon class="icon-usuario">account_circle</mat-icon>
+            <div class="div-usuario">
+              <b class="usuario" *ngIf="apellidoNombre != null; else elseBlock">
+                {{ apellidoNombre }}
+              </b>
+              <ng-template #elseBlock>
+                <b class="usuario">
+                  {{ rol }}
+                </b></ng-template
+              >
+            </div>
+            <p class="usuario">{{ usuario }}</p>
+          </div>
           <mat-expansion-panel class="opcion">
             <mat-expansion-panel-header>
               <mat-panel-title>
@@ -187,7 +211,7 @@
               Buscar
             </a>
           </mat-expansion-panel>
-          <mat-expansion-panel class="opcion">
+          <!-- <mat-expansion-panel class="opcion">
             <mat-expansion-panel-header>
               <mat-panel-title>
                 <a mat-list-item ng-Focus="onSelected(this)">
@@ -205,17 +229,8 @@
             >
               Registrar
             </a>
-            <mat-divider *ngIf="permisos.eventos > 1"></mat-divider>
-            <a
-              mat-list-item
-              class="opciones-expansion"
-              *ngIf="permisos.eventos > 1"
-              (click)="cerrarMenuLateral(sideNav)"
-            >
-              Buscar
-            </a>
-          </mat-expansion-panel>
-          <mat-expansion-panel
+          </mat-expansion-panel> -->
+          <!-- <mat-expansion-panel
             class="opcion"
             *ngIf="permisos.registrarEmpleado >= 1"
           >
@@ -223,7 +238,7 @@
               <mat-panel-title>
                 <a mat-list-item>
                   <mat-icon>person</mat-icon>
-                  <b class="titulo-expansion">Empleados</b>
+                  <b class="titulo-expansion">Personal</b>
                 </a>
               </mat-panel-title>
             </mat-expansion-panel-header>
@@ -235,7 +250,30 @@
             >
               Registrar
             </a>
-          </mat-expansion-panel>
+          </mat-expansion-panel> -->
+          <a
+            class="sinExpansion"
+            routerLink="/registrarEvento"
+            *ngIf="permisos.eventos > 1"
+            (click)="cerrarMenuLateral(sideNav)"
+            mat-list-item
+            ng-Focus="onSelected(this)"
+          >
+            <mat-icon class="iconSinExpansion">event</mat-icon>
+            <b class="titulo-expansion">Registrar Eventos</b>
+          </a>
+          <a
+            class="sinExpansion"
+            *ngIf="permisos.registrarEmpleado >= 1"
+            mat-list-item
+            routerLink="/altaEmpleado"
+            (click)="cerrarMenuLateral(sideNav)"
+          >
+            <mat-icon class="iconSinExpansion">person</mat-icon>
+            <b class="titulo-expansion"> Registrar Personal</b>
+          </a>
+          <!-- </mat-panel-title>
+          </mat-expansion-panel-header> -->
         </mat-accordion>
       </mat-nav-list>
     </mat-sidenav>
