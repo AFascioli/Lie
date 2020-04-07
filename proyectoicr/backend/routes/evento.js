@@ -96,7 +96,7 @@ router.post("/registrar", upload, async (req, res, next) => {
             //   "El evento se realizará en la fecha " + evento.fechaEvento + "."
             // );
             res.status(201).json({
-              message: "Evento creado existosamente",
+              message: "Evento creado exitosamente",
               exito: true
             });
           });
@@ -140,7 +140,7 @@ router.post("/modificar", upload, async (req, res) => {
       .then(() => {
         //Completar con código de la notificación COMPLETAR CON LO DE ARRIBA
         res.status(201).json({
-          message: "Evento modificado existosamente",
+          message: "Evento modificado exitosamente",
           exito: true
         });
       })
@@ -163,7 +163,7 @@ router.post("/modificar", upload, async (req, res) => {
       .then(() => {
         //Completar con código de la notificación COMPLETAR CON LO DE ARRIBA
         res.status(201).json({
-          message: "Evento modificado existosamente",
+          message: "Evento modificado exitosamente",
           exito: true
         });
       })
@@ -181,7 +181,7 @@ router.get("", (req, res, next) => {
     .then(eventos => {
       res.status(200).json({
         eventos: eventos,
-        message: "Eventos devuelto existosamente",
+        message: "Eventos devuelto exitosamente",
         exito: true
       });
     })
@@ -204,7 +204,7 @@ router.get("/comentarios", (req, res, next) => {
     .then(evento => {
       res.status(200).json({
         comentarios: evento.comentarios,
-        message: "Evento devuelto existosamente",
+        message: "Evento devuelto exitosamente",
         exito: true
       });
     })
