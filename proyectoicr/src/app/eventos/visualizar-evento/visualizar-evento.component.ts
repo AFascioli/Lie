@@ -48,7 +48,6 @@ export class VisualizarEventoComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.unsubscribe))
       .subscribe((rtdo) => {
         this.eventoService.comentarios = rtdo.comentarios.reverse();
-        console.log(this.eventoService.comentarios);
         this.actualizarPermisos();
       });
   }

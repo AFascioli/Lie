@@ -111,14 +111,18 @@ export class DefinirAgendaComponent implements OnInit, OnDestroy {
   }
 
   obtenerAgenda(idCurso) {
-    this.cursoSelected = true;
-    this.idCursoSeleccionado = idCurso.value;
-    this.servicioAgenda
-      .obtenerAgendaDeCurso(idCurso.value)
-      .pipe(takeUntil(this.unsubscribe))
-      .subscribe((rtdo) => {
-        this.dataSource.data = rtdo.agenda;
-      });
+    if(!this.isEditing){
+      this.cursoSelected = true;
+      this.idCursoSeleccionado = idCurso.value;
+      this.servicioAgenda
+        .obtenerAgendaDeCurso(this.idCursoSeleccionado)
+        .pipe(takeUntil(this.unsubscribe))
+        .subscribe((rtdo) => {
+          this.dataSource.data = rtdo.agenda;
+        });
+    }else{
+      this.openSnackBar("Necesitas finalizar la edición de la correspondiente fila","snack-bar-fracaso");
+    }
   }
 
   reservarAgenda(indice, row) {
@@ -131,6 +135,7 @@ export class DefinirAgendaComponent implements OnInit, OnDestroy {
       this.validarHorario(row, indice);
       if (this.agendaValida) {
         this.indice = -1;
+        this.isEditing=false;
         document.getElementById("editar" + indice).style.display = "block";
         document.getElementById("reservar" + indice).style.display = "none";
       }
@@ -142,9 +147,11 @@ export class DefinirAgendaComponent implements OnInit, OnDestroy {
       this.servicioAgenda
         .registrarAgenda(this.dataSource.data, this.idCursoSeleccionado)
         .subscribe((response) => {
+          this.isEditing=false;
           this.openSnackBar(response.message, "snack-bar-exito");
         });
     } else {
+      console.log(this.dataSource.data);
       this.openSnackBar(this.mensajeError, "snack-bar-fracaso");
     }
   }
@@ -166,6 +173,7 @@ export class DefinirAgendaComponent implements OnInit, OnDestroy {
       });
       this.dataSource._updateChangeSubscription(); // Fuerza el renderizado de la tabla.
       setTimeout(() => {
+        this.isEditing=true;
         this.editarAgenda(largo);
       }, 100);
     } else {
@@ -272,6 +280,7 @@ export class DefinirAgendaComponent implements OnInit, OnDestroy {
             this.agendaValida = true;
             this.mensajeError = "";
             this.indice = -1;
+            this.isEditing=false;
           }
         } else {
           result && this.eliminarHorarios(index);

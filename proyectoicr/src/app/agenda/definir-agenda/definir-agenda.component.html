@@ -261,7 +261,7 @@
       mat-raised-button
       class="button-primary"
       (click)="onGuardar(form)"
-      *ngIf="cursoSelected"
+      *ngIf="cursoSelected && dataSource.data.length!=0"
     >
       Guardar
     </button>

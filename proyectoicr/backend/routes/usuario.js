@@ -265,33 +265,33 @@ router.post("/suscripcion", (req, res) => {
 });
 
 router.get("/obtenerNombreApellido", (req, res) => {
-  if(req.query.rol!='AdultorResponsable')
-  {
-  Empleado.aggregate([
-    {
-      $match: {
-        idUsuario: mongoose.Types.ObjectId(req.query.idUsuario),
+  if (req.query.rol != "AdultorResponsable") {
+    Empleado.aggregate([
+      {
+        $match: {
+          idUsuario: mongoose.Types.ObjectId(req.query.idUsuario),
+        },
       },
-    },
-    {
-      $project: {
-        nombre: 1,
-        apellido: 1,
+      {
+        $project: {
+          nombre: 1,
+          apellido: 1,
+        },
       },
-    },
-  ]).then(usuario => {
-    return res.status(200).json({
-      message: "Se obtuvo el empleado exitosamente",
-      exito: true,
-      usuario: usuario[0]
-    });
-  })
-  .catch(() => {
-    res.status(500).json({
-      message: "Mensaje de error especifico"
-    });
-  });
-}
+    ])
+      .then((usuario) => {
+        return res.status(200).json({
+          message: "Se obtuvo el empleado exitosamente",
+          exito: true,
+          usuario: usuario[0],
+        });
+      })
+      .catch(() => {
+        res.status(500).json({
+          message: "Mensaje de error especifico",
+        });
+      });
+  }
 });
 
 module.exports = router;
