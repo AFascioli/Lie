@@ -6,7 +6,7 @@
   width: 100%;
 }
 
-.camposFormulario {
+.campos-formulario {
   text-align: center;
 }
 
@@ -14,7 +14,6 @@ input[type="file"] {
   visibility: hidden;
 }
 
-mat-form-field,
 textarea {
   width: 100%;
 }
@@ -36,12 +35,12 @@ mat-datepicker-toggle {
   color: red;
 }
 
-.mat-form-field {
+mat-form-field {
   width: 60%;
 }
 
 .mat-form-field-mobile {
-  width: 100%;
+  width: 80%;
 }
 
 .div-button {
@@ -66,8 +65,12 @@ mat-datepicker-toggle {
   padding: 25px 50px;
 }
 
-.matFormHora {
+.mat-form-hora {
   width: 29%;
+}
+
+.mat-form-hora-mobile {
+  width: 39%;
 }
 
 .contenedor-flexbox {
