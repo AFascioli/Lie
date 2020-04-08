@@ -1,7 +1,16 @@
+.titulo-resumen{
+  text-align: center;
+  font-size: large;
+}
+
 table {
   width: 95%;
   margin: 2rem;
   text-align: center;
+}
+
+.table-mobile{
+  margin: 0;
 }
 
 .columnas-normales{
@@ -15,7 +24,7 @@ table {
 th{
   font-weight: bold;
   font-size: 15px;
-  text-align: center;
+  text-align: center !important;
 }
 
 .sin-sanciones{
@@ -26,4 +35,29 @@ th{
   text-align: right;
 }
 
+.grid-resumen {
+  width: 60%;
+  margin-left: auto;
+  margin-right: auto;
+  display: grid;
+  grid-template-columns:  repeat(2,1fr);
+  grid-template-rows:  repeat(2,1fr);
+  grid-gap: 8px;
+  padding: 10px;
+  border-radius: 4px;
+}
 
+.grid-resumen-mobile{
+  width: 100%;
+}
+
+.grid-resumen > .mat-card {
+  display: grid;
+  align-items: stretch;
+  grid-column-gap: 30px;
+  border-radius: 4px;
+  width: 80%;
+  text-align: center;
+  justify-content: center;
+  align-items: center;
+}
