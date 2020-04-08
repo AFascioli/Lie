@@ -1,6 +1,6 @@
 import { UbicacionService } from "src/app/ubicacion/ubicacion.service";
 import { EstudiantesService } from "src/app/estudiantes/estudiante.service";
-import { AdultoResponsableService } from "./../adultoResponsable.service";
+import { AdultoResponsableService } from "../adultoResponsable.service";
 import { Component, OnInit, OnDestroy, ChangeDetectorRef } from "@angular/core";
 import { MatDialog, MatDialogRef } from "@angular/material/dialog";
 import { Router } from "@angular/router";
@@ -12,11 +12,11 @@ import { MediaMatcher } from "@angular/cdk/layout";
 import { takeUntil } from "rxjs/operators";
 
 @Component({
-  selector: "app-alta-ar",
-  templateUrl: "./alta-ar.component.html",
-  styleUrls: ["./alta-ar.component.css"],
+  selector: "app-alta-adulto-responsable",
+  templateUrl: "./alta-adulto-responsable.component.html",
+  styleUrls: ["./alta-adulto-responsable.component.css"],
 })
-export class AltaARComponent implements OnInit, OnDestroy {
+export class AltaAdultoResponsableComponent implements OnInit, OnDestroy {
   private unsubscribe: Subject<void> = new Subject();
   apellidoEstudiante: string;
   nombreEstudiante: string;
@@ -43,9 +43,17 @@ export class AltaARComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.cargarEstudianteSeleccionado();
+    this.obtenerNacionalidades();
+  }
+
+  cargarEstudianteSeleccionado() {
     this.apellidoEstudiante = this.servicioEstudiante.estudianteSeleccionado.apellido;
     this.nombreEstudiante = this.servicioEstudiante.estudianteSeleccionado.nombre;
     this._idEstudiante = this.servicioEstudiante.estudianteSeleccionado._id;
+  }
+
+  obtenerNacionalidades() {
     this.servicioUbicacion.getNacionalidades();
     this.suscripcion = this.servicioUbicacion
       .getNacionalidadesListener()
@@ -55,67 +63,7 @@ export class AltaARComponent implements OnInit, OnDestroy {
       });
   }
 
-  // Cuando se destruye el componente se eliminan las suscripciones.
-  ngOnDestroy() {
-    this.unsubscribe.next();
-    this.unsubscribe.complete();
-  }
-
-  onGuardar(form: NgForm) {
-    if (!form.invalid) {
-      this.servicio
-        .registrarAdultoResponsable(
-          form.value.apellido,
-          form.value.nombre,
-          form.value.tipoDocumento,
-          form.value.nroDocumento,
-          form.value.sexo,
-          form.value.nacionalidad,
-          form.value.fechaNac,
-          form.value.telefono,
-          form.value.email,
-          this.tutor,
-          this._idEstudiante
-        )
-        .pipe(takeUntil(this.unsubscribe))
-        .subscribe(
-          (response) => {
-            if (response.exito) {
-              this.snackBar.open(response.message, "", {
-                panelClass: ["snack-bar-exito"],
-                duration: 4000,
-              });
-              form.resetForm();
-              this.tutor = false;
-            } else {
-              this.snackBar.open(response.message, "", {
-                panelClass: ["snack-bar-fracaso"],
-                duration: 4000,
-              });
-            }
-          },
-          (error) => {
-            console.log(
-              "Se presentaron problemas al querer registrar el adulto responsable: ",
-              error
-            );
-          }
-        );
-    } else {
-      this.snackBar.open("Faltan campos por completar", "", {
-        panelClass: ["snack-bar-fracaso"],
-        duration: 4000,
-      });
-    }
-  }
-
-  popUpVolver() {
-    this.dialog.open(AltaARPopupComponent, {
-      width: "250px",
-    });
-  }
-
-  checkLetras(event) {
+  checkIfIsALetter(event) {
     var inputValue = event.which;
     if (
       !(
@@ -130,8 +78,7 @@ export class AltaARComponent implements OnInit, OnDestroy {
     }
   }
 
-  //Chequea que solo se puedan tipear numeros
-  checkNumeros(event) {
+  checkIfIsANumber(event) {
     var inputValue = event.which;
     if (
       !(inputValue >= 48 && inputValue <= 57) &&
@@ -141,16 +88,79 @@ export class AltaARComponent implements OnInit, OnDestroy {
       event.preventDefault();
     }
   }
+
+  openPopUpVolver() {
+    this.dialog.open(AltaAdultoResponsablePopupComponent, {
+      width: "250px",
+    });
+  }
+
+  registrarAdultoResponsable(form) {
+    this.servicio
+      .registrarAdultoResponsable(
+        form.value.apellido,
+        form.value.nombre,
+        form.value.tipoDocumento,
+        form.value.nroDocumento,
+        form.value.sexo,
+        form.value.nacionalidad,
+        form.value.fechaNac,
+        form.value.telefono,
+        form.value.email,
+        this.tutor,
+        this._idEstudiante
+      )
+      .pipe(takeUntil(this.unsubscribe))
+      .subscribe(
+        (response) => {
+          if (response.exito) {
+            this.snackBar.open(response.message, "", {
+              panelClass: ["snack-bar-exito"],
+              duration: 4000,
+            });
+            form.resetForm();
+            this.tutor = false;
+          } else {
+            this.snackBar.open(response.message, "", {
+              panelClass: ["snack-bar-fracaso"],
+              duration: 4000,
+            });
+          }
+        },
+        (error) => {
+          console.log(
+            "Se presentaron problemas al querer registrar el adulto responsable: ",
+            error
+          );
+        }
+      );
+  }
+
+  onGuardar(form: NgForm) {
+    if (!form.invalid) {
+      this.registrarAdultoResponsable(form);
+    } else {
+      this.snackBar.open("Faltan campos por completar", "", {
+        panelClass: ["snack-bar-fracaso"],
+        duration: 4000,
+      });
+    }
+  }
+
+  ngOnDestroy() {
+    this.unsubscribe.next();
+    this.unsubscribe.complete();
+  }
 }
 
 @Component({
   selector: "app-alta-ar-popup",
-  templateUrl: "./alta-ar-popup.component.html",
-  styleUrls: ["./alta-ar.component.css"],
+  templateUrl: "./alta-adulto-responsable-popup.component.html",
+  styleUrls: ["./alta-adulto-responsable.component.css"],
 })
-export class AltaARPopupComponent {
+export class AltaAdultoResponsablePopupComponent {
   constructor(
-    public dialogRef: MatDialogRef<AltaARPopupComponent>,
+    public dialogRef: MatDialogRef<AltaAdultoResponsablePopupComponent>,
     public router: Router
   ) {}
 

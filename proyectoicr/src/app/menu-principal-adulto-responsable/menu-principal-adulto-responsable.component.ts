@@ -1,11 +1,11 @@
 import { Router } from "@angular/router";
-import { UbicacionService } from "./../ubicacion/ubicacion.service";
-import { InscripcionService } from "./../inscripcion/inscripcion.service";
-import { CalificacionesService } from "./../calificaciones/calificaciones.service";
-import { AsistenciaService } from "./../asistencia/asistencia.service";
-import { EstudiantesService } from "./../estudiantes/estudiante.service";
-import { EventosService } from "./../eventos/eventos.service";
-import { AutenticacionService } from "./../login/autenticacionService.service";
+import { UbicacionService } from "../ubicacion/ubicacion.service";
+import { InscripcionService } from "../inscripcion/inscripcion.service";
+import { CalificacionesService } from "../calificaciones/calificaciones.service";
+import { AsistenciaService } from "../asistencia/asistencia.service";
+import { EstudiantesService } from "../estudiantes/estudiante.service";
+import { EventosService } from "../eventos/eventos.service";
+import { AutenticacionService } from "../login/autenticacionService.service";
 import { Component, OnInit, ChangeDetectorRef } from "@angular/core";
 import { AdultoResponsableService } from "../adulto-responsable/adultoResponsable.service";
 import { Estudiante } from "../estudiantes/estudiante.model";
@@ -16,7 +16,7 @@ import { MediaMatcher } from "@angular/cdk/layout";
   templateUrl: "./menu-principal-ar.component.html",
   styleUrls: ["./menu-principal-ar.component.css"],
 })
-export class MenuPrincipalARComponent implements OnInit {
+export class MenuPrincipalAdultoResponsableComponent implements OnInit {
   estudiantes;
   eventos;
   _mobileQueryListener: () => void;
