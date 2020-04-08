@@ -12,9 +12,9 @@ import { Estudiante } from "../estudiantes/estudiante.model";
 import { MediaMatcher } from "@angular/cdk/layout";
 
 @Component({
-  selector: "app-menu-principal-ar",
-  templateUrl: "./menu-principal-ar.component.html",
-  styleUrls: ["./menu-principal-ar.component.css"],
+  selector: "app-menu-principal-adulto-responsable",
+  templateUrl: "./menu-principal-adulto-responsable.component.html",
+  styleUrls: ["./menu-principal-adulto-responsable.component.css"],
 })
 export class MenuPrincipalAdultoResponsableComponent implements OnInit {
   estudiantes;
