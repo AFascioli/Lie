@@ -14,7 +14,7 @@ import { takeUntil } from "rxjs/operators";
 @Component({
   selector: "app-alta-ar",
   templateUrl: "./alta-ar.component.html",
-  styleUrls: ["./alta-ar.component.css"]
+  styleUrls: ["./alta-ar.component.css"],
 })
 export class AltaARComponent implements OnInit, OnDestroy {
   private unsubscribe: Subject<void> = new Subject();
@@ -50,7 +50,7 @@ export class AltaARComponent implements OnInit, OnDestroy {
     this.suscripcion = this.servicioUbicacion
       .getNacionalidadesListener()
       .pipe(takeUntil(this.unsubscribe))
-      .subscribe(nacionalidadesActualizadas => {
+      .subscribe((nacionalidadesActualizadas) => {
         this.nacionalidades = nacionalidadesActualizadas;
       });
   }
@@ -78,32 +78,40 @@ export class AltaARComponent implements OnInit, OnDestroy {
           this._idEstudiante
         )
         .pipe(takeUntil(this.unsubscribe))
-        .subscribe(response => {
-          if (response.exito) {
-            this.snackBar.open(response.message, "", {
-              panelClass: ["snack-bar-exito"],
-              duration: 4000
-            });
-            form.resetForm();
-            this.tutor = false;
-          } else {
-            this.snackBar.open(response.message, "", {
-              panelClass: ["snack-bar-fracaso"],
-              duration: 4000
-            });
+        .subscribe(
+          (response) => {
+            if (response.exito) {
+              this.snackBar.open(response.message, "", {
+                panelClass: ["snack-bar-exito"],
+                duration: 4000,
+              });
+              form.resetForm();
+              this.tutor = false;
+            } else {
+              this.snackBar.open(response.message, "", {
+                panelClass: ["snack-bar-fracaso"],
+                duration: 4000,
+              });
+            }
+          },
+          (error) => {
+            console.log(
+              "Se presentaron problemas al querer registrar el adulto responsable: ",
+              error
+            );
           }
-        });
+        );
     } else {
       this.snackBar.open("Faltan campos por completar", "", {
         panelClass: ["snack-bar-fracaso"],
-        duration: 4000
+        duration: 4000,
       });
     }
   }
 
   popUpVolver() {
     this.dialog.open(AltaARPopupComponent, {
-      width: "250px"
+      width: "250px",
     });
   }
 
@@ -138,7 +146,7 @@ export class AltaARComponent implements OnInit, OnDestroy {
 @Component({
   selector: "app-alta-ar-popup",
   templateUrl: "./alta-ar-popup.component.html",
-  styleUrls: ["./alta-ar.component.css"]
+  styleUrls: ["./alta-ar.component.css"],
 })
 export class AltaARPopupComponent {
   constructor(
