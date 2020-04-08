@@ -19,8 +19,11 @@ var Grid = require("gridfs-stream");
 let gfs;
 
 const app = express(); // Creo la app express
-
-const conn = mongoose.createConnection(Ambiente.stringDeConexion);
+const options = {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+};
+const conn = mongoose.createConnection(Ambiente.stringDeConexion, options);
 
 conn.once("open", () => {
   gfs = Grid(conn.db, mongoose.mongo);
@@ -33,7 +36,7 @@ app.get("/imagen/:filename", (req, res) => {
     // Check if file
     if (!file || file.length === 0) {
       return res.status(404).json({
-        err: "No file exists"
+        err: "No file exists",
       });
     }
 
@@ -44,7 +47,7 @@ app.get("/imagen/:filename", (req, res) => {
       readstream.pipe(res);
     } else {
       res.status(404).json({
-        err: "Not an image"
+        err: "Not an image",
       });
     }
   });
@@ -53,7 +56,7 @@ app.get("/imagen/:filename", (req, res) => {
 mongoose
   .connect(Ambiente.stringDeConexion, {
     useNewUrlParser: true,
-    useUnifiedTopology: true
+    useUnifiedTopology: true,
   })
   .then(() => {
     console.log("Conexión a base de datos exitosa");
@@ -105,7 +108,7 @@ app.use("/materia", materiasRoutes);
 
 app.get("/status", (req, res, next) => {
   res.status(200).json({
-    message: "Servidor Node.js Lie®"
+    message: "Servidor Node.js Lie®",
   });
 });
 
