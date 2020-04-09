@@ -87,7 +87,7 @@ router.get("/estudiantes", checkAuthMiddleware, async (req, res) => {
           }).then((inscripcion) => {
             if (inscripcion != null) {
               Curso.findById(inscripcion.idCurso).then((curso) => {
-                datosEstudiante.curso = curso.curso;
+                datosEstudiante.curso = curso.nombre;
                 resolve(datosEstudiante);
               });
             } else {

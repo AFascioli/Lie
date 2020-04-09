@@ -24,7 +24,7 @@ router.get("/", checkAuthMiddleware, (req, res) => {
       cursos.forEach((curso) => {
         var cursoConId = {
           id: curso._id,
-          curso: curso.curso,
+          curso: curso.nombre,
         };
         respuesta.push(cursoConId);
       });
@@ -309,7 +309,7 @@ router.get("/cursosDeEstudiante", checkAuthMiddleware, (req, res) => {
         siguiente = ClaseInscripcion.obtenerAñoHabilitado(inscripcion);
 
         //Buscamos los cursos que corresponden al que se puede inscribir el estudiante
-        Curso.find({ curso: { $regex: siguiente } }).then((cursos) => {
+        Curso.find({ nombre: { $regex: siguiente } }).then((cursos) => {
           return res.status(200).json({
             message: "Devolvio los cursos correctamente",
             exito: true,
@@ -319,13 +319,13 @@ router.get("/cursosDeEstudiante", checkAuthMiddleware, (req, res) => {
       } else {
         //El estudiante no está inscripto a ningun curso, devuelve todos los cursos almacenados
         Curso.find()
-          .select({ curso: 1, _id: 1 })
+          .select({ nombre: 1, _id: 1 })
           .then((cursos) => {
             var respuesta = [];
             cursos.forEach((curso) => {
               var cursoConId = {
                 _id: curso._id,
-                curso: curso.curso,
+                curso: curso.nombre,
               };
               respuesta.push(cursoConId);
             });
@@ -372,7 +372,7 @@ router.get("/docente", checkAuthMiddleware, (req, res) => {
       cursos.forEach((curso) => {
         var cursoConId = {
           id: curso._id,
-          curso: curso.curso,
+          curso: curso.nombre,
         };
         respuesta.push(cursoConId);
       });
@@ -412,7 +412,7 @@ router.get("/documentos", checkAuthMiddleware, (req, res) => {
     },
     {
       $match: {
-        "cursos.curso": req.query.curso,
+        "cursos.nombre": req.query.curso,
       },
     },
     {
@@ -486,7 +486,7 @@ router.get(
           "datosEstudiante._id": 1,
           "datosEstudiante.nombre": 1,
           "datosEstudiante.apellido": 1,
-          "curso.curso": 1,
+          "curso.nombre": 1,
           calificacionesXMateria: 1,
         },
       },
@@ -593,7 +593,7 @@ router.get("/estudiante", checkAuthMiddleware, (req, res) => {
         {
           $project: {
             _id: 0,
-            "cursosDeEstudiante.curso": 1,
+            "cursosDeEstudiante.nombre": 1,
             "cursosDeEstudiante._id": 1,
           },
         },
@@ -602,7 +602,7 @@ router.get("/estudiante", checkAuthMiddleware, (req, res) => {
           return res.status(200).json({
             message: "Se obtuvo el curso del estudiante exitosamente",
             exito: true,
-            curso: cursoDeEstudiante[0].cursosDeEstudiante[0].curso,
+            curso: cursoDeEstudiante[0].cursosDeEstudiante[0].nombre,
             idCurso: cursoDeEstudiante[0].cursosDeEstudiante[0]._id,
           });
         })

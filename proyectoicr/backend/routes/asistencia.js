@@ -24,7 +24,7 @@ router.get("", checkAuthMiddleware, (req, res) => {
     },
     {
       $match: {
-        "curso.curso": req.query.curso,
+        "curso.nombre": req.query.curso,
         activa: true,
       },
     },
@@ -81,7 +81,7 @@ router.get("", checkAuthMiddleware, (req, res) => {
           },
           {
             $match: {
-              "curso.curso": req.query.curso,
+              "curso.nombre": req.query.curso,
               activa: true,
             },
           },
@@ -176,7 +176,7 @@ router.get("", checkAuthMiddleware, (req, res) => {
             },
           },
           {
-            $match: { "curso.curso": req.query.curso, activa: true },
+            $match: { "curso.nombre": req.query.curso, activa: true },
           },
           {
             $project: {
