@@ -2,17 +2,19 @@ const express = require("express");
 const router = express.Router();
 const Materia = require("../models/materia");
 
-//Obtiene todas las localidades que están almacenadas en la base de datos
-router.get("", (req, res, next) => {
-  Materia.find().sort({nombre: 'asc'}).then(materias => {
-    res.status(200).json({
-      materias: materias
+router.get("", (res) => {
+  Materia.find()
+    .sort({ nombre: "asc" })
+    .then((materias) => {
+      res.status(200).json({
+        materias: materias,
+      });
+    })
+    .catch((error) => {
+      res.status(500).json({
+        message: "Ocurrio un error al querer obtener las materias: " + error,
+      });
     });
-  }).catch(() => {
-    res.status(500).json({
-      message: "Mensaje de error especifico"
-    });
-  });
 });
 
 module.exports = router;
