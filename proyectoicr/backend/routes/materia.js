@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const Materia = require("../models/materia");
 
-router.get("", (res) => {
+router.get("", (req, res) => {
   Materia.find()
     .sort({ nombre: "asc" })
     .then((materias) => {

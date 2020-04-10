@@ -224,7 +224,7 @@
               </button>
               <button
                 id="reservar{{ i }}"
-                style="display: none"
+                style="display: none;"
                 [disabled]="indice != i"
                 mat-icon-button
                 (click)="reservarAgenda(i, row)"
@@ -260,8 +260,8 @@
     <button
       mat-raised-button
       class="button-primary"
-      (click)="onGuardar(form)"
-      *ngIf="cursoSelected && dataSource.data.length!=0"
+      (click)="onGuardar()"
+      *ngIf="cursoSelected && dataSource.data.length != 0 && huboCambios"
     >
       Guardar
     </button>
