@@ -37,7 +37,7 @@ let gfs;
 conn.once("open", () => {
   gfs = Grid(conn.db, mongoose.mongo);
   gfs.collection("imagen");
-  console.log("Conexión por imagenes a base de datos local.");
+  console.log("Conexión por imagenes a base de datos local");
 });
 
 // Usamos el body parser para poder extraer datos del request body
@@ -108,8 +108,7 @@ app.get("/status", (req, res, next) => {
   });
 });
 
-// #wip Guardar comentarios y diccionario
-
+// #resolve Guardar comentarios y diccionario
 // Endpoint save diccionario
 var mimir = require("mimir");
 var file_apropiados = require("./assets/comentarios_apropiados");
@@ -117,7 +116,8 @@ var file_inapropiados = require("./assets/comentarios_inapropiados");
 var comentarios_apropiados = file_apropiados.comentarios_apropiados;
 var comentarios_inapropiados = file_inapropiados.comentarios_inapropiados;
 const Diccionario = require("./models/diccionario");
-app.get("/sdict", (req, res, next) => {
+// #wip Por ahora llena de vuelta con los archivos nomas
+app.get("/sdict", (res) => {
   let diccionario = mimir.dict(comentarios);
 
   const dict = new Diccionario({
@@ -133,16 +133,4 @@ app.get("/sdict", (req, res, next) => {
   });
 });
 
-// Clasificador
-var redNeuronal = require("./assets/clasificador");
-var comentarios = comentarios_apropiados.concat(comentarios_inapropiados);
-let comentario =
-  "Es un comentario de mierda manga de hijos de puta, la culpa del covid la tienen los chinos.";
-app.get("/clasificador", (req, res) => {
-  bow_comentario = mimir.bow(comentario, diccionario);
-
-  res.status(200).json({
-    apropiado: true,
-  });
-});
 module.exports = app;

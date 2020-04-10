@@ -6,6 +6,7 @@ const router = express.Router();
 const AdultoResponsable = require("../models/adultoResponsable");
 const Empleado = require("../models/empleado");
 const checkAuthMiddleware = require("../middleware/check-auth");
+const clasificador = require("../middleware/clasificador");
 const multer = require("multer");
 const Usuario = require("../models/usuario");
 const path = require("path");
@@ -218,7 +219,7 @@ router.get("/comentarios", (req, res, next) => {
 //Publica en la base de datos un comentario
 //@params: id del evento
 //@params: la descripcion del comentario, el autor junto con el rol que cumple
-router.post("/registrarComentario", async (req, res, next) => {
+router.post("/registrarComentario", clasificador, async (req, res, next) => {
   let apellido = "";
   let nombre = "";
   let idUsuario = "";
