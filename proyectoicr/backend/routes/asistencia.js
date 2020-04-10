@@ -11,7 +11,6 @@ const Suscripcion = require("../classes/suscripcion");
 
 //Retorna vector con datos de los estudiantes y presente. Si ya se registro una asistencia para
 //el dia de hoy se retorna ese valor de la asistencia, sino se "construye" una nueva
-//#resolve
 router.get("", checkAuthMiddleware, (req, res) => {
   Inscripcion.aggregate([
     {
@@ -29,7 +28,6 @@ router.get("", checkAuthMiddleware, (req, res) => {
       },
     },
     {
-      //#resolve porque capaz no funciona si no tiene asistencias y salta error
       $project: {
         ultimaAsistencia: {
           $slice: ["$asistenciaDiaria", -1],
@@ -158,6 +156,7 @@ router.get("", checkAuthMiddleware, (req, res) => {
             .json({ estudiantes: respuesta, asistenciaNueva: "false" });
         });
       } else {
+        //Si no se tomo asistencia hoy / nunca se tomo asistencia
         Inscripcion.aggregate([
           {
             $lookup: {
@@ -405,7 +404,6 @@ router.get("/inasistencias", (req, res) => {
       },
     },
     {
-      //#resolve, revisar cuando no tiene 5 asistenciasdiarias
       $project: {
         asistenciaDiaria: {
           $slice: ["$asistenciaDiaria", -5],
