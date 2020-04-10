@@ -298,7 +298,7 @@ router.get("/cursosDeEstudiante", checkAuthMiddleware, (req, res) => {
     {
       $project: {
         estadoInscripcion: 1,
-        "cursoActual.curso": 1,
+        "cursoActual.nombre": 1,
       },
     },
   ])
@@ -761,7 +761,7 @@ router.get("/materias", checkAuthMiddleware, (req, res) => {
 //@params: id estudiante que se quiere inscribir
 //@params: id curso al que se lo quiere inscribir
 //@params: array documentos entregados en inscripcion: true si se entregó ese documente
-router.post("/inscripciontest", checkAuthMiddleware, async (req, res) => {
+router.post("/inscripcion", checkAuthMiddleware, async (req, res) => {
   //Dado una id de curso, encuentra todos los datos del mismo
   var obtenerCurso = () => {
     return new Promise((resolve, reject) => {
@@ -877,7 +877,7 @@ router.post("/inscripciontest", checkAuthMiddleware, async (req, res) => {
     });
   };
 
-  var cearCuotas = () => {
+  var crearCuotas = () => {
     return new Promise((resolve, reject) => {
       cuotas = [];
 
@@ -914,7 +914,7 @@ router.post("/inscripciontest", checkAuthMiddleware, async (req, res) => {
   }
 
   var materiasDelCurso = await obtenerMateriasDeCurso();
-  var cuotas = await cearCuotas();
+  var cuotas = await crearCuotas();
   var estadoCursandoMateria = await obtenerEstadoCursandoMateria();
   var idsCXMNuevas = await ClaseCalifXMateria.crearCXM(
     materiasDelCurso,

@@ -225,7 +225,6 @@ export class InscripcionPopupComponent implements OnDestroy {
 
   onYesConfirmarClick(): void {
     this.isLoading = true;
-    this.dialogRef.close();
     this.servicioInscripcion
       .inscribirEstudiante(
         this.IdEstudiante,

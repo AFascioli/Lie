@@ -19,6 +19,7 @@ import { MediaMatcher } from "@angular/cdk/layout";
 export class ListaEstudiantesComponent implements OnInit, OnDestroy {
   estudiantes: Estudiante[] = [];
   inscripto: any[] = [];
+  cursos: any[] = [];
   private unsubscribe: Subject<void> = new Subject();
   permisos = {
     notas: 0,
@@ -71,6 +72,7 @@ export class ListaEstudiantesComponent implements OnInit, OnDestroy {
               .pipe(takeUntil(this.unsubscribe))
               .subscribe((response) => {
                 this.inscripto[i] = response.exito;
+                this.cursos[i]=response.curso;
               });
           }
         });

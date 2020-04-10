@@ -37,7 +37,7 @@
                 >Atención, el estudiante seleccionado ya esta inscripto en el
                 curso
               </b>
-              <label *ngFor="let curso of cursos" [innerHTML]= "curso.curso"  class="mensaje-atencion-curso"> </label>
+              <label *ngFor="let curso of cursos" [innerHTML]= "curso.nombre"  class="mensaje-atencion-curso"> </label>
             </p>
           </mat-card-subtitle>
         </mat-card>
@@ -54,7 +54,7 @@
             (selectionChange)="onCursoSeleccionado(cursoSeleccionado)"
           >
             <mat-option *ngFor="let objCurso of cursos" [value]="objCurso._id">
-              {{ objCurso.curso }}
+              {{ objCurso.nombre }}
             </mat-option>
           </mat-select>
         </mat-form-field>
