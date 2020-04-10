@@ -144,7 +144,6 @@ export class BorrarPopupComponent implements OnDestroy {
   private unsubscribe: Subject<void> = new Subject();
   constructor(
     public dialogRef: MatDialogRef<BorrarPopupComponent>,
-    public router: Router,
     public servicioEvento: EventosService,
     public snackBar: MatSnackBar
   ) {}
