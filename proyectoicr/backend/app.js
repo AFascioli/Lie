@@ -108,14 +108,14 @@ app.get("/status", (req, res, next) => {
   });
 });
 
-// #wip Guardar comentarios
+// #wip Guardar comentarios y diccionario
+
+// Endpoint save diccionario
 var mimir = require("mimir");
-var redNeuronal = require("./assets/funcionNN");
 var file_apropiados = require("./assets/comentarios_apropiados");
 var file_inapropiados = require("./assets/comentarios_inapropiados");
 var comentarios_apropiados = file_apropiados.comentarios_apropiados;
 var comentarios_inapropiados = file_inapropiados.comentarios_inapropiados;
-var comentarios = comentarios_apropiados.concat(comentarios_inapropiados);
 const Diccionario = require("./models/diccionario");
 app.get("/sdict", (req, res, next) => {
   let diccionario = mimir.dict(comentarios);
@@ -133,10 +133,16 @@ app.get("/sdict", (req, res, next) => {
   });
 });
 
-// #wip Guardar diccionario
-// app.get("/status", (req, res, next) => {
-//   res.status(200).json({
-//     message: "Servidor Node.js Lie®",
-//   });
-// });
+// Clasificador
+var redNeuronal = require("./assets/clasificador");
+var comentarios = comentarios_apropiados.concat(comentarios_inapropiados);
+let comentario =
+  "Es un comentario de mierda manga de hijos de puta, la culpa del covid la tienen los chinos.";
+app.get("/clasificador", (req, res) => {
+  bow_comentario = mimir.bow(comentario, diccionario);
+
+  res.status(200).json({
+    apropiado: true,
+  });
+});
 module.exports = app;
