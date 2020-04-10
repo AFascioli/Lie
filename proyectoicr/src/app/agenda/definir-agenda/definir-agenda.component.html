@@ -219,6 +219,7 @@
                 [disabled]="indice == i"
                 mat-icon-button
                 (click)="editarAgenda(i)"
+                matTooltip="Editar"
               >
                 <mat-icon>edit</mat-icon>
               </button>
@@ -228,10 +229,15 @@
                 [disabled]="indice != i"
                 mat-icon-button
                 (click)="reservarAgenda(i, row)"
+                matTooltip="Aceptar"
               >
                 <mat-icon>done</mat-icon>
               </button>
-              <button mat-icon-button (click)="popupEliminar(i)">
+              <button
+                mat-icon-button
+                (click)="popupEliminar(i)"
+                matTooltip="Eliminar"
+              >
                 <mat-icon>remove_circle_outline</mat-icon>
               </button>
             </p>
