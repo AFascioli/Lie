@@ -1,8 +1,6 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
-const path = require("path");
-const cron = require("node-schedule");
 const estudiantesRoutes = require("./routes/estudiante");
 const ubicacionRoutes = require("./routes/ubicacion");
 const cursoRoutes = require("./routes/curso");
@@ -16,19 +14,48 @@ const eventoRoutes = require("./routes/evento");
 const materiasRoutes = require("./routes/materia");
 const Ambiente = require("./assets/ambiente");
 var Grid = require("gridfs-stream");
-let gfs;
 
 const app = express(); // Creo la app express
 const options = {
   useNewUrlParser: true,
   useUnifiedTopology: true,
+  useFindAndModify: false,
 };
-const conn = mongoose.createConnection(Ambiente.stringDeConexion, options);
 
+mongoose
+  .connect(Ambiente.stringDeConexion, options)
+  .then(() => {
+    console.log("Conexión a base de datos exitosa");
+  })
+  .catch(() => {
+    console.log("Fallo conexión a la base de datos");
+  });
+
+// Conexión a la base de datos que se usa en paralelo para manejo de imagenes
+const conn = mongoose.createConnection(Ambiente.stringDeConexion, options);
+let gfs;
 conn.once("open", () => {
   gfs = Grid(conn.db, mongoose.mongo);
   gfs.collection("imagen");
   console.log("Conexión por imagenes a base de datos local.");
+});
+
+// Usamos el body parser para poder extraer datos del request body
+app.use(bodyParser.json());
+
+// Esto se realiza para poder compartir recursos desde otro servidor (servidor angular)
+// CORS
+app.use((req, res, next) => {
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept, Authorization, Access-Control-Allow-Headers"
+  );
+  res.setHeader(
+    "Access-Control-Allow-Methods",
+    "GET, POST, PATCH, DELETE, OPTIONS"
+  );
+  next();
 });
 
 app.get("/imagen/:filename", (req, res) => {
@@ -53,39 +80,6 @@ app.get("/imagen/:filename", (req, res) => {
   });
 });
 
-mongoose
-  .connect(Ambiente.stringDeConexion, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  })
-  .then(() => {
-    console.log("Conexión a base de datos exitosa");
-  })
-  .catch(() => {
-    console.log("Fallo conexión a la base de datos");
-  });
-
-// //Para sacar el deprecation warning de la consola
-mongoose.set("useFindAndModify", false);
-
-// Usamos el body parser para poder extraer datos del request body
-app.use(bodyParser.json());
-
-// Esto se realiza para poder compartir recursos desde otro servidor (servidor angular)
-// CORS
-app.use((req, res, next) => {
-  res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader(
-    "Access-Control-Allow-Headers",
-    "Origin, X-Requested-With, Content-Type, Accept, Authorization, Access-Control-Allow-Headers"
-  );
-  res.setHeader(
-    "Access-Control-Allow-Methods",
-    "GET, POST, PATCH, DELETE, OPTIONS"
-  );
-  next();
-});
-
 app.use("/estudiante", estudiantesRoutes);
 
 app.use("/ubicacion", ubicacionRoutes);
@@ -106,12 +100,43 @@ app.use("/calificacion", calificacionesRoutes);
 
 app.use("/materia", materiasRoutes);
 
+app.use("/evento", eventoRoutes);
+
 app.get("/status", (req, res, next) => {
   res.status(200).json({
     message: "Servidor Node.js Lie®",
   });
 });
 
-app.use("/evento", eventoRoutes);
+// #wip Guardar comentarios
+var mimir = require("mimir");
+var redNeuronal = require("./assets/funcionNN");
+var file_apropiados = require("./assets/comentarios_apropiados");
+var file_inapropiados = require("./assets/comentarios_inapropiados");
+var comentarios_apropiados = file_apropiados.comentarios_apropiados;
+var comentarios_inapropiados = file_inapropiados.comentarios_inapropiados;
+var comentarios = comentarios_apropiados.concat(comentarios_inapropiados);
+const Diccionario = require("./models/diccionario");
+app.get("/sdict", (req, res, next) => {
+  let diccionario = mimir.dict(comentarios);
 
+  const dict = new Diccionario({
+    comentarios_apropiados: comentarios_apropiados,
+    comentarios_inapropiados: comentarios_inapropiados,
+    diccionario: diccionario,
+  });
+
+  dict.save().then(() => {
+    res.status(200).json({
+      message: "Diccionario creado.",
+    });
+  });
+});
+
+// #wip Guardar diccionario
+// app.get("/status", (req, res, next) => {
+//   res.status(200).json({
+//     message: "Servidor Node.js Lie®",
+//   });
+// });
 module.exports = app;
