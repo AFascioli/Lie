@@ -18,7 +18,7 @@ const ClaseAsistencia = require("../classes/asistencia");
 // Obtiene todos los cursos que están almacenados en la base de datos
 router.get("/", checkAuthMiddleware, (req, res) => {
   Curso.find()
-    .select({ curso: 1, _id: 1 })
+    .select({ nombre: 1, _id: 1 })
     .then((cursos) => {
       var respuesta = [];
       cursos.forEach((curso) => {

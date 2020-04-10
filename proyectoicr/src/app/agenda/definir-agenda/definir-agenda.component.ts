@@ -19,6 +19,7 @@ import { takeUntil } from "rxjs/operators";
 import { CancelPopupComponent } from "src/app/popup-genericos/cancel-popup.component";
 import { Router } from "@angular/router";
 import { MediaMatcher } from "@angular/cdk/layout";
+import { NgModel } from '@angular/forms';
 
 @Component({
   selector: "app-definir-agenda",
@@ -110,7 +111,7 @@ export class DefinirAgendaComponent implements OnInit, OnDestroy {
       });
   }
 
-  obtenerAgenda(idCurso) {
+  obtenerAgenda(idCurso: NgModel) {
     if(!this.isEditing){
       this.cursoSelected = true;
       this.idCursoSeleccionado = idCurso.value;
@@ -121,6 +122,7 @@ export class DefinirAgendaComponent implements OnInit, OnDestroy {
           this.dataSource.data = rtdo.agenda;
         });
     }else{
+      idCurso.reset(this.idCursoSeleccionado);
       this.openSnackBar("Necesitas finalizar la edición de la correspondiente fila","snack-bar-fracaso");
     }
   }
