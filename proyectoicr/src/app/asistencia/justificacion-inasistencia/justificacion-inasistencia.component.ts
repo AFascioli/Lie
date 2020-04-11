@@ -9,7 +9,7 @@ import { Subject } from "rxjs";
 @Component({
   selector: "app-justificacion-inasistencia",
   templateUrl: "./justificacion-inasistencia.component.html",
-  styleUrls: ["./justificacion-inasistencia.component.css"]
+  styleUrls: ["./justificacion-inasistencia.component.css"],
 })
 export class JustificacionInasistenciaComponent implements OnInit, OnDestroy {
   fechaActual = new Date();
@@ -38,10 +38,19 @@ export class JustificacionInasistenciaComponent implements OnInit, OnDestroy {
       this.servicioAsistencia
         .obtenerUltimasInasistencias()
         .pipe(takeUntil(this.unsubscribe))
-        .subscribe(response => {
-          this.ultimasInasistencias = response.inasistencias;
-          this.isLoading = false;
-        });
+        .subscribe(
+          (response) => {
+            this.ultimasInasistencias = response.inasistencias;
+            this.isLoading = false;
+          },
+          (error) => {
+            console.error(
+              "Ocurrió un error al querer publicar el estado de las inasistencias (justificada / injustificada). " +
+                "El error se puede describir de la siguiente manera: " +
+                error
+            );
+          }
+        );
     } else {
       this.fueraDeCursado = true;
     }
@@ -51,17 +60,26 @@ export class JustificacionInasistenciaComponent implements OnInit, OnDestroy {
     this.servicioAsistencia
       .justificarInasistencia(this.ultimasInasistencias)
       .pipe(takeUntil(this.unsubscribe))
-      .subscribe(response => {
-        let tipoSnackBar = "snack-bar-fracaso";
-        if (response.exito) {
-          tipoSnackBar = "snack-bar-exito";
+      .subscribe(
+        (response) => {
+          let tipoSnackBar = "snack-bar-fracaso";
+          if (response.exito) {
+            tipoSnackBar = "snack-bar-exito";
+          }
+          this.snackBar.open(response.message, "", {
+            panelClass: [tipoSnackBar],
+            duration: 4500,
+          });
+          this.ngOnInit();
+        },
+        (error) => {
+          console.error(
+            "Ocurrió un error al querer publicar el estado de las inasistencias (justificada / injustificada). " +
+              "El error se puede describir de la siguiente manera: " +
+              error
+          );
         }
-        this.snackBar.open(response.message, "", {
-          panelClass: [tipoSnackBar],
-          duration: 4500
-        });
-        this.ngOnInit();
-      });
+      );
   }
 
   fechaActualEnPeriodoCursado() {
