@@ -115,6 +115,7 @@ var file_apropiados = require("./assets/comentarios_apropiados");
 var file_inapropiados = require("./assets/comentarios_inapropiados");
 var comentarios_apropiados = file_apropiados.comentarios_apropiados;
 var comentarios_inapropiados = file_inapropiados.comentarios_inapropiados;
+var comentarios = comentarios_apropiados.concat(comentarios_inapropiados);
 const Diccionario = require("./models/diccionario");
 // #wip Por ahora llena de vuelta con los archivos nomas
 app.get("/sdict", (res) => {

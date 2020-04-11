@@ -70,9 +70,9 @@ export class MenuLateralComponent implements OnInit, OnDestroy {
       .subscribe((response) => {
         this.permisos = response.permisos;
       });
-    this.authService.obtenerNombreApellido().subscribe((user) => {
-      this.apellidoNombre=user.usuario.apellido + " " + user.usuario.nombre;
-    });
+    // this.authService.obtenerNombreApellido().subscribe((user) => {
+    //   this.apellidoNombre=user.usuario.apellido + " " + user.usuario.nombre;
+    // });
 
     this.rol = this.authService.getRol();
     this.usuario = this.authService.getUsuarioAutenticado();
