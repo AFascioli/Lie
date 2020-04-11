@@ -48,6 +48,7 @@ div.mat-chip-list-wrapper {
 }
 
 .descripcion {
+  display: flex;
   font-size: 20px;
   margin-left: 25px;
   margin-top: 20px;
@@ -293,6 +294,7 @@ mat-icon {
   animation-duration: 1.5s;
 }
 
+
 @-webkit-keyframes fade {
   from {
     opacity: 0.4;
@@ -310,3 +312,4 @@ mat-icon {
     opacity: 1;
   }
 }
+
