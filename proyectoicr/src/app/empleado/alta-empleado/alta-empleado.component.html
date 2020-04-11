@@ -127,6 +127,7 @@
           ngModel
           #nacionalidad="ngModel"
           matNativeControl
+          [(ngModel)]="nacionalidadEmpleado"
         >
           <mat-option
             *ngFor="let nacionalidad of nacionalidades"

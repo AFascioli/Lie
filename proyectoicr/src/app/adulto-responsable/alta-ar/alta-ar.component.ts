@@ -28,6 +28,9 @@ export class AltaARComponent implements OnInit, OnDestroy {
   mobileQuery: MediaQueryList;
   tutor: boolean = false;
 
+  //para asignar valores por defecto
+  nacionalidadAdultoResponsable: string;
+
   constructor(
     public servicio: AdultoResponsableService,
     public servicioEstudiante: EstudiantesService,
@@ -43,6 +46,7 @@ export class AltaARComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.nacionalidadAdultoResponsable = "Argentina";
     this.apellidoEstudiante = this.servicioEstudiante.estudianteSeleccionado.apellido;
     this.nombreEstudiante = this.servicioEstudiante.estudianteSeleccionado.nombre;
     this._idEstudiante = this.servicioEstudiante.estudianteSeleccionado._id;
@@ -52,6 +56,9 @@ export class AltaARComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.unsubscribe))
       .subscribe(nacionalidadesActualizadas => {
         this.nacionalidades = nacionalidadesActualizadas;
+        this.nacionalidades.sort((a, b) =>
+          a.name > b.name ? 1 : b.name > a.name ? -1 : 0
+        );
       });
   }
 
