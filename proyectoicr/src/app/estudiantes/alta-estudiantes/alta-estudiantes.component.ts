@@ -54,7 +54,6 @@ export class AltaEstudiantesComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.codigoPostalEstudiante = "2421";
     this.nacionalidadEstudiante = "Argentina";
-    this.servicioEstudiante.formInvalidoEstudiante = true;
     this.servicioUbicacion.getProvincias();
     this.suscripcion = this.servicioUbicacion
       .getProvinciasListener()

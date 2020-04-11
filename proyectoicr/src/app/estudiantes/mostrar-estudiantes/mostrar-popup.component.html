@@ -13,21 +13,13 @@
 <div *ngIf="tipoPopup === 'borrar'" class="borrar">
   <h3 mat-dialog-title class="titulo-popup">Borrar</h3>
   <div mat-dialog-content>
-    <p class="parrafo">{{ borrar }}</p>
+    <p class="parrafo">¿Está seguro que desea borrar el estudiante?</p>
   </div>
   <div
-    *ngIf="borrar != 'El estudiante fue borrado exitosamente'"
     mat-dialog-actions class="button-popup">
     <button mat-raised-button class="button-warn" (click)="onYesDeleteClick()" cdkFocusInitial >
       Sí
     </button>
     <button mat-raised-button class="button-primary" (click)="onNoClick()">No</button>
-  </div>
-  <div
-    *ngIf="borrar === 'El estudiante fue borrado exitosamente'"
-    mat-dialog-actions>
-    <div mat-dialog-actions class="button-popup">
-      <button mat-raised-button class="button-primary" (click)="onOkClickBorrar()" >Ok</button>
-    </div>
   </div>
 </div>

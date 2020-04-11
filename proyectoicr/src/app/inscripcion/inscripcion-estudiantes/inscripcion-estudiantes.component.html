@@ -1,7 +1,7 @@
 <h1 class="componente-titulo">
   Inscribir estudiante a un curso para el ciclo lectivo {{fechaActual.getFullYear()}}
 </h1>
-<mat-card class="card-body-componente">
+<mat-card class="card-body-componente" *ngIf="!isLoading">
   <form #form="ngForm">
     <p class="aviso" *ngIf="!fechaDentroDeRangoInscripcion">
       Atención, no se puede realizar inscripciones debido a que nos encontramos
@@ -54,7 +54,7 @@
             (selectionChange)="onCursoSeleccionado(cursoSeleccionado)"
           >
             <mat-option *ngFor="let objCurso of cursos" [value]="objCurso._id">
-              {{ objCurso.nombre }}
+              {{ objCurso.curso }}
             </mat-option>
           </mat-select>
         </mat-form-field>
@@ -110,4 +110,8 @@
       </button>
     </div>
   </form>
+</mat-card>
+
+<mat-card class="card-spinner" *ngIf="isLoading">
+  <mat-spinner class="spinner" [diameter]="60"></mat-spinner>
 </mat-card>

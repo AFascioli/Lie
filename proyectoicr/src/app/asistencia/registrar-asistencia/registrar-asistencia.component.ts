@@ -130,7 +130,6 @@ export class RegistrarAsistenciaComponent implements OnInit, OnDestroy {
   }
 
   onCancelar() {
-    this.servicioEstudiante.tipoPopUp = "cancelar";
     this.popup.open(AsistenciaPopupComponent, {
       width: "250px"
     });
@@ -143,18 +142,11 @@ export class RegistrarAsistenciaComponent implements OnInit, OnDestroy {
   styleUrls: ["./registrar-asistencia.component.css"]
 })
 export class AsistenciaPopupComponent {
-  tipoPopup: string;
 
   constructor(
     public dialogRef: MatDialogRef<AsistenciaPopupComponent>,
-    public router: Router,
-    public servicioEstudiante: EstudiantesService
+    public router: Router
   ) {
-    this.tipoPopup = this.servicioEstudiante.tipoPopUp;
-  }
-
-  onOkClick(): void {
-    this.dialogRef.close();
   }
 
   onYesClick(): void {

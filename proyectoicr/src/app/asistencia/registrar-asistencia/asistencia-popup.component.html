@@ -1,13 +1,4 @@
-<div *ngIf="tipoPopup === 'guardar'" class="cancelar">
-  <h3 mat-dialog-title class="titulo-popup">Guardar</h3>
-  <div mat-dialog-content>
-    <p class="parrafo">Asistencia registrada exitosamente</p>
-  </div>
-  <div mat-dialog-actions class="button-popup">
-    <button mat-raised-button class="button-primary" (click)="onOkClick()"> Ok </button>
-  </div>
-</div>
-<div *ngIf="tipoPopup === 'cancelar'" class="cancelar">
+<div class="cancelar">
   <h3 mat-dialog-title class="titulo-popup">Cancelar</h3>
   <div mat-dialog-content>
     <p class="parrafo">¿Está seguro que desea cancelar?</p>

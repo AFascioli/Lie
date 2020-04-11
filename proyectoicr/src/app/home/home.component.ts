@@ -116,7 +116,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     });
     // Luego de que se cierra el popup, se fija si se eligio si o no, en caso de si se borra.
     popup.afterClosed().subscribe((resultado) => {
-      if (resultado.data) {
+      if (resultado) {
         this.servicioEvento
           .eliminarEvento(this.servicioEvento.evento._id)
           .pipe(takeUntil(this.unsubscribe))
@@ -165,10 +165,10 @@ export class BorrarPopupComponent{
   ) {}
 
   onYesClick(): void {
-    this.dialogRef.close({ data: true });
+    this.dialogRef.close(true);
   }
 
   onNoClick(): void {
-    this.dialogRef.close({ data: false });
+    this.dialogRef.close(false);
   }
 }

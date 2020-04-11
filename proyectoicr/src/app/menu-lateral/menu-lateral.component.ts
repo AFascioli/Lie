@@ -83,10 +83,15 @@ export class MenuLateralComponent implements OnInit, OnDestroy {
   }
 
   cierreSesion() {
-    // this.authService.logout();
-    // this.router.navigate(["./login"]);
-    this.dialog.open(CerrarSesionPopupComponent, {
+    let popup = this.dialog.open(CerrarSesionPopupComponent, {
       width: "250px",
+    });
+
+    popup.afterClosed().subscribe((resultado) => {
+      if(resultado){
+        this.authService.logout();
+        this.router.navigate(["./login"]);
+      }
     });
   }
 
@@ -104,20 +109,14 @@ export class MenuLateralComponent implements OnInit, OnDestroy {
   styleUrls: ["./menu-lateral.component.css"],
 })
 export class CerrarSesionPopupComponent {
-  formInvalido: Boolean;
-  tipoPopup: string;
   constructor(
-    public dialogRef: MatDialogRef<CerrarSesionPopupComponent>,
-    public router: Router,
-    public authService: AutenticacionService
+    public dialogRef: MatDialogRef<CerrarSesionPopupComponent>
   ) {}
 
   onYesClick(): void {
-    this.dialogRef.close();
-    this.authService.logout();
-    this.router.navigate(["./login"]);
+    this.dialogRef.close(true);
   }
   onNoClick(): void {
-    this.dialogRef.close();
+    this.dialogRef.close(false);
   }
 }

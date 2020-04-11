@@ -698,11 +698,11 @@ router.post("/retiro", checkAuthMiddleware, (req, res) => {
                                     cuerpo = cuerpo + ".";
                                 }
                               }
-                              //Envio de la notificación
+                              //Envio de la notificación #resolve
                               Suscripcion.notificacionGrupal(
                                 ...estudiante.adultoResponsable,
                                 "Retiro anticipado",
-                                this.cuerpo
+                                cuerpo
                               );
                             })
                             .catch(() => {
