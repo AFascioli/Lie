@@ -322,13 +322,13 @@ router.delete("/eliminarEvento", checkAuthMiddleware, (req, res, next) => {
           //     evento.titulo,
           //     "Se ha cancelado el evento."
           //   );
-
-          return res.status(202).json({
-            message: "Evento eliminado exitosamente",
-            exito: true,
-          });
         });
       }
+
+      return res.status(202).json({
+        message: "Evento eliminado exitosamente",
+        exito: true,
+      });
     })
     .catch(() => {
       res.status(500).json({
