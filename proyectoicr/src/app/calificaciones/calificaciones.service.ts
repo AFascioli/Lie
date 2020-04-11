@@ -50,6 +50,25 @@ export class CalificacionesService {
     });
   }
 
+   //Obtiene todas las calificaciones de los estudiantes de un curso determinado
+  //@params: id del curso
+  //@params: id de la materia
+  public obtenerCalificacionesEstudiantesXCursoXMateriaCicloLectivo(
+    idCurso: string,
+    idMateria: string
+  ) {
+    let params = new HttpParams()
+      .set("idCurso", idCurso)
+      .set("idMateria", idMateria)
+    return this.http.get<{
+      estudiantes: any[];
+      message: string;
+      exito: boolean;
+    }>(environment.apiUrl + "/curso/estudiantes/materias/calificacionesCicloLectivo", {
+      params: params
+    });
+  }
+
   //Obtiene las materias desaprobadas de un estudiante determinado
   //@params: id del estudiante
   public obtenerMateriasDesaprobadasEstudiante() {

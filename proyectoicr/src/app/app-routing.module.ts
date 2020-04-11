@@ -39,6 +39,7 @@ import { VisualizarAgendaComponent } from "./agenda/visualizar-agenda/visualizar
 import { SancionesEstudianteComponent } from "./perfil-estudiante/sanciones-estudiante/sanciones-estudiante.component";
 import { RouteEventoGuard } from "./routeEvento.guard";
 import { DefinirAgendaComponent } from "./agenda/definir-agenda/definir-agenda.component";
+import { CalificacionesCicloLectivoComponent } from './calificaciones/calificaciones-ciclo-lectivo/calificaciones-ciclo-lectivo.component';
 
 const routes: Routes = [
   { path: "login", component: LoginComponent },
@@ -136,6 +137,12 @@ const routes: Routes = [
         component: CalificacionesEstudiantesComponent,
         canActivate: [RoleGuard],
         data: { rolesValidos: ["Admin", "Preceptor", "Director", "Docente"] }
+      },
+      {
+        path: "calificacionesCicloLectivo",
+        component: CalificacionesCicloLectivoComponent,
+        // canActivate: [RoleGuard],
+        // data: { rolesValidos: ["Admin", "Preceptor", "Director", "Docente"] }
       },
       {
         path: "registrarCuotas",

@@ -69,6 +69,7 @@ import {
 import { DocumentosInscripcionComponent } from "./inscripcion/documentos-inscripcion/documentos-inscripcion.component";
 import { MatGridListModule } from "@angular/material/grid-list";
 import { CalificacionesEstudiantesComponent } from "./calificaciones/calificaciones-estudiantes/calificaciones-estudiantes.component";
+import { CalificacionesCicloLectivoComponent } from "./calificaciones/calificaciones-ciclo-lectivo/calificaciones-ciclo-lectivo.component";
 import { LlegadaTardeComponent } from "./asistencia/llegada-tarde/llegada-tarde.component";
 import {
   CambiarPassword,
@@ -148,6 +149,7 @@ import { MenuPrincipalARComponent } from "./menu-principal-ar/menu-principal-ar.
     RetiroPopupComponent,
     DocumentosInscripcionComponent,
     CalificacionesEstudiantesComponent,
+    CalificacionesCicloLectivoComponent,
     LlegadaTardeComponent,
     CambiarPassword,
     CambiarPasswordPopupComponent,
