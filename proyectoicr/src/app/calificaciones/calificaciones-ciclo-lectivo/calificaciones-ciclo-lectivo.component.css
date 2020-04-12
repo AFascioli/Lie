@@ -10,15 +10,21 @@ table {
 
 .columnas-normales {
   color: black;
-  /* width: 14% !important; */
+  width: 10% !important;
+}
+
+.columnas-promedios {
+  color: black;
+  width: 4.25% !important;
 }
 
 .columnas-chicas {
- color: black;
-  /* width: 5%; */
+  color: black;
+  width: 3%;
 }
 
-.apellido-tabla, .nombre-tabla{
+.apellido-tabla,
+.nombre-tabla {
   word-break: break-all;
 }
 
@@ -27,11 +33,12 @@ th {
   font-size: 14px;
 }
 
-th.mat-header-cell {
+.header {
   text-align: center;
 }
 
-p,b{
+p,
+b {
   font-size: 14px !important;
   margin-top: 16px;
 }
@@ -95,13 +102,21 @@ input:focus {
   width: 97%;
 }
 
-.th.mat-header-cell:first-of-type,  th.mat-header-cell:first-of-type,
-.td.mat-cell:first-of-type,  td.mat-cell:first-of-type{
+.th.mat-header-cell:first-of-type,
+th.mat-header-cell:first-of-type,
+.td.mat-cell:first-of-type,
+td.mat-cell:first-of-type {
   padding-left: 0;
 }
 
-
-.th.mat-header-cell:last-of-type,  th.mat-header-cell:last-of-type,
-.td.mat-cell:last-of-type,  td.mat-cell:last-of-type{
+.th.mat-header-cell:last-of-type,
+th.mat-header-cell:last-of-type,
+.td.mat-cell:last-of-type,
+td.mat-cell:last-of-type {
   padding-right: 0;
+}
+
+.card-body-componente {
+  max-width: 1000px;
+  min-width: 500px;
 }

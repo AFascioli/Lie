@@ -184,9 +184,9 @@
           </td>
         </ng-container>
         <ng-container matColumnDef="prom1">
-          <th class="columnas-chicas" mat-header-cell *matHeaderCellDef>P1</th>
+          <th class="columnas-promedios" mat-header-cell *matHeaderCellDef>P1</th>
           <td
-            class="columnas-chicas"
+            class="columnas-promedios"
             mat-cell
             *matCellDef="let estudiante; let i = index"
             [ngClass]="{
@@ -289,9 +289,9 @@
           </td>
         </ng-container>
         <ng-container matColumnDef="prom2">
-          <th class="columnas-chicas" mat-header-cell *matHeaderCellDef>P2</th>
+          <th class="columnas-promedios" mat-header-cell *matHeaderCellDef>P2</th>
           <td
-            class="columnas-chicas"
+            class="columnas-promedios"
             mat-cell
             *matCellDef="let estudiante; let i = index"
             [ngClass]="{
@@ -394,9 +394,9 @@
           </td>
         </ng-container>
         <ng-container matColumnDef="prom3">
-          <th class="columnas-chicas" mat-header-cell *matHeaderCellDef>P3</th>
+          <th class="columnas-promedios" mat-header-cell *matHeaderCellDef>P3</th>
           <td
-            class="columnas-chicas"
+            class="columnas-promedios"
             mat-cell
             *matCellDef="let estudiante; let i = index"
             [ngClass]="{
@@ -409,11 +409,11 @@
           </td>
         </ng-container>
         <ng-container matColumnDef="prom">
-          <th class="columnas-chicas" mat-header-cell *matHeaderCellDef>
+          <th class="columnas-promedios promedio"  mat-header-cell *matHeaderCellDef>
             Final
           </th>
           <td
-            class="columnas-chicas promedio"
+            class="columnas-promedios promedio"
             mat-cell
             *matCellDef="let estudiante; let i = index"
             [ngClass]="{
@@ -427,28 +427,28 @@
           </td>
         </ng-container>
 
-        <ng-container matColumnDef="estudiante">
-          <th mat-header-cell *matHeaderCellDef [attr.colspan]="2">
+        <ng-container matColumnDef="estudiante" class="header">
+          <th class="header" mat-header-cell *matHeaderCellDef [attr.colspan]="2">
             Estudiante
           </th>
         </ng-container>
-        <ng-container matColumnDef="primerTrimestre">
-          <th mat-header-cell *matHeaderCellDef [attr.colspan]="7">
+        <ng-container matColumnDef="primerTrimestre" class="header">
+          <th class="header" mat-header-cell *matHeaderCellDef [attr.colspan]="7">
             Primer Trimestre
           </th>
         </ng-container>
-        <ng-container matColumnDef="segundoTrimestre">
-          <th mat-header-cell *matHeaderCellDef [attr.colspan]="7">
+        <ng-container matColumnDef="segundoTrimestre" class="header">
+          <th class="header" mat-header-cell *matHeaderCellDef [attr.colspan]="7">
             Segundo Trimestre
           </th>
         </ng-container>
-        <ng-container matColumnDef="tercerTrimestre">
-          <th mat-header-cell *matHeaderCellDef [attr.colspan]="7">
+        <ng-container matColumnDef="tercerTrimestre" class="header">
+          <th class="header" mat-header-cell *matHeaderCellDef [attr.colspan]="7">
             Tercer Trimestre
           </th>
         </ng-container>
-        <ng-container matColumnDef="promedio">
-          <th mat-header-cell *matHeaderCellDef [attr.colspan]="1">
+        <ng-container matColumnDef="promedio" class="header">
+          <th class="header" mat-header-cell *matHeaderCellDef [attr.colspan]="1">
             Promedio
           </th>
         </ng-container>
@@ -480,17 +480,6 @@
       </button>
     </div>
     <div class="div-button">
-      <!-- <button
-        [disabled]="
-          !estudiantes || !calificacionesChange || !puedeEditarCalificaciones
-        "
-        mat-raised-button
-        class="button"
-        (click)="onGuardar(form)"
-        class="button-primary"
-      >
-        Guardar
-      </button> -->
       <button mat-raised-button class="button-warn" (click)="onCancelar()">
         Cancelar
       </button>
