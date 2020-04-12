@@ -116,12 +116,13 @@
             <mat-form-field [class.mat-form-field-mobile]="mobileQuery.matches">
               <input
                 matInput
-                [matDatepicker]="picker"
                 name="fechaNac"
                 ngModel
                 #fechaNac="ngModel"
-                [max]="maxDate"
+                [matDatepicker]="picker"
                 placeholder="Sel. fecha de nacimiento"
+                (click)="picker.open()"
+                [max]="maxDate"
                 required
               />
               <mat-datepicker-toggle

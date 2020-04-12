@@ -109,6 +109,7 @@
           [max]="maxDate"
           [matDatepicker]="picker"
           placeholder="Seleccione fecha de nacimiento"
+          (click)="picker.open()"
           required
         />
         <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
