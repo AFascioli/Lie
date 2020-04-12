@@ -36,6 +36,7 @@ import { CancelPopupComponent } from "./popup-genericos/cancel-popup.component";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { HttpClientModule, HTTP_INTERCEPTORS } from "@angular/common/http";
 import { NgxMaterialTimepickerModule } from "ngx-material-timepicker";
+import { MatTableExporterModule } from 'mat-table-exporter';
 import { EstudiantesService } from "./estudiantes/estudiante.service";
 import {
   BuscarEstudiantesComponent,
@@ -235,6 +236,7 @@ import { MenuPrincipalARComponent } from "./menu-principal-ar/menu-principal-ar.
     NgxMaterialTimepickerModule,
     ImageUploadModule,
     MatTooltipModule,
+    MatTableExporterModule,
     MatCarouselModule.forRoot(),
     ServiceWorkerModule.register("ngsw-worker.js", {
       enabled: environment.production,

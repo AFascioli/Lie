@@ -50,373 +50,422 @@
         placeholder="Estudiante"
       />
     </mat-form-field> -->
+    <div [hidden]="!estudiantes">
+      <table
+        mat-table
+        [dataSource]="dataSource"
+        matTableExporter
+        #exporter="matTableExporter"
+        [class.table-mobile]="mobileQuery.matches"
+      >
+        <ng-container matColumnDef="apellido">
+          <th class="columnas-normales" mat-header-cell *matHeaderCellDef>
+            Apellido/s
+          </th>
+          <td
+            class="columnas-normales apellido-tabla"
+            mat-cell
+            *matCellDef="let estudiante; let i = index"
+            [ngClass]="{
+              bajoPromedio:
+                calcularPromedio(
+                  indexEst + i,
+                  contadorNotasValidas(indexEst + i)
+                ) < 6 || this.promedioT3 < 6
+            }"
+          >
+            {{ estudiante.apellido }}
+          </td>
+        </ng-container>
 
-    <table
-      mat-table
-      [class.table-mobile]="mobileQuery.matches"
-      [dataSource]="dataSource"
-      *ngIf="estudiantes"
-    >
-      <ng-container matColumnDef="apellido">
-        <th class="columnas-normales" mat-header-cell *matHeaderCellDef>
-          Apellido/s
-        </th>
-        <td
-          class="columnas-normales apellido-tabla"
-          mat-cell
-          *matCellDef="let estudiante; let i = index"
-          [ngClass]="{
-            bajoPromedio:
-              calcularPromedio(
-                indexEst + i,
-                contadorNotasValidas(indexEst + i)
-              ) < 6 || this.promedioT3 < 6
-          }"
-        >
-          {{ estudiante.apellido }}
-        </td>
-      </ng-container>
+        <ng-container matColumnDef="nombre">
+          <th class="columnas-normales" mat-header-cell *matHeaderCellDef>
+            Nombre/s
+          </th>
+          <td
+            class="columnas-normales nombre-tabla"
+            mat-cell
+            *matCellDef="let estudiante; let i = index"
+            [ngClass]="{
+              bajoPromedio: this.promedio < 6 || this.promedioT3 < 6
+            }"
+          >
+            {{ estudiante.nombre }}
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="cal1">
+          <th class="columnas-chicas" mat-header-cell *matHeaderCellDef>1°</th>
+          <td
+            class="columnas-chicas"
+            mat-cell
+            *matCellDef="let estudiante; let i = index"
+            [ngClass]="{
+              bajoPromedio: this.promedio < 6 || this.promedioT3 < 6
+            }"
+          >
+            <p *ngIf="!rolConPermisosEdicion || !puedeEditarCalificaciones">
+              {{ estudiante.calificaciones[0][0][0] }}
+            </p>
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="cal2">
+          <th class="columnas-chicas" mat-header-cell *matHeaderCellDef>2°</th>
+          <td
+            class="columnas-chicas"
+            mat-cell
+            *matCellDef="let estudiante; let i = index"
+            [ngClass]="{
+              bajoPromedio: this.promedio < 6 || this.promedioT3 < 6
+            }"
+          >
+            <p *ngIf="!rolConPermisosEdicion || !puedeEditarCalificaciones">
+              {{ estudiante.calificaciones[0][0][1] }}
+            </p>
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="cal3">
+          <th class="columnas-chicas" mat-header-cell *matHeaderCellDef>3°</th>
+          <td
+            class="columnas-chicas"
+            mat-cell
+            *matCellDef="let estudiante; let i = index"
+            [ngClass]="{
+              bajoPromedio: this.promedio < 6 || this.promedioT3 < 6
+            }"
+          >
+            <p *ngIf="!rolConPermisosEdicion || !puedeEditarCalificaciones">
+              {{ estudiante.calificaciones[0][0][2] }}
+            </p>
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="cal4">
+          <th class="columnas-chicas" mat-header-cell *matHeaderCellDef>4°</th>
+          <td
+            class="columnas-chicas"
+            mat-cell
+            *matCellDef="let estudiante; let i = index"
+            [ngClass]="{
+              bajoPromedio: this.promedio < 6 || this.promedioT3 < 6
+            }"
+          >
+            <p *ngIf="!rolConPermisosEdicion || !puedeEditarCalificaciones">
+              {{ estudiante.calificaciones[0][0][3] }}
+            </p>
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="cal5">
+          <th class="columnas-chicas" mat-header-cell *matHeaderCellDef>5°</th>
+          <td
+            class="columnas-chicas"
+            mat-cell
+            *matCellDef="let estudiante; let i = index"
+            [ngClass]="{
+              bajoPromedio: this.promedio < 6 || this.promedioT3 < 6
+            }"
+          >
+            <p *ngIf="!rolConPermisosEdicion || !puedeEditarCalificaciones">
+              {{ estudiante.calificaciones[0][0][4] }}
+            </p>
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="cal6">
+          <th class="columnas-chicas" mat-header-cell *matHeaderCellDef>6°</th>
+          <td
+            class="columnas-chicas"
+            mat-cell
+            *matCellDef="let estudiante; let i = index"
+            [ngClass]="{
+              bajoPromedio: this.promedio < 6 || this.promedioT3 < 6
+            }"
+          >
+            <p *ngIf="!rolConPermisosEdicion || !puedeEditarCalificaciones">
+              {{ estudiante.calificaciones[0][0][5] }}
+            </p>
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="prom1">
+          <th class="columnas-chicas" mat-header-cell *matHeaderCellDef>P1</th>
+          <td
+            class="columnas-chicas"
+            mat-cell
+            *matCellDef="let estudiante; let i = index"
+            [ngClass]="{
+              bajoPromedio: this.promedio < 6 || this.promedioT3 < 6
+            }"
+          >
+            <b *ngIf="!rolConPermisosEdicion || !puedeEditarCalificaciones">
+              {{ this.promedioT1.toFixed(2) }}
+            </b>
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="cal7">
+          <th class="columnas-chicas" mat-header-cell *matHeaderCellDef>1°</th>
+          <td
+            class="columnas-chicas"
+            mat-cell
+            *matCellDef="let estudiante; let i = index"
+            [ngClass]="{
+              bajoPromedio: this.promedio < 6 || this.promedioT3 < 6
+            }"
+          >
+            <p *ngIf="!rolConPermisosEdicion || !puedeEditarCalificaciones">
+              {{ estudiante.calificaciones[1][0][0] }}
+            </p>
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="cal8">
+          <th class="columnas-chicas" mat-header-cell *matHeaderCellDef>2°</th>
+          <td
+            class="columnas-chicas"
+            mat-cell
+            *matCellDef="let estudiante; let i = index"
+            [ngClass]="{
+              bajoPromedio: this.promedio < 6 || this.promedioT3 < 6
+            }"
+          >
+            <p *ngIf="!rolConPermisosEdicion || !puedeEditarCalificaciones">
+              {{ estudiante.calificaciones[1][0][1] }}
+            </p>
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="cal9">
+          <th class="columnas-chicas" mat-header-cell *matHeaderCellDef>3°</th>
+          <td
+            class="columnas-chicas"
+            mat-cell
+            *matCellDef="let estudiante; let i = index"
+            [ngClass]="{
+              bajoPromedio: this.promedio < 6 || this.promedioT3 < 6
+            }"
+          >
+            <p *ngIf="!rolConPermisosEdicion || !puedeEditarCalificaciones">
+              {{ estudiante.calificaciones[1][0][2] }}
+            </p>
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="cal10">
+          <th class="columnas-chicas" mat-header-cell *matHeaderCellDef>4°</th>
+          <td
+            class="columnas-chicas"
+            mat-cell
+            *matCellDef="let estudiante; let i = index"
+            [ngClass]="{
+              bajoPromedio: this.promedio < 6 || this.promedioT3 < 6
+            }"
+          >
+            <p *ngIf="!rolConPermisosEdicion || !puedeEditarCalificaciones">
+              {{ estudiante.calificaciones[1][0][3] }}
+            </p>
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="cal11">
+          <th class="columnas-chicas" mat-header-cell *matHeaderCellDef>5°</th>
+          <td
+            class="columnas-chicas"
+            mat-cell
+            *matCellDef="let estudiante; let i = index"
+            [ngClass]="{
+              bajoPromedio: this.promedio < 6 || this.promedioT3 < 6
+            }"
+          >
+            <p *ngIf="!rolConPermisosEdicion || !puedeEditarCalificaciones">
+              {{ estudiante.calificaciones[1][0][4] }}
+            </p>
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="cal12">
+          <th class="columnas-chicas" mat-header-cell *matHeaderCellDef>6°</th>
+          <td
+            class="columnas-chicas"
+            mat-cell
+            *matCellDef="let estudiante; let i = index"
+            [ngClass]="{
+              bajoPromedio: this.promedio < 6 || this.promedioT3 < 6
+            }"
+          >
+            <p *ngIf="!rolConPermisosEdicion || !puedeEditarCalificaciones">
+              {{ estudiante.calificaciones[1][0][5] }}
+            </p>
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="prom2">
+          <th class="columnas-chicas" mat-header-cell *matHeaderCellDef>P2</th>
+          <td
+            class="columnas-chicas"
+            mat-cell
+            *matCellDef="let estudiante; let i = index"
+            [ngClass]="{
+              bajoPromedio: this.promedio < 6 || this.promedioT3 < 6
+            }"
+          >
+            <b *ngIf="!rolConPermisosEdicion || !puedeEditarCalificaciones">
+              {{ this.promedioT2.toFixed(2) }}
+            </b>
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="cal13">
+          <th class="columnas-chicas" mat-header-cell *matHeaderCellDef>1°</th>
+          <td
+            class="columnas-chicas"
+            mat-cell
+            *matCellDef="let estudiante; let i = index"
+            [ngClass]="{
+              bajoPromedio: this.promedio < 6 || this.promedioT3 < 6
+            }"
+          >
+            <p *ngIf="!rolConPermisosEdicion || !puedeEditarCalificaciones">
+              {{ estudiante.calificaciones[2][0][0] }}
+            </p>
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="cal14">
+          <th class="columnas-chicas" mat-header-cell *matHeaderCellDef>2°</th>
+          <td
+            class="columnas-chicas"
+            mat-cell
+            *matCellDef="let estudiante; let i = index"
+            [ngClass]="{
+              bajoPromedio: this.promedio < 6 || this.promedioT3 < 6
+            }"
+          >
+            <p *ngIf="!rolConPermisosEdicion || !puedeEditarCalificaciones">
+              {{ estudiante.calificaciones[2][0][1] }}
+            </p>
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="cal15">
+          <th class="columnas-chicas" mat-header-cell *matHeaderCellDef>3°</th>
+          <td
+            class="columnas-chicas"
+            mat-cell
+            *matCellDef="let estudiante; let i = index"
+            [ngClass]="{
+              bajoPromedio: this.promedio < 6 || this.promedioT3 < 6
+            }"
+          >
+            <p *ngIf="!rolConPermisosEdicion || !puedeEditarCalificaciones">
+              {{ estudiante.calificaciones[2][0][2] }}
+            </p>
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="cal16">
+          <th class="columnas-chicas" mat-header-cell *matHeaderCellDef>4°</th>
+          <td
+            class="columnas-chicas"
+            mat-cell
+            *matCellDef="let estudiante; let i = index"
+            [ngClass]="{
+              bajoPromedio: this.promedio < 6 || this.promedioT3 < 6
+            }"
+          >
+            <p *ngIf="!rolConPermisosEdicion || !puedeEditarCalificaciones">
+              {{ estudiante.calificaciones[2][0][3] }}
+            </p>
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="cal17">
+          <th class="columnas-chicas" mat-header-cell *matHeaderCellDef>5°</th>
+          <td
+            class="columnas-chicas"
+            mat-cell
+            *matCellDef="let estudiante; let i = index"
+            [ngClass]="{
+              bajoPromedio: this.promedio < 6 || this.promedioT3 < 6
+            }"
+          >
+            <p *ngIf="!rolConPermisosEdicion || !puedeEditarCalificaciones">
+              {{ estudiante.calificaciones[2][0][4] }}
+            </p>
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="cal18">
+          <th class="columnas-chicas" mat-header-cell *matHeaderCellDef>6°</th>
+          <td
+            class="columnas-chicas"
+            mat-cell
+            *matCellDef="let estudiante; let i = index"
+            [ngClass]="{
+              bajoPromedio: this.promedio < 6 || this.promedioT3 < 6
+            }"
+          >
+            <p *ngIf="!rolConPermisosEdicion || !puedeEditarCalificaciones">
+              {{ estudiante.calificaciones[2][0][5] }}
+            </p>
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="prom3">
+          <th class="columnas-chicas" mat-header-cell *matHeaderCellDef>P3</th>
+          <td
+            class="columnas-chicas"
+            mat-cell
+            *matCellDef="let estudiante; let i = index"
+            [ngClass]="{
+              bajoPromedio: this.promedio < 6 || this.promedioT3 < 6
+            }"
+          >
+            <b *ngIf="!rolConPermisosEdicion || !puedeEditarCalificaciones">
+              {{ this.promedioT3.toFixed(2) }}
+            </b>
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="prom">
+          <th class="columnas-chicas" mat-header-cell *matHeaderCellDef>
+            Final
+          </th>
+          <td
+            class="columnas-chicas promedio"
+            mat-cell
+            *matCellDef="let estudiante; let i = index"
+            [ngClass]="{
+              bajoPromedio: this.promedio < 6 || this.promedioT3 < 6
+            }"
+          >
+            <b *ngIf="!(contadorNotasValidas(i) == 0); else sinNotas">
+              {{ this.promedio.toFixed(2) }}
+            </b>
+            <ng-template #sinNotas>0</ng-template>
+          </td>
+        </ng-container>
 
-      <ng-container matColumnDef="nombre">
-        <th class="columnas-normales" mat-header-cell *matHeaderCellDef>
-          Nombre/s
-        </th>
-        <td
-          class="columnas-normales nombre-tabla"
-          mat-cell
-          *matCellDef="let estudiante; let i = index"
-          [ngClass]="{ bajoPromedio: this.promedio < 6 || this.promedioT3 < 6 }"
-        >
-          {{ estudiante.nombre }}
-        </td>
-      </ng-container>
-      <ng-container matColumnDef="cal1">
-        <th class="columnas-chicas" mat-header-cell *matHeaderCellDef>1°</th>
-        <td
-          class="columnas-chicas"
-          mat-cell
-          *matCellDef="let estudiante; let i = index"
-          [ngClass]="{ bajoPromedio: this.promedio < 6 || this.promedioT3 < 6 }"
-        >
-          <p *ngIf="!rolConPermisosEdicion || !puedeEditarCalificaciones">
-            {{ estudiante.calificaciones[0][0][0] }}
-          </p>
-        </td>
-      </ng-container>
-      <ng-container matColumnDef="cal2">
-        <th class="columnas-chicas" mat-header-cell *matHeaderCellDef>2°</th>
-        <td
-          class="columnas-chicas"
-          mat-cell
-          *matCellDef="let estudiante; let i = index"
-          [ngClass]="{ bajoPromedio: this.promedio < 6 || this.promedioT3 < 6 }"
-        >
-          <p *ngIf="!rolConPermisosEdicion || !puedeEditarCalificaciones">
-            {{ estudiante.calificaciones[0][0][1] }}
-          </p>
-        </td>
-      </ng-container>
-      <ng-container matColumnDef="cal3">
-        <th class="columnas-chicas" mat-header-cell *matHeaderCellDef>3°</th>
-        <td
-          class="columnas-chicas"
-          mat-cell
-          *matCellDef="let estudiante; let i = index"
-          [ngClass]="{ bajoPromedio: this.promedio < 6 || this.promedioT3 < 6 }"
-        >
-          <p *ngIf="!rolConPermisosEdicion || !puedeEditarCalificaciones">
-            {{ estudiante.calificaciones[0][0][2] }}
-          </p>
-        </td>
-      </ng-container>
-      <ng-container matColumnDef="cal4">
-        <th class="columnas-chicas" mat-header-cell *matHeaderCellDef>4°</th>
-        <td
-          class="columnas-chicas"
-          mat-cell
-          *matCellDef="let estudiante; let i = index"
-          [ngClass]="{ bajoPromedio: this.promedio < 6 || this.promedioT3 < 6 }"
-        >
-          <p *ngIf="!rolConPermisosEdicion || !puedeEditarCalificaciones">
-            {{ estudiante.calificaciones[0][0][3] }}
-          </p>
-        </td>
-      </ng-container>
-      <ng-container matColumnDef="cal5">
-        <th class="columnas-chicas" mat-header-cell *matHeaderCellDef>5°</th>
-        <td
-          class="columnas-chicas"
-          mat-cell
-          *matCellDef="let estudiante; let i = index"
-          [ngClass]="{ bajoPromedio: this.promedio < 6 || this.promedioT3 < 6 }"
-        >
-          <p *ngIf="!rolConPermisosEdicion || !puedeEditarCalificaciones">
-            {{ estudiante.calificaciones[0][0][4] }}
-          </p>
-        </td>
-      </ng-container>
-      <ng-container matColumnDef="cal6">
-        <th class="columnas-chicas" mat-header-cell *matHeaderCellDef>6°</th>
-        <td
-          class="columnas-chicas"
-          mat-cell
-          *matCellDef="let estudiante; let i = index"
-          [ngClass]="{ bajoPromedio: this.promedio < 6 || this.promedioT3 < 6 }"
-        >
-          <p *ngIf="!rolConPermisosEdicion || !puedeEditarCalificaciones">
-            {{ estudiante.calificaciones[0][0][5] }}
-          </p>
-        </td>
-      </ng-container>
-      <ng-container matColumnDef="prom1">
-        <th class="columnas-chicas" mat-header-cell *matHeaderCellDef>P1</th>
-        <td
-          class="columnas-chicas"
-          mat-cell
-          *matCellDef="let estudiante; let i = index"
-          [ngClass]="{ bajoPromedio: this.promedio < 6 || this.promedioT3 < 6 }"
-        >
-          <b *ngIf="!rolConPermisosEdicion || !puedeEditarCalificaciones">
-            {{ this.promedioT1.toFixed(2) }}
-          </b>
-        </td>
-      </ng-container>
-      <ng-container matColumnDef="cal7">
-        <th class="columnas-chicas" mat-header-cell *matHeaderCellDef>1°</th>
-        <td
-          class="columnas-chicas"
-          mat-cell
-          *matCellDef="let estudiante; let i = index"
-          [ngClass]="{ bajoPromedio: this.promedio < 6 || this.promedioT3 < 6 }"
-        >
-          <p *ngIf="!rolConPermisosEdicion || !puedeEditarCalificaciones">
-            {{ estudiante.calificaciones[1][0][0] }}
-          </p>
-        </td>
-      </ng-container>
-      <ng-container matColumnDef="cal8">
-        <th class="columnas-chicas" mat-header-cell *matHeaderCellDef>2°</th>
-        <td
-          class="columnas-chicas"
-          mat-cell
-          *matCellDef="let estudiante; let i = index"
-          [ngClass]="{ bajoPromedio: this.promedio < 6 || this.promedioT3 < 6 }"
-        >
-          <p *ngIf="!rolConPermisosEdicion || !puedeEditarCalificaciones">
-            {{ estudiante.calificaciones[1][0][1] }}
-          </p>
-        </td>
-      </ng-container>
-      <ng-container matColumnDef="cal9">
-        <th class="columnas-chicas" mat-header-cell *matHeaderCellDef>3°</th>
-        <td
-          class="columnas-chicas"
-          mat-cell
-          *matCellDef="let estudiante; let i = index"
-          [ngClass]="{ bajoPromedio: this.promedio < 6 || this.promedioT3 < 6 }"
-        >
-          <p *ngIf="!rolConPermisosEdicion || !puedeEditarCalificaciones">
-            {{ estudiante.calificaciones[1][0][2] }}
-          </p>
-        </td>
-      </ng-container>
-      <ng-container matColumnDef="cal10">
-        <th class="columnas-chicas" mat-header-cell *matHeaderCellDef>4°</th>
-        <td
-          class="columnas-chicas"
-          mat-cell
-          *matCellDef="let estudiante; let i = index"
-          [ngClass]="{ bajoPromedio: this.promedio < 6 || this.promedioT3 < 6 }"
-        >
-          <p *ngIf="!rolConPermisosEdicion || !puedeEditarCalificaciones">
-            {{ estudiante.calificaciones[1][0][3] }}
-          </p>
-        </td>
-      </ng-container>
-      <ng-container matColumnDef="cal11">
-        <th class="columnas-chicas" mat-header-cell *matHeaderCellDef>5°</th>
-        <td
-          class="columnas-chicas"
-          mat-cell
-          *matCellDef="let estudiante; let i = index"
-          [ngClass]="{ bajoPromedio: this.promedio < 6 || this.promedioT3 < 6 }"
-        >
-          <p *ngIf="!rolConPermisosEdicion || !puedeEditarCalificaciones">
-            {{ estudiante.calificaciones[1][0][4] }}
-          </p>
-        </td>
-      </ng-container>
-      <ng-container matColumnDef="cal12">
-        <th class="columnas-chicas" mat-header-cell *matHeaderCellDef>6°</th>
-        <td
-          class="columnas-chicas"
-          mat-cell
-          *matCellDef="let estudiante; let i = index"
-          [ngClass]="{ bajoPromedio: this.promedio < 6 || this.promedioT3 < 6 }"
-        >
-          <p *ngIf="!rolConPermisosEdicion || !puedeEditarCalificaciones">
-            {{ estudiante.calificaciones[1][0][5] }}
-          </p>
-        </td>
-      </ng-container>
-      <ng-container matColumnDef="prom2">
-        <th class="columnas-chicas" mat-header-cell *matHeaderCellDef>P2</th>
-        <td
-          class="columnas-chicas"
-          mat-cell
-          *matCellDef="let estudiante; let i = index"
-          [ngClass]="{ bajoPromedio: this.promedio < 6 || this.promedioT3 < 6 }"
-        >
-          <b *ngIf="!rolConPermisosEdicion || !puedeEditarCalificaciones">
-            {{ this.promedioT2.toFixed(2) }}
-          </b>
-        </td>
-      </ng-container>
-      <ng-container matColumnDef="cal13">
-        <th class="columnas-chicas" mat-header-cell *matHeaderCellDef>1°</th>
-        <td
-          class="columnas-chicas"
-          mat-cell
-          *matCellDef="let estudiante; let i = index"
-          [ngClass]="{ bajoPromedio: this.promedio < 6 || this.promedioT3 < 6 }"
-        >
-          <p *ngIf="!rolConPermisosEdicion || !puedeEditarCalificaciones">
-            {{ estudiante.calificaciones[2][0][0] }}
-          </p>
-        </td>
-      </ng-container>
-      <ng-container matColumnDef="cal14">
-        <th class="columnas-chicas" mat-header-cell *matHeaderCellDef>2°</th>
-        <td
-          class="columnas-chicas"
-          mat-cell
-          *matCellDef="let estudiante; let i = index"
-          [ngClass]="{ bajoPromedio: this.promedio < 6 || this.promedioT3 < 6 }"
-        >
-          <p *ngIf="!rolConPermisosEdicion || !puedeEditarCalificaciones">
-            {{ estudiante.calificaciones[2][0][1] }}
-          </p>
-        </td>
-      </ng-container>
-      <ng-container matColumnDef="cal15">
-        <th class="columnas-chicas" mat-header-cell *matHeaderCellDef>3°</th>
-        <td
-          class="columnas-chicas"
-          mat-cell
-          *matCellDef="let estudiante; let i = index"
-          [ngClass]="{ bajoPromedio: this.promedio < 6 || this.promedioT3 < 6 }"
-        >
-          <p *ngIf="!rolConPermisosEdicion || !puedeEditarCalificaciones">
-            {{ estudiante.calificaciones[2][0][2] }}
-          </p>
-        </td>
-      </ng-container>
-      <ng-container matColumnDef="cal16">
-        <th class="columnas-chicas" mat-header-cell *matHeaderCellDef>4°</th>
-        <td
-          class="columnas-chicas"
-          mat-cell
-          *matCellDef="let estudiante; let i = index"
-          [ngClass]="{ bajoPromedio: this.promedio < 6 || this.promedioT3 < 6 }"
-        >
-          <p *ngIf="!rolConPermisosEdicion || !puedeEditarCalificaciones">
-            {{ estudiante.calificaciones[2][0][3] }}
-          </p>
-        </td>
-      </ng-container>
-      <ng-container matColumnDef="cal17">
-        <th class="columnas-chicas" mat-header-cell *matHeaderCellDef>5°</th>
-        <td
-          class="columnas-chicas"
-          mat-cell
-          *matCellDef="let estudiante; let i = index"
-          [ngClass]="{ bajoPromedio: this.promedio < 6 || this.promedioT3 < 6 }"
-        >
-          <p *ngIf="!rolConPermisosEdicion || !puedeEditarCalificaciones">
-            {{ estudiante.calificaciones[2][0][4] }}
-          </p>
-        </td>
-      </ng-container>
-      <ng-container matColumnDef="cal18">
-        <th class="columnas-chicas" mat-header-cell *matHeaderCellDef>6°</th>
-        <td
-          class="columnas-chicas"
-          mat-cell
-          *matCellDef="let estudiante; let i = index"
-          [ngClass]="{ bajoPromedio: this.promedio < 6 || this.promedioT3 < 6 }"
-        >
-          <p *ngIf="!rolConPermisosEdicion || !puedeEditarCalificaciones">
-            {{ estudiante.calificaciones[2][0][5] }}
-          </p>
-        </td>
-      </ng-container>
-      <ng-container matColumnDef="prom3">
-        <th class="columnas-chicas" mat-header-cell *matHeaderCellDef>P3</th>
-        <td
-          class="columnas-chicas"
-          mat-cell
-          *matCellDef="let estudiante; let i = index"
-          [ngClass]="{ bajoPromedio: this.promedio < 6 || this.promedioT3 < 6 }"
-        >
-          <b *ngIf="!rolConPermisosEdicion || !puedeEditarCalificaciones">
-            {{ this.promedioT3.toFixed(2) }}
-          </b>
-        </td>
-      </ng-container>
-      <ng-container matColumnDef="prom">
-        <th class="columnas-chicas" mat-header-cell *matHeaderCellDef>
-          Final
-        </th>
-        <td
-          class="columnas-chicas promedio"
-          mat-cell
-          *matCellDef="let estudiante; let i = index"
-          [ngClass]="{ bajoPromedio: this.promedio < 6 || this.promedioT3 < 6 }"
-        >
-          <b *ngIf="!(contadorNotasValidas(i) == 0); else sinNotas">
-            {{ this.promedio.toFixed(2) }}
-          </b>
-          <ng-template #sinNotas>0</ng-template>
-        </td>
-      </ng-container>
-
-      <ng-container matColumnDef="estudiante">
-        <th mat-header-cell *matHeaderCellDef [attr.colspan]="2">Estudiante</th>
-      </ng-container>
-      <ng-container matColumnDef="primerTrimestre">
-        <th mat-header-cell *matHeaderCellDef [attr.colspan]="7">
-          Primer Trimestre
-        </th>
-      </ng-container>
-      <ng-container matColumnDef="segundoTrimestre">
-        <th mat-header-cell *matHeaderCellDef [attr.colspan]="7">
-          Segundo Trimestre
-        </th>
-      </ng-container>
-      <ng-container matColumnDef="tercerTrimestre">
-        <th mat-header-cell *matHeaderCellDef [attr.colspan]="7">
-          Tercer Trimestre
-        </th>
-      </ng-container>
-      <ng-container matColumnDef="promedio">
-        <th mat-header-cell *matHeaderCellDef [attr.colspan]="1">
-          Promedio
-        </th>
-      </ng-container>
-      <tr
-        mat-header-row
-        *matHeaderRowDef="[
-          'estudiante',
-          'primerTrimestre',
-          'segundoTrimestre',
-          'tercerTrimestre',
-          'promedio'
-        ]"
-      ></tr>
-      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-      <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
-    </table>
-
+        <ng-container matColumnDef="estudiante">
+          <th mat-header-cell *matHeaderCellDef [attr.colspan]="2">
+            Estudiante
+          </th>
+        </ng-container>
+        <ng-container matColumnDef="primerTrimestre">
+          <th mat-header-cell *matHeaderCellDef [attr.colspan]="7">
+            Primer Trimestre
+          </th>
+        </ng-container>
+        <ng-container matColumnDef="segundoTrimestre">
+          <th mat-header-cell *matHeaderCellDef [attr.colspan]="7">
+            Segundo Trimestre
+          </th>
+        </ng-container>
+        <ng-container matColumnDef="tercerTrimestre">
+          <th mat-header-cell *matHeaderCellDef [attr.colspan]="7">
+            Tercer Trimestre
+          </th>
+        </ng-container>
+        <ng-container matColumnDef="promedio">
+          <th mat-header-cell *matHeaderCellDef [attr.colspan]="1">
+            Promedio
+          </th>
+        </ng-container>
+        <tr
+          mat-header-row
+          *matHeaderRowDef="[
+            'estudiante',
+            'primerTrimestre',
+            'segundoTrimestre',
+            'tercerTrimestre',
+            'promedio'
+          ]"
+        ></tr>
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+      </table>
+    </div>
     <div [hidden]="!estudiantes">
       <mat-paginator
         (page)="pageEvent = indexEstudiante()"
@@ -424,6 +473,11 @@
         class="paginator"
       >
       </mat-paginator>
+    </div>
+    <div [hidden]="!estudiantes">
+      <button mat-button (click)="exporter.exportTable('xlsx', {fileName:'Calificaciones', Props: {Author: this.servicioEstudianteAutenticacion.getUsuarioAutenticado()}})">
+        EXPORTAR
+      </button>
     </div>
     <div class="div-button">
       <!-- <button

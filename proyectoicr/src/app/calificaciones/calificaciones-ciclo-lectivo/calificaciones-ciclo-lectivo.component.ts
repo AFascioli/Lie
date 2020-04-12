@@ -187,7 +187,6 @@ export class CalificacionesCicloLectivoComponent implements OnInit, OnDestroy {
           this.estudiantes = this.estudiantes.sort((a, b) =>
             a.apellido > b.apellido ? 1 : b.apellido > a.apellido ? -1 : 0
           );
-          console.log(this.estudiantes);
           this.reordenarCalificaciones();
           this.dataSource = new MatTableDataSource(this.estudiantes);
           this.dataSource.paginator = this.paginator;
@@ -249,7 +248,6 @@ export class CalificacionesCicloLectivoComponent implements OnInit, OnDestroy {
           }
         }
       } else {
-        console.log('1');
         if (this.estudiantes[i].trimestre[1][0] != 2) {
           let auxCal = this.estudiantes[i].calificaciones[1];
           this.estudiantes[i].calificaciones[1] = this.estudiantes[
