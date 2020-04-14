@@ -19,12 +19,12 @@
   margin: 1rem;
 }
 
-.ubicacionfecha {
+.ubicacion-fecha {
   margin-top: 0.5rem;
-  float: right;
+  text-align: end;
 }
 
-.inputFecha {
+.input-fecha {
   width: 0%;
   color: black !important;
 }
@@ -33,15 +33,16 @@
   text-align: right;
 }
 
-.div-selects {
+.div-select {
   text-align: center !important;
+  margin-top: 6%;
 }
 
 .contenido {
   width: 41%;
   margin-left: auto;
   margin-right: auto;
-  margin-top: 3rem !important;
+  margin-top: 1rem !important;
 }
 
 .contenido-mobile {
@@ -67,7 +68,7 @@
 }
 
 .titulos-reg-doc-mobile {
-  font-size: 11px !important;
+  font-size: 18px !important;
 }
 
 .parrafo {
@@ -78,11 +79,11 @@
   text-align: center;
 }
 
-.mensajeAtencion {
+.mensaje-atencion {
   color: black;
 }
 
-.mensajeAtencioncurso {
+.mensaje-atencion-curso {
   color: black;
   font-weight: bold;
 }
@@ -91,4 +92,12 @@
   margin-bottom: 0;
   text-align: center;
   font-size: 19px;
+}
+
+.card-spinner {
+  margin: auto;
+  margin-top: 1rem;
+  margin-bottom: 1.5rem;
+  max-width: 800px;
+  box-shadow: 0px 0px 8px 0px rgba(0, 0, 0, 0.71) !important;
 }

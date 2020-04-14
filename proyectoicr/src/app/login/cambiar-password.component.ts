@@ -1,10 +1,11 @@
-import { OnInit, Component, OnDestroy } from "@angular/core";
+import { OnInit, Component, OnDestroy, ChangeDetectorRef } from "@angular/core";
 import { AutenticacionService } from "./autenticacionService.service";
 import { NgForm } from "@angular/forms";
 import { MatSnackBar, MatDialogRef, MatDialog } from "@angular/material";
 import { Router } from "@angular/router";
 import { Subject } from "rxjs";
 import { takeUntil } from "rxjs/operators";
+import { MediaMatcher } from '@angular/cdk/layout';
 
 @Component({
   selector: "app-cambiar-password",
@@ -16,14 +17,22 @@ export class CambiarPassword implements OnInit, OnDestroy {
   esVisible2: boolean = false;
   esVisible3: boolean = false;
   private unsubscribe: Subject<void> = new Subject();
+  _mobileQueryListener: () => void;
+  mobileQuery: MediaQueryList;
 
   ngOnInit() {}
 
   constructor(
     private servicio: AutenticacionService,
     private snackBar: MatSnackBar,
-    public dialog: MatDialog
-  ) {}
+    public dialog: MatDialog,
+    public changeDetectorRef: ChangeDetectorRef,
+    public media: MediaMatcher
+  ) {
+    this.mobileQuery = media.matchMedia("(max-width: 600px)");
+    this._mobileQueryListener = () => changeDetectorRef.detectChanges();
+    this.mobileQuery.addListener(this._mobileQueryListener);
+  }
 
   ngOnDestroy() {
     this.unsubscribe.next();
@@ -98,8 +107,7 @@ export class CambiarPassword implements OnInit, OnDestroy {
   styleUrls: ["./login.component.css"]
 })
 export class CambiarPasswordPopupComponent {
-  formInvalido: Boolean;
-  tipoPopup: string;
+
   constructor(
     public dialogRef: MatDialogRef<CambiarPasswordPopupComponent>,
     public router: Router

@@ -13,7 +13,7 @@ import { takeUntil } from "rxjs/operators";
 @Component({
   selector: "app-home",
   templateUrl: "./home.component.html",
-  styleUrls: ["./home.component.css"]
+  styleUrls: ["./home.component.css"],
 })
 export class HomeComponent implements OnInit, OnDestroy {
   private unsubscribe: Subject<void> = new Subject();
@@ -23,6 +23,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   readonly VAPID_PUBLIC =
     "BMlC2dLJTBP6T1GCl3S3sDBmhERNVcjN7ff2a6JAoOg8bA_qXjikveleRwjz0Zn8c9-58mnrNo2K4p07UPK0DKQ";
   evento: Evento;
+  enProcesoDeBorrado: boolean = false;
 
   constructor(
     public snackBar: MatSnackBar,
@@ -32,6 +33,13 @@ export class HomeComponent implements OnInit, OnDestroy {
     public servicioEvento: EventosService,
     public dialog: MatDialog
   ) {}
+
+  eventoSeleccionado(evento: Evento) {
+    if (!this.enProcesoDeBorrado) {
+      this.servicioEvento.eventoSeleccionado = evento;
+      this.router.navigate(["/visualizarEvento"]);
+    }
+  }
 
   getImage(filename) {
     return environment.apiUrl + `/imagen/${filename}`;
@@ -58,23 +66,18 @@ export class HomeComponent implements OnInit, OnDestroy {
     this.servicioEvento
       .obtenerEvento()
       .pipe(takeUntil(this.unsubscribe))
-      .subscribe(rtdo => {
+      .subscribe((rtdo) => {
         this.eventos = rtdo.eventos;
+        console.log(rtdo.eventos);
       });
     if ("serviceWorker" in navigator) {
-      navigator.serviceWorker.register("ngsw-worker.js").then(swreg => {
+      navigator.serviceWorker.register("ngsw-worker.js").then((swreg) => {
         if (swreg.active) {
           console.log("Se registro el service worker.");
           this.subscribeToNotifications();
         }
       });
     }
-    this.servicioEvento.eventoSeleccionado = null;
-  }
-
-  eventoSeleccionado(evento: Evento) {
-    this.servicioEvento.eventoSeleccionado = evento;
-    this.router.navigate(["/visualizarEvento"]);
   }
 
   subscribeToNotifications() {
@@ -83,17 +86,17 @@ export class HomeComponent implements OnInit, OnDestroy {
     } else {
       this.swPush
         .requestSubscription({
-          serverPublicKey: this.VAPID_PUBLIC
+          serverPublicKey: this.VAPID_PUBLIC,
         })
-        .then(pushsub => {
+        .then((pushsub) => {
           this.servicioAuth
             .addPushSubscriber(pushsub)
             .pipe(takeUntil(this.unsubscribe))
-            .subscribe(res => {
+            .subscribe((res) => {
               console.log("Se suscribió a recibir notificaciones push.");
             });
         })
-        .catch(err =>
+        .catch((err) =>
           console.error("No se pudo suscribir a las notificaciones push.", err)
         );
     }
@@ -106,16 +109,36 @@ export class HomeComponent implements OnInit, OnDestroy {
   }
 
   onBorrar(evento) {
+    this.enProcesoDeBorrado = true;
     this.servicioEvento.evento = evento;
-    this.dialog.open(BorrarPopupComponent, {
-      width: "250px"
+    let popup = this.dialog.open(BorrarPopupComponent, {
+      width: "250px",
     });
-    this.servicioEvento
-      .obtenerEvento()
-      .pipe(takeUntil(this.unsubscribe))
-      .subscribe(rtdo => {
-        this.eventos = rtdo.eventos;
-      });
+    // Luego de que se cierra el popup, se fija si se eligio si o no, en caso de si se borra.
+    popup.afterClosed().subscribe((resultado) => {
+      if (resultado) {
+        this.servicioEvento
+          .eliminarEvento(this.servicioEvento.evento._id)
+          .pipe(takeUntil(this.unsubscribe))
+          .subscribe((response) => {
+            console.log(response);
+            if (response.exito) {
+              this.servicioEvento
+                .obtenerEvento()
+                .pipe(takeUntil(this.unsubscribe))
+                .subscribe((rtdo) => {
+                  this.eventos = rtdo.eventos;
+                  console.log(this.eventos);
+                  this.enProcesoDeBorrado = false;
+                  this.snackBar.open(response.message, "", {
+                    panelClass: ["snack-bar-exito"],
+                    duration: 4500,
+                  });
+                });
+            }
+          });
+      }
+    });
   }
 
   conocerUsuarioLogueado(indiceEvento): boolean {
@@ -133,39 +156,19 @@ export class HomeComponent implements OnInit, OnDestroy {
   selector: "app-borrar-popup",
   templateUrl: "./borrar-popup.component.html",
   styleUrls: [
-    "../estudiantes/mostrar-estudiantes/mostrar-estudiantes.component.css"
-  ]
+    "../estudiantes/mostrar-estudiantes/mostrar-estudiantes.component.css",
+  ],
 })
-export class BorrarPopupComponent implements OnDestroy {
-  private unsubscribe: Subject<void> = new Subject();
+export class BorrarPopupComponent{
   constructor(
     public dialogRef: MatDialogRef<BorrarPopupComponent>,
-    public router: Router,
-    public servicioEvento: EventosService,
-    public snackBar: MatSnackBar
   ) {}
 
-  ngOnDestroy() {
-    this.unsubscribe.next();
-    this.unsubscribe.complete();
-  }
-
   onYesClick(): void {
-    this.servicioEvento
-      .eliminarEvento(this.servicioEvento.evento._id)
-      .pipe(takeUntil(this.unsubscribe))
-      .subscribe(response => {
-        if (response.exito) {
-          this.snackBar.open(response.message, "", {
-            panelClass: ["snack-bar-exito"],
-            duration: 4500
-          });
-        }
-      });
-    this.dialogRef.close();
+    this.dialogRef.close(true);
   }
 
   onNoClick(): void {
-    this.dialogRef.close();
+    this.dialogRef.close(false);
   }
 }

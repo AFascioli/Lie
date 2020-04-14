@@ -4,8 +4,6 @@ import { Estudiante } from "./estudiante.model";
 import { HttpClient, HttpParams } from "@angular/common/http";
 import { Subject } from "rxjs";
 import { takeUntil } from "rxjs/operators";
-import { Localidad } from "../ubicacion/localidades.model";
-import { Nacionalidad } from "../ubicacion/nacionalidades.model";
 
 @Injectable({
   providedIn: "root"
@@ -17,11 +15,8 @@ export class EstudiantesService implements OnDestroy {
   private estudiantesXDivisionActualizados = new Subject<any[]>();
   estudiantesBuscados = new Subject<Estudiante[]>();
   private divisionXCursoActualizada = new Subject<any[]>();
-  formInvalidoEstudiante: Boolean;
   estudianteSeleccionado: Estudiante;
   retornoDesdeAcciones: Boolean;
-  tipoPopUp: string;
-  formEstudianteModificada: boolean;
   busquedaEstudianteXNombre: boolean;
   private unsubscribe: Subject<void> = new Subject();
 

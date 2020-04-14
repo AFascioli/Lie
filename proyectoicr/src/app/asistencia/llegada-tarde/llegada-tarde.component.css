@@ -1,19 +1,10 @@
-.mat-radio-button ~ .mat-radio-button {
-  margin-left: 6%;
-}
-
-.mat-radio-group {
-  margin-left: 25%;
-  margin-top: 10%;
-}
-
 .label-radio-button {
   white-space: normal !important;
 }
 
-.ubicacionfecha {
+.ubicacion-fecha {
   margin-top: 0.5rem;
-  float: right;
+  text-align: end;
 }
 
 .div-button {
@@ -30,10 +21,10 @@
 }
 
 .contenido {
-  width: 41%;
   margin-left: auto;
   margin-right: auto;
-  margin-top: 3rem !important;
+  margin-bottom: 2%;
+  margin-top: 1rem !important;
 }
 
 .label-radio-button {
@@ -50,7 +41,7 @@
   text-align: center;
 }
 
-.inputFecha{
+.input-fecha{
   width: 0%;
   color: black !important;
 }
@@ -61,8 +52,27 @@
   font-size: 19px;
 }
 
-.mat-form-Fecha
-{
+.mat-form-fecha{
   text-align: center !important;
 }
 
+.opciones{
+  display: grid;
+  grid-template-columns: repeat(2,1fr);
+  width: 80%;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.opciones-mobile{
+  width: 90%;
+}
+
+.datos-estudiante{
+  width: 50%;
+  margin: 0 auto;
+}
+
+.datos-estudiante-mobile{
+  width: 70%;
+}

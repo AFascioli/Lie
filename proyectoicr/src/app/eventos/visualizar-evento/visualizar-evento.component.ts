@@ -13,7 +13,7 @@ import { environment } from "src/environments/environment";
 @Component({
   selector: "app-visualizar-evento",
   templateUrl: "./visualizar-evento.component.html",
-  styleUrls: ["./visualizar-evento.component.css"]
+  styleUrls: ["./visualizar-evento.component.css"],
 })
 export class VisualizarEventoComponent implements OnInit, OnDestroy {
   evento: Evento;
@@ -27,6 +27,7 @@ export class VisualizarEventoComponent implements OnInit, OnDestroy {
   fechaDelEvento: Date;
   horaFinal: string;
   private unsubscribe: Subject<void> = new Subject();
+  slideIndex: number = 1;
 
   constructor(
     public eventoService: EventosService,
@@ -39,10 +40,13 @@ export class VisualizarEventoComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.evento = this.eventoService.eventoSeleccionado;
+    setTimeout(() => {
+      this.showSlide(1);
+    }, 500);
     this.eventoService
       .obtenerComentariosDeEvento()
       .pipe(takeUntil(this.unsubscribe))
-      .subscribe(rtdo => {
+      .subscribe((rtdo) => {
         this.eventoService.comentarios = rtdo.comentarios.reverse();
         this.actualizarPermisos();
       });
@@ -87,11 +91,10 @@ export class VisualizarEventoComponent implements OnInit, OnDestroy {
   }
 
   onGuardar(descripcion) {
-    console.log(descripcion);
     if (!this.descripcionComentario || !this.descripcionComentario.trim()) {
       this.snackBar.open("El comentario esta vacío", "", {
         duration: 4500,
-        panelClass: ["snack-bar-fracaso"]
+        panelClass: ["snack-bar-fracaso"],
       });
     } else {
       const comentario: Comentario = {
@@ -99,7 +102,7 @@ export class VisualizarEventoComponent implements OnInit, OnDestroy {
         cuerpo: descripcion,
         nombre: null,
         apellido: null,
-        fecha: new Date()
+        fecha: new Date(),
       };
       this.eventoService
         .publicarComentario(
@@ -108,17 +111,17 @@ export class VisualizarEventoComponent implements OnInit, OnDestroy {
           this.autenticacionService.getRol()
         )
         .pipe(takeUntil(this.unsubscribe))
-        .subscribe(rtdo => {
+        .subscribe((rtdo) => {
           if (rtdo.exito) {
             this.snackBar.open(rtdo.message, "", {
               duration: 4500,
-              panelClass: ["snack-bar-exito"]
+              panelClass: ["snack-bar-exito"],
             });
             this.descripcionComentario = "";
             this.eventoService
               .obtenerComentariosDeEvento()
               .pipe(takeUntil(this.unsubscribe))
-              .subscribe(rtdo => {
+              .subscribe((rtdo) => {
                 this.eventoService.comentarios = rtdo.comentarios.reverse();
                 this.actualizarPermisos();
               });
@@ -128,7 +131,7 @@ export class VisualizarEventoComponent implements OnInit, OnDestroy {
               "",
               {
                 duration: 4500,
-                panelClass: ["snack-bar-fracaso"]
+                panelClass: ["snack-bar-fracaso"],
               }
             );
           }
@@ -136,21 +139,57 @@ export class VisualizarEventoComponent implements OnInit, OnDestroy {
     }
   }
 
+  obtenerImagen(index) {
+    return this.imgURL[index];
+  }
+
+  moveFromCurrentSlide(n) {
+    this.slideIndex += n;
+    this.showSlide(this.slideIndex);
+  }
+
+  showSlide(n) {
+    var slides = document.getElementsByClassName("my-slides");
+    var dots = document.getElementsByClassName("dot");
+    this.esSlideValido(n, slides);
+    for (let i = 0; i < slides.length; i++) {
+      slides[i].setAttribute("style", "display:none;");
+    }
+    for (let i = 0; i < dots.length; i++) {
+      dots[i].className = dots[i].className.replace(" active", "");
+    }
+    this.setAttributesCurrentSlide(slides, dots);
+  }
+
+  setAttributesCurrentSlide(slides, dots) {
+    slides[this.slideIndex - 1].setAttribute("style", "display:block;");
+    dots[this.slideIndex - 1].className += " active";
+  }
+
+  esSlideValido(n, slides) {
+    if (n > slides.length) {
+      this.slideIndex = 1;
+    }
+    if (n < 1) {
+      this.slideIndex = slides.length;
+    }
+  }
+
   onEliminar(idComentario): void {
     this.eventoService
-      .eliminarComentario(idComentario)
+      .eliminarComentariobyID(idComentario)
       .pipe(takeUntil(this.unsubscribe))
-      .subscribe(response => {
+      .subscribe((response) => {
         if (response.exito) {
           this.snackBar.open(response.message, "", {
             panelClass: ["snack-bar-exito"],
-            duration: 4500
+            duration: 4500,
           });
         }
         this.eventoService
           .obtenerComentariosDeEvento()
           .pipe(takeUntil(this.unsubscribe))
-          .subscribe(rtdo => {
+          .subscribe((rtdo) => {
             this.eventoService.comentarios = rtdo.comentarios.reverse();
           });
       });

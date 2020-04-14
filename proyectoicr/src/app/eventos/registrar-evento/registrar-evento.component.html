@@ -4,7 +4,7 @@
 
 <mat-card class="card-body-componente">
   <form #form="ngForm">
-    <mat-form-field>
+    <mat-form-field [class.mat-form-field-mobile]="mobileQuery.matches">
       <input
         name="titulo"
         ngModel
@@ -16,7 +16,7 @@
       />
     </mat-form-field>
     <br />
-    <mat-form-field>
+    <mat-form-field [class.mat-form-field-mobile]="mobileQuery.matches">
       <textarea
         matInput
         name="descripcion"
@@ -29,7 +29,7 @@
       </textarea>
     </mat-form-field>
     <br />
-    <mat-form-field>
+    <mat-form-field [class.mat-form-field-mobile]="mobileQuery.matches">
       <input
         matInput
         name="fechaEvento"
@@ -46,7 +46,7 @@
       <mat-datepicker touchUi #picker></mat-datepicker>
     </mat-form-field>
     <div>
-      <mat-form-field class="matFormHora">
+      <mat-form-field class="mat-form-hora" [class.mat-form-field-hora-mobile]="mobileQuery.matches">
         <div class="hora">
           <input
             matInput
@@ -60,7 +60,7 @@
         </div>
       </mat-form-field>
       &nbsp;
-      <mat-form-field class="matFormHora">
+      <mat-form-field class="mat-form-hora" [class.mat-form-field-hora-mobile]="mobileQuery.matches">
         <div class="hora">
           <input
             matInput
@@ -75,40 +75,39 @@
       </mat-form-field>
     </div>
 
-    <mat-form-field class="chip-list">
+    <mat-form-field class="chip-list" [class.mat-form-field-mobile]="mobileQuery.matches">
       <mat-chip-list #chipList aria-label="Seleccion de chips">
         <mat-chip
           *ngFor="let chip of chips"
           [selectable]="selectable"
           [removable]="removable"
           (removed)="remove(chip)"
-        >
-          {{ chip }}
-          <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
-        </mat-chip>
-        <input
-          placeholder="Seleccione los cursos *"
-          #chipsInput
-          [formControl]="chipsCtrl"
-          [matAutocomplete]="auto"
-          [matChipInputFor]="chipList"
-          [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
-          [matChipInputAddOnBlur]="addOnBlur"
-          (matChipInputTokenEnd)="add($event)"
+          >
+            {{ chip }}
+            <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
+          </mat-chip>
+          <input
+            placeholder="Seleccione los cursos *"
+            #chipsInput
+            [formControl]="chipsCtrl"
+            [matAutocomplete]="auto"
+            [matChipInputFor]="chipList"
+            [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+            [matChipInputAddOnBlur]="addOnBlur"
+            (matChipInputTokenEnd)="add($event)"
+            required
+          />
+        </mat-chip-list>
+        <mat-autocomplete
           required
-        />
-      </mat-chip-list>
-      <mat-autocomplete
-        required
-        #auto="matAutocomplete"
-        (optionSelected)="selected($event)"
-      >
-        <mat-option *ngFor="let chip of filteredChips | async" [value]="chip">
-          {{ chip }}
-        </mat-option>
-      </mat-autocomplete>
-    </mat-form-field>
-    <div>
+          #auto="matAutocomplete"
+          (optionSelected)="selected($event)"
+        >
+          <mat-option *ngFor="let chip of filteredChips | async" [value]="chip">
+            {{ chip }}
+          </mat-option>
+        </mat-autocomplete>
+      </mat-form-field>
       <div class="contenedor-flexbox">
         <button
           mat-stroked-button
@@ -116,59 +115,52 @@
           type="button"
           (click)="file.click()"
         >
-          Seleccionar imagen
+          Seleccionar imagenes
         </button>
       </div>
-      <br />
-      <div *ngIf="imgURL.length != 0">
-        <mat-card>
-          <img
-            [src]="obtenerImagen()"
-            [hidden]="imgURL.length != 0"
-            class="image-preview"
-          />
-          <br />
-          <button
-            id="beforeArrow"
-            class="botonBefore"
-            mat-icon-button
-            (click)="mostrarImagenAnterior()"
-          >
-            <mat-icon>navigate_before</mat-icon>
-          </button>
-          <button
-            id="afterArrow"
-            class="botonBefore"
-            mat-icon-button
-            (click)="mostrarImagenSiguiente()"
-          >
-            <mat-icon>navigate_next</mat-icon>
-          </button>
-        </mat-card>
-      </div>
-      <br />
-      <span class="mensaje" *ngIf="message">{{ message }}</span>
-      <br />
       <input
         #file
         type="file"
         accept="image/*"
-        (imageSelected)="selectedImage($event)"
+        (imageSelected)="cargarImagen($event)"
         imageUpload
         [resizeOptions]="resizeOptions"
         multiple
       />
+    <div *ngIf="imgURL.length != 0">
+      <div class="slideshow-container">
+        <div *ngFor="let image of imgURL; let i = index">
+          <div class="my-slides fade">
+            <img [src]="obtenerImagen(i)" style="width: 100%;" />
+          </div>
+        </div>
+        <a
+          class="prev"
+          (click)="moveFromCurrentSlide(-1)"
+          *ngIf="imgURL.length != 1"
+          >&#10094;</a
+        >
+        <a
+          class="next"
+          (click)="moveFromCurrentSlide(1)"
+          *ngIf="imgURL.length != 1"
+          >&#10095;</a
+        >
+      </div>
+      <br />
+      <div *ngIf="imgURL.length > 1" style="text-align: center;">
+        <span class="dot" *ngFor="let image of imgURL; let i = index"></span>
+      </div>
     </div>
-
     <div class="div-button">
       <button
-        class="buttonPrimary"
+        class="button-primary"
         (click)="onGuardarEvento(form)"
         mat-raised-button
       >
         Guardar
       </button>
-      <button mat-raised-button (click)="popUpCancelar()" class="buttonWarn">
+      <button mat-raised-button (click)="popUpCancelar()" class="button-warn">
         Cancelar
       </button>
     </div>

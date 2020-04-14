@@ -1,11 +1,3 @@
-/* mat-card-subtitle{
-  color: black;
-}
-
-mat-card-content{
-  text-indent: 34%;
-} */
-
 mat-icon {
   display: flex;
   margin-left: auto;
@@ -22,11 +14,11 @@ table {
   margin-bottom: 1rem;
 }
 
-.columnasNormales {
+.columnas-normales {
   width: 22% !important;
 }
 
-.columnasChicas {
+.columnas-chicas {
   width: 8%;
 }
 

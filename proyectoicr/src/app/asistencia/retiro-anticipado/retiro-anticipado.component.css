@@ -1,23 +1,14 @@
-.mat-radio-button ~ .mat-radio-button {
-  margin-left: 6%;
-}
-
-.mat-radio-group {
-  margin-left: 10%;
-  margin-right: 10%;
-}
-
-.ubicacionfecha {
+.ubicacion-fecha {
   margin-top: 0.5rem;
-  float: right;
+  text-align: end;
 }
 
-.inputFecha {
+.input-fecha {
   width: 0%;
   color: black !important;
 }
 
-.tituloTutores {
+.titulo-tutores {
   font-size: 21px;
 }
 
@@ -39,12 +30,16 @@
 }
 
 table {
-  width: 50%;
+  width: 70%;
   margin: auto;
   margin-bottom: 3% !important;
 }
 
-.columnasNormales {
+.table-mobile{
+  width: 98%;
+}
+
+.columnas-normales {
   width: 22% !important;
   text-align: center;
 }
@@ -61,7 +56,6 @@ th {
 
 .contenido {
   text-align: center;
-  margin-top: 8%;
 }
 
 .aviso {
@@ -70,11 +64,22 @@ th {
   font-size: 19px;
 }
 
-.columnaCheckbox {
+.columna-checkbox {
   padding-right: 12px;
 }
 
-.mat-form-Fecha
-{
+.mat-form-Fecha{
   text-align: center !important;
+}
+
+.opciones{
+  text-align: center;
+  display: grid;
+  grid-template-columns: repeat(2,1fr);
+  margin: 0 auto;
+  width: 80%;
+}
+
+.opciones-mobile{
+  width: 100%;
 }

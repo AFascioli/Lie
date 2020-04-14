@@ -7,7 +7,7 @@ import {
   MatDialogRef,
   MAT_DIALOG_DATA,
   MatDialogConfig,
-  MatSnackBar
+  MatSnackBar,
 } from "@angular/material";
 import { Router } from "@angular/router";
 import { MediaMatcher } from "@angular/cdk/layout";
@@ -18,7 +18,7 @@ import { Subject } from "rxjs";
 @Component({
   selector: "app-retiro-anticipado",
   templateUrl: "./retiro-anticipado.component.html",
-  styleUrls: ["./retiro-anticipado.component.css"]
+  styleUrls: ["./retiro-anticipado.component.css"],
 })
 export class RetiroAnticipadoComponent implements OnInit {
   fechaActual = new Date();
@@ -36,7 +36,7 @@ export class RetiroAnticipadoComponent implements OnInit {
     "nombre",
     "telefono",
     "tipoDocumento",
-    "nroDocumento"
+    "nroDocumento",
   ];
   tutores: any[] = [];
   fueraPeriodoCicloLectivo = false;
@@ -53,7 +53,7 @@ export class RetiroAnticipadoComponent implements OnInit {
     public autenticacionService: AutenticacionService,
     public media: MediaMatcher
   ) {
-    this.mobileQuery = media.matchMedia("(max-width: 1000px)");
+    this.mobileQuery = media.matchMedia("(max-width: 800px)");
     this._mobileQueryListener = () => changeDetectorRef.detectChanges();
     this.mobileQuery.addListener(this._mobileQueryListener);
   }
@@ -69,7 +69,7 @@ export class RetiroAnticipadoComponent implements OnInit {
         "",
         {
           panelClass: ["snack-bar-aviso"],
-          duration: 8000
+          duration: 8000,
         }
       );
     }
@@ -84,7 +84,7 @@ export class RetiroAnticipadoComponent implements OnInit {
       this.servicioEstudiante
         .getTutoresDeEstudiante()
         .pipe(takeUntil(this.unsubscribe))
-        .subscribe(respuesta => {
+        .subscribe((respuesta) => {
           this.tutores = respuesta.tutores;
           this.isLoading = false;
         });
@@ -128,36 +128,64 @@ export class RetiroAnticipadoComponent implements OnInit {
       IdEstudiante: this._idEstudiante,
       antes10am: this.antes10am,
       tipoPopup: tipoPopup,
-      tutoresSeleccionados: this.seleccion.selected
+      tutoresSeleccionados: this.seleccion.selected,
     };
-    this.dialog.open(RetiroPopupComponent, this.matConfig);
+    let popup = this.dialog.open(RetiroPopupComponent, this.matConfig);
+
+    popup.afterClosed().subscribe((confirmado) => {
+      if (confirmado) {
+        this.servicioAsistencia
+          .registrarRetiroAnticipado(
+            this._idEstudiante,
+            this.antes10am,
+            this.seleccion.selected
+          )
+          .pipe(takeUntil(this.unsubscribe))
+          .subscribe((response) => {
+            let resultadoOperacion = response.exito;
+            if (resultadoOperacion == "exito") {
+              this.snackBar.open(response.message, "", {
+                panelClass: ["snack-bar-exito"],
+                duration: 4500,
+              });
+            } else if (resultadoOperacion == "retirado") {
+              this.snackBar.open(response.message, "", {
+                panelClass: ["snack-bar-fracaso"],
+                duration: 4500,
+              });
+            } else if (resultadoOperacion == "ausente") {
+              this.snackBar.open(response.message, "", {
+                panelClass: ["snack-bar-fracaso"],
+                duration: 4500,
+              });
+            } else {
+              this.snackBar.open(response.message, "", {
+                panelClass: ["snack-bar-fracaso"],
+                duration: 4500,
+              });
+            }
+          });
+      }
+    });
   }
 }
 
 @Component({
   selector: "app-retiro-popup",
   templateUrl: "./retiro-popup.component.html",
-  styleUrls: ["./retiro-anticipado.component.css"]
+  styleUrls: ["./retiro-anticipado.component.css"],
 })
 export class RetiroPopupComponent {
   tipoPopup: string;
-  IdEstudiante: string;
-  antes10am: Boolean;
-  resultado: string;
-  tutoresSeleccionados: Array<any>;
   private unsubscribe: Subject<void> = new Subject();
 
   constructor(
     public dialogRef: MatDialogRef<RetiroPopupComponent>,
     public router: Router,
-    public servicioAsistencia: AsistenciaService,
     public snackBar: MatSnackBar,
     @Inject(MAT_DIALOG_DATA) data
   ) {
     this.tipoPopup = data.tipoPopup;
-    this.IdEstudiante = data.IdEstudiante;
-    this.antes10am = data.antes10am;
-    this.tutoresSeleccionados = data.tutoresSeleccionados;
   }
 
   //Vuelve al menu principal
@@ -168,59 +196,12 @@ export class RetiroPopupComponent {
 
   //Cierra el popup y vuelve a la interfaz de retiro
   onNoCancelarConfirmarClick(): void {
-    this.dialogRef.close();
+    this.dialogRef.close(false);
   }
 
   //Confirma el retiro anticipado para el estudiante
   onYesConfirmarClick(): void {
-    this.servicioAsistencia
-      .registrarRetiroAnticipado(
-        this.IdEstudiante,
-        this.antes10am,
-        this.tutoresSeleccionados
-      )
-      .pipe(takeUntil(this.unsubscribe))
-      .subscribe(response => {
-        this.resultado = response.exito;
-        this.dialogRef.close();
-        if (this.resultado == "exito") {
-          this.snackBar.open(
-            "Se registró correctamente el retiro anticipado para el estudiante seleccionado.",
-            "",
-            {
-              panelClass: ["snack-bar-exito"],
-              duration: 4500
-            }
-          );
-        } else if (this.resultado == "retirado") {
-          this.snackBar.open(
-            "Retiro no registrado. Ya se ha registrado un retiro anticipado para el estudiante seleccionado.",
-            "",
-            {
-              panelClass: ["snack-bar-fracaso"],
-              duration: 4500
-            }
-          );
-        } else if (this.resultado == "ausente") {
-          this.snackBar.open(
-            "Retiro no registrado. El estudiante esta ausente para el día de hoy.",
-            "",
-            {
-              panelClass: ["snack-bar-fracaso"],
-              duration: 4500
-            }
-          );
-        } else {
-          this.snackBar.open(
-            "Retiro no registrado. El estudiante no tiene registrada la asistencia para el día de hoy.",
-            "",
-            {
-              panelClass: ["snack-bar-fracaso"],
-              duration: 4500
-            }
-          );
-        }
-      });
+    this.dialogRef.close(true);
   }
 
   ngOnDestroy() {

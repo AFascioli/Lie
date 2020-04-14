@@ -100,21 +100,17 @@ export class BuscarEstudiantesComponent implements OnInit {
   styleUrls: ["./buscar-estudiantes.component.css"]
 })
 export class BuscarPopupComponent {
-  formInvalido: Boolean;
-  tipoPopup: string;
   constructor(
     public dialogRef: MatDialogRef<BuscarPopupComponent>,
-    public router: Router,
-    public servicio: EstudiantesService
+    public router: Router
   ) {
-    this.tipoPopup = this.servicio.tipoPopUp;
-    this.formInvalido = this.servicio.formInvalidoEstudiante;
   }
 
   onYesClick(): void {
     this.router.navigate(["./home"]);
     this.dialogRef.close();
   }
+
   onNoClick(): void {
     this.dialogRef.close();
   }

@@ -1,10 +1,11 @@
 import { AutenticacionService } from "./../../login/autenticacionService.service";
-import { Component, OnInit, OnDestroy } from "@angular/core";
+import { Component, OnInit, OnDestroy, ChangeDetectorRef } from "@angular/core";
 import { EstudiantesService } from "src/app/estudiantes/estudiante.service";
 import { AsistenciaService } from "src/app/asistencia/asistencia.service";
 import { MatSnackBar } from "@angular/material";
 import { Subject } from "rxjs";
 import { takeUntil } from "rxjs/operators";
+import { MediaMatcher } from '@angular/cdk/layout';
 
 @Component({
   selector: "app-llegada-tarde",
@@ -19,13 +20,21 @@ export class LlegadaTardeComponent implements OnInit, OnDestroy {
   despues8am = false;
   fueraPeriodoCicloLectivo = false;
   private unsubscribe: Subject<void> = new Subject();
+  _mobileQueryListener: () => void;
+  mobileQuery: MediaQueryList;
 
   constructor(
     public servicioEstudiante: EstudiantesService,
     public servicioAsistencia: AsistenciaService,
     public snackBar: MatSnackBar,
-    public autenticacionService: AutenticacionService
-  ) {}
+    public autenticacionService: AutenticacionService,
+    public changeDetectorRef: ChangeDetectorRef,
+    public media: MediaMatcher
+  ) {
+    this.mobileQuery = media.matchMedia("(max-width: 800px)");
+    this._mobileQueryListener = () => changeDetectorRef.detectChanges();
+    this.mobileQuery.addListener(this._mobileQueryListener);
+  }
 
   ngOnInit() {
     this.fechaActual = new Date();

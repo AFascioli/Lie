@@ -3,13 +3,14 @@ import {
   OnInit,
   ElementRef,
   ViewChild,
-  OnDestroy
+  OnDestroy,
+  ChangeDetectorRef,
 } from "@angular/core";
 import { COMMA, ENTER } from "@angular/cdk/keycodes";
 import { FormControl, NgForm } from "@angular/forms";
 import {
   MatAutocompleteSelectedEvent,
-  MatAutocomplete
+  MatAutocomplete,
 } from "@angular/material/autocomplete";
 import { MatChipInputEvent } from "@angular/material/chips";
 import { Observable, Subject } from "rxjs";
@@ -21,11 +22,13 @@ import Rolldate from "../../../assets/rolldate.min.js";
 import { CancelPopupComponent } from "src/app/popup-genericos/cancel-popup.component";
 import { Evento } from "../evento.model";
 import { environment } from "src/environments/environment";
+import { ResizeOptions, ImageResult } from "ng2-imageupload";
+import { MediaMatcher } from '@angular/cdk/layout';
 
 @Component({
   selector: "app-modificar-evento",
   templateUrl: "./modificar-evento.component.html",
-  styleUrls: ["./modificar-evento.component.css"]
+  styleUrls: ["./modificar-evento.component.css"],
 })
 export class ModificarEventoComponent implements OnInit, OnDestroy {
   @ViewChild("chipsInput", { static: false }) chipsInput: ElementRef<
@@ -33,8 +36,8 @@ export class ModificarEventoComponent implements OnInit, OnDestroy {
   >;
   @ViewChild("auto", { static: false }) matAutocomplete: MatAutocomplete;
   fechaActual: Date;
-  imageFile: File;
-  imgURL: any[] = [];
+  imagesFile: any = [];
+  imagenesCargadas: any[] = [];
   message: string;
   selectable = true;
   removable = true;
@@ -44,18 +47,35 @@ export class ModificarEventoComponent implements OnInit, OnDestroy {
   filteredChips: Observable<string[]>;
   chips: string[] = [];
   allChips: string[] = ["1A", "2A", "3A", "4A", "5A", "6A", "Todos los cursos"];
-  horaInicio = "";
-  horaFin = "";
+  horaInicio: string;
+  horaFin: string;
   evento: Evento;
+  slideIndex = 1;
   private unsubscribe: Subject<void> = new Subject();
+  _mobileQueryListener: () => void;
+  mobileQuery: MediaQueryList;
 
   constructor(
     public eventoService: EventosService,
     public dialog: MatDialog,
     public router: Router,
-    public snackBar: MatSnackBar
+    public snackBar: MatSnackBar,
+    public changeDetectorRef: ChangeDetectorRef,
+    public media: MediaMatcher
   ) {
-    //Hace que funcione el autocomplete, filtra
+    this.mobileQuery = media.matchMedia("(max-width: 800px)");
+    this._mobileQueryListener = () => changeDetectorRef.detectChanges();
+    this.mobileQuery.addListener(this._mobileQueryListener);
+    this.filtrarChips();
+    console.log(this.mobileQuery.matches);
+  }
+
+  ngOnDestroy() {
+    this.unsubscribe.next();
+    this.unsubscribe.complete();
+  }
+
+  filtrarChips() {
     this.filteredChips = this.chipsCtrl.valueChanges.pipe(
       startWith(null),
       map((chip: string | null) =>
@@ -64,9 +84,12 @@ export class ModificarEventoComponent implements OnInit, OnDestroy {
     );
   }
 
-  ngOnDestroy() {
-    this.unsubscribe.next();
-    this.unsubscribe.complete();
+  private _filter(value: string): string[] {
+    const filterValue = value.toLowerCase();
+
+    return this.allChips.filter(
+      (chip) => chip.toLowerCase().indexOf(filterValue) === 0
+    );
   }
 
   ngOnInit() {
@@ -74,10 +97,13 @@ export class ModificarEventoComponent implements OnInit, OnDestroy {
     this.fechaActual = new Date();
     if (this.evento.filenames.length != 0) {
       for (let index = 0; index < this.evento.filenames.length; index++) {
-        this.imgURL.push(
+        this.imagenesCargadas.push(
           environment.apiUrl + `/imagen/${this.evento.filenames[index]}`
         );
       }
+      setTimeout(() => {
+        this.showSlide(1);
+      }, 500);
     }
     this.chips = this.evento.tags;
     this.inicializarPickers();
@@ -100,39 +126,6 @@ export class ModificarEventoComponent implements OnInit, OnDestroy {
     }
   }
 
-  inicializarPickers() {
-    new Rolldate({
-      el: "#pickerInicio",
-      format: "hh:mm",
-      minStep: 15,
-      lang: {
-        title: "Seleccione hora de inicio del evento",
-        hour: "",
-        min: ""
-      },
-      confirm: date => {
-        this.horaInicio = date;
-      }
-    });
-    new Rolldate({
-      el: "#pickerFin",
-      format: "hh:mm",
-      minStep: 15,
-      lang: { title: "Seleccione hora de fin del evento", hour: "", min: "" },
-      confirm: date => {
-        this.horaFin = date;
-      }
-    });
-  }
-
-  remove(chip: string): void {
-    const index = this.chips.indexOf(chip);
-
-    if (index >= 0) {
-      this.chips.splice(index, 1);
-    }
-  }
-
   selected(event: MatAutocompleteSelectedEvent): void {
     if (event.option.viewValue == "Todos los cursos") {
       this.chips = [];
@@ -150,83 +143,126 @@ export class ModificarEventoComponent implements OnInit, OnDestroy {
     this.chipsCtrl.setValue(null);
   }
 
-  private _filter(value: string): string[] {
-    const filterValue = value.toLowerCase();
-
-    return this.allChips.filter(
-      chip => chip.toLowerCase().indexOf(filterValue) === 0
-    );
+  inicializarPickers() {
+    new Rolldate({
+      el: "#pickerInicio",
+      format: "hh:mm",
+      minStep: 15,
+      lang: {
+        title: "Seleccione hora de inicio del evento",
+        hour: "",
+        min: "",
+      },
+      confirm: (date) => {
+        this.horaInicio = date;
+      },
+    });
+    new Rolldate({
+      el: "#pickerFin",
+      format: "hh:mm",
+      minStep: 15,
+      lang: { title: "Seleccione hora de fin del evento", hour: "", min: "" },
+      confirm: (date) => {
+        this.horaFin = date;
+      },
+    });
   }
 
-  obtenerImagen = (file, reader) => {
-    return new Promise((resolve, reject) => {
-      reader.readAsDataURL(file);
-      reader.onload = _event => {
-        resolve(reader.result);
-      };
-      if (file == null) {
-        reject("No se pudo obtener la imagen.");
-      }
-    });
+  remove(chip: string): void {
+    const index = this.chips.indexOf(chip);
+
+    if (index >= 0) {
+      this.chips.splice(index, 1);
+    }
+  }
+
+  resizeOptions: ResizeOptions = {
+    resizeMaxHeight: 600,
+    resizeMaxWidth: 600,
   };
 
-  async preview(files) {
-    let incorrectType = false;
-    if (files.length === 0) return;
+  async cargarImagen(imagenCargada: ImageResult) {
+    this.imagesFile.push(imagenCargada.file);
+    this.imagenesCargadas.push(
+      (imagenCargada.resized && imagenCargada.resized.dataURL) ||
+        imagenCargada.dataURL
+    );
+    setTimeout(() => {
+      this.showSlide(1);
+    }, 500);
+  }
 
-    for (let index = 0; index < files.length; index++) {
-      var mimeType = files[index].type;
-      if (mimeType.match(/image\/*/) == null) {
-        incorrectType = true;
-        files.splice(index, 1);
-      }
+  moveFromCurrentSlide(n) {
+    this.slideIndex += n;
+    this.showSlide(this.slideIndex);
+  }
+
+  showSlide(n) {
+    var slides = document.getElementsByClassName("mySlides");
+    var dots = document.getElementsByClassName("dot");
+    this.esSlideValido(n, slides);
+    for (let i = 0; i < slides.length; i++) {
+      slides[i].setAttribute("style", "display:none;");
     }
-
-    incorrectType && (this.message = "Solo se admiten archivos de imagen");
-
-    this.imageFile = files;
-    this.imgURL = [];
-    for (let index = 0; index < files.length; index++) {
-      var reader = new FileReader();
-      this.imgURL[index] = await this.obtenerImagen(files[index], reader);
+    for (let i = 0; i < dots.length; i++) {
+      dots[i].className = dots[i].className.replace(" active", "");
     }
+    this.setAttributesCurrentSlide(slides, dots);
+  }
+
+  setAttributesCurrentSlide(slides, dots) {
+    slides[this.slideIndex - 1].setAttribute("style", "display:block;");
+    dots[this.slideIndex - 1].className += " active";
+  }
+
+  esSlideValido(n, slides) {
+    if (n > slides.length) {
+      this.slideIndex = 1;
+    }
+    if (n < 1) {
+      this.slideIndex = slides.length;
+    }
+  }
+
+  modificarEvento() {
+    let fechaEvento = new Date(this.evento.fechaEvento);
+    this.eventoService
+      .modificarEvento(
+        this.evento.titulo,
+        this.evento.descripcion,
+        fechaEvento,
+        this.evento.horaInicio,
+        this.evento.horaFin,
+        this.evento.tags,
+        this.imagesFile,
+        this.evento.filenames,
+        this.evento._id,
+        this.evento.autor
+      )
+      .pipe(takeUntil(this.unsubscribe))
+      .subscribe((rtdo) => {
+        if (rtdo.exito) {
+          this.snackBar.open(rtdo.message, "", {
+            panelClass: ["snack-bar-exito"],
+            duration: 4500,
+          });
+          this.router.navigate(["./home"]);
+        } else {
+          this.snackBar.open(rtdo.message, "", {
+            duration: 4500,
+            panelClass: ["snack-bar-fracaso"],
+          });
+        }
+      });
   }
 
   onGuardarEvento(form: NgForm) {
     if (form.valid && this.evento.tags.length != 0) {
       if (
-        (this.evento.horaInicio == "" && this.evento.horaFin == "") ||
+        (this.evento.horaInicio && this.evento.horaFin) ||
         this.horaEventoEsValido(this.evento.horaInicio, this.evento.horaFin)
       ) {
-        let fechaEvento = new Date(this.evento.fechaEvento);
-        this.eventoService
-          .modificarEvento(
-            this.evento.titulo,
-            this.evento.descripcion,
-            fechaEvento,
-            this.evento.horaInicio,
-            this.evento.horaFin,
-            this.evento.tags,
-            this.imageFile,
-            this.evento.filenames,
-            this.evento._id,
-            this.evento.autor
-          )
-          .pipe(takeUntil(this.unsubscribe))
-          .subscribe(rtdo => {
-            if (rtdo.exito) {
-              this.snackBar.open(rtdo.message, "", {
-                panelClass: ["snack-bar-exito"],
-                duration: 4500
-              });
-              this.router.navigate(["./home"]);
-            } else {
-              this.snackBar.open(rtdo.message, "", {
-                duration: 4500,
-                panelClass: ["snack-bar-fracaso"]
-              });
-            }
-          });
+        this.modificarEvento();
       } else if (
         !this.horaEventoEsValido(this.evento.horaInicio, this.evento.horaFin)
       ) {
@@ -235,14 +271,14 @@ export class ModificarEventoComponent implements OnInit, OnDestroy {
           "",
           {
             duration: 4500,
-            panelClass: ["snack-bar-fracaso"]
+            panelClass: ["snack-bar-fracaso"],
           }
         );
       }
     } else {
       this.snackBar.open("Faltan campos por completar", "", {
         duration: 4500,
-        panelClass: ["snack-bar-fracaso"]
+        panelClass: ["snack-bar-fracaso"],
       });
     }
   }
@@ -261,7 +297,7 @@ export class ModificarEventoComponent implements OnInit, OnDestroy {
 
   popUpCancelar() {
     this.dialog.open(CancelPopupComponent, {
-      width: "250px"
+      width: "250px",
     });
   }
 }

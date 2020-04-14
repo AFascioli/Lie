@@ -8,12 +8,8 @@ table {
   margin: auto;
 }
 
-.columnasNormales {
+.columnas-normales {
   width: 22% !important;
-}
-
-.columnasChicas {
-  width: 8%;
 }
 
 th {
