@@ -68,6 +68,7 @@ export class HomeComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.unsubscribe))
       .subscribe((rtdo) => {
         this.eventos = rtdo.eventos;
+        console.log(rtdo.eventos);
       });
     if ("serviceWorker" in navigator) {
       navigator.serviceWorker.register("ngsw-worker.js").then((swreg) => {
@@ -110,16 +111,34 @@ export class HomeComponent implements OnInit, OnDestroy {
   onBorrar(evento) {
     this.enProcesoDeBorrado = true;
     this.servicioEvento.evento = evento;
-    this.dialog.open(BorrarPopupComponent, {
+    let popup = this.dialog.open(BorrarPopupComponent, {
       width: "250px",
     });
-    this.servicioEvento
-      .obtenerEvento()
-      .pipe(takeUntil(this.unsubscribe))
-      .subscribe((rtdo) => {
-        this.eventos = rtdo.eventos;
-        this.enProcesoDeBorrado = false;
-      });
+    // Luego de que se cierra el popup, se fija si se eligio si o no, en caso de si se borra.
+    popup.afterClosed().subscribe((resultado) => {
+      if (resultado) {
+        this.servicioEvento
+          .eliminarEvento(this.servicioEvento.evento._id)
+          .pipe(takeUntil(this.unsubscribe))
+          .subscribe((response) => {
+            console.log(response);
+            if (response.exito) {
+              this.servicioEvento
+                .obtenerEvento()
+                .pipe(takeUntil(this.unsubscribe))
+                .subscribe((rtdo) => {
+                  this.eventos = rtdo.eventos;
+                  console.log(this.eventos);
+                  this.enProcesoDeBorrado = false;
+                  this.snackBar.open(response.message, "", {
+                    panelClass: ["snack-bar-exito"],
+                    duration: 4500,
+                  });
+                });
+            }
+          });
+      }
+    });
   }
 
   conocerUsuarioLogueado(indiceEvento): boolean {
@@ -140,36 +159,16 @@ export class HomeComponent implements OnInit, OnDestroy {
     "../estudiantes/mostrar-estudiantes/mostrar-estudiantes.component.css",
   ],
 })
-export class BorrarPopupComponent implements OnDestroy {
-  private unsubscribe: Subject<void> = new Subject();
+export class BorrarPopupComponent{
   constructor(
     public dialogRef: MatDialogRef<BorrarPopupComponent>,
-    public router: Router,
-    public servicioEvento: EventosService,
-    public snackBar: MatSnackBar
   ) {}
 
-  ngOnDestroy() {
-    this.unsubscribe.next();
-    this.unsubscribe.complete();
-  }
-
   onYesClick(): void {
-    this.servicioEvento
-      .eliminarEvento(this.servicioEvento.evento._id)
-      .pipe(takeUntil(this.unsubscribe))
-      .subscribe((response) => {
-        if (response.exito) {
-          this.snackBar.open(response.message, "", {
-            panelClass: ["snack-bar-exito"],
-            duration: 4500,
-          });
-        }
-      });
-    this.dialogRef.close();
+    this.dialogRef.close(true);
   }
 
   onNoClick(): void {
-    this.dialogRef.close();
+    this.dialogRef.close(false);
   }
 }

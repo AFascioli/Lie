@@ -1,4 +1,3 @@
-import { Evento } from "./eventos/evento.model";
 import { ReadMoreComponent } from "./eventos/visualizar-evento/read-more.component";
 import { AuthInterceptor } from "./login/auth-interceptor";
 import { BrowserModule } from "@angular/platform-browser";
@@ -14,7 +13,6 @@ import {
   MatTableModule,
   MatSidenavModule,
   MatToolbarModule,
-  MatSortModule,
   MatIconModule,
   MatListModule,
   MatSlideToggleModule,
@@ -23,7 +21,7 @@ import {
   MatSnackBarModule,
   MatChipsModule,
   MatInputModule,
-  MatPaginatorIntl
+  MatPaginatorIntl,
 } from "@angular/material";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
@@ -39,32 +37,32 @@ import { NgxMaterialTimepickerModule } from "ngx-material-timepicker";
 import { EstudiantesService } from "./estudiantes/estudiante.service";
 import {
   BuscarEstudiantesComponent,
-  BuscarPopupComponent
+  BuscarPopupComponent,
 } from "./estudiantes/buscar-estudiantes/buscar-estudiantes.component";
 import { ListaEstudiantesComponent } from "./estudiantes/lista-estudiantes/lista-estudiantes.component";
 import {
   MostrarEstudiantesComponent,
-  MostrarPopupComponent
+  MostrarPopupComponent,
 } from "./estudiantes/mostrar-estudiantes/mostrar-estudiantes.component";
 import { AppRoutingModule } from "./app-routing.module";
 import { LoginComponent } from "./login/login.component";
 import {
   MenuLateralComponent,
-  CerrarSesionPopupComponent
+  CerrarSesionPopupComponent,
 } from "./menu-lateral/menu-lateral.component";
 import { HomeComponent } from "./home/home.component";
 import {
   RegistrarAsistenciaComponent,
-  AsistenciaPopupComponent
+  AsistenciaPopupComponent,
 } from "./asistencia/registrar-asistencia/registrar-asistencia.component";
 import { MatExpansionModule } from "@angular/material/expansion";
 import {
   InscripcionEstudianteComponent,
-  InscripcionPopupComponent
+  InscripcionPopupComponent,
 } from "./inscripcion/inscripcion-estudiantes/inscripcion-estudiantes.component";
 import {
   RetiroAnticipadoComponent,
-  RetiroPopupComponent
+  RetiroPopupComponent,
 } from "./asistencia/retiro-anticipado/retiro-anticipado.component";
 import { DocumentosInscripcionComponent } from "./inscripcion/documentos-inscripcion/documentos-inscripcion.component";
 import { MatGridListModule } from "@angular/material/grid-list";
@@ -72,11 +70,11 @@ import { CalificacionesEstudiantesComponent } from "./calificaciones/calificacio
 import { LlegadaTardeComponent } from "./asistencia/llegada-tarde/llegada-tarde.component";
 import {
   CambiarPassword,
-  CambiarPasswordPopupComponent
+  CambiarPasswordPopupComponent,
 } from "./login/cambiar-password.component";
 import {
   PerfilEstudianteComponent,
-  PerfilEstudiantePopupComponent
+  PerfilEstudiantePopupComponent,
 } from "./perfil-estudiante/perfil-estudiante.component";
 import { CalificacionesPerfilEstudianteComponent } from "./perfil-estudiante/calificaciones-perfil-estudiante/calificaciones-perfil-estudiante.component";
 import { AgendaCursoPerfilEstudianteComponent } from "./perfil-estudiante/agenda-curso-perfil-estudiante/agenda-curso-perfil-estudiante.component";
@@ -87,16 +85,16 @@ registerLocaleData(localePy, "es");
 import localePy from "@angular/common/locales/es";
 import { JustificacionInasistenciaComponent } from "./asistencia/justificacion-inasistencia/justificacion-inasistencia.component";
 import {
-  AltaARComponent,
-  AltaARPopupComponent
-} from "./adulto-responsable/alta-ar/alta-ar.component";
+  AltaAdultoResponsableComponent,
+  AltaAdultoResponsablePopupComponent,
+} from "./adulto-responsable/alta-adulto-responsable/alta-adulto-responsable.component";
 import {
   AltaEmpleadoComponent,
-  AltaEmpleadoPopupComponent
+  AltaEmpleadoPopupComponent,
 } from "./empleado/alta-empleado/alta-empleado.component";
 import {
   PreferenciasComponent,
-  PreferenciasPopupComponent
+  PreferenciasPopupComponent,
 } from "./menu-lateral/preferencias/preferencias.component";
 import { BorrarPopupComponent } from "./home/home.component";
 import { ServiceWorkerModule } from "@angular/service-worker";
@@ -115,14 +113,14 @@ import { VisualizarAgendaComponent } from "./agenda/visualizar-agenda/visualizar
 import { RegistrarCuotasComponent } from "./cuotas/registrar-cuotas/registrar-cuotas.component";
 import {
   DefinirAgendaComponent,
-  AgendaPopupComponent
+  AgendaPopupComponent,
 } from "./agenda/definir-agenda/definir-agenda.component";
 import { RegistrarSancionesComponent } from "./sanciones/registrar-sanciones/registrar-sanciones.component";
 import { SancionesEstudianteComponent } from "./perfil-estudiante/sanciones-estudiante/sanciones-estudiante.component";
 import { ErrorInterceptor } from "./error-interceptor";
 import { ErrorComponent } from "./error/error.component";
 import { ImageUploadModule } from "ng2-imageupload";
-import { MenuPrincipalARComponent } from "./menu-principal-ar/menu-principal-ar.component";
+import { MenuPrincipalAdultoResponsableComponent } from "./menu-principal-adulto-responsable/menu-principal-adulto-responsable.component";
 
 @NgModule({
   declarations: [
@@ -156,10 +154,10 @@ import { MenuPrincipalARComponent } from "./menu-principal-ar/menu-principal-ar.
     CalificacionesPerfilEstudianteComponent,
     AgendaCursoPerfilEstudianteComponent,
     JustificacionInasistenciaComponent,
-    AltaARComponent,
+    AltaAdultoResponsableComponent,
     AltaEmpleadoComponent,
     AltaEmpleadoPopupComponent,
-    AltaARPopupComponent,
+    AltaAdultoResponsablePopupComponent,
     PreferenciasComponent,
     LoginComponent,
     InasistenciasEstudianteComponent,
@@ -177,7 +175,7 @@ import { MenuPrincipalARComponent } from "./menu-principal-ar/menu-principal-ar.
     DefinirAgendaComponent,
     RegistrarSancionesComponent,
     SancionesEstudianteComponent,
-    MenuPrincipalARComponent
+    MenuPrincipalAdultoResponsableComponent,
   ],
   //entryComponents declara los componentes que se generan dinamicamente dentro de otros.
   entryComponents: [
@@ -193,10 +191,10 @@ import { MenuPrincipalARComponent } from "./menu-principal-ar/menu-principal-ar.
     CerrarSesionPopupComponent,
     PreferenciasPopupComponent,
     AltaEmpleadoPopupComponent,
-    AltaARPopupComponent,
+    AltaAdultoResponsablePopupComponent,
     AgendaPopupComponent,
     ReadMoreComponent,
-    ErrorComponent
+    ErrorComponent,
   ],
   imports: [
     MatChipsModule,
@@ -236,8 +234,8 @@ import { MenuPrincipalARComponent } from "./menu-principal-ar/menu-principal-ar.
     MatCarouselModule.forRoot(),
     ServiceWorkerModule.register("ngsw-worker.js", {
       enabled: environment.production,
-      registrationStrategy: "registerImmediately"
-    })
+      registrationStrategy: "registerImmediately",
+    }),
   ],
   //le decimos a angular que vamos a tener un interceptor nuevo (provide), luego le indicamos que
   //interceptor usar (useClass) y finalmente aclaramos que no sobreescriba el interceptor que esta
@@ -247,8 +245,8 @@ import { MenuPrincipalARComponent } from "./menu-principal-ar/menu-principal-ar.
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
     { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },
     { provide: LOCALE_ID, useValue: "es" },
-    { provide: MatPaginatorIntl, useValue: getDutchPaginatorIntl() }
+    { provide: MatPaginatorIntl, useValue: getDutchPaginatorIntl() },
   ],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
 })
 export class AppModule {}

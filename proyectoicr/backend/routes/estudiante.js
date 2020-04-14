@@ -12,20 +12,20 @@ const ClaseEstudiante = require("../classes/estudiante");
 router.post("", checkAuthMiddleware, (req, res, next) => {
   Estudiante.findOne({
     tipoDocumento: req.body.tipoDocumento,
-    numeroDocumento: req.body.numeroDocumento
+    numeroDocumento: req.body.numeroDocumento,
   })
-    .then(estudiante => {
+    .then((estudiante) => {
       if (estudiante) {
         res.status(200).json({
           message: "El estudiante ya se encuentra registrado",
-          exito: false
+          exito: false,
         });
       } else {
         Estado.findOne({
           ambito: "Estudiante",
-          nombre: "Registrado"
+          nombre: "Registrado",
         })
-          .then(estado => {
+          .then((estado) => {
             ClaseEstudiante.CrearEstudiante(
               req.body.apellido,
               req.body.nombre,
@@ -48,54 +48,65 @@ router.post("", checkAuthMiddleware, (req, res, next) => {
               true,
               estado._id
             )
-              .then(estudiante => {
+              .then((estudiante) => {
                 estudiante
                   .save()
                   .then(() => {
                     res.status(201).json({
                       message: "Estudiante registrado correctamente",
-                      exito: true
+                      exito: true,
                     });
                   })
                   .catch(() =>
                     res.status(500).json({
                       message:
                         "Ocurrió un error al querer guardar en la base de datos a un estudiante",
-                      exito: false
+                      exito: false,
                     })
                   );
               })
               .catch(() => {
                 res.status(500).json({
-                  message: "Mensaje de error especifico"
+                  message: "Mensaje de error especifico",
                 });
               });
           })
           .catch(() => {
             res.status(500).json({
-              message: "Mensaje de error especifico"
+              message: "Mensaje de error especifico",
             });
           });
       }
     })
     .catch(() => {
       res.status(500).json({
-        message: "Mensaje de error especifico"
+        message: "Mensaje de error especifico",
       });
     });
 });
 
-router.get("/id",checkAuthMiddleware, (req, res) => {
-   Estudiante.findById(req.query.idEstudiante).then(estudiante => {
-      if(estudiante){
-        res.json({estudiante: estudiante, exito: true, message: "Estudiante encontrado exitosamente"});
-      }else{
-        res.json({estudiante: null, exito: false, message: "Estudiante no registrado"});
+router.get("/id", checkAuthMiddleware, (req, res) => {
+  Estudiante.findById(req.query.idEstudiante)
+    .then((estudiante) => {
+      if (estudiante) {
+        res.json({
+          estudiante: estudiante,
+          exito: true,
+          message: "Estudiante encontrado exitosamente",
+        });
+      } else {
+        res.json({
+          estudiante: null,
+          exito: false,
+          message: "Estudiante no registrado",
+        });
       }
-   }).catch(() => {
+    })
+    .catch(() => {
       res.status(500).json({
-        message: "Mensaje de error especifico"
-      })});
+        message: "Mensaje de error especifico",
+      });
+    });
 });
 //Obtiene los adultos responsable de un estudiante
 router.get("/adultosResponsables", (req, res) => {
@@ -103,16 +114,16 @@ router.get("/adultosResponsables", (req, res) => {
     {
       $match: {
         _id: mongoose.Types.ObjectId(req.query.idEstudiante),
-        activo: true
-      }
+        activo: true,
+      },
     },
     {
       $lookup: {
         from: "adultoResponsable",
         localField: "adultoResponsable",
         foreignField: "_id",
-        as: "datosAR"
-      }
+        as: "datosAR",
+      },
     },
     {
       $project: {
@@ -122,30 +133,30 @@ router.get("/adultosResponsables", (req, res) => {
         "datosAR.telefono": 1,
         "datosAR.email": 1,
         "datosAR.tipoDocumento": 1,
-        "datosAR.numeroDocumento": 1
-      }
-    }
+        "datosAR.numeroDocumento": 1,
+      },
+    },
   ])
-    .then(datosAdResp => {
+    .then((datosAdResp) => {
       if (!datosAdResp) {
         return res.status(200).json({
           message: "El estudiante no tiene adultos responsables a su cargo",
-          exito: false
+          exito: false,
         });
       }
       let AR = [];
-      datosAdResp[0].datosAR.forEach(AdResp => {
+      datosAdResp[0].datosAR.forEach((AdResp) => {
         AR.push(AdResp);
       });
       return res.status(200).json({
         message: "Se obtuvieron los adultos responsables exitosamente",
         exito: true,
-        tutores: AR
+        tutores: AR,
       });
     })
     .catch(() => {
       res.status(500).json({
-        message: "Mensaje de error especifico"
+        message: "Mensaje de error especifico",
       });
     });
 });
@@ -154,31 +165,31 @@ router.get("/adultosResponsables", (req, res) => {
 router.delete("/borrar", checkAuthMiddleware, (req, res, next) => {
   Estado.findOne({
     ambito: "Estudiante",
-    nombre: "De baja"
+    nombre: "De baja",
   })
-    .then(estado => {
+    .then((estado) => {
       Estudiante.findOneAndUpdate(
         { _id: req.query._id },
         { activo: false, estado: estado._id }
       ).then(() => {
         Inscripcion.findOne({
           idEstudiante: req.query._id,
-          activa: true
-        }).then(inscripcion => {
+          activa: true,
+        }).then((inscripcion) => {
           if (inscripcion) {
             inscripcion.activa = false;
             inscripcion.save();
           }
           res.status(202).json({
             message: "Estudiante exitosamente borrado",
-            exito: true
+            exito: true,
           });
         });
       });
     })
     .catch(() => {
       res.status(500).json({
-        message: "Mensaje de error especifico"
+        message: "Mensaje de error especifico",
       });
     });
 });
@@ -186,32 +197,32 @@ router.delete("/borrar", checkAuthMiddleware, (req, res, next) => {
 //Dada una id de estudiante, se fija si esta inscripto en un curso
 router.get("/curso", checkAuthMiddleware, (req, res) => {
   Estudiante.findOne({ _id: req.query.idEstudiante, activo: true })
-    .then(estudiante => {
+    .then((estudiante) => {
       Estado.findById(estudiante.estado)
-        .then(estado => {
+        .then((estado) => {
           if (estado.nombre == "Inscripto") {
             res.status(200).json({
               message:
                 "El estudiante seleccionado ya se encuentra inscripto en un curso",
-              exito: true
+              exito: true,
             });
           } else {
             res.status(200).json({
               message:
                 "El estudiante seleccionado no esta inscripto en un curso",
-              exito: false
+              exito: false,
             });
           }
         })
         .catch(() => {
           res.status(500).json({
-            message: "Mensaje de error especifico"
+            message: "Mensaje de error especifico",
           });
         });
     })
     .catch(() => {
       res.status(500).json({
-        message: "Mensaje de error especifico"
+        message: "Mensaje de error especifico",
       });
     });
 });
@@ -224,16 +235,16 @@ router.get("/documento", checkAuthMiddleware, (req, res, next) => {
   Estudiante.find({
     tipoDocumento: tipo,
     numeroDocumento: numero,
-    activo: true
+    activo: true,
   })
-    .then(documents => {
+    .then((documents) => {
       res.status(200).json({
-        estudiantes: documents
+        estudiantes: documents,
       });
     })
     .catch(() => {
       res.status(500).json({
-        message: "Mensaje de error especifico"
+        message: "Mensaje de error especifico",
       });
     });
 });
@@ -241,7 +252,7 @@ router.get("/documento", checkAuthMiddleware, (req, res, next) => {
 //Recibe por parametros un vector de los estudiantes con los respectivos documentos entregados
 router.post("/documentos", checkAuthMiddleware, (req, res) => {
   try {
-    req.body.forEach(estudiante => {
+    req.body.forEach((estudiante) => {
       Inscripcion.findOneAndUpdate(
         { idEstudiante: estudiante.idEstudiante, activa: true },
         { $set: { documentosEntregados: estudiante.documentosEntregados } }
@@ -274,18 +285,18 @@ router.patch("/modificar", checkAuthMiddleware, (req, res, next) => {
     nacionalidad: req.body.nacionalidad,
     fechaNacimiento: req.body.fechaNacimiento,
     estadoCivil: req.body.estadoCivil,
-    telefonoFijo: req.body.telefonoFijo
+    telefonoFijo: req.body.telefonoFijo,
   })
     .then(() => {
       res.status(200).json({
         message: "Estudiante modificado exitosamente",
-        exito: true
+        exito: true,
       });
     })
     .catch(() => {
       res.status(200).json({
         message: "Ocurrió un problema al intentar modificar el estudiante",
-        exito: false
+        exito: false,
       });
     });
 });
@@ -297,16 +308,16 @@ router.get("/nombreyapellido", checkAuthMiddleware, (req, res, next) => {
   Estudiante.find({
     nombre: { $regex: new RegExp(nombre, "i") },
     apellido: { $regex: new RegExp(apellido, "i") },
-    activo: true
+    activo: true,
   })
-    .then(documents => {
+    .then((documents) => {
       res.status(200).json({
-        estudiantes: documents
+        estudiantes: documents,
       });
     })
     .catch(() => {
       res.status(500).json({
-        message: "Mensaje de error especifico"
+        message: "Mensaje de error especifico",
       });
     });
 });
@@ -317,56 +328,56 @@ router.get("/tutores", (req, res) => {
     {
       $match: {
         _id: mongoose.Types.ObjectId(req.query.idEstudiante),
-        activo: true
-      }
+        activo: true,
+      },
     },
     {
       $lookup: {
         from: "adultoResponsable",
         localField: "adultoResponsable",
         foreignField: "_id",
-        as: "datosAR"
-      }
+        as: "datosAR",
+      },
     },
     {
       $unwind: {
-        path: "$datosAR"
-      }
+        path: "$datosAR",
+      },
     },
     {
       $match: {
-        "datosAR.tutor": true
-      }
+        "datosAR.tutor": true,
+      },
     },
     {
       $project: {
         "datosAR._id": 1,
         "datosAR.apellido": 1,
         "datosAR.nombre": 1,
-        "datosAR.telefono": 1
-      }
-    }
+        "datosAR.telefono": 1,
+      },
+    },
   ])
-    .then(datosTutores => {
+    .then((datosTutores) => {
       if (!datosTutores) {
         return res.status(200).json({
           message: "El estudiante no tiene tutores",
-          exito: false
+          exito: false,
         });
       }
       let tutores = [];
-      datosTutores.forEach(tutor => {
+      datosTutores.forEach((tutor) => {
         tutores.push(tutor.datosAR);
       });
       return res.status(200).json({
         message: "Se obtuvieron los tutores exitosamente",
         exito: true,
-        tutores: tutores
+        tutores: tutores,
       });
     })
     .catch(() => {
       res.status(500).json({
-        message: "Mensaje de error especifico"
+        message: "Mensaje de error especifico",
       });
     });
 });
@@ -378,25 +389,25 @@ router.get("/cuotasEstudiante", (req, res) => {
     {
       $match: {
         _id: mongoose.Types.ObjectId(req.query.idEstudiante),
-        activo: true
-      }
+        activo: true,
+      },
     },
     {
       $lookup: {
         from: "inscripcion",
         localField: "_id",
         foreignField: "idEstudiante",
-        as: "InscripcionEstudiante"
-      }
+        as: "InscripcionEstudiante",
+      },
     },
     {
       $project: {
         _id: 1,
-        InscripcionEstudiante: 1
-      }
-    }
+        InscripcionEstudiante: 1,
+      },
+    },
   ])
-    .then(docs => {
+    .then((docs) => {
       let docPosta = [];
 
       for (let i = 0; i < docs[0].InscripcionEstudiante.length; i++) {
@@ -407,22 +418,22 @@ router.get("/cuotasEstudiante", (req, res) => {
       if (docPosta[0].cuotas.length == 0) {
         return res.status(200).json({
           message: "El estudiante no tiene cuotas",
-          exito: false
+          exito: false,
         });
       }
       let cuo = [];
-      docPosta[0].cuotas.forEach(d => {
+      docPosta[0].cuotas.forEach((d) => {
         cuo.push([d.mes, d.pagado]);
       });
       return res.status(200).json({
         message: "Se obtuvieron las cuotas exitosamente",
         exito: true,
-        cuotas: cuo
+        cuotas: cuo,
       });
     })
     .catch(() => {
       res.status(500).json({
-        message: "Mensaje de error especifico"
+        message: "Mensaje de error especifico",
       });
     });
 });
@@ -432,65 +443,65 @@ router.get("/sancionesEstudiante", (req, res) => {
     {
       $match: {
         _id: mongoose.Types.ObjectId(req.query.idEstudiante),
-        activo: true
-      }
+        activo: true,
+      },
     },
     {
       $lookup: {
         from: "inscripcion",
         localField: "_id",
         foreignField: "idEstudiante",
-        as: "InscripcionEstudiante"
-      }
+        as: "InscripcionEstudiante",
+      },
     },
     {
       $unwind: {
-        path: "$InscripcionEstudiante"
-      }
+        path: "$InscripcionEstudiante",
+      },
     },
     {
       $match: {
-        "InscripcionEstudiante.activa": true
-      }
+        "InscripcionEstudiante.activa": true,
+      },
     },
     {
       $project: {
         _id: 1,
-        InscripcionEstudiante: 1
-      }
+        InscripcionEstudiante: 1,
+      },
     },
     {
       $unwind: {
-        path: "$InscripcionEstudiante"
-      }
+        path: "$InscripcionEstudiante",
+      },
     },
     {
       $project: {
         _id: 0,
-        "InscripcionEstudiante.sanciones": 1
-      }
-    }
+        "InscripcionEstudiante.sanciones": 1,
+      },
+    },
   ])
-    .then(inscripciones => {
+    .then((inscripciones) => {
       let sanciones = inscripciones[0].InscripcionEstudiante.sanciones;
 
       if (sanciones.length == 0) {
         return res.status(200).json({
           message: "El estudiante no tiene sanciones",
           exito: false,
-          sanciones: []
+          sanciones: [],
         });
       } else {
         return res.status(200).json({
           message: "Se obtuvieron las sanciones exitosamente",
           exito: true,
-          sanciones: sanciones
+          sanciones: sanciones,
         });
       }
     })
     .catch(() => {
       res.status(500).json({
-        message: "Mensaje de error especifico"
+        message: "Mensaje de error especifico",
       });
     });
 });
@@ -502,84 +513,84 @@ router.get("/agenda", checkAuthMiddleware, (req, res) => {
     {
       $match: {
         idEstudiante: mongoose.Types.ObjectId(req.query.idEstudiante),
-        activa: true
-      }
+        activa: true,
+      },
     },
     {
       $project: {
-        idCurso: 1
-      }
+        idCurso: 1,
+      },
     },
     {
       $lookup: {
         from: "curso",
         localField: "idCurso",
         foreignField: "_id",
-        as: "curso"
-      }
+        as: "curso",
+      },
     },
     {
       $unwind: {
-        path: "$curso"
-      }
+        path: "$curso",
+      },
     },
     {
       $lookup: {
         from: "materiasXCurso",
         localField: "curso.materias",
         foreignField: "_id",
-        as: "MXC"
-      }
+        as: "MXC",
+      },
     },
     {
       $unwind: {
-        path: "$MXC"
-      }
+        path: "$MXC",
+      },
     },
     {
       $lookup: {
         from: "materia",
-        localField: "MXC.materia",
+        localField: "MXC.idMateria",
         foreignField: "_id",
-        as: "nombreMateria"
-      }
+        as: "nombreMateria",
+      },
     },
     {
       $lookup: {
         from: "empleado",
         localField: "MXC.idDocente",
         foreignField: "_id",
-        as: "docente"
-      }
+        as: "docente",
+      },
     },
     {
       $unwind: {
-        path: "$MXC.horarios"
-      }
+        path: "$MXC.horarios",
+      },
     },
     {
       $lookup: {
         from: "horario",
         localField: "MXC.horarios",
         foreignField: "_id",
-        as: "horarios"
-      }
+        as: "horarios",
+      },
     },
     {
       $project: {
         "nombreMateria.nombre": 1,
         horarios: 1,
         "docente.nombre": 1,
-        "docente.apellido": 1
-      }
-    }
+        "docente.apellido": 1,
+      },
+    },
   ])
-    .then(agendaCompleta => {
+    .then((agendaCompleta) => {
       if (agendaCompleta[0].horarios[0] == null) {
         return res.json({
           exito: false,
           message: "No existen horarios registrados para este curso",
-          agenda: []
+          agenda: [],
         });
       } else {
         let agenda = [];
@@ -591,20 +602,20 @@ router.get("/agenda", checkAuthMiddleware, (req, res) => {
             fin: agendaCompleta[i].horarios[0].horaFin,
             nombreDocente: agendaCompleta[i].docente[0].nombre,
             apellidoDocente: agendaCompleta[i].docente[0].apellido,
-            idHorarios: agendaCompleta[i].horarios[0]._id
+            idHorarios: agendaCompleta[i].horarios[0]._id,
           };
           agenda.push(valor);
         }
         return res.json({
           exito: true,
           message: "Se ha obtenido la agenda correctamente",
-          agenda: agenda
+          agenda: agenda,
         });
       }
     })
     .catch(() => {
       res.status(500).json({
-        message: "Mensaje de error especifico"
+        message: "Mensaje de error especifico",
       });
     });
 });

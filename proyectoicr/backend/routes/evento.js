@@ -322,13 +322,13 @@ router.delete("/eliminarEvento", checkAuthMiddleware, (req, res, next) => {
           //     evento.titulo,
           //     "Se ha cancelado el evento."
           //   );
-
-          return res.status(202).json({
-            message: "Evento eliminado exitosamente",
-            exito: true,
-          });
         });
       }
+
+      return res.status(202).json({
+        message: "Evento eliminado exitosamente",
+        exito: true,
+      });
     })
     .catch(() => {
       res.status(500).json({
@@ -378,7 +378,7 @@ notificarPorEvento = function (tags, titulo, cuerpo) {
       {
         $match: {
           $expr: {
-            $in: ["$icurso.curso", ["5A"]],
+            $in: ["$icurso.nombre", ["5A"]],
           },
         },
       },
@@ -427,11 +427,7 @@ notificarPorEvento = function (tags, titulo, cuerpo) {
       response.forEach((conadulto) => {
         idtutores.push(conadulto[0].idUsuario);
       });
-      Suscripcion.notificacionGrupal(
-        idtutores, // Tutores de los cursos seleccionados
-        titulo,
-        cuerpo
-      );
+      Suscripcion.notificacionGrupal(idtutores, titulo, cuerpo);
     });
   }
 };

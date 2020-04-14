@@ -1,3 +1,4 @@
+import { NgForm } from "@angular/forms";
 import {
   Component,
   OnInit,
@@ -19,6 +20,7 @@ import { takeUntil } from "rxjs/operators";
 import { CancelPopupComponent } from "src/app/popup-genericos/cancel-popup.component";
 import { Router } from "@angular/router";
 import { MediaMatcher } from "@angular/cdk/layout";
+import { NgModel } from "@angular/forms";
 
 @Component({
   selector: "app-definir-agenda",
@@ -62,6 +64,7 @@ export class DefinirAgendaComponent implements OnInit, OnDestroy {
   ];
   nuevo: number;
   isLoading = true;
+  huboCambios = false;
   _mobileQueryListener: () => void;
   mobileQuery: MediaQueryList;
 
@@ -110,29 +113,56 @@ export class DefinirAgendaComponent implements OnInit, OnDestroy {
       });
   }
 
-  obtenerAgenda(idCurso) {
-    this.cursoSelected = true;
-    this.idCursoSeleccionado = idCurso.value;
-    this.servicioAgenda
-      .obtenerAgendaDeCurso(idCurso.value)
+  obtenerAgenda(idCurso: NgModel) {
+    if (!this.isEditing) {
+      this.cursoSelected = true;
+      this.idCursoSeleccionado = idCurso.value;
+      this.servicioAgenda
+        .obtenerAgendaDeCurso(this.idCursoSeleccionado)
+        .pipe(takeUntil(this.unsubscribe))
+        .subscribe((rtdo) => {
+          this.dataSource.data = rtdo.agenda;
+          this.huboCambios=false;
+        });
+    } else {
+      idCurso.reset(this.idCursoSeleccionado);
+      this.openSnackBar(
+        "Necesitas finalizar la edición de la correspondiente fila",
+        "snack-bar-fracaso"
+      );
+    }
+  }
+
+  obtenerCursos() {
+    this.servicioEstudiante
+      .obtenerCursos()
       .pipe(takeUntil(this.unsubscribe))
-      .subscribe((rtdo) => {
-        this.dataSource.data = rtdo.agenda;
+      .subscribe((response) => {
+        this.cursos = response.cursos;
+        this.cursos.sort((a, b) =>
+          a.curso.charAt(0) > b.curso.charAt(0)
+            ? 1
+            : b.curso.charAt(0) > a.curso.charAt(0)
+            ? -1
+            : 0
+        );
+        this.isLoading = false;
       });
   }
 
   reservarAgenda(indice, row) {
-    if(row.idMateria==""||row.dia==""||row.idDocente==""){
+    if (row.idMateria == "" || row.dia == "" || row.idDocente == "") {
       this.agendaValida = false;
-      this.mensajeError =
-        "Faltan campos por completar";
+      this.mensajeError = "Faltan campos por completar";
       this.openSnackBar(this.mensajeError, "snack-bar-fracaso");
-    }else{
+    } else {
       this.validarHorario(row, indice);
       if (this.agendaValida) {
         this.indice = -1;
+        this.isEditing = false;
         document.getElementById("editar" + indice).style.display = "block";
         document.getElementById("reservar" + indice).style.display = "none";
+        this.huboCambios = true;
       }
     }
   }
@@ -142,6 +172,7 @@ export class DefinirAgendaComponent implements OnInit, OnDestroy {
       this.servicioAgenda
         .registrarAgenda(this.dataSource.data, this.idCursoSeleccionado)
         .subscribe((response) => {
+          this.isEditing = false;
           this.openSnackBar(response.message, "snack-bar-exito");
         });
     } else {
@@ -166,6 +197,7 @@ export class DefinirAgendaComponent implements OnInit, OnDestroy {
       });
       this.dataSource._updateChangeSubscription(); // Fuerza el renderizado de la tabla.
       setTimeout(() => {
+        this.isEditing = true;
         this.editarAgenda(largo);
       }, 100);
     } else {
@@ -272,6 +304,7 @@ export class DefinirAgendaComponent implements OnInit, OnDestroy {
             this.agendaValida = true;
             this.mensajeError = "";
             this.indice = -1;
+            this.isEditing = false;
           }
         } else {
           result && this.eliminarHorarios(index);
@@ -288,6 +321,7 @@ export class DefinirAgendaComponent implements OnInit, OnDestroy {
           this.dataSource.data.splice(index, 1)[0]
         );
         this.dataSource._updateChangeSubscription();
+        this.huboCambios = true;
       });
   }
 
@@ -296,23 +330,6 @@ export class DefinirAgendaComponent implements OnInit, OnDestroy {
       panelClass: [exito],
       duration: 4500,
     });
-  }
-
-  obtenerCursos() {
-    this.servicioEstudiante
-      .obtenerCursos()
-      .pipe(takeUntil(this.unsubscribe))
-      .subscribe((response) => {
-        this.cursos = response.cursos;
-        this.cursos.sort((a, b) =>
-          a.curso.charAt(0) > b.curso.charAt(0)
-            ? 1
-            : b.curso.charAt(0) > a.curso.charAt(0)
-            ? -1
-            : 0
-        );
-        this.isLoading = false;
-      });
   }
 }
 

@@ -1,7 +1,7 @@
 <h1 class="componente-titulo">
   Inscribir estudiante a un curso para el ciclo lectivo {{fechaActual.getFullYear()}}
 </h1>
-<mat-card class="card-body-componente">
+<mat-card class="card-body-componente" *ngIf="!isLoading">
   <form #form="ngForm">
     <p class="aviso" *ngIf="!fechaDentroDeRangoInscripcion">
       Atención, no se puede realizar inscripciones debido a que nos encontramos
@@ -37,7 +37,7 @@
                 >Atención, el estudiante seleccionado ya esta inscripto en el
                 curso
               </b>
-              <label *ngFor="let curso of cursos" [innerHTML]= "curso.curso"  class="mensaje-atencion-curso"> </label>
+              <label *ngFor="let curso of cursos" [innerHTML]= "curso.nombre"  class="mensaje-atencion-curso"> </label>
             </p>
           </mat-card-subtitle>
         </mat-card>
@@ -110,4 +110,8 @@
       </button>
     </div>
   </form>
+</mat-card>
+
+<mat-card class="card-spinner" *ngIf="isLoading">
+  <mat-spinner class="spinner" [diameter]="60"></mat-spinner>
 </mat-card>

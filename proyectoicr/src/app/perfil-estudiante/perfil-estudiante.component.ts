@@ -82,8 +82,7 @@ export class PerfilEstudianteComponent implements OnInit {
   export class PerfilEstudiantePopupComponent {
     constructor(
       public dialogRef: MatDialogRef<PerfilEstudiantePopupComponent>,
-      public router: Router,
-      public servicio: EstudiantesService
+      public router: Router
     ) {}
 
     onYesCancelarClick(): void {

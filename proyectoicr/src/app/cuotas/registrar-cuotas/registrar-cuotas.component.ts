@@ -172,7 +172,6 @@ export class RegistrarCuotasComponent implements OnInit, OnDestroy {
   }
 
   onCancelar() {
-    this.servicioEstudiante.tipoPopUp = "cancelar";
     this.popup.open(CancelPopupComponent);
   }
 }
