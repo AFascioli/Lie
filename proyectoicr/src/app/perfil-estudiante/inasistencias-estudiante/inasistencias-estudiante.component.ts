@@ -9,7 +9,7 @@ import { Subject } from "rxjs";
 @Component({
   selector: "app-inasistencias-estudiante",
   templateUrl: "./inasistencias-estudiante.component.html",
-  styleUrls: ["./inasistencias-estudiante.component.css"]
+  styleUrls: ["./inasistencias-estudiante.component.css"],
 })
 export class InasistenciasEstudianteComponent implements OnInit, OnDestroy {
   displayedColumns: string[] = ["tipo", "cantidad"];
@@ -22,17 +22,17 @@ export class InasistenciasEstudianteComponent implements OnInit, OnDestroy {
     responsive: true,
     legend: {
       labels: {
-        fontSize: 18
-      }
+        fontSize: 18,
+      },
     },
     plugins: {
       datalabels: {
         font: {
           size: 20,
-          weight: "bold"
-        }
-      }
-    }
+          weight: "bold",
+        },
+      },
+    },
   };
 
   public barChartType: ChartType = "pie";
@@ -50,20 +50,28 @@ export class InasistenciasEstudianteComponent implements OnInit, OnDestroy {
     this.servicioAsistencia
       .obtenerInasistenciasDeEstudiante()
       .pipe(takeUntil(this.unsubscribe))
-      .subscribe(response => {
-        this.contadorInasistenciaInjustificada =
-          response.contadorInasistenciasInjustificada;
-        this.contadorInasistenciaJustificada =
-          response.contadorInasistenciasJustificada;
+      .subscribe(
+        (response) => {
+          this.contadorInasistenciaInjustificada =
+            response.contadorInasistenciasInjustificada;
+          this.contadorInasistenciaJustificada =
+            response.contadorInasistenciasJustificada;
 
-        this.barChartData = [
-          this.contadorInasistenciaInjustificada,
-          this.contadorInasistenciaJustificada
-        ];
-        this.barChartLabels = [
-          "Inasistencias injustificadas",
-          "Inasistencias justificadas"
-        ];
-      });
+          this.barChartData = [
+            this.contadorInasistenciaInjustificada,
+            this.contadorInasistenciaJustificada,
+          ];
+          this.barChartLabels = [
+            "Inasistencias injustificadas",
+            "Inasistencias justificadas",
+          ];
+        },
+        (error) => {
+          console.error(
+            "Ocurrió un error al querer devolver los contadores de inasistencias. El error se puede describir de la siguiente manera: " +
+              error
+          );
+        }
+      );
   }
 }

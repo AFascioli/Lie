@@ -126,14 +126,10 @@ export class VisualizarEventoComponent implements OnInit, OnDestroy {
                 this.actualizarPermisos();
               });
           } else {
-            this.snackBar.open(
-              "Ocurrio un error al querer publicar el comentario",
-              "",
-              {
-                duration: 4500,
-                panelClass: ["snack-bar-fracaso"],
-              }
-            );
+            this.snackBar.open(rtdo.message, "", {
+              duration: 4500,
+              panelClass: ["snack-bar-fracaso"],
+            });
           }
         });
     }
