@@ -35,7 +35,7 @@ export class CalificacionesEstudiantesComponent implements OnInit, OnDestroy {
   trimestreSeleccionado: string;
   trimestreActual: string = "fuera";
   rolConPermisosEdicion = false;
- isLoading = true;
+  isLoading = true;
   fechaActual: Date;
   calificacionesChange = false;
   puedeEditarCalificaciones = false;
