@@ -44,14 +44,22 @@
       </mat-chip>
     </mat-chip-list>
   </div>
+
+  <div class="prueba">
   <mat-card-content *ngIf="evento.descripcion">
     <p class="descripcion">
       <b>
         Descripción:
       </b>
-      {{ evento.descripcion }}
+    <app-read-more
+    [text]="evento.descripcion"
+    [maxHeight]="40"
+    [readAll]="false"
+    ></app-read-more>
     </p>
   </mat-card-content>
+</div>
+
   <br />
   <mat-divider class="divisor"></mat-divider>
   <mat-form-field appearance="outline" class="comentario">

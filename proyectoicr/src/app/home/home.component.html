@@ -35,6 +35,7 @@
         mat-icon-button
         class="boton-editar"
         *ngIf="conocerUsuarioLogueado(j) && evento.filenames.length != 0"
+        matTooltip="Editar evento"
       >
         <mat-icon (click)="onEditar(evento)">mode_edit </mat-icon>
       </button>
@@ -43,6 +44,7 @@
         mat-icon-button
         class="boton-borrar"
         *ngIf="conocerUsuarioLogueado(j) && evento.filenames.length != 0"
+        matTooltip="Eliminar evento"
       >
         <mat-icon (click)="onBorrar(evento)">delete </mat-icon>
       </button>

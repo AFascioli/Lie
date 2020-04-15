@@ -102,6 +102,8 @@
             [max]="maxDate"
             [matDatepicker]="picker"
             placeholder="Seleccione fecha de nacimiento"
+            (click)="picker.open()"
+            readonly
             required
           />
           <mat-datepicker-toggle
@@ -123,6 +125,7 @@
             ngModel
             #nacionalidad="ngModel"
             matNativeControl
+            [(ngModel)]="nacionalidadAdultoResponsable"
           >
             <mat-option
               *ngFor="let nacionalidad of nacionalidades"

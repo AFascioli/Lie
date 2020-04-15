@@ -25,6 +25,7 @@
         rows="3"
         placeholder="Ingrese descripción"
         type="text"
+        [maxLength]="250"
       >
       </textarea>
     </mat-form-field>
@@ -42,8 +43,14 @@
         required
         readonly
       />
-      <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-      <mat-datepicker touchUi #picker></mat-datepicker>
+      <mat-datepicker-toggle
+        matSuffix
+        [for]="picker"
+      ></mat-datepicker-toggle>
+      <mat-datepicker
+      touchUi
+      #picker
+      ></mat-datepicker>
     </mat-form-field>
     <div>
       <mat-form-field class="mat-form-hora" [class.mat-form-field-hora-mobile]="mobileQuery.matches">

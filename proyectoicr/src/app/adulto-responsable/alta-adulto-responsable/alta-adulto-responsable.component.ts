@@ -27,6 +27,7 @@ export class AltaAdultoResponsableComponent implements OnInit, OnDestroy {
   _mobileQueryListener: () => void;
   mobileQuery: MediaQueryList;
   tutor: boolean = false;
+  nacionalidadAdultoResponsable: string = "Argentina";
 
   constructor(
     public servicio: AdultoResponsableService,
@@ -60,6 +61,9 @@ export class AltaAdultoResponsableComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.unsubscribe))
       .subscribe((nacionalidadesActualizadas) => {
         this.nacionalidades = nacionalidadesActualizadas;
+        this.nacionalidades.sort((a, b) =>
+          a.name > b.name ? 1 : b.name > a.name ? -1 : 0
+        );
       });
   }
 
