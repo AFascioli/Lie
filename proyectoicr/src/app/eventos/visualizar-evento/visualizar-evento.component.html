@@ -13,7 +13,7 @@
   <div *ngIf="evento.filenames.length != 0">
     <div class="slideshow-container">
       <div *ngFor="let filename of evento.filenames">
-        <div class="mySlides fade">
+        <div class="my-slides fade">
           <img [src]="getImage(filename)" style="width: 100%;" />
         </div>
       </div>
@@ -129,7 +129,7 @@
           </div>
           <p class="texto-comentario">
             <app-read-more
-              [text]="comentario.cuerpo"
+              [text]="comentario.comentario"
               [maxHeight]="40"
               [readAll]="false"
             ></app-read-more>

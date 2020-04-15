@@ -26,7 +26,7 @@
             placeholder="Ingrese apellido/s"
             type="text"
             required
-            (keypress)="checkLetras($event)"
+            (keypress)="checkIfIsALetter($event)"
           />
         </mat-form-field>
         <br />
@@ -41,7 +41,7 @@
             placeholder="Ingrese nombre/s"
             type="text"
             required
-            (keypress)="checkLetras($event)"
+            (keypress)="checkIfIsALetter($event)"
           />
         </mat-form-field>
         <br />
@@ -75,7 +75,7 @@
             matInput
             placeholder="Ingrese el número de documento"
             required
-            (keypress)="checkNumeros($event)"
+            (keypress)="checkIfIsANumber($event)"
           />
         </mat-form-field>
         <br />
@@ -142,7 +142,7 @@
             #telefono="ngModel"
             placeholder="Ingrese número de teléfono"
             type="text"
-            (keypress)="checkNumeros($event)"
+            (keypress)="checkIfIsANumber($event)"
             required
           />
         </mat-form-field>
@@ -159,7 +159,7 @@
           />
         </mat-form-field>
         <br />
-        <mat-checkbox [checked]="tutor" (change)="tutor=!tutor">
+        <mat-checkbox [checked]="tutor" (change)="tutor = !tutor">
           Tutor
         </mat-checkbox>
       </div>
@@ -172,7 +172,7 @@
       >
         Guardar
       </button>
-      <button mat-raised-button (click)="popUpVolver()" class="button-warn">
+      <button mat-raised-button (click)="openPopUpVolver()" class="button-warn">
         Volver
       </button>
     </div>

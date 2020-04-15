@@ -58,7 +58,6 @@ export class RegistrarAsistenciaComponent implements OnInit, OnDestroy {
         .obtenerCursos()
         .pipe(takeUntil(this.unsubscribe))
         .subscribe((response) => {
-          console.log(response.cursos);
           this.cursos = response.cursos;
           this.cursos.sort((a, b) =>
             a.curso.charAt(0) > b.curso.charAt(0)
@@ -147,7 +146,6 @@ export class RegistrarAsistenciaComponent implements OnInit, OnDestroy {
   }
 
   onCancelar() {
-    this.servicioEstudiante.tipoPopUp = "cancelar";
     this.popup.open(AsistenciaPopupComponent, {
       width: "250px",
     });
@@ -160,18 +158,11 @@ export class RegistrarAsistenciaComponent implements OnInit, OnDestroy {
   styleUrls: ["./registrar-asistencia.component.css"],
 })
 export class AsistenciaPopupComponent {
-  tipoPopup: string;
 
   constructor(
     public dialogRef: MatDialogRef<AsistenciaPopupComponent>,
-    public router: Router,
-    public servicioEstudiante: EstudiantesService
+    public router: Router
   ) {
-    this.tipoPopup = this.servicioEstudiante.tipoPopUp;
-  }
-
-  onOkClick(): void {
-    this.dialogRef.close();
   }
 
   onYesClick(): void {

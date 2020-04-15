@@ -14,11 +14,12 @@ import { MediaMatcher } from "@angular/cdk/layout";
 @Component({
   selector: "app-lista-estudiantes",
   templateUrl: "./lista-estudiantes.component.html",
-  styleUrls: ["./lista-estudiantes.component.css"]
+  styleUrls: ["./lista-estudiantes.component.css"],
 })
 export class ListaEstudiantesComponent implements OnInit, OnDestroy {
   estudiantes: Estudiante[] = [];
-  curso: any[] = [];
+  inscripto: any[] = [];
+  cursos: any[] = [];
   private unsubscribe: Subject<void> = new Subject();
   permisos = {
     notas: 0,
@@ -28,7 +29,7 @@ export class ListaEstudiantesComponent implements OnInit, OnDestroy {
     agendaCursos: 0,
     inscribirEstudiante: 0,
     registrarEmpleado: 0,
-    cuotas: 0
+    cuotas: 0,
   };
   isLoading: boolean = true;
   _mobileQueryListener: () => void;
@@ -62,15 +63,16 @@ export class ListaEstudiantesComponent implements OnInit, OnDestroy {
       this.servicio
         .getEstudiantesListener()
         .pipe(takeUntil(this.unsubscribe))
-        .subscribe(estudiantesBuscados => {
+        .subscribe((estudiantesBuscados) => {
           this.estudiantes = estudiantesBuscados;
           this.isLoading = false;
           for (let i = 0; i < estudiantesBuscados.length; i++) {
             this.servicio
               .obtenerCursoDeEstudianteById(this.estudiantes[i]._id)
               .pipe(takeUntil(this.unsubscribe))
-              .subscribe(response => {
-                this.curso[i] = response.curso;
+              .subscribe((response) => {
+                this.inscripto[i] = response.exito;
+                this.cursos[i]=response.curso;
               });
           }
         });
@@ -81,21 +83,21 @@ export class ListaEstudiantesComponent implements OnInit, OnDestroy {
       this.authService
         .obtenerPermisosDeRol()
         .pipe(takeUntil(this.unsubscribe))
-        .subscribe(response => {
+        .subscribe((response) => {
           this.permisos = response.permisos;
         });
     }
     this.authService
       .obtenerPermisosDeRol()
       .pipe(takeUntil(this.unsubscribe))
-      .subscribe(response => {
+      .subscribe((response) => {
         this.permisos = response.permisos;
       });
   }
 
   asignarEstudianteSeleccionado(indice) {
     this.servicio.estudianteSeleccionado = this.estudiantes.find(
-      estudiante =>
+      (estudiante) =>
         estudiante.numeroDocumento === this.estudiantes[indice].numeroDocumento
     );
     this.servicioCalificaciones.estudianteSeleccionado = this.servicio.estudianteSeleccionado;
@@ -107,7 +109,7 @@ export class ListaEstudiantesComponent implements OnInit, OnDestroy {
 
   onInscribir(indice) {
     this.asignarEstudianteSeleccionado(indice);
-    this.router.navigate(["./curso"]);
+    this.router.navigate(["./inscribirEstudiante"]);
   }
 
   onMostrar(indice) {

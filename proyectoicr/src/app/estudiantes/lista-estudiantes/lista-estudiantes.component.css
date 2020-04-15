@@ -10,6 +10,11 @@
   border-radius: 4px;
 }
 
+.no-inscripto {
+  grid-template-columns: repeat(2,1fr);
+  grid-template-rows: repeat(2,150px);
+}
+
 .grid-container-mobile {
   width: 95%;
   margin-left: auto;

@@ -1,5 +1,4 @@
 export interface AdultoResponsable {
-  //_id: string;
   apellido: string;
   nombre: string;
   tipoDocumento: string;

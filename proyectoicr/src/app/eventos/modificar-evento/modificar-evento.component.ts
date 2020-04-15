@@ -4,6 +4,7 @@ import {
   ElementRef,
   ViewChild,
   OnDestroy,
+  ChangeDetectorRef,
 } from "@angular/core";
 import { COMMA, ENTER } from "@angular/cdk/keycodes";
 import { FormControl, NgForm } from "@angular/forms";
@@ -22,6 +23,7 @@ import { CancelPopupComponent } from "src/app/popup-genericos/cancel-popup.compo
 import { Evento } from "../evento.model";
 import { environment } from "src/environments/environment";
 import { ResizeOptions, ImageResult } from "ng2-imageupload";
+import { MediaMatcher } from '@angular/cdk/layout';
 
 @Component({
   selector: "app-modificar-evento",
@@ -50,14 +52,22 @@ export class ModificarEventoComponent implements OnInit, OnDestroy {
   evento: Evento;
   slideIndex = 1;
   private unsubscribe: Subject<void> = new Subject();
+  _mobileQueryListener: () => void;
+  mobileQuery: MediaQueryList;
 
   constructor(
     public eventoService: EventosService,
     public dialog: MatDialog,
     public router: Router,
-    public snackBar: MatSnackBar
+    public snackBar: MatSnackBar,
+    public changeDetectorRef: ChangeDetectorRef,
+    public media: MediaMatcher
   ) {
+    this.mobileQuery = media.matchMedia("(max-width: 800px)");
+    this._mobileQueryListener = () => changeDetectorRef.detectChanges();
+    this.mobileQuery.addListener(this._mobileQueryListener);
     this.filtrarChips();
+    console.log(this.mobileQuery.matches);
   }
 
   ngOnDestroy() {
@@ -246,7 +256,7 @@ export class ModificarEventoComponent implements OnInit, OnDestroy {
       });
   }
 
-  onGuardar(form: NgForm) {
+  onGuardarEvento(form: NgForm) {
     if (form.valid && this.evento.tags.length != 0) {
       if (
         (this.evento.horaInicio && this.evento.horaFin) ||

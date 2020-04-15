@@ -23,7 +23,7 @@ router.get("", checkAuthMiddleware, (req, res) => {
     },
     {
       $match: {
-        "curso.curso": req.query.curso,
+        "curso.nombre": req.query.curso,
         activa: true,
       },
     },
@@ -79,7 +79,7 @@ router.get("", checkAuthMiddleware, (req, res) => {
           },
           {
             $match: {
-              "curso.curso": req.query.curso,
+              "curso.nombre": req.query.curso,
               activa: true,
             },
           },
@@ -156,6 +156,7 @@ router.get("", checkAuthMiddleware, (req, res) => {
             .json({ estudiantes: respuesta, asistenciaNueva: "false" });
         });
       } else {
+        //Si no se tomo asistencia hoy / nunca se tomo asistencia
         Inscripcion.aggregate([
           {
             $lookup: {
@@ -174,7 +175,7 @@ router.get("", checkAuthMiddleware, (req, res) => {
             },
           },
           {
-            $match: { "curso.curso": req.query.curso, activa: true },
+            $match: { "curso.nombre": req.query.curso, activa: true },
           },
           {
             $project: {
@@ -639,21 +640,33 @@ router.post("/retiro", checkAuthMiddleware, (req, res) => {
                                   " " +
                                   tutores[i].nombre;
                               }
-                              if (i == tutores.length - 1)
-                                cuerpo = cuerpo + ".";
-                            }
-                          }
-                          //Envio de la notificación
-                          Suscripcion.notificacionGrupal(
-                            ...estudiante.adultoResponsable,
-                            "Retiro anticipado",
-                            this.cuerpo
-                          );
-                        }
-                      );
-                      res.status(200).json({
-                        message: "Retiro anticipado exitosamente registrado",
-                        exito: "exito",
+                              //Envio de la notificación #resolve
+                              Suscripcion.notificacionGrupal(
+                                ...estudiante.adultoResponsable,
+                                "Retiro anticipado",
+                                cuerpo
+                              );
+                            })
+                            .catch(() => {
+                              res.status(500).json({
+                                message: "Mensaje de error especifico",
+                              });
+                            });
+                          res.status(200).json({
+                            message:
+                              "Retiro anticipado exitosamente registrado",
+                            exito: "exito",
+                          });
+                        })
+                        .catch(() => {
+                          res.status(500).json({
+                            message: "Mensaje de error especifico",
+                          });
+                        });
+                    })
+                    .catch(() => {
+                      res.status(500).json({
+                        message: "Mensaje de error especifico",
                       });
                     });
                   });

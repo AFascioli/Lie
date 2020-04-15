@@ -130,7 +130,43 @@ export class RetiroAnticipadoComponent implements OnInit {
       tipoPopup: tipoPopup,
       tutoresSeleccionados: this.seleccion.selected,
     };
-    this.dialog.open(RetiroPopupComponent, this.matConfig);
+    let popup = this.dialog.open(RetiroPopupComponent, this.matConfig);
+
+    popup.afterClosed().subscribe((confirmado) => {
+      if (confirmado) {
+        this.servicioAsistencia
+          .registrarRetiroAnticipado(
+            this._idEstudiante,
+            this.antes10am,
+            this.seleccion.selected
+          )
+          .pipe(takeUntil(this.unsubscribe))
+          .subscribe((response) => {
+            let resultadoOperacion = response.exito;
+            if (resultadoOperacion == "exito") {
+              this.snackBar.open(response.message, "", {
+                panelClass: ["snack-bar-exito"],
+                duration: 4500,
+              });
+            } else if (resultadoOperacion == "retirado") {
+              this.snackBar.open(response.message, "", {
+                panelClass: ["snack-bar-fracaso"],
+                duration: 4500,
+              });
+            } else if (resultadoOperacion == "ausente") {
+              this.snackBar.open(response.message, "", {
+                panelClass: ["snack-bar-fracaso"],
+                duration: 4500,
+              });
+            } else {
+              this.snackBar.open(response.message, "", {
+                panelClass: ["snack-bar-fracaso"],
+                duration: 4500,
+              });
+            }
+          });
+      }
+    });
   }
 }
 
@@ -141,23 +177,15 @@ export class RetiroAnticipadoComponent implements OnInit {
 })
 export class RetiroPopupComponent {
   tipoPopup: string;
-  IdEstudiante: string;
-  antes10am: Boolean;
-  resultado: string;
-  tutoresSeleccionados: Array<any>;
   private unsubscribe: Subject<void> = new Subject();
 
   constructor(
     public dialogRef: MatDialogRef<RetiroPopupComponent>,
     public router: Router,
-    public servicioAsistencia: AsistenciaService,
     public snackBar: MatSnackBar,
     @Inject(MAT_DIALOG_DATA) data
   ) {
     this.tipoPopup = data.tipoPopup;
-    this.IdEstudiante = data.IdEstudiante;
-    this.antes10am = data.antes10am;
-    this.tutoresSeleccionados = data.tutoresSeleccionados;
   }
 
   //Vuelve al menu principal
@@ -168,7 +196,7 @@ export class RetiroPopupComponent {
 
   //Cierra el popup y vuelve a la interfaz de retiro
   onNoCancelarConfirmarClick(): void {
-    this.dialogRef.close();
+    this.dialogRef.close(false);
   }
 
   //Confirma el retiro anticipado para el estudiante
@@ -230,6 +258,7 @@ export class RetiroPopupComponent {
           );
         }
       );
+    this.dialogRef.close(true);
   }
 
   ngOnDestroy() {

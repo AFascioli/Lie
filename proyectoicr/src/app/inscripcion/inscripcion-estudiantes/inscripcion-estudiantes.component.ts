@@ -47,6 +47,7 @@ export class InscripcionEstudianteComponent implements OnInit, OnDestroy {
   mobileQuery: MediaQueryList;
   fechaDentroDeRangoInscripcion: boolean = true;
   private unsubscribe: Subject<void> = new Subject();
+  isLoading: boolean=false;
 
   constructor(
     public servicioEstudiante: EstudiantesService,
@@ -90,6 +91,7 @@ export class InscripcionEstudianteComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.unsubscribe))
       .subscribe(response => {
         this.cursos = response.cursos;
+        console.log(this.cursos);
         this.cursos.sort((a, b) =>
           a.curso.charAt(0) > b.curso.charAt(0)
             ? 1
@@ -132,6 +134,32 @@ export class InscripcionEstudianteComponent implements OnInit, OnDestroy {
     ].entregado;
   }
 
+  inscribirEstudiante(){
+    this.servicioInscripcion
+      .inscribirEstudiante(
+        this._idEstudiante,
+        this.cursoSeleccionado,
+        this.documentosEntregados
+      )
+      .pipe(takeUntil(this.unsubscribe))
+      .subscribe(response => {
+        let exito = response.exito;
+        if (exito) {
+          this.snackBar.open(response.message, "", {
+            panelClass: ["snack-bar-exito"],
+            duration: 4500
+          });
+          this.isLoading = false;
+        } else {
+          this.snackBar.open(response.message, "", {
+            duration: 4500,
+            panelClass: ["snack-bar-fracaso"]
+          });
+          this.isLoading = false;
+        }
+      });
+  }
+
   openDialogo(form: NgForm) {
     if (form.invalid) {
       this.snackBar.open("No se ha seleccionado un curso", "", {
@@ -149,22 +177,18 @@ export class InscripcionEstudianteComponent implements OnInit, OnDestroy {
           }
         );
       } else {
-        this.matConfig.data = {
-          formValido: form.valid,
-          IdEstudiante: this._idEstudiante,
-          curso: this.cursoSeleccionado,
-          documentosEntregados: this.documentosEntregados
-        };
         this.matConfig.width = "250px";
-        const dialogRef = this.dialog.open(
+        const popup = this.dialog.open(
           InscripcionPopupComponent,
           this.matConfig
         );
-        dialogRef
+        popup
           .afterClosed()
           .pipe(takeUntil(this.unsubscribe))
-          .subscribe(result => {
-            if (result.data) {
+          .subscribe(resultado => {
+            if (resultado) {
+              this.isLoading = true;
+              this.inscribirEstudiante();
               this.estudianteEstaInscripto = true;
               this.servicioInscripcion
                 .obtenerCapacidadCurso(this.cursoSeleccionado)
@@ -188,30 +212,12 @@ export class InscripcionEstudianteComponent implements OnInit, OnDestroy {
   ]
 })
 export class InscripcionPopupComponent implements OnDestroy {
-  tipoPopup: string;
-  formValido: boolean;
-  IdEstudiante: string;
-  curso: string;
-  capacidadCurso: Number;
-  exito: boolean = false;
-  documentosEntregados: any[];
-  isLoading: Boolean = false;
-  fechaActual: Date;
   private unsubscribe: Subject<void> = new Subject();
 
   constructor(
     public dialogRef: MatDialogRef<InscripcionPopupComponent>,
-    public router: Router,
-    public servicioEstudiante: EstudiantesService,
-    public servicioInscripcion: InscripcionService,
-    public snackBar: MatSnackBar,
     @Inject(MAT_DIALOG_DATA) data
   ) {
-    this.fechaActual = new Date();
-    this.formValido = data.formValido;
-    this.IdEstudiante = data.IdEstudiante;
-    this.curso = data.curso;
-    this.documentosEntregados = data.documentosEntregados;
   }
 
   ngOnDestroy() {
@@ -220,36 +226,10 @@ export class InscripcionPopupComponent implements OnDestroy {
   }
 
   onNoCancelarConfirmarClick(): void {
-    this.dialogRef.close();
+    this.dialogRef.close(false);
   }
 
   onYesConfirmarClick(): void {
-    this.isLoading = true;
-    this.dialogRef.close();
-    this.servicioInscripcion
-      .inscribirEstudiante(
-        this.IdEstudiante,
-        this.curso,
-        this.documentosEntregados
-      )
-      .pipe(takeUntil(this.unsubscribe))
-      .subscribe(response => {
-        this.exito = response.exito;
-        if (this.exito) {
-          this.snackBar.open(response.message, "", {
-            panelClass: ["snack-bar-exito"],
-            duration: 4500
-          });
-          this.isLoading = false;
-          this.dialogRef.close({ event: "close", data: this.exito });
-        } else {
-          this.snackBar.open(response.message, "", {
-            duration: 4500,
-            panelClass: ["snack-bar-fracaso"]
-          });
-          this.isLoading = false;
-          this.dialogRef.close({ event: "close", data: this.exito });
-        }
-      });
+    this.dialogRef.close(true);
   }
 }
