@@ -599,53 +599,60 @@ router.post("/retiro", checkAuthMiddleware, (req, res) => {
                       retiroAnticipado: true,
                       $inc: { valorInasistencia: actualizacionInasistencia },
                     }
-                  ).then(() => {
-                    inscripcion.contadorInasistenciasInjustificada =
-                      inscripcion.contadorInasistenciasInjustificada +
-                      actualizacionInasistencia;
-                    inscripcion.save().then(() => {
-                      //Envio de notificación a los adultos responsables del estudiante. #working
-                      Estudiante.findById(req.body.idEstudiante).then(
-                        (estudiante) => {
-                          //Construcción del cuerpo de la notificación.
-                          var tutores = req.body.tutoresSeleccionados;
-                          var cuerpo =
-                            "Se ha registrado un retiro anticipado de " +
-                            estudiante.apellido +
-                            " " +
-                            estudiante.nombre +
-                            ". ";
+                  )
+                    .then(() => {
+                      inscripcion.contadorInasistenciasInjustificada =
+                        inscripcion.contadorInasistenciasInjustificada +
+                        actualizacionInasistencia;
+                      inscripcion
+                        .save()
+                        .then(() => {
+                          //Envio de notificación a los adultos responsables del estudiante. #working
+                          Estudiante.findById(req.body.idEstudiante)
+                            .then((estudiante) => {
+                              //Construcción del cuerpo de la notificación.
+                              var tutores = req.body.tutoresSeleccionados;
+                              var cuerpo =
+                                "Se ha registrado un retiro anticipado de " +
+                                estudiante.apellido +
+                                " " +
+                                estudiante.nombre +
+                                ". ";
 
-                          if (tutores.length > 0) {
-                            cuerpo =
-                              cuerpo +
-                              "El estudiante fue retirado por " +
-                              tutores[0].apellido +
-                              " " +
-                              tutores[0].nombre;
-
-                            for (let i = 0; i < tutores.length; i++) {
-                              if (i == tutores.length - 1) {
+                              if (tutores.length > 0) {
                                 cuerpo =
                                   cuerpo +
-                                  " y " +
-                                  tutores[i].apellido +
+                                  "El estudiante fue retirado por " +
+                                  tutores[0].apellido +
                                   " " +
-                                  tutores[i].nombre;
-                              } else if (i != 0) {
-                                cuerpo =
-                                  cuerpo +
-                                  ", " +
-                                  tutores[i].apellido +
-                                  " " +
-                                  tutores[i].nombre;
+                                  tutores[0].nombre;
+
+                                for (let i = 0; i < tutores.length; i++) {
+                                  if (i == tutores.length - 1) {
+                                    cuerpo =
+                                      cuerpo +
+                                      " y " +
+                                      tutores[i].apellido +
+                                      " " +
+                                      tutores[i].nombre;
+                                  } else if (i != 0) {
+                                    cuerpo =
+                                      cuerpo +
+                                      ", " +
+                                      tutores[i].apellido +
+                                      " " +
+                                      tutores[i].nombre;
+                                  }
+                                  if (i == tutores.length - 1)
+                                    cuerpo = cuerpo + ".";
+                                }
                               }
-                              //Envio de la notificación #resolve
-                              Suscripcion.notificacionGrupal(
-                                ...estudiante.adultoResponsable,
-                                "Retiro anticipado",
-                                cuerpo
-                              );
+                              //Envio de la notificación
+                              // Suscripcion.notificacionGrupal(
+                              //   ...estudiante.adultoResponsable,
+                              //   "Retiro anticipado",
+                              //   this.cuerpo
+                              // );
                             })
                             .catch(() => {
                               res.status(500).json({
@@ -669,7 +676,6 @@ router.post("/retiro", checkAuthMiddleware, (req, res) => {
                         message: "Mensaje de error especifico",
                       });
                     });
-                  });
                 }
               }
             } else {
@@ -679,15 +685,17 @@ router.post("/retiro", checkAuthMiddleware, (req, res) => {
                 exito: "faltaasistencia",
               });
             }
+          })
+          .catch(() => {
+            res.status(500).json({
+              message: "Mensaje de error especifico",
+            });
           });
       }
     })
     .catch(() => {
       res.status(500).json({
-        message:
-          "Ocurrió un error al querer publicar el retiro anticipado de un estudiante" +
-          "El error se puede describir de la siguiente manera: " +
-          error.message,
+        message: "Mensaje de error especifico",
       });
     });
 });
