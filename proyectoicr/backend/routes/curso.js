@@ -567,6 +567,147 @@ router.get(
   }
 );
 
+//Obtiene las calificaciones de los estudiantes para un curso y una materia
+//@params: id del curso
+//@params: id de la materia
+router.get(
+  "/estudiantes/materias/calificacionesCicloLectivo",
+  checkAuthMiddleware,
+  (req, res) => {
+    Inscripcion.aggregate([
+      {
+        $match: {
+          idCurso: mongoose.Types.ObjectId(req.query.idCurso),
+          activa: true,
+        },
+      },
+      {
+        $unwind: {
+          path: "$calificacionesXMateria",
+        },
+      },
+      {
+        $lookup: {
+          from: "calificacionesXMateria",
+          localField: "calificacionesXMateria",
+          foreignField: "_id",
+          as: "calificacionesXMateriaDif",
+        },
+      },
+      {
+        $match: {
+          "calificacionesXMateriaDif.idMateria": mongoose.Types.ObjectId(
+            req.query.idMateria
+          ),
+        },
+      },
+      {
+        $group: {
+          _id: "$calificacionesXMateriaDif._id",
+          idInscipcion: {
+            $first: "$_id",
+          },
+          idEstudiante: {
+            $first: "$idEstudiante",
+          },
+          calificacionesXTrimestre: {
+            $push: {
+              $arrayElemAt: [
+                "$calificacionesXMateriaDif.calificacionesXTrimestre",
+                0,
+              ],
+            },
+          },
+        },
+      },
+      {
+        $unwind: {
+          path: "$calificacionesXTrimestre",
+        },
+      },
+      {
+        $unwind: {
+          path: "$calificacionesXTrimestre",
+        },
+      },
+      {
+        $lookup: {
+          from: "calificacionesXTrimestre",
+          localField: "calificacionesXTrimestre",
+          foreignField: "_id",
+          as: "calificacionesTrim",
+        },
+      },
+      {
+        $group: {
+          _id: "$calificacionesTrim._id",
+          idMateriaXCalif: {
+            $first: "$_id",
+          },
+          idEstudiante: {
+            $first: "$idEstudiante",
+          },
+          calificaciones: {
+            $first: "$calificacionesTrim.calificaciones",
+          },
+          trim: {
+            $first: "$calificacionesTrim.trimestre",
+          },
+        },
+      },
+      {
+        $group: {
+          _id: "$idMateriaXCalif",
+          idEstudiante: {
+            $first: "$idEstudiante",
+          },
+          calificaciones: {
+            $push: "$calificaciones",
+          },
+          trimestre: {
+            $push: "$trim",
+          },
+        },
+      },
+      {
+        $lookup: {
+          from: "estudiante",
+          localField: "idEstudiante",
+          foreignField: "_id",
+          as: "Estudiante",
+        },
+      },
+      {
+        $project: {
+          idEstudiante: 1,
+          calificaciones: 1,
+          trimestre: 1,
+          nombre: {
+            $arrayElemAt: ["$Estudiante.nombre", 0],
+          },
+          apellido: {
+            $arrayElemAt: ["$Estudiante.apellido", 0],
+          },
+        },
+      },
+    ])
+      .then((documentos) => {
+        res.status(200).json({
+          estudiantes: documentos,
+          message:
+            "Se obtuvieron las calificaciones para una materia, un curso y un trimestre determinado correctamente",
+          exito: true,
+
+        });
+      })
+      .catch(() => {
+        res.status(500).json({
+          message: "Mensaje de error especifico",
+        });
+      });
+  }
+);
+
 //Obtiene el curso al que está inscripto un estudiante
 //@params: id del estudiante
 router.get("/estudiante", checkAuthMiddleware, (req, res) => {

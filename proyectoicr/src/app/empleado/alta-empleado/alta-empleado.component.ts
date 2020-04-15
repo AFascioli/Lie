@@ -23,6 +23,9 @@ export class AltaEmpleadoComponent implements OnInit, OnDestroy {
   mobileQuery: MediaQueryList;
   private unsubscribe: Subject<void> = new Subject();
 
+  //para asignar valores por defecto
+  nacionalidadEmpleado: string;
+
   constructor(
     public servicio: EmpleadoService,
     public servicioUbicacion: UbicacionService,
@@ -37,12 +40,16 @@ export class AltaEmpleadoComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.nacionalidadEmpleado= "Argentina";
     this.servicioUbicacion.getNacionalidades();
     this.suscripcion = this.servicioUbicacion
       .getNacionalidadesListener()
       .pipe(takeUntil(this.unsubscribe))
       .subscribe(nacionalidadesActualizadas => {
         this.nacionalidades = nacionalidadesActualizadas;
+        this.nacionalidades.sort((a, b) =>
+          a.name > b.name ? 1 : b.name > a.name ? -1 : 0
+        );
       });
   }
 
