@@ -152,8 +152,8 @@ router.post("/registrarSancion", checkAuthMiddleware, (req, res) => {
 router.get("/estadoCuotas", checkAuthMiddleware, (req, res) => {
   let fechaActual = new Date();
   // let añoActual = fechaActual.getFullYear();
-  Curso.findOne({ curso: req.query.idCurso })
-    .then((curso) => {
+  Curso.findById(req.query.idCurso)
+  .then((curso) => {
       Inscripcion.aggregate([
         {
           $unwind: {
@@ -186,8 +186,9 @@ router.get("/estadoCuotas", checkAuthMiddleware, (req, res) => {
         .then((estadoCuotas) => {
           if (estadoCuotas.length == 0) {
             res.status(200).json({
+              cuotasXEstudiante: [],
               message: "No se han obtenido alumnos de dicho curso",
-              exito: true,
+              exito: true
             });
           } else {
             cuotasXEstudiantes = [];
@@ -209,7 +210,7 @@ router.get("/estadoCuotas", checkAuthMiddleware, (req, res) => {
               message:
                 "Se ha obtenido el estado de las cuotas de un curso exitosamente",
               exito: true,
-              cuotasXEstudiante: cuotasXEstudiantes,
+              cuotasXEstudiante: cuotasXEstudiantes
             });
           }
         })

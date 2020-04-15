@@ -33,7 +33,7 @@
           required
           (selectionChange)="onCursoSeleccionado(curso, mes)"
         >
-          <mat-option *ngFor="let objCurso of cursos" [value]="objCurso.curso">
+          <mat-option *ngFor="let objCurso of cursos" [value]="objCurso.id">
             {{ objCurso.curso }}
           </mat-option>
         </mat-select>
@@ -60,7 +60,7 @@
   <!-- <p class="aviso" *ngIf="fueraPeriodoCicloLectivo==true">Atención, no se puede registrar las cuotas debido a que estamos fuera del ciclo lectivo </p>  -->
   <br />
   <div *ngIf="!cursoNotSelected">
-    <table mat-table [dataSource]="cuotasXEstudiante">
+    <table mat-table [dataSource]="cuotasXEstudiante" *ngIf="cuotasXEstudiante.length != 0">
       <ng-container matColumnDef="apellido">
         <th class="nombre-apellido" mat-header-cell *matHeaderCellDef>
           Apellido/s

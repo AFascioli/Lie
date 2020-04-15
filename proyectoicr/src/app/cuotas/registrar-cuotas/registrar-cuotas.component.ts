@@ -90,9 +90,13 @@ export class RegistrarCuotasComponent implements OnInit, OnDestroy {
       .obtenerEstadoCuotasDeCurso(curso.value, nroMes)
       .pipe(takeUntil(this.unsubscribe))
       .subscribe(rtdo => {
-        this.cuotasXEstudiante = rtdo.cuotasXEstudiante.sort((a, b) =>
-          a.apellido > b.apellido ? 1 : b.apellido > a.apellido ? -1 : 0
-        );
+        if(rtdo.cuotasXEstudiante.length!=0){
+          this.cuotasXEstudiante = rtdo.cuotasXEstudiante.sort((a, b) =>
+            a.apellido > b.apellido ? 1 : b.apellido > a.apellido ? -1 : 0
+          );
+        }else{
+          this.cuotasXEstudiante = [];
+        }
       });
   }
 

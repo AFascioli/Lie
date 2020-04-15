@@ -25,7 +25,7 @@
         mat-table
         matSort
         [dataSource]="dataSource"
-        [hidden]="!cursoSelected"
+        [hidden]="!cursoSelected || dataSource.data.length==0"
         [class.table-mobile]="mobileQuery.matches"
       >
         <ng-container matColumnDef="Materia">
