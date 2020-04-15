@@ -50,7 +50,7 @@
   </p>
   <br />
   <div class="contenedor-tabla" *ngIf="!cursoNotSelected">
-    <table mat-table [dataSource]="estudiantesXDivision">
+    <table mat-table [dataSource]="estudiantesXDivision" *ngIf="estudiantesXDivision.length!=0">
       <ng-container matColumnDef="apellido">
         <th class="nombre-apellido" mat-header-cell *matHeaderCellDef>
           Apellido/s

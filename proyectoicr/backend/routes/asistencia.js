@@ -53,6 +53,11 @@ router.get("", checkAuthMiddleware, (req, res) => {
     },
   ])
     .then((ultimaAsistencia) => {
+      if(ultimaAsistencia.length==0){
+        return res
+        .status(200)
+        .json({ estudiantes: [], asistenciaNueva: "true" });
+      }
       var fechaHoy = new Date();
       fechaHoy.setHours(fechaHoy.getHours() - 3);
       //Compara si la ultima asistencia fue el dia de hoy

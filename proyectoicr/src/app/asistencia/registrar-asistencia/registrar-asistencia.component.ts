@@ -97,9 +97,14 @@ export class RegistrarAsistenciaComponent implements OnInit, OnDestroy {
       .subscribe(
         (respuesta) => {
           this.asistenciaNueva = respuesta.asistenciaNueva;
-          this.estudiantesXDivision = respuesta.estudiantes.sort((a, b) =>
-            a.apellido > b.apellido ? 1 : b.apellido > a.apellido ? -1 : 0
-          );
+          if(respuesta.estudiantes.length!=0){
+            this.estudiantesXDivision = respuesta.estudiantes.sort((a, b) =>
+              a.apellido > b.apellido ? 1 : b.apellido > a.apellido ? -1 : 0
+            );
+          }else{
+            this.estudiantesXDivision =[];
+          }
+          console.log(this.estudiantesXDivision.length);
         },
         (error) => {
           console.error(
