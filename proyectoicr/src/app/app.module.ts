@@ -34,6 +34,7 @@ import { CancelPopupComponent } from "./popup-genericos/cancel-popup.component";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { HttpClientModule, HTTP_INTERCEPTORS } from "@angular/common/http";
 import { NgxMaterialTimepickerModule } from "ngx-material-timepicker";
+import { MatTableExporterModule } from 'mat-table-exporter';
 import { EstudiantesService } from "./estudiantes/estudiante.service";
 import {
   BuscarEstudiantesComponent,
@@ -67,6 +68,7 @@ import {
 import { DocumentosInscripcionComponent } from "./inscripcion/documentos-inscripcion/documentos-inscripcion.component";
 import { MatGridListModule } from "@angular/material/grid-list";
 import { CalificacionesEstudiantesComponent } from "./calificaciones/calificaciones-estudiantes/calificaciones-estudiantes.component";
+import { CalificacionesCicloLectivoComponent } from "./calificaciones/calificaciones-ciclo-lectivo/calificaciones-ciclo-lectivo.component";
 import { LlegadaTardeComponent } from "./asistencia/llegada-tarde/llegada-tarde.component";
 import {
   CambiarPassword,
@@ -146,6 +148,7 @@ import { MenuPrincipalAdultoResponsableComponent } from "./menu-principal-adulto
     RetiroPopupComponent,
     DocumentosInscripcionComponent,
     CalificacionesEstudiantesComponent,
+    CalificacionesCicloLectivoComponent,
     LlegadaTardeComponent,
     CambiarPassword,
     CambiarPasswordPopupComponent,
@@ -231,6 +234,7 @@ import { MenuPrincipalAdultoResponsableComponent } from "./menu-principal-adulto
     NgxMaterialTimepickerModule,
     ImageUploadModule,
     MatTooltipModule,
+    MatTableExporterModule,
     MatCarouselModule.forRoot(),
     ServiceWorkerModule.register("ngsw-worker.js", {
       enabled: environment.production,
