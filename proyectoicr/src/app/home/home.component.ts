@@ -68,7 +68,6 @@ export class HomeComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.unsubscribe))
       .subscribe((rtdo) => {
         this.eventos = rtdo.eventos;
-        console.log(rtdo.eventos);
       });
     if ("serviceWorker" in navigator) {
       navigator.serviceWorker.register("ngsw-worker.js").then((swreg) => {
@@ -121,14 +120,12 @@ export class HomeComponent implements OnInit, OnDestroy {
           .eliminarEvento(this.servicioEvento.evento._id)
           .pipe(takeUntil(this.unsubscribe))
           .subscribe((response) => {
-            console.log(response);
             if (response.exito) {
               this.servicioEvento
                 .obtenerEvento()
                 .pipe(takeUntil(this.unsubscribe))
                 .subscribe((rtdo) => {
                   this.eventos = rtdo.eventos;
-                  console.log(this.eventos);
                   this.enProcesoDeBorrado = false;
                   this.snackBar.open(response.message, "", {
                     panelClass: ["snack-bar-exito"],
@@ -159,10 +156,8 @@ export class HomeComponent implements OnInit, OnDestroy {
     "../estudiantes/mostrar-estudiantes/mostrar-estudiantes.component.css",
   ],
 })
-export class BorrarPopupComponent{
-  constructor(
-    public dialogRef: MatDialogRef<BorrarPopupComponent>,
-  ) {}
+export class BorrarPopupComponent {
+  constructor(public dialogRef: MatDialogRef<BorrarPopupComponent>) {}
 
   onYesClick(): void {
     this.dialogRef.close(true);

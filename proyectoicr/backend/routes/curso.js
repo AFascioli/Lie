@@ -24,7 +24,7 @@ router.get("/", checkAuthMiddleware, (req, res) => {
       cursos.forEach((curso) => {
         var cursoConId = {
           id: curso._id,
-          curso: curso.nombre,
+          nombre: curso.nombre,
         };
         respuesta.push(cursoConId);
       });
@@ -697,7 +697,6 @@ router.get(
           message:
             "Se obtuvieron las calificaciones para una materia, un curso y un trimestre determinado correctamente",
           exito: true,
-
         });
       })
       .catch(() => {

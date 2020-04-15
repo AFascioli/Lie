@@ -35,6 +35,7 @@ export class RegistrarAsistenciaComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.cursoNotSelected = true;
+    console.log("ejecuto");
     this.fechaActual = new Date();
     if (
       this.fechaActual.toString().substring(0, 3) == "Sat" ||
@@ -58,14 +59,15 @@ export class RegistrarAsistenciaComponent implements OnInit, OnDestroy {
         .obtenerCursos()
         .pipe(takeUntil(this.unsubscribe))
         .subscribe((response) => {
+          console.log(response);
           this.cursos = response.cursos;
-          this.cursos.sort((a, b) =>
-            a.curso.charAt(0) > b.curso.charAt(0)
-              ? 1
-              : b.curso.charAt(0) > a.curso.charAt(0)
-              ? -1
-              : 0
-          );
+          // this.cursos.sort((a, b) =>
+          //   a.curso.charAt(0) > b.curso.charAt(0)
+          //     ? 1
+          //     : b.curso.charAt(0) > a.curso.charAt(0)
+          //     ? -1
+          //     : 0
+          // );
           this.isLoading = false;
         });
     } else {
@@ -158,12 +160,10 @@ export class RegistrarAsistenciaComponent implements OnInit, OnDestroy {
   styleUrls: ["./registrar-asistencia.component.css"],
 })
 export class AsistenciaPopupComponent {
-
   constructor(
     public dialogRef: MatDialogRef<AsistenciaPopupComponent>,
     public router: Router
-  ) {
-  }
+  ) {}
 
   onYesClick(): void {
     this.router.navigate(["./home"]);

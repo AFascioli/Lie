@@ -5,7 +5,7 @@ import {
   Component,
   Inject,
   ChangeDetectorRef,
-  OnDestroy
+  OnDestroy,
 } from "@angular/core";
 import { Router } from "@angular/router";
 import {
@@ -13,7 +13,7 @@ import {
   MatDialog,
   MatDialogConfig,
   MAT_DIALOG_DATA,
-  MatSnackBar
+  MatSnackBar,
 } from "@angular/material";
 import { NgForm } from "@angular/forms";
 import { MediaMatcher } from "@angular/cdk/layout";
@@ -24,7 +24,7 @@ import { takeUntil } from "rxjs/operators";
 @Component({
   selector: "app-inscripcion-estudiantes",
   templateUrl: "./inscripcion-estudiantes.component.html",
-  styleUrls: ["./inscripcion-estudiantes.component.css"]
+  styleUrls: ["./inscripcion-estudiantes.component.css"],
 })
 export class InscripcionEstudianteComponent implements OnInit, OnDestroy {
   cursos: any[];
@@ -41,13 +41,13 @@ export class InscripcionEstudianteComponent implements OnInit, OnDestroy {
   documentosEntregados = [
     { nombre: "Fotocopia documento", entregado: false },
     { nombre: "Ficha medica", entregado: false },
-    { nombre: "Informe año anterior", entregado: false }
+    { nombre: "Informe año anterior", entregado: false },
   ];
   _mobileQueryListener: () => void;
   mobileQuery: MediaQueryList;
   fechaDentroDeRangoInscripcion: boolean = true;
   private unsubscribe: Subject<void> = new Subject();
-  isLoading: boolean=false;
+  isLoading: boolean = false;
 
   constructor(
     public servicioEstudiante: EstudiantesService,
@@ -83,15 +83,14 @@ export class InscripcionEstudianteComponent implements OnInit, OnDestroy {
     this.servicioEstudiante
       .estudianteEstaInscripto(this._idEstudiante)
       .pipe(takeUntil(this.unsubscribe))
-      .subscribe(response => {
+      .subscribe((response) => {
         this.estudianteEstaInscripto = response.exito;
       });
     this.servicioInscripcion
       .obtenerCursosInscripcionEstudiante()
       .pipe(takeUntil(this.unsubscribe))
-      .subscribe(response => {
+      .subscribe((response) => {
         this.cursos = response.cursos;
-        console.log(this.cursos);
         this.cursos.sort((a, b) =>
           a.curso.charAt(0) > b.curso.charAt(0)
             ? 1
@@ -122,7 +121,7 @@ export class InscripcionEstudianteComponent implements OnInit, OnDestroy {
     this.servicioInscripcion
       .obtenerCapacidadCurso(curso.value)
       .pipe(takeUntil(this.unsubscribe))
-      .subscribe(response => {
+      .subscribe((response) => {
         this.capacidadCurso = response.capacidad;
       });
   }
@@ -134,7 +133,7 @@ export class InscripcionEstudianteComponent implements OnInit, OnDestroy {
     ].entregado;
   }
 
-  inscribirEstudiante(){
+  inscribirEstudiante() {
     this.servicioInscripcion
       .inscribirEstudiante(
         this._idEstudiante,
@@ -142,18 +141,18 @@ export class InscripcionEstudianteComponent implements OnInit, OnDestroy {
         this.documentosEntregados
       )
       .pipe(takeUntil(this.unsubscribe))
-      .subscribe(response => {
+      .subscribe((response) => {
         let exito = response.exito;
         if (exito) {
           this.snackBar.open(response.message, "", {
             panelClass: ["snack-bar-exito"],
-            duration: 4500
+            duration: 4500,
           });
           this.isLoading = false;
         } else {
           this.snackBar.open(response.message, "", {
             duration: 4500,
-            panelClass: ["snack-bar-fracaso"]
+            panelClass: ["snack-bar-fracaso"],
           });
           this.isLoading = false;
         }
@@ -164,7 +163,7 @@ export class InscripcionEstudianteComponent implements OnInit, OnDestroy {
     if (form.invalid) {
       this.snackBar.open("No se ha seleccionado un curso", "", {
         panelClass: ["snack-bar-fracaso"],
-        duration: 4500
+        duration: 4500,
       });
     } else {
       if (this.capacidadCurso == 0) {
@@ -173,7 +172,7 @@ export class InscripcionEstudianteComponent implements OnInit, OnDestroy {
           "",
           {
             panelClass: ["snack-bar-fracaso"],
-            duration: 4500
+            duration: 4500,
           }
         );
       } else {
@@ -185,7 +184,7 @@ export class InscripcionEstudianteComponent implements OnInit, OnDestroy {
         popup
           .afterClosed()
           .pipe(takeUntil(this.unsubscribe))
-          .subscribe(resultado => {
+          .subscribe((resultado) => {
             if (resultado) {
               this.isLoading = true;
               this.inscribirEstudiante();
@@ -193,7 +192,7 @@ export class InscripcionEstudianteComponent implements OnInit, OnDestroy {
               this.servicioInscripcion
                 .obtenerCapacidadCurso(this.cursoSeleccionado)
                 .pipe(takeUntil(this.unsubscribe))
-                .subscribe(response => {
+                .subscribe((response) => {
                   this.capacidadCurso = response.capacidad;
                 });
             }
@@ -208,8 +207,8 @@ export class InscripcionEstudianteComponent implements OnInit, OnDestroy {
   templateUrl: "./inscripcion-popup.component.html",
   styleUrls: [
     "./inscripcion-estudiantes.component.css",
-    "../../app.component.css"
-  ]
+    "../../app.component.css",
+  ],
 })
 export class InscripcionPopupComponent implements OnDestroy {
   private unsubscribe: Subject<void> = new Subject();
@@ -217,8 +216,7 @@ export class InscripcionPopupComponent implements OnDestroy {
   constructor(
     public dialogRef: MatDialogRef<InscripcionPopupComponent>,
     @Inject(MAT_DIALOG_DATA) data
-  ) {
-  }
+  ) {}
 
   ngOnDestroy() {
     this.unsubscribe.next();

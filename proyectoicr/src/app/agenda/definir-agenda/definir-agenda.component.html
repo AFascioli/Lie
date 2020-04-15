@@ -15,7 +15,7 @@
         (selectionChange)="obtenerAgenda(curso)"
       >
         <mat-option *ngFor="let curso of cursos" [value]="curso.id">
-          {{ curso.curso }}
+          {{ curso.nombre }}
         </mat-option>
       </mat-select>
     </mat-form-field>

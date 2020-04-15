@@ -122,7 +122,7 @@ export class DefinirAgendaComponent implements OnInit, OnDestroy {
         .pipe(takeUntil(this.unsubscribe))
         .subscribe((rtdo) => {
           this.dataSource.data = rtdo.agenda;
-          this.huboCambios=false;
+          this.huboCambios = false;
         });
     } else {
       idCurso.reset(this.idCursoSeleccionado);
@@ -139,13 +139,13 @@ export class DefinirAgendaComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.unsubscribe))
       .subscribe((response) => {
         this.cursos = response.cursos;
-        this.cursos.sort((a, b) =>
-          a.curso.charAt(0) > b.curso.charAt(0)
-            ? 1
-            : b.curso.charAt(0) > a.curso.charAt(0)
-            ? -1
-            : 0
-        );
+        // this.cursos.sort((a, b) =>
+        //   a.curso.charAt(0) > b.curso.charAt(0)
+        //     ? 1
+        //     : b.curso.charAt(0) > a.curso.charAt(0)
+        //     ? -1
+        //     : 0
+        // );
         this.isLoading = false;
       });
   }
