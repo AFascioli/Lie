@@ -25,7 +25,6 @@ export class CuotasService {
   }
 
   public publicarEstadoCuotasDeCurso(estadoXCuotas:any[]){
-    console.log(estadoXCuotas);
     return this.http.post<{ message: string; exito: boolean }>(
       environment.apiUrl + "/curso/publicarEstadoCuotas",
       estadoXCuotas

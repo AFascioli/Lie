@@ -68,12 +68,10 @@ export class HomeComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.unsubscribe))
       .subscribe((rtdo) => {
         this.eventos = rtdo.eventos;
-        console.log(rtdo.eventos);
       });
     if ("serviceWorker" in navigator) {
       navigator.serviceWorker.register("ngsw-worker.js").then((swreg) => {
         if (swreg.active) {
-          console.log("Se registro el service worker.");
           this.subscribeToNotifications();
         }
       });
@@ -82,7 +80,6 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   subscribeToNotifications() {
     if (Notification.permission === "granted") {
-      console.log("Ya se otorgó el permiso de envio de notificaciones.");
     } else {
       this.swPush
         .requestSubscription({
@@ -121,14 +118,12 @@ export class HomeComponent implements OnInit, OnDestroy {
           .eliminarEvento(this.servicioEvento.evento._id)
           .pipe(takeUntil(this.unsubscribe))
           .subscribe((response) => {
-            console.log(response);
             if (response.exito) {
               this.servicioEvento
                 .obtenerEvento()
                 .pipe(takeUntil(this.unsubscribe))
                 .subscribe((rtdo) => {
                   this.eventos = rtdo.eventos;
-                  console.log(this.eventos);
                   this.enProcesoDeBorrado = false;
                   this.snackBar.open(response.message, "", {
                     panelClass: ["snack-bar-exito"],

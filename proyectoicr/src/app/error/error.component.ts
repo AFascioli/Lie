@@ -14,7 +14,6 @@ export class ErrorComponent implements OnInit {
     public data: { message: string; dialog: MatDialogRef<ErrorComponent> }
   ) {
     this.dialog = data.dialog;
-    console.log(this.dialog);
   }
 
   close() {

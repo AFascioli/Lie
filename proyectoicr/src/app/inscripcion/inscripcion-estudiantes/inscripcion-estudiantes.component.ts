@@ -91,7 +91,6 @@ export class InscripcionEstudianteComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.unsubscribe))
       .subscribe(response => {
         this.cursos = response.cursos;
-        console.log(this.cursos);
         this.cursos.sort((a, b) =>
           a.curso.charAt(0) > b.curso.charAt(0)
             ? 1

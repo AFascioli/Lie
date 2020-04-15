@@ -132,6 +132,7 @@
         </div>
       </div>
     </div>
+    <p class="agenda-vacia" *ngIf="agendaVacia">El curso seleccionado no tiene materias registradas</p>
     <div class="div-button">
       <button mat-raised-button [routerLink]="['/home']" class="button-warn">
         Volver

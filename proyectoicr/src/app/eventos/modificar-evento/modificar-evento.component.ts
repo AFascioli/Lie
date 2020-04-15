@@ -67,7 +67,6 @@ export class ModificarEventoComponent implements OnInit, OnDestroy {
     this._mobileQueryListener = () => changeDetectorRef.detectChanges();
     this.mobileQuery.addListener(this._mobileQueryListener);
     this.filtrarChips();
-    console.log(this.mobileQuery.matches);
   }
 
   ngOnDestroy() {

@@ -104,7 +104,6 @@ export class RegistrarAsistenciaComponent implements OnInit, OnDestroy {
           }else{
             this.estudiantesXDivision =[];
           }
-          console.log(this.estudiantesXDivision.length);
         },
         (error) => {
           console.error(
