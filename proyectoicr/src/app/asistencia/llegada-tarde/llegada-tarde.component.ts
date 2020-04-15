@@ -5,12 +5,12 @@ import { AsistenciaService } from "src/app/asistencia/asistencia.service";
 import { MatSnackBar } from "@angular/material";
 import { Subject } from "rxjs";
 import { takeUntil } from "rxjs/operators";
-import { MediaMatcher } from '@angular/cdk/layout';
+import { MediaMatcher } from "@angular/cdk/layout";
 
 @Component({
   selector: "app-llegada-tarde",
   templateUrl: "./llegada-tarde.component.html",
-  styleUrls: ["./llegada-tarde.component.css"]
+  styleUrls: ["./llegada-tarde.component.css"],
 })
 export class LlegadaTardeComponent implements OnInit, OnDestroy {
   fechaActual: Date;
@@ -65,7 +65,7 @@ export class LlegadaTardeComponent implements OnInit, OnDestroy {
         "",
         {
           panelClass: ["snack-bar-aviso"],
-          duration: 8000
+          duration: 8000,
         }
       );
     }
@@ -94,19 +94,28 @@ export class LlegadaTardeComponent implements OnInit, OnDestroy {
     this.servicioAsistencia
       .registrarLlegadaTarde(this.antes8am)
       .pipe(takeUntil(this.unsubscribe))
-      .subscribe(result => {
-        if (result.exito) {
-          this.snackBar.open(result.message, "", {
-            panelClass: ["snack-bar-exito"],
-            duration: 4500
-          });
-        } else {
-          this.snackBar.open(result.message, "", {
-            panelClass: ["snack-bar-fracaso"],
-            duration: 4500
-          });
+      .subscribe(
+        (result) => {
+          if (result.exito) {
+            this.snackBar.open(result.message, "", {
+              panelClass: ["snack-bar-exito"],
+              duration: 4500,
+            });
+          } else {
+            this.snackBar.open(result.message, "", {
+              panelClass: ["snack-bar-fracaso"],
+              duration: 4500,
+            });
+          }
+        },
+        (error) => {
+          console.error(
+            "Ocurrió un error al querer publicar la llegada tarde de un estudiante" +
+              "El error se puede describir de la siguiente manera: " +
+              error
+          );
         }
-      });
+      );
   }
 
   ngOnDestroy() {

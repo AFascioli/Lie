@@ -206,14 +206,16 @@ router.get("", checkAuthMiddleware, (req, res) => {
         });
       }
     })
-    .catch(() => {
+    .catch((error) => {
       res.status(500).json({
-        message: "Mensaje de error especifico",
+        message:
+          "Ocurrió un error al querer obtener el estado de la asistencia para cada alumno. El error es: " +
+          error.message,
       });
     });
 });
 
-// Registrar asistencia 2.0, recibe un vector de estudiantes y para cada uno, encuentra la inscripcion que le corresponde
+// Recibe un vector de estudiantes y para cada uno, encuentra la inscripcion que le corresponde
 // luego crea la asistencia diaria usando la _id de la inscripcion, luego guarda la asistenciaDiaria y
 // guarda la _id de esta asistenciaDiaria en el vector de asistenciasDiarias de la inscripcion.
 // Si ya se tomo asistencia en el dia, se actualiza el valor presente de la asistencia individual.
@@ -227,85 +229,67 @@ router.post("", checkAuthMiddleware, (req, res) => {
       Inscripcion.findOne({
         idEstudiante: estudiante._id,
         activa: true,
-      })
-        .then(async (inscripcion) => {
-          var asistenciaEstudiante = new AsistenciaDiaria({
-            idInscripcion: inscripcion._id,
-            fecha: estudiante.fecha,
-            presente: estudiante.presente,
-            valorInasistencia: valorInasistencia,
-            justificado: false,
-          });
-
-          await asistenciaEstudiante.save().then(async (asistenciaDiaria) => {
-            await inscripcion.asistenciaDiaria.push(asistenciaDiaria._id);
-            inscripcion.contadorInasistenciasInjustificada =
-              inscripcion.contadorInasistenciasInjustificada +
-              valorInasistencia;
-            inscripcion.save();
-          });
-        })
-        .catch(() => {
-          res.status(500).json({
-            message: "Mensaje de error especifico",
-          });
+      }).then(async (inscripcion) => {
+        var asistenciaEstudiante = new AsistenciaDiaria({
+          idInscripcion: inscripcion._id,
+          fecha: estudiante.fecha,
+          presente: estudiante.presente,
+          valorInasistencia: valorInasistencia,
+          justificado: false,
         });
+
+        await asistenciaEstudiante.save().then(async (asistenciaDiaria) => {
+          await inscripcion.asistenciaDiaria.push(asistenciaDiaria._id);
+          inscripcion.contadorInasistenciasInjustificada =
+            inscripcion.contadorInasistenciasInjustificada + valorInasistencia;
+          inscripcion.save();
+        });
+      });
     });
   } else {
     req.body.forEach((estudiante) => {
-      AsistenciaDiaria.findById(estudiante.idAsistencia)
-        .then((asistencia) => {
-          //si estaba presente en la bd y se cambio a ausente incrementa contador inasistencia
-          if (asistencia.presente && !estudiante.presente) {
-            AsistenciaDiaria.findByIdAndUpdate(estudiante.idAsistencia, {
-              presente: estudiante.presente,
-            })
-              .then(() => {
-                Inscripcion.findOneAndUpdate(
-                  {
-                    idEstudiante: estudiante._id,
-                    activa: true,
-                  },
-                  { $inc: { contadorInasistenciasInjustificada: 1 } }
-                ).exec();
-              })
-              .catch(() => {
-                res.status(500).json({
-                  message: "Mensaje de error especifico",
-                });
-              });
-          }
-          //si estaba ausente y lo pasaron a presente decrementa contador inasistencia
-          else if (!asistencia.presente && estudiante.presente) {
-            AsistenciaDiaria.findByIdAndUpdate(estudiante.idAsistencia, {
-              presente: estudiante.presente,
-            })
-              .then(() => {
-                Inscripcion.findOneAndUpdate(
-                  {
-                    idEstudiante: estudiante._id,
-                    activa: true,
-                  },
-                  { $inc: { contadorInasistenciasInjustificada: -1 } }
-                ).exec();
-              })
-              .catch(() => {
-                res.status(500).json({
-                  message: "Mensaje de error especifico",
-                });
-              });
-          }
-        })
-        .catch(() => {
-          res.status(500).json({
-            message: "Mensaje de error especifico",
+      AsistenciaDiaria.findById(estudiante.idAsistencia).then((asistencia) => {
+        //si estaba presente en la bd y se cambio a ausente incrementa contador inasistencia
+        if (asistencia.presente && !estudiante.presente) {
+          AsistenciaDiaria.findByIdAndUpdate(estudiante.idAsistencia, {
+            presente: estudiante.presente,
+          }).then(() => {
+            Inscripcion.findOneAndUpdate(
+              {
+                idEstudiante: estudiante._id,
+                activa: true,
+              },
+              { $inc: { contadorInasistenciasInjustificada: 1 } }
+            ).exec();
           });
-        });
+        }
+        //si estaba ausente y lo pasaron a presente decrementa contador inasistencia
+        else if (!asistencia.presente && estudiante.presente) {
+          AsistenciaDiaria.findByIdAndUpdate(estudiante.idAsistencia, {
+            presente: estudiante.presente,
+          }).then(() => {
+            Inscripcion.findOneAndUpdate(
+              {
+                idEstudiante: estudiante._id,
+                activa: true,
+              },
+              { $inc: { contadorInasistenciasInjustificada: -1 } }
+            ).exec();
+          });
+        }
+      });
     });
   }
   return res
     .status(201)
-    .json({ message: "Asistencia registrada exitosamente", exito: true });
+    .json({ message: "Asistencia registrada exitosamente", exito: true })
+    .catch((error) => {
+      res.status(500).json({
+        message:
+          "Ocurrió un error al querer publicar el estado de la asistencia para un curso. El error es: " +
+          error.message,
+      });
+    });
 });
 
 //Este metodo filtra las inscripciones por estudiante y retorna el contador de inasistencias (injustificada y justificada)
@@ -321,9 +305,11 @@ router.get("/asistenciaEstudiante", (req, res) => {
           estudiante.contadorInasistenciasJustificada,
       });
     })
-    .catch(() => {
+    .catch((error) => {
       res.status(500).json({
-        message: "Mensaje de error especifico",
+        message:
+          "Ocurrió un error al querer devolver los contadores de inasistencias. El error se puede describir de la siguiente manera: " +
+          error.message,
       });
     });
 });
@@ -336,14 +322,7 @@ router.post("/inasistencia/justificada", checkAuthMiddleware, (req, res) => {
       contador = contador + 1;
       AsistenciaDiaria.findByIdAndUpdate(inasistencia.idAsistencia, {
         justificado: true,
-      })
-        .exec()
-        .catch(() => {
-          res.status(500).json({
-            message: "Ocurrió un error al querer justificar la inasistencia ",
-            exito: false,
-          });
-        });
+      }).exec();
     }
   });
   Inscripcion.findOneAndUpdate(
@@ -363,7 +342,10 @@ router.post("/inasistencia/justificada", checkAuthMiddleware, (req, res) => {
     })
     .catch(() => {
       res.status(500).json({
-        message: "Mensaje de error especifico",
+        message:
+          "Ocurrió un error al querer publicar el estado de las inasistencias (justificada / injustificada). " +
+          "El error se puede describir de la siguiente manera: " +
+          error.message,
       });
     });
 });
@@ -374,8 +356,8 @@ router.post("/inasistencia/justificada", checkAuthMiddleware, (req, res) => {
 router.get("/inasistencias", (req, res) => {
   let fechaActual = new Date();
 
-  CicloLectivo.findOne({ año: fechaActual.getFullYear() })
-    .then((cicloLectivo) => {
+  CicloLectivo.findOne({ año: fechaActual.getFullYear() }).then(
+    (cicloLectivo) => {
       if (!ClaseAsistencia.validarFechasJustificar(cicloLectivo)) {
         return res.status(200).json({
           exito: false,
@@ -389,12 +371,8 @@ router.get("/inasistencias", (req, res) => {
       //   message:
       //     "La fecha actual se encuentra dentro de las fechas permitidas para justificar inasistencias"
       // });}
-    })
-    .catch(() => {
-      res.status(500).json({
-        message: "Mensaje de error especifico",
-      });
-    });
+    }
+  );
 
   let ultimasInasistencias = [];
   Inscripcion.aggregate([
@@ -468,7 +446,10 @@ router.get("/inasistencias", (req, res) => {
     })
     .catch(() => {
       res.status(500).json({
-        message: "Mensaje de error especifico",
+        message:
+          "Ocurrió un error al querer obtener el estado de las inasistencias (justificada / injustificada). " +
+          "El error se puede describir de la siguiente manera: " +
+          error.message,
       });
     });
 });
@@ -484,128 +465,96 @@ router.post("/llegadaTarde", checkAuthMiddleware, (req, res) => {
     .then((inscripcion) => {
       AsistenciaDiaria.findById(
         inscripcion.asistenciaDiaria[inscripcion.asistenciaDiaria.length - 1]
-      )
-        .then(async (ultimaAD) => {
-          var ADcreada = null;
-          var fechaHoy = new Date();
-          fechaHoy.setHours(fechaHoy.getHours() - 3);
-          //Compara si la ultima asistencia fue el dia de hoy
-          if (!ClaseAsistencia.esFechaActual(ultimaAD)) {
-            var nuevaAsistencia = new AsistenciaDiaria({
-              idInscripcion: inscripcion._id,
-              fecha: fechaHoy,
-              presente: true,
-              retiroAnticipado: false,
-              valorInasistencia: 0,
-              justificado: false,
-            });
-            await nuevaAsistencia
-              .save()
-              .then((ADultima) => {
-                ADcreada = ADultima;
-                ultimaAD = ADultima;
-              })
-              .catch(() => {
-                res.status(500).json({
-                  message: "Mensaje de error especifico",
-                });
-              });
+      ).then(async (ultimaAD) => {
+        var ADcreada = null;
+        var fechaHoy = new Date();
+        fechaHoy.setHours(fechaHoy.getHours() - 3);
+        //Compara si la ultima asistencia fue el dia de hoy
+        if (!ClaseAsistencia.esFechaActual(ultimaAD)) {
+          var nuevaAsistencia = new AsistenciaDiaria({
+            idInscripcion: inscripcion._id,
+            fecha: fechaHoy,
+            presente: true,
+            retiroAnticipado: false,
+            valorInasistencia: 0,
+            justificado: false,
+          });
+          await nuevaAsistencia.save().then((ADultima) => {
+            ADcreada = ADultima;
+            ultimaAD = ADultima;
+          });
+        } else {
+          if (!ultimaAD.llegadaTarde) {
+            ultimaAD.presente = true;
+            ultimaAD.save();
           } else {
-            if (!ultimaAD.llegadaTarde) {
-              ultimaAD.presente = true;
-              ultimaAD.save();
-            } else {
-              return res.status(500).json({
-                message:
-                  "Ya exite una llegada tarde registrada para el estudiante seleccionado",
-                exito: false,
-              });
-            }
+            return res.status(500).json({
+              message:
+                "Ya exite una llegada tarde registrada para el estudiante seleccionado",
+              exito: false,
+            });
           }
+        }
 
-          if (req.body.antes8am && inscripcion.contadorLlegadasTarde < 4) {
-            inscripcion.contadorLlegadasTarde =
-              inscripcion.contadorLlegadasTarde + 1;
+        if (req.body.antes8am && inscripcion.contadorLlegadasTarde < 4) {
+          inscripcion.contadorLlegadasTarde =
+            inscripcion.contadorLlegadasTarde + 1;
+          if (ADcreada != null) {
+            inscripcion.asistenciaDiaria.push(ADcreada._id);
+          }
+          inscripcion.save();
+          ultimaAD.llegadaTarde = true;
+          ultimaAD.save().then(() => {
+            return res.status(500).json({
+              message:
+                "Llegada tarde antes de las 8 am registrada exitosamente",
+              exito: true,
+            });
+          });
+        } else {
+          if (req.body.antes8am && inscripcion.contadorLlegadasTarde == 4) {
+            inscripcion.contadorLlegadasTarde = 0;
+            inscripcion.inscripcion.contadorInasistenciasInjustificada =
+              inscripcion.contadorInasistenciasInjustificada + 1;
             if (ADcreada != null) {
               inscripcion.asistenciaDiaria.push(ADcreada._id);
             }
             inscripcion.save();
+            ultimaAD.valorInasistencia = ultimaAD.valorInasistencia + 1;
             ultimaAD.llegadaTarde = true;
-            ultimaAD
-              .save()
-              .then(() => {
-                return res.status(500).json({
-                  message:
-                    "Llegada tarde antes de las 8 am registrada exitosamente",
-                  exito: true,
-                });
-              })
-              .catch(() => {
-                res.status(500).json({
-                  message: "Mensaje de error especifico",
-                });
+            ultimaAD.save().then(() => {
+              return res.status(500).json({
+                message:
+                  "Llegada tarde antes de las 8 am registrada exitosamente",
+                exito: true,
               });
+            });
           } else {
-            if (req.body.antes8am && inscripcion.contadorLlegadasTarde == 4) {
-              inscripcion.contadorLlegadasTarde = 0;
-              inscripcion.inscripcion.contadorInasistenciasInjustificada =
-                inscripcion.contadorInasistenciasInjustificada + 1;
-              if (ADcreada != null) {
-                inscripcion.asistenciaDiaria.push(ADcreada._id);
-              }
-              inscripcion.save();
-              ultimaAD.valorInasistencia = ultimaAD.valorInasistencia + 1;
-              ultimaAD.llegadaTarde = true;
-              ultimaAD
-                .save()
-                .then(() => {
-                  return res.status(500).json({
-                    message:
-                      "Llegada tarde antes de las 8 am registrada exitosamente",
-                    exito: true,
-                  });
-                })
-                .catch(() => {
-                  res.status(500).json({
-                    message: "Mensaje de error especifico",
-                  });
-                });
-            } else {
-              inscripcion.contadorInasistenciasInjustificada =
-                inscripcion.contadorInasistenciasInjustificada + 0.5;
-              if (ADcreada != null) {
-                inscripcion.asistenciaDiaria.push(ADcreada._id);
-              }
-              inscripcion.save();
-              ultimaAD.valorInasistencia = ultimaAD.valorInasistencia + 0.5;
-              ultimaAD.llegadaTarde = true;
-              ultimaAD
-                .save()
-                .then(() => {
-                  return res.status(500).json({
-                    message:
-                      "Llegada tarde después de las 8 am registrada exitosamente",
-                    exito: true,
-                  });
-                })
-                .catch(() => {
-                  res.status(500).json({
-                    message: "Mensaje de error especifico",
-                  });
-                });
+            inscripcion.contadorInasistenciasInjustificada =
+              inscripcion.contadorInasistenciasInjustificada + 0.5;
+            if (ADcreada != null) {
+              inscripcion.asistenciaDiaria.push(ADcreada._id);
             }
+            inscripcion.save();
+            ultimaAD.valorInasistencia = ultimaAD.valorInasistencia + 0.5;
+            ultimaAD.llegadaTarde = true;
+            ultimaAD.save().then(() => {
+              return res.status(500).json({
+                message:
+                  "Llegada tarde después de las 8 am registrada exitosamente",
+                exito: true,
+              });
+            });
           }
-        })
-        .catch(() => {
-          res.status(500).json({
-            message: "Mensaje de error especifico",
-          });
-        });
+        }
+      });
     })
-    .catch((e) => {
+    .catch((error) => {
       res.status(500).json({
-        message: "No se pudo asignar la llegada tarde",
-        exito: false,
+        message:
+          "Ocurrió un error al querer publicar la llegada tarde de un estudiante" +
+          "El error se puede describir de la siguiente manera: " +
+          error.message,
       });
     });
 });
@@ -650,53 +599,46 @@ router.post("/retiro", checkAuthMiddleware, (req, res) => {
                       retiroAnticipado: true,
                       $inc: { valorInasistencia: actualizacionInasistencia },
                     }
-                  )
-                    .then(() => {
-                      inscripcion.contadorInasistenciasInjustificada =
-                        inscripcion.contadorInasistenciasInjustificada +
-                        actualizacionInasistencia;
-                      inscripcion
-                        .save()
-                        .then(() => {
-                          //Envio de notificación a los adultos responsables del estudiante. #working
-                          Estudiante.findById(req.body.idEstudiante)
-                            .then((estudiante) => {
-                              //Construcción del cuerpo de la notificación.
-                              var tutores = req.body.tutoresSeleccionados;
-                              var cuerpo =
-                                "Se ha registrado un retiro anticipado de " +
-                                estudiante.apellido +
-                                " " +
-                                estudiante.nombre +
-                                ". ";
+                  ).then(() => {
+                    inscripcion.contadorInasistenciasInjustificada =
+                      inscripcion.contadorInasistenciasInjustificada +
+                      actualizacionInasistencia;
+                    inscripcion.save().then(() => {
+                      //Envio de notificación a los adultos responsables del estudiante. #working
+                      Estudiante.findById(req.body.idEstudiante).then(
+                        (estudiante) => {
+                          //Construcción del cuerpo de la notificación.
+                          var tutores = req.body.tutoresSeleccionados;
+                          var cuerpo =
+                            "Se ha registrado un retiro anticipado de " +
+                            estudiante.apellido +
+                            " " +
+                            estudiante.nombre +
+                            ". ";
 
-                              if (tutores.length > 0) {
+                          if (tutores.length > 0) {
+                            cuerpo =
+                              cuerpo +
+                              "El estudiante fue retirado por " +
+                              tutores[0].apellido +
+                              " " +
+                              tutores[0].nombre;
+
+                            for (let i = 0; i < tutores.length; i++) {
+                              if (i == tutores.length - 1) {
                                 cuerpo =
                                   cuerpo +
-                                  "El estudiante fue retirado por " +
-                                  tutores[0].apellido +
+                                  " y " +
+                                  tutores[i].apellido +
                                   " " +
-                                  tutores[0].nombre;
-
-                                for (let i = 0; i < tutores.length; i++) {
-                                  if (i == tutores.length - 1) {
-                                    cuerpo =
-                                      cuerpo +
-                                      " y " +
-                                      tutores[i].apellido +
-                                      " " +
-                                      tutores[i].nombre;
-                                  } else if (i != 0) {
-                                    cuerpo =
-                                      cuerpo +
-                                      ", " +
-                                      tutores[i].apellido +
-                                      " " +
-                                      tutores[i].nombre;
-                                  }
-                                  if (i == tutores.length - 1)
-                                    cuerpo = cuerpo + ".";
-                                }
+                                  tutores[i].nombre;
+                              } else if (i != 0) {
+                                cuerpo =
+                                  cuerpo +
+                                  ", " +
+                                  tutores[i].apellido +
+                                  " " +
+                                  tutores[i].nombre;
                               }
                               //Envio de la notificación #resolve
                               Suscripcion.notificacionGrupal(
@@ -727,6 +669,7 @@ router.post("/retiro", checkAuthMiddleware, (req, res) => {
                         message: "Mensaje de error especifico",
                       });
                     });
+                  });
                 }
               }
             } else {
@@ -736,17 +679,15 @@ router.post("/retiro", checkAuthMiddleware, (req, res) => {
                 exito: "faltaasistencia",
               });
             }
-          })
-          .catch(() => {
-            res.status(500).json({
-              message: "Mensaje de error especifico",
-            });
           });
       }
     })
     .catch(() => {
       res.status(500).json({
-        message: "Mensaje de error especifico",
+        message:
+          "Ocurrió un error al querer publicar el retiro anticipado de un estudiante" +
+          "El error se puede describir de la siguiente manera: " +
+          error.message,
       });
     });
 });

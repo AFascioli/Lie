@@ -14,7 +14,7 @@ const eventoRoutes = require("./routes/evento");
 const materiasRoutes = require("./routes/materia");
 const Ambiente = require("./assets/ambiente");
 var Grid = require("gridfs-stream");
-let gfs;
+
 
 const app = express();
 options = {
@@ -22,13 +22,6 @@ options = {
   useUnifiedTopology: true,
   useFindAndModify: false,
 };
-const conn = mongoose.createConnection(Ambiente.stringDeConexion, options);
-
-conn.once("open", () => {
-  gfs = Grid(conn.db, mongoose.mongo);
-  gfs.collection("imagen");
-  console.log("Conexión por imagenes a base de datos local.");
-});
 
 app.get("/imagen/:filename", (req, res) => {
   gfs.files.findOne({ filename: req.params.filename }, (err, file) => {
@@ -50,17 +43,22 @@ app.get("/imagen/:filename", (req, res) => {
 });
 
 mongoose
-  .connect(Ambiente.stringDeConexion, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-    useFindAndModify: false,
-  })
+  .connect(Ambiente.stringDeConexion, options)
   .then(() => {
     console.log("Conexión a base de datos exitosa");
   })
   .catch(() => {
     console.log("Fallo conexión a la base de datos");
   });
+
+// Conexión a la base de datos que se usa en paralelo para manejo de imagenes
+const conn = mongoose.createConnection(Ambiente.stringDeConexion, options);
+let gfs;
+conn.once("open", () => {
+  gfs = Grid(conn.db, mongoose.mongo);
+  gfs.collection("imagen");
+  console.log("Conexión por imagenes a base de datos local");
+});
 
 // Usamos el body parser para poder extraer datos del request body
 app.use(bodyParser.json());
@@ -78,6 +76,28 @@ app.use((req, res, next) => {
     "GET, POST, PATCH, DELETE, OPTIONS"
   );
   next();
+});
+
+app.get("/imagen/:filename", (req, res) => {
+  gfs.files.findOne({ filename: req.params.filename }, (err, file) => {
+    // Check if file
+    if (!file || file.length === 0) {
+      return res.status(404).json({
+        err: "No file exists",
+      });
+    }
+
+    // Check if image
+    if (file.contentType === "image/jpeg" || file.contentType === "image/png") {
+      // Read output to browser
+      const readstream = gfs.createReadStream(file.filename);
+      readstream.pipe(res);
+    } else {
+      res.status(404).json({
+        err: "Not an image",
+      });
+    }
+  });
 });
 
 app.use("/estudiante", estudiantesRoutes);
@@ -100,12 +120,38 @@ app.use("/calificacion", calificacionesRoutes);
 
 app.use("/materia", materiasRoutes);
 
+app.use("/evento", eventoRoutes);
+
 app.get("/status", (req, res, next) => {
   res.status(200).json({
     message: "Servidor Node.js Lie®",
   });
 });
 
-app.use("/evento", eventoRoutes);
+// #resolve Guardar comentarios y diccionario
+// Endpoint save diccionario
+var mimir = require("mimir");
+var file_apropiados = require("./assets/comentarios_apropiados");
+var file_inapropiados = require("./assets/comentarios_inapropiados");
+var comentarios_apropiados = file_apropiados.comentarios_apropiados;
+var comentarios_inapropiados = file_inapropiados.comentarios_inapropiados;
+var comentarios = comentarios_apropiados.concat(comentarios_inapropiados);
+const Diccionario = require("./models/diccionario");
+// #wip Por ahora llena de vuelta con los archivos nomas
+app.get("/sdict", (res) => {
+  let diccionario = mimir.dict(comentarios);
+
+  const dict = new Diccionario({
+    comentarios_apropiados: comentarios_apropiados,
+    comentarios_inapropiados: comentarios_inapropiados,
+    diccionario: diccionario,
+  });
+
+  dict.save().then(() => {
+    res.status(200).json({
+      message: "Diccionario creado.",
+    });
+  });
+});
 
 module.exports = app;
