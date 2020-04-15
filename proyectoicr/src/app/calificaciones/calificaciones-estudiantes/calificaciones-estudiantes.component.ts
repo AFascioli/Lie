@@ -292,9 +292,9 @@ export class CalificacionesEstudiantesComponent implements OnInit, OnDestroy {
   }
 
   onCancelar() {
-    this.servicioEstudiante.tipoPopUp = "cancelar";
     this.popup.open(CancelPopupComponent);
   }
+
   checkNotas(event, cal) {
     var inputValue = event.which;
     var concat = cal + String.fromCharCode(inputValue);

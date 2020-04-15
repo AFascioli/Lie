@@ -72,11 +72,13 @@ mat-card {
   padding: 0%;
   padding-left: 2%;
   margin-top: 2%;
+  margin-top: 3%;
   text-align: left;
 }
 
 .div-button {
   text-align: center;
+  margin-top: 3%;
 }
 
 form {

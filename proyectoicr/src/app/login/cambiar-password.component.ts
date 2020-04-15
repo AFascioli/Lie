@@ -107,8 +107,7 @@ export class CambiarPassword implements OnInit, OnDestroy {
   styleUrls: ["./login.component.css"]
 })
 export class CambiarPasswordPopupComponent {
-  formInvalido: Boolean;
-  tipoPopup: string;
+
   constructor(
     public dialogRef: MatDialogRef<CambiarPasswordPopupComponent>,
     public router: Router

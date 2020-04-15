@@ -1,8 +1,6 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
-const path = require("path");
-const cron = require("node-schedule");
 const estudiantesRoutes = require("./routes/estudiante");
 const ubicacionRoutes = require("./routes/ubicacion");
 const cursoRoutes = require("./routes/curso");
@@ -18,10 +16,11 @@ const Ambiente = require("./assets/ambiente");
 var Grid = require("gridfs-stream");
 let gfs;
 
-const app = express(); // Creo la app express
-const options = {
+const app = express();
+options = {
   useNewUrlParser: true,
   useUnifiedTopology: true,
+  useFindAndModify: false,
 };
 const conn = mongoose.createConnection(Ambiente.stringDeConexion, options);
 
@@ -33,16 +32,13 @@ conn.once("open", () => {
 
 app.get("/imagen/:filename", (req, res) => {
   gfs.files.findOne({ filename: req.params.filename }, (err, file) => {
-    // Check if file
     if (!file || file.length === 0) {
       return res.status(404).json({
         err: "No file exists",
       });
     }
 
-    // Check if image
     if (file.contentType === "image/jpeg" || file.contentType === "image/png") {
-      // Read output to browser
       const readstream = gfs.createReadStream(file.filename);
       readstream.pipe(res);
     } else {
@@ -57,6 +53,7 @@ mongoose
   .connect(Ambiente.stringDeConexion, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
+    useFindAndModify: false,
   })
   .then(() => {
     console.log("Conexión a base de datos exitosa");
@@ -64,9 +61,6 @@ mongoose
   .catch(() => {
     console.log("Fallo conexión a la base de datos");
   });
-
-// //Para sacar el deprecation warning de la consola
-mongoose.set("useFindAndModify", false);
 
 // Usamos el body parser para poder extraer datos del request body
 app.use(bodyParser.json());

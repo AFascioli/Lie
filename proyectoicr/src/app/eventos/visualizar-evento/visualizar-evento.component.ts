@@ -149,7 +149,7 @@ export class VisualizarEventoComponent implements OnInit, OnDestroy {
   }
 
   showSlide(n) {
-    var slides = document.getElementsByClassName("mySlides");
+    var slides = document.getElementsByClassName("my-slides");
     var dots = document.getElementsByClassName("dot");
     this.esSlideValido(n, slides);
     for (let i = 0; i < slides.length; i++) {

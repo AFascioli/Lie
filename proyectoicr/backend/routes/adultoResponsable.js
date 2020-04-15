@@ -69,41 +69,60 @@ router.get("/estudiantes", checkAuthMiddleware, async (req, res) => {
       );
     });
   };
+
   var obtenerDatosEstudiantes = (idEstudiante) => {
     return new Promise((resolve, reject) => {
       let datosEstudiante;
-      Estudiante.findById(idEstudiante).then((estudiante) => {
-        datosEstudiante = {
-          nombre: estudiante.nombre,
-          apellido: estudiante.apellido,
-          idEstudiante: estudiante._id,
-          curso: null,
-        };
-        Inscripcion.findOne({ idEstudiante: idEstudiante, activa: true }).then(
-          (inscripcion) => {
+      Estudiante.findById(idEstudiante)
+        .then((estudiante) => {
+          datosEstudiante = {
+            nombre: estudiante.nombre,
+            apellido: estudiante.apellido,
+            idEstudiante: estudiante._id,
+            curso: null,
+          };
+          Inscripcion.findOne({
+            idEstudiante: idEstudiante,
+            activa: true,
+          }).then((inscripcion) => {
             if (inscripcion != null) {
               Curso.findById(inscripcion.idCurso).then((curso) => {
-                datosEstudiante.curso = curso.curso;
+                datosEstudiante.curso = curso.nombre;
                 resolve(datosEstudiante);
               });
             } else {
               resolve(null);
             }
-          }
-        );
-      });
+          });
+        })
+        .catch((error) => {
+          res.status(500).json({
+            message:
+              "Se presentó un error al querer obtener los datos del estudiante. El error fue el siguiente: " +
+              error,
+          });
+        });
     });
   };
+
   let idsEstudiantes = await obtenerIdsEstudiantes(req.query.idUsuario);
 
-  for (const idEstudiante of idsEstudiantes) {
-    let datosEstudiante = await obtenerDatosEstudiantes(idEstudiante);
-    estudiantes.push(datosEstudiante);
-  }
-  if (estudiantes.length != 0) {
-    res.json({ estudiantes: estudiantes, exito: true, message: "exito" });
-  } else {
-    res.json({ estudiantes: estudiantes, exito: false, message: "error" });
+  try {
+    for (const idEstudiante of idsEstudiantes) {
+      let datosEstudiante = await obtenerDatosEstudiantes(idEstudiante);
+      estudiantes.push(datosEstudiante);
+    }
+    if (estudiantes.length != 0) {
+      res.json({ estudiantes: estudiantes, exito: true, message: "exito" });
+    } else {
+      res.json({ estudiantes: estudiantes, exito: false, message: "error" });
+    }
+  } catch (error) {
+    res.status(500).json({
+      message:
+        "Se presentó un error al querer obtener los datos del estudiante. El error fue el siguiente: " +
+        error,
+    });
   }
 });
 

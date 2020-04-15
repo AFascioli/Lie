@@ -7,7 +7,7 @@ import { Subject } from "rxjs";
 import { takeUntil } from "rxjs/operators";
 
 @Injectable({
-  providedIn: "root"
+  providedIn: "root",
 })
 export class AdultoResponsableService implements OnDestroy {
   adultoResponsableEstudiante: AdultoResponsable;
@@ -35,7 +35,7 @@ export class AdultoResponsableService implements OnDestroy {
     this.authServicio
       .crearUsuario(email, numeroDocumento.toString(), "AdultoResponsable")
       .pipe(takeUntil(this.unsubscribe))
-      .subscribe(res => {
+      .subscribe((res) => {
         if (res.exito) {
           let idUsuario = res.id;
           const adultoResponsable: AdultoResponsable = {
@@ -49,19 +49,19 @@ export class AdultoResponsableService implements OnDestroy {
             telefono,
             email,
             tutor,
-            idUsuario
+            idUsuario,
           };
           let datos = {
             AR: adultoResponsable,
-            idEstudiante: idEstudiante
+            idEstudiante: idEstudiante,
           };
           this.http
             .post<{ message: string; exito: boolean }>(
-              "http://localhost:3000/adultoResponsable",
+              environment.apiUrl + "/adultoResponsable",
               { datos: datos }
             )
             .pipe(takeUntil(this.unsubscribe))
-            .subscribe(response => {
+            .subscribe((response) => {
               subject.next(response);
             });
         } else {
@@ -83,7 +83,7 @@ export class AdultoResponsableService implements OnDestroy {
       exito: boolean;
       message: string;
     }>(environment.apiUrl + "/adultoResponsable/estudiantes", {
-      params: params
+      params: params,
     });
   }
 }

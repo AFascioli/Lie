@@ -6,9 +6,7 @@ const Curso = require("../models/curso");
 const Estado = require("../models/estado");
 const Inscripcion = require("../models/inscripcion");
 const CalificacionesXTrimestre = require("../models/calificacionesXTrimestre");
-//const CalificacionesXMateria = require("../models/calificacionesXMateria");
 const Estudiante = require("../models/estudiante");
-//const Cuota = require("../models/inscripcion");
 const Horario = require("../models/horario");
 const MateriaXCurso = require("../models/materiasXCurso");
 const ClaseInscripcion = require("../classes/inscripcion");
@@ -20,13 +18,13 @@ const ClaseAsistencia = require("../classes/asistencia");
 // Obtiene todos los cursos que están almacenados en la base de datos
 router.get("/", checkAuthMiddleware, (req, res) => {
   Curso.find()
-    .select({ curso: 1, _id: 1 })
+    .select({ nombre: 1, _id: 1 })
     .then((cursos) => {
       var respuesta = [];
       cursos.forEach((curso) => {
         var cursoConId = {
           id: curso._id,
-          curso: curso.curso,
+          curso: curso.nombre,
         };
         respuesta.push(cursoConId);
       });
@@ -300,7 +298,7 @@ router.get("/cursosDeEstudiante", checkAuthMiddleware, (req, res) => {
     {
       $project: {
         estadoInscripcion: 1,
-        "cursoActual.curso": 1,
+        "cursoActual.nombre": 1,
       },
     },
   ])
@@ -311,7 +309,7 @@ router.get("/cursosDeEstudiante", checkAuthMiddleware, (req, res) => {
         siguiente = ClaseInscripcion.obtenerAñoHabilitado(inscripcion);
 
         //Buscamos los cursos que corresponden al que se puede inscribir el estudiante
-        Curso.find({ curso: { $regex: siguiente } }).then((cursos) => {
+        Curso.find({ nombre: { $regex: siguiente } }).then((cursos) => {
           return res.status(200).json({
             message: "Devolvio los cursos correctamente",
             exito: true,
@@ -321,13 +319,13 @@ router.get("/cursosDeEstudiante", checkAuthMiddleware, (req, res) => {
       } else {
         //El estudiante no está inscripto a ningun curso, devuelve todos los cursos almacenados
         Curso.find()
-          .select({ curso: 1, _id: 1 })
+          .select({ nombre: 1, _id: 1 })
           .then((cursos) => {
             var respuesta = [];
             cursos.forEach((curso) => {
               var cursoConId = {
                 _id: curso._id,
-                curso: curso.curso,
+                curso: curso.nombre,
               };
               respuesta.push(cursoConId);
             });
@@ -374,7 +372,7 @@ router.get("/docente", checkAuthMiddleware, (req, res) => {
       cursos.forEach((curso) => {
         var cursoConId = {
           id: curso._id,
-          curso: curso.curso,
+          curso: curso.nombre,
         };
         respuesta.push(cursoConId);
       });
@@ -414,7 +412,7 @@ router.get("/documentos", checkAuthMiddleware, (req, res) => {
     },
     {
       $match: {
-        "cursos.curso": req.query.curso,
+        "cursos.nombre": req.query.curso,
       },
     },
     {
@@ -488,7 +486,7 @@ router.get(
           "datosEstudiante._id": 1,
           "datosEstudiante.nombre": 1,
           "datosEstudiante.apellido": 1,
-          "curso.curso": 1,
+          "curso.nombre": 1,
           calificacionesXMateria: 1,
         },
       },
@@ -699,6 +697,7 @@ router.get(
           message:
             "Se obtuvieron las calificaciones para una materia, un curso y un trimestre determinado correctamente",
           exito: true,
+
         });
       })
       .catch(() => {
@@ -735,7 +734,7 @@ router.get("/estudiante", checkAuthMiddleware, (req, res) => {
         {
           $project: {
             _id: 0,
-            "cursosDeEstudiante.curso": 1,
+            "cursosDeEstudiante.nombre": 1,
             "cursosDeEstudiante._id": 1,
           },
         },
@@ -744,7 +743,7 @@ router.get("/estudiante", checkAuthMiddleware, (req, res) => {
           return res.status(200).json({
             message: "Se obtuvo el curso del estudiante exitosamente",
             exito: true,
-            curso: cursoDeEstudiante[0].cursosDeEstudiante[0].curso,
+            curso: cursoDeEstudiante[0].cursosDeEstudiante[0].nombre,
             idCurso: cursoDeEstudiante[0].cursosDeEstudiante[0]._id,
           });
         })
@@ -783,14 +782,14 @@ router.get("/materiasDeCurso", checkAuthMiddleware, (req, res) => {
     },
     {
       $project: {
-        "materiasDeCurso.materia": 1,
+        "materiasDeCurso.idMateria": 1,
         _id: 0,
       },
     },
     {
       $lookup: {
         from: "materia",
-        localField: "materiasDeCurso.materia",
+        localField: "materiasDeCurso.idMateria",
         foreignField: "_id",
         as: "materias",
       },
@@ -843,7 +842,7 @@ router.get("/materias", checkAuthMiddleware, (req, res) => {
     },
     {
       $project: {
-        "materiasDeCurso.materia": 1,
+        "materiasDeCurso.idMateria": 1,
         "materiasDeCurso.idDocente": 1,
         _id: 0,
       },
@@ -863,7 +862,7 @@ router.get("/materias", checkAuthMiddleware, (req, res) => {
     {
       $lookup: {
         from: "materia",
-        localField: "materiasDeCurso.materia",
+        localField: "materiasDeCurso.idMateria",
         foreignField: "_id",
         as: "materias",
       },
@@ -903,7 +902,7 @@ router.get("/materias", checkAuthMiddleware, (req, res) => {
 //@params: id estudiante que se quiere inscribir
 //@params: id curso al que se lo quiere inscribir
 //@params: array documentos entregados en inscripcion: true si se entregó ese documente
-router.post("/inscripciontest", checkAuthMiddleware, async (req, res) => {
+router.post("/inscripcion", checkAuthMiddleware, async (req, res) => {
   //Dado una id de curso, encuentra todos los datos del mismo
   var obtenerCurso = () => {
     return new Promise((resolve, reject) => {
@@ -1003,7 +1002,7 @@ router.post("/inscripciontest", checkAuthMiddleware, async (req, res) => {
         },
         {
           $project: {
-            "materiasDelCurso.materia": 1,
+            "materiasDelCurso.idMateria": 1,
             _id: 0,
           },
         },
@@ -1019,7 +1018,7 @@ router.post("/inscripciontest", checkAuthMiddleware, async (req, res) => {
     });
   };
 
-  var cearCuotas = () => {
+  var crearCuotas = () => {
     return new Promise((resolve, reject) => {
       cuotas = [];
 
@@ -1056,7 +1055,7 @@ router.post("/inscripciontest", checkAuthMiddleware, async (req, res) => {
   }
 
   var materiasDelCurso = await obtenerMateriasDeCurso();
-  var cuotas = await cearCuotas();
+  var cuotas = await crearCuotas();
   var estadoCursandoMateria = await obtenerEstadoCursandoMateria();
   var idsCXMNuevas = await ClaseCalifXMateria.crearCXM(
     materiasDelCurso,
@@ -1230,7 +1229,7 @@ router.get("/agenda", checkAuthMiddleware, (req, res) => {
         {
           $lookup: {
             from: "materia",
-            localField: "MXC.materia",
+            localField: "MXC.idMateria",
             foreignField: "_id",
             as: "nombreMateria",
           },
@@ -1312,9 +1311,6 @@ router.get("/agenda", checkAuthMiddleware, (req, res) => {
     }
   });
 });
-
-//Recibimos : idCXM, idHorarios,
-router.post("/modificarAgenda", checkAuthMiddleware, (req, res) => {});
 
 //Elimina un horario para un curso y una materia
 //@params: agenda, que se usa solo idHorario y la idMXC
@@ -1425,7 +1421,7 @@ router.post("/agenda", checkAuthMiddleware, async (req, res) => {
     }
     Curso.findByIdAndUpdate(req.body.idCurso, {
       $push: { materias: { $each: vectorIdsMXC } },
-    }).then((curso) => {
+    }).then(() => {
       res.json({ exito: true, message: "Materias agregadas correctamente" });
     });
   } else {
@@ -1511,7 +1507,7 @@ router.post("/agendaTEST", checkAuthMiddleware, async (req, res) => {
         vectorIdsHorarios.push(idHorarioGuardado);
       }
       let nuevaMateriaXCurso = new MateriaXCurso({
-        materia: mxcNueva.idMateria,
+        idMateria: mxcNueva.idMateria,
         idDocente: mxcNueva.idDocente,
         horarios: vectorIdsHorarios,
       });
@@ -1528,80 +1524,5 @@ router.post("/agendaTEST", checkAuthMiddleware, async (req, res) => {
     res.json({ exito: true, message: "nice" });
   }
 });
-//Obtiene la agenda de un curso (materias, horario y día dictadas)
-//@params: idCurso
-// router.get("/agenda", checkAuthMiddleware, (req, res) => {
-//   Curso.aggregate([
-//     {
-//       $match: {
-//         _id: mongoose.Types.ObjectId(req.query.idCurso)
-//       }
-//     },
-//     {
-//       $lookup: {
-//         from: "materiasXCurso",
-//         localField: "materias",
-//         foreignField: "_id",
-//         as: "MXC"
-//       }
-//     },
-//     {
-//       $unwind: {
-//         path: "$MXC"
-//       }
-//     },
-//     {
-//       $lookup: {
-//         from: "materia",
-//         localField: "MXC.materia",
-//         foreignField: "_id",
-//         as: "nombreMateria"
-//       }
-//     },
-//     {
-//       $unwind: {
-//         path: "$MXC.horarios"
-//       }
-//     },
-//     {
-//       $lookup: {
-//         from: "horario",
-//         localField: "MXC.horarios",
-//         foreignField: "_id",
-//         as: "horarios"
-//       }
-//     },
-//     {
-//       $project: {
-//         "nombreMateria.nombre": 1,
-//         horarios: 1
-//       }
-//     }
-//   ]).then(agendaCompleta => {
-//     if (agendaCompleta[0].horarios[0] == null) {
-//       return res.json({
-//         exito: false,
-//         message: "No existen horarios registrados para este curso",
-//         agenda: []
-//       });
-//     } else {
-//       let agenda = [];
-//       for (let i = 0; i < agendaCompleta.length; i++) {
-//         let valor = {
-//           nombre: agendaCompleta[i].nombreMateria[0].nombre,
-//           dia: agendaCompleta[i].horarios[0].dia,
-//           inicio: agendaCompleta[i].horarios[0].horaInicio,
-//           fin: agendaCompleta[i].horarios[0].horaFin
-//         };
-//         agenda.push(valor);
-//       }
-//       res.json({
-//         exito: true,
-//         message: "Se ha obtenido la agenda correctamente",
-//         agenda: agenda
-//       });
-//     }
-//   });
-// });
 
 module.exports = router;

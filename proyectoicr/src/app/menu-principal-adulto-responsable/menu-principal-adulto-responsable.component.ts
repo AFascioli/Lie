@@ -1,26 +1,27 @@
 import { Router } from "@angular/router";
-import { UbicacionService } from "./../ubicacion/ubicacion.service";
-import { InscripcionService } from "./../inscripcion/inscripcion.service";
-import { CalificacionesService } from "./../calificaciones/calificaciones.service";
-import { AsistenciaService } from "./../asistencia/asistencia.service";
-import { EstudiantesService } from "./../estudiantes/estudiante.service";
-import { EventosService } from "./../eventos/eventos.service";
-import { AutenticacionService } from "./../login/autenticacionService.service";
+import { UbicacionService } from "../ubicacion/ubicacion.service";
+import { InscripcionService } from "../inscripcion/inscripcion.service";
+import { CalificacionesService } from "../calificaciones/calificaciones.service";
+import { AsistenciaService } from "../asistencia/asistencia.service";
+import { EstudiantesService } from "../estudiantes/estudiante.service";
+import { EventosService } from "../eventos/eventos.service";
+import { AutenticacionService } from "../login/autenticacionService.service";
 import { Component, OnInit, ChangeDetectorRef } from "@angular/core";
 import { AdultoResponsableService } from "../adulto-responsable/adultoResponsable.service";
 import { Estudiante } from "../estudiantes/estudiante.model";
 import { MediaMatcher } from "@angular/cdk/layout";
 
 @Component({
-  selector: "app-menu-principal-ar",
-  templateUrl: "./menu-principal-ar.component.html",
-  styleUrls: ["./menu-principal-ar.component.css"]
+  selector: "app-menu-principal-adulto-responsable",
+  templateUrl: "./menu-principal-adulto-responsable.component.html",
+  styleUrls: ["./menu-principal-adulto-responsable.component.css"],
 })
-export class MenuPrincipalARComponent implements OnInit {
+export class MenuPrincipalAdultoResponsableComponent implements OnInit {
   estudiantes;
   eventos;
   _mobileQueryListener: () => void;
   mobileQuery: MediaQueryList;
+  cursos = [];
 
   constructor(
     public authService: AutenticacionService,
@@ -41,20 +42,29 @@ export class MenuPrincipalARComponent implements OnInit {
   }
 
   ngOnInit() {
-    let cursos = [];
-    this.servicioAR
-      .getDatosEstudiantes(this.authService.getId())
-      .subscribe(response => {
+    this.obtenerDatosEstudiante();
+  }
+
+  obtenerDatosEstudiante() {
+    this.servicioAR.getDatosEstudiantes(this.authService.getId()).subscribe(
+      (response) => {
         this.estudiantes = response.estudiantes;
-        this.estudiantes.forEach(estudiante => {
-          cursos.push(estudiante.curso);
+        this.estudiantes.forEach((estudiante) => {
+          this.cursos.push(estudiante.curso);
         });
         this.servicioEvento
-          .obtenerEventosDeCursos(cursos.join(","))
-          .subscribe(response => {
+          .obtenerEventosDeCursos(this.cursos.join(","))
+          .subscribe((response) => {
             this.eventos = response.eventos;
           });
-      });
+      },
+      (error) => {
+        console.log(
+          "Ocurrió un error al querer obtener los datos del estudiante: ",
+          error
+        );
+      }
+    );
   }
 
   obtenerMes(fechaEvento) {
@@ -71,7 +81,7 @@ export class MenuPrincipalARComponent implements OnInit {
   onEstudianteClick(idEstudiante: string) {
     this.servicioEstudiante
       .obtenerEstudiantePorId(idEstudiante)
-      .subscribe(response => {
+      .subscribe((response) => {
         if (response.exito) {
           this.asignarEstudianteSeleccionado(response.estudiante);
           this.router.navigate(["./perfilEstudiante"]);
@@ -80,7 +90,7 @@ export class MenuPrincipalARComponent implements OnInit {
   }
 
   onEventoClick(idEvento: string) {
-    this.servicioEvento.obtenerEventoPorId(idEvento).subscribe(response => {
+    this.servicioEvento.obtenerEventoPorId(idEvento).subscribe((response) => {
       if (response.exito) {
         this.servicioEvento.eventoSeleccionado = response.evento;
         this.router.navigate(["./visualizarEvento"]);

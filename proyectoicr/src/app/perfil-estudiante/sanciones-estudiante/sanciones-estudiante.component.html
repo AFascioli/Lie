@@ -1,50 +1,56 @@
-<h1 class="componente-titulo">Sanciones de {{apellidoEstudiante}}, {{nombreEstudiante}}</h1>
+<h1 class="componente-titulo">
+  Sanciones de {{ apellidoEstudiante }}, {{ nombreEstudiante }}
+</h1>
 <mat-card class="card-body-componente">
-  <div *ngIf="sanciones.length != 0" class="resumen-sanciones">
-    <h3><b class="tituloResumen"> Resumen de sanciones</b></h3>
-    <p><b>Llamados de atención:</b> {{ sumatoriaSanciones[0] }}</p>
-    <p><b>Apercibimientos:</b> {{ sumatoriaSanciones[1] }}</p>
-    <p><b>Amonestaciones:</b> {{ sumatoriaSanciones[2] }}</p>
-    <p><b>Suspenciones:</b> {{ sumatoriaSanciones[3] }}</p>
+  <h3 class="titulo-resumen"><b> Resumen de sanciones</b></h3>
+  <div *ngIf="sanciones.length != 0" class="grid-resumen" [class.grid-resumen-mobile]="mobileQuery.matches">
+    <mat-card
+      ><b>{{ sumatoriaSanciones[0] }}</b><b>Llamados de atención</b>
+    </mat-card>
+    <mat-card><b> {{ sumatoriaSanciones[1] }}</b> <b>Apercibimientos</b></mat-card>
+    <mat-card><b> {{ sumatoriaSanciones[2] }}</b> <b>Amonestaciones</b></mat-card>
+    <mat-card><b> {{ sumatoriaSanciones[3] }}</b> <b>Suspenciones</b></mat-card>
   </div>
 
-  <table mat-table [dataSource]="sanciones" *ngIf="sanciones.length != 0">
+  <table mat-table [dataSource]="sanciones" *ngIf="sanciones.length != 0"  [class.table-mobile]="mobileQuery.matches">
     <ng-container matColumnDef="fecha">
       <th class="columnas-normales" mat-header-cell *matHeaderCellDef>
         Fecha
       </th>
       <td class="columnas-normales" mat-cell *matCellDef="let sancion">
         {{ sancion.fecha | date: "dd/MM/yyyy" }}
-    </td>
-  </ng-container>
-  <ng-container matColumnDef="tipoSancion">
-    <th class="columnas-normales" mat-header-cell *matHeaderCellDef>
-      Tipo de sanción
-    </th>
-    <td class="columnas-normales" mat-cell *matCellDef="let sancion">
-      {{ sancion.tipo }}
-    </td>
-  </ng-container>
-  <ng-container matColumnDef="cantidad">
-    <th class="columnas-chicas" mat-header-cell *matHeaderCellDef>
-      Cantidad
-    </th>
-    <td class="columnas-chicas" mat-cell *matCellDef="let sancion">
-      {{ sancion.cantidad }}
-    </td>
-  </ng-container>
-  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-  <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="tipoSancion">
+      <th class="columnas-normales" mat-header-cell *matHeaderCellDef>
+        Tipo de sanción
+      </th>
+      <td class="columnas-normales" mat-cell *matCellDef="let sancion">
+        {{ sancion.tipo }}
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="cantidad">
+      <th class="columnas-chicas" mat-header-cell *matHeaderCellDef>
+        Cantidad
+      </th>
+      <td class="columnas-chicas" mat-cell *matCellDef="let sancion">
+        {{ sancion.cantidad }}
+      </td>
+    </ng-container>
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
   </table>
 
-  <p *ngIf="sanciones.length == 0" class="sin-sanciones">El estudiante no presenta sanciones</p>
+  <p *ngIf="sanciones.length == 0" class="sin-sanciones">
+    El estudiante no presenta sanciones
+  </p>
   <div class="div-button">
     <button
-    mat-raised-button
-    [routerLink]="['/perfilEstudiante']"
-    class="button-warn" >
-       Volver
+      mat-raised-button
+      [routerLink]="['/perfilEstudiante']"
+      class="button-warn"
+    >
+      Volver
     </button>
   </div>
 </mat-card>
-

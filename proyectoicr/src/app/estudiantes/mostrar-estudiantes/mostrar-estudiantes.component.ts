@@ -5,7 +5,8 @@ import {
   OnInit,
   Input,
   ChangeDetectorRef,
-  OnDestroy
+  OnDestroy,
+  Inject
 } from "@angular/core";
 import { EstudiantesService } from "../estudiante.service";
 import { Subscription, Subject } from "rxjs";
@@ -14,7 +15,7 @@ import { NgForm } from "@angular/forms";
 import { Estudiante } from "../estudiante.model";
 import { Nacionalidad } from "../../ubicacion/nacionalidades.model";
 import { Localidad } from "../../ubicacion/localidades.model";
-import { MatDialog, MatDialogRef, MatSnackBar } from "@angular/material";
+import { MatDialog, MatDialogRef, MatSnackBar, MAT_DIALOG_DATA } from "@angular/material";
 import { Router } from "@angular/router";
 import { MediaMatcher } from "@angular/cdk/layout";
 import { takeUntil } from "rxjs/operators";
@@ -104,8 +105,6 @@ export class MostrarEstudiantesComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.servicioEstudiante.formInvalidoEstudiante = true;
-    this.servicioEstudiante.formEstudianteModificada = false;
     this.servicioUbicacion.getProvincias();
     this.suscripcion = this.servicioUbicacion
       .getProvinciasListener()
@@ -207,15 +206,34 @@ export class MostrarEstudiantesComponent implements OnInit, OnDestroy {
     if (tipo == "volver" && !this.modoEditar) {
       this.router.navigate(["./buscar/lista"]);
     } else {
-      this.servicioEstudiante.tipoPopUp = tipo;
+      let formInvalida=false;
+      let formModificada=false;
       if (form.invalid) {
-        this.servicioEstudiante.formInvalidoEstudiante = true;
+        formInvalida=true;
       } else {
-        this.servicioEstudiante.formInvalidoEstudiante = false;
-        this.servicioEstudiante.formEstudianteModificada = form.dirty;
+        formInvalida=false;
+        formModificada=form.dirty;
       }
-      this.dialog.open(MostrarPopupComponent, {
-        width: "250px"
+
+      let popup = this.dialog.open(MostrarPopupComponent, {
+        width: "250px",
+        data: {tipoPopUp: tipo, formInvalida: formInvalida, formModificada: formModificada}
+      });
+
+      popup.afterClosed().subscribe(borrar => {
+        if(borrar){
+          this.servicioEstudiante
+          .borrarEstudiante(this.servicioEstudiante.estudianteSeleccionado._id)
+          .subscribe(rta => {
+            if(rta.exito){
+              this.snackBar.open(rta.message, "", {
+                panelClass: ["snack-bar-exito"],
+                duration: 4000
+              });
+              this.router.navigate(["./buscar/lista"]);
+            }
+          });
+        }
       });
     }
   }
@@ -229,50 +247,32 @@ export class MostrarEstudiantesComponent implements OnInit, OnDestroy {
 export class MostrarPopupComponent {
   tipoPopup: string;
   formInvalido: Boolean;
-  borrar: string;
   formModificada: boolean;
 
   constructor(
     public dialogRef: MatDialogRef<MostrarPopupComponent>,
     public router: Router,
-    public servicioEstudiante: EstudiantesService,
-    public snackBar: MatSnackBar
+    @Inject(MAT_DIALOG_DATA) data
   ) {
-    this.tipoPopup = this.servicioEstudiante.tipoPopUp;
-    this.formInvalido = servicioEstudiante.formInvalidoEstudiante;
-    this.borrar = "¿Está seguro que desea borrar el estudiante?";
-    this.formModificada = this.servicioEstudiante.formEstudianteModificada;
+    this.tipoPopup = data.tipoPopUp;
+    this.formInvalido = data.formInvalida;
+    this.formModificada = data.formModificada;
   }
 
   onYesClick(): void {
     this.router.navigate(["./buscar/lista"]);
-    this.dialogRef.close();
+    this.dialogRef.close(false);
   }
 
   onNoClick(): void {
-    this.dialogRef.close();
+    this.dialogRef.close(false);
   }
 
   onOkClick(): void {
-    this.dialogRef.close();
-    this.servicioEstudiante.formInvalidoEstudiante = true;
-  }
-
-  onOkClickBorrar(): void {
-    this.dialogRef.close();
-    this.router.navigate(["./buscar/lista"]);
+    this.dialogRef.close(false);
   }
 
   onYesDeleteClick() {
-    this.borrar = "El estudiante fue borrado exitosamente";
-    this.servicioEstudiante
-      .borrarEstudiante(this.servicioEstudiante.estudianteSeleccionado._id)
-      .subscribe(rta => {
-        rta.exito &&
-          this.snackBar.open(rta.message, "", {
-            panelClass: ["snack-bar-exito"],
-            duration: 4000
-          });
-      });
+    this.dialogRef.close(true);
   }
 }

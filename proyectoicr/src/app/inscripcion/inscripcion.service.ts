@@ -21,7 +21,7 @@ export class InscripcionService {
     documentosEntregados: any[]
   ) {
     return this.http.post<{ message: string; exito: boolean }>(
-      environment.apiUrl + "/curso/inscripciontest",
+      environment.apiUrl + "/curso/inscripcion",
       {
         idEstudiante: idEstudiante,
         idCurso: idCurso,
