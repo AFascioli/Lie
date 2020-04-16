@@ -33,7 +33,7 @@ export class CalificacionesPerfilEstudianteComponent
   fechaActual: Date;
   promedio = 0;
   private unsubscribe: Subject<void> = new Subject();
-  materiasPendientes = [{ nombre: "Biologia" }, { nombre: "Fisica" }];
+  materiasPendientes = [];
   _mobileQueryListener: () => void;
   mobileQuery: MediaQueryList;
 
