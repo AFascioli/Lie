@@ -311,10 +311,17 @@ router.get("/cursosDeEstudiante", checkAuthMiddleware, (req, res) => {
 
         //Buscamos los cursos que corresponden al que se puede inscribir el estudiante
         Curso.find({ nombre: { $regex: siguiente } }).then((cursos) => {
+          // Se elimina el curso al que esta inscripto el estudiante
+          cursos.forEach((curso, index)  => {
+             if(curso.nombre==inscripcion[0].cursoActual[0].nombre){
+              cursos.splice(index);
+             }
+          });
           return res.status(200).json({
             message: "Devolvio los cursos correctamente",
             exito: true,
             cursos: cursos,
+            cursoActual: inscripcion[0].cursoActual[0]
           });
         });
       } else {

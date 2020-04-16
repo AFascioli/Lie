@@ -42,6 +42,7 @@ export class CalificacionesEstudiantesComponent implements OnInit, OnDestroy {
   promedio = 0;
   dataSource: MatTableDataSource<any>;
   indexEst = 0;
+  cursoSeleccionado: boolean=false;
   private unsubscribe: Subject<void> = new Subject();
   _mobileQueryListener: () => void;
   mobileQuery: MediaQueryList;
@@ -175,6 +176,7 @@ export class CalificacionesEstudiantesComponent implements OnInit, OnDestroy {
   // }
 
   onCursoSeleccionado(curso, materia: NgModel) {
+    this.cursoSeleccionado=true;
     this.estudiantes = null;
     this.materias = null;
     materia.reset();
@@ -202,7 +204,8 @@ export class CalificacionesEstudiantesComponent implements OnInit, OnDestroy {
   }
 
   obtenerNotas(form: NgForm) {
-    if (form.value.curso != "" || form.value.materia != "") {
+    // Revisar condicion por si las dudas #resolve
+    if (form.value.curso != null && form.value.materia != null) {
       this.servicioCalificaciones
         .obtenerCalificacionesEstudiantesXCursoXMateria(
           form.value.curso,
@@ -282,6 +285,7 @@ export class CalificacionesEstudiantesComponent implements OnInit, OnDestroy {
         });
     }
   }
+
   contadorNotasValidas(index): number {
     var cont = 0;
     this.estudiantes[index].calificaciones.forEach(nota => {

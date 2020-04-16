@@ -42,14 +42,13 @@ export class InscripcionService {
   }
 
   //Obtiene todos los cursos a los que se puede inscribir un estudiante de acuerdo
-  //a su estado académico (promovido - libre)
-  //@params: id de la docente
+  //a su estado académico (promovido - libre) y su curso actual
   public obtenerCursosInscripcionEstudiante() {
     let params = new HttpParams().set(
       "idEstudiante",
       this.estudianteSeleccionado._id
     );
-    return this.http.get<{ message: string; exito: boolean; cursos: any[] }>(
+    return this.http.get<{ message: string; exito: boolean; cursos: any[], cursoActual: any }>(
       environment.apiUrl + "/curso/cursosDeEstudiante",
       { params: params }
     );

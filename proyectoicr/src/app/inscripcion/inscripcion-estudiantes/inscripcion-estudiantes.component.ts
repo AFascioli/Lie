@@ -48,6 +48,7 @@ export class InscripcionEstudianteComponent implements OnInit, OnDestroy {
   fechaDentroDeRangoInscripcion: boolean = true;
   private unsubscribe: Subject<void> = new Subject();
   isLoading: boolean=false;
+  cursoActual: any;
 
   constructor(
     public servicioEstudiante: EstudiantesService,
@@ -90,6 +91,7 @@ export class InscripcionEstudianteComponent implements OnInit, OnDestroy {
       .obtenerCursosInscripcionEstudiante()
       .pipe(takeUntil(this.unsubscribe))
       .subscribe(response => {
+        this.cursoActual=response.cursoActual;
         this.cursos = response.cursos;
         this.cursos.sort((a, b) =>
           a.curso.charAt(0) > b.curso.charAt(0)

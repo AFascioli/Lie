@@ -78,7 +78,7 @@
           class="opcion"
           [class.opcion-mobile]="mobileQuery.matches"
           (click)="onVisualizarPerfil(i)"
-          *ngIf="permisos.inscribirEstudiante >= 1"
+          *ngIf="permisos.inscribirEstudiante >= 1 && inscripto[i]"
           ><b>Visualizar perfil de estudiante</b></mat-card
         >
       </div>

@@ -49,6 +49,7 @@
           #materia="ngModel"
           matNativeControl
           required
+          [disabled]="!cursoSeleccionado"
           (selectionChange)="obtenerNotas(form)"
         >
           <mat-option
