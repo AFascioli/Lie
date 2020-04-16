@@ -474,82 +474,91 @@ router.post("/llegadaTarde", checkAuthMiddleware, (req, res) => {
         var ADcreada = null;
         var fechaHoy = new Date();
         fechaHoy.setHours(fechaHoy.getHours() - 3);
-        //Compara si la ultima asistencia fue el dia de hoy
-        if (!ClaseAsistencia.esFechaActual(ultimaAD)) {
-          var nuevaAsistencia = new AsistenciaDiaria({
-            idInscripcion: inscripcion._id,
-            fecha: fechaHoy,
-            presente: true,
-            retiroAnticipado: false,
-            valorInasistencia: 0,
-            justificado: false,
+        //Chequea si el estudiante tiene o no AsistenciaDiaria
+        if(ultimaAD==null){
+          return res.status(200).json({
+            message:
+              "El estudiante no tiene registrada una asistencia para el dia de hoy",
+            exito: false
           });
-          await nuevaAsistencia.save().then((ADultima) => {
-            ADcreada = ADultima;
-            ultimaAD = ADultima;
-          });
-        } else {
-          if (!ultimaAD.llegadaTarde) {
-            ultimaAD.presente = true;
-            ultimaAD.save();
+        }else{
+          //Compara si la ultima asistencia fue el dia de hoy
+          if (!ClaseAsistencia.esFechaActual(ultimaAD)) {
+            var nuevaAsistencia = new AsistenciaDiaria({
+              idInscripcion: inscripcion._id,
+              fecha: fechaHoy,
+              presente: true,
+              retiroAnticipado: false,
+              valorInasistencia: 0,
+              justificado: false,
+            });
+            await nuevaAsistencia.save().then((ADultima) => {
+              ADcreada = ADultima;
+              ultimaAD = ADultima;
+            });
           } else {
-            return res.status(500).json({
-              message:
-                "Ya exite una llegada tarde registrada para el estudiante seleccionado",
-              exito: false,
-            });
+            if (!ultimaAD.llegadaTarde) {
+              ultimaAD.presente = true;
+              ultimaAD.save();
+            } else {
+              return res.status(200).json({
+                message:
+                  "Ya exite una llegada tarde registrada para el estudiante seleccionado",
+                exito: false
+              });
+            }
           }
-        }
 
-        if (req.body.antes8am && inscripcion.contadorLlegadasTarde < 4) {
-          inscripcion.contadorLlegadasTarde =
-            inscripcion.contadorLlegadasTarde + 1;
-          if (ADcreada != null) {
-            inscripcion.asistenciaDiaria.push(ADcreada._id);
-          }
-          inscripcion.save();
-          ultimaAD.llegadaTarde = true;
-          ultimaAD.save().then(() => {
-            return res.status(500).json({
-              message:
-                "Llegada tarde antes de las 8 am registrada exitosamente",
-              exito: true,
-            });
-          });
-        } else {
-          if (req.body.antes8am && inscripcion.contadorLlegadasTarde == 4) {
-            inscripcion.contadorLlegadasTarde = 0;
-            inscripcion.inscripcion.contadorInasistenciasInjustificada =
-              inscripcion.contadorInasistenciasInjustificada + 1;
+          if (req.body.antes8am && inscripcion.contadorLlegadasTarde < 4) {
+            inscripcion.contadorLlegadasTarde =
+              inscripcion.contadorLlegadasTarde + 1;
             if (ADcreada != null) {
               inscripcion.asistenciaDiaria.push(ADcreada._id);
             }
             inscripcion.save();
-            ultimaAD.valorInasistencia = ultimaAD.valorInasistencia + 1;
             ultimaAD.llegadaTarde = true;
             ultimaAD.save().then(() => {
-              return res.status(500).json({
+              return res.status(200).json({
                 message:
                   "Llegada tarde antes de las 8 am registrada exitosamente",
-                exito: true,
+                exito: true
               });
             });
           } else {
-            inscripcion.contadorInasistenciasInjustificada =
-              inscripcion.contadorInasistenciasInjustificada + 0.5;
-            if (ADcreada != null) {
-              inscripcion.asistenciaDiaria.push(ADcreada._id);
-            }
-            inscripcion.save();
-            ultimaAD.valorInasistencia = ultimaAD.valorInasistencia + 0.5;
-            ultimaAD.llegadaTarde = true;
-            ultimaAD.save().then(() => {
-              return res.status(500).json({
-                message:
-                  "Llegada tarde después de las 8 am registrada exitosamente",
-                exito: true,
+            if (req.body.antes8am && inscripcion.contadorLlegadasTarde == 4) {
+              inscripcion.contadorLlegadasTarde = 0;
+              inscripcion.inscripcion.contadorInasistenciasInjustificada =
+                inscripcion.contadorInasistenciasInjustificada + 1;
+              if (ADcreada != null) {
+                inscripcion.asistenciaDiaria.push(ADcreada._id);
+              }
+              inscripcion.save();
+              ultimaAD.valorInasistencia = ultimaAD.valorInasistencia + 1;
+              ultimaAD.llegadaTarde = true;
+              ultimaAD.save().then(() => {
+                return res.status(200).json({
+                  message:
+                    "Llegada tarde antes de las 8 am registrada exitosamente",
+                  exito: true
+                });
               });
-            });
+            } else {
+              inscripcion.contadorInasistenciasInjustificada =
+                inscripcion.contadorInasistenciasInjustificada + 0.5;
+              if (ADcreada != null) {
+                inscripcion.asistenciaDiaria.push(ADcreada._id);
+              }
+              inscripcion.save();
+              ultimaAD.valorInasistencia = ultimaAD.valorInasistencia + 0.5;
+              ultimaAD.llegadaTarde = true;
+              ultimaAD.save().then(() => {
+                return res.status(200).json({
+                  message:
+                    "Llegada tarde después de las 8 am registrada exitosamente",
+                  exito: true,
+                });
+              });
+            }
           }
         }
       });

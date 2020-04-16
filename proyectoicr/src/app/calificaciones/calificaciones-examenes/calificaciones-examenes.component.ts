@@ -1,3 +1,4 @@
+import { NgForm } from '@angular/forms';
 import { CalificacionesService } from "../calificaciones.service";
 import { MatSnackBar } from "@angular/material";
 import { AutenticacionService } from "../../login/autenticacionService.service";
@@ -117,41 +118,48 @@ export class CalificacionesExamenesComponent implements OnInit, OnDestroy {
     );
   }
 
-  guardar() {
-    if (this.condicionExamen == "aprobado" && this.notaExamen > 5) {
-      this.servicioCalificaciones
-        .registrarCalificacionExamen(
-          this.idMateriaSeleccionada,
-          this.notaExamen
-        )
-        .pipe(takeUntil(this.unsubscribe))
-        .subscribe(rtdo => {
-          if (rtdo.exito) {
-            this.snackBar.open(rtdo.message, "", {
-              panelClass: ["snack-bar-exito"],
-              duration: 3000
-            });
-          } else {
-            this.snackBar.open(rtdo.message, "", {
-              panelClass: ["snack-bar-fracaso"],
-              duration: 3000
-            });
-          }
-        });
-    } else if (this.condicionExamen == "aprobado" && this.notaExamen < 6) {
-      this.snackBar.open(
-        "La calificación ingresada debe ser mayor o igual a 6.",
-        "",
-        {
-          panelClass: ["snack-bar-fracaso"],
-          duration: 3000
-        }
-      );
-    } else {
-      this.snackBar.open("Se ha registrado la materia desaprobada.", "", {
-        panelClass: ["snack-bar-exito"],
+  guardar(form: NgForm) {
+    if(form.invalid){
+      this.snackBar.open("Faltan campos por completar", "", {
+        panelClass: ["snack-bar-fracaso"],
         duration: 3000
       });
+    }else{
+      if (this.condicionExamen == "aprobado" && this.notaExamen > 5) {
+        this.servicioCalificaciones
+          .registrarCalificacionExamen(
+            this.idMateriaSeleccionada,
+            this.notaExamen
+          )
+          .pipe(takeUntil(this.unsubscribe))
+          .subscribe(rtdo => {
+            if (rtdo.exito) {
+              this.snackBar.open(rtdo.message, "", {
+                panelClass: ["snack-bar-exito"],
+                duration: 3000
+              });
+            } else {
+              this.snackBar.open(rtdo.message, "", {
+                panelClass: ["snack-bar-fracaso"],
+                duration: 3000
+              });
+            }
+          });
+      } else if (this.condicionExamen == "aprobado" && this.notaExamen < 6) {
+        this.snackBar.open(
+          "La calificación ingresada debe ser mayor o igual a 6.",
+          "",
+          {
+            panelClass: ["snack-bar-fracaso"],
+            duration: 3000
+          }
+        );
+      } else {
+        this.snackBar.open("Se ha registrado la materia desaprobada.", "", {
+          panelClass: ["snack-bar-exito"],
+          duration: 3000
+        });
+      }
     }
-  }
+    }
 }
