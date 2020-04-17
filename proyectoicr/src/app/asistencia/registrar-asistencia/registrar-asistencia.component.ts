@@ -35,7 +35,6 @@ export class RegistrarAsistenciaComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.cursoNotSelected = true;
-    console.log("ejecuto");
     this.fechaActual = new Date();
     if (
       this.fechaActual.toString().substring(0, 3) == "Sat" ||
