@@ -333,7 +333,7 @@ router.get("/cursosDeEstudiante", checkAuthMiddleware, (req, res) => {
             cursos.forEach((curso) => {
               var cursoConId = {
                 _id: curso._id,
-                curso: curso.nombre,
+                nombre: curso.nombre,
               };
               respuesta.push(cursoConId);
             });
@@ -341,6 +341,7 @@ router.get("/cursosDeEstudiante", checkAuthMiddleware, (req, res) => {
               message: "Devolvio los cursos correctamente",
               exito: true,
               cursos: respuesta,
+              cursoActual: ""
             });
           })
           .catch(() => {

@@ -91,12 +91,14 @@ export class InscripcionEstudianteComponent implements OnInit, OnDestroy {
       .obtenerCursosInscripcionEstudiante()
       .pipe(takeUntil(this.unsubscribe))
       .subscribe(response => {
-        this.cursoActual=response.cursoActual.nombre;
+        if(response.cursoActual!=""){
+          this.cursoActual=response.cursoActual.nombre;
+        }
         this.cursos = response.cursos;
         this.cursos.sort((a, b) =>
-          a.curso.charAt(0) > b.curso.charAt(0)
+          a.nombre.charAt(0) > b.nombre.charAt(0)
             ? 1
-            : b.curso.charAt(0) > a.curso.charAt(0)
+            : b.nombre.charAt(0) > a.nombre.charAt(0)
             ? -1
             : 0
         );
