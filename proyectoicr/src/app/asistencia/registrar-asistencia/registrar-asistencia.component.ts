@@ -58,7 +58,6 @@ export class RegistrarAsistenciaComponent implements OnInit, OnDestroy {
         .obtenerCursos()
         .pipe(takeUntil(this.unsubscribe))
         .subscribe((response) => {
-          console.log(response);
           this.cursos = response.cursos;
           // this.cursos.sort((a, b) =>
           //   a.curso.charAt(0) > b.curso.charAt(0)
@@ -97,6 +96,10 @@ export class RegistrarAsistenciaComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.unsubscribe))
       .subscribe(
         (respuesta) => {
+          // #wip recibo estado en respuesta.estudiantes.estado
+          respuesta.estudiantes.forEach((e) => {
+            console.log("Estado: ", e.estado);
+          });
           this.asistenciaNueva = respuesta.asistenciaNueva;
           this.estudiantesXDivision = respuesta.estudiantes.sort((a, b) =>
             a.apellido > b.apellido ? 1 : b.apellido > a.apellido ? -1 : 0
@@ -144,6 +147,14 @@ export class RegistrarAsistenciaComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.unsubscribe.next();
     this.unsubscribe.complete();
+  }
+
+  esSuspendido(estudiantesXDivision) {
+    if (estudiantesXDivision.estado == "5e9b47ca052c7e1e2c6701da") {
+      return true;
+    } else {
+      return false;
+    }
   }
 
   onCancelar() {

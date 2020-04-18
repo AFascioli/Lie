@@ -86,6 +86,7 @@ router.get("", checkAuthMiddleware, (req, res) => {
           },
           {
             $project: {
+              estado: 1,
               ultimaAsistencia: {
                 $slice: ["$asistenciaDiaria", -1],
               },
@@ -104,6 +105,7 @@ router.get("", checkAuthMiddleware, (req, res) => {
           },
           {
             $project: {
+              estado: 1,
               datosEstudiante: 1,
               "asistencia.presente": 1,
               "asistencia._id": 1,
@@ -136,6 +138,7 @@ router.get("", checkAuthMiddleware, (req, res) => {
                       idAsistencia: asistenciaGuardada._id,
                       fecha: fechaHoy,
                       presente: true,
+                      estado: estudiante.estado,
                     };
                     respuesta.push(estudianteRefinado);
                   });
@@ -148,6 +151,7 @@ router.get("", checkAuthMiddleware, (req, res) => {
                 idAsistencia: estudiante.asistencia[0]._id,
                 fecha: fechaHoy,
                 presente: estudiante.asistencia[0].presente,
+                estado: estudiante.estado,
               };
               respuesta.push(estudianteRefinado);
             }
@@ -184,6 +188,7 @@ router.get("", checkAuthMiddleware, (req, res) => {
               "estudiante._id": 1,
               "estudiante.nombre": 1,
               "estudiante.apellido": 1,
+              estado: 1,
             },
           },
         ]).then((documents) => {
@@ -197,6 +202,7 @@ router.get("", checkAuthMiddleware, (req, res) => {
               apellido: objConEstudiante.estudiante[0].apellido,
               fecha: fechaHoy,
               presente: true,
+              estado: objConEstudiante.estado,
             };
             estudiantesRedux.push(estudianteRedux);
           });
@@ -289,7 +295,7 @@ router.post("", checkAuthMiddleware, (req, res) => {
 });
 
 validarLibreInasistencias = function (idEst, valorInasistencia) {
-  Estado.find({ nombre: "Libre", ambito: "Inscripcion" })
+  Estado.find({ nombre: "Suspendido", ambito: "Inscripcion" })
     .then((estado) => {
       Inscripcion.findOne({
         idEstudiante: idEst,
@@ -311,7 +317,7 @@ validarLibreInasistencias = function (idEst, valorInasistencia) {
     })
     .catch(() => {
       res.status(500).json({
-        message: "No se pudo obtener el estado libre",
+        message: "No se pudo obtener el estado suspendido",
       });
     });
 };
