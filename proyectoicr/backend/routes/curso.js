@@ -990,12 +990,12 @@ router.post("/inscripcion", checkAuthMiddleware, async (req, res) => {
   };
 
   //Dada una id de curso, obtiene las ids de las materias que se dan en ese curso
-  var obtenerMateriasDeCurso = () => {
+  var obtenerMateriasDeCurso = (idCurso) => {
     return new Promise((resolve, reject) => {
       Curso.aggregate([
         {
           $match: {
-            _id: mongoose.Types.ObjectId(req.body.idCurso),
+            _id: mongoose.Types.ObjectId(idCurso),
           },
         },
         {
@@ -1010,11 +1010,12 @@ router.post("/inscripcion", checkAuthMiddleware, async (req, res) => {
           },
         },
         {
-          $project: {
-            "materiasDelCurso.idMateria": 1,
-            _id: 0,
-          },
-        },
+          $group: {
+              _id: {
+                  idMateria: "$materiasDelCurso.idMateria"
+              }
+          }
+        }
       ])
         .then((materiasDelCurso) => {
           resolve(materiasDelCurso);
@@ -1063,7 +1064,7 @@ router.post("/inscripcion", checkAuthMiddleware, async (req, res) => {
     await inscripcion.save();
   }
 
-  var materiasDelCurso = await obtenerMateriasDeCurso();
+  var materiasDelCurso = await obtenerMateriasDeCurso(req.body.idCurso);
   var cuotas = await crearCuotas();
   var estadoCursandoMateria = await obtenerEstadoCursandoMateria();
   var idsCXMNuevas = await ClaseCalifXMateria.crearCXM(
