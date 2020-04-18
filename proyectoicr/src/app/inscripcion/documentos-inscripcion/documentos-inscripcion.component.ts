@@ -28,6 +28,7 @@ export class DocumentosInscripcionComponent implements OnInit, OnDestroy {
   documentosEntregadosOnChange = false;
   fueraPeriodoCicloLectivo = false;
   fechaActual: Date;
+  isLoading = true;
   private unsubscribe: Subject<void> = new Subject();
   _mobileQueryListener: () => void;
   mobileQuery: MediaQueryList;
@@ -65,13 +66,14 @@ export class DocumentosInscripcionComponent implements OnInit, OnDestroy {
         .pipe(takeUntil(this.unsubscribe))
         .subscribe(response => {
           this.cursos = response.cursos;
-          this.cursos.sort((a, b) =>
-            a.curso.charAt(0) > b.curso.charAt(0)
-              ? 1
-              : b.curso.charAt(0) > a.curso.charAt(0)
-              ? -1
-              : 0
-          );
+         // this.cursos.sort((a, b) =>
+         //   a.curso.charAt(0) > b.curso.charAt(0)
+          //    ? 1
+          //    : b.curso.charAt(0) > a.curso.charAt(0)
+         //    ? -1
+         //     : 0
+      //    );
+      this.isLoading = false;
         });
     } else {
       this.fueraPeriodoCicloLectivo = true;
@@ -108,6 +110,7 @@ export class DocumentosInscripcionComponent implements OnInit, OnDestroy {
               ? -1
               : 0
         );
+
       });
     this.documentosEntregadosOnChange = false;
   }
