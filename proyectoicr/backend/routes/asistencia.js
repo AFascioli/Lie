@@ -287,14 +287,8 @@ router.post("", checkAuthMiddleware, (req, res) => {
   }
   return res
     .status(201)
-    .json({ message: "Asistencia registrada exitosamente", exito: true })
-    .catch((error) => {
-      res.status(500).json({
-        message:
-          "Ocurrió un error al querer publicar el estado de la asistencia para un curso. El error es: " +
-          error.message,
-      });
-    });
+    .json({ message: "Asistencia registrada exitosamente", exito: true });
+
 });
 
 //Este metodo filtra las inscripciones por estudiante y retorna el contador de inasistencias (injustificada y justificada)

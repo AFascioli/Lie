@@ -15,25 +15,25 @@ export class InasistenciasEstudianteComponent implements OnInit, OnDestroy {
   displayedColumns: string[] = ["tipo", "cantidad"];
   contadorInasistenciaJustificada: number;
   contadorInasistenciaInjustificada: number;
-  barChartData: any[];
-  barChartLabels: Label[];
+  barChartLabels: Label[]=[];
   private unsubscribe: Subject<void> = new Subject();
   public barChartOptions: ChartOptions = {
     responsive: true,
     legend: {
       labels: {
-        fontSize: 18,
-      },
+        fontSize: 18
+      }
     },
     plugins: {
       datalabels: {
         font: {
           size: 20,
-          weight: "bold",
-        },
-      },
-    },
+          weight: "bold"
+        }
+      }
+    }
   };
+  barDataSet=[];
 
   public barChartType: ChartType = "pie";
   public barChartPlugins = [pluginDataLabels];
@@ -57,13 +57,19 @@ export class InasistenciasEstudianteComponent implements OnInit, OnDestroy {
           this.contadorInasistenciaJustificada =
             response.contadorInasistenciasJustificada;
 
-          this.barChartData = [
-            this.contadorInasistenciaInjustificada,
-            this.contadorInasistenciaJustificada,
+          this.barDataSet=[
+            {
+              backgroundColor: ["rgb(263, 210, 97)","rgb(255, 185, 97)"],
+              data: [
+                response.contadorInasistenciasInjustificada,
+                response.contadorInasistenciasJustificada
+              ]
+            }
           ];
+
           this.barChartLabels = [
             "Inasistencias injustificadas",
-            "Inasistencias justificadas",
+            "Inasistencias justificadas"
           ];
         },
         (error) => {
