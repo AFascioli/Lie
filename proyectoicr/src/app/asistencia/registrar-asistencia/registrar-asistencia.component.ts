@@ -96,10 +96,6 @@ export class RegistrarAsistenciaComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.unsubscribe))
       .subscribe(
         (respuesta) => {
-          // #wip recibo estado en respuesta.estudiantes.estado
-          respuesta.estudiantes.forEach((e) => {
-            console.log("Estado: ", e.estado);
-          });
           this.asistenciaNueva = respuesta.asistenciaNueva;
           this.estudiantesXDivision = respuesta.estudiantes.sort((a, b) =>
             a.apellido > b.apellido ? 1 : b.apellido > a.apellido ? -1 : 0
