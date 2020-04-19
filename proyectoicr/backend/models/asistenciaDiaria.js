@@ -6,7 +6,7 @@ const asistenciaDiariaSchema= mongoose.Schema({
   presente: Boolean,
   retiroAnticipado: Boolean,
   valorInasistencia: Number,
-  llegadaTarde: Number,
+  llegadaTarde: Boolean,
   justificado: Boolean
 });
 

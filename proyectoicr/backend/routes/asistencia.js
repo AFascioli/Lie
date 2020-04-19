@@ -477,7 +477,7 @@ router.post("/llegadaTarde", checkAuthMiddleware, (req, res) => {
           });
         }else{
           //Compara si la ultima asistencia fue el dia de hoy
-          if (!ClaseAsistencia.esFechaActual(ultimaAD)) {
+          if (!ClaseAsistencia.esFechaActual(ultimaAD.fecha)) {
             var nuevaAsistencia = new AsistenciaDiaria({
               idInscripcion: inscripcion._id,
               fecha: fechaHoy,
@@ -493,7 +493,6 @@ router.post("/llegadaTarde", checkAuthMiddleware, (req, res) => {
           } else {
             if (!ultimaAD.llegadaTarde) {
               ultimaAD.presente = true;
-              ultimaAD.save();
             } else {
               return res.status(200).json({
                 message:
