@@ -88,6 +88,10 @@ export class MenuLateralComponent implements OnInit, OnDestroy {
       'inscripcion',
       this.domSanitizer.bypassSecurityTrustResourceUrl("../assets/inscripcion.svg")
     );
+    this.matIconRegistry.addSvgIcon(
+      'check',
+      this.domSanitizer.bypassSecurityTrustResourceUrl("../assets/check.svg")
+    );
   }
 
   ngOnDestroy() {
