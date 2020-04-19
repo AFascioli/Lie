@@ -293,15 +293,24 @@ router.post("", checkAuthMiddleware, (req, res) => {
 
 //Este metodo filtra las inscripciones por estudiante y retorna el contador de inasistencias (injustificada y justificada)
 router.get("/asistenciaEstudiante", (req, res) => {
-  Inscripcion.findOne({ idEstudiante: req.query.idEstudiante })
-    .then((estudiante) => {
+  Inscripcion.find({ idEstudiante: req.query.idEstudiante })
+    .then((inscripciones) => {
+      let contadorInjustificadas=0;
+      let contadorJustificadas=0;
+      if(inscripciones.length>1){
+        inscripciones.forEach(inscripcion => {
+          contadorInjustificadas+=inscripcion.contadorInasistenciasInjustificada;
+          contadorJustificadas+=inscripcion.contadorInasistenciasJustificada;
+        });
+      }else{
+        contadorInjustificadas=inscripciones.contadorInasistenciasInjustificada;
+        contadorJustificadas=inscripciones.contadorInasistenciasJustificada;
+      }
       res.status(200).json({
         message: "Operacion exitosa",
         exito: true,
-        contadorInasistenciasInjustificada:
-          estudiante.contadorInasistenciasInjustificada,
-        contadorInasistenciasJustificada:
-          estudiante.contadorInasistenciasJustificada,
+        contadorInasistenciasInjustificada:contadorInjustificadas,
+        contadorInasistenciasJustificada:contadorJustificadas
       });
     })
     .catch((error) => {

@@ -278,6 +278,7 @@ router.get("/cursosDeEstudiante", checkAuthMiddleware, (req, res) => {
     {
       $match: {
         idEstudiante: mongoose.Types.ObjectId(req.query.idEstudiante),
+        activa: true
       },
     },
     {
