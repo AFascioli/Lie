@@ -9,9 +9,10 @@ const CalificacionesXTrimestre = require("../models/calificacionesXTrimestre");
 const Estudiante = require("../models/estudiante");
 const Horario = require("../models/horario");
 const MateriaXCurso = require("../models/materiasXCurso");
+const AdultoResponsable = require("../models/adultoResponsable");
+const CicloLectivo = require("../models/cicloLectivo");
 const ClaseInscripcion = require("../classes/inscripcion");
 const ClaseCalifXMateria = require("../classes/calificacionXMateria");
-const AdultoResponsable = require("../models/adultoResponsable");
 const Suscripcion = require("../classes/suscripcion");
 const ClaseAsistencia = require("../classes/asistencia");
 
@@ -1042,6 +1043,22 @@ router.post("/inscripcion", checkAuthMiddleware, async (req, res) => {
     });
   };
 
+  var obtenerAñoCicloLectivo = () => {
+    let fechaActual= new Date();
+    return new Promise((resolve, reject) => {
+      CicloLectivo.findOne({año: fechaActual.getFullYear()
+      })
+        .then((cicloLectivo) => {
+          resolve(cicloLectivo.año);
+        })
+        .catch(() => {
+          res.status(500).json({
+            message: "Mensaje de error especifico",
+          });
+        });
+    });
+  };
+
   var cursoSeleccionado = await obtenerCurso();
   var estadoInscriptoInscripcion = await obtenerEstadoInscriptoInscripcion();
   var inscripcion = await obtenerInscripcion();
@@ -1066,6 +1083,7 @@ router.post("/inscripcion", checkAuthMiddleware, async (req, res) => {
     await inscripcion.save();
   }
 
+  var añoActual= await obtenerAñoCicloLectivo();
   var materiasDelCurso = await obtenerMateriasDeCurso(req.body.idCurso);
   var cuotas = await crearCuotas();
   var estadoCursandoMateria = await obtenerEstadoCursandoMateria();
@@ -1085,7 +1103,7 @@ router.post("/inscripcion", checkAuthMiddleware, async (req, res) => {
     contadorLlegadasTarde: 0,
     calificacionesXMateria: idsCXMNuevas,
     materiasPendientes: materiasPendientesNuevas,
-    año: 2019,
+    año: añoActual,
     cuotas: cuotas,
     sanciones: [],
   });
