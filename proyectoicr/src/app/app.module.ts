@@ -23,6 +23,7 @@ import {
   MatInputModule,
   MatPaginatorIntl,
 } from "@angular/material";
+// import { MatIconRegistry } from "@angular/material/icon";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { MatPaginatorModule } from "@angular/material/paginator";
@@ -230,6 +231,7 @@ import { MenuPrincipalAdultoResponsableComponent } from "./menu-principal-adulto
     MatSnackBarModule,
     MatGridListModule,
     ChartsModule,
+    // MatIconRegistry,
     MatPaginatorModule,
     NgxMaterialTimepickerModule,
     ImageUploadModule,

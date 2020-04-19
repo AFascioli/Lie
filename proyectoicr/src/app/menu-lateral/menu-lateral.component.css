@@ -193,11 +193,11 @@ hr {
 }
 
 .icon-usuario {
-  font-size: 100px;
+  font-size: 80px;
   /* margin: auto;
   margin-top: 8px;
   display: table; */
-  margin: 10% 0% 0% 10%;
+  margin: 8% 0% 0% 10%;
   color: beige;
 }
 .usuario {
@@ -218,7 +218,8 @@ hr {
  background-image: url("https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcSgASpiPnEAyktT3ldWZPC1vFkZoUln8iw7-mcIU3a4MzUmVSYP&usqp=CAU");
  background-repeat: no-repeat;
  background-size: cover;
-  display: flow-root;
+ display: flow-root;
+ height: 200px;
 }
 
 .sinExpansion

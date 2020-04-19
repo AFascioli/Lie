@@ -1,4 +1,5 @@
 import { CambiarPassword } from "./../login/cambiar-password.component";
+import { DomSanitizer } from "@angular/platform-browser";
 import {
   MatDialog,
   MatDialogRef,
@@ -19,6 +20,7 @@ import { EstudiantesService } from "../estudiantes/estudiante.service";
 import { MediaMatcher } from "@angular/cdk/layout";
 import { Subject } from "rxjs";
 import { takeUntil } from "rxjs/operators";
+import { MatIconRegistry } from "@angular/material/icon";
 
 @Component({
   selector: "app-menu-lateral",
@@ -51,11 +53,41 @@ export class MenuLateralComponent implements OnInit, OnDestroy {
     public dialog: MatDialog,
     public estudianteService: EstudiantesService,
     public changeDetectorRef: ChangeDetectorRef,
-    public media: MediaMatcher
+    public media: MediaMatcher,
+    private matIconRegistry: MatIconRegistry,
+    private domSanitizer: DomSanitizer
   ) {
     this.mobileQuery = media.matchMedia("(max-width: 1000px)"); //Estaba en 800, lo tiro a 1000
     this._mobileQueryListener = () => changeDetectorRef.detectChanges();
     this.mobileQuery.addListener(this._mobileQueryListener);
+    this.matIconRegistry.addSvgIcon(
+      'agenda',
+      this.domSanitizer.bypassSecurityTrustResourceUrl("../assets/agenda.svg")
+    );
+    this.matIconRegistry.addSvgIcon(
+      'addStudent',
+      this.domSanitizer.bypassSecurityTrustResourceUrl("../assets/addStudent.svg")
+    );
+    this.matIconRegistry.addSvgIcon(
+      'pagoCuota',
+      this.domSanitizer.bypassSecurityTrustResourceUrl("../assets/pagoCuota.svg")
+    );
+    this.matIconRegistry.addSvgIcon(
+      'calificacion',
+      this.domSanitizer.bypassSecurityTrustResourceUrl("../assets/calificacion.svg")
+    );
+    this.matIconRegistry.addSvgIcon(
+      'asistencia',
+      this.domSanitizer.bypassSecurityTrustResourceUrl("../assets/asistencia.svg")
+    );
+    this.matIconRegistry.addSvgIcon(
+      'findStudent',
+      this.domSanitizer.bypassSecurityTrustResourceUrl("../assets/findStudent.svg")
+    );
+    this.matIconRegistry.addSvgIcon(
+      'inscripcion',
+      this.domSanitizer.bypassSecurityTrustResourceUrl("../assets/inscripcion.svg")
+    );
   }
 
   ngOnDestroy() {
