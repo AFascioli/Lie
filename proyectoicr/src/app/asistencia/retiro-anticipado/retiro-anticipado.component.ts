@@ -148,16 +148,6 @@ export class RetiroAnticipadoComponent implements OnInit {
                 panelClass: ["snack-bar-exito"],
                 duration: 4500,
               });
-            } else if (resultadoOperacion == "retirado") {
-              this.snackBar.open(response.message, "", {
-                panelClass: ["snack-bar-fracaso"],
-                duration: 4500,
-              });
-            } else if (resultadoOperacion == "ausente") {
-              this.snackBar.open(response.message, "", {
-                panelClass: ["snack-bar-fracaso"],
-                duration: 4500,
-              });
             } else {
               this.snackBar.open(response.message, "", {
                 panelClass: ["snack-bar-fracaso"],

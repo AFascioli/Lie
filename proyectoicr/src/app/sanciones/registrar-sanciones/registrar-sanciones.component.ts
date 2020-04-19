@@ -75,33 +75,41 @@ export class RegistrarSancionesComponent implements OnInit, OnDestroy {
   }
 
   guardar(cantidad, tipoSancion, form: NgForm) {
-    let sancion = "";
-    switch (tipoSancion) {
-      case 0:
-        sancion = "Llamado de atencion";
-        break;
-      case 1:
-        sancion = "Apercibimiento";
-        break;
-      case 2:
-        sancion = "Amonestacion";
-        break;
-      case 3:
-        sancion = "Suspencion";
-        cantidad = 1;
-        break;
-    }
-    this.servicioSancion
-      .registrarSancion(this.fechaActual, cantidad, sancion, this.idEstudiante)
-      .pipe(takeUntil(this.unsubscribe))
-      .subscribe(rtdo => {
-        if (rtdo.exito) {
-          this.snackBar.open(rtdo.message, "", {
-            panelClass: ["snack-bar-exito"],
-            duration: 8000
-          });
-          form.resetForm();
-        }
+    if(form.valid){
+
+      let sancion = "";
+      switch (tipoSancion) {
+        case 0:
+          sancion = "Llamado de atencion";
+          break;
+        case 1:
+          sancion = "Apercibimiento";
+          break;
+        case 2:
+          sancion = "Amonestacion";
+          break;
+        case 3:
+          sancion = "Suspencion";
+          cantidad = 1;
+          break;
+      }
+      this.servicioSancion
+        .registrarSancion(this.fechaActual, cantidad, sancion, this.idEstudiante)
+        .pipe(takeUntil(this.unsubscribe))
+        .subscribe(rtdo => {
+          if (rtdo.exito) {
+            this.snackBar.open(rtdo.message, "", {
+              panelClass: ["snack-bar-exito"],
+              duration: 4000
+            });
+            form.resetForm();
+          }
+        });
+    }else{
+      this.snackBar.open("Faltan campos por completar", "", {
+        panelClass: ["snack-bar-fracaso"],
+        duration: 4000
       });
+    }
   }
 }
