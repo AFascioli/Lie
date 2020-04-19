@@ -308,19 +308,20 @@ router.get("/cursosDeEstudiante", checkAuthMiddleware, (req, res) => {
         //El estudiante está inscripto a un curso y por ende se fija al curso al que se puede inscribir
         let siguiente;
         siguiente = ClaseInscripcion.obtenerAñoHabilitado(inscripcion);
+        let cursosDisponibles=[];
 
         //Buscamos los cursos que corresponden al que se puede inscribir el estudiante
         Curso.find({ nombre: { $regex: siguiente } }).then((cursos) => {
-          // Se elimina el curso al que esta inscripto el estudiante
-          cursos.forEach((curso, index)  => {
-             if(curso.nombre==inscripcion[0].cursoActual[0].nombre){
-              cursos.splice(index);
+          //Se agregan todos los cursos disponibles para inscribirse excepto el curso actual
+          cursos.forEach((curso)  => {
+             if(!(curso.nombre==inscripcion[0].cursoActual[0].nombre)){
+              cursosDisponibles.push(curso);
              }
           });
           return res.status(200).json({
             message: "Devolvio los cursos correctamente",
             exito: true,
-            cursos: cursos,
+            cursos: cursosDisponibles,
             cursoActual: inscripcion[0].cursoActual[0]
           });
         });
