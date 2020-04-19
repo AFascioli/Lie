@@ -620,4 +620,39 @@ router.get("/agenda", checkAuthMiddleware, (req, res) => {
     });
 });
 
+router.get("/suspendido", (req, res) => {
+  Inscripcion.findOne({
+    idEstudiante: mongoose.Types.ObjectId(req.query.idEstudiante),
+    activa: true,
+  })
+    .then((inscripcion) => {
+      Estado.findOne({
+        nombre: "Suspendido",
+        ambito: "Inscripcion",
+      }).then((estado) => {
+        if (inscripcion.estado.toString() == estado._id.toString()) {
+          res.status(200).json({
+            message: "El estudiante esta suspendido",
+            exito: true,
+            inscripcion: inscripcion.estado,
+            estado: estado._id,
+          });
+        } else {
+          res.status(200).json({
+            message: "El estudiante no esta suspendido",
+            exito: false,
+            inscripcion: inscripcion.estado,
+            estado: estado._id,
+          });
+        }
+      });
+    })
+    .catch(() => {
+      res.status(500).json({
+        message:
+          "Ah ocurrido un error al validar si el estudiante esta suspendido.",
+      });
+    });
+});
+
 module.exports = router;

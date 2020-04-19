@@ -20,6 +20,7 @@ export class ListaEstudiantesComponent implements OnInit, OnDestroy {
   estudiantes: Estudiante[] = [];
   inscripto: any[] = [];
   cursos: any[] = [];
+  suspendido: any[] = [];
   private unsubscribe: Subject<void> = new Subject();
   permisos = {
     notas: 0,
@@ -72,7 +73,16 @@ export class ListaEstudiantesComponent implements OnInit, OnDestroy {
               .pipe(takeUntil(this.unsubscribe))
               .subscribe((response) => {
                 this.inscripto[i] = response.exito;
-                this.cursos[i]=response.curso;
+                this.cursos[i] = response.curso;
+              });
+
+            this.servicio
+              .esEstudianteSuspendido(this.estudiantes[i]._id)
+              .pipe(takeUntil(this.unsubscribe))
+              .subscribe((response) => {
+                // #wip
+                console.log(response.exito);
+                this.suspendido[i] = response.exito;
               });
           }
         });
@@ -150,5 +160,9 @@ export class ListaEstudiantesComponent implements OnInit, OnDestroy {
   onRegistrarExamenes(indice) {
     this.asignarEstudianteSeleccionado(indice);
     this.router.navigate(["./calificacionesExamenes"]);
+  }
+
+  onReincorporar(indice) {
+    this.asignarEstudianteSeleccionado(indice);
   }
 }

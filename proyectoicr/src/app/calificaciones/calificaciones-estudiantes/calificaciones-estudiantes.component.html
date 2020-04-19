@@ -37,7 +37,7 @@
           (selectionChange)="onCursoSeleccionado(curso, materia)"
         >
           <mat-option *ngFor="let objCurso of cursos" [value]="objCurso.id">
-            {{ objCurso.curso }}
+            {{ objCurso.nombre }}
           </mat-option>
         </mat-select>
       </mat-form-field>
