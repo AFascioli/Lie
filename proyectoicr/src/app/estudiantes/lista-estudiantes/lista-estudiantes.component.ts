@@ -80,8 +80,6 @@ export class ListaEstudiantesComponent implements OnInit, OnDestroy {
               .esEstudianteSuspendido(this.estudiantes[i]._id)
               .pipe(takeUntil(this.unsubscribe))
               .subscribe((response) => {
-                // #wip
-                console.log(response.exito);
                 this.suspendido[i] = response.exito;
               });
           }
@@ -164,5 +162,6 @@ export class ListaEstudiantesComponent implements OnInit, OnDestroy {
 
   onReincorporar(indice) {
     this.asignarEstudianteSeleccionado(indice);
+    console.log("Accion de reincorporar");
   }
 }
