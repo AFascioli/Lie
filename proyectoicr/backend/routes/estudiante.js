@@ -655,4 +655,31 @@ router.get("/suspendido", (req, res) => {
     });
 });
 
+router.get("/reincorporacion", (req, res) => {
+  Estado.findOne({
+    nombre: "Inscripto",
+    ambito: "Inscripcion",
+  }).then((estado) => {
+    Inscripcion.findOneAndUpdate(
+      { idEstudiante: mongoose.Types.ObjectId(req.query.idEstudiante) },
+      {
+        estado: estado._id,
+      }
+    )
+      .then(() => {
+        res.status(200).json({
+          message: "El estudiante esta reincorporado",
+          exito: true,
+        });
+      })
+      .catch(() => {
+        res.status(500).json({
+          message:
+            "Ah ocurrido un error al registrar la reincorporación del estudiante.",
+          exito: false,
+        });
+      });
+  });
+});
+
 module.exports = router;

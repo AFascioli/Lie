@@ -323,6 +323,19 @@ export class EstudiantesService implements OnDestroy {
     });
   }
 
+  public reincorporarEstudianteSeleccionado() {
+    let params = new HttpParams().set(
+      "idEstudiante",
+      this.estudianteSeleccionado._id
+    );
+    return this.http.get<{
+      message: string;
+      exito: boolean;
+    }>(environment.apiUrl + "/estudiante/reincorporacion", {
+      params: params,
+    });
+  }
+
   //Obtiene un estudiante dada su id
   //@params: id del estudiante
   public obtenerEstudiantePorId(idEstudiante: string) {

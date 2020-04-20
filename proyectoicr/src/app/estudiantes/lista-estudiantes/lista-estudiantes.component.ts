@@ -10,6 +10,7 @@ import { Router } from "@angular/router";
 import { Subject } from "rxjs";
 import { takeUntil } from "rxjs/operators";
 import { MediaMatcher } from "@angular/cdk/layout";
+import { MatDialogRef, MatDialog, MatSnackBar } from "@angular/material";
 
 @Component({
   selector: "app-lista-estudiantes",
@@ -45,7 +46,9 @@ export class ListaEstudiantesComponent implements OnInit, OnDestroy {
     public router: Router,
     public authService: AutenticacionService,
     public changeDetectorRef: ChangeDetectorRef,
-    public media: MediaMatcher
+    public media: MediaMatcher,
+    public dialog: MatDialog,
+    private snackBar: MatSnackBar
   ) {
     this.mobileQuery = media.matchMedia("(max-width: 700px)");
     this._mobileQueryListener = () => changeDetectorRef.detectChanges();
@@ -162,6 +165,48 @@ export class ListaEstudiantesComponent implements OnInit, OnDestroy {
 
   onReincorporar(indice) {
     this.asignarEstudianteSeleccionado(indice);
-    console.log("Accion de reincorporar");
+    this.dialog
+      .open(ReincorporarPopupComponent, {
+        width: "250px",
+      })
+      .afterClosed()
+      .pipe(takeUntil(this.unsubscribe))
+      .subscribe((result) => {
+        if (result) {
+          this.servicio
+            .reincorporarEstudianteSeleccionado()
+            .pipe(takeUntil(this.unsubscribe))
+            .subscribe((response) => {
+              if (response.exito) {
+                this.suspendido[indice] = false;
+                this.snackBar.open(response.message, "", {
+                  panelClass: ["snack-bar-exito"],
+                  duration: 4000,
+                });
+              } else {
+                this.snackBar.open(response.message, "", {
+                  panelClass: ["snack-bar-fracaso"],
+                  duration: 4000,
+                });
+              }
+            });
+        }
+      });
+  }
+}
+
+@Component({
+  selector: "app-reincorporar-popup",
+  templateUrl: "./reincorporar-popup.component.html",
+  styleUrls: ["../alta-estudiantes/alta-estudiantes.component.css"],
+})
+export class ReincorporarPopupComponent {
+  constructor(public dialogRef: MatDialogRef<ReincorporarPopupComponent>) {}
+
+  onYesClick(): void {
+    this.dialogRef.close(true);
+  }
+  onNoClick(): void {
+    this.dialogRef.close(false);
   }
 }
