@@ -311,7 +311,6 @@ router.get("/cursosDeEstudiante", checkAuthMiddleware, (req, res) => {
         let siguiente;
         siguiente = ClaseInscripcion.obtenerAñoHabilitado(inscripcion);
         let cursosDisponibles=[];
-
         //Buscamos los cursos que corresponden al que se puede inscribir el estudiante
         Curso.find({ nombre: { $regex: siguiente } }).then((cursos) => {
           //Se agregan todos los cursos disponibles para inscribirse excepto el curso actual
@@ -1062,12 +1061,15 @@ router.post("/inscripcion", checkAuthMiddleware, async (req, res) => {
   var cursoSeleccionado = await obtenerCurso();
   var estadoInscriptoInscripcion = await obtenerEstadoInscriptoInscripcion();
   var inscripcion = await obtenerInscripcion();
+  let cuotasAnteriores=[];
 
   //Si el estudiante tiene una inscripcion anteriormente, se obtienen las CXM que esten desaprobadas,
   //ya sea las que estan en materiasPendientes y las CXM con estado "Desaprobada"
   var materiasPendientesNuevas = [];
   if (inscripcion != null) {
     inscripcion.activa = false;
+    cuotasAnteriores=inscripcion.cuotas;
+
     var estadoDesaprobadaMateria = await obtenerEstadoDesaprobadaMateria();
     if (inscripcion.materiasPendientes.length != 0) {
       //Revisar logica
@@ -1085,7 +1087,12 @@ router.post("/inscripcion", checkAuthMiddleware, async (req, res) => {
 
   var añoActual= await obtenerAñoCicloLectivo();
   var materiasDelCurso = await obtenerMateriasDeCurso(req.body.idCurso);
-  var cuotas = await crearCuotas();
+  var cuotas=[];
+  if(cuotasAnteriores.length==0){
+    cuotas = await crearCuotas();
+  }else{
+    cuotas=cuotasAnteriores;
+  }
   var estadoCursandoMateria = await obtenerEstadoCursandoMateria();
   var idsCXMNuevas = await ClaseCalifXMateria.crearCXM(
     materiasDelCurso,

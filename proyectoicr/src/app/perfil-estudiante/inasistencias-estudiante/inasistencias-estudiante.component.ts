@@ -56,7 +56,6 @@ export class InasistenciasEstudianteComponent implements OnInit, OnDestroy {
             response.contadorInasistenciasInjustificada;
           this.contadorInasistenciaJustificada =
             response.contadorInasistenciasJustificada;
-
           this.barDataSet=[
             {
               backgroundColor: ["rgb(263, 210, 97)","rgb(255, 185, 97)"],

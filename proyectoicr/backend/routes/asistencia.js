@@ -53,10 +53,10 @@ router.get("", checkAuthMiddleware, (req, res) => {
     },
   ])
     .then((ultimaAsistencia) => {
-      if(ultimaAsistencia.length==0){
+      if (ultimaAsistencia.length == 0) {
         return res
-        .status(200)
-        .json({ estudiantes: [], asistenciaNueva: "true" });
+          .status(200)
+          .json({ estudiantes: [], asistenciaNueva: "true" });
       }
       var fechaHoy = new Date();
       fechaHoy.setHours(fechaHoy.getHours() - 3);
@@ -125,7 +125,7 @@ router.get("", checkAuthMiddleware, (req, res) => {
                 presente: true,
                 valorInasistencia: 0,
                 justificado: false,
-                llegadaTarde: 0,
+                llegadaTarde: false,
               });
               await asistenciaNuevaEstudiante
                 .save()
@@ -241,6 +241,7 @@ router.post("", checkAuthMiddleware, (req, res) => {
           presente: estudiante.presente,
           valorInasistencia: valorInasistencia,
           justificado: false,
+          llegadaTarde: false,
         });
 
         await asistenciaEstudiante.save().then(async (asistenciaDiaria) => {
@@ -288,29 +289,31 @@ router.post("", checkAuthMiddleware, (req, res) => {
   return res
     .status(201)
     .json({ message: "Asistencia registrada exitosamente", exito: true });
-
 });
 
 //Este metodo filtra las inscripciones por estudiante y retorna el contador de inasistencias (injustificada y justificada)
 router.get("/asistenciaEstudiante", (req, res) => {
   Inscripcion.find({ idEstudiante: req.query.idEstudiante })
     .then((inscripciones) => {
-      let contadorInjustificadas=0;
-      let contadorJustificadas=0;
-      if(inscripciones.length>1){
-        inscripciones.forEach(inscripcion => {
-          contadorInjustificadas+=inscripcion.contadorInasistenciasInjustificada;
-          contadorJustificadas+=inscripcion.contadorInasistenciasJustificada;
+      let contadorInjustificadas = 0;
+      let contadorJustificadas = 0;
+      if (inscripciones.length > 1) {
+        inscripciones.forEach((inscripcion) => {
+          contadorInjustificadas +=
+            inscripcion.contadorInasistenciasInjustificada;
+          contadorJustificadas += inscripcion.contadorInasistenciasJustificada;
         });
-      }else{
-        contadorInjustificadas=inscripciones.contadorInasistenciasInjustificada;
-        contadorJustificadas=inscripciones.contadorInasistenciasJustificada;
+      } else {
+        contadorInjustificadas =
+          inscripciones[0].contadorInasistenciasInjustificada;
+        contadorJustificadas =
+          inscripciones[0].contadorInasistenciasJustificada;
       }
       res.status(200).json({
         message: "Operacion exitosa",
         exito: true,
-        contadorInasistenciasInjustificada:contadorInjustificadas,
-        contadorInasistenciasJustificada:contadorJustificadas
+        contadorInasistenciasInjustificada: contadorInjustificadas,
+        contadorInasistenciasJustificada: contadorJustificadas,
       });
     })
     .catch((error) => {
@@ -477,14 +480,15 @@ router.post("/llegadaTarde", checkAuthMiddleware, (req, res) => {
         var ADcreada = null;
         var fechaHoy = new Date();
         fechaHoy.setHours(fechaHoy.getHours() - 3);
+        let estudianteAusente = false;
         //Chequea si el estudiante tiene o no AsistenciaDiaria
-        if(ultimaAD==null){
+        if (ultimaAD == null) {
           return res.status(200).json({
             message:
               "El estudiante no tiene registrada una asistencia para el dia de hoy",
-            exito: false
+            exito: false,
           });
-        }else{
+        } else {
           //Compara si la ultima asistencia fue el dia de hoy
           if (!ClaseAsistencia.esFechaActual(ultimaAD.fecha)) {
             var nuevaAsistencia = new AsistenciaDiaria({
@@ -494,19 +498,26 @@ router.post("/llegadaTarde", checkAuthMiddleware, (req, res) => {
               retiroAnticipado: false,
               valorInasistencia: 0,
               justificado: false,
+              llegadaTarde: true,
             });
             await nuevaAsistencia.save().then((ADultima) => {
               ADcreada = ADultima;
               ultimaAD = ADultima;
             });
           } else {
+            //Estudiante tiene una AD que se la crearon el dia de hoy
             if (!ultimaAD.llegadaTarde) {
-              ultimaAD.presente = true;
+              //No tiene una llegada tarde registrada
+              if (!ultimaAD.presente) {
+                //Estaba registrado como ausente
+                ultimaAD.presente = true;
+                estudianteAusente = true; //Si el estudiante estuvo ausente, no se le deberia sumar mas inasistencia
+              }
             } else {
               return res.status(200).json({
                 message:
                   "Ya exite una llegada tarde registrada para el estudiante seleccionado",
-                exito: false
+                exito: false,
               });
             }
           }
@@ -523,7 +534,7 @@ router.post("/llegadaTarde", checkAuthMiddleware, (req, res) => {
               return res.status(200).json({
                 message:
                   "Llegada tarde antes de las 8 am registrada exitosamente",
-                exito: true
+                exito: true,
               });
             });
           } else {
@@ -541,17 +552,20 @@ router.post("/llegadaTarde", checkAuthMiddleware, (req, res) => {
                 return res.status(200).json({
                   message:
                     "Llegada tarde antes de las 8 am registrada exitosamente",
-                  exito: true
+                  exito: true,
                 });
               });
             } else {
-              inscripcion.contadorInasistenciasInjustificada =
-                inscripcion.contadorInasistenciasInjustificada + 0.5;
+              if (!estudianteAusente) {
+                //Si el estudiante estuvo ausente, no se le deberia sumar mas inasistencia porque ya se le sumo cuando se le toma asistencia
+                inscripcion.contadorInasistenciasInjustificada =
+                  inscripcion.contadorInasistenciasInjustificada + 0.5;
+              }
               if (ADcreada != null) {
                 inscripcion.asistenciaDiaria.push(ADcreada._id);
               }
               inscripcion.save();
-              ultimaAD.valorInasistencia = ultimaAD.valorInasistencia + 0.5;
+              ultimaAD.valorInasistencia = 0.5;
               ultimaAD.llegadaTarde = true;
               ultimaAD.save().then(() => {
                 return res.status(200).json({
@@ -593,7 +607,7 @@ router.post("/retiro", checkAuthMiddleware, (req, res) => {
           actualizacionInasistencia = 1;
         }
         AsistenciaDiaria.findById(inscripcion.asistenciaDiaria[0])
-          .select({ retiroAnticipado: 1, presente: 1 })
+          .select({ retiroAnticipado: 1, presente: 1, justificado:1 })
           .then((asistencia) => {
             if (asistencia) {
               if (!asistencia.presente) {
@@ -617,9 +631,11 @@ router.post("/retiro", checkAuthMiddleware, (req, res) => {
                     }
                   )
                     .then(() => {
-                      inscripcion.contadorInasistenciasInjustificada =
-                        inscripcion.contadorInasistenciasInjustificada +
-                        actualizacionInasistencia;
+                      if(!asistencia.justificado){
+                        //Si el estudiante tiene ya registrada una falta pero esta justificada, el retiro no deberia sumar mas inasistencias
+                        inscripcion.contadorInasistenciasInjustificada +=
+                          actualizacionInasistencia;
+                      }
                       inscripcion
                         .save()
                         .then(() => {
