@@ -66,10 +66,11 @@ export class RegistrarAsistenciaComponent implements OnInit, OnDestroy {
               ? -1
               : 0
           );
-          this.isLoading = false;
+          this.isLoading=false;
         });
     } else {
       this.fueraPeriodoCicloLectivo = true;
+      this.isLoading=false;
     }
   }
 

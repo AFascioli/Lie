@@ -2,7 +2,7 @@
   Definir agenda de curso
 </h1>
 <mat-card class="card-body-componente">
-  <form #form="ngForm">
+  <form #form="ngForm" *ngIf="!fueraPeriodoDefinirAgenda">
     <mat-form-field>
       <mat-select
         placeholder="Seleccione curso"
@@ -25,7 +25,7 @@
         mat-table
         matSort
         [dataSource]="dataSource"
-        [hidden]="!cursoSelected || dataSource.data.length==0"
+        [hidden]="!cursoSelected || dataSource.data.length == 0"
         [class.table-mobile]="mobileQuery.matches"
       >
         <ng-container matColumnDef="Materia">
@@ -251,7 +251,11 @@
       </table>
     </div>
   </form>
-  <div class="div-agregar" [class.div-agregar-mobile]="mobileQuery.matches">
+  <div
+    class="div-agregar"
+    *ngIf="!fueraPeriodoDefinirAgenda"
+    [class.div-agregar-mobile]="mobileQuery.matches"
+  >
     <button
       mat-raised-button
       class="button-agregar"
@@ -262,12 +266,17 @@
       Agregar horario
     </button>
   </div>
+  <p class="aviso" *ngIf="fueraPeriodoDefinirAgenda">
+    Atención, estamos fuera del periodo correspondiente para definir las agendas
+    de los cursos
+  </p>
   <div class="div-guardar">
     <button
       mat-raised-button
       class="button-primary"
       (click)="onGuardar()"
       *ngIf="cursoSelected && dataSource.data.length != 0 && huboCambios"
+      [disabled]="fueraPeriodoDefinirAgenda"
     >
       Guardar
     </button>

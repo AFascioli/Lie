@@ -57,7 +57,7 @@
       </mat-form-field>
     </div>
   </div>
-  <!-- <p class="aviso" *ngIf="fueraPeriodoCicloLectivo==true">Atención, no se puede registrar las cuotas debido a que estamos fuera del ciclo lectivo </p>  -->
+  <p class="aviso" *ngIf="fueraPeriodoCicloLectivo">Atención, no se puede registrar las cuotas debido a que estamos fuera del ciclo lectivo </p>
   <br />
   <div *ngIf="!cursoNotSelected">
     <table mat-table [dataSource]="cuotasXEstudiante" *ngIf="cuotasXEstudiante.length != 0">

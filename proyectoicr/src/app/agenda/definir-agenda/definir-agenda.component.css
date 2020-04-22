@@ -72,6 +72,11 @@ button {
   margin-top: 3%;
 }
 
+.aviso{
+  text-align: center;
+  margin-top: 2% !important;
+}
+
 th.mat-sort-header-sorted {
   color: black;
 }

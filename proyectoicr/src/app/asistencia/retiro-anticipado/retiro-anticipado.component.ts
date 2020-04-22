@@ -90,6 +90,7 @@ export class RetiroAnticipadoComponent implements OnInit {
         });
     } else {
       this.fueraPeriodoCicloLectivo = true;
+      this.isLoading = false;
     }
   }
 
