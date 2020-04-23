@@ -53,14 +53,15 @@ export class RegistrarSancionesComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.fechaActual = new Date();
     if (
-      !this.fechaActualEnCicloLectivo() ||
-      this.autenticacionService.getRol() != "Admin"
+      this.fechaActualEnCicloLectivo() ||
+      this.autenticacionService.getRol() == "Admin"
     ) {
-       this.fueraPeriodoCicloLectivo = true;
+      this.apellidoEstudiante = this.servicioEstudiante.estudianteSeleccionado.apellido;
+      this.nombreEstudiante = this.servicioEstudiante.estudianteSeleccionado.nombre;
+      this.idEstudiante = this.servicioEstudiante.estudianteSeleccionado._id;
+    }else{
+      this.fueraPeriodoCicloLectivo = true;
     }
-    this.apellidoEstudiante = this.servicioEstudiante.estudianteSeleccionado.apellido;
-    this.nombreEstudiante = this.servicioEstudiante.estudianteSeleccionado.nombre;
-    this.idEstudiante = this.servicioEstudiante.estudianteSeleccionado._id;
   }
 
 //Devuelve true si la fecha actual se encuentra dentro del ciclo lectivo, y false caso contrario.
@@ -98,11 +99,11 @@ fechaActualEnCicloLectivo() {
     }
   }
 
-  guardar(cantidad, tipoSancion, form: NgForm) {
+  guardar(form: NgForm) {
     if(form.valid){
-
       let sancion = "";
-      switch (tipoSancion) {
+      let cantidad=form.value.cantidadSancion;
+      switch (form.value.sancion) {
         case 0:
           sancion = "Llamado de atencion";
           break;
