@@ -34,6 +34,7 @@ export class CalificacionesEstudiantesComponent implements OnInit, OnDestroy {
   ];
   trimestreSeleccionado: string;
   trimestreActual: string = "fuera";
+  idDocente: string;
   rolConPermisosEdicion = false;
   isLoading = true;
   fechaActual: Date;
@@ -54,7 +55,7 @@ export class CalificacionesEstudiantesComponent implements OnInit, OnDestroy {
     public servicioCalificaciones: CalificacionesService,
     public popup: MatDialog,
     private snackBar: MatSnackBar,
-    public servicioEstudianteAutenticacion: AutenticacionService,
+    public servicioAutenticacion: AutenticacionService,
     public changeDetectorRef: ChangeDetectorRef,
     public media: MediaMatcher
   ) {
@@ -76,7 +77,7 @@ export class CalificacionesEstudiantesComponent implements OnInit, OnDestroy {
   }
 
   validarPermisos() {
-    this.servicioEstudianteAutenticacion
+    this.servicioAutenticacion
       .obtenerPermisosDeRol()
       .pipe(takeUntil(this.unsubscribe))
       .subscribe(res => {
@@ -88,20 +89,23 @@ export class CalificacionesEstudiantesComponent implements OnInit, OnDestroy {
   }
 
   obtenerCursos() {
-    if (this.servicioEstudianteAutenticacion.getRol() == "Docente") {
-      this.servicioEstudiante
-        .obtenerCursosDeDocente(this.servicioEstudianteAutenticacion.getId())
-        .pipe(takeUntil(this.unsubscribe))
-        .subscribe(response => {
-          this.cursos = response.cursos;
-          this.cursos.sort((a, b) =>
-            a.curso.charAt(0) > b.curso.charAt(0)
-              ? 1
-              : b.curso.charAt(0) > a.curso.charAt(0)
-              ? -1
-              : 0
-          );
-        });
+    if (this.servicioAutenticacion.getRol() == "Docente") {
+      this.servicioAutenticacion.obtenerIdEmpleado(this.servicioAutenticacion.getId()).subscribe(response  => {
+        this.idDocente=response.id;
+        this.servicioEstudiante
+          .obtenerCursosDeDocente(this.idDocente)
+          .pipe(takeUntil(this.unsubscribe))
+          .subscribe(response => {
+            this.cursos = response.cursos;
+            this.cursos.sort((a, b) =>
+              a.curso.charAt(0) > b.curso.charAt(0)
+                ? 1
+                : b.curso.charAt(0) > a.curso.charAt(0)
+                ? -1
+                : 0
+            );
+          });
+      })
     } else {
       this.servicioEstudiante
         .obtenerCursos()
@@ -120,7 +124,7 @@ export class CalificacionesEstudiantesComponent implements OnInit, OnDestroy {
   }
 
   obtenerTrimestreActual() {
-    let fechas = this.servicioEstudianteAutenticacion.getFechasCicloLectivo();
+    let fechas = this.servicioAutenticacion.getFechasCicloLectivo();
     let fechaInicioPrimerTrimestre = new Date(
       fechas.fechaInicioPrimerTrimestre
     );
@@ -175,6 +179,7 @@ export class CalificacionesEstudiantesComponent implements OnInit, OnDestroy {
   //   this.dataSource.filter = filterValue;
   // }
 
+  //Se obtienen las materias del curso seleccionado segun el docente logueado o todas si el rol logueado es Admin
   onCursoSeleccionado(curso, materia: NgModel) {
     this.cursoSeleccionado=true;
     this.estudiantes = null;
@@ -182,12 +187,12 @@ export class CalificacionesEstudiantesComponent implements OnInit, OnDestroy {
     materia.reset();
     if (
       this.rolConPermisosEdicion &&
-      this.servicioEstudianteAutenticacion.getRol() != "Admin"
+      this.servicioAutenticacion.getRol() != "Admin"
     ) {
       this.servicioEstudiante
         .obtenerMateriasXCursoXDocente(
           curso.value,
-          this.servicioEstudianteAutenticacion.getId()
+          this.idDocente
         )
         .pipe(takeUntil(this.unsubscribe))
         .subscribe(respuesta => {
