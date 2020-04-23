@@ -32,6 +32,7 @@ export class ListaEstudiantesComponent implements OnInit, OnDestroy {
     cuotas: 0,
   };
   isLoading: boolean = true;
+  rol:string;
   _mobileQueryListener: () => void;
   mobileQuery: MediaQueryList;
 
@@ -93,6 +94,7 @@ export class ListaEstudiantesComponent implements OnInit, OnDestroy {
       .subscribe((response) => {
         this.permisos = response.permisos;
       });
+      this.rol=this.authService.getRol();
   }
 
   asignarEstudianteSeleccionado(indice) {

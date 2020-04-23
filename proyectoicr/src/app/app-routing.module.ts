@@ -118,7 +118,7 @@ const routes: Routes = [
         path: "registrarSancion",
         component: RegistrarSancionesComponent,
         canActivate: [RouteGuard, RoleGuard],
-        data: { rolesValidos: ["Admin", "Preceptor", "Director", "Docente"] },
+        data: { rolesValidos: ["Admin", "Preceptor", "Director"] },
       },
       {
         path: "retiroAnticipado",

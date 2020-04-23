@@ -15,6 +15,11 @@
   grid-template-rows: repeat(2,150px);
 }
 
+.rol-docente {
+  grid-template-columns: repeat(3,1fr);
+  grid-template-rows: repeat(1,150px);
+}
+
 .grid-container-mobile {
   width: 95%;
   margin-left: auto;
