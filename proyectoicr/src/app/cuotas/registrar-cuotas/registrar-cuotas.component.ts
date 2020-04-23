@@ -63,8 +63,8 @@ export class RegistrarCuotasComponent implements OnInit, OnDestroy {
     }
 
     if (
-      !this.fechaActualEnCicloLectivo() ||
-      this.autenticacionService.getRol() != "Admin"
+      !(this.fechaActualEnCicloLectivo() ||
+      this.autenticacionService.getRol() == "Admin")
     ) {
        this.fueraPeriodoCicloLectivo = true;
     }
