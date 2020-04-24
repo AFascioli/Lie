@@ -70,7 +70,7 @@ export class CalificacionesPerfilEstudianteComponent
         this.calificacionesXMateria = res.vectorCalXMat;
       });
     this.servicioCalificaciones
-      .obtenerMateriasDesaprobadasEstudiante()
+      .obtenerMateriasDesaprobadasEstudiante(this.servicioEstudiante.estudianteSeleccionado._id)
       .subscribe(materias => {
         if (materias.materiasDesaprobadas != null) {
           this.materiasPendientes = materias.materiasDesaprobadas;

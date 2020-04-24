@@ -70,7 +70,7 @@ router.get("/materiasDesaprobadas", (req, res) => {
             return res.status(200).json({
               message: "El alumno seleccionado no tiene materias desaprobadas",
               exito: true,
-              materiasDesaprobadas: [],
+              materiasDesaprobadas: []
             });
           }
         })

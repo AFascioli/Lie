@@ -54,7 +54,7 @@ export class CalificacionesExamenesComponent implements OnInit, OnDestroy {
       this.apellidoEstudiante = this.estudianteService.estudianteSeleccionado.apellido;
       this.nombreEstudiante = this.estudianteService.estudianteSeleccionado.nombre;
       this.servicioCalificaciones
-        .obtenerMateriasDesaprobadasEstudiante()
+        .obtenerMateriasDesaprobadasEstudiante(this.estudianteService.estudianteSeleccionado._id)
         .pipe(takeUntil(this.unsubscribe))
         .subscribe((materias) => {
           if (materias.materiasDesaprobadas != null) {

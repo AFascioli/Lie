@@ -34,6 +34,7 @@ export class ListaEstudiantesComponent implements OnInit, OnDestroy {
   };
   isLoading: boolean = true;
   rol: string;
+  materiasPendientes:boolean[]= [];
   _mobileQueryListener: () => void;
   mobileQuery: MediaQueryList;
 
@@ -76,6 +77,11 @@ export class ListaEstudiantesComponent implements OnInit, OnDestroy {
                 this.inscripto[i] = response.exito;
                 this.cursos[i] = response.curso;
               });
+            this.servicioCalificaciones
+              .obtenerMateriasDesaprobadasEstudiante(this.estudiantes[i]._id)
+              .subscribe((response) => {
+                this.materiasPendientes.push(response.materiasDesaprobadas.length>0);
+              });
           }
         });
 
@@ -97,25 +103,29 @@ export class ListaEstudiantesComponent implements OnInit, OnDestroy {
         this.permisos = response.permisos;
       });
     this.rol = this.authService.getRol();
-    if(this.rol=="Docente"){
-      this.authService.obtenerIdEmpleado(this.authService.getId()).subscribe(response => {
-        this.servicio.obtenerCursosDeDocente(response.id).subscribe(response2  => {
-          response2.cursos.forEach(objetoCurso  => {
-             this.cursosDeDocente.push(objetoCurso.curso);
-          });
+    if (this.rol == "Docente") {
+      this.authService
+        .obtenerIdEmpleado(this.authService.getId())
+        .subscribe((response) => {
+          this.servicio
+            .obtenerCursosDeDocente(response.id)
+            .subscribe((response2) => {
+              response2.cursos.forEach((objetoCurso) => {
+                this.cursosDeDocente.push(objetoCurso.curso);
+              });
+            });
         });
-      });
     }
   }
 
   //Retorna un booleano segun si se deberia mostrar la opcion Registrar examen
   //(si rol es docente, el estudiante debe estar en el curso del docente)
-  correspondeRegistrarExamen(indexEstudiante:number){
-    if(this.rol=="Docente"){
-      return this.cursosDeDocente.includes(this.cursos[indexEstudiante])
-    }else{
-      if(this.rol=="Admin") return true
-      else return false
+  correspondeRegistrarExamen(indexEstudiante: number) {
+    if (this.rol == "Docente") {
+      return this.cursosDeDocente.includes(this.cursos[indexEstudiante]);
+    } else {
+      if (this.rol == "Admin") return true;
+      else return false;
     }
   }
 

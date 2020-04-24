@@ -17,7 +17,7 @@
         class="grid-container"
         [class.grid-container-mobile]="mobileQuery.matches"
         [class.no-inscripto]="!inscripto[i]"
-        [class.rol-docente]="rol=='Docente'"
+        [class.rol-docente]="rol == 'Docente'"
       >
         <mat-card
           class="opcion"
@@ -44,7 +44,12 @@
           class="opcion"
           [class.opcion-mobile]="mobileQuery.matches"
           (click)="onRegistrarExamenes(i)"
-          *ngIf="permisos.notas > 1 && inscripto[i] && correspondeRegistrarExamen(i)"
+          *ngIf="
+            permisos.notas > 1 &&
+            inscripto[i] &&
+            correspondeRegistrarExamen(i) &&
+            materiasPendientes[i]
+          "
           ><b>Registrar examen</b></mat-card
         >
         <mat-card

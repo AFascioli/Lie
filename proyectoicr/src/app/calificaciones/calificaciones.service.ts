@@ -71,10 +71,10 @@ export class CalificacionesService {
 
   //Obtiene las materias desaprobadas de un estudiante determinado
   //@params: id del estudiante
-  public obtenerMateriasDesaprobadasEstudiante() {
+  public obtenerMateriasDesaprobadasEstudiante(idEstudiante: string) {
     let params = new HttpParams().set(
       "idEstudiante",
-      this.estudianteSeleccionado._id
+      idEstudiante
     );
     return this.http.get<{
       message: string;
