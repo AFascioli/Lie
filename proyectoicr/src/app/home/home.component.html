@@ -34,7 +34,7 @@
         type="button"
         mat-icon-button
         class="boton-editar"
-        *ngIf="conocerUsuarioLogueado(j) && evento.filenames.length != 0"
+        *ngIf="conocerUsuarioLogueado(j) && evento.filenames.length != 0 && !eventoYaOcurrio(j)"
         matTooltip="Editar evento"
       >
         <mat-icon (click)="onEditar(evento)">mode_edit </mat-icon>
