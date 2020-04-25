@@ -96,8 +96,8 @@
                   {{ rol }}
                 </b></ng-template
               >
+              <p class="usuario">{{ usuario }}</p>
             </div>
-            <p class="usuario">{{ usuario }}</p>
           </div>
           <!-- <mat-expansion-panel class="opcion"> -->
           <!-- <mat-expansion-panel-header> -->
@@ -163,8 +163,8 @@
             *ngIf="permisos.inscribirEstudiante > 1"
             (click)="cerrarMenuLateral(sideNav)"
           >
-          <mat-icon class="iconSinExpansion" svgIcon="inscripcion"></mat-icon>
-          <p class="titulo-expansion">Registrar documentos de inscripción</p>
+            <mat-icon class="iconSinExpansion" svgIcon="inscripcion"></mat-icon>
+            <p class="titulo-expansion">Registrar documentos de inscripción</p>
           </a>
           <mat-divider
             *ngIf="permisos.inscribirEstudiante > 1 && permisos.notas >= 1"
@@ -189,8 +189,8 @@
             *ngIf="permisos.notas == 1"
             (click)="cerrarMenuLateral(sideNav)"
           >
-          <mat-icon class="iconSinExpansion" svgIcon="check"></mat-icon>
-          <p class="titulo-expansion">Visualizar calificaciones</p>
+            <mat-icon class="iconSinExpansion" svgIcon="check"></mat-icon>
+            <p class="titulo-expansion">Visualizar calificaciones</p>
           </a>
           <!-- </mat-expansion-panel> -->
           <!-- <mat-expansion-panel class="opcion"> -->
