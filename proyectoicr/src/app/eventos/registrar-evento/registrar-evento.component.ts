@@ -4,7 +4,7 @@ import {
   ElementRef,
   ViewChild,
   OnDestroy,
-  ChangeDetectorRef
+  ChangeDetectorRef,
 } from "@angular/core";
 import { COMMA, ENTER } from "@angular/cdk/keycodes";
 import { FormControl, NgForm } from "@angular/forms";
@@ -21,7 +21,7 @@ import Rolldate from "../../../assets/rolldate.min.js";
 import { CancelPopupComponent } from "src/app/popup-genericos/cancel-popup.component";
 import { Router } from "@angular/router";
 import { ImageResult, ResizeOptions } from "ng2-imageupload";
-import { MediaMatcher } from '@angular/cdk/layout';
+import { MediaMatcher } from "@angular/cdk/layout";
 
 @Component({
   selector: "app-registrar-evento",
@@ -240,6 +240,12 @@ export class RegistrarEventoComponent implements OnInit, OnDestroy {
 
   obtenerImagen(index) {
     return this.imgURL[index];
+  }
+
+  onEliminarImagen(index) {
+    this.imgURL.splice(index, 1);
+    this.imagesFile.splice(index,1);
+    this.moveFromCurrentSlide(this.slideIndex);
   }
 
   moveFromCurrentSlide(n) {
