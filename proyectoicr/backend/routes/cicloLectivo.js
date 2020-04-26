@@ -37,16 +37,20 @@ router.get("/", checkAuthMiddleware, (req, res) => {
 /* Al finalizar el tercer trimestre: Se calculan los promedios de los trimestre y se asignan los estados de
 acuerdo a si la materia esta aprobada o desaprobada y el promedio final en
 caso de aprobada*/
-router.use("/procesoAutomaticoTercerTrimestre", (req, res) => {
+router.get("/procesoAutomaticoTercerTrimestre", (req, res) => {
   let date = new Date();
   let fechas;
   CicloLectivo.findOne({ año: date.getFullYear() })
     .then(cicloLectivoActual => {
-      fechas = {
-        date: cicloLectivoActual.fechaFinTercerTrimestre.getDate(),
-        month: cicloLectivoActual.fechaFinTercerTrimestre.getMonth(),
-        year: cicloLectivoActual.fechaFinTercerTrimestre.getFullYear()
-      };
+      //Se agrega +1 en date porque devuelve mal el dia.
+      fechas= new Date(
+        cicloLectivoActual.fechaFinTercerTrimestre.getFullYear(),
+        cicloLectivoActual.fechaFinTercerTrimestre.getMonth(),
+        cicloLectivoActual.fechaFinTercerTrimestre.getDate()+1,
+        20,
+        0,
+        0
+      );
     })
     .catch(() => {
       res.status(500).json({
@@ -55,16 +59,8 @@ router.use("/procesoAutomaticoTercerTrimestre", (req, res) => {
     });
 
   cron.scheduleJob(
-    //  {
-    // //Son fechas para testear metodo
-    //   // second: date.getSeconds() + 10,
-    //   // hour: date.getHours(),
-    //   // minute: date.getMinutes(),
-    //   // date: date.getDate(),
-    //   // month: date.getMonth(),
-    //   // year: date.getFullYear()
-    //  },
-    fechas,
+    //  fechas,
+    date.setSeconds(date.getSeconds()+5),
     () => {
       //Obtenemos todas las materias de las inscripciones activas y de este año
       //para cambiar el estado en el que se encuentran
@@ -72,7 +68,7 @@ router.use("/procesoAutomaticoTercerTrimestre", (req, res) => {
         {
           $match: {
             activa: true,
-            año: date.getFullYear()
+            año: 2020
           }
         },
         {
@@ -188,6 +184,7 @@ router.use("/procesoAutomaticoTercerTrimestre", (req, res) => {
                       });
                   }
                 }
+
               })
               .catch(() => {
                 res.status(500).json({
@@ -227,6 +224,7 @@ router.use("/procesoAutomaticoTercerTrimestre", (req, res) => {
           //Se actualiza el estado de la inscripción según los estados de las diferentes CXM
           //y la cantidad de materias pendientes
           materiasDeInscripcion.forEach(inscripcion => {
+            console.log("Desaprobadas");
             inscripcion.CXM.forEach(materia => {
               if (materia.promedio < 6) {
                 contadorMateriasDesaprobadas += 1;

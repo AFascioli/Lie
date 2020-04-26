@@ -308,11 +308,11 @@ router.get("/nombreyapellido", checkAuthMiddleware, (req, res, next) => {
   Estudiante.find({
     nombre: { $regex: new RegExp(nombre, "i") },
     apellido: { $regex: new RegExp(apellido, "i") },
-    activo: true,
+    activo: true
   })
     .then((documents) => {
       res.status(200).json({
-        estudiantes: documents,
+        estudiantes: documents
       });
     })
     .catch(() => {

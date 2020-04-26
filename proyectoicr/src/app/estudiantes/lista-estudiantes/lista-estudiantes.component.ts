@@ -34,7 +34,7 @@ export class ListaEstudiantesComponent implements OnInit, OnDestroy {
   };
   isLoading: boolean = true;
   rol: string;
-  materiasPendientes:boolean[]= [];
+  materiasPendientes: boolean[] = [];
   _mobileQueryListener: () => void;
   mobileQuery: MediaQueryList;
 
@@ -76,11 +76,17 @@ export class ListaEstudiantesComponent implements OnInit, OnDestroy {
               .subscribe((response) => {
                 this.inscripto[i] = response.exito;
                 this.cursos[i] = response.curso;
-              });
-            this.servicioCalificaciones
-              .obtenerMateriasDesaprobadasEstudiante(this.estudiantes[i]._id)
-              .subscribe((response) => {
-                this.materiasPendientes.push(response.materiasDesaprobadas.length>0);
+                if (this.inscripto[i]) {
+                  this.servicioCalificaciones
+                    .obtenerMateriasDesaprobadasEstudiante(
+                      this.estudiantes[i]._id
+                    )
+                    .subscribe((response) => {
+                      this.materiasPendientes.push(
+                        response.materiasDesaprobadas.length > 0
+                      );
+                    });
+                }
               });
           }
         });
