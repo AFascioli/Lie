@@ -40,23 +40,23 @@ caso de aprobada*/
 router.get("/procesoAutomaticoTercerTrimestre", (req, res) => {
   let date = new Date();
   let fechas;
-  // CicloLectivo.findOne({ año: date.getFullYear() })
-  //   .then((cicloLectivoActual) => {
-  //     //Se agrega +1 en date porque devuelve mal el dia.
-  //     fechas = new Date(
-  //       cicloLectivoActual.fechaFinTercerTrimestre.getFullYear(),
-  //       cicloLectivoActual.fechaFinTercerTrimestre.getMonth(),
-  //       cicloLectivoActual.fechaFinTercerTrimestre.getDate() + 1,
-  //       20,
-  //       0,
-  //       0
-  //     );
-  //   })
-  //   .catch(() => {
-  //     res.status(500).json({
-  //       message: "Mensaje de error especifico",
-  //     });
-  //   });
+  CicloLectivo.findOne({ año: date.getFullYear() })
+    .then((cicloLectivoActual) => {
+      //Se agrega +1 en date porque devuelve mal el dia.
+      fechas = new Date(
+        cicloLectivoActual.fechaFinTercerTrimestre.getFullYear(),
+        cicloLectivoActual.fechaFinTercerTrimestre.getMonth(),
+        cicloLectivoActual.fechaFinTercerTrimestre.getDate() + 1,
+        20,
+        0,
+        0
+      );
+    })
+    .catch(() => {
+      res.status(500).json({
+        message: "Mensaje de error especifico",
+      });
+    });
 
   let obtenerTodasCXM = (año) => {
     return new Promise((resolve, reject) => {
@@ -96,6 +96,8 @@ router.get("/procesoAutomaticoTercerTrimestre", (req, res) => {
         },
       ]).then((cxmTotales) => {
         resolve(cxmTotales);
+      }).catch(() => {
+        reject({message: "Mensaje de error especifico"});
       });
     });
   };
@@ -104,6 +106,8 @@ router.get("/procesoAutomaticoTercerTrimestre", (req, res) => {
     return new Promise((resolve, reject) => {
       Estado.findOne({ nombre: nombre, ambito: ambito }).then((estado) => {
         resolve(estado._id);
+      }).catch(() => {
+        reject({message: "Mensaje de error especifico"});
       });
     });
   };
@@ -132,6 +136,18 @@ router.get("/procesoAutomaticoTercerTrimestre", (req, res) => {
         },
       ]).then((materiasDesaprobadasTotales) => {
         resolve(materiasDesaprobadasTotales);
+      }).catch(() => {
+        reject({message: "Mensaje de error especifico"});
+      });
+    });
+  };
+
+  let obtenerCXM = (id) => {
+    return new Promise((resolve, reject) => {
+      CalificacionesXMateria.findById(id).then((cxmEncontrada) => {
+        resolve(cxmEncontrada);
+      }).catch(() => {
+        reject({message: "Mensaje de error especifico"});
       });
     });
   };
@@ -142,32 +158,28 @@ router.get("/procesoAutomaticoTercerTrimestre", (req, res) => {
     async () => {
       let cxmTotales = await obtenerTodasCXM(2020);
       for (let materia of cxmTotales) {
-        CalificacionesXMateria.findById({ _id: materia.CXM._id }).then(
-          async (cxmEncontrada) => {
-            let resultadoFinal = ClaseCXM.obtenerEstadoYPromedioCXM(
-              materia.CXT[0].calificaciones,
-              materia.CXT[1].calificaciones,
-              materia.CXT[2].calificaciones
-            );
-
-            if (resultadoFinal.aprobado) {
-              let idEstado = await obtenerIdEstado(
-                "CalificacionesXMateria",
-                "Desaprobada"
-              );
-              cxmEncontrada.estado = idEstado;
-            } else {
-              let idEstado = await obtenerIdEstado(
-                "CalificacionesXMateria",
-                "Aprobada"
-              );
-              cxmEncontrada.estado = idEstado;
-            }
-            cxmEncontrada.promedio = resultadoFinal.promedio;
-            console.log(cxmEncontrada._id);
-            cxmEncontrada.save();
-          }
+        let cxmEncontrada = await obtenerCXM(materia.CXM._id);
+        let resultadoFinal = ClaseCXM.obtenerEstadoYPromedioCXM(
+          materia.CXT[0].calificaciones,
+          materia.CXT[1].calificaciones,
+          materia.CXT[2].calificaciones
         );
+
+        if (resultadoFinal.aprobado) {
+          let idEstado = await obtenerIdEstado(
+            "CalificacionesXMateria",
+            "Aprobada"
+          );
+          cxmEncontrada.estado = idEstado;
+        } else {
+          let idEstado = await obtenerIdEstado(
+            "CalificacionesXMateria",
+            "Desaprobada"
+          );
+          cxmEncontrada.estado = idEstado;
+        }
+        cxmEncontrada.promedio = resultadoFinal.promedio;
+        cxmEncontrada.save();
       }
 
       let inscripcionesConCXM = await obtenerTodasInscripcionesConCXM();
@@ -191,220 +203,14 @@ router.get("/procesoAutomaticoTercerTrimestre", (req, res) => {
         } else {
           idEstado = await obtenerIdEstado("Inscripcion", "Promovido");
         }
-        console.log(inscripcion._id);
         Inscripcion.findByIdAndUpdate(inscripcion._id, {
-          estado: idEstado,
-        }).exec();
+          estado: idEstado
+        }).exec().catch(() => {
+          res.status(500).json({
+            message: "Mensaje de error especifico",
+          });
+        });
       }
-
-      res.json({ message: "exito" });
-
-      //Obtenemos todas las materias de las inscripciones activas y de este año
-      //para cambiar el estado en el que se encuentran
-      // Inscripcion.aggregate([
-      //   {
-      //     $match: {
-      //       activa: true,
-      //       año: 2020,
-      //     },
-      //   },
-      //   {
-      //     $lookup: {
-      //       from: "calificacionesXMateria",
-      //       localField: "calificacionesXMateria",
-      //       foreignField: "_id",
-      //       as: "CXM",
-      //     },
-      //   },
-      //   {
-      //     $project: {
-      //       CXM: 1,
-      //       materiasPendientes: 1,
-      //     },
-      //   },
-      //   {
-      //     $unwind: {
-      //       path: "$CXM",
-      //     },
-      //   },
-      //   {
-      //     $lookup: {
-      //       from: "calificacionesXTrimestre",
-      //       localField: "CXM.calificacionesXTrimestre",
-      //       foreignField: "_id",
-      //       as: "CXT",
-      //     },
-      //   },
-      // ])
-      //   .then((calificacionesDeInscripciones) => {
-      //     let estadoAprobado;
-      //     Estado.findOne({
-      //       ambito: "CalificacionesXMateria",
-      //       nombre: "Aprobada",
-      //     })
-      //       .then((estado) => {
-      //         estadoAprobado = estado;
-      //       })
-      //       .catch(() => {
-      //         res.status(500).json({
-      //           message: "Mensaje de error especifico",
-      //         });
-      //       });
-      //     let promedioTrim1 = 0;
-      //     let promedioTrim2 = 0;
-      //     let promedioTrim3 = 0;
-      //     let promedioGral = 0;
-
-      //     //El objeto materia tiene: CXT y CXM de una materia dada
-      //     for (let materia of calificacionesDeInscripciones) {
-      //       //Se busca la CXM que estamos recorriendo
-      //       CalificacionesXMateria.findById({ _id: materia.CXM._id })
-      //         .then((CXMEncontrada) => {
-      //           promedioTrim1 = 0;
-      //           promedioTrim2 = 0;
-      //           promedioTrim3 = 0;
-      //           promedioGral = 0;
-
-      //           //Calculamos el promedio del trimestre 3
-      //           promedioTrim3 = ClaseCXM.obtenerPromedioDeTrimestre(
-      //             materia.CXT[2].calificaciones
-      //           );
-
-      //           if (promedioTrim3 < 6) {
-      //             Estado.findOne({
-      //               ambito: "CalificacionesXMateria",
-      //               nombre: "Desaprobada",
-      //             })
-      //               .then(async (estado) => {
-      //                 CXMEncontrada.estado = estado._id;
-      //                 CXMEncontrada.promedio = 0;
-      //                 await CXMEncontrada.save();
-      //               })
-      //               .catch(() => {
-      //                 res.status(500).json({
-      //                   message: "Mensaje de error especifico",
-      //                 });
-      //               });
-      //           } else {
-      //             //Promedio trimestre 3 mayor a 6
-      //             //Se calcula el promedio del primer trimestre
-      //             promedioTrim1 = ClaseCXM.obtenerPromedioDeTrimestre(
-      //               materia.CXT[0].calificaciones
-      //             );
-
-      //             //Se calcula el promedio del segundo trimestre
-      //             promedioTrim2 = ClaseCXM.obtenerPromedioDeTrimestre(
-      //               materia.CXT[1].calificaciones
-      //             );
-
-      //             promedioGral =
-      //               (promedioTrim1 + promedioTrim2 + promedioTrim3) / 3;
-
-      //             if (promedioGral >= 6) {
-      //               CXMEncontrada.estado = estadoAprobado._id;
-      //               CXMEncontrada.promedio = promedioGral;
-      //               CXMEncontrada.save();
-      //             } else {
-      //               Estado.findOne({
-      //                 ambito: "CalificacionesXMateria",
-      //                 nombre: "Desaprobada",
-      //               })
-      //                 .then(async (estadoDesaprobado) => {
-      //                   CXMEncontrada.estado = estadoDesaprobado._id;
-      //                   CXMEncontrada.promedio = 0;
-      //                   await CXMEncontrada.save();
-      //                 })
-      //                 .catch(() => {
-      //                   res.status(500).json({
-      //                     message: "Mensaje de error especifico",
-      //                   });
-      //                 });
-      //             }
-      //           }
-      //         })
-      //         .catch(() => {
-      //           res.status(500).json({
-      //             message: "Mensaje de error especifico",
-      //           });
-      //         });
-      //     }
-      //   })
-      //   .catch(() => {
-      //     res.status(500).json({
-      //       message: "Mensaje de error especifico",
-      //     });
-      //   });
-
-      // Inscripcion.aggregate([
-      //   {
-      //     $match: {
-      //       activa: true,
-      //     },
-      //   },
-      //   {
-      //     $lookup: {
-      //       from: "calificacionesXMateria",
-      //       localField: "calificacionesXMateria",
-      //       foreignField: "_id",
-      //       as: "CXM",
-      //     },
-      //   },
-      //   {
-      //     $project: {
-      //       materiasPendientes: 1,
-      //       CXM: 1,
-      //     },
-      //   },
-      // ])
-      //   .then((materiasDeInscripcion) => {
-      //     //Se actualiza el estado de la inscripción según los estados de las diferentes CXM
-      //     //y la cantidad de materias pendientes
-      //     materiasDeInscripcion.forEach((inscripcion) => {
-      //       inscripcion.CXM.forEach((materia) => {
-      //         if (materia.promedio < 6) {
-      //           contadorMateriasDesaprobadas += 1;
-      //         }
-      //       });
-
-      //       if (inscripcion.materiasPendientes != null) {
-      //         contadorMateriasDesaprobadas +=
-      //           inscripcion.materiasPendientes.length + 1;
-      //       }
-      //       if (contadorMateriasDesaprobadas > 3) {
-      //         Estado.findOne({
-      //           ambito: "Inscripcion",
-      //           nombre: "Examenes pendientes",
-      //         })
-      //           .then((estado) => {
-      //             Inscripcion.findByIdAndUpdate(inscripcion._id, {
-      //               estado: estado._id,
-      //             }).exec();
-      //           })
-      //           .catch(() => {
-      //             res.status(500).json({
-      //               message: "Mensaje de error especifico",
-      //             });
-      //           });
-      //       } else {
-      //         Estado.findOne({ ambito: "Inscripcion", nombre: "Promovido" })
-      //           .then((estado) => {
-      //             Inscripcion.findByIdAndUpdate(inscripcion._id, {
-      //               estado: estado._id,
-      //             }).exec();
-      //           })
-      //           .catch(() => {
-      //             res.status(500).json({
-      //               message: "Mensaje de error especifico",
-      //             });
-      //           });
-      //       }
-      //     });
-      //   })
-      //   .catch(() => {
-      //     res.status(500).json({
-      //       message: "Mensaje de error especifico",
-      //     });
-      //   });
     }
   );
 });
