@@ -203,6 +203,7 @@ router.get("/procesoAutomaticoTercerTrimestre", (req, res) => {
         } else {
           idEstado = await obtenerIdEstado("Inscripcion", "Promovido");
         }
+        contadorMateriasDesaprobadas=0;
         Inscripcion.findByIdAndUpdate(inscripcion._id, {
           estado: idEstado
         }).exec().catch(() => {
