@@ -307,7 +307,7 @@ router.use("/procesoAutomaticoFinExamenes", (req, res) => {
           );
         }
         contadorMateriasDesaprobadas=0;
-        Inscripcion.findByIdAndUpdate(inscripcion._id,{estado:idEstado}).then(() => {
+        Inscripcion.findByIdAndUpdate(inscripcion._id,{estado:idEstado}).then(async() => {
           let idEstadoEstudiante = await ClaseEstado.obtenerIdEstado(
             "Estudiante",
             "Registrado"
