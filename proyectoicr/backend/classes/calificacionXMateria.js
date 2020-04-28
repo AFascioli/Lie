@@ -1,5 +1,6 @@
 const CalificacionesXTrimestre = require("../models/calificacionesXTrimestre");
 const CalificacionesXMateria = require("../models/calificacionesXMateria");
+const mongoose = require("mongoose");
 
 exports.obtenerPromedioDeTrimestre = function (calificaciones) {
   let contador = 0;
@@ -16,35 +17,6 @@ exports.obtenerPromedioDeTrimestre = function (calificaciones) {
   }
 
   return promedioTrimestre;
-};
-
-// Añade al vector de materias desaprobadas las materias pendientes de otros años y
-//las materias del año actual que también se encuentren desaprobadas
-exports.obtenerMateriasDesaprobadas = async function (
-  arrayPendientes,
-  arrayCXMTotal,
-  arrayNombresCXM
-) {
-  materiasDesaprobadas = [];
-  if (arrayPendientes.length != 0) {
-    materiasDesaprobadas.push(arrayPendientes);
-  }
-
-  for (i = 0; i < arrayCXMTotal.length - 1; i++) {
-    if (arrayCXMTotal[i].promedio < 6) {
-      for (j = 0; j < arrayNombresCXM.length - 1; j++) {
-        //Necesita el casteo sino me lo compara mal
-        if (
-          arrayNombresCXM[j]._id.toString() ===
-          arrayCXMTotal[i].idMateria.toString()
-        ) {
-          materiasDesaprobadas.push(arrayNombresCXM[j]);
-        }
-      }
-    }
-  }
-
-  return materiasDesaprobadas;
 };
 
 exports.crearCalifXTrimestre = async function (califXMateriaNueva) {
@@ -186,4 +158,36 @@ exports.obtenerEstadoYPromedioCXM= (trimestre1, trimestre2, trimestre3) => {
       return {aprobado: true, promedio: promedioGeneral};
     }
   }
+};
+
+//Dado un array de ids de cxm, obtiene el nombre e id de las materias
+exports.obtenerNombresMaterias =async (arrayIdCXM) => {
+  return new Promise(async (resolve, reject) => {
+    let nombresMaterias=[];
+    for(const idCxm of arrayIdCXM){
+      await CalificacionesXMateria.aggregate([
+        {
+          '$match': {
+            '_id': mongoose.Types.ObjectId(idCxm)
+          }
+        },
+        {
+          '$lookup': {
+            'from': 'materia',
+            'localField': 'idMateria',
+            'foreignField': '_id',
+            'as': 'datosMateria'
+          }
+        }, {
+          '$project': {
+            "datosMateria._id":1,
+            'datosMateria.nombre': 1
+          }
+        }
+      ]).then(datosMaterias => {
+        nombresMaterias.push(datosMaterias[0].datosMateria[0]);
+      });
+    }
+    resolve(nombresMaterias);
+  });
 };
