@@ -107,32 +107,12 @@ router.get("/procesoAutomaticoTercerTrimestre", (req, res) => {
 
   let obtenerTodasInscripcionesConCXM = () => {
     return new Promise((resolve, reject) => {
-      Inscripcion.aggregate([
-        {
-          $match: {
-            activa: true,
-          },
-        },
-        {
-          $lookup: {
-            from: "calificacionesXMateria",
-            localField: "calificacionesXMateria",
-            foreignField: "_id",
-            as: "CXM",
-          },
-        },
-        {
-          $project: {
-            materiasPendientes: 1,
-            CXM: 1,
-          },
-        },
-      ])
-        .then((materiasDesaprobadasTotales) => {
-          resolve(materiasDesaprobadasTotales);
+      Inscripcion.find({ activa: true })
+        .then((inscripciones) => {
+          resolve(inscripciones);
         })
         .catch(() => {
-          reject({ message: "Mensaje de error especifico" });
+          reject("Error");
         });
     });
   };
@@ -180,32 +160,43 @@ router.get("/procesoAutomaticoTercerTrimestre", (req, res) => {
       }
 
       let inscripcionesConCXM = await obtenerTodasInscripcionesConCXM();
+      let idEstadoCXM = await ClaseEstado.obtenerIdEstado(
+        "CalificacionesXMateria",
+        "Desaprobada"
+      );
       let contadorMateriasDesaprobadas = 0;
-      let idEstado;
+      let idEstadoInscripcion;
       for (let inscripcion of inscripcionesConCXM) {
-        for (let materia of inscripcion.CXM) {
-          if (materia.promedio < 6) {
-            contadorMateriasDesaprobadas += 1;
-          }
-        }
-        if (inscripcion.materiasPendientes != null) {
-          contadorMateriasDesaprobadas +=
-            inscripcion.materiasPendientes.length + 1;
-        }
+        let arrayCXMDesaprobadas = await ClaseCXM.obtenerMateriasDesaprobadasv2(
+          inscripcion.materiasPendientes,
+          inscripcion.calificacionesXMateria,
+          idEstadoCXM
+        );
+        contadorMateriasDesaprobadas = arrayCXMDesaprobadas.length;
+        // for (let materia of inscripcion.CXM) {
+        //   if (materia.promedio < 6) {
+        //     contadorMateriasDesaprobadas += 1;
+        //   }
+        // }
+        // if (inscripcion.materiasPendientes != null) {
+        //   contadorMateriasDesaprobadas +=
+        //     inscripcion.materiasPendientes.length + 1;
+        // }
         if (contadorMateriasDesaprobadas > 3) {
-          idEstado = await ClaseEstado.obtenerIdEstado(
+          idEstadoInscripcion = await ClaseEstado.obtenerIdEstado(
             "Inscripcion",
             "Examenes pendientes"
           );
         } else {
-          idEstado = await ClaseEstado.obtenerIdEstado(
+          idEstadoInscripcion = await ClaseEstado.obtenerIdEstado(
             "Inscripcion",
             "Promovido"
           );
         }
         contadorMateriasDesaprobadas = 0;
+        //FIJARSE SI SE DEBEN ACTUALIZAR LAS MATERIAS PENDIENTES
         Inscripcion.findByIdAndUpdate(inscripcion._id, {
-          estado: idEstado,
+          estado: idEstadoInscripcion,
         })
           .exec()
           .catch(() => {
@@ -213,6 +204,7 @@ router.get("/procesoAutomaticoTercerTrimestre", (req, res) => {
               message: "Mensaje de error especifico",
             });
           });
+          console.log("done");
       }
     }
   );
@@ -248,28 +240,7 @@ router.use("/procesoAutomaticoFinExamenes", (req, res) => {
     async () => {
       let obtenerInscripcionesActivas = () => {
         return new Promise((resolve, reject) => {
-          Inscripcion.aggregate([
-            {
-              $match: {
-                activa: true,
-              },
-            },
-            {
-              $lookup: {
-                from: "calificacionesXMateria",
-                localField: "calificacionesXMateria",
-                foreignField: "_id",
-                as: "CXM",
-              },
-            },
-            {
-              $project: {
-                materiasPendientes: 1,
-                CXM: 1,
-                idEstudiante: 1,
-              },
-            },
-          ])
+          Inscripcion.find({ activa: true })
             .then((inscripciones) => {
               resolve(inscripciones);
             })
@@ -278,36 +249,51 @@ router.use("/procesoAutomaticoFinExamenes", (req, res) => {
             });
         });
       };
-      let idEstado;
+      let idEstadoInscripcion;
       let contadorMateriasDesaprobadas = 0;
       let materiasDeInscripcion = await obtenerInscripcionesActivas();
+      let idEstadoCXM = await ClaseEstado.obtenerIdEstado(
+        "CalificacionesXMateria",
+        "Desaprobada"
+      );
 
       for (const inscripcion of materiasDeInscripcion) {
-        for (const materia of inscripcion.CXM) {
-          if (materia.promedio < 6) {
-            contadorMateriasDesaprobadas += 1;
-          }
-        }
+        let arrayCXMDesaprobadas = await ClaseCXM.obtenerMateriasDesaprobadasv2(
+          inscripcion.materiasPendientes,
+          inscripcion.calificacionesXMateria,
+          idEstadoCXM
+        );
+        contadorMateriasDesaprobadas = arrayCXMDesaprobadas.length;
+        // for (const materia of inscripcion.CXM) {
+        //   if (materia.promedio < 6) {
+        //     contadorMateriasDesaprobadas += 1;
+        //   }
+        // }
 
-        if (inscripcion.materiasPendientes != null) {
-          contadorMateriasDesaprobadas +=
-            inscripcion.materiasPendientes.length + 1;
-        }
+        // if (inscripcion.materiasPendientes != null) {
+        //   contadorMateriasDesaprobadas +=
+        //     inscripcion.materiasPendientes.length + 1;
+        // }
         if (contadorMateriasDesaprobadas > 3) {
-          idEstado = await ClaseEstado.obtenerIdEstado("Inscripcion", "Libre");
+          idEstadoInscripcion = await ClaseEstado.obtenerIdEstado(
+            "Inscripcion",
+            "Libre"
+          );
         } else if (contadorMateriasDesaprobadas == 0) {
-          idEstado = await ClaseEstado.obtenerIdEstado(
+          idEstadoInscripcion = await ClaseEstado.obtenerIdEstado(
             "Inscripcion",
             "Promovido"
           );
         } else {
-          idEstado = await ClaseEstado.obtenerIdEstado(
+          idEstadoInscripcion = await ClaseEstado.obtenerIdEstado(
             "Inscripcion",
             "Promovido con examenes pendientes"
           );
         }
-        contadorMateriasDesaprobadas=0;
-        Inscripcion.findByIdAndUpdate(inscripcion._id,{estado:idEstado}).then(async() => {
+        contadorMateriasDesaprobadas = 0;
+        Inscripcion.findByIdAndUpdate(inscripcion._id, {
+          estado: idEstadoInscripcion,
+        }).then(async () => {
           let idEstadoEstudiante = await ClaseEstado.obtenerIdEstado(
             "Estudiante",
             "Registrado"

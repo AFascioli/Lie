@@ -13,6 +13,7 @@ const MateriaXCurso = require("../models/materiasXCurso");
 const AdultoResponsable = require("../models/adultoResponsable");
 const CicloLectivo = require("../models/cicloLectivo");
 const ClaseInscripcion = require("../classes/inscripcion");
+const ClaseEstado = require("../classes/estado");
 const ClaseCalifXMateria = require("../classes/calificacionXMateria");
 const Suscripcion = require("../classes/suscripcion");
 const ClaseAsistencia = require("../classes/asistencia");
@@ -1069,7 +1070,10 @@ router.post("/inscripcion", checkAuthMiddleware, async (req, res) => {
     inscripcion.activa = false;
     cuotasAnteriores = inscripcion.cuotas;
 
-    var estadoDesaprobadaMateria = await obtenerEstadoDesaprobadaMateria();
+    var idEstadoDesaprobadaMateria = await ClaseEstado.obtenerIdEstado(
+      "CalificacionesXMateria",
+      "Desaprobada"
+    );
     // if (inscripcion.materiasPendientes.length != 0) {
     //   //Revisar logica
     //   materiasPendientesNuevas.push(...inscripcion.materiasPendientes);
@@ -1077,7 +1081,7 @@ router.post("/inscripcion", checkAuthMiddleware, async (req, res) => {
     var idsCXMDesaprobadas = await ClaseCalifXMateria.obtenerMateriasDesaprobadasv2(
       inscripcion.materiasPendientes,
       inscripcion.calificacionesXMateria,
-      estadoDesaprobadaMateria._id
+      idEstadoDesaprobadaMateria
     );
     if (idsCXMDesaprobadas.length != 0) {
       materiasPendientesNuevas.push(...idsCXMDesaprobadas);
