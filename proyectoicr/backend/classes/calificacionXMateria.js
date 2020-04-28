@@ -31,7 +31,7 @@ exports.obtenerMateriasDesaprobadas = async function (
   }
 
   for (i = 0; i < arrayCXMTotal.length - 1; i++) {
-    if (arrayCXMTotal[i].promedio == 0) {
+    if (arrayCXMTotal[i].promedio < 6) {
       for (j = 0; j < arrayNombresCXM.length - 1; j++) {
         //Necesita el casteo sino me lo compara mal
         if (
@@ -135,14 +135,18 @@ exports.crearCXM = async function (materiasDelCurso, estado) {
   return idsCalXMateria;
 };
 
-//Obtiene las CalificacionesXMateria desaprobadas. Retorna las ids de las CXM desaprobadas
+//Obtiene las CalificacionesXMateria desaprobadas. Retorna las ids de las CXM desaprobadas y pendientes
 //@param: array con las ids de las CalificacionesXMateria
 //@param: id del estado Desaprobada
 exports.obtenerMateriasDesaprobadasv2 = async function (
+  arrayPendientes,
   idsCalificacionesXMateria,
   idEstado
 ) {
   var idsCXMDesaprobadas = [];
+  if (arrayPendientes.length != 0) {
+    idsCXMDesaprobadas.push(arrayPendientes);
+  }
   for (const cxm of idsCalificacionesXMateria) {
     await CalificacionesXMateria.findOne({ _id: cxm, estado: idEstado }).then(
       (cxmEncontrada) => {
@@ -171,14 +175,13 @@ exports.obtenerPromedioTotal = (trimestre1, trimestre2, trimestre3) => {
 //@param: vector de calificaciones 1, 2 y 3 trimestre
 exports.obtenerEstadoYPromedioCXM= (trimestre1, trimestre2, trimestre3) => {
   let promedioTrimestre3= this.obtenerPromedioDeTrimestre(trimestre3);
-  let promedioGeneral;
+  let promedioGeneral=this.obtenerPromedioTotal(trimestre1, trimestre2, trimestre3);
 
   if(promedioTrimestre3<6){
-    return {aprobado: false, promedio: 0};
+    return {aprobado: false, promedio: promedioGeneral};
   }else{
-    promedioGeneral=this.obtenerPromedioTotal(trimestre1, trimestre2, trimestre3);
     if(promedioGeneral<6){
-      return {aprobado: false, promedio: 0};
+      return {aprobado: false, promedio: promedioGeneral};
     }else{
       return {aprobado: true, promedio: promedioGeneral};
     }

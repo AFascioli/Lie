@@ -4,13 +4,17 @@ const router = express.Router();
 const mongoose = require("mongoose");
 const ClaseCXM = require("../classes/calificacionXMateria");
 
-//Dado un id de estudiante obtiene todas las materias desaprobadas
+//Dado un id de estudiante obtiene todas las materias desaprobadas del año actual
+//Retorna vector con id materia y nombre materia
+//@param: idEstudiante
 router.get("/materiasDesaprobadas", (req, res) => {
+  let fechaActual= new Date();
   Inscripcion.aggregate([
     {
       $match: {
         idEstudiante: mongoose.Types.ObjectId(req.query.idEstudiante),
-      },
+        año: fechaActual.getFullYear()
+      }
     },
     {
       $lookup: {
@@ -60,6 +64,7 @@ router.get("/materiasDesaprobadas", (req, res) => {
         materias[0].nombreCXM
       )
         .then((materiasDesaprobadas) => {
+          console.log(materiasDesaprobadas);
           if (materiasDesaprobadas.length != 0) {
             return res.status(200).json({
               message: "Materias desaprobadas obtenidas correctamente",

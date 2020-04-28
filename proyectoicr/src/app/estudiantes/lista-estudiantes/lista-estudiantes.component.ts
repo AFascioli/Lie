@@ -84,7 +84,7 @@ export class ListaEstudiantesComponent implements OnInit, OnDestroy {
                     .subscribe((response) => {
                       this.materiasPendientes.push(
                         response.materiasDesaprobadas.length > 0
-                      );
+                        );
                     });
                 }
               });

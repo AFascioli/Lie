@@ -1070,11 +1070,12 @@ router.post("/inscripcion", checkAuthMiddleware, async (req, res) => {
     cuotasAnteriores = inscripcion.cuotas;
 
     var estadoDesaprobadaMateria = await obtenerEstadoDesaprobadaMateria();
-    if (inscripcion.materiasPendientes.length != 0) {
-      //Revisar logica
-      materiasPendientesNuevas.push(...inscripcion.materiasPendientes);
-    }
+    // if (inscripcion.materiasPendientes.length != 0) {
+    //   //Revisar logica
+    //   materiasPendientesNuevas.push(...inscripcion.materiasPendientes);
+    // }
     var idsCXMDesaprobadas = await ClaseCalifXMateria.obtenerMateriasDesaprobadasv2(
+      inscripcion.materiasPendientes,
       inscripcion.calificacionesXMateria,
       estadoDesaprobadaMateria._id
     );
