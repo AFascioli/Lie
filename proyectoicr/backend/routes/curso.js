@@ -1075,7 +1075,7 @@ router.post("/inscripcion", checkAuthMiddleware, async (req, res) => {
       "Desaprobada"
     );
     // if (inscripcion.materiasPendientes.length != 0) {
-    //   //Revisar logica
+    //   //Revisar logica #resolve
     //   materiasPendientesNuevas.push(...inscripcion.materiasPendientes);
     // }
     var idsCXMDesaprobadas = await ClaseCalifXMateria.obtenerMateriasDesaprobadasv2(

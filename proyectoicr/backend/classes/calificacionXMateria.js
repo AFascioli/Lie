@@ -115,20 +115,22 @@ exports.obtenerMateriasDesaprobadasv2 = async function (
   idsCalificacionesXMateria,
   idEstado
 ) {
-  var idsCXMDesaprobadas = [];
-  if (arrayPendientes.length != 0) {
-    idsCXMDesaprobadas.push(arrayPendientes);
-  }
-  for (const cxm of idsCalificacionesXMateria) {
-    await CalificacionesXMateria.findOne({ _id: cxm, estado: idEstado }).then(
-      (cxmEncontrada) => {
-        if (cxmEncontrada != null) {
-          idsCXMDesaprobadas.push(cxm);
+  return new Promise(async(resolve, reject) => {
+    var idsCXMDesaprobadas = [];
+    if (arrayPendientes.length != 0) {
+      idsCXMDesaprobadas.push(arrayPendientes);
+    }
+    for (const cxm of idsCalificacionesXMateria) {
+      await CalificacionesXMateria.findOne({ _id: cxm, estado: idEstado }).then(
+        (cxmEncontrada) => {
+          if (cxmEncontrada != null) {
+            idsCXMDesaprobadas.push(cxm);
+          }
         }
-      }
-    );
-  }
-  return idsCXMDesaprobadas;
+      ).catch(()=> reject("Error"));
+    }
+    resolve(idsCXMDesaprobadas);
+  });
 };
 
 //Dados los 3 vectores de calificaciones calcula el promedio total

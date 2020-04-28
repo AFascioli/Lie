@@ -194,7 +194,6 @@ router.get("/procesoAutomaticoTercerTrimestre", (req, res) => {
           );
         }
         contadorMateriasDesaprobadas = 0;
-        //FIJARSE SI SE DEBEN ACTUALIZAR LAS MATERIAS PENDIENTES
         Inscripcion.findByIdAndUpdate(inscripcion._id, {
           estado: idEstadoInscripcion,
         })
@@ -204,7 +203,6 @@ router.get("/procesoAutomaticoTercerTrimestre", (req, res) => {
               message: "Mensaje de error especifico",
             });
           });
-          console.log("done");
       }
     }
   );
@@ -213,29 +211,29 @@ router.get("/procesoAutomaticoTercerTrimestre", (req, res) => {
 /* Al cumplirse la fecha de fin de examenes: El metodo siguiente se fija la cantidad de
 materias desaprobadas del año lectivo y la cantidad de materias pendientes y de acuerdo a
 eso le cambia el estado a la inscripcion */
-router.use("/procesoAutomaticoFinExamenes", (req, res) => {
+router.get("/procesoAutomaticoFinExamenes", (req, res) => {
   let fechaActual = new Date();
   let fechaFinExamenes;
-  CicloLectivo.findOne({ año: fechaActual.getFullYear() })
-    .then((cicloLectivoActual) => {
-      //Se agrega +1 en date porque devuelve mal el dia.
-      fechaFinExamenes = new Date(
-        cicloLectivoActual.fechaFinTercerTrimestre.getFullYear(),
-        cicloLectivoActual.fechaFinTercerTrimestre.getMonth(),
-        cicloLectivoActual.fechaFinTercerTrimestre.getDate() + 1,
-        20,
-        0,
-        0
-      );
-    })
-    .catch(() => {
-      res.status(500).json({
-        message: "Mensaje de error especifico",
-      });
-    });
+  // CicloLectivo.findOne({ año: fechaActual.getFullYear() })
+  //   .then((cicloLectivoActual) => {
+  //     //Se agrega +1 en date porque devuelve mal el dia.
+  //     fechaFinExamenes = new Date(
+  //       cicloLectivoActual.fechaFinTercerTrimestre.getFullYear(),
+  //       cicloLectivoActual.fechaFinTercerTrimestre.getMonth(),
+  //       cicloLectivoActual.fechaFinTercerTrimestre.getDate() + 1,
+  //       20,
+  //       0,
+  //       0
+  //     );
+  //   })
+  //   .catch(() => {
+  //     res.status(500).json({
+  //       message: "Mensaje de error especifico",
+  //     });
+  //   });
 
   cron.scheduleJob(
-    date.setSeconds(date.getSeconds() + 5),
+    fechaActual.setSeconds(fechaActual.getSeconds() + 5),
     // fechaFinExamenes,
     async () => {
       let obtenerInscripcionesActivas = () => {
@@ -264,16 +262,7 @@ router.use("/procesoAutomaticoFinExamenes", (req, res) => {
           idEstadoCXM
         );
         contadorMateriasDesaprobadas = arrayCXMDesaprobadas.length;
-        // for (const materia of inscripcion.CXM) {
-        //   if (materia.promedio < 6) {
-        //     contadorMateriasDesaprobadas += 1;
-        //   }
-        // }
 
-        // if (inscripcion.materiasPendientes != null) {
-        //   contadorMateriasDesaprobadas +=
-        //     inscripcion.materiasPendientes.length + 1;
-        // }
         if (contadorMateriasDesaprobadas > 3) {
           idEstadoInscripcion = await ClaseEstado.obtenerIdEstado(
             "Inscripcion",
@@ -291,7 +280,7 @@ router.use("/procesoAutomaticoFinExamenes", (req, res) => {
           );
         }
         contadorMateriasDesaprobadas = 0;
-        Inscripcion.findByIdAndUpdate(inscripcion._id, {
+        await Inscripcion.findByIdAndUpdate(inscripcion._id, {
           estado: idEstadoInscripcion,
         }).then(async () => {
           let idEstadoEstudiante = await ClaseEstado.obtenerIdEstado(
@@ -303,103 +292,6 @@ router.use("/procesoAutomaticoFinExamenes", (req, res) => {
           }).exec();
         });
       }
-
-      // Inscripcion.aggregate([
-      //   {
-      //     $match: {
-      //       activa: true,
-      //     },
-      //   },
-      //   {
-      //     $lookup: {
-      //       from: "calificacionesXMateria",
-      //       localField: "calificacionesXMateria",
-      //       foreignField: "_id",
-      //       as: "CXM",
-      //     },
-      //   },
-      //   {
-      //     $project: {
-      //       materiasPendientes: 1,
-      //       CXM: 1,
-      //       idEstudiante: 1,
-      //     },
-      //   },
-      // ])
-      //   .then((materiasDeInscripcion) => {
-      //     //Se actualiza el estado de la inscripción según los estados de las diferentes CXM
-      //     //y la cantidad de materias pendientes
-      //     let estadoEstudiante;
-      //     Estado.findOne({
-      //       ambito: "Estudiante",
-      //       nombre: "Registrado",
-      //     })
-      //       .then((estadoEstudiante) => {
-      //         estadoEstudiante = estadoEstudiante;
-      //       })
-      //       .catch(() => {
-      //         res.status(500).json({
-      //           message: "Mensaje de error especifico",
-      //         });
-      //       });
-      //     materiasDeInscripcion.forEach((inscripcion) => {
-      //       inscripcion.CXM.forEach((materia) => {
-      //         if (materia.promedio < 6) {
-      //           contadorMateriasDesaprobadas += 1;
-      //         }
-      //       });
-
-      //       if (inscripcion.materiasPendientes != null) {
-      //         contadorMateriasDesaprobadas +=
-      //           inscripcion.materiasPendientes.length + 1;
-      //       }
-
-      //       Estudiante.findById(inscripcion.idEstudiante)
-      //         .then((estudiante) => {
-      //           estudiante.estado = estadoEstudiante;
-      //           estudiante.save();
-      //         })
-      //         .catch(() => {
-      //           res.status(500).json({
-      //             message: "Mensaje de error especifico",
-      //           });
-      //         });
-
-      //       if (contadorMateriasDesaprobadas > 3) {
-      //         Estado.findOne({
-      //           ambito: "Inscripcion",
-      //           nombre: "Libre",
-      //         })
-      //           .then((estado) => {
-      //             Inscripcion.findByIdAndUpdate(inscripcion._id, {
-      //               estado: estado._id,
-      //             }).exec();
-      //           })
-      //           .catch(() => {
-      //             res.status(500).json({
-      //               message: "Mensaje de error especifico",
-      //             });
-      //           });
-      //       } else {
-      //         Estado.findOne({ ambito: "Inscripcion", nombre: "Promovido" })
-      //           .then((estado) => {
-      //             Inscripcion.findByIdAndUpdate(inscripcion._id, {
-      //               estado: estado._id,
-      //             }).exec();
-      //           })
-      //           .catch(() => {
-      //             res.status(500).json({
-      //               message: "Mensaje de error especifico",
-      //             });
-      //           });
-      //       }
-      //     });
-      //   })
-      //   .catch(() => {
-      //     res.status(500).json({
-      //       message: "Mensaje de error especifico",
-      //     });
-      //   });
     }
   );
 });
