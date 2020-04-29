@@ -173,15 +173,6 @@ router.get("/procesoAutomaticoTercerTrimestre", (req, res) => {
           idEstadoCXM
         );
         contadorMateriasDesaprobadas = arrayCXMDesaprobadas.length;
-        // for (let materia of inscripcion.CXM) {
-        //   if (materia.promedio < 6) {
-        //     contadorMateriasDesaprobadas += 1;
-        //   }
-        // }
-        // if (inscripcion.materiasPendientes != null) {
-        //   contadorMateriasDesaprobadas +=
-        //     inscripcion.materiasPendientes.length + 1;
-        // }
         if (contadorMateriasDesaprobadas > 3) {
           idEstadoInscripcion = await ClaseEstado.obtenerIdEstado(
             "Inscripcion",
