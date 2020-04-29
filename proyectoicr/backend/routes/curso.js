@@ -958,23 +958,6 @@ router.post("/inscripcion", checkAuthMiddleware, async (req, res) => {
     });
   };
 
-  var obtenerEstadoDesaprobadaMateria = () => {
-    return new Promise((resolve, reject) => {
-      Estado.findOne({
-        nombre: "Desaprobada",
-        ambito: "CalificacionesXMateria",
-      })
-        .then((estado) => {
-          resolve(estado);
-        })
-        .catch(() => {
-          res.status(500).json({
-            message: "Mensaje de error especifico",
-          });
-        });
-    });
-  };
-
   var obtenerEstadoCursandoMateria = () => {
     return new Promise((resolve, reject) => {
       Estado.findOne({
@@ -1074,10 +1057,6 @@ router.post("/inscripcion", checkAuthMiddleware, async (req, res) => {
       "CalificacionesXMateria",
       "Desaprobada"
     );
-    // if (inscripcion.materiasPendientes.length != 0) {
-    //   //Revisar logica #resolve
-    //   materiasPendientesNuevas.push(...inscripcion.materiasPendientes);
-    // }
     var idsCXMDesaprobadas = await ClaseCalifXMateria.obtenerMateriasDesaprobadasv2(
       inscripcion.materiasPendientes,
       inscripcion.calificacionesXMateria,
@@ -1125,6 +1104,7 @@ router.post("/inscripcion", checkAuthMiddleware, async (req, res) => {
       cursoSeleccionado.capacidad = cursoSeleccionado.capacidad - 1;
       cursoSeleccionado.save();
       //Le cambiamos el estado al estudiante
+      //SE PUEDE CAMBIAR CON EL METODO OBTENERIDESTADO #resolve
       Estado.findOne({
         nombre: "Inscripto",
         ambito: "Estudiante",
