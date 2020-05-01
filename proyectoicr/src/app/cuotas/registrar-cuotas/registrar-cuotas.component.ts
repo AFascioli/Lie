@@ -10,7 +10,7 @@ import { Subject } from "rxjs";
 @Component({
   selector: "app-registrar-cuotas",
   templateUrl: "./registrar-cuotas.component.html",
-  styleUrls: ["./registrar-cuotas.component.css"]
+  styleUrls: ["./registrar-cuotas.component.css"],
 })
 export class RegistrarCuotasComponent implements OnInit, OnDestroy {
   constructor(
@@ -38,7 +38,7 @@ export class RegistrarCuotasComponent implements OnInit, OnDestroy {
     "Septiembre",
     "Octubre",
     "Noviembre",
-    "Diciembre"
+    "Diciembre",
   ];
   cursoNotSelected: Boolean = true;
   cuotasXEstudiante: any[] = [];
@@ -57,7 +57,7 @@ export class RegistrarCuotasComponent implements OnInit, OnDestroy {
         "",
         {
           panelClass: ["snack-bar-aviso"],
-          duration: 8000
+          duration: 4000,
         }
       );
     }
@@ -77,7 +77,6 @@ export class RegistrarCuotasComponent implements OnInit, OnDestroy {
 
   //Busca los estudiantes segun el curso que se selecciono en pantalla. Los orden alfabeticamente
   onCursoSeleccionado(curso, mes) {
-    this.cursoNotSelected = false;
     let nroMes: any = 0;
 
     for (let i = 0; i < this.meses.length; i++) {
@@ -97,13 +96,14 @@ export class RegistrarCuotasComponent implements OnInit, OnDestroy {
         }else{
           this.cuotasXEstudiante = [];
         }
+        this.cursoNotSelected = false;
       });
   }
 
   //Cambia el atributo presente del estudiante cuando se cambia de valor el toggle
   onCambioEstadoCuota(row) {
     const indexEstudiante = this.cuotasXEstudiante.findIndex(
-      objConIDEstudiante => objConIDEstudiante._id == row._id
+      (objConIDEstudiante) => objConIDEstudiante._id == row._id
     );
     this.cuotasXEstudiante[indexEstudiante].pagado = !this.cuotasXEstudiante[
       indexEstudiante
@@ -133,22 +133,23 @@ export class RegistrarCuotasComponent implements OnInit, OnDestroy {
     this.servicioEstudiante
       .obtenerCursos()
       .pipe(takeUntil(this.unsubscribe))
-      .subscribe(response => {
+      .subscribe((response) => {
         this.cursos = response.cursos;
-        this.cursos.sort((a, b) =>
-          a.curso.charAt(0) > b.curso.charAt(0)
-            ? 1
-            : b.curso.charAt(0) > a.curso.charAt(0)
-            ? -1
-            : 0
-        );
+        // this.cursos.sort((a, b) =>
+        //   a.curso.charAt(0) > b.curso.charAt(0)
+        //     ? 1
+        //     : b.curso.charAt(0) > a.curso.charAt(0)
+        //     ? -1
+        //     : 0
+        // );
+
       });
     this.cursoEstudiante = "";
   }
 
   onGuardar() {
     let cuotasCambiadas = [];
-    this.cuotasXEstudiante.forEach(cuota => {
+    this.cuotasXEstudiante.forEach((cuota) => {
       if (cuota.changed == true) {
         cuotasCambiadas.push(cuota);
       }
@@ -156,20 +157,20 @@ export class RegistrarCuotasComponent implements OnInit, OnDestroy {
     this.cuotasService
       .publicarEstadoCuotasDeCurso(cuotasCambiadas)
       .pipe(takeUntil(this.unsubscribe))
-      .subscribe(rtdo => {
+      .subscribe((rtdo) => {
         if (cuotasCambiadas.length == 0) {
           this.snackBar.open(
             "No se ha realizado ninguna modificación en las cuotas",
             "",
             {
               panelClass: ["snack-bar-fracaso"],
-              duration: 3000
+              duration: 3000,
             }
           );
         } else {
           this.snackBar.open(rtdo.message, "", {
             panelClass: ["snack-bar-exito"],
-            duration: 3000
+            duration: 3000,
           });
         }
       });

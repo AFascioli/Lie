@@ -68,6 +68,7 @@ export class HomeComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.unsubscribe))
       .subscribe((rtdo) => {
         this.eventos = rtdo.eventos;
+        this.eventos.sort((a, b) => this.compareFechaEventos(a, b));
       });
     if ("serviceWorker" in navigator) {
       navigator.serviceWorker.register("ngsw-worker.js").then((swreg) => {
@@ -91,6 +92,14 @@ export class HomeComponent implements OnInit, OnDestroy {
     }else{
       return fechaActual.getTime() > fechaEvento.getTime();
     }
+  compareFechaEventos(a, b) {
+    if (a.fechaEvento < b.fechaEvento) {
+      return -1;
+    }
+    if (a.fechaEvento > b.fechaEvento) {
+      return 1;
+    }
+    return 0;
   }
 
   subscribeToNotifications() {
@@ -170,10 +179,8 @@ export class HomeComponent implements OnInit, OnDestroy {
     "../estudiantes/mostrar-estudiantes/mostrar-estudiantes.component.css",
   ],
 })
-export class BorrarPopupComponent{
-  constructor(
-    public dialogRef: MatDialogRef<BorrarPopupComponent>,
-  ) {}
+export class BorrarPopupComponent {
+  constructor(public dialogRef: MatDialogRef<BorrarPopupComponent>) {}
 
   onYesClick(): void {
     this.dialogRef.close(true);

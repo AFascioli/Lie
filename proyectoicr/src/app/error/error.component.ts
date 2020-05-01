@@ -5,7 +5,7 @@ import { MAT_DIALOG_DATA } from "@angular/material";
 @Component({
   selector: "app-error",
   templateUrl: "./error.component.html",
-  styleUrls: ["./error.component.css"]
+  styleUrls: ["./error.component.css"],
 })
 export class ErrorComponent implements OnInit {
   dialog: MatDialogRef<ErrorComponent>;
@@ -20,7 +20,5 @@ export class ErrorComponent implements OnInit {
     this.dialog.close();
   }
 
-  ngOnInit() {
-
-  }
+  ngOnInit() {}
 }

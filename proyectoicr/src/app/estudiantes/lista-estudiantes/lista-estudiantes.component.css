@@ -11,8 +11,13 @@
 }
 
 .no-inscripto {
-  grid-template-columns: repeat(2,1fr);
-  grid-template-rows: repeat(2,150px);
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: repeat(2, 150px);
+}
+
+.suspendido {
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(4, 150px);
 }
 
 .rol-docente {
@@ -26,8 +31,11 @@
   margin-right: auto;
   margin-bottom: 2%;
   display: grid;
-  grid-template-columns:  auto;
-  grid-template-rows: repeat(9, 1fr); /* El 9 es la cantidad de opciones que hay */
+  grid-template-columns: auto;
+  grid-template-rows: repeat(
+    9,
+    1fr
+  ); /* El 9 es la cantidad de opciones que hay */
   grid-gap: 8px;
   padding: 10px;
   border-radius: 4px;
@@ -50,7 +58,7 @@
   height: 80%;
 }
 
-.opcion{
+.opcion {
   cursor: pointer;
 }
 
@@ -76,14 +84,14 @@ th {
   width: 45%;
 }
 
-.button-primary{
+.button-primary {
   width: 45% !important;
 }
 
-.mat-raised-button{
+.mat-raised-button {
   white-space: normal !important;
 }
 
-.titulo-expansion-panel{
+.titulo-expansion-panel {
   font-size: 17px;
 }

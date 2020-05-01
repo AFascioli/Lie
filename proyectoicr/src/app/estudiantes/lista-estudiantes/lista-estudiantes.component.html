@@ -18,6 +18,7 @@
         [class.grid-container-mobile]="mobileQuery.matches"
         [class.no-inscripto]="!inscripto[i]"
         [class.rol-docente]="rol == 'Docente'"
+        [class.suspendido]="suspendido[i]"
       >
         <mat-card
           class="opcion"
@@ -86,6 +87,14 @@
           (click)="onVisualizarPerfil(i)"
           *ngIf="permisos.inscribirEstudiante >= 1 && inscripto[i]"
           ><b>Visualizar perfil de estudiante</b></mat-card
+        >
+        <!-- #wip -->
+        <mat-card
+          class="opcion"
+          [class.opcion-mobile]="mobileQuery.matches"
+          (click)="onReincorporar(i)"
+          *ngIf="permisos.inscribirEstudiante >= 1 && suspendido[i]"
+          ><b>Reincorporar estudiante</b></mat-card
         >
       </div>
     </mat-expansion-panel>

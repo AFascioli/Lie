@@ -1,7 +1,13 @@
 import { CancelPopupComponent } from "src/app/popup-genericos/cancel-popup.component";
 import { AutenticacionService } from "../../login/autenticacionService.service";
 import { EstudiantesService } from "src/app/estudiantes/estudiante.service";
-import { Component, OnInit, ViewChild, OnDestroy, ChangeDetectorRef } from "@angular/core";
+import {
+  Component,
+  OnInit,
+  ViewChild,
+  OnDestroy,
+  ChangeDetectorRef,
+} from "@angular/core";
 import { MatDialog, MatSnackBar } from "@angular/material";
 import { NgForm, NgModel } from "@angular/forms";
 import { MatPaginator, PageEvent } from "@angular/material/paginator";
@@ -10,12 +16,12 @@ import { CalificacionesService } from "../calificaciones.service";
 import { MatPaginatorIntl } from "@angular/material";
 import { Subject } from "rxjs";
 import { takeUntil } from "rxjs/operators";
-import { MediaMatcher } from '@angular/cdk/layout';
+import { MediaMatcher } from "@angular/cdk/layout";
 
 @Component({
   selector: "app-calificaciones-estudiantes",
   templateUrl: "./calificaciones-estudiantes.component.html",
-  styleUrls: ["./calificaciones-estudiantes.component.css"]
+  styleUrls: ["./calificaciones-estudiantes.component.css"],
 })
 export class CalificacionesEstudiantesComponent implements OnInit, OnDestroy {
   cursos: any[];
@@ -30,7 +36,7 @@ export class CalificacionesEstudiantesComponent implements OnInit, OnDestroy {
     "cal4",
     "cal5",
     "cal6",
-    "prom"
+    "prom",
   ];
   trimestreSeleccionado: string;
   trimestreActual: string = "fuera";
@@ -80,7 +86,7 @@ export class CalificacionesEstudiantesComponent implements OnInit, OnDestroy {
     this.servicioAutenticacion
       .obtenerPermisosDeRol()
       .pipe(takeUntil(this.unsubscribe))
-      .subscribe(res => {
+      .subscribe((res) => {
         if (res.permisos.notas == 2) {
           this.rolConPermisosEdicion = true;
         }
@@ -110,15 +116,15 @@ export class CalificacionesEstudiantesComponent implements OnInit, OnDestroy {
       this.servicioEstudiante
         .obtenerCursos()
         .pipe(takeUntil(this.unsubscribe))
-        .subscribe(response => {
+        .subscribe((response) => {
           this.cursos = response.cursos;
-          this.cursos.sort((a, b) =>
-            a.curso.charAt(0) > b.curso.charAt(0)
-              ? 1
-              : b.curso.charAt(0) > a.curso.charAt(0)
-              ? -1
-              : 0
-          );
+           this.cursos.sort((a, b) =>
+             a.curso.charAt(0) > b.curso.charAt(0)
+               ? 1
+               : b.curso.charAt(0) > a.curso.charAt(0)
+               ? -1
+               : 0
+           );
         });
     }
   }
@@ -195,14 +201,14 @@ export class CalificacionesEstudiantesComponent implements OnInit, OnDestroy {
           this.idDocente
         )
         .pipe(takeUntil(this.unsubscribe))
-        .subscribe(respuesta => {
+        .subscribe((respuesta) => {
           this.materias = respuesta.materias;
         });
     } else {
       this.servicioEstudiante
         .obtenerMateriasDeCurso(curso.value)
         .pipe(takeUntil(this.unsubscribe))
-        .subscribe(respuesta => {
+        .subscribe((respuesta) => {
           this.materias = respuesta.materias;
         });
     }
@@ -217,7 +223,7 @@ export class CalificacionesEstudiantesComponent implements OnInit, OnDestroy {
           form.value.trimestre
         )
         .pipe(takeUntil(this.unsubscribe))
-        .subscribe(respuesta => {
+        .subscribe((respuesta) => {
           this.estudiantes = [...respuesta.estudiantes];
           this.estudiantes = this.estudiantes.sort((a, b) =>
             a.apellido > b.apellido ? 1 : b.apellido > a.apellido ? -1 : 0
@@ -242,7 +248,7 @@ export class CalificacionesEstudiantesComponent implements OnInit, OnDestroy {
   calcularPromedio(index, cantidad) {
     if (cantidad != 0) {
       var notas: number = 0;
-      this.estudiantes[index].calificaciones.forEach(nota => {
+      this.estudiantes[index].calificaciones.forEach((nota) => {
         if (nota != 0 && nota != null) notas = notas + nota;
       });
       this.promedio = notas / cantidad;
@@ -259,7 +265,7 @@ export class CalificacionesEstudiantesComponent implements OnInit, OnDestroy {
       if (form.value.curso == "" || form.value.materia == "") {
         this.snackBar.open("Faltan campos por seleccionar", "", {
           panelClass: ["snack-bar-fracaso"],
-          duration: 3000
+          duration: 3000,
         });
       } else {
         this.snackBar.open(
@@ -267,7 +273,7 @@ export class CalificacionesEstudiantesComponent implements OnInit, OnDestroy {
           "",
           {
             panelClass: ["snack-bar-fracaso"],
-            duration: 3000
+            duration: 3000,
           }
         );
       }
@@ -279,11 +285,11 @@ export class CalificacionesEstudiantesComponent implements OnInit, OnDestroy {
           form.value.trimestre
         )
         .pipe(takeUntil(this.unsubscribe))
-        .subscribe(respuesta => {
+        .subscribe((respuesta) => {
           if (respuesta.exito) {
             this.snackBar.open(respuesta.message, "", {
               panelClass: ["snack-bar-exito"],
-              duration: 3000
+              duration: 3000,
             });
           }
         });
@@ -292,7 +298,7 @@ export class CalificacionesEstudiantesComponent implements OnInit, OnDestroy {
 
   contadorNotasValidas(index): number {
     var cont = 0;
-    this.estudiantes[index].calificaciones.forEach(nota => {
+    this.estudiantes[index].calificaciones.forEach((nota) => {
       if (nota != 0 && nota != null) cont++;
     });
     return cont;

@@ -91,6 +91,12 @@ mat-datepicker-toggle {
   display: none;
 }
 
+.my-slides .boton-borrar {
+  position: absolute;
+  right:5px;
+  top: 5px;
+}
+
 /* Next & previous buttons */
 .prev,
 .next {

@@ -45,7 +45,7 @@ export class RegistrarAsistenciaComponent implements OnInit, OnDestroy {
         "",
         {
           panelClass: ["snack-bar-aviso"],
-          duration: 8000,
+          duration: 4000,
         }
       );
     }
@@ -150,6 +150,14 @@ export class RegistrarAsistenciaComponent implements OnInit, OnDestroy {
     this.unsubscribe.complete();
   }
 
+  esSuspendido(estudiantesXDivision) {
+    if (estudiantesXDivision.estado == "5e9b47ca052c7e1e2c6701da") {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   onCancelar() {
     this.popup.open(AsistenciaPopupComponent, {
       width: "250px",
@@ -163,12 +171,10 @@ export class RegistrarAsistenciaComponent implements OnInit, OnDestroy {
   styleUrls: ["./registrar-asistencia.component.css"],
 })
 export class AsistenciaPopupComponent {
-
   constructor(
     public dialogRef: MatDialogRef<AsistenciaPopupComponent>,
     public router: Router
-  ) {
-  }
+  ) {}
 
   onYesClick(): void {
     this.router.navigate(["./home"]);

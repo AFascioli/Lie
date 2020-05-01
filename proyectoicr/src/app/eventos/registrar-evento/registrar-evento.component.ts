@@ -243,6 +243,12 @@ export class RegistrarEventoComponent implements OnInit, OnDestroy {
     return this.imgURL[index];
   }
 
+  onEliminarImagen(index) {
+    this.imgURL.splice(index, 1);
+    this.imagesFile.splice(index,1);
+    this.moveFromCurrentSlide(1);
+  }
+
   moveFromCurrentSlide(n) {
     this.slideIndex += n;
     this.showSlide(this.slideIndex);

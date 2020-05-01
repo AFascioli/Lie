@@ -2,6 +2,10 @@
   Resumen académico {{ fechaActual.getFullYear() }} de:
   {{ apellidoEstudiante }}, {{ nombreEstudiante }}
 </h1>
+<h3 class="mensaje-suspendido" *ngIf="suspendido">
+  El estudiante se encuentra suspendido
+</h3>
+
 <div class="grid-container" [class.grid-container-mobile]="mobileQuery.matches">
   <mat-card class="opcion" (click)="onClickCalificaciones()"
     ><mat-icon [inline]="true">assignment_turned_in</mat-icon><br /><b
@@ -39,7 +43,11 @@
   >
 </div>
 <div class="div-button" [class.div-button-mobile]="mobileQuery.matches">
-  <button mat-raised-button [routerLink]="['/buscar/lista']" class="button-warn">
+  <button
+    mat-raised-button
+    [routerLink]="['/buscar/lista']"
+    class="button-warn"
+  >
     Volver
   </button>
 </div>

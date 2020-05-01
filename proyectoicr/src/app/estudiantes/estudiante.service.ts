@@ -6,7 +6,7 @@ import { Subject } from "rxjs";
 import { takeUntil } from "rxjs/operators";
 
 @Injectable({
-  providedIn: "root"
+  providedIn: "root",
 })
 export class EstudiantesService implements OnDestroy {
   estudiantes: Estudiante[] = [];
@@ -68,7 +68,7 @@ export class EstudiantesService implements OnDestroy {
       nacionalidad,
       fechaNacimiento,
       estadoCivil,
-      telefonoFijo
+      telefonoFijo,
     };
     return this.http.post<{ message: string; exito: boolean }>(
       environment.apiUrl + "/estudiante",
@@ -83,7 +83,7 @@ export class EstudiantesService implements OnDestroy {
     return this.http.delete<{ message: string; exito: boolean }>(
       environment.apiUrl + "/estudiante/borrar",
       {
-        params: params
+        params: params,
       }
     );
   }
@@ -101,7 +101,7 @@ export class EstudiantesService implements OnDestroy {
         { params: params }
       )
       .pipe(takeUntil(this.unsubscribe))
-      .subscribe(response => {
+      .subscribe((response) => {
         this.estudiantes = response.estudiantes;
         this.estudiantesBuscados.next([...this.estudiantes]);
       });
@@ -120,7 +120,7 @@ export class EstudiantesService implements OnDestroy {
         { params: params }
       )
       .pipe(takeUntil(this.unsubscribe))
-      .subscribe(response => {
+      .subscribe((response) => {
         this.estudiantes = response.estudiantes;
         this.estudiantesBuscados.next([...this.estudiantes]);
       });
@@ -160,7 +160,7 @@ export class EstudiantesService implements OnDestroy {
       exito: boolean;
       cuotas: any[];
     }>(environment.apiUrl + "/estudiante/cuotasEstudiante", {
-      params: params
+      params: params,
     });
   }
 
@@ -175,7 +175,7 @@ export class EstudiantesService implements OnDestroy {
       exito: boolean;
       sanciones: any[];
     }>(environment.apiUrl + "/estudiante/sancionesEstudiante", {
-      params: params
+      params: params,
     });
   }
   //Obtiene todos los tutores (tutores y adultos responsables) de un estudiante pasado por parámetro
@@ -190,7 +190,7 @@ export class EstudiantesService implements OnDestroy {
       exito: boolean;
       tutores: any[];
     }>(environment.apiUrl + "/estudiante/adultosResponsables", {
-      params: params
+      params: params,
     });
   }
 
@@ -234,7 +234,7 @@ export class EstudiantesService implements OnDestroy {
       nacionalidad,
       fechaNacimiento,
       estadoCivil,
-      telefonoFijo
+      telefonoFijo,
     };
     return this.http.patch<{ message: string; exito: boolean }>(
       environment.apiUrl + "/estudiante/modificar",
@@ -293,7 +293,7 @@ export class EstudiantesService implements OnDestroy {
       curso: string;
       idCurso: string;
     }>(environment.apiUrl + "/curso/estudiante", {
-      params: params
+      params: params,
     });
   }
 
@@ -308,7 +308,31 @@ export class EstudiantesService implements OnDestroy {
       curso: string;
       idCurso: string;
     }>(environment.apiUrl + "/curso/estudiante", {
-      params: params
+      params: params,
+    });
+  }
+
+  public esEstudianteSuspendido(idEstudiante) {
+    let params = new HttpParams().set("idEstudiante", idEstudiante);
+
+    return this.http.get<{
+      message: string;
+      exito: boolean;
+    }>(environment.apiUrl + "/estudiante/suspendido", {
+      params: params,
+    });
+  }
+
+  public reincorporarEstudianteSeleccionado() {
+    let params = new HttpParams().set(
+      "idEstudiante",
+      this.estudianteSeleccionado._id
+    );
+    return this.http.get<{
+      message: string;
+      exito: boolean;
+    }>(environment.apiUrl + "/estudiante/reincorporacion", {
+      params: params,
     });
   }
 
