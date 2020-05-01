@@ -1,11 +1,10 @@
-
-.button-perfil{
-  background-color:#551111 !important;
+.button-perfil {
+  background-color: #551111 !important;
   color: #fff !important;
   margin-left: 38% !important;
 }
 
-.button-perfil-calificaciones{
+.button-perfil-calificaciones {
   background-color: #551111 !important;
   color: #fff !important;
   margin-left: 41% !important;
@@ -16,11 +15,11 @@ table {
   margin-left: 30%;
 }
 
-.mat-card{
-max-width: 1200px !important;
+.mat-card {
+  max-width: 1200px !important;
 }
 
-th{
+th {
   font-weight: bold;
   font-size: 15px;
 }
@@ -34,21 +33,21 @@ th{
   margin-bottom: 2%;
 }
 
-button{
+button {
   color: white;
 }
 
-.mat-toolbar{
+.mat-toolbar {
   background: #2f6483 !important;
   margin-bottom: 6%;
 }
 
-.mat-button.mat-accent{
+.mat-button.mat-accent {
   background: #b4d1ce !important;
   color: black;
 }
 
-.active{
+.active {
   background: #b4d1ce !important;
   color: black;
 }
@@ -59,8 +58,8 @@ button{
   margin-left: auto;
   margin-right: auto;
   display: grid;
-  grid-template-columns:  repeat(3,1fr);
-  grid-template-rows:  150px 150px 150px;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: 150px 150px 150px;
   grid-gap: 8px;
   padding: 10px;
   border-radius: 4px;
@@ -77,7 +76,7 @@ button{
   align-items: center;
 }
 
-.opcion{
+.opcion {
   cursor: pointer;
   margin: auto;
   margin-top: 1rem;
@@ -87,23 +86,35 @@ button{
 }
 
 .grid-container-mobile {
-  grid-template-columns: repeat(1,1fr);
+  grid-template-columns: repeat(1, 1fr);
   grid-template-rows: auto;
 }
 
-.grid-container-mobile > .mat-card{
+.grid-container-mobile > .mat-card {
   margin-bottom: 0.2rem;
   margin-top: 0;
 }
 
-.mat-icon{
+.mat-icon {
   font-size: 45px;
 }
 
-.div-button{
+.div-button {
   width: 94%;
 }
 
-.div-button-mobile{
+.div-button-mobile {
   width: 88%;
+}
+
+.mensaje-suspendido {
+  text-align: center;
+  margin: auto;
+  font-size: large;
+  background-color: #fc7978;
+  box-shadow: 9px 7px 13px 0px #00000040;
+  border-radius: 15px 15px;
+  width: 350px;
+  block-size: 30px;
+  margin-bottom: 8px;
 }

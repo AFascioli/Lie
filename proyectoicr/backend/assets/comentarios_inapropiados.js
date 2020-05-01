@@ -5,6 +5,7 @@ module.exports.comentarios_inapropiados = [
   "Es una mierda este colegio",
   "Es un colegio carteludo",
   "Es muy carteludo el instituto",
+  "Es muy pija el instituto",
   "El ¨Instituto Cristo Rey¨ está lleno de gente que solo le importa la plata",
   "Son unos hipócritas",
   "Son unos ladrones",

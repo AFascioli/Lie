@@ -59,6 +59,9 @@
           class="nombre-apellido"
           mat-cell
           *matCellDef="let estudiantesXDivision"
+          [ngClass]="{
+            suspendido: esSuspendido(estudiantesXDivision)
+          }"
         >
           {{ estudiantesXDivision.apellido }}
         </td>
@@ -71,6 +74,9 @@
           class="nombre-apellido"
           mat-cell
           *matCellDef="let estudiantesXDivision"
+          [ngClass]="{
+            suspendido: esSuspendido(estudiantesXDivision)
+          }"
         >
           {{ estudiantesXDivision.nombre }}
         </td>
@@ -80,7 +86,14 @@
         <th class="presentismo" mat-header-cell *matHeaderCellDef>
           Presentismo
         </th>
-        <td class="presentismo" mat-cell *matCellDef="let row">
+        <td
+          class="presentismo"
+          mat-cell
+          *matCellDef="let row"
+          [ngClass]="{
+            suspendido: esSuspendido(row)
+          }"
+        >
           <mat-slide-toggle
             [checked]="row.presente"
             (change)="onCambioPresentismo(row)"

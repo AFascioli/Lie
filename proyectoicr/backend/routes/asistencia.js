@@ -8,6 +8,7 @@ const checkAuthMiddleware = require("../middleware/check-auth");
 const ClaseAsistencia = require("../classes/asistencia");
 const Estudiante = require("../models/estudiante");
 const Suscripcion = require("../classes/suscripcion");
+const Estado = require("../models/estado");
 
 //Retorna vector con datos de los estudiantes y presente. Si ya se registro una asistencia para
 //el dia de hoy se retorna ese valor de la asistencia, sino se "construye" una nueva
@@ -85,6 +86,7 @@ router.get("", checkAuthMiddleware, (req, res) => {
           },
           {
             $project: {
+              estado: 1,
               ultimaAsistencia: {
                 $slice: ["$asistenciaDiaria", -1],
               },
@@ -103,6 +105,7 @@ router.get("", checkAuthMiddleware, (req, res) => {
           },
           {
             $project: {
+              estado: 1,
               datosEstudiante: 1,
               "asistencia.presente": 1,
               "asistencia._id": 1,
@@ -135,6 +138,7 @@ router.get("", checkAuthMiddleware, (req, res) => {
                       idAsistencia: asistenciaGuardada._id,
                       fecha: fechaHoy,
                       presente: true,
+                      estado: estudiante.estado,
                     };
                     respuesta.push(estudianteRefinado);
                   });
@@ -147,6 +151,7 @@ router.get("", checkAuthMiddleware, (req, res) => {
                 idAsistencia: estudiante.asistencia[0]._id,
                 fecha: fechaHoy,
                 presente: estudiante.asistencia[0].presente,
+                estado: estudiante.estado,
               };
               respuesta.push(estudianteRefinado);
             }
@@ -183,6 +188,7 @@ router.get("", checkAuthMiddleware, (req, res) => {
               "estudiante._id": 1,
               "estudiante.nombre": 1,
               "estudiante.apellido": 1,
+              estado: 1,
             },
           },
         ]).then((documents) => {
@@ -196,6 +202,7 @@ router.get("", checkAuthMiddleware, (req, res) => {
               apellido: objConEstudiante.estudiante[0].apellido,
               fecha: fechaHoy,
               presente: true,
+              estado: objConEstudiante.estado,
             };
             estudiantesRedux.push(estudianteRedux);
           });
@@ -245,6 +252,7 @@ router.post("", checkAuthMiddleware, (req, res) => {
           inscripcion.save();
         });
       });
+      validarLibreInasistencias(estudiante._id, valorInasistencia);
     });
   } else {
     req.body.forEach((estudiante) => {
@@ -262,6 +270,7 @@ router.post("", checkAuthMiddleware, (req, res) => {
               { $inc: { contadorInasistenciasInjustificada: 1 } }
             ).exec();
           });
+          validarLibreInasistencias(estudiante._id, 1);
         }
         //si estaba ausente y lo pasaron a presente decrementa contador inasistencia
         else if (!asistencia.presente && estudiante.presente) {
@@ -282,15 +291,36 @@ router.post("", checkAuthMiddleware, (req, res) => {
   }
   return res
     .status(201)
-    .json({ message: "Asistencia registrada exitosamente", exito: true })
-    .catch((error) => {
+    .json({ message: "Asistencia registrada exitosamente", exito: true });
+});
+
+validarLibreInasistencias = function (idEst, valorInasistencia) {
+  Estado.find({ nombre: "Suspendido", ambito: "Inscripcion" })
+    .then((estado) => {
+      Inscripcion.findOne({
+        idEstudiante: idEst,
+        activa: true,
+      }).then((inscripcion) => {
+        if (
+          inscripcion.contadorInasistenciasInjustificada % 14 == 0 &&
+          valorInasistencia == 1
+        ) {
+          Inscripcion.findOneAndUpdate(
+            {
+              idEstudiante: idEst,
+              activa: true,
+            },
+            { estado: mongoose.Types.ObjectId(estado[0]._id) }
+          ).exec();
+        }
+      });
+    })
+    .catch(() => {
       res.status(500).json({
-        message:
-          "Ocurrió un error al querer publicar el estado de la asistencia para un curso. El error es: " +
-          error.message,
+        message: "No se pudo obtener el estado suspendido",
       });
     });
-});
+};
 
 //Este metodo filtra las inscripciones por estudiante y retorna el contador de inasistencias (injustificada y justificada)
 router.get("/asistenciaEstudiante", (req, res) => {

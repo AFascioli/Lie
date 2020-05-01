@@ -35,7 +35,6 @@ export class RegistrarAsistenciaComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.cursoNotSelected = true;
-    console.log("ejecuto");
     this.fechaActual = new Date();
     if (
       this.fechaActual.toString().substring(0, 3) == "Sat" ||
@@ -59,7 +58,6 @@ export class RegistrarAsistenciaComponent implements OnInit, OnDestroy {
         .obtenerCursos()
         .pipe(takeUntil(this.unsubscribe))
         .subscribe((response) => {
-          console.log(response);
           this.cursos = response.cursos;
           // this.cursos.sort((a, b) =>
           //   a.curso.charAt(0) > b.curso.charAt(0)
@@ -145,6 +143,14 @@ export class RegistrarAsistenciaComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.unsubscribe.next();
     this.unsubscribe.complete();
+  }
+
+  esSuspendido(estudiantesXDivision) {
+    if (estudiantesXDivision.estado == "5e9b47ca052c7e1e2c6701da") {
+      return true;
+    } else {
+      return false;
+    }
   }
 
   onCancelar() {
