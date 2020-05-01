@@ -1,7 +1,12 @@
-<h1 class="componente-titulo">
+<mat-card class="card-spinner" *ngIf="isLoading">
+  <mat-spinner class="spinner" [diameter]="60"></mat-spinner>
+</mat-card>
+
+
+<h1 *ngIf="!isLoading" class="componente-titulo">
   Registrar pago de cuotas
 </h1>
-<mat-card class="card-body-componente">
+<mat-card class="card-body-componente" *ngIf="!isLoading">
   <div class="div-mes-curso-fecha">
     <div>
       <mat-form-field class="mes">

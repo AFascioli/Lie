@@ -68,6 +68,7 @@ export class HomeComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.unsubscribe))
       .subscribe((rtdo) => {
         this.eventos = rtdo.eventos;
+        this.eventos.sort((a, b) => this.compareFechaEventos(a, b));
       });
     if ("serviceWorker" in navigator) {
       navigator.serviceWorker.register("ngsw-worker.js").then((swreg) => {
@@ -77,6 +78,16 @@ export class HomeComponent implements OnInit, OnDestroy {
         }
       });
     }
+  }
+
+  compareFechaEventos(a, b) {
+    if (a.fechaEvento < b.fechaEvento) {
+      return -1;
+    }
+    if (a.fechaEvento > b.fechaEvento) {
+      return 1;
+    }
+    return 0;
   }
 
   subscribeToNotifications() {

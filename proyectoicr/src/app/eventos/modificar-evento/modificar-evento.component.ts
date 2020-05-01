@@ -23,7 +23,7 @@ import { CancelPopupComponent } from "src/app/popup-genericos/cancel-popup.compo
 import { Evento } from "../evento.model";
 import { environment } from "src/environments/environment";
 import { ResizeOptions, ImageResult } from "ng2-imageupload";
-import { MediaMatcher } from '@angular/cdk/layout';
+import { MediaMatcher } from "@angular/cdk/layout";
 
 @Component({
   selector: "app-modificar-evento",
@@ -195,6 +195,14 @@ export class ModificarEventoComponent implements OnInit, OnDestroy {
   moveFromCurrentSlide(n) {
     this.slideIndex += n;
     this.showSlide(this.slideIndex);
+  }
+
+  onEliminarImagen(index) {
+    if (index > this.evento.filenames.length - 1 && this.imagesFile.length > 0)
+      this.imagesFile.splice(index - this.evento.filenames.length, 1);
+    this.imagenesCargadas.splice(index, 1);
+    this.evento.filenames.splice(index, 1);
+    this.moveFromCurrentSlide(1);
   }
 
   showSlide(n) {

@@ -57,7 +57,7 @@ export class RegistrarCuotasComponent implements OnInit, OnDestroy {
         "",
         {
           panelClass: ["snack-bar-aviso"],
-          duration: 8000,
+          duration: 4000,
         }
       );
     }
@@ -139,6 +139,7 @@ export class RegistrarCuotasComponent implements OnInit, OnDestroy {
         //     ? -1
         //     : 0
         // );
+
       });
     this.cursoEstudiante = "";
   }

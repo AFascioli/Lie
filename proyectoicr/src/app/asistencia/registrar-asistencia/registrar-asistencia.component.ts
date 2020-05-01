@@ -45,7 +45,7 @@ export class RegistrarAsistenciaComponent implements OnInit, OnDestroy {
         "",
         {
           panelClass: ["snack-bar-aviso"],
-          duration: 8000,
+          duration: 4000,
         }
       );
     }
