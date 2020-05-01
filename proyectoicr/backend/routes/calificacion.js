@@ -3,88 +3,45 @@ const Inscripcion = require("../models/inscripcion");
 const router = express.Router();
 const mongoose = require("mongoose");
 const ClaseCXM = require("../classes/calificacionXMateria");
+const ClaseEstado = require("../classes/estado");
 
-//Dado un id de estudiante obtiene todas las materias desaprobadas
+//Dado un id de estudiante obtiene todas las materias desaprobadas del año actual
+//Retorna vector con id materia y nombre materia
+//@param: idEstudiante
 router.get("/materiasDesaprobadas", (req, res) => {
-  Inscripcion.aggregate([
-    {
-      $match: {
-        idEstudiante: mongoose.Types.ObjectId(req.query.idEstudiante),
-      },
-    },
-    {
-      $lookup: {
-        from: "calificacionesXMateria",
-        localField: "calificacionesXMateria",
-        foreignField: "_id",
-        as: "CXM",
-      },
-    },
-    {
-      $lookup: {
-        from: "materia",
-        localField: "CXM.idMateria",
-        foreignField: "_id",
-        as: "nombreCXM",
-      },
-    },
-    {
-      $lookup: {
-        from: "calificacionesXMateria",
-        localField: "materiasPendientes",
-        foreignField: "_id",
-        as: "materiasPendientesArray",
-      },
-    },
-    {
-      $lookup: {
-        from: "materia",
-        localField: "materiasPendientesArray.idMateria",
-        foreignField: "_id",
-        as: "materiasPendientesNombres",
-      },
-    },
-    {
-      $project: {
-        materiasPendientesNombres: 1,
-        nombreCXM: 1,
-        CXM: 1,
-        materiasPendientesArray: 1,
-      },
-    },
-  ])
-    .then((materias) => {
-      ClaseCXM.obtenerMateriasDesaprobadas(
-        materias[0].materiasPendientesNombres,
-        materias[0].CXM,
-        materias[0].nombreCXM
-      )
-        .then((materiasDesaprobadas) => {
-          if (materiasDesaprobadas.length != 0) {
-            return res.status(200).json({
-              message: "Materias desaprobadas obtenidas correctamente",
-              exito: true,
-              materiasDesaprobadas: materiasDesaprobadas,
-            });
-          } else {
-            return res.status(200).json({
-              message: "El alumno seleccionado no tiene materias desaprobadas",
-              exito: true,
-              materiasDesaprobadas: [],
-            });
-          }
-        })
-        .catch(() => {
-          res.status(500).json({
-            message: "Mensaje de error especifico",
-          });
-        });
-    })
-    .catch(() => {
-      res.status(500).json({
-        message: "Mensaje de error especifico",
+  let fechaActual = new Date();
+
+  Inscripcion.findOne({
+    idEstudiante: mongoose.Types.ObjectId(req.query.idEstudiante),
+    año: fechaActual.getFullYear()
+  }).then(async (inscripcion) => {
+    let idEstado = await ClaseEstado.obtenerIdEstado(
+      "CalificacionesXMateria",
+      "Desaprobada"
+    );
+
+    let idsCXMDesaprobadas = await ClaseCXM.obtenerMateriasDesaprobadasv2(
+      inscripcion.materiasPendientes,
+      inscripcion.calificacionesXMateria,
+      idEstado
+    );
+
+    if(idsCXMDesaprobadas.length!=0){
+      let materiasDesaprobadas= await ClaseCXM.obtenerNombresMaterias(idsCXMDesaprobadas);
+
+      return res.status(200).json({
+        message: "Materias desaprobadas obtenidas correctamente",
+        exito: true,
+        materiasDesaprobadas: materiasDesaprobadas
       });
-    });
+    } else {
+      return res.status(200).json({
+        message: "El alumno seleccionado no tiene materias desaprobadas",
+        exito: true,
+        materiasDesaprobadas: []
+      });
+    }
+  });
 });
 
 //Dado una id de estudiante y un trimestre obtiene todas las materias con sus respectivas calificaciones

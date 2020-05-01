@@ -89,7 +89,9 @@
       <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
     </table>
   </div>
-
+  <p class="aviso" *ngIf="estudiantesConDocumentos.length == 0 && cursoSeleccionado">
+    No se encuentran estudiantes inscriptos en el curso seleccionado
+  </p>
   <div class="div-button">
     <button
       class="button-primary"

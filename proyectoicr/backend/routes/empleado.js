@@ -50,4 +50,21 @@ router.get("/docente", checkAuthMiddleware, (req, res) => {
     });
 });
 
+//Obtiene la id del empleado dada la idUsuario
+router.get("/id", checkAuthMiddleware, (req, res) => {
+  Empleado.findOne({idUsuario: req.query.idUsuario}).then(empleado => {
+     if(empleado){
+       res.status(200).json({
+         exito: true,
+         message: "Id obtenida correctamente",
+         id: empleado._id
+       })
+     }
+  }).catch(() => {
+    res.status(500).json({
+      message: "Mensaje de error especifico",
+    });
+  });
+});
+
 module.exports = router;

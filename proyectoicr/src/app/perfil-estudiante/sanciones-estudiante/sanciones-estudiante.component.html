@@ -2,7 +2,7 @@
   Sanciones de {{ apellidoEstudiante }}, {{ nombreEstudiante }}
 </h1>
 <mat-card class="card-body-componente">
-  <h3 class="titulo-resumen"><b> Resumen de sanciones</b></h3>
+  <h3 class="titulo-resumen" *ngIf="sanciones.length != 0"><b> Resumen de sanciones</b></h3>
   <div *ngIf="sanciones.length != 0" class="grid-resumen" [class.grid-resumen-mobile]="mobileQuery.matches">
     <mat-card
       ><b>{{ sumatoriaSanciones[0] }}</b><b>Llamados de atención</b>
@@ -42,7 +42,7 @@
   </table>
 
   <p *ngIf="sanciones.length == 0" class="sin-sanciones">
-    El estudiante no presenta sanciones
+   <b> El estudiante no presenta sanciones</b>
   </p>
   <div class="div-button">
     <button

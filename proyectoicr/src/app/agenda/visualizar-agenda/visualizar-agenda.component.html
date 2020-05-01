@@ -66,7 +66,6 @@
         08:15
       </p>
     </div>
-
     <div class="hora modulo2" [class.texto-mobile]="mobileQuery.matches">
       <p class="modulo">
         08:15 <br />-<br />
@@ -105,14 +104,14 @@
     </div>
     <div class="hora modulo8" [class.texto-mobile]="mobileQuery.matches">
       <p class="modulo">
-        13:30 <br />-<br />
-        14:15
+        12:45 <br />-<br />
+        13:30
       </p>
     </div>
     <div class="hora modulo9" [class.texto-mobile]="mobileQuery.matches">
       <p class="modulo">
-        14:05 <br />-<br />
-        14:50
+        13:30 <br />-<br />
+        14:15
       </p>
     </div>
     <div
@@ -131,10 +130,11 @@
         </div>
       </div>
     </div>
-  </div>
-  <div class="div-button">
-    <button mat-raised-button [routerLink]="['/home']" class="button-warn">
-      Volver
-    </button>
+    <p class="agenda-vacia" *ngIf="agendaVacia">El curso seleccionado no tiene materias registradas</p>
+    <div class="div-button">
+      <button mat-raised-button [routerLink]="['/home']" class="button-warn">
+        Volver
+      </button>
+    </div>
   </div>
 </mat-card>

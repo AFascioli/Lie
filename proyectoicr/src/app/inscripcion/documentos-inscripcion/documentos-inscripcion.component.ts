@@ -102,15 +102,16 @@ export class DocumentosInscripcionComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.unsubscribe))
       .subscribe(estudiantes => {
         this.estudiantesConDocumentos = estudiantes.documentos;
-        this.estudiantesConDocumentos = this.estudiantesConDocumentos.sort(
-          (a, b) =>
-            a.datosEstudiante[0].apellido > b.datosEstudiante[0].apellido
-              ? 1
-              : b.datosEstudiante[0].apellido > a.datosEstudiante[0].apellido
-              ? -1
-              : 0
-        );
-
+        if(estudiantes.documentos.length!=0){
+          this.estudiantesConDocumentos = this.estudiantesConDocumentos.sort(
+            (a, b) =>
+              a.datosEstudiante[0].apellido > b.datosEstudiante[0].apellido
+                ? 1
+                : b.datosEstudiante[0].apellido > a.datosEstudiante[0].apellido
+                ? -1
+                : 0
+          );
+        }
       });
     this.documentosEntregadosOnChange = false;
   }

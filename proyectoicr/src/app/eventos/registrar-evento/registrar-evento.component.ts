@@ -104,9 +104,10 @@ export class RegistrarEventoComponent implements OnInit, OnDestroy {
   onGuardarEvento(form: NgForm) {
     if (form.valid && this.chips.length != 0) {
       const fechaEvento = form.value.fechaEvento.toString();
-      if (this.horaInicio == "" && this.horaFin == "") {
-        this.registrarEvento(fechaEvento, form);
-      } else if (this.horaEventoEsValido(this.horaInicio, this.horaFin)) {
+      if (
+        (this.horaInicio == "" && this.horaFin == "") ||
+        this.horaEventoEsValido(this.horaInicio, this.horaFin)
+      ) {
         this.registrarEvento(fechaEvento, form);
       } else {
         this.snackBar.open(

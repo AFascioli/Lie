@@ -3,8 +3,8 @@
   margin-left: auto;
   margin-right: auto;
   display: grid;
-  grid-template-columns: auto auto auto;
-  grid-template-rows: 150px 150px 150px;
+  grid-template-columns:  repeat(3,1fr);
+  grid-template-rows:  150px 150px 150px;
   grid-gap: 8px;
   padding: 10px;
   border-radius: 4px;
@@ -18,6 +18,11 @@
 .suspendido {
   grid-template-columns: repeat(3, 1fr);
   grid-template-rows: repeat(4, 150px);
+}
+
+.rol-docente {
+  grid-template-columns: repeat(3,1fr);
+  grid-template-rows: repeat(1,150px);
 }
 
 .grid-container-mobile {

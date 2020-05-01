@@ -2,13 +2,13 @@
 <mat-card class="card-body-componente">
   <div
     *ngIf="
-      contadorInasistenciaInjustificada && contadorInasistenciaInjustificada != 0
+      (contadorInasistenciaJustificada!= 0 || contadorInasistenciaInjustificada != 0) && contadorInasistenciaInjustificada!=undefined
     "
     style="display: block"
   >
     <canvas
       baseChart
-      [data]="barChartData"
+      [datasets]="barDataSet"
       [labels]="barChartLabels"
       [options]="barChartOptions"
       [plugins]="barChartPlugins"
@@ -25,7 +25,7 @@
       </b>
     </p>
   </div>
-  <p *ngIf="contadorInasistenciaInjustificada == 0">
+  <p class="aviso" *ngIf="contadorInasistenciaInjustificada == 0 && contadorInasistenciaJustificada == 0">
     <b> El estudiante no presenta ninguna inasistencia </b>
   </p>
   <div class="div-button">

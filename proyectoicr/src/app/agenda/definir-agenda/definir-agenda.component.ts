@@ -1,3 +1,4 @@
+import { AutenticacionService } from 'src/app/login/autenticacionService.service';
 import { NgForm } from "@angular/forms";
 import {
   Component,
@@ -65,12 +66,15 @@ export class DefinirAgendaComponent implements OnInit, OnDestroy {
   nuevo: number;
   isLoading = true;
   huboCambios = false;
+  fechaActual: Date;
+  fueraPeriodoDefinirAgenda=false;
   _mobileQueryListener: () => void;
   mobileQuery: MediaQueryList;
 
   constructor(
     public servicioEstudiante: EstudiantesService,
     public servicioAgenda: AgendaService,
+    public servicioAuth: AutenticacionService,
     public dialog: MatDialog,
     private snackBar: MatSnackBar,
     public router: Router,
@@ -85,18 +89,37 @@ export class DefinirAgendaComponent implements OnInit, OnDestroy {
   @ViewChild(MatSort, { static: true }) sort: MatSort;
 
   ngOnInit() {
-    this.obtenerCursos();
-    this.servicioAgenda
-      .obtenerMaterias()
-      .pipe(takeUntil(this.unsubscribe))
-      .subscribe((response) => {
-        this.materias = response.materias;
-      });
-    this.obtenerDocentes();
+    this.fechaActual = new Date();
+    if (
+      this.fechaActualEnCicloLectivo() ||
+      this.servicioAuth.getRol() == "Admin"
+    ) {
+      this.obtenerCursos();
+      this.servicioAgenda
+        .obtenerMaterias()
+        .pipe(takeUntil(this.unsubscribe))
+        .subscribe((response) => {
+          this.materias = response.materias;
+        });
+      this.obtenerDocentes();
+    }else{
+      this.fueraPeriodoDefinirAgenda=true;
+    }
   }
 
   ngAfterViewInit() {
     this.dataSource.sort = this.sort;
+  }
+
+  //Devuelve true si la fecha actual se encuentra dentro del ciclo lectivo, y false caso contrario.
+  fechaActualEnCicloLectivo() {
+    let fechaInicioPrimerTrimestre = new Date(
+      this.servicioAuth.getFechasCicloLectivo().fechaInicioPrimerTrimestre
+    );
+
+    return (
+      this.fechaActual.getTime() < fechaInicioPrimerTrimestre.getTime()
+    );
   }
 
   obtenerDocentes() {

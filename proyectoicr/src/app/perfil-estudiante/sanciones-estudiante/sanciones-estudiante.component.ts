@@ -38,6 +38,8 @@ export class SancionesEstudianteComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.apellidoEstudiante = this.servicio.estudianteSeleccionado.apellido;
+    this.nombreEstudiante = this.servicio.estudianteSeleccionado.nombre;
     this.servicio
       .getSancionesDeEstudiante()
       .pipe(takeUntil(this.unsubscribe))
@@ -47,8 +49,6 @@ export class SancionesEstudianteComponent implements OnInit, OnDestroy {
           if (this.sanciones.length != 0) {
             this.calcularSumatoriaSanciones();
           }
-          this.apellidoEstudiante = this.servicio.estudianteSeleccionado.apellido;
-          this.nombreEstudiante = this.servicio.estudianteSeleccionado.nombre;
         }
       });
   }

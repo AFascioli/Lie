@@ -48,6 +48,7 @@ export class InscripcionEstudianteComponent implements OnInit, OnDestroy {
   fechaDentroDeRangoInscripcion: boolean = true;
   private unsubscribe: Subject<void> = new Subject();
   isLoading: boolean = false;
+  cursoActual: any;
 
   constructor(
     public servicioEstudiante: EstudiantesService,
@@ -86,19 +87,7 @@ export class InscripcionEstudianteComponent implements OnInit, OnDestroy {
       .subscribe((response) => {
         this.estudianteEstaInscripto = response.exito;
       });
-    this.servicioInscripcion
-      .obtenerCursosInscripcionEstudiante()
-      .pipe(takeUntil(this.unsubscribe))
-      .subscribe((response) => {
-        this.cursos = response.cursos;
-        this.cursos.sort((a, b) =>
-          a.curso.charAt(0) > b.curso.charAt(0)
-            ? 1
-            : b.curso.charAt(0) > a.curso.charAt(0)
-            ? -1
-            : 0
-        );
-      });
+    this.obtenerCursosEstudiante();
   }
 
   fechaActualEnRangoFechasInscripcion() {
@@ -118,12 +107,7 @@ export class InscripcionEstudianteComponent implements OnInit, OnDestroy {
   //Obtiene la capacidad del curso seleccionado
   onCursoSeleccionado(curso) {
     this.cursoSeleccionado = curso.value;
-    this.servicioInscripcion
-      .obtenerCapacidadCurso(curso.value)
-      .pipe(takeUntil(this.unsubscribe))
-      .subscribe((response) => {
-        this.capacidadCurso = response.capacidad;
-      });
+    this.obtenerCapacidadCurso();
   }
 
   //Cambia el valor de entregado del documento seleccionado por el usuario
@@ -148,6 +132,8 @@ export class InscripcionEstudianteComponent implements OnInit, OnDestroy {
             panelClass: ["snack-bar-exito"],
             duration: 4500,
           });
+          this.obtenerCursosEstudiante();
+          this.obtenerCapacidadCurso();
           this.isLoading = false;
         } else {
           this.snackBar.open(response.message, "", {
@@ -156,6 +142,34 @@ export class InscripcionEstudianteComponent implements OnInit, OnDestroy {
           });
           this.isLoading = false;
         }
+      });
+  }
+
+  obtenerCursosEstudiante() {
+    this.servicioInscripcion
+      .obtenerCursosInscripcionEstudiante()
+      .pipe(takeUntil(this.unsubscribe))
+      .subscribe((response) => {
+        if (response.cursoActual != "") {
+          this.cursoActual = response.cursoActual.nombre;
+        }
+        this.cursos = response.cursos;
+        this.cursos.sort((a, b) =>
+          a.nombre.charAt(0) > b.nombre.charAt(0)
+            ? 1
+            : b.nombre.charAt(0) > a.nombre.charAt(0)
+            ? -1
+            : 0
+        );
+      });
+  }
+
+  obtenerCapacidadCurso() {
+    this.servicioInscripcion
+      .obtenerCapacidadCurso(this.cursoSeleccionado)
+      .pipe(takeUntil(this.unsubscribe))
+      .subscribe((response) => {
+        this.capacidadCurso = response.capacidad;
       });
   }
 
@@ -189,12 +203,6 @@ export class InscripcionEstudianteComponent implements OnInit, OnDestroy {
               this.isLoading = true;
               this.inscribirEstudiante();
               this.estudianteEstaInscripto = true;
-              this.servicioInscripcion
-                .obtenerCapacidadCurso(this.cursoSeleccionado)
-                .pipe(takeUntil(this.unsubscribe))
-                .subscribe((response) => {
-                  this.capacidadCurso = response.capacidad;
-                });
             }
           });
       }

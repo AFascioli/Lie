@@ -90,6 +90,7 @@ export class RetiroAnticipadoComponent implements OnInit {
         });
     } else {
       this.fueraPeriodoCicloLectivo = true;
+      this.isLoading = false;
     }
   }
 
@@ -146,16 +147,6 @@ export class RetiroAnticipadoComponent implements OnInit {
             if (resultadoOperacion == "exito") {
               this.snackBar.open(response.message, "", {
                 panelClass: ["snack-bar-exito"],
-                duration: 4500,
-              });
-            } else if (resultadoOperacion == "retirado") {
-              this.snackBar.open(response.message, "", {
-                panelClass: ["snack-bar-fracaso"],
-                duration: 4500,
-              });
-            } else if (resultadoOperacion == "ausente") {
-              this.snackBar.open(response.message, "", {
-                panelClass: ["snack-bar-fracaso"],
                 duration: 4500,
               });
             } else {

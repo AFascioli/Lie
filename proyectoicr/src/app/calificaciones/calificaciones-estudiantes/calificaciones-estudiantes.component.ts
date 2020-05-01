@@ -40,6 +40,7 @@ export class CalificacionesEstudiantesComponent implements OnInit, OnDestroy {
   ];
   trimestreSeleccionado: string;
   trimestreActual: string = "fuera";
+  idDocente: string;
   rolConPermisosEdicion = false;
   isLoading = true;
   fechaActual: Date;
@@ -48,6 +49,7 @@ export class CalificacionesEstudiantesComponent implements OnInit, OnDestroy {
   promedio = 0;
   dataSource: MatTableDataSource<any>;
   indexEst = 0;
+  cursoSeleccionado: boolean=false;
   private unsubscribe: Subject<void> = new Subject();
   _mobileQueryListener: () => void;
   mobileQuery: MediaQueryList;
@@ -59,7 +61,7 @@ export class CalificacionesEstudiantesComponent implements OnInit, OnDestroy {
     public servicioCalificaciones: CalificacionesService,
     public popup: MatDialog,
     private snackBar: MatSnackBar,
-    public servicioEstudianteAutenticacion: AutenticacionService,
+    public servicioAutenticacion: AutenticacionService,
     public changeDetectorRef: ChangeDetectorRef,
     public media: MediaMatcher
   ) {
@@ -81,7 +83,7 @@ export class CalificacionesEstudiantesComponent implements OnInit, OnDestroy {
   }
 
   validarPermisos() {
-    this.servicioEstudianteAutenticacion
+    this.servicioAutenticacion
       .obtenerPermisosDeRol()
       .pipe(takeUntil(this.unsubscribe))
       .subscribe((res) => {
@@ -93,39 +95,42 @@ export class CalificacionesEstudiantesComponent implements OnInit, OnDestroy {
   }
 
   obtenerCursos() {
-    if (this.servicioEstudianteAutenticacion.getRol() == "Docente") {
-      this.servicioEstudiante
-        .obtenerCursosDeDocente(this.servicioEstudianteAutenticacion.getId())
-        .pipe(takeUntil(this.unsubscribe))
-        .subscribe((response) => {
-          this.cursos = response.cursos;
-          // this.cursos.sort((a, b) =>
-          //   a.curso.charAt(0) > b.curso.charAt(0)
-          //     ? 1
-          //     : b.curso.charAt(0) > a.curso.charAt(0)
-          //     ? -1
-          //     : 0
-          // );
-        });
+    if (this.servicioAutenticacion.getRol() == "Docente") {
+      this.servicioAutenticacion.obtenerIdEmpleado(this.servicioAutenticacion.getId()).subscribe(response  => {
+        this.idDocente=response.id;
+        this.servicioEstudiante
+          .obtenerCursosDeDocente(this.idDocente)
+          .pipe(takeUntil(this.unsubscribe))
+          .subscribe(response => {
+            this.cursos = response.cursos;
+            this.cursos.sort((a, b) =>
+              a.curso.charAt(0) > b.curso.charAt(0)
+                ? 1
+                : b.curso.charAt(0) > a.curso.charAt(0)
+                ? -1
+                : 0
+            );
+          });
+      })
     } else {
       this.servicioEstudiante
         .obtenerCursos()
         .pipe(takeUntil(this.unsubscribe))
         .subscribe((response) => {
           this.cursos = response.cursos;
-          // this.cursos.sort((a, b) =>
-          //   a.curso.charAt(0) > b.curso.charAt(0)
-          //     ? 1
-          //     : b.curso.charAt(0) > a.curso.charAt(0)
-          //     ? -1
-          //     : 0
-          // );
+           this.cursos.sort((a, b) =>
+             a.curso.charAt(0) > b.curso.charAt(0)
+               ? 1
+               : b.curso.charAt(0) > a.curso.charAt(0)
+               ? -1
+               : 0
+           );
         });
     }
   }
 
   obtenerTrimestreActual() {
-    let fechas = this.servicioEstudianteAutenticacion.getFechasCicloLectivo();
+    let fechas = this.servicioAutenticacion.getFechasCicloLectivo();
     let fechaInicioPrimerTrimestre = new Date(
       fechas.fechaInicioPrimerTrimestre
     );
@@ -180,18 +185,20 @@ export class CalificacionesEstudiantesComponent implements OnInit, OnDestroy {
   //   this.dataSource.filter = filterValue;
   // }
 
+  //Se obtienen las materias del curso seleccionado segun el docente logueado o todas si el rol logueado es Admin
   onCursoSeleccionado(curso, materia: NgModel) {
+    this.cursoSeleccionado=true;
     this.estudiantes = null;
     this.materias = null;
     materia.reset();
     if (
       this.rolConPermisosEdicion &&
-      this.servicioEstudianteAutenticacion.getRol() != "Admin"
+      this.servicioAutenticacion.getRol() != "Admin"
     ) {
       this.servicioEstudiante
         .obtenerMateriasXCursoXDocente(
           curso.value,
-          this.servicioEstudianteAutenticacion.getId()
+          this.idDocente
         )
         .pipe(takeUntil(this.unsubscribe))
         .subscribe((respuesta) => {
@@ -208,7 +215,7 @@ export class CalificacionesEstudiantesComponent implements OnInit, OnDestroy {
   }
 
   obtenerNotas(form: NgForm) {
-    if (form.value.curso != "" || form.value.materia != "") {
+    if (form.value.curso != null && form.value.materia != null) {
       this.servicioCalificaciones
         .obtenerCalificacionesEstudiantesXCursoXMateria(
           form.value.curso,
@@ -288,6 +295,7 @@ export class CalificacionesEstudiantesComponent implements OnInit, OnDestroy {
         });
     }
   }
+
   contadorNotasValidas(index): number {
     var cont = 0;
     this.estudiantes[index].calificaciones.forEach((nota) => {

@@ -67,7 +67,6 @@ export class ModificarEventoComponent implements OnInit, OnDestroy {
     this._mobileQueryListener = () => changeDetectorRef.detectChanges();
     this.mobileQuery.addListener(this._mobileQueryListener);
     this.filtrarChips();
-    console.log(this.mobileQuery.matches);
   }
 
   ngOnDestroy() {
@@ -154,7 +153,7 @@ export class ModificarEventoComponent implements OnInit, OnDestroy {
         min: "",
       },
       confirm: (date) => {
-        this.horaInicio = date;
+        this.evento.horaInicio = date;
       },
     });
     new Rolldate({
@@ -163,7 +162,7 @@ export class ModificarEventoComponent implements OnInit, OnDestroy {
       minStep: 15,
       lang: { title: "Seleccione hora de fin del evento", hour: "", min: "" },
       confirm: (date) => {
-        this.horaFin = date;
+        this.evento.horaFin = date;
       },
     });
   }
@@ -265,21 +264,28 @@ export class ModificarEventoComponent implements OnInit, OnDestroy {
   }
 
   onGuardarEvento(form: NgForm) {
+    console.log(form);
     if (form.valid && this.evento.tags.length != 0) {
-      if (
-        (this.evento.horaInicio && this.evento.horaFin) ||
-        this.horaEventoEsValido(this.evento.horaInicio, this.evento.horaFin)
-      ) {
-        this.modificarEvento();
-      } else if (
-        !this.horaEventoEsValido(this.evento.horaInicio, this.evento.horaFin)
-      ) {
+      if(this.evento.horaInicio!="" && this.evento.horaFin!=""){
+        if(this.horaEventoEsValido(this.evento.horaInicio, this.evento.horaFin)){
+          this.modificarEvento();
+        }else{
+          this.snackBar.open(
+            "La hora de finalización del evento es menor que la hora de inicio",
+            "",
+            {
+              duration: 4500,
+              panelClass: ["snack-bar-fracaso"]
+            }
+          );
+        }
+      }else{
         this.snackBar.open(
-          "La hora de finalización del evento es menor que la hora de inicio",
+          "Faltan campos por completar",
           "",
           {
             duration: 4500,
-            panelClass: ["snack-bar-fracaso"],
+            panelClass: ["snack-bar-fracaso"]
           }
         );
       }
@@ -300,7 +306,7 @@ export class ModificarEventoComponent implements OnInit, OnDestroy {
   horaEventoEsValido(horaInicio: string, horaFin: string) {
     var variableDateInicio = new Date("01/01/2020 " + horaInicio);
     var variableDateFin = new Date("01/01/2020 " + horaFin);
-    return variableDateInicio < variableDateFin;
+    return variableDateInicio.getTime() < variableDateFin.getTime();
   }
 
   popUpCancelar() {

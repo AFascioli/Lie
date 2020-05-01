@@ -1,3 +1,4 @@
+import { AutenticacionService } from 'src/app/login/autenticacionService.service';
 import { Component, OnInit, ChangeDetectorRef, OnDestroy } from "@angular/core";
 import { EstudiantesService } from "src/app/estudiantes/estudiante.service";
 import { SancionService } from "../sancion.service";
@@ -26,6 +27,7 @@ export class RegistrarSancionesComponent implements OnInit, OnDestroy {
   ];
   tipoSancionSelected: Boolean = false;
   suspensionSelected: Boolean = false;
+  fueraPeriodoCicloLectivo:Boolean = false;
   private unsubscribe: Subject<void> = new Subject();
   _mobileQueryListener: () => void;
   mobileQuery: MediaQueryList;
@@ -33,6 +35,7 @@ export class RegistrarSancionesComponent implements OnInit, OnDestroy {
   constructor(
     public servicioEstudiante: EstudiantesService,
     public servicioSancion: SancionService,
+    public autenticacionService: AutenticacionService,
     public snackBar: MatSnackBar,
     public changeDetectorRef: ChangeDetectorRef,
     public media: MediaMatcher
@@ -49,10 +52,32 @@ export class RegistrarSancionesComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.fechaActual = new Date();
-    this.apellidoEstudiante = this.servicioEstudiante.estudianteSeleccionado.apellido;
-    this.nombreEstudiante = this.servicioEstudiante.estudianteSeleccionado.nombre;
-    this.idEstudiante = this.servicioEstudiante.estudianteSeleccionado._id;
+    if (
+      this.fechaActualEnCicloLectivo() ||
+      this.autenticacionService.getRol() == "Admin"
+    ) {
+      this.apellidoEstudiante = this.servicioEstudiante.estudianteSeleccionado.apellido;
+      this.nombreEstudiante = this.servicioEstudiante.estudianteSeleccionado.nombre;
+      this.idEstudiante = this.servicioEstudiante.estudianteSeleccionado._id;
+    }else{
+      this.fueraPeriodoCicloLectivo = true;
+    }
   }
+
+//Devuelve true si la fecha actual se encuentra dentro del ciclo lectivo, y false caso contrario.
+fechaActualEnCicloLectivo() {
+  let fechaInicioPrimerTrimestre = new Date(
+    this.autenticacionService.getFechasCicloLectivo().fechaInicioPrimerTrimestre
+  );
+  let fechaFinTercerTrimestre = new Date(
+    this.autenticacionService.getFechasCicloLectivo().fechaFinTercerTrimestre
+  );
+
+  return (
+    this.fechaActual.getTime() > fechaInicioPrimerTrimestre.getTime() &&
+    this.fechaActual.getTime() < fechaFinTercerTrimestre.getTime()
+  );
+}
 
   onTipoSancionChange(tipoSancion) {
     this.tipoSancionSelected = true;
@@ -74,34 +99,42 @@ export class RegistrarSancionesComponent implements OnInit, OnDestroy {
     }
   }
 
-  guardar(cantidad, tipoSancion, form: NgForm) {
-    let sancion = "";
-    switch (tipoSancion) {
-      case 0:
-        sancion = "Llamado de atencion";
-        break;
-      case 1:
-        sancion = "Apercibimiento";
-        break;
-      case 2:
-        sancion = "Amonestacion";
-        break;
-      case 3:
-        sancion = "Suspencion";
-        cantidad = 1;
-        break;
-    }
-    this.servicioSancion
-      .registrarSancion(this.fechaActual, cantidad, sancion, this.idEstudiante)
-      .pipe(takeUntil(this.unsubscribe))
-      .subscribe(rtdo => {
-        if (rtdo.exito) {
-          this.snackBar.open(rtdo.message, "", {
-            panelClass: ["snack-bar-exito"],
-            duration: 8000
-          });
-          form.resetForm();
-        }
+  guardar(form: NgForm) {
+    if(form.valid){
+      let sancion = "";
+      let cantidad=form.value.cantidadSancion;
+      switch (form.value.sancion) {
+        case 0:
+          sancion = "Llamado de atencion";
+          break;
+        case 1:
+          sancion = "Apercibimiento";
+          break;
+        case 2:
+          sancion = "Amonestacion";
+          break;
+        case 3:
+          sancion = "Suspencion";
+          cantidad = 1;
+          break;
+      }
+      this.servicioSancion
+        .registrarSancion(this.fechaActual, cantidad, sancion, this.idEstudiante)
+        .pipe(takeUntil(this.unsubscribe))
+        .subscribe(rtdo => {
+          if (rtdo.exito) {
+            this.snackBar.open(rtdo.message, "", {
+              panelClass: ["snack-bar-exito"],
+              duration: 4000
+            });
+            form.resetForm();
+          }
+        });
+    }else{
+      this.snackBar.open("Faltan campos por completar", "", {
+        panelClass: ["snack-bar-fracaso"],
+        duration: 4000
       });
+    }
   }
 }

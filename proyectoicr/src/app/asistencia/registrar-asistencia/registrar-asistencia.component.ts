@@ -59,17 +59,18 @@ export class RegistrarAsistenciaComponent implements OnInit, OnDestroy {
         .pipe(takeUntil(this.unsubscribe))
         .subscribe((response) => {
           this.cursos = response.cursos;
-          // this.cursos.sort((a, b) =>
-          //   a.curso.charAt(0) > b.curso.charAt(0)
-          //     ? 1
-          //     : b.curso.charAt(0) > a.curso.charAt(0)
-          //     ? -1
-          //     : 0
-          // );
-          this.isLoading = false;
+          this.cursos.sort((a, b) =>
+            a.curso.charAt(0) > b.curso.charAt(0)
+              ? 1
+              : b.curso.charAt(0) > a.curso.charAt(0)
+              ? -1
+              : 0
+          );
+          this.isLoading=false;
         });
     } else {
       this.fueraPeriodoCicloLectivo = true;
+      this.isLoading=false;
     }
   }
 
@@ -97,9 +98,13 @@ export class RegistrarAsistenciaComponent implements OnInit, OnDestroy {
       .subscribe(
         (respuesta) => {
           this.asistenciaNueva = respuesta.asistenciaNueva;
-          this.estudiantesXDivision = respuesta.estudiantes.sort((a, b) =>
-            a.apellido > b.apellido ? 1 : b.apellido > a.apellido ? -1 : 0
-          );
+          if(respuesta.estudiantes.length!=0){
+            this.estudiantesXDivision = respuesta.estudiantes.sort((a, b) =>
+              a.apellido > b.apellido ? 1 : b.apellido > a.apellido ? -1 : 0
+            );
+          }else{
+            this.estudiantesXDivision =[];
+          }
         },
         (error) => {
           console.error(

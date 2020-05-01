@@ -73,13 +73,25 @@ export class HomeComponent implements OnInit, OnDestroy {
     if ("serviceWorker" in navigator) {
       navigator.serviceWorker.register("ngsw-worker.js").then((swreg) => {
         if (swreg.active) {
-          console.log("Se registro el service worker.");
           this.subscribeToNotifications();
         }
       });
     }
   }
 
+  //Compara la fecha del evento con la fecha actual para deshabilitar el boton editar
+  //si el evento ya paso. Si estamos en el dia del evento, devuelve true si ya estamos
+  //en la misma hora que el evento
+  eventoYaOcurrio(indexEvento: number){
+    const fechaActual= new Date();
+    const fechaEvento= new Date(this.eventos[indexEvento].fechaEvento);
+    if(fechaActual.getMonth() == fechaEvento.getMonth() &&
+    fechaActual.getDate() == fechaEvento.getDate()){
+      const horaEvento= new Date('01/01/2020 ' +this.eventos[indexEvento].horaInicio);
+      return fechaActual.getHours()>=horaEvento.getHours();
+    }else{
+      return fechaActual.getTime() > fechaEvento.getTime();
+    }
   compareFechaEventos(a, b) {
     if (a.fechaEvento < b.fechaEvento) {
       return -1;
@@ -92,7 +104,6 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   subscribeToNotifications() {
     if (Notification.permission === "granted") {
-      console.log("Ya se otorgó el permiso de envio de notificaciones.");
     } else {
       this.swPush
         .requestSubscription({
@@ -153,6 +164,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     let mostrarBoton = false;
     if (
       this.servicioAuth.getRol() == "Admin" ||
+      this.servicioAuth.getRol() == "Director" ||
       this.servicioAuth.getId() == this.eventos[indiceEvento].autor
     )
       mostrarBoton = true;

@@ -21,6 +21,7 @@ export class ListaEstudiantesComponent implements OnInit, OnDestroy {
   estudiantes: Estudiante[] = [];
   inscripto: any[] = [];
   cursos: any[] = [];
+  cursosDeDocente: any[] = [];
   suspendido: any[] = [];
   private unsubscribe: Subject<void> = new Subject();
   permisos = {
@@ -34,6 +35,8 @@ export class ListaEstudiantesComponent implements OnInit, OnDestroy {
     cuotas: 0,
   };
   isLoading: boolean = true;
+  rol: string;
+  materiasPendientes: boolean[] = [];
   _mobileQueryListener: () => void;
   mobileQuery: MediaQueryList;
 
@@ -77,6 +80,17 @@ export class ListaEstudiantesComponent implements OnInit, OnDestroy {
               .subscribe((response) => {
                 this.inscripto[i] = response.exito;
                 this.cursos[i] = response.curso;
+                if (this.inscripto[i]) {
+                  this.servicioCalificaciones
+                    .obtenerMateriasDesaprobadasEstudiante(
+                      this.estudiantes[i]._id
+                    )
+                    .subscribe((response) => {
+                      this.materiasPendientes.push(
+                        response.materiasDesaprobadas.length > 0
+                        );
+                    });
+                }
               });
 
             this.servicio
@@ -91,19 +105,45 @@ export class ListaEstudiantesComponent implements OnInit, OnDestroy {
       if (!this.servicio.retornoDesdeAcciones) {
         this.servicio.retornoDesdeAcciones = false;
       }
-      this.authService
-        .obtenerPermisosDeRol()
-        .pipe(takeUntil(this.unsubscribe))
-        .subscribe((response) => {
-          this.permisos = response.permisos;
-        });
+      // this.authService
+      //   .obtenerPermisosDeRol()
+      //   .pipe(takeUntil(this.unsubscribe))
+      //   .subscribe((response) => {
+      //     this.permisos = response.permisos;
+      //   });
     }
+
     this.authService
       .obtenerPermisosDeRol()
       .pipe(takeUntil(this.unsubscribe))
       .subscribe((response) => {
         this.permisos = response.permisos;
       });
+    this.rol = this.authService.getRol();
+    if (this.rol == "Docente") {
+      this.authService
+        .obtenerIdEmpleado(this.authService.getId())
+        .subscribe((response) => {
+          this.servicio
+            .obtenerCursosDeDocente(response.id)
+            .subscribe((response2) => {
+              response2.cursos.forEach((objetoCurso) => {
+                this.cursosDeDocente.push(objetoCurso.curso);
+              });
+            });
+        });
+    }
+  }
+
+  //Retorna un booleano segun si se deberia mostrar la opcion Registrar examen
+  //(si rol es docente, el estudiante debe estar en el curso del docente)
+  correspondeRegistrarExamen(indexEstudiante: number) {
+    if (this.rol == "Docente") {
+      return this.cursosDeDocente.includes(this.cursos[indexEstudiante]);
+    } else {
+      if (this.rol == "Admin") return true;
+      else return false;
+    }
   }
 
   asignarEstudianteSeleccionado(indice) {

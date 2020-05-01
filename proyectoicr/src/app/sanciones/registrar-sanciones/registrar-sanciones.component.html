@@ -3,7 +3,7 @@
 </h1>
 <mat-card class="card-body-componente">
   <form #form="ngForm">
-    <div class="ubicacion-fecha">
+    <div class="ubicacion-fecha" *ngIf="!fueraPeriodoCicloLectivo">
       <b>Fecha: </b>
       <mat-form-field class="mat-form-Fecha" [class.mat-form-field-mobile]="mobileQuery.matches">
         <input
@@ -19,7 +19,7 @@
         {{ fechaActual | date: "dd/MM/yyyy" }}&nbsp;
       </mat-form-field>
     </div>
-    <div class="contenido" [class.contenido-mobile]="mobileQuery.matches">
+    <div class="contenido" *ngIf="!fueraPeriodoCicloLectivo" [class.contenido-mobile]="mobileQuery.matches">
       <mat-card>
         <p class="titulo-datos-est">Datos del estudiante</p>
         <mat-card-subtitle>
@@ -30,7 +30,7 @@
       </mat-card>
     </div>
     <br />
-    <div class="div-selects">
+    <div class="div-selects" *ngIf="!fueraPeriodoCicloLectivo">
       <mat-form-field [class.mat-form-field-mobile]="mobileQuery.matches">
         <mat-select
           placeholder="Seleccione tipo de sanción"
@@ -66,13 +66,15 @@
         />
       </mat-form-field>
     </div>
+    <p class="aviso" *ngIf="fueraPeriodoCicloLectivo">Atención, no se puede registrar sanciones debido a que estamos fuera del ciclo lectivo </p>
     <br />
     <div class="div-button">
       <button
         mat-raised-button
         class="button-primary"
-        (click)="guardar(cantidad.value, sancion.value, form)"
+        (click)="guardar(form)"
         mat-raised-button
+        [disabled]="fueraPeriodoCicloLectivo"
       >
         Guardar
       </button>

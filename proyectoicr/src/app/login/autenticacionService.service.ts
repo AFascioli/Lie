@@ -380,4 +380,16 @@ export class AutenticacionService implements OnDestroy {
       params: params,
     });
   }
+
+  obtenerIdEmpleado(idUsuario: string){
+    let params = new HttpParams()
+    .set("idUsuario", idUsuario);
+    return this.http.get<{
+      message: string;
+      exito: boolean;
+      id: string;
+    }>(environment.apiUrl + "/empleado/id", {
+      params: params
+    });
+  }
 }

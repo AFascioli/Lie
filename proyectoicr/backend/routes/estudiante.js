@@ -308,11 +308,11 @@ router.get("/nombreyapellido", checkAuthMiddleware, (req, res, next) => {
   Estudiante.find({
     nombre: { $regex: new RegExp(nombre, "i") },
     apellido: { $regex: new RegExp(apellido, "i") },
-    activo: true,
+    activo: true
   })
     .then((documents) => {
       res.status(200).json({
-        estudiantes: documents,
+        estudiantes: documents
       });
     })
     .catch(() => {
@@ -439,6 +439,8 @@ router.get("/cuotasEstudiante", (req, res) => {
 });
 
 router.get("/sancionesEstudiante", (req, res) => {
+  let objetoDate= new Date();
+  let añoActual=objetoDate.getFullYear();
   Estudiante.aggregate([
     {
       $match: {
@@ -461,7 +463,7 @@ router.get("/sancionesEstudiante", (req, res) => {
     },
     {
       $match: {
-        "InscripcionEstudiante.activa": true,
+        "InscripcionEstudiante.año": añoActual,
       },
     },
     {
@@ -483,7 +485,14 @@ router.get("/sancionesEstudiante", (req, res) => {
     },
   ])
     .then((inscripciones) => {
-      let sanciones = inscripciones[0].InscripcionEstudiante.sanciones;
+      let sanciones = [];
+      if(inscripciones.length>1){
+        inscripciones.forEach(inscripcion => {
+          sanciones=sanciones.concat(inscripcion.InscripcionEstudiante.sanciones);
+        });
+      }else{
+        sanciones = inscripciones[0].InscripcionEstudiante.sanciones;
+      }
 
       if (sanciones.length == 0) {
         return res.status(200).json({

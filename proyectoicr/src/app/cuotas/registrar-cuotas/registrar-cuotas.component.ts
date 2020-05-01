@@ -23,7 +23,7 @@ export class RegistrarCuotasComponent implements OnInit, OnDestroy {
 
   mesSeleccionado: any;
   fechaActual: Date;
-  fueraPeriodoCicloLectivo: Boolean;
+  fueraPeriodoCicloLectivo: Boolean=false;
   cursos: any[];
   cursoEstudiante: any;
   meses: string[] = [
@@ -62,12 +62,12 @@ export class RegistrarCuotasComponent implements OnInit, OnDestroy {
       );
     }
 
-    // if (
-    //   !this.fechaActualEnCicloLectivo() ||
-    //   this.autenticacionService.getRol() != "Admin"
-    // ) {
-    //    this.fueraPeriodoCicloLectivo = true;
-    // }
+    if (
+      !(this.fechaActualEnCicloLectivo() ||
+      this.autenticacionService.getRol() == "Admin")
+    ) {
+       this.fueraPeriodoCicloLectivo = true;
+    }
   }
 
   ngOnDestroy() {
@@ -85,14 +85,17 @@ export class RegistrarCuotasComponent implements OnInit, OnDestroy {
         break;
       }
     }
-    console.log(curso.value);
     this.cuotasService
       .obtenerEstadoCuotasDeCurso(curso.value, nroMes)
       .pipe(takeUntil(this.unsubscribe))
-      .subscribe((rtdo) => {
-        this.cuotasXEstudiante = rtdo.cuotasXEstudiante.sort((a, b) =>
-          a.apellido > b.apellido ? 1 : b.apellido > a.apellido ? -1 : 0
-        );
+      .subscribe(rtdo => {
+        if(rtdo.cuotasXEstudiante.length!=0){
+          this.cuotasXEstudiante = rtdo.cuotasXEstudiante.sort((a, b) =>
+            a.apellido > b.apellido ? 1 : b.apellido > a.apellido ? -1 : 0
+          );
+        }else{
+          this.cuotasXEstudiante = [];
+        }
         this.cursoNotSelected = false;
       });
   }
@@ -109,19 +112,19 @@ export class RegistrarCuotasComponent implements OnInit, OnDestroy {
   }
 
   //Devuelve true si la fecha actual se encuentra dentro del ciclo lectivo, y false caso contrario.
-  // fechaActualEnCicloLectivo() {
-  //   let fechaInicioPrimerTrimestre = new Date(
-  //     this.autenticacionService.getFechasCicloLectivo().fechaInicioPrimerTrimestre
-  //   );
-  //   let fechaFinTercerTrimestre = new Date(
-  //     this.autenticacionService.getFechasCicloLectivo().fechaFinTercerTrimestre
-  //   );
+  fechaActualEnCicloLectivo() {
+    let fechaInicioPrimerTrimestre = new Date(
+      this.autenticacionService.getFechasCicloLectivo().fechaInicioPrimerTrimestre
+    );
+    let fechaFinTercerTrimestre = new Date(
+      this.autenticacionService.getFechasCicloLectivo().fechaFinTercerTrimestre
+    );
 
-  //   return (
-  //     this.fechaActual.getTime() > fechaInicioPrimerTrimestre.getTime() &&
-  //     this.fechaActual.getTime() < fechaFinTercerTrimestre.getTime()
-  //   );
-  // }
+    return (
+      this.fechaActual.getTime() > fechaInicioPrimerTrimestre.getTime() &&
+      this.fechaActual.getTime() < fechaFinTercerTrimestre.getTime()
+    );
+  }
 
   //Al seleccionar el mes obtiene todos los cursos y los ordena alfabeticamente
   onMesSeleccionado(mes) {

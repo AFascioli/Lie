@@ -1,10 +1,11 @@
 const CalificacionesXTrimestre = require("../models/calificacionesXTrimestre");
 const CalificacionesXMateria = require("../models/calificacionesXMateria");
+const mongoose = require("mongoose");
 
-exports.obtenerPromedioDeTrimestre = function(calificaciones) {
+exports.obtenerPromedioDeTrimestre = function (calificaciones) {
   let contador = 0;
   let promedioTrimestre = 0;
-  calificaciones.forEach(calificacion => {
+  calificaciones.forEach((calificacion) => {
     if (calificacion != 0) {
       contador = contador + 1;
       promedioTrimestre += calificacion;
@@ -18,45 +19,16 @@ exports.obtenerPromedioDeTrimestre = function(calificaciones) {
   return promedioTrimestre;
 };
 
-// Añade al vector de materias desaprobadas las materias pendientes de otros años y
-//las materias del año actual que también se encuentren desaprobadas
-exports.obtenerMateriasDesaprobadas = async function(
-  arrayPendientes,
-  arrayCXMTotal,
-  arrayNombresCXM
-) {
-  materiasDesaprobadas = [];
-  if (arrayPendientes.length != 0) {
-    materiasDesaprobadas.push(arrayPendientes);
-  }
-
-  for (i = 0; i < arrayCXMTotal.length - 1; i++) {
-    if (arrayCXMTotal[i].promedio == 0) {
-      for (j = 0; j < arrayNombresCXM.length - 1; j++) {
-        //Necesita el casteo sino me lo compara mal
-        if (
-          arrayNombresCXM[j]._id.toString() ===
-          arrayCXMTotal[i].idMateria.toString()
-        ) {
-          materiasDesaprobadas.push(arrayNombresCXM[j]);
-        }
-      }
-    }
-  }
-
-  return materiasDesaprobadas;
-};
-
-exports.crearCalifXTrimestre = async function(califXMateriaNueva) {
+exports.crearCalifXTrimestre = async function (califXMateriaNueva) {
   let idsCalXMateria = [];
   let idsCalificacionMatXTrim = [];
   //vas a crear las calificacionesXTrimestre de cada materia
   for (let i = 0; i < 3; i++) {
     let calificacionesXTrim = new CalificacionesXTrimestre({
       calificaciones: [0, 0, 0, 0, 0, 0],
-      trimestre: i + 1
+      trimestre: i + 1,
     });
-    calificacionesXTrim.save().then(async calXMateriaXTrimestre => {
+    calificacionesXTrim.save().then(async (calXMateriaXTrimestre) => {
       await idsCalificacionMatXTrim.push(calXMateriaXTrimestre._id);
       califXMateriaNueva.calificacionesXTrimestre = idsCalificacionMatXTrim;
       califXMateriaNueva.save();
@@ -69,18 +41,18 @@ exports.crearCalifXTrimestre = async function(califXMateriaNueva) {
   }
 };
 
-exports.crearDocsCalif = async function(materiasDelCurso, estado) {
+exports.crearDocsCalif = async function (materiasDelCurso, estado) {
   let idsCalXMateria = [];
-  materiasDelCurso.forEach(elemento => {
+  materiasDelCurso.forEach((elemento) => {
     let califXMateriaNueva = new CalificacionesXMateria({
       idMateria: elemento.materiasDelCurso[0].materia,
       estado: estado._id,
-      calificacionesXTrimestre: idsCalXMateria
+      calificacionesXTrimestre: idsCalXMateria,
     });
 
     //Creamos las califXMateria
     this.crearCalifXTrimestre(califXMateriaNueva).then(
-      async idsCalificacionMat => {
+      async (idsCalificacionMat) => {
         return await idsCalificacionMat;
       }
     );
@@ -90,14 +62,14 @@ exports.crearDocsCalif = async function(materiasDelCurso, estado) {
 //Crear todas las CalificacionXMateria necesarias con sus respectivas CalificacionesXTrimestre
 //@param: Array con ids de las materias de un curso
 //@param: Id del estado Cursando de CalificacionXMateria
-exports.crearCXM = async function(materiasDelCurso, estado) {
-  var obtenerCXT = trimestre => {
+exports.crearCXM = async function (materiasDelCurso, estado) {
+  var obtenerCXT = (trimestre) => {
     return new Promise((resolve, reject) => {
       let calificacionesXTrim = new CalificacionesXTrimestre({
         calificaciones: [0, 0, 0, 0, 0, 0],
-        trimestre: trimestre
+        trimestre: trimestre,
       });
-      calificacionesXTrim.save().then(async calXMateriaXTrimestre => {
+      calificacionesXTrim.save().then(async (calXMateriaXTrimestre) => {
         resolve(calXMateriaXTrimestre._id);
       });
     });
@@ -114,11 +86,11 @@ exports.crearCXM = async function(materiasDelCurso, estado) {
       let califXMateriaNueva = new CalificacionesXMateria({
         idMateria: idMateria,
         estado: estado,
-        calificacionesXTrimestre: idsCXT
+        calificacionesXTrimestre: idsCXT,
       });
 
       //Se guarda la CXM y se devuelve la id
-      califXMateriaNueva.save().then(cxmNueva => {
+      califXMateriaNueva.save().then((cxmNueva) => {
         resolve(cxmNueva._id);
       });
     });
@@ -127,7 +99,7 @@ exports.crearCXM = async function(materiasDelCurso, estado) {
   var idsCalXMateria = [];
   for (const materia of materiasDelCurso) {
     var idCXM = await obtenerCXMParaInscripcion(
-      materia.materiasDelCurso[0].materia,
+      materia._id.idMateria[0],
       estado._id
     );
     idsCalXMateria.push(idCXM);
@@ -135,22 +107,89 @@ exports.crearCXM = async function(materiasDelCurso, estado) {
   return idsCalXMateria;
 };
 
-//Obtiene las CalificacionesXMateria desaprobadas. Retorna las ids de las CXM desaprobadas
+//Obtiene las CalificacionesXMateria desaprobadas. Retorna las ids de las CXM desaprobadas y pendientes
 //@param: array con las ids de las CalificacionesXMateria
 //@param: id del estado Desaprobada
-exports.obtenerMateriasDesaprobadasv2 = async function(
+exports.obtenerMateriasDesaprobadasv2 = async function (
+  arrayPendientes,
   idsCalificacionesXMateria,
   idEstado
 ) {
-  var idsCXMDesaprobadas = [];
-  for (const cxm of idsCalificacionesXMateria) {
-    await CalificacionesXMateria.findOne({ _id: cxm, estado: idEstado }).then(
-      cxmEncontrada => {
-        if (cxmEncontrada != null) {
-          idsCXMDesaprobadas.push(cxm);
+  return new Promise(async(resolve, reject) => {
+    var idsCXMDesaprobadas = [];
+    if (arrayPendientes.length != 0) {
+      idsCXMDesaprobadas.push(arrayPendientes);
+    }
+    for (const cxm of idsCalificacionesXMateria) {
+      await CalificacionesXMateria.findOne({ _id: cxm, estado: idEstado }).then(
+        (cxmEncontrada) => {
+          if (cxmEncontrada != null) {
+            idsCXMDesaprobadas.push(cxm);
+          }
         }
-      }
-    );
+      ).catch(()=> reject("Error"));
+    }
+    resolve(idsCXMDesaprobadas);
+  });
+};
+
+//Dados los 3 vectores de calificaciones calcula el promedio total
+//@param: vector de calificaciones 1, 2 y 3 trimestre
+exports.obtenerPromedioTotal = (trimestre1, trimestre2, trimestre3) => {
+  return (
+    (this.obtenerPromedioDeTrimestre(trimestre1) +
+      this.obtenerPromedioDeTrimestre(trimestre2) +
+      this.obtenerPromedioDeTrimestre(trimestre3)) /
+    3
+  );
+};
+
+//Dados los 3 vectores de calificaciones retorna un objeto que indica el estado y el promedio
+//que tendra la CXM correspondiente
+//@param: vector de calificaciones 1, 2 y 3 trimestre
+exports.obtenerEstadoYPromedioCXM= (trimestre1, trimestre2, trimestre3) => {
+  let promedioTrimestre3= this.obtenerPromedioDeTrimestre(trimestre3);
+  let promedioGeneral=this.obtenerPromedioTotal(trimestre1, trimestre2, trimestre3);
+
+  if(promedioTrimestre3<6){
+    return {aprobado: false, promedio: promedioGeneral};
+  }else{
+    if(promedioGeneral<6){
+      return {aprobado: false, promedio: promedioGeneral};
+    }else{
+      return {aprobado: true, promedio: promedioGeneral};
+    }
   }
-  return idsCXMDesaprobadas;
+};
+
+//Dado un array de ids de cxm, obtiene el nombre e id de las materias
+exports.obtenerNombresMaterias =async (arrayIdCXM) => {
+  return new Promise(async (resolve, reject) => {
+    let nombresMaterias=[];
+    for(const idCxm of arrayIdCXM){
+      await CalificacionesXMateria.aggregate([
+        {
+          '$match': {
+            '_id': mongoose.Types.ObjectId(idCxm)
+          }
+        },
+        {
+          '$lookup': {
+            'from': 'materia',
+            'localField': 'idMateria',
+            'foreignField': '_id',
+            'as': 'datosMateria'
+          }
+        }, {
+          '$project': {
+            "datosMateria._id":1,
+            'datosMateria.nombre': 1
+          }
+        }
+      ]).then(datosMaterias => {
+        nombresMaterias.push(datosMaterias[0].datosMateria[0]);
+      });
+    }
+    resolve(nombresMaterias);
+  });
 };
