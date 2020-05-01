@@ -26,7 +26,7 @@ import { MediaMatcher } from "@angular/cdk/layout";
 export class CalificacionesEstudiantesComponent implements OnInit, OnDestroy {
   cursos: any[];
   materias: any[];
-  estudiantes: any[];
+  estudiantes: any[]=[];
   displayedColumns: string[] = [
     "apellido",
     "nombre",
@@ -50,6 +50,7 @@ export class CalificacionesEstudiantesComponent implements OnInit, OnDestroy {
   dataSource: MatTableDataSource<any>;
   indexEst = 0;
   cursoSeleccionado: boolean=false;
+  materiaSeleccionada:boolean=false;
   private unsubscribe: Subject<void> = new Subject();
   _mobileQueryListener: () => void;
   mobileQuery: MediaQueryList;
@@ -118,13 +119,13 @@ export class CalificacionesEstudiantesComponent implements OnInit, OnDestroy {
         .pipe(takeUntil(this.unsubscribe))
         .subscribe((response) => {
           this.cursos = response.cursos;
-           this.cursos.sort((a, b) =>
-             a.curso.charAt(0) > b.curso.charAt(0)
-               ? 1
-               : b.curso.charAt(0) > a.curso.charAt(0)
-               ? -1
-               : 0
-           );
+          this.cursos.sort((a, b) =>
+          a.nombre.charAt(0) > b.nombre.charAt(0)
+            ? 1
+            : b.nombre.charAt(0) > a.nombre.charAt(0)
+            ? -1
+            : 0
+        );
         });
     }
   }
@@ -188,7 +189,8 @@ export class CalificacionesEstudiantesComponent implements OnInit, OnDestroy {
   //Se obtienen las materias del curso seleccionado segun el docente logueado o todas si el rol logueado es Admin
   onCursoSeleccionado(curso, materia: NgModel) {
     this.cursoSeleccionado=true;
-    this.estudiantes = null;
+    this.materiaSeleccionada=false;
+    this.estudiantes = [];
     this.materias = null;
     materia.reset();
     if (
@@ -224,6 +226,7 @@ export class CalificacionesEstudiantesComponent implements OnInit, OnDestroy {
         )
         .pipe(takeUntil(this.unsubscribe))
         .subscribe((respuesta) => {
+          this.materiaSeleccionada=true;
           this.estudiantes = [...respuesta.estudiantes];
           this.estudiantes = this.estudiantes.sort((a, b) =>
             a.apellido > b.apellido ? 1 : b.apellido > a.apellido ? -1 : 0

@@ -1,11 +1,11 @@
+<h1 class="componente-titulo">
+  Registrar pago de cuotas
+</h1>
+
 <mat-card class="card-spinner" *ngIf="isLoading">
   <mat-spinner class="spinner" [diameter]="60"></mat-spinner>
 </mat-card>
 
-
-<h1 *ngIf="!isLoading" class="componente-titulo">
-  Registrar pago de cuotas
-</h1>
 <mat-card class="card-body-componente" *ngIf="!isLoading">
   <div class="div-mes-curso-fecha">
     <div>
@@ -15,6 +15,7 @@
           name="mes"
           ngModel
           #mes="ngModel"
+          [(ngModel)]="mesSeleccionado"
           [disabled]="fueraPeriodoCicloLectivo"
           matNativeControl
           required
@@ -39,7 +40,7 @@
           (selectionChange)="onCursoSeleccionado(curso, mes)"
         >
           <mat-option *ngFor="let objCurso of cursos" [value]="objCurso.id">
-            {{ objCurso.curso }}
+            {{ objCurso.nombre }}
           </mat-option>
         </mat-select>
       </mat-form-field>

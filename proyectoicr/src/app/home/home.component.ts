@@ -92,6 +92,8 @@ export class HomeComponent implements OnInit, OnDestroy {
     }else{
       return fechaActual.getTime() > fechaEvento.getTime();
     }
+  }
+
   compareFechaEventos(a, b) {
     if (a.fechaEvento < b.fechaEvento) {
       return -1;

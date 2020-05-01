@@ -398,30 +398,10 @@ router.post("/inasistencia/justificada", checkAuthMiddleware, (req, res) => {
     });
 });
 
-//Se obtienen las ultimas inasistencias dentro de un periodo de 5 dias antes
+//Se obtienen las ultimas 5 inasistencias del estudiante, se permite justificar las inasistencias
+//que fueron creadas en los ultimos 5 dias
 //Se utiliza para la justificacion de inasistencias
-//Se valida que solo se pueda justificar inasistencias para el trimestre actual
 router.get("/inasistencias", (req, res) => {
-  let fechaActual = new Date();
-
-  CicloLectivo.findOne({ año: fechaActual.getFullYear() }).then(
-    (cicloLectivo) => {
-      if (!ClaseAsistencia.validarFechasJustificar(cicloLectivo)) {
-        return res.status(200).json({
-          exito: false,
-          message:
-            "La fecha actual no se encuentra dentro de las fechas permitidas para justificar inasistencias",
-        });
-      }
-      //else{
-      // return res.status(200).json({
-      //   exito: true,
-      //   message:
-      //     "La fecha actual se encuentra dentro de las fechas permitidas para justificar inasistencias"
-      // });}
-    }
-  );
-
   let ultimasInasistencias = [];
   Inscripcion.aggregate([
     {
@@ -466,6 +446,7 @@ router.get("/inasistencias", (req, res) => {
   ])
     .then((response) => {
       if (response.length > 0) {
+        //Limita a que se puedan justificar las inasistencias de los ultimos 5 dias
         fechalimiteInferior = new Date(new Date() - 24 * 60 * 60 * 1000 * 5);
         fechalimiteSuperior = new Date();
         response.forEach((objeto) => {

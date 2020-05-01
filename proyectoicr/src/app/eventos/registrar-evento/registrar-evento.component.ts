@@ -40,7 +40,7 @@ export class RegistrarEventoComponent implements OnInit, OnDestroy {
   chipsCtrl = new FormControl();
   filteredChips: Observable<string[]>;
   chips: string[] = [];
-  allChips: string[] = ["1A", "2A", "3A", "4A", "5A", "6A", "Todos los cursos"];
+  allChips: string[] = ["1A","1B", "2A","2B", "3A","3B", "4A","4B", "5A","5B", "6A","6B", "Todos los cursos"];
   horaInicio = "";
   horaFin = "";
 

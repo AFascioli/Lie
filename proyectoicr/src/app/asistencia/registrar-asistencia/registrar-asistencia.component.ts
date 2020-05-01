@@ -60,12 +60,12 @@ export class RegistrarAsistenciaComponent implements OnInit, OnDestroy {
         .subscribe((response) => {
           this.cursos = response.cursos;
           this.cursos.sort((a, b) =>
-            a.curso.charAt(0) > b.curso.charAt(0)
-              ? 1
-              : b.curso.charAt(0) > a.curso.charAt(0)
-              ? -1
-              : 0
-          );
+          a.nombre.charAt(0) > b.nombre.charAt(0)
+            ? 1
+            : b.nombre.charAt(0) > a.nombre.charAt(0)
+            ? -1
+            : 0
+        );
           this.isLoading=false;
         });
     } else {

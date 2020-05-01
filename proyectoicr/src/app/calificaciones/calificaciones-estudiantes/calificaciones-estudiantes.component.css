@@ -94,3 +94,8 @@ input:focus {
 .td.mat-cell:last-of-type,  td.mat-cell:last-of-type{
   padding-right: 0;
 }
+
+.aviso{
+  text-align: center;
+  margin-top: 2% !important;
+}
