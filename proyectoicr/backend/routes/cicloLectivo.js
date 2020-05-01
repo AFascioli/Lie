@@ -35,10 +35,12 @@ router.get("/", checkAuthMiddleware, (req, res) => {
     });
 });
 
+//#resolve Estos metodos se deberian llamar una vez que se definan las fechas del ciclo lectivo
+//en ese endpoint. (fijarse si hace falta mover estos metodos a otro lado, ej, clase CicloLectivo)
 /* Al finalizar el tercer trimestre: Se calculan los promedios de los trimestre y se asignan los estados de
 acuerdo a si la materia esta aprobada o desaprobada y el promedio final en
 caso de aprobada. Tambien se cambia el estado de la inscripcion (Promovido o Examenes pendientes)*/
-router.get("/procesoAutomaticoTercerTrimestre", (req, res) => {
+router.use("/procesoAutomaticoTercerTrimestre", (req, res) => {
   let date = new Date();
   let fechas;
   CicloLectivo.findOne({ año: date.getFullYear() })
@@ -130,8 +132,8 @@ router.get("/procesoAutomaticoTercerTrimestre", (req, res) => {
   };
 
   cron.scheduleJob(
-    //  fechas,
-    date.setSeconds(date.getSeconds() + 5),
+     fechas,
+    // date.setSeconds(date.getSeconds() + 5),
     async () => {
       let cxmTotales = await obtenerTodasCXM(2020);
       for (let materia of cxmTotales) {
@@ -197,35 +199,36 @@ router.get("/procesoAutomaticoTercerTrimestre", (req, res) => {
       }
     }
   );
+  next();
 });
 
 /* Al cumplirse la fecha de fin de examenes: El metodo siguiente se fija la cantidad de
 materias desaprobadas del año lectivo y la cantidad de materias pendientes y de acuerdo a
 eso le cambia el estado a la inscripcion */
-router.get("/procesoAutomaticoFinExamenes", (req, res) => {
-  let fechaActual = new Date();
+router.use("/procesoAutomaticoFinExamenes", (req, res) => {
+  // let fechaActual = new Date();
   let fechaFinExamenes;
-  // CicloLectivo.findOne({ año: fechaActual.getFullYear() })
-  //   .then((cicloLectivoActual) => {
-  //     //Se agrega +1 en date porque devuelve mal el dia.
-  //     fechaFinExamenes = new Date(
-  //       cicloLectivoActual.fechaFinTercerTrimestre.getFullYear(),
-  //       cicloLectivoActual.fechaFinTercerTrimestre.getMonth(),
-  //       cicloLectivoActual.fechaFinTercerTrimestre.getDate() + 1,
-  //       20,
-  //       0,
-  //       0
-  //     );
-  //   })
-  //   .catch(() => {
-  //     res.status(500).json({
-  //       message: "Mensaje de error especifico",
-  //     });
-  //   });
+  CicloLectivo.findOne({ año: fechaActual.getFullYear() })
+    .then((cicloLectivoActual) => {
+      //Se agrega +1 en date porque devuelve mal el dia.
+      fechaFinExamenes = new Date(
+        cicloLectivoActual.fechaFinTercerTrimestre.getFullYear(),
+        cicloLectivoActual.fechaFinTercerTrimestre.getMonth(),
+        cicloLectivoActual.fechaFinTercerTrimestre.getDate() + 1,
+        20,
+        0,
+        0
+      );
+    })
+    .catch(() => {
+      res.status(500).json({
+        message: "Mensaje de error especifico",
+      });
+    });
 
   cron.scheduleJob(
-    fechaActual.setSeconds(fechaActual.getSeconds() + 5),
-    // fechaFinExamenes,
+    // fechaActual.setSeconds(fechaActual.getSeconds() + 5),
+    fechaFinExamenes,
     async () => {
       let obtenerInscripcionesActivas = () => {
         return new Promise((resolve, reject) => {
