@@ -24,13 +24,13 @@ export class TutoresEstudianteComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.apellidoEstudiante = this.servicio.estudianteSeleccionado.apellido;
+    this.nombreEstudiante = this.servicio.estudianteSeleccionado.nombre;
     this.servicio
       .getTutoresDeEstudiante()
       .pipe(takeUntil(this.unsubscribe))
       .subscribe((respuesta) => {
         this.tutores = respuesta.tutores;
-        this.apellidoEstudiante = this.servicio.estudianteSeleccionado.apellido;
-        this.nombreEstudiante = this.servicio.estudianteSeleccionado.nombre;
       });
   }
 }

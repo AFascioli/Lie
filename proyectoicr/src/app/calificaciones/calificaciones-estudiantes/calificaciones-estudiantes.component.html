@@ -37,7 +37,7 @@
           (selectionChange)="onCursoSeleccionado(curso, materia)"
         >
           <mat-option *ngFor="let objCurso of cursos" [value]="objCurso.id">
-            {{ objCurso.curso }}
+            {{ objCurso.nombre }}
           </mat-option>
         </mat-select>
       </mat-form-field>
@@ -49,6 +49,7 @@
           #materia="ngModel"
           matNativeControl
           required
+          [disabled]="!cursoSeleccionado"
           (selectionChange)="obtenerNotas(form)"
         >
           <mat-option
@@ -60,7 +61,7 @@
         </mat-select>
       </mat-form-field>
     </div>
-    <mat-form-field class="filtro" *ngIf="estudiantes">
+    <mat-form-field class="filtro" *ngIf="estudiantes.length!=0">
       <mat-label>Filtrar estudiante</mat-label>
       <input
         matInput
@@ -73,7 +74,7 @@
       mat-table
       [class.table-mobile]="mobileQuery.matches"
       [dataSource]="dataSource"
-      *ngIf="estudiantes"
+      *ngIf="estudiantes.length!=0"
     >
       <ng-container matColumnDef="apellido">
         <th class="columnas-normales" mat-header-cell *matHeaderCellDef>
@@ -269,7 +270,7 @@
       <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
     </table>
 
-    <div [hidden]="!estudiantes">
+    <div [hidden]="!(estudiantes.length!=0)">
       <mat-paginator
         (page)="pageEvent = indexEstudiante()"
         [pageSizeOptions]="[10, 20, 30, 35]"
@@ -277,10 +278,11 @@
       >
       </mat-paginator>
     </div>
+    <p class="aviso" *ngIf="estudiantes.length==0 && materiaSeleccionada">No se encuentran estudiantes registrados en este curso</p>
     <div class="div-button">
       <button
         [disabled]="
-          !estudiantes || !calificacionesChange || !puedeEditarCalificaciones
+          !(estudiantes.length!=0) || !calificacionesChange || !puedeEditarCalificaciones
         "
         mat-raised-button
         class="button"

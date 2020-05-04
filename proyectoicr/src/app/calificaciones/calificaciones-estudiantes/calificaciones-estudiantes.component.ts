@@ -1,7 +1,13 @@
 import { CancelPopupComponent } from "src/app/popup-genericos/cancel-popup.component";
 import { AutenticacionService } from "../../login/autenticacionService.service";
 import { EstudiantesService } from "src/app/estudiantes/estudiante.service";
-import { Component, OnInit, ViewChild, OnDestroy, ChangeDetectorRef } from "@angular/core";
+import {
+  Component,
+  OnInit,
+  ViewChild,
+  OnDestroy,
+  ChangeDetectorRef,
+} from "@angular/core";
 import { MatDialog, MatSnackBar } from "@angular/material";
 import { NgForm, NgModel } from "@angular/forms";
 import { MatPaginator, PageEvent } from "@angular/material/paginator";
@@ -10,17 +16,17 @@ import { CalificacionesService } from "../calificaciones.service";
 import { MatPaginatorIntl } from "@angular/material";
 import { Subject } from "rxjs";
 import { takeUntil } from "rxjs/operators";
-import { MediaMatcher } from '@angular/cdk/layout';
+import { MediaMatcher } from "@angular/cdk/layout";
 
 @Component({
   selector: "app-calificaciones-estudiantes",
   templateUrl: "./calificaciones-estudiantes.component.html",
-  styleUrls: ["./calificaciones-estudiantes.component.css"]
+  styleUrls: ["./calificaciones-estudiantes.component.css"],
 })
 export class CalificacionesEstudiantesComponent implements OnInit, OnDestroy {
   cursos: any[];
   materias: any[];
-  estudiantes: any[];
+  estudiantes: any[]=[];
   displayedColumns: string[] = [
     "apellido",
     "nombre",
@@ -30,18 +36,21 @@ export class CalificacionesEstudiantesComponent implements OnInit, OnDestroy {
     "cal4",
     "cal5",
     "cal6",
-    "prom"
+    "prom",
   ];
   trimestreSeleccionado: string;
   trimestreActual: string = "fuera";
+  idDocente: string;
   rolConPermisosEdicion = false;
- isLoading = true;
+  isLoading = true;
   fechaActual: Date;
   calificacionesChange = false;
   puedeEditarCalificaciones = false;
   promedio = 0;
   dataSource: MatTableDataSource<any>;
   indexEst = 0;
+  cursoSeleccionado: boolean=false;
+  materiaSeleccionada:boolean=false;
   private unsubscribe: Subject<void> = new Subject();
   _mobileQueryListener: () => void;
   mobileQuery: MediaQueryList;
@@ -53,7 +62,7 @@ export class CalificacionesEstudiantesComponent implements OnInit, OnDestroy {
     public servicioCalificaciones: CalificacionesService,
     public popup: MatDialog,
     private snackBar: MatSnackBar,
-    public servicioEstudianteAutenticacion: AutenticacionService,
+    public servicioAutenticacion: AutenticacionService,
     public changeDetectorRef: ChangeDetectorRef,
     public media: MediaMatcher
   ) {
@@ -75,10 +84,10 @@ export class CalificacionesEstudiantesComponent implements OnInit, OnDestroy {
   }
 
   validarPermisos() {
-    this.servicioEstudianteAutenticacion
+    this.servicioAutenticacion
       .obtenerPermisosDeRol()
       .pipe(takeUntil(this.unsubscribe))
-      .subscribe(res => {
+      .subscribe((res) => {
         if (res.permisos.notas == 2) {
           this.rolConPermisosEdicion = true;
         }
@@ -87,39 +96,42 @@ export class CalificacionesEstudiantesComponent implements OnInit, OnDestroy {
   }
 
   obtenerCursos() {
-    if (this.servicioEstudianteAutenticacion.getRol() == "Docente") {
-      this.servicioEstudiante
-        .obtenerCursosDeDocente(this.servicioEstudianteAutenticacion.getId())
-        .pipe(takeUntil(this.unsubscribe))
-        .subscribe(response => {
-          this.cursos = response.cursos;
-          this.cursos.sort((a, b) =>
-            a.curso.charAt(0) > b.curso.charAt(0)
-              ? 1
-              : b.curso.charAt(0) > a.curso.charAt(0)
-              ? -1
-              : 0
-          );
-        });
+    if (this.servicioAutenticacion.getRol() == "Docente") {
+      this.servicioAutenticacion.obtenerIdEmpleado(this.servicioAutenticacion.getId()).subscribe(response  => {
+        this.idDocente=response.id;
+        this.servicioEstudiante
+          .obtenerCursosDeDocente(this.idDocente)
+          .pipe(takeUntil(this.unsubscribe))
+          .subscribe(response => {
+            this.cursos = response.cursos;
+            this.cursos.sort((a, b) =>
+              a.curso.charAt(0) > b.curso.charAt(0)
+                ? 1
+                : b.curso.charAt(0) > a.curso.charAt(0)
+                ? -1
+                : 0
+            );
+          });
+      })
     } else {
       this.servicioEstudiante
         .obtenerCursos()
         .pipe(takeUntil(this.unsubscribe))
-        .subscribe(response => {
+        .subscribe((response) => {
           this.cursos = response.cursos;
           this.cursos.sort((a, b) =>
-            a.curso.charAt(0) > b.curso.charAt(0)
-              ? 1
-              : b.curso.charAt(0) > a.curso.charAt(0)
-              ? -1
-              : 0
-          );
+          a.nombre.charAt(0) > b.nombre.charAt(0)
+            ? 1
+            : b.nombre.charAt(0) > a.nombre.charAt(0)
+            ? -1
+            : 0
+        );
         });
     }
   }
 
   obtenerTrimestreActual() {
-    let fechas = this.servicioEstudianteAutenticacion.getFechasCicloLectivo();
+    let fechas = this.servicioAutenticacion.getFechasCicloLectivo();
     let fechaInicioPrimerTrimestre = new Date(
       fechas.fechaInicioPrimerTrimestre
     );
@@ -174,35 +186,38 @@ export class CalificacionesEstudiantesComponent implements OnInit, OnDestroy {
   //   this.dataSource.filter = filterValue;
   // }
 
+  //Se obtienen las materias del curso seleccionado segun el docente logueado o todas si el rol logueado es Admin
   onCursoSeleccionado(curso, materia: NgModel) {
-    this.estudiantes = null;
+    this.cursoSeleccionado=true;
+    this.materiaSeleccionada=false;
+    this.estudiantes = [];
     this.materias = null;
     materia.reset();
     if (
       this.rolConPermisosEdicion &&
-      this.servicioEstudianteAutenticacion.getRol() != "Admin"
+      this.servicioAutenticacion.getRol() != "Admin"
     ) {
       this.servicioEstudiante
         .obtenerMateriasXCursoXDocente(
           curso.value,
-          this.servicioEstudianteAutenticacion.getId()
+          this.idDocente
         )
         .pipe(takeUntil(this.unsubscribe))
-        .subscribe(respuesta => {
+        .subscribe((respuesta) => {
           this.materias = respuesta.materias;
         });
     } else {
       this.servicioEstudiante
         .obtenerMateriasDeCurso(curso.value)
         .pipe(takeUntil(this.unsubscribe))
-        .subscribe(respuesta => {
+        .subscribe((respuesta) => {
           this.materias = respuesta.materias;
         });
     }
   }
 
   obtenerNotas(form: NgForm) {
-    if (form.value.curso != "" || form.value.materia != "") {
+    if (form.value.curso != null && form.value.materia != null) {
       this.servicioCalificaciones
         .obtenerCalificacionesEstudiantesXCursoXMateria(
           form.value.curso,
@@ -210,12 +225,12 @@ export class CalificacionesEstudiantesComponent implements OnInit, OnDestroy {
           form.value.trimestre
         )
         .pipe(takeUntil(this.unsubscribe))
-        .subscribe(respuesta => {
+        .subscribe((respuesta) => {
+          this.materiaSeleccionada=true;
           this.estudiantes = [...respuesta.estudiantes];
           this.estudiantes = this.estudiantes.sort((a, b) =>
             a.apellido > b.apellido ? 1 : b.apellido > a.apellido ? -1 : 0
           );
-          console.log(this.estudiantes);
           this.dataSource = new MatTableDataSource(this.estudiantes);
           this.dataSource.paginator = this.paginator;
           this.dataSource.paginator.firstPage();
@@ -236,7 +251,7 @@ export class CalificacionesEstudiantesComponent implements OnInit, OnDestroy {
   calcularPromedio(index, cantidad) {
     if (cantidad != 0) {
       var notas: number = 0;
-      this.estudiantes[index].calificaciones.forEach(nota => {
+      this.estudiantes[index].calificaciones.forEach((nota) => {
         if (nota != 0 && nota != null) notas = notas + nota;
       });
       this.promedio = notas / cantidad;
@@ -253,7 +268,7 @@ export class CalificacionesEstudiantesComponent implements OnInit, OnDestroy {
       if (form.value.curso == "" || form.value.materia == "") {
         this.snackBar.open("Faltan campos por seleccionar", "", {
           panelClass: ["snack-bar-fracaso"],
-          duration: 3000
+          duration: 3000,
         });
       } else {
         this.snackBar.open(
@@ -261,7 +276,7 @@ export class CalificacionesEstudiantesComponent implements OnInit, OnDestroy {
           "",
           {
             panelClass: ["snack-bar-fracaso"],
-            duration: 3000
+            duration: 3000,
           }
         );
       }
@@ -273,19 +288,20 @@ export class CalificacionesEstudiantesComponent implements OnInit, OnDestroy {
           form.value.trimestre
         )
         .pipe(takeUntil(this.unsubscribe))
-        .subscribe(respuesta => {
+        .subscribe((respuesta) => {
           if (respuesta.exito) {
             this.snackBar.open(respuesta.message, "", {
               panelClass: ["snack-bar-exito"],
-              duration: 3000
+              duration: 3000,
             });
           }
         });
     }
   }
+
   contadorNotasValidas(index): number {
     var cont = 0;
-    this.estudiantes[index].calificaciones.forEach(nota => {
+    this.estudiantes[index].calificaciones.forEach((nota) => {
       if (nota != 0 && nota != null) cont++;
     });
     return cont;

@@ -43,6 +43,7 @@
     "http-server": "^0.12.1",
     "jsonwebtoken": "^8.5.1",
     "mat-table-exporter": "^9.0.0",
+    "mimir": "0.0.1",
     "mongoose": "^5.6.0",
     "mongoose-unique-validator": "^2.0.3",
     "multer": "^1.4.2",

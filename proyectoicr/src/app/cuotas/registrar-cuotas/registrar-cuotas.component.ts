@@ -10,7 +10,7 @@ import { Subject } from "rxjs";
 @Component({
   selector: "app-registrar-cuotas",
   templateUrl: "./registrar-cuotas.component.html",
-  styleUrls: ["./registrar-cuotas.component.css"]
+  styleUrls: ["./registrar-cuotas.component.css"],
 })
 export class RegistrarCuotasComponent implements OnInit, OnDestroy {
   constructor(
@@ -23,7 +23,7 @@ export class RegistrarCuotasComponent implements OnInit, OnDestroy {
 
   mesSeleccionado: any;
   fechaActual: Date;
-  fueraPeriodoCicloLectivo: Boolean;
+  fueraPeriodoCicloLectivo: Boolean=false;
   cursos: any[];
   cursoEstudiante: any;
   meses: string[] = [
@@ -38,11 +38,12 @@ export class RegistrarCuotasComponent implements OnInit, OnDestroy {
     "Septiembre",
     "Octubre",
     "Noviembre",
-    "Diciembre"
+    "Diciembre",
   ];
   cursoNotSelected: Boolean = true;
   cuotasXEstudiante: any[] = [];
   displayedColumns: string[] = ["apellido", "nombre", "accion"];
+  isLoading: Boolean =false;
   private unsubscribe: Subject<void> = new Subject();
 
   ngOnInit() {
@@ -57,17 +58,17 @@ export class RegistrarCuotasComponent implements OnInit, OnDestroy {
         "",
         {
           panelClass: ["snack-bar-aviso"],
-          duration: 8000
+          duration: 4000,
         }
       );
     }
 
-    // if (
-    //   !this.fechaActualEnCicloLectivo() ||
-    //   this.autenticacionService.getRol() != "Admin"
-    // ) {
-    //    this.fueraPeriodoCicloLectivo = true;
-    // }
+    if (
+      !(this.fechaActualEnCicloLectivo() ||
+      this.autenticacionService.getRol() == "Admin")
+    ) {
+       this.fueraPeriodoCicloLectivo = true;
+    }
   }
 
   ngOnDestroy() {
@@ -77,7 +78,6 @@ export class RegistrarCuotasComponent implements OnInit, OnDestroy {
 
   //Busca los estudiantes segun el curso que se selecciono en pantalla. Los orden alfabeticamente
   onCursoSeleccionado(curso, mes) {
-    this.cursoNotSelected = false;
     let nroMes: any = 0;
 
     for (let i = 0; i < this.meses.length; i++) {
@@ -86,20 +86,27 @@ export class RegistrarCuotasComponent implements OnInit, OnDestroy {
         break;
       }
     }
+    this.isLoading=true;
     this.cuotasService
       .obtenerEstadoCuotasDeCurso(curso.value, nroMes)
       .pipe(takeUntil(this.unsubscribe))
       .subscribe(rtdo => {
-        this.cuotasXEstudiante = rtdo.cuotasXEstudiante.sort((a, b) =>
-          a.apellido > b.apellido ? 1 : b.apellido > a.apellido ? -1 : 0
-        );
+        if(rtdo.cuotasXEstudiante.length!=0){
+          this.cuotasXEstudiante = rtdo.cuotasXEstudiante.sort((a, b) =>
+            a.apellido > b.apellido ? 1 : b.apellido > a.apellido ? -1 : 0
+          );
+        }else{
+          this.cuotasXEstudiante = [];
+        }
+        this.isLoading=false;
+        this.cursoNotSelected = false;
       });
   }
 
   //Cambia el atributo presente del estudiante cuando se cambia de valor el toggle
   onCambioEstadoCuota(row) {
     const indexEstudiante = this.cuotasXEstudiante.findIndex(
-      objConIDEstudiante => objConIDEstudiante._id == row._id
+      (objConIDEstudiante) => objConIDEstudiante._id == row._id
     );
     this.cuotasXEstudiante[indexEstudiante].pagado = !this.cuotasXEstudiante[
       indexEstudiante
@@ -108,19 +115,19 @@ export class RegistrarCuotasComponent implements OnInit, OnDestroy {
   }
 
   //Devuelve true si la fecha actual se encuentra dentro del ciclo lectivo, y false caso contrario.
-  // fechaActualEnCicloLectivo() {
-  //   let fechaInicioPrimerTrimestre = new Date(
-  //     this.autenticacionService.getFechasCicloLectivo().fechaInicioPrimerTrimestre
-  //   );
-  //   let fechaFinTercerTrimestre = new Date(
-  //     this.autenticacionService.getFechasCicloLectivo().fechaFinTercerTrimestre
-  //   );
+  fechaActualEnCicloLectivo() {
+    let fechaInicioPrimerTrimestre = new Date(
+      this.autenticacionService.getFechasCicloLectivo().fechaInicioPrimerTrimestre
+    );
+    let fechaFinTercerTrimestre = new Date(
+      this.autenticacionService.getFechasCicloLectivo().fechaFinTercerTrimestre
+    );
 
-  //   return (
-  //     this.fechaActual.getTime() > fechaInicioPrimerTrimestre.getTime() &&
-  //     this.fechaActual.getTime() < fechaFinTercerTrimestre.getTime()
-  //   );
-  // }
+    return (
+      this.fechaActual.getTime() > fechaInicioPrimerTrimestre.getTime() &&
+      this.fechaActual.getTime() < fechaFinTercerTrimestre.getTime()
+    );
+  }
 
   //Al seleccionar el mes obtiene todos los cursos y los ordena alfabeticamente
   onMesSeleccionado(mes) {
@@ -129,12 +136,12 @@ export class RegistrarCuotasComponent implements OnInit, OnDestroy {
     this.servicioEstudiante
       .obtenerCursos()
       .pipe(takeUntil(this.unsubscribe))
-      .subscribe(response => {
+      .subscribe((response) => {
         this.cursos = response.cursos;
         this.cursos.sort((a, b) =>
-          a.curso.charAt(0) > b.curso.charAt(0)
+          a.nombre.charAt(0) > b.nombre.charAt(0)
             ? 1
-            : b.curso.charAt(0) > a.curso.charAt(0)
+            : b.nombre.charAt(0) > a.nombre.charAt(0)
             ? -1
             : 0
         );
@@ -144,28 +151,30 @@ export class RegistrarCuotasComponent implements OnInit, OnDestroy {
 
   onGuardar() {
     let cuotasCambiadas = [];
-    this.cuotasXEstudiante.forEach(cuota => {
+    this.cuotasXEstudiante.forEach((cuota) => {
       if (cuota.changed == true) {
         cuotasCambiadas.push(cuota);
       }
     });
+    this.isLoading=true;
     this.cuotasService
       .publicarEstadoCuotasDeCurso(cuotasCambiadas)
       .pipe(takeUntil(this.unsubscribe))
-      .subscribe(rtdo => {
+      .subscribe((rtdo) => {
+        this.isLoading=false;
         if (cuotasCambiadas.length == 0) {
           this.snackBar.open(
             "No se ha realizado ninguna modificación en las cuotas",
             "",
             {
               panelClass: ["snack-bar-fracaso"],
-              duration: 3000
+              duration: 3000,
             }
           );
         } else {
           this.snackBar.open(rtdo.message, "", {
             panelClass: ["snack-bar-exito"],
-            duration: 3000
+            duration: 3000,
           });
         }
       });

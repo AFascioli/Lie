@@ -8,10 +8,13 @@ const Inscripcion = require("../models/inscripcion");
 const CalificacionesXTrimestre = require("../models/calificacionesXTrimestre");
 const Estudiante = require("../models/estudiante");
 const Horario = require("../models/horario");
+const Empleado = require("../models/empleado");
 const MateriaXCurso = require("../models/materiasXCurso");
-const ClaseInscripcion = require("../classes/inscripcion");
-const ClaseCalifXMateria = require("../classes/calificacionXMateria");
 const AdultoResponsable = require("../models/adultoResponsable");
+const CicloLectivo = require("../models/cicloLectivo");
+const ClaseInscripcion = require("../classes/inscripcion");
+const ClaseEstado = require("../classes/estado");
+const ClaseCalifXMateria = require("../classes/calificacionXMateria");
 const Suscripcion = require("../classes/suscripcion");
 const ClaseAsistencia = require("../classes/asistencia");
 
@@ -24,7 +27,7 @@ router.get("/", checkAuthMiddleware, (req, res) => {
       cursos.forEach((curso) => {
         var cursoConId = {
           id: curso._id,
-          curso: curso.nombre,
+          nombre: curso.nombre,
         };
         respuesta.push(cursoConId);
       });
@@ -152,7 +155,7 @@ router.post("/registrarSancion", checkAuthMiddleware, (req, res) => {
 router.get("/estadoCuotas", checkAuthMiddleware, (req, res) => {
   let fechaActual = new Date();
   // let añoActual = fechaActual.getFullYear();
-  Curso.findOne({ curso: req.query.idCurso })
+  Curso.findById(req.query.idCurso)
     .then((curso) => {
       Inscripcion.aggregate([
         {
@@ -186,6 +189,7 @@ router.get("/estadoCuotas", checkAuthMiddleware, (req, res) => {
         .then((estadoCuotas) => {
           if (estadoCuotas.length == 0) {
             res.status(200).json({
+              cuotasXEstudiante: [],
               message: "No se han obtenido alumnos de dicho curso",
               exito: true,
             });
@@ -277,6 +281,7 @@ router.get("/cursosDeEstudiante", checkAuthMiddleware, (req, res) => {
     {
       $match: {
         idEstudiante: mongoose.Types.ObjectId(req.query.idEstudiante),
+        activa: true,
       },
     },
     {
@@ -307,13 +312,20 @@ router.get("/cursosDeEstudiante", checkAuthMiddleware, (req, res) => {
         //El estudiante está inscripto a un curso y por ende se fija al curso al que se puede inscribir
         let siguiente;
         siguiente = ClaseInscripcion.obtenerAñoHabilitado(inscripcion);
-
+        let cursosDisponibles = [];
         //Buscamos los cursos que corresponden al que se puede inscribir el estudiante
         Curso.find({ nombre: { $regex: siguiente } }).then((cursos) => {
+          //Se agregan todos los cursos disponibles para inscribirse excepto el curso actual
+          cursos.forEach((curso) => {
+            if (!(curso.nombre == inscripcion[0].cursoActual[0].nombre)) {
+              cursosDisponibles.push(curso);
+            }
+          });
           return res.status(200).json({
             message: "Devolvio los cursos correctamente",
             exito: true,
-            cursos: cursos,
+            cursos: cursosDisponibles,
+            cursoActual: inscripcion[0].cursoActual[0],
           });
         });
       } else {
@@ -325,7 +337,7 @@ router.get("/cursosDeEstudiante", checkAuthMiddleware, (req, res) => {
             cursos.forEach((curso) => {
               var cursoConId = {
                 _id: curso._id,
-                curso: curso.nombre,
+                nombre: curso.nombre,
               };
               respuesta.push(cursoConId);
             });
@@ -333,6 +345,7 @@ router.get("/cursosDeEstudiante", checkAuthMiddleware, (req, res) => {
               message: "Devolvio los cursos correctamente",
               exito: true,
               cursos: respuesta,
+              cursoActual: "",
             });
           })
           .catch(() => {
@@ -697,7 +710,6 @@ router.get(
           message:
             "Se obtuvieron las calificaciones para una materia, un curso y un trimestre determinado correctamente",
           exito: true,
-
         });
       })
       .catch(() => {
@@ -946,23 +958,6 @@ router.post("/inscripcion", checkAuthMiddleware, async (req, res) => {
     });
   };
 
-  var obtenerEstadoDesaprobadaMateria = () => {
-    return new Promise((resolve, reject) => {
-      Estado.findOne({
-        nombre: "Desaprobada",
-        ambito: "CalificacionesXMateria",
-      })
-        .then((estado) => {
-          resolve(estado);
-        })
-        .catch(() => {
-          res.status(500).json({
-            message: "Mensaje de error especifico",
-          });
-        });
-    });
-  };
-
   var obtenerEstadoCursandoMateria = () => {
     return new Promise((resolve, reject) => {
       Estado.findOne({
@@ -981,12 +976,12 @@ router.post("/inscripcion", checkAuthMiddleware, async (req, res) => {
   };
 
   //Dada una id de curso, obtiene las ids de las materias que se dan en ese curso
-  var obtenerMateriasDeCurso = () => {
+  var obtenerMateriasDeCurso = (idCurso) => {
     return new Promise((resolve, reject) => {
       Curso.aggregate([
         {
           $match: {
-            _id: mongoose.Types.ObjectId(req.body.idCurso),
+            _id: mongoose.Types.ObjectId(idCurso),
           },
         },
         {
@@ -1001,9 +996,10 @@ router.post("/inscripcion", checkAuthMiddleware, async (req, res) => {
           },
         },
         {
-          $project: {
-            "materiasDelCurso.idMateria": 1,
-            _id: 0,
+          $group: {
+            _id: {
+              idMateria: "$materiasDelCurso.idMateria",
+            },
           },
         },
       ])
@@ -1030,23 +1026,41 @@ router.post("/inscripcion", checkAuthMiddleware, async (req, res) => {
     });
   };
 
+  var obtenerAñoCicloLectivo = () => {
+    let fechaActual = new Date();
+    return new Promise((resolve, reject) => {
+      CicloLectivo.findOne({ año: fechaActual.getFullYear() })
+        .then((cicloLectivo) => {
+          resolve(cicloLectivo.año);
+        })
+        .catch(() => {
+          res.status(500).json({
+            message: "Mensaje de error especifico",
+          });
+        });
+    });
+  };
+
   var cursoSeleccionado = await obtenerCurso();
   var estadoInscriptoInscripcion = await obtenerEstadoInscriptoInscripcion();
   var inscripcion = await obtenerInscripcion();
+  let cuotasAnteriores = [];
 
   //Si el estudiante tiene una inscripcion anteriormente, se obtienen las CXM que esten desaprobadas,
   //ya sea las que estan en materiasPendientes y las CXM con estado "Desaprobada"
   var materiasPendientesNuevas = [];
   if (inscripcion != null) {
     inscripcion.activa = false;
-    var estadoDesaprobadaMateria = await obtenerEstadoDesaprobadaMateria();
-    if (inscripcion.materiasPendientes.length != 0) {
-      //Revisar logica
-      materiasPendientesNuevas.push(...inscripcion.materiasPendientes);
-    }
+    cuotasAnteriores = inscripcion.cuotas;
+
+    var idEstadoDesaprobadaMateria = await ClaseEstado.obtenerIdEstado(
+      "CalificacionesXMateria",
+      "Desaprobada"
+    );
     var idsCXMDesaprobadas = await ClaseCalifXMateria.obtenerMateriasDesaprobadasv2(
+      inscripcion.materiasPendientes,
       inscripcion.calificacionesXMateria,
-      estadoDesaprobadaMateria._id
+      idEstadoDesaprobadaMateria
     );
     if (idsCXMDesaprobadas.length != 0) {
       materiasPendientesNuevas.push(...idsCXMDesaprobadas);
@@ -1054,8 +1068,14 @@ router.post("/inscripcion", checkAuthMiddleware, async (req, res) => {
     await inscripcion.save();
   }
 
-  var materiasDelCurso = await obtenerMateriasDeCurso();
-  var cuotas = await crearCuotas();
+  var añoActual = await obtenerAñoCicloLectivo();
+  var materiasDelCurso = await obtenerMateriasDeCurso(req.body.idCurso);
+  var cuotas = [];
+  if (cuotasAnteriores.length == 0) {
+    cuotas = await crearCuotas();
+  } else {
+    cuotas = cuotasAnteriores;
+  }
   var estadoCursandoMateria = await obtenerEstadoCursandoMateria();
   var idsCXMNuevas = await ClaseCalifXMateria.crearCXM(
     materiasDelCurso,
@@ -1073,7 +1093,7 @@ router.post("/inscripcion", checkAuthMiddleware, async (req, res) => {
     contadorLlegadasTarde: 0,
     calificacionesXMateria: idsCXMNuevas,
     materiasPendientes: materiasPendientesNuevas,
-    año: 2019,
+    año: añoActual,
     cuotas: cuotas,
     sanciones: [],
   });
@@ -1084,6 +1104,7 @@ router.post("/inscripcion", checkAuthMiddleware, async (req, res) => {
       cursoSeleccionado.capacidad = cursoSeleccionado.capacidad - 1;
       cursoSeleccionado.save();
       //Le cambiamos el estado al estudiante
+      //SE PUEDE CAMBIAR CON EL METODO OBTENERIDESTADO #resolve
       Estado.findOne({
         nombre: "Inscripto",
         ambito: "Estudiante",
@@ -1337,7 +1358,8 @@ router.post("/eliminarHorario", checkAuthMiddleware, (req, res) => {
 //para un curso dado, sino se modifica el horario de la mxc existente.
 //@params: id del curso
 //@params: agenda, que es un vector que tiene objetos con idMateria, idDocente, modificado  y el vector de horarios
-router.post("/agenda", checkAuthMiddleware, async (req, res) => {
+//, checkAuthMiddleware
+router.post("/agenda", async (req, res) => {
   var crearHorario = (horario) => {
     return new Promise((resolve, reject) => {
       horario.save().then((horarioGuardado) => {
@@ -1368,6 +1390,7 @@ router.post("/agenda", checkAuthMiddleware, async (req, res) => {
               inicio: materia.inicio,
               fin: materia.fin,
             });
+            break;
           } else {
             mxcNuevas.push({
               idMateria: materia.idMateria,
@@ -1376,6 +1399,7 @@ router.post("/agenda", checkAuthMiddleware, async (req, res) => {
                 { dia: materia.dia, inicio: materia.inicio, fin: materia.fin },
               ],
             });
+            break;
           }
         }
       } else {
@@ -1396,103 +1420,6 @@ router.post("/agenda", checkAuthMiddleware, async (req, res) => {
       }).exec();
     }
   }
-
-  if (mxcNuevas.length != 0) {
-    //Hay mxc nuevas para guarda en la bd
-    for (const mxcNueva of mxcNuevas) {
-      let vectorIdsHorarios = [];
-      for (const horario of mxcNueva.horarios) {
-        let nuevoHorario = new Horario({
-          dia: horario.dia,
-          horaInicio: horario.inicio,
-          horaFin: horario.fin,
-        });
-        let idHorarioGuardado = await crearHorario(nuevoHorario);
-        vectorIdsHorarios.push(idHorarioGuardado);
-      }
-      let nuevaMateriaXCurso = new MateriaXCurso({
-        materia: mxcNueva.idMateria,
-        idDocente: mxcNueva.idDocente,
-        horarios: vectorIdsHorarios,
-      });
-
-      let idMXC = await crearMateriaXCurso(nuevaMateriaXCurso);
-      vectorIdsMXC.push(idMXC);
-    }
-    Curso.findByIdAndUpdate(req.body.idCurso, {
-      $push: { materias: { $each: vectorIdsMXC } },
-    }).then(() => {
-      res.json({ exito: true, message: "Materias agregadas correctamente" });
-    });
-  } else {
-    res.json({ exito: true, message: "Horarios modificados correctamente" });
-  }
-});
-
-//Se fija cada objeto del vector agenda, si es una mxc nueva la registra
-//para un curso dado, sino se modifica el horario de la mxc existente.
-//@params: id del curso
-//@params: agenda, que es un vector que tiene objetos con idMateria, idDocente, modificado  y el vector de horarios
-router.post("/agendaTEST", checkAuthMiddleware, async (req, res) => {
-  var crearHorario = (horario) => {
-    return new Promise((resolve, reject) => {
-      horario.save().then((horarioGuardado) => {
-        resolve(horarioGuardado._id);
-      });
-    });
-  };
-
-  var crearMateriaXCurso = (mxc) => {
-    return new Promise((resolve, reject) => {
-      mxc.save().then((mxcGuardada) => {
-        resolve(mxcGuardada._id);
-      });
-    });
-  };
-  var mxcNuevas = [];
-  let vectorIdsMXC = [];
-  for (const materia of req.body.agenda) {
-    //Recorrer agenda del front
-    if (materia.idHorarios == null) {
-      //vemos si la mxc es nueva o una modificada
-      if (mxcNuevas.length != 0) {
-        for (const mxcNueva of mxcNuevas) {
-          //Recorrer mxcNuevas para saber si es una mxc nueva o es una ya creada que tiene un nuevo horario
-          if (mxcNueva.idMateria == materia.idMateria) {
-            mxcNueva.horaInicio.push({
-              dia: materia.dia,
-              inicio: materia.inicio,
-              fin: materia.fin,
-            });
-          } else {
-            mxcNuevas.push({
-              idMateria: materia.idMateria,
-              idDocente: materia.idDocente,
-              horarios: [
-                { dia: materia.dia, inicio: materia.inicio, fin: materia.fin },
-              ],
-            });
-          }
-        }
-      } else {
-        mxcNuevas.push({
-          idMateria: materia.idMateria,
-          idDocente: materia.idDocente,
-          horarios: [
-            { dia: materia.dia, inicio: materia.inicio, fin: materia.fin },
-          ],
-        });
-      }
-    } else if (materia.modificado) {
-      //Se actualiza el nuevo horario para una mxc dada
-      Horario.findByIdAndUpdate(materia.idHorarios, {
-        dia: materia.dia,
-        horaInicio: materia.inicio,
-        horaFin: materia.fin,
-      }).exec();
-    }
-  }
-
   if (mxcNuevas.length != 0) {
     //Hay mxc nuevas para guarda en la bd
     for (const mxcNueva of mxcNuevas) {
@@ -1515,14 +1442,15 @@ router.post("/agendaTEST", checkAuthMiddleware, async (req, res) => {
       let idMXC = await crearMateriaXCurso(nuevaMateriaXCurso);
       vectorIdsMXC.push(idMXC);
     }
-    Curso.findByIdAndUpdate(req.body.idCurso, { materias: vectorIdsMXC }).then(
-      () => {
-        res.json({ exito: true, message: "nice" });
-      }
-    );
+    Curso.findByIdAndUpdate(req.body.idCurso, {
+      $push: { materias: { $each: vectorIdsMXC } },
+    }).then(() => {
+      res.json({ exito: true, message: "Materias agregadas correctamente" });
+    });
   } else {
-    res.json({ exito: true, message: "nice" });
+    res.json({ exito: true, message: "Horarios modificados correctamente" });
   }
+  // res.json({ exito: mxcNuevas, message: "Horarios modificados correctamente" });
 });
 
 module.exports = router;

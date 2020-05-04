@@ -23,6 +23,7 @@ import {
   MatInputModule,
   MatPaginatorIntl,
 } from "@angular/material";
+// import { MatIconRegistry } from "@angular/material/icon";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { MatPaginatorModule } from "@angular/material/paginator";
@@ -34,13 +35,16 @@ import { CancelPopupComponent } from "./popup-genericos/cancel-popup.component";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { HttpClientModule, HTTP_INTERCEPTORS } from "@angular/common/http";
 import { NgxMaterialTimepickerModule } from "ngx-material-timepicker";
-import { MatTableExporterModule } from 'mat-table-exporter';
+import { MatTableExporterModule } from "mat-table-exporter";
 import { EstudiantesService } from "./estudiantes/estudiante.service";
 import {
   BuscarEstudiantesComponent,
   BuscarPopupComponent,
 } from "./estudiantes/buscar-estudiantes/buscar-estudiantes.component";
-import { ListaEstudiantesComponent } from "./estudiantes/lista-estudiantes/lista-estudiantes.component";
+import {
+  ListaEstudiantesComponent,
+  ReincorporarPopupComponent,
+} from "./estudiantes/lista-estudiantes/lista-estudiantes.component";
 import {
   MostrarEstudiantesComponent,
   MostrarPopupComponent,
@@ -131,6 +135,7 @@ import { MenuPrincipalAdultoResponsableComponent } from "./menu-principal-adulto
     AltaEstudiantesComponent,
     BuscarEstudiantesComponent,
     ListaEstudiantesComponent,
+    ReincorporarPopupComponent,
     MostrarEstudiantesComponent,
     CancelPopupComponent,
     MostrarPopupComponent,
@@ -196,6 +201,7 @@ import { MenuPrincipalAdultoResponsableComponent } from "./menu-principal-adulto
     AltaEmpleadoPopupComponent,
     AltaAdultoResponsablePopupComponent,
     AgendaPopupComponent,
+    ReincorporarPopupComponent,
     ReadMoreComponent,
     ErrorComponent,
   ],
@@ -230,6 +236,7 @@ import { MenuPrincipalAdultoResponsableComponent } from "./menu-principal-adulto
     MatSnackBarModule,
     MatGridListModule,
     ChartsModule,
+    // MatIconRegistry,
     MatPaginatorModule,
     NgxMaterialTimepickerModule,
     ImageUploadModule,

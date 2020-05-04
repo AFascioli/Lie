@@ -90,6 +90,7 @@ export class RetiroAnticipadoComponent implements OnInit {
         });
     } else {
       this.fueraPeriodoCicloLectivo = true;
+      this.isLoading = false;
     }
   }
 
@@ -148,16 +149,6 @@ export class RetiroAnticipadoComponent implements OnInit {
                 panelClass: ["snack-bar-exito"],
                 duration: 4500,
               });
-            } else if (resultadoOperacion == "retirado") {
-              this.snackBar.open(response.message, "", {
-                panelClass: ["snack-bar-fracaso"],
-                duration: 4500,
-              });
-            } else if (resultadoOperacion == "ausente") {
-              this.snackBar.open(response.message, "", {
-                panelClass: ["snack-bar-fracaso"],
-                duration: 4500,
-              });
             } else {
               this.snackBar.open(response.message, "", {
                 panelClass: ["snack-bar-fracaso"],
@@ -201,63 +192,6 @@ export class RetiroPopupComponent {
 
   //Confirma el retiro anticipado para el estudiante
   onYesConfirmarClick(): void {
-    this.servicioAsistencia
-      .registrarRetiroAnticipado(
-        this.IdEstudiante,
-        this.antes10am,
-        this.tutoresSeleccionados
-      )
-      .pipe(takeUntil(this.unsubscribe))
-      .subscribe(
-        (response) => {
-          this.resultado = response.exito;
-          this.dialogRef.close();
-          if (this.resultado == "exito") {
-            this.snackBar.open(
-              "Se registró correctamente el retiro anticipado para el estudiante seleccionado.",
-              "",
-              {
-                panelClass: ["snack-bar-exito"],
-                duration: 4500,
-              }
-            );
-          } else if (this.resultado == "retirado") {
-            this.snackBar.open(
-              "Retiro no registrado. Ya se ha registrado un retiro anticipado para el estudiante seleccionado.",
-              "",
-              {
-                panelClass: ["snack-bar-fracaso"],
-                duration: 4500,
-              }
-            );
-          } else if (this.resultado == "ausente") {
-            this.snackBar.open(
-              "Retiro no registrado. El estudiante esta ausente para el día de hoy.",
-              "",
-              {
-                panelClass: ["snack-bar-fracaso"],
-                duration: 4500,
-              }
-            );
-          } else {
-            this.snackBar.open(
-              "Retiro no registrado. El estudiante no tiene registrada la asistencia para el día de hoy.",
-              "",
-              {
-                panelClass: ["snack-bar-fracaso"],
-                duration: 4500,
-              }
-            );
-          }
-        },
-        (error) => {
-          console.error(
-            "Ocurrió un error al querer publicar el retiro anticipado de un estudiante" +
-              "El error se puede describir de la siguiente manera: " +
-              error.message
-          );
-        }
-      );
     this.dialogRef.close(true);
   }
 

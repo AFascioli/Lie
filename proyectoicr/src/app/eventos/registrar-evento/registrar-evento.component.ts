@@ -4,7 +4,7 @@ import {
   ElementRef,
   ViewChild,
   OnDestroy,
-  ChangeDetectorRef
+  ChangeDetectorRef,
 } from "@angular/core";
 import { COMMA, ENTER } from "@angular/cdk/keycodes";
 import { FormControl, NgForm } from "@angular/forms";
@@ -21,7 +21,7 @@ import Rolldate from "../../../assets/rolldate.min.js";
 import { CancelPopupComponent } from "src/app/popup-genericos/cancel-popup.component";
 import { Router } from "@angular/router";
 import { ImageResult, ResizeOptions } from "ng2-imageupload";
-import { MediaMatcher } from '@angular/cdk/layout';
+import { MediaMatcher } from "@angular/cdk/layout";
 
 @Component({
   selector: "app-registrar-evento",
@@ -40,7 +40,7 @@ export class RegistrarEventoComponent implements OnInit, OnDestroy {
   chipsCtrl = new FormControl();
   filteredChips: Observable<string[]>;
   chips: string[] = [];
-  allChips: string[] = ["1A", "2A", "3A", "4A", "5A", "6A", "Todos los cursos"];
+  allChips: string[] = ["1A","1B", "2A","2B", "3A","3B", "4A","4B", "5A","5B", "6A","6B", "Todos los cursos"];
   horaInicio = "";
   horaFin = "";
 
@@ -104,9 +104,10 @@ export class RegistrarEventoComponent implements OnInit, OnDestroy {
   onGuardarEvento(form: NgForm) {
     if (form.valid && this.chips.length != 0) {
       const fechaEvento = form.value.fechaEvento.toString();
-      if (this.horaInicio == "" && this.horaFin == "") {
-        this.registrarEvento(fechaEvento, form);
-      } else if (this.horaEventoEsValido(this.horaInicio, this.horaFin)) {
+      if (
+        (this.horaInicio == "" && this.horaFin == "") ||
+        this.horaEventoEsValido(this.horaInicio, this.horaFin)
+      ) {
         this.registrarEvento(fechaEvento, form);
       } else {
         this.snackBar.open(
@@ -240,6 +241,12 @@ export class RegistrarEventoComponent implements OnInit, OnDestroy {
 
   obtenerImagen(index) {
     return this.imgURL[index];
+  }
+
+  onEliminarImagen(index) {
+    this.imgURL.splice(index, 1);
+    this.imagesFile.splice(index,1);
+    this.moveFromCurrentSlide(1);
   }
 
   moveFromCurrentSlide(n) {

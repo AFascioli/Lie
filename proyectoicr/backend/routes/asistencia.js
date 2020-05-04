@@ -8,6 +8,7 @@ const checkAuthMiddleware = require("../middleware/check-auth");
 const ClaseAsistencia = require("../classes/asistencia");
 const Estudiante = require("../models/estudiante");
 const Suscripcion = require("../classes/suscripcion");
+const Estado = require("../models/estado");
 
 //Retorna vector con datos de los estudiantes y presente. Si ya se registro una asistencia para
 //el dia de hoy se retorna ese valor de la asistencia, sino se "construye" una nueva
@@ -53,6 +54,11 @@ router.get("", checkAuthMiddleware, (req, res) => {
     },
   ])
     .then((ultimaAsistencia) => {
+      if (ultimaAsistencia.length == 0) {
+        return res
+          .status(200)
+          .json({ estudiantes: [], asistenciaNueva: "true" });
+      }
       var fechaHoy = new Date();
       fechaHoy.setHours(fechaHoy.getHours() - 3);
       //Compara si la ultima asistencia fue el dia de hoy
@@ -85,6 +91,7 @@ router.get("", checkAuthMiddleware, (req, res) => {
           },
           {
             $project: {
+              estado: 1,
               ultimaAsistencia: {
                 $slice: ["$asistenciaDiaria", -1],
               },
@@ -103,6 +110,7 @@ router.get("", checkAuthMiddleware, (req, res) => {
           },
           {
             $project: {
+              estado: 1,
               datosEstudiante: 1,
               "asistencia.presente": 1,
               "asistencia._id": 1,
@@ -120,7 +128,7 @@ router.get("", checkAuthMiddleware, (req, res) => {
                 presente: true,
                 valorInasistencia: 0,
                 justificado: false,
-                llegadaTarde: 0,
+                llegadaTarde: false,
               });
               await asistenciaNuevaEstudiante
                 .save()
@@ -135,6 +143,7 @@ router.get("", checkAuthMiddleware, (req, res) => {
                       idAsistencia: asistenciaGuardada._id,
                       fecha: fechaHoy,
                       presente: true,
+                      estado: estudiante.estado,
                     };
                     respuesta.push(estudianteRefinado);
                   });
@@ -147,6 +156,7 @@ router.get("", checkAuthMiddleware, (req, res) => {
                 idAsistencia: estudiante.asistencia[0]._id,
                 fecha: fechaHoy,
                 presente: estudiante.asistencia[0].presente,
+                estado: estudiante.estado,
               };
               respuesta.push(estudianteRefinado);
             }
@@ -183,6 +193,7 @@ router.get("", checkAuthMiddleware, (req, res) => {
               "estudiante._id": 1,
               "estudiante.nombre": 1,
               "estudiante.apellido": 1,
+              estado: 1,
             },
           },
         ]).then((documents) => {
@@ -196,6 +207,7 @@ router.get("", checkAuthMiddleware, (req, res) => {
               apellido: objConEstudiante.estudiante[0].apellido,
               fecha: fechaHoy,
               presente: true,
+              estado: objConEstudiante.estado,
             };
             estudiantesRedux.push(estudianteRedux);
           });
@@ -236,6 +248,7 @@ router.post("", checkAuthMiddleware, (req, res) => {
           presente: estudiante.presente,
           valorInasistencia: valorInasistencia,
           justificado: false,
+          llegadaTarde: false,
         });
 
         await asistenciaEstudiante.save().then(async (asistenciaDiaria) => {
@@ -245,6 +258,7 @@ router.post("", checkAuthMiddleware, (req, res) => {
           inscripcion.save();
         });
       });
+      validarLibreInasistencias(estudiante._id, valorInasistencia);
     });
   } else {
     req.body.forEach((estudiante) => {
@@ -262,6 +276,7 @@ router.post("", checkAuthMiddleware, (req, res) => {
               { $inc: { contadorInasistenciasInjustificada: 1 } }
             ).exec();
           });
+          validarLibreInasistencias(estudiante._id, 1);
         }
         //si estaba ausente y lo pasaron a presente decrementa contador inasistencia
         else if (!asistencia.presente && estudiante.presente) {
@@ -282,27 +297,60 @@ router.post("", checkAuthMiddleware, (req, res) => {
   }
   return res
     .status(201)
-    .json({ message: "Asistencia registrada exitosamente", exito: true })
-    .catch((error) => {
+    .json({ message: "Asistencia registrada exitosamente", exito: true });
+});
+
+validarLibreInasistencias = function (idEst, valorInasistencia) {
+  Estado.find({ nombre: "Suspendido", ambito: "Inscripcion" })
+    .then((estado) => {
+      Inscripcion.findOne({
+        idEstudiante: idEst,
+        activa: true,
+      }).then((inscripcion) => {
+        if (
+          inscripcion.contadorInasistenciasInjustificada % 14 == 0 &&
+          valorInasistencia == 1
+        ) {
+          Inscripcion.findOneAndUpdate(
+            {
+              idEstudiante: idEst,
+              activa: true,
+            },
+            { estado: mongoose.Types.ObjectId(estado[0]._id) }
+          ).exec();
+        }
+      });
+    })
+    .catch(() => {
       res.status(500).json({
-        message:
-          "Ocurrió un error al querer publicar el estado de la asistencia para un curso. El error es: " +
-          error.message,
+        message: "No se pudo obtener el estado suspendido",
       });
     });
-});
+};
 
 //Este metodo filtra las inscripciones por estudiante y retorna el contador de inasistencias (injustificada y justificada)
 router.get("/asistenciaEstudiante", (req, res) => {
-  Inscripcion.findOne({ idEstudiante: req.query.idEstudiante })
-    .then((estudiante) => {
+  Inscripcion.find({ idEstudiante: req.query.idEstudiante })
+    .then((inscripciones) => {
+      let contadorInjustificadas = 0;
+      let contadorJustificadas = 0;
+      if (inscripciones.length > 1) {
+        inscripciones.forEach((inscripcion) => {
+          contadorInjustificadas +=
+            inscripcion.contadorInasistenciasInjustificada;
+          contadorJustificadas += inscripcion.contadorInasistenciasJustificada;
+        });
+      } else {
+        contadorInjustificadas =
+          inscripciones[0].contadorInasistenciasInjustificada;
+        contadorJustificadas =
+          inscripciones[0].contadorInasistenciasJustificada;
+      }
       res.status(200).json({
         message: "Operacion exitosa",
         exito: true,
-        contadorInasistenciasInjustificada:
-          estudiante.contadorInasistenciasInjustificada,
-        contadorInasistenciasJustificada:
-          estudiante.contadorInasistenciasJustificada,
+        contadorInasistenciasInjustificada: contadorInjustificadas,
+        contadorInasistenciasJustificada: contadorJustificadas,
       });
     })
     .catch((error) => {
@@ -350,30 +398,10 @@ router.post("/inasistencia/justificada", checkAuthMiddleware, (req, res) => {
     });
 });
 
-//Se obtienen las ultimas inasistencias dentro de un periodo de 5 dias antes
+//Se obtienen las ultimas 5 inasistencias del estudiante, se permite justificar las inasistencias
+//que fueron creadas en los ultimos 5 dias
 //Se utiliza para la justificacion de inasistencias
-//Se valida que solo se pueda justificar inasistencias para el trimestre actual
 router.get("/inasistencias", (req, res) => {
-  let fechaActual = new Date();
-
-  CicloLectivo.findOne({ año: fechaActual.getFullYear() }).then(
-    (cicloLectivo) => {
-      if (!ClaseAsistencia.validarFechasJustificar(cicloLectivo)) {
-        return res.status(200).json({
-          exito: false,
-          message:
-            "La fecha actual no se encuentra dentro de las fechas permitidas para justificar inasistencias",
-        });
-      }
-      //else{
-      // return res.status(200).json({
-      //   exito: true,
-      //   message:
-      //     "La fecha actual se encuentra dentro de las fechas permitidas para justificar inasistencias"
-      // });}
-    }
-  );
-
   let ultimasInasistencias = [];
   Inscripcion.aggregate([
     {
@@ -418,6 +446,7 @@ router.get("/inasistencias", (req, res) => {
   ])
     .then((response) => {
       if (response.length > 0) {
+        //Limita a que se puedan justificar las inasistencias de los ultimos 5 dias
         fechalimiteInferior = new Date(new Date() - 24 * 60 * 60 * 1000 * 5);
         fechalimiteSuperior = new Date();
         response.forEach((objeto) => {
@@ -469,82 +498,101 @@ router.post("/llegadaTarde", checkAuthMiddleware, (req, res) => {
         var ADcreada = null;
         var fechaHoy = new Date();
         fechaHoy.setHours(fechaHoy.getHours() - 3);
-        //Compara si la ultima asistencia fue el dia de hoy
-        if (!ClaseAsistencia.esFechaActual(ultimaAD)) {
-          var nuevaAsistencia = new AsistenciaDiaria({
-            idInscripcion: inscripcion._id,
-            fecha: fechaHoy,
-            presente: true,
-            retiroAnticipado: false,
-            valorInasistencia: 0,
-            justificado: false,
-          });
-          await nuevaAsistencia.save().then((ADultima) => {
-            ADcreada = ADultima;
-            ultimaAD = ADultima;
+        let estudianteAusente = false;
+        //Chequea si el estudiante tiene o no AsistenciaDiaria
+        if (ultimaAD == null) {
+          return res.status(200).json({
+            message:
+              "El estudiante no tiene registrada una asistencia para el dia de hoy",
+            exito: false,
           });
         } else {
-          if (!ultimaAD.llegadaTarde) {
-            ultimaAD.presente = true;
-            ultimaAD.save();
+          //Compara si la ultima asistencia fue el dia de hoy
+          if (!ClaseAsistencia.esFechaActual(ultimaAD.fecha)) {
+            var nuevaAsistencia = new AsistenciaDiaria({
+              idInscripcion: inscripcion._id,
+              fecha: fechaHoy,
+              presente: true,
+              retiroAnticipado: false,
+              valorInasistencia: 0,
+              justificado: false,
+              llegadaTarde: true,
+            });
+            await nuevaAsistencia.save().then((ADultima) => {
+              ADcreada = ADultima;
+              ultimaAD = ADultima;
+            });
           } else {
-            return res.status(500).json({
-              message:
-                "Ya exite una llegada tarde registrada para el estudiante seleccionado",
-              exito: false,
-            });
+            //Estudiante tiene una AD que se la crearon el dia de hoy
+            if (!ultimaAD.llegadaTarde) {
+              //No tiene una llegada tarde registrada
+              if (!ultimaAD.presente) {
+                //Estaba registrado como ausente
+                ultimaAD.presente = true;
+                estudianteAusente = true; //Si el estudiante estuvo ausente, no se le deberia sumar mas inasistencia
+              }
+            } else {
+              return res.status(200).json({
+                message:
+                  "Ya exite una llegada tarde registrada para el estudiante seleccionado",
+                exito: false,
+              });
+            }
           }
-        }
 
-        if (req.body.antes8am && inscripcion.contadorLlegadasTarde < 4) {
-          inscripcion.contadorLlegadasTarde =
-            inscripcion.contadorLlegadasTarde + 1;
-          if (ADcreada != null) {
-            inscripcion.asistenciaDiaria.push(ADcreada._id);
-          }
-          inscripcion.save();
-          ultimaAD.llegadaTarde = true;
-          ultimaAD.save().then(() => {
-            return res.status(500).json({
-              message:
-                "Llegada tarde antes de las 8 am registrada exitosamente",
-              exito: true,
-            });
-          });
-        } else {
-          if (req.body.antes8am && inscripcion.contadorLlegadasTarde == 4) {
-            inscripcion.contadorLlegadasTarde = 0;
-            inscripcion.inscripcion.contadorInasistenciasInjustificada =
-              inscripcion.contadorInasistenciasInjustificada + 1;
+          if (req.body.antes8am && inscripcion.contadorLlegadasTarde < 4) {
+            inscripcion.contadorLlegadasTarde =
+              inscripcion.contadorLlegadasTarde + 1;
             if (ADcreada != null) {
               inscripcion.asistenciaDiaria.push(ADcreada._id);
             }
             inscripcion.save();
-            ultimaAD.valorInasistencia = ultimaAD.valorInasistencia + 1;
             ultimaAD.llegadaTarde = true;
             ultimaAD.save().then(() => {
-              return res.status(500).json({
+              return res.status(200).json({
                 message:
                   "Llegada tarde antes de las 8 am registrada exitosamente",
                 exito: true,
               });
             });
           } else {
-            inscripcion.contadorInasistenciasInjustificada =
-              inscripcion.contadorInasistenciasInjustificada + 0.5;
-            if (ADcreada != null) {
-              inscripcion.asistenciaDiaria.push(ADcreada._id);
-            }
-            inscripcion.save();
-            ultimaAD.valorInasistencia = ultimaAD.valorInasistencia + 0.5;
-            ultimaAD.llegadaTarde = true;
-            ultimaAD.save().then(() => {
-              return res.status(500).json({
-                message:
-                  "Llegada tarde después de las 8 am registrada exitosamente",
-                exito: true,
+            if (req.body.antes8am && inscripcion.contadorLlegadasTarde == 4) {
+              inscripcion.contadorLlegadasTarde = 0;
+              inscripcion.inscripcion.contadorInasistenciasInjustificada =
+                inscripcion.contadorInasistenciasInjustificada + 1;
+              if (ADcreada != null) {
+                inscripcion.asistenciaDiaria.push(ADcreada._id);
+              }
+              inscripcion.save();
+              ultimaAD.valorInasistencia = ultimaAD.valorInasistencia + 1;
+              ultimaAD.llegadaTarde = true;
+              ultimaAD.save().then(() => {
+                return res.status(200).json({
+                  message:
+                    "Llegada tarde antes de las 8 am registrada exitosamente",
+                  exito: true,
+                });
               });
-            });
+            } else {
+              if (!estudianteAusente) {
+                //Si el estudiante estuvo ausente, no se le deberia sumar mas inasistencia porque ya se le sumo cuando se le toma asistencia
+                inscripcion.contadorInasistenciasInjustificada =
+                  inscripcion.contadorInasistenciasInjustificada + 0.5;
+              }
+              if (ADcreada != null) {
+                inscripcion.asistenciaDiaria.push(ADcreada._id);
+              }
+              inscripcion.save();
+              ultimaAD.valorInasistencia = 0.5;
+              ultimaAD.llegadaTarde = true;
+              ultimaAD.save().then(() => {
+                return res.status(200).json({
+                  message:
+                    "Llegada tarde después de las 8 am registrada exitosamente",
+                  exito: true,
+                });
+              });
+            }
           }
         }
       });
@@ -577,7 +625,7 @@ router.post("/retiro", checkAuthMiddleware, (req, res) => {
           actualizacionInasistencia = 1;
         }
         AsistenciaDiaria.findById(inscripcion.asistenciaDiaria[0])
-          .select({ retiroAnticipado: 1, presente: 1 })
+          .select({ retiroAnticipado: 1, presente: 1, justificado:1 })
           .then((asistencia) => {
             if (asistencia) {
               if (!asistencia.presente) {
@@ -599,53 +647,62 @@ router.post("/retiro", checkAuthMiddleware, (req, res) => {
                       retiroAnticipado: true,
                       $inc: { valorInasistencia: actualizacionInasistencia },
                     }
-                  ).then(() => {
-                    inscripcion.contadorInasistenciasInjustificada =
-                      inscripcion.contadorInasistenciasInjustificada +
-                      actualizacionInasistencia;
-                    inscripcion.save().then(() => {
-                      //Envio de notificación a los adultos responsables del estudiante. #working
-                      Estudiante.findById(req.body.idEstudiante).then(
-                        (estudiante) => {
-                          //Construcción del cuerpo de la notificación.
-                          var tutores = req.body.tutoresSeleccionados;
-                          var cuerpo =
-                            "Se ha registrado un retiro anticipado de " +
-                            estudiante.apellido +
-                            " " +
-                            estudiante.nombre +
-                            ". ";
+                  )
+                    .then(() => {
+                      if(!asistencia.justificado){
+                        //Si el estudiante tiene ya registrada una falta pero esta justificada, el retiro no deberia sumar mas inasistencias
+                        inscripcion.contadorInasistenciasInjustificada +=
+                          actualizacionInasistencia;
+                      }
+                      inscripcion
+                        .save()
+                        .then(() => {
+                          //Envio de notificación a los adultos responsables del estudiante. #working
+                          Estudiante.findById(req.body.idEstudiante)
+                            .then((estudiante) => {
+                              //Construcción del cuerpo de la notificación.
+                              var tutores = req.body.tutoresSeleccionados;
+                              var cuerpo =
+                                "Se ha registrado un retiro anticipado de " +
+                                estudiante.apellido +
+                                " " +
+                                estudiante.nombre +
+                                ". ";
 
-                          if (tutores.length > 0) {
-                            cuerpo =
-                              cuerpo +
-                              "El estudiante fue retirado por " +
-                              tutores[0].apellido +
-                              " " +
-                              tutores[0].nombre;
-
-                            for (let i = 0; i < tutores.length; i++) {
-                              if (i == tutores.length - 1) {
+                              if (tutores.length > 0) {
                                 cuerpo =
                                   cuerpo +
-                                  " y " +
-                                  tutores[i].apellido +
+                                  "El estudiante fue retirado por " +
+                                  tutores[0].apellido +
                                   " " +
-                                  tutores[i].nombre;
-                              } else if (i != 0) {
-                                cuerpo =
-                                  cuerpo +
-                                  ", " +
-                                  tutores[i].apellido +
-                                  " " +
-                                  tutores[i].nombre;
+                                  tutores[0].nombre;
+
+                                for (let i = 0; i < tutores.length; i++) {
+                                  if (i == tutores.length - 1) {
+                                    cuerpo =
+                                      cuerpo +
+                                      " y " +
+                                      tutores[i].apellido +
+                                      " " +
+                                      tutores[i].nombre;
+                                  } else if (i != 0) {
+                                    cuerpo =
+                                      cuerpo +
+                                      ", " +
+                                      tutores[i].apellido +
+                                      " " +
+                                      tutores[i].nombre;
+                                  }
+                                  if (i == tutores.length - 1)
+                                    cuerpo = cuerpo + ".";
+                                }
                               }
-                              //Envio de la notificación #resolve
-                              Suscripcion.notificacionGrupal(
-                                ...estudiante.adultoResponsable,
-                                "Retiro anticipado",
-                                cuerpo
-                              );
+                              //Envio de la notificación
+                              // Suscripcion.notificacionGrupal(
+                              //   ...estudiante.adultoResponsable,
+                              //   "Retiro anticipado",
+                              //   this.cuerpo
+                              // );
                             })
                             .catch(() => {
                               res.status(500).json({
@@ -669,7 +726,6 @@ router.post("/retiro", checkAuthMiddleware, (req, res) => {
                         message: "Mensaje de error especifico",
                       });
                     });
-                  });
                 }
               }
             } else {
@@ -679,15 +735,17 @@ router.post("/retiro", checkAuthMiddleware, (req, res) => {
                 exito: "faltaasistencia",
               });
             }
+          })
+          .catch(() => {
+            res.status(500).json({
+              message: "Mensaje de error especifico",
+            });
           });
       }
     })
     .catch(() => {
       res.status(500).json({
-        message:
-          "Ocurrió un error al querer publicar el retiro anticipado de un estudiante" +
-          "El error se puede describir de la siguiente manera: " +
-          error.message,
+        message: "Mensaje de error especifico",
       });
     });
 });

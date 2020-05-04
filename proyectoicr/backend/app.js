@@ -15,13 +15,30 @@ const materiasRoutes = require("./routes/materia");
 const Ambiente = require("./assets/ambiente");
 var Grid = require("gridfs-stream");
 
-
 const app = express();
 options = {
   useNewUrlParser: true,
   useUnifiedTopology: true,
   useFindAndModify: false,
 };
+
+mongoose
+  .connect(Ambiente.stringDeConexion, options)
+  .then(() => {
+    console.log("Conexión a base de datos exitosa");
+  })
+  .catch(() => {
+    console.log("Fallo conexión a la base de datos");
+  });
+
+// Conexión a la base de datos que se usa en paralelo para manejo de imagenes
+const conn = mongoose.createConnection(Ambiente.stringDeConexion, options);
+let gfs;
+conn.once("open", () => {
+  gfs = Grid(conn.db, mongoose.mongo);
+  gfs.collection("imagen");
+  console.log("Conexión por imagenes a base de datos local");
+});
 
 app.get("/imagen/:filename", (req, res) => {
   gfs.files.findOne({ filename: req.params.filename }, (err, file) => {
@@ -40,24 +57,6 @@ app.get("/imagen/:filename", (req, res) => {
       });
     }
   });
-});
-
-mongoose
-  .connect(Ambiente.stringDeConexion, options)
-  .then(() => {
-    console.log("Conexión a base de datos exitosa");
-  })
-  .catch(() => {
-    console.log("Fallo conexión a la base de datos");
-  });
-
-// Conexión a la base de datos que se usa en paralelo para manejo de imagenes
-const conn = mongoose.createConnection(Ambiente.stringDeConexion, options);
-let gfs;
-conn.once("open", () => {
-  gfs = Grid(conn.db, mongoose.mongo);
-  gfs.collection("imagen");
-  console.log("Conexión por imagenes a base de datos local");
 });
 
 // Usamos el body parser para poder extraer datos del request body
@@ -78,27 +77,27 @@ app.use((req, res, next) => {
   next();
 });
 
-app.get("/imagen/:filename", (req, res) => {
-  gfs.files.findOne({ filename: req.params.filename }, (err, file) => {
-    // Check if file
-    if (!file || file.length === 0) {
-      return res.status(404).json({
-        err: "No file exists",
-      });
-    }
+// app.get("/imagen/:filename", (req, res) => {
+//   gfs.files.findOne({ filename: req.params.filename }, (err, file) => {
+//     // Check if file
+//     if (!file || file.length === 0) {
+//       return res.status(404).json({
+//         err: "No file exists",
+//       });
+//     }
 
-    // Check if image
-    if (file.contentType === "image/jpeg" || file.contentType === "image/png") {
-      // Read output to browser
-      const readstream = gfs.createReadStream(file.filename);
-      readstream.pipe(res);
-    } else {
-      res.status(404).json({
-        err: "Not an image",
-      });
-    }
-  });
-});
+//     // Check if image
+//     if (file.contentType === "image/jpeg" || file.contentType === "image/png") {
+//       // Read output to browser
+//       const readstream = gfs.createReadStream(file.filename);
+//       readstream.pipe(res);
+//     } else {
+//       res.status(404).json({
+//         err: "Not an image",
+//       });
+//     }
+//   });
+// });
 
 app.use("/estudiante", estudiantesRoutes);
 

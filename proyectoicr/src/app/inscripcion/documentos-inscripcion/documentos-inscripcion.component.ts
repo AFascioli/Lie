@@ -28,6 +28,7 @@ export class DocumentosInscripcionComponent implements OnInit, OnDestroy {
   documentosEntregadosOnChange = false;
   fueraPeriodoCicloLectivo = false;
   fechaActual: Date;
+  isLoading = true;
   private unsubscribe: Subject<void> = new Subject();
   _mobileQueryListener: () => void;
   mobileQuery: MediaQueryList;
@@ -66,12 +67,13 @@ export class DocumentosInscripcionComponent implements OnInit, OnDestroy {
         .subscribe(response => {
           this.cursos = response.cursos;
           this.cursos.sort((a, b) =>
-            a.curso.charAt(0) > b.curso.charAt(0)
-              ? 1
-              : b.curso.charAt(0) > a.curso.charAt(0)
-              ? -1
-              : 0
-          );
+          a.nombre.charAt(0) > b.nombre.charAt(0)
+            ? 1
+            : b.nombre.charAt(0) > a.nombre.charAt(0)
+            ? -1
+            : 0
+        );
+      this.isLoading = false;
         });
     } else {
       this.fueraPeriodoCicloLectivo = true;
@@ -100,14 +102,16 @@ export class DocumentosInscripcionComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.unsubscribe))
       .subscribe(estudiantes => {
         this.estudiantesConDocumentos = estudiantes.documentos;
-        this.estudiantesConDocumentos = this.estudiantesConDocumentos.sort(
-          (a, b) =>
-            a.datosEstudiante[0].apellido > b.datosEstudiante[0].apellido
-              ? 1
-              : b.datosEstudiante[0].apellido > a.datosEstudiante[0].apellido
-              ? -1
-              : 0
-        );
+        if(estudiantes.documentos.length!=0){
+          this.estudiantesConDocumentos = this.estudiantesConDocumentos.sort(
+            (a, b) =>
+              a.datosEstudiante[0].apellido > b.datosEstudiante[0].apellido
+                ? 1
+                : b.datosEstudiante[0].apellido > a.datosEstudiante[0].apellido
+                ? -1
+                : 0
+          );
+        }
       });
     this.documentosEntregadosOnChange = false;
   }

@@ -1,3 +1,4 @@
+import { NgForm } from "@angular/forms";
 import { CalificacionesService } from "../calificaciones.service";
 import { MatSnackBar } from "@angular/material";
 import { AutenticacionService } from "../../login/autenticacionService.service";
@@ -10,7 +11,7 @@ import { takeUntil } from "rxjs/operators";
 @Component({
   selector: "app-calificaciones-examenes",
   templateUrl: "./calificaciones-examenes.component.html",
-  styleUrls: ["./calificaciones-examenes.component.css"]
+  styleUrls: ["./calificaciones-examenes.component.css"],
 })
 export class CalificacionesExamenesComponent implements OnInit, OnDestroy {
   apellidoEstudiante: string;
@@ -45,22 +46,23 @@ export class CalificacionesExamenesComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.apellidoEstudiante = this.estudianteService.estudianteSeleccionado.apellido;
-    this.nombreEstudiante = this.estudianteService.estudianteSeleccionado.nombre;
-    this.servicioCalificaciones
-      .obtenerMateriasDesaprobadasEstudiante()
-      .pipe(takeUntil(this.unsubscribe))
-      .subscribe(materias => {
-        if (materias.materiasDesaprobadas != null) {
-          this.materiasDesaprobadas = materias.materiasDesaprobadas;
-          this.tieneMateriasDesaprobadas = true;
-        }
-      });
     this.fechaActual = new Date();
     if (
       this.fechaActualEnRangoFechasExamenes() ||
       this.authService.getRol() == "Admin"
     ) {
+      this.apellidoEstudiante = this.estudianteService.estudianteSeleccionado.apellido;
+      this.nombreEstudiante = this.estudianteService.estudianteSeleccionado.nombre;
+      this.servicioCalificaciones
+        .obtenerMateriasDesaprobadasEstudiante(this.estudianteService.estudianteSeleccionado._id)
+        .pipe(takeUntil(this.unsubscribe))
+        .subscribe((materias) => {
+          if (materias.materiasDesaprobadas != null) {
+            this.materiasDesaprobadas = materias.materiasDesaprobadas;
+            this.tieneMateriasDesaprobadas = true;
+          }
+        });
+
       this.fechaDentroDeRangoExamen = true;
       this.fechaActualFinDeSemana();
     }
@@ -97,7 +99,7 @@ export class CalificacionesExamenesComponent implements OnInit, OnDestroy {
         "",
         {
           panelClass: ["snack-bar-aviso"],
-          duration: 8000
+          duration: 8000,
         }
       );
     }
@@ -117,41 +119,48 @@ export class CalificacionesExamenesComponent implements OnInit, OnDestroy {
     );
   }
 
-  guardar() {
-    if (this.condicionExamen == "aprobado" && this.notaExamen > 5) {
-      this.servicioCalificaciones
-        .registrarCalificacionExamen(
-          this.idMateriaSeleccionada,
-          this.notaExamen
-        )
-        .pipe(takeUntil(this.unsubscribe))
-        .subscribe(rtdo => {
-          if (rtdo.exito) {
-            this.snackBar.open(rtdo.message, "", {
-              panelClass: ["snack-bar-exito"],
-              duration: 3000
-            });
-          } else {
-            this.snackBar.open(rtdo.message, "", {
-              panelClass: ["snack-bar-fracaso"],
-              duration: 3000
-            });
-          }
-        });
-    } else if (this.condicionExamen == "aprobado" && this.notaExamen < 6) {
-      this.snackBar.open(
-        "La calificación ingresada debe ser mayor o igual a 6.",
-        "",
-        {
-          panelClass: ["snack-bar-fracaso"],
-          duration: 3000
-        }
-      );
-    } else {
-      this.snackBar.open("Se ha registrado la materia desaprobada.", "", {
-        panelClass: ["snack-bar-exito"],
-        duration: 3000
+  guardar(form: NgForm) {
+    if (form.invalid) {
+      this.snackBar.open("Faltan campos por completar", "", {
+        panelClass: ["snack-bar-fracaso"],
+        duration: 3000,
       });
+    } else {
+      if (this.condicionExamen == "aprobado" && this.notaExamen > 5) {
+        this.servicioCalificaciones
+          .registrarCalificacionExamen(
+            this.idMateriaSeleccionada,
+            this.notaExamen
+          )
+          .pipe(takeUntil(this.unsubscribe))
+          .subscribe((rtdo) => {
+            if (rtdo.exito) {
+              this.snackBar.open(rtdo.message, "", {
+                panelClass: ["snack-bar-exito"],
+                duration: 3000,
+              });
+            } else {
+              this.snackBar.open(rtdo.message, "", {
+                panelClass: ["snack-bar-fracaso"],
+                duration: 3000,
+              });
+            }
+          });
+      } else if (this.condicionExamen == "aprobado" && this.notaExamen < 6) {
+        this.snackBar.open(
+          "La calificación ingresada debe ser mayor o igual a 6.",
+          "",
+          {
+            panelClass: ["snack-bar-fracaso"],
+            duration: 3000,
+          }
+        );
+      } else {
+        this.snackBar.open("Se ha registrado la materia desaprobada.", "", {
+          panelClass: ["snack-bar-exito"],
+          duration: 3000,
+        });
+      }
     }
   }
 }

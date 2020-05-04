@@ -11,9 +11,8 @@
 }
 
 .aviso {
-  margin-bottom: 0;
   text-align: center;
-  font-size: 19px;
+  margin-top: 2% !important;
 }
 
 .ubicacion-fecha {

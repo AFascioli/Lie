@@ -308,11 +308,11 @@ router.get("/nombreyapellido", checkAuthMiddleware, (req, res, next) => {
   Estudiante.find({
     nombre: { $regex: new RegExp(nombre, "i") },
     apellido: { $regex: new RegExp(apellido, "i") },
-    activo: true,
+    activo: true
   })
     .then((documents) => {
       res.status(200).json({
-        estudiantes: documents,
+        estudiantes: documents
       });
     })
     .catch(() => {
@@ -439,6 +439,8 @@ router.get("/cuotasEstudiante", (req, res) => {
 });
 
 router.get("/sancionesEstudiante", (req, res) => {
+  let objetoDate= new Date();
+  let añoActual=objetoDate.getFullYear();
   Estudiante.aggregate([
     {
       $match: {
@@ -461,7 +463,7 @@ router.get("/sancionesEstudiante", (req, res) => {
     },
     {
       $match: {
-        "InscripcionEstudiante.activa": true,
+        "InscripcionEstudiante.año": añoActual,
       },
     },
     {
@@ -483,7 +485,14 @@ router.get("/sancionesEstudiante", (req, res) => {
     },
   ])
     .then((inscripciones) => {
-      let sanciones = inscripciones[0].InscripcionEstudiante.sanciones;
+      let sanciones = [];
+      if(inscripciones.length>1){
+        inscripciones.forEach(inscripcion => {
+          sanciones=sanciones.concat(inscripcion.InscripcionEstudiante.sanciones);
+        });
+      }else{
+        sanciones = inscripciones[0].InscripcionEstudiante.sanciones;
+      }
 
       if (sanciones.length == 0) {
         return res.status(200).json({
@@ -618,6 +627,68 @@ router.get("/agenda", checkAuthMiddleware, (req, res) => {
         message: "Mensaje de error especifico",
       });
     });
+});
+
+router.get("/suspendido", (req, res) => {
+  Inscripcion.findOne({
+    idEstudiante: mongoose.Types.ObjectId(req.query.idEstudiante),
+    activa: true,
+  })
+    .then((inscripcion) => {
+      Estado.findOne({
+        nombre: "Suspendido",
+        ambito: "Inscripcion",
+      }).then((estado) => {
+        if (inscripcion.estado.toString() == estado._id.toString()) {
+          res.status(200).json({
+            message: "El estudiante esta suspendido",
+            exito: true,
+            inscripcion: inscripcion.estado,
+            estado: estado._id,
+          });
+        } else {
+          res.status(200).json({
+            message: "El estudiante no esta suspendido",
+            exito: false,
+            inscripcion: inscripcion.estado,
+            estado: estado._id,
+          });
+        }
+      });
+    })
+    .catch(() => {
+      res.status(500).json({
+        message:
+          "Ah ocurrido un error al validar si el estudiante esta suspendido.",
+      });
+    });
+});
+
+router.get("/reincorporacion", (req, res) => {
+  Estado.findOne({
+    nombre: "Inscripto",
+    ambito: "Inscripcion",
+  }).then((estado) => {
+    Inscripcion.findOneAndUpdate(
+      { idEstudiante: mongoose.Types.ObjectId(req.query.idEstudiante) },
+      {
+        estado: estado._id,
+      }
+    )
+      .then(() => {
+        res.status(200).json({
+          message: "El estudiante esta reincorporado",
+          exito: true,
+        });
+      })
+      .catch(() => {
+        res.status(500).json({
+          message:
+            "Ah ocurrido un error al registrar la reincorporación del estudiante.",
+          exito: false,
+        });
+      });
+  });
 });
 
 module.exports = router;

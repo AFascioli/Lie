@@ -1,8 +1,13 @@
-<h1 class="componente-titulo">
+<mat-card class="card-spinner" *ngIf="isLoading">
+  <mat-spinner class="spinner" [diameter]="60"></mat-spinner>
+</mat-card>
+
+
+<h1 *ngIf="!isLoading" class="componente-titulo">
   Definir agenda de curso
 </h1>
-<mat-card class="card-body-componente">
-  <form #form="ngForm">
+<mat-card class="card-body-componente" *ngIf="!isLoading">
+  <form #form="ngForm" *ngIf="!fueraPeriodoDefinirAgenda">
     <mat-form-field>
       <mat-select
         placeholder="Seleccione curso"
@@ -15,7 +20,7 @@
         (selectionChange)="obtenerAgenda(curso)"
       >
         <mat-option *ngFor="let curso of cursos" [value]="curso.id">
-          {{ curso.curso }}
+          {{ curso.nombre }}
         </mat-option>
       </mat-select>
     </mat-form-field>
@@ -25,7 +30,7 @@
         mat-table
         matSort
         [dataSource]="dataSource"
-        [hidden]="!cursoSelected"
+        [hidden]="!cursoSelected || dataSource.data.length == 0"
         [class.table-mobile]="mobileQuery.matches"
       >
         <ng-container matColumnDef="Materia">
@@ -251,7 +256,11 @@
       </table>
     </div>
   </form>
-  <div class="div-agregar" [class.div-agregar-mobile]="mobileQuery.matches">
+  <div
+    class="div-agregar"
+    *ngIf="!fueraPeriodoDefinirAgenda"
+    [class.div-agregar-mobile]="mobileQuery.matches"
+  >
     <button
       mat-raised-button
       class="button-agregar"
@@ -262,12 +271,17 @@
       Agregar horario
     </button>
   </div>
+  <p class="aviso" *ngIf="fueraPeriodoDefinirAgenda">
+    Atención, estamos fuera del periodo correspondiente para definir las agendas
+    de los cursos
+  </p>
   <div class="div-guardar">
     <button
       mat-raised-button
       class="button-primary"
       (click)="onGuardar()"
       *ngIf="cursoSelected && dataSource.data.length != 0 && huboCambios"
+      [disabled]="fueraPeriodoDefinirAgenda"
     >
       Guardar
     </button>

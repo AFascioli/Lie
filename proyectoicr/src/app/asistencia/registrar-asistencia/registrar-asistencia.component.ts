@@ -45,7 +45,7 @@ export class RegistrarAsistenciaComponent implements OnInit, OnDestroy {
         "",
         {
           panelClass: ["snack-bar-aviso"],
-          duration: 8000,
+          duration: 4000,
         }
       );
     }
@@ -60,16 +60,17 @@ export class RegistrarAsistenciaComponent implements OnInit, OnDestroy {
         .subscribe((response) => {
           this.cursos = response.cursos;
           this.cursos.sort((a, b) =>
-            a.curso.charAt(0) > b.curso.charAt(0)
-              ? 1
-              : b.curso.charAt(0) > a.curso.charAt(0)
-              ? -1
-              : 0
-          );
-          this.isLoading = false;
+          a.nombre.charAt(0) > b.nombre.charAt(0)
+            ? 1
+            : b.nombre.charAt(0) > a.nombre.charAt(0)
+            ? -1
+            : 0
+        );
+          this.isLoading=false;
         });
     } else {
       this.fueraPeriodoCicloLectivo = true;
+      this.isLoading=false;
     }
   }
 
@@ -97,9 +98,13 @@ export class RegistrarAsistenciaComponent implements OnInit, OnDestroy {
       .subscribe(
         (respuesta) => {
           this.asistenciaNueva = respuesta.asistenciaNueva;
-          this.estudiantesXDivision = respuesta.estudiantes.sort((a, b) =>
-            a.apellido > b.apellido ? 1 : b.apellido > a.apellido ? -1 : 0
-          );
+          if(respuesta.estudiantes.length!=0){
+            this.estudiantesXDivision = respuesta.estudiantes.sort((a, b) =>
+              a.apellido > b.apellido ? 1 : b.apellido > a.apellido ? -1 : 0
+            );
+          }else{
+            this.estudiantesXDivision =[];
+          }
         },
         (error) => {
           console.error(
@@ -145,6 +150,14 @@ export class RegistrarAsistenciaComponent implements OnInit, OnDestroy {
     this.unsubscribe.complete();
   }
 
+  esSuspendido(estudiantesXDivision) {
+    if (estudiantesXDivision.estado == "5e9b47ca052c7e1e2c6701da") {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   onCancelar() {
     this.popup.open(AsistenciaPopupComponent, {
       width: "250px",
@@ -158,12 +171,10 @@ export class RegistrarAsistenciaComponent implements OnInit, OnDestroy {
   styleUrls: ["./registrar-asistencia.component.css"],
 })
 export class AsistenciaPopupComponent {
-
   constructor(
     public dialogRef: MatDialogRef<AsistenciaPopupComponent>,
     public router: Router
-  ) {
-  }
+  ) {}
 
   onYesClick(): void {
     this.router.navigate(["./home"]);

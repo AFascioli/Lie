@@ -138,6 +138,16 @@
       <div class="slideshow-container">
         <div *ngFor="let image of imagenesCargadas; let i = index">
           <div class="mySlides fade">
+            <button
+            type="button"
+            mat-icon-button
+            class="boton-borrar"
+            matTooltip="Eliminar imagen"
+          >
+            <mat-icon (click)="onEliminarImagen(i)"
+              >cancel</mat-icon
+            >
+          </button>
             <img [src]="image" style="width: 100%;" />
           </div>
         </div>

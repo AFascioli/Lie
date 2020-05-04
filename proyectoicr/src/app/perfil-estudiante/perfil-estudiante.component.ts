@@ -1,26 +1,35 @@
-import { Component, OnInit, ElementRef, ViewChild, ChangeDetectorRef } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  ElementRef,
+  ViewChild,
+  ChangeDetectorRef,
+} from "@angular/core";
 import { EstudiantesService } from "../estudiantes/estudiante.service";
-import { Estudiante } from '../estudiantes/estudiante.model';
-import { Router } from '@angular/router';
-import { MatDialogRef, MatDialog } from '@angular/material';
-import { MediaMatcher } from '@angular/cdk/layout';
-
+import { Estudiante } from "../estudiantes/estudiante.model";
+import { Router } from "@angular/router";
+import { MatDialogRef, MatDialog } from "@angular/material";
+import { MediaMatcher } from "@angular/cdk/layout";
+import { Subject } from "rxjs";
+import { takeUntil } from "rxjs/operators";
 
 @Component({
-  selector: 'app-perfil-estudiante',
-  templateUrl: './perfil-estudiante.component.html',
-  styleUrls: ['./perfil-estudiante.component.css']
+  selector: "app-perfil-estudiante",
+  templateUrl: "./perfil-estudiante.component.html",
+  styleUrls: ["./perfil-estudiante.component.css"],
 })
 export class PerfilEstudianteComponent implements OnInit {
   apellidoEstudiante: string;
   nombreEstudiante: string;
   estudiantes: Estudiante[] = [];
   _idEstudiante: string;
+  suspendido: Boolean;
   idUsuario: string;
   calificacionesSelected: boolean;
   fechaActual: Date;
   _mobileQueryListener: () => void;
   mobileQuery: MediaQueryList;
+  private unsubscribe: Subject<void> = new Subject();
 
   constructor(
     public servicio: EstudiantesService,
@@ -39,60 +48,69 @@ export class PerfilEstudianteComponent implements OnInit {
     this.apellidoEstudiante = this.servicio.estudianteSeleccionado.apellido;
     this.nombreEstudiante = this.servicio.estudianteSeleccionado.nombre;
     this._idEstudiante = this.servicio.estudianteSeleccionado._id;
+
+    this.servicio
+      .esEstudianteSuspendido(this._idEstudiante)
+      .pipe(takeUntil(this.unsubscribe))
+      .subscribe((response) => {
+        this.suspendido = response.exito;
+      });
   }
 
-  onCancelar(){
+  ngOnDestroy() {
+    this.unsubscribe.next();
+    this.unsubscribe.complete();
+  }
+
+  onCancelar() {
     this.popup.open(PerfilEstudiantePopupComponent);
   }
 
-  onClickCalificaciones(){
+  onClickCalificaciones() {
     this.router.navigate(["./calificacionesPerfilEstudiante"]);
   }
 
-  onClickInasistencias(){
+  onClickInasistencias() {
     this.router.navigate(["./inasistenciasPerfilEstudiante"]);
   }
 
-  onClickCuotas(){
+  onClickCuotas() {
     this.router.navigate(["./cuotasPerfilEstudiante"]);
   }
 
-  onClickHorarios(){
+  onClickHorarios() {
     this.router.navigate(["./agendaCursoPerfilEstudiante"]);
   }
 
-  onClickSanciones(){
+  onClickSanciones() {
     this.router.navigate(["./sancionesPerfilEstudiante"]);
   }
 
-  onClickTutores(){
+  onClickTutores() {
     this.router.navigate(["./tutoresPerfilEstudiante"]);
   }
 
-  onClickDatosEstudiante(){
+  onClickDatosEstudiante() {
     this.router.navigate(["./datosPerfilEstudiante"]);
   }
-
 }
-  @Component({
-    selector: "app-perfil-estudiante-popup",
-    templateUrl: "./perfil-estudiante-popup.component.html",
-    styleUrls: ["./perfil-estudiante.component.css"]
-  })
-  export class PerfilEstudiantePopupComponent {
-    constructor(
-      public dialogRef: MatDialogRef<PerfilEstudiantePopupComponent>,
-      public router: Router
-    ) {}
+@Component({
+  selector: "app-perfil-estudiante-popup",
+  templateUrl: "./perfil-estudiante-popup.component.html",
+  styleUrls: ["./perfil-estudiante.component.css"],
+})
+export class PerfilEstudiantePopupComponent {
+  constructor(
+    public dialogRef: MatDialogRef<PerfilEstudiantePopupComponent>,
+    public router: Router
+  ) {}
 
-    onYesCancelarClick(): void {
-      this.router.navigate(["./home"]);
-      this.dialogRef.close();
-    }
-
-    onNoCancelarClick(): void {
-      this.dialogRef.close();
-    }
+  onYesCancelarClick(): void {
+    this.router.navigate(["./home"]);
+    this.dialogRef.close();
   }
 
-
+  onNoCancelarClick(): void {
+    this.dialogRef.close();
+  }
+}

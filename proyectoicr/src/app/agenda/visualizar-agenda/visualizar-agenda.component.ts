@@ -9,7 +9,7 @@ import { Subject } from "rxjs";
 @Component({
   selector: "app-visualizar-agenda",
   templateUrl: "./visualizar-agenda.component.html",
-  styleUrls: ["./visualizar-agenda.component.css"]
+  styleUrls: ["./visualizar-agenda.component.css"],
 })
 export class VisualizarAgendaComponent implements OnInit, OnDestroy {
   dias = ["Hora", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes"];
@@ -25,7 +25,7 @@ export class VisualizarAgendaComponent implements OnInit, OnDestroy {
     "12:00",
     "12:45",
     "13:30",
-    "14:15"
+    "14:15",
   ];
   idCurso: any;
   cursos: any[];
@@ -37,6 +37,7 @@ export class VisualizarAgendaComponent implements OnInit, OnDestroy {
   mobileQuery: MediaQueryList;
   private unsubscribe: Subject<void> = new Subject();
   isLoading = true;
+  agendaVacia: boolean=false;
 
   constructor(
     public servicioEstudiante: EstudiantesService,
@@ -52,9 +53,6 @@ export class VisualizarAgendaComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.obtenerCursos();
-    // this.materias = this.servicioAgenda.obtenerMaterias();
-    // this.getMateriasDistintas();
-    // this.getColorVector();
   }
 
   // Obtiene la agenda de un curso y le asigna a las materias un color distinto
@@ -63,18 +61,17 @@ export class VisualizarAgendaComponent implements OnInit, OnDestroy {
       this.servicioAgenda
         .obtenerAgendaDeCurso(idCurso)
         .pipe(takeUntil(this.unsubscribe))
-        .subscribe(async agenda => {
+        .subscribe(async (agenda) => {
           if (agenda.exito) {
             this.cursoSelected = true;
           } else {
             this.cursoSelected = false;
             this.snackBar.open(agenda.message, "", {
               panelClass: ["snack-bar-fracaso"],
-              duration: 3000
+              duration: 3000,
             });
           }
           this.materias = agenda.agenda;
-          console.log(this.materias);
           this.getMateriasDistintas();
           this.getColorVector();
           resolve(agenda.agenda);
@@ -86,9 +83,13 @@ export class VisualizarAgendaComponent implements OnInit, OnDestroy {
   actualizarInterfaz(idCurso) {
     (async () => {
       let agenda: any = await this.obtenerAgenda(idCurso.value);
-      agenda.forEach((materia, index) => {
-        this.setInGrid(index.toString(), materia);
-      });
+      if(agenda.length!=0){
+        agenda.forEach((materia, index) => {
+          this.setInGrid(index.toString(), materia);
+        });
+      }else{
+        this.agendaVacia=true;
+      }
     })();
   }
 
@@ -96,12 +97,12 @@ export class VisualizarAgendaComponent implements OnInit, OnDestroy {
     this.servicioEstudiante
       .obtenerCursos()
       .pipe(takeUntil(this.unsubscribe))
-      .subscribe(response => {
+      .subscribe((response) => {
         this.cursos = response.cursos;
         this.cursos.sort((a, b) =>
-          a.curso.charAt(0) > b.curso.charAt(0)
+          a.nombre.charAt(0) > b.nombre.charAt(0)
             ? 1
-            : b.curso.charAt(0) > a.curso.charAt(0)
+            : b.nombre.charAt(0) > a.nombre.charAt(0)
             ? -1
             : 0
         );
@@ -121,10 +122,13 @@ export class VisualizarAgendaComponent implements OnInit, OnDestroy {
       let elem: HTMLElement = document.getElementById(id);
       elem.setAttribute(
         "style",
-        `grid-column-start: ${this.dias.indexOf(materiaObj.dia) +
-          1}; grid-column-end: ${this.dias.indexOf(materiaObj.dia) +
-          2}; grid-row-start: ${this.modulo.indexOf(materiaObj.inicio) +
-          1}; grid-row-end: ${this.modulo.indexOf(materiaObj.fin) + 1};`
+        `grid-column-start: ${
+          this.dias.indexOf(materiaObj.dia) + 1
+        }; grid-column-end: ${
+          this.dias.indexOf(materiaObj.dia) + 2
+        }; grid-row-start: ${
+          this.modulo.indexOf(materiaObj.inicio) + 1
+        }; grid-row-end: ${this.modulo.indexOf(materiaObj.fin) + 1};`
       );
     }, 10);
   }

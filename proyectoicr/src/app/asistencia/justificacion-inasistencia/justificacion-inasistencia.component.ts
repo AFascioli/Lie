@@ -53,6 +53,7 @@ export class JustificacionInasistenciaComponent implements OnInit, OnDestroy {
         );
     } else {
       this.fueraDeCursado = true;
+      this.isLoading = false;
     }
   }
 

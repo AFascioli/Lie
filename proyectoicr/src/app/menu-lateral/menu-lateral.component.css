@@ -3,7 +3,13 @@
   margin: 0;
 }
 
-.tituloMenu, .mat-icon-button, .home-button, .home-buttonAR, .drop-down, .preferencias-ar, .cerrar-sesion-ar{
+.tituloMenu,
+.mat-icon-button,
+.home-button,
+.home-buttonAR,
+.drop-down,
+.preferencias-ar,
+.cerrar-sesion-ar {
   color: #ffff;
 }
 
@@ -46,7 +52,7 @@ hr {
   width: 29%;
 }
 
-.sidenav-mobile{
+.sidenav-mobile {
   box-shadow: 2px 0 5px -2px #888;
   border-right: 0px !important;
   width: 60%;
@@ -66,11 +72,11 @@ hr {
   margin-left: 10%;
 } */
 
-.home-button{
+.home-button {
   margin-left: auto !important;
 }
 
-.cierre-sesion{
+.cierre-sesion {
   position: absolute;
   left: 0;
   bottom: 0;
@@ -120,7 +126,7 @@ hr {
   min-width: 56px;
 }
 
-.home-buttonAR{
+.home-buttonAR {
   width: fit-content;
 }
 
@@ -177,7 +183,7 @@ hr {
   text-shadow: 2px 2px 4px #000000;
 }
 
-.titulo-row-AR{
+.titulo-row-AR {
   text-align: center;
   opacity: 0.8;
   color: #ffffff;
@@ -192,41 +198,48 @@ hr {
   text-align: center;
 }
 
+a:hover {
+  background-color: #47988da8 !important;
+}
+
 .icon-usuario {
-  font-size: 100px;
+  font-size: 80px;
   /* margin: auto;
   margin-top: 8px;
   display: table; */
-  margin: 10% 0% 0% 10%;
-  color: beige;
+  margin: 8% 0% 0% 10%;
+  color: #222831;
 }
 .usuario {
   /* text-align: center;
   margin: 8px 8px;
   word-break: break-all; */
-  margin: 7px 0px 30px 55px !important;
-  color: beige;
+  margin: 5px 0px 5px 50px !important;
+  color: #222831;
   font-size: 18px !important;
 }
 
-.div-usuario{
-  margin: 10px 0px 5px 0px !important;
+.div-usuario {
+  margin: 7px 0px 5px 0px !important;
 }
 
 .imagen-background {
   /* background-image: url("https://conceptodefinicion.de/wp-content/uploads/2017/03/Abstracto.jpg"); */
- background-image: url("https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcSgASpiPnEAyktT3ldWZPC1vFkZoUln8iw7-mcIU3a4MzUmVSYP&usqp=CAU");
- background-repeat: no-repeat;
- background-size: cover;
+  /* background-image: url("https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcSgASpiPnEAyktT3ldWZPC1vFkZoUln8iw7-mcIU3a4MzUmVSYP&usqp=CAU"); */
+  /* background-image: url("https://img3.stockfresh.com/files/c/cienpies/m/29/9336281_stock-vector-education-school-icon-quote-in-spanish-language.jpg"); */
+  /* background-image: url("https://cdn.dribbble.com/users/1298822/screenshots/6964804/ccf_2x.jpg"); */
+  /* background-image: url("https://cdn.clipart.email/3269947bf7e0d6927334e4205659bd93_education-background-stock-vectors-royalty-free-education-_1024-1024.jpeg"); */
+  background-image: url("https://cdn.clipart.email/3269947bf7e0d6927334e4205659bd93_education-background-stock-vectors-royalty-free-education-_1024-1024.jpeg");
+  background-repeat: no-repeat;
+  background-size: cover;
   display: flow-root;
+  height: 190px;
 }
 
-.sinExpansion
-{
+.sinExpansion {
   background: #47988d59 !important;
   box-shadow: 0px 0px 4px 0px rgba(0, 0, 0, 0.31) !important;
 }
-.iconSinExpansion
-{
+.iconSinExpansion {
   margin-left: 7px;
 }

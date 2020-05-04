@@ -17,6 +17,8 @@
         class="grid-container"
         [class.grid-container-mobile]="mobileQuery.matches"
         [class.no-inscripto]="!inscripto[i]"
+        [class.rol-docente]="rol == 'Docente'"
+        [class.suspendido]="suspendido[i]"
       >
         <mat-card
           class="opcion"
@@ -43,7 +45,12 @@
           class="opcion"
           [class.opcion-mobile]="mobileQuery.matches"
           (click)="onRegistrarExamenes(i)"
-          *ngIf="permisos.notas > 1 && inscripto[i]"
+          *ngIf="
+            permisos.notas > 1 &&
+            inscripto[i] &&
+            correspondeRegistrarExamen(i) &&
+            materiasPendientes[i]
+          "
           ><b>Registrar examen</b></mat-card
         >
         <mat-card
@@ -64,7 +71,7 @@
           class="opcion"
           [class.opcion-mobile]="mobileQuery.matches"
           (click)="onSancion(i)"
-          *ngIf="permisos.inscribirEstudiante >= 1 && inscripto[i]"
+          *ngIf="permisos.sanciones >= 1 && inscripto[i]"
           ><b>Registrar sanción</b></mat-card
         >
         <mat-card
@@ -78,8 +85,16 @@
           class="opcion"
           [class.opcion-mobile]="mobileQuery.matches"
           (click)="onVisualizarPerfil(i)"
-          *ngIf="permisos.inscribirEstudiante >= 1"
+          *ngIf="permisos.inscribirEstudiante >= 1 && inscripto[i]"
           ><b>Visualizar perfil de estudiante</b></mat-card
+        >
+        <!-- #wip -->
+        <mat-card
+          class="opcion"
+          [class.opcion-mobile]="mobileQuery.matches"
+          (click)="onReincorporar(i)"
+          *ngIf="permisos.inscribirEstudiante >= 1 && suspendido[i]"
+          ><b>Reincorporar estudiante</b></mat-card
         >
       </div>
     </mat-expansion-panel>
