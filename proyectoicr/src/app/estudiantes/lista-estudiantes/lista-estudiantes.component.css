@@ -17,7 +17,7 @@
 
 .suspendido {
   grid-template-columns: repeat(3, 1fr);
-  grid-template-rows: repeat(4, 150px);
+  grid-template-rows: repeat(3, 150px);
 }
 
 .rol-docente {
@@ -94,4 +94,8 @@ th {
 
 .titulo-expansion-panel {
   font-size: 17px;
+}
+
+.mat-expansion-panel{
+  margin-bottom: 2%;
 }

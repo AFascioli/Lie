@@ -155,6 +155,7 @@ export class RegistrarEventoComponent implements OnInit, OnDestroy {
 
       if ((value || "").trim()) {
         if (this.allChips.includes(value)) this.chips.push(value.trim());
+
       }
 
       if (input) {
@@ -163,6 +164,7 @@ export class RegistrarEventoComponent implements OnInit, OnDestroy {
 
       this.chipsCtrl.setValue(null);
     }
+
   }
 
   remove(chip: string): void {
@@ -173,7 +175,9 @@ export class RegistrarEventoComponent implements OnInit, OnDestroy {
     }
   }
 
-  selected(event: MatAutocompleteSelectedEvent): void {
+  //Agregado que cuando se selecciona una opcion, el input pierde focus para
+  //que sea mas facil que el usuario pueda elegir otra
+  selected(event: MatAutocompleteSelectedEvent,chipsInput: HTMLElement): void {
     if (event.option.viewValue == "Todos los cursos") {
       this.chips = [];
       this.chips.push(event.option.viewValue);
@@ -188,6 +192,7 @@ export class RegistrarEventoComponent implements OnInit, OnDestroy {
     }
     this.chipsInput.nativeElement.value = "";
     this.chipsCtrl.setValue(null);
+    chipsInput.blur();
   }
 
   private _filter(value: string): string[] {

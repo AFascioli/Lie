@@ -108,7 +108,7 @@
         <mat-autocomplete
           required
           #auto="matAutocomplete"
-          (optionSelected)="selected($event)"
+          (optionSelected)="selected($event, chipsInput)"
         >
           <mat-option *ngFor="let chip of filteredChips | async" [value]="chip">
             {{ chip }}
