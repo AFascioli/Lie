@@ -251,7 +251,7 @@ export class CalificacionesEstudiantesComponent implements OnInit, OnDestroy {
   calcularPromedio(index, cantidad) {
     if (cantidad != 0) {
       var notas: number = 0;
-      this.estudiantes[index].calificaciones.forEach((nota) => {
+        this.dataSource.filteredData[index].calificaciones.forEach((nota) => {
         if (nota != 0 && nota != null) notas = notas + nota;
       });
       this.promedio = notas / cantidad;
