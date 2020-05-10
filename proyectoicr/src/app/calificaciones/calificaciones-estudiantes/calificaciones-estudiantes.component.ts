@@ -77,6 +77,7 @@ export class CalificacionesEstudiantesComponent implements OnInit, OnDestroy {
     this.obtenerTrimestreActual();
     this.validarPermisos();
     this.obtenerCursos();
+    this.servicioCalificaciones.auxCambios=false;
   }
 
   ngOnDestroy() {
