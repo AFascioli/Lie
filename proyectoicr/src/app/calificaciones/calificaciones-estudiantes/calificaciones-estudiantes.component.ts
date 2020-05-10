@@ -77,7 +77,7 @@ export class CalificacionesEstudiantesComponent implements OnInit, OnDestroy {
     this.obtenerTrimestreActual();
     this.validarPermisos();
     this.obtenerCursos();
-    this.servicioCalificaciones.auxCambios=false;
+    this.servicioCalificaciones.auxCambios = false;
   }
 
   ngOnDestroy() {
@@ -206,6 +206,9 @@ export class CalificacionesEstudiantesComponent implements OnInit, OnDestroy {
         .pipe(takeUntil(this.unsubscribe))
         .subscribe((respuesta) => {
           this.materias = respuesta.materias;
+          this.materias.sort((a, b) =>
+            a.nombre > b.nombre ? 1 : b.nombre > a.nombre ? -1 : 0
+          );
         });
     } else {
       this.servicioEstudiante
@@ -213,6 +216,9 @@ export class CalificacionesEstudiantesComponent implements OnInit, OnDestroy {
         .pipe(takeUntil(this.unsubscribe))
         .subscribe((respuesta) => {
           this.materias = respuesta.materias;
+          this.materias.sort((a, b) =>
+            a.nombre > b.nombre ? 1 : b.nombre > a.nombre ? -1 : 0
+          );
         });
     }
   }
