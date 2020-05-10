@@ -94,3 +94,8 @@
     </h1>
   </mat-card>
 </ng-container>
+<ng-container *ngIf="eventos.length == 0">
+  <mat-card class="titulo-aviso">
+    <h1>No hay eventos publicados por la institución.</h1>
+  </mat-card>
+</ng-container>
