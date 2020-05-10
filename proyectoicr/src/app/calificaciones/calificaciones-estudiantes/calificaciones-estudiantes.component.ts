@@ -238,6 +238,7 @@ export class CalificacionesEstudiantesComponent implements OnInit, OnDestroy {
 
   obtenerNotas(form: NgForm) {
     if (form.value.curso != null && form.value.materia != null) {
+      this.calificacionesChange=false;
       this.servicioCalificaciones
         .obtenerCalificacionesEstudiantesXCursoXMateria(
           form.value.curso,
