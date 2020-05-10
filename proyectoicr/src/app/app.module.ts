@@ -71,7 +71,7 @@ import {
 } from "./asistencia/retiro-anticipado/retiro-anticipado.component";
 import { DocumentosInscripcionComponent } from "./inscripcion/documentos-inscripcion/documentos-inscripcion.component";
 import { MatGridListModule } from "@angular/material/grid-list";
-import { CalificacionesEstudiantesComponent } from "./calificaciones/calificaciones-estudiantes/calificaciones-estudiantes.component";
+import { CalificacionesEstudiantesComponent, CalificacionesEstudiantePopupComponent } from "./calificaciones/calificaciones-estudiantes/calificaciones-estudiantes.component";
 import { CalificacionesCicloLectivoComponent } from "./calificaciones/calificaciones-ciclo-lectivo/calificaciones-ciclo-lectivo.component";
 import { LlegadaTardeComponent } from "./asistencia/llegada-tarde/llegada-tarde.component";
 import {
@@ -145,6 +145,7 @@ import { MenuPrincipalAdultoResponsableComponent } from "./menu-principal-adulto
     HomeComponent,
     RegistrarAsistenciaComponent,
     AsistenciaPopupComponent,
+    CalificacionesEstudiantePopupComponent,
     PerfilEstudiantePopupComponent,
     BuscarPopupComponent,
     InscripcionEstudianteComponent,
@@ -191,6 +192,7 @@ import { MenuPrincipalAdultoResponsableComponent } from "./menu-principal-adulto
     MostrarPopupComponent,
     BorrarPopupComponent,
     AsistenciaPopupComponent,
+    CalificacionesEstudiantePopupComponent,
     PerfilEstudiantePopupComponent,
     BuscarPopupComponent,
     InscripcionPopupComponent,

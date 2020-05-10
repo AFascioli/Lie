@@ -385,7 +385,7 @@ router.get("/docente", checkAuthMiddleware, (req, res) => {
       cursos.forEach((curso) => {
         var cursoConId = {
           id: curso._id,
-          curso: curso.nombre,
+          nombre: curso.nombre,
         };
         respuesta.push(cursoConId);
       });

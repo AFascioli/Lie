@@ -31,9 +31,11 @@
           placeholder="Seleccione curso"
           name="curso"
           ngModel
+          #ComboCurso
           #curso="ngModel"
           matNativeControl
           required
+          (openedChange)="onValidarCambios(curso)"
           (selectionChange)="onCursoSeleccionado(curso, materia)"
         >
           <mat-option *ngFor="let objCurso of cursos" [value]="objCurso.id">

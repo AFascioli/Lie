@@ -1,9 +1,9 @@
 
-  <h3 mat-dialog-title class="titulo-popup">Cancelar</h3>
+  <h3 mat-dialog-title class="titulo-popup">Aviso</h3>
   <div mat-dialog-content>
-    <p class="parrafo">¿Está seguro que desea cancelar?</p>
+    <p class="parrafo">Tiene cambios no guardados ¿Está seguro que desea cambiar la selección?</p>
   </div>
   <div mat-dialog-actions class="button-popup">
-    <button  mat-raised-button class="button-primary" (click)="onYesCancelarClick()" cdkFocusInitial>Sí </button>
-    <button mat-raised-button class="button-warn" (click)="onNoCancelarClick()">No</button>
+    <button  mat-raised-button class="button-primary" (click)="onYesClick()" cdkFocusInitial>Sí </button>
+    <button mat-raised-button class="button-warn" (click)="onNoClick()">No</button>
   </div>
