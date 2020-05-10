@@ -51,6 +51,7 @@ export class CalificacionesEstudiantesComponent implements OnInit, OnDestroy {
   indexEst = 0;
   cursoSeleccionado: boolean = false;
   materiaSeleccionada: boolean = false;
+  filtroEstudiante: string;
   private unsubscribe: Subject<void> = new Subject();
   _mobileQueryListener: () => void;
   mobileQuery: MediaQueryList;
@@ -182,14 +183,6 @@ export class CalificacionesEstudiantesComponent implements OnInit, OnDestroy {
     }
   }
 
-  // applyFilter(filterValue: string) {
-  //   filterValue = filterValue.trim(); // Remove whitespace
-  //   filterValue = filterValue.toLowerCase(); // Datasource defaults to lowercase matches
-  //   //ACA CREO Q ESTA EL PROBLEMA
-  //   this.dataSource = new MatTableDataSource(this.servicioEstudiante.estudiantes);
-  //   this.dataSource.filter = filterValue;
-  // }
-
   //Se obtienen las materias del curso seleccionado segun el docente logueado o todas si el rol logueado es Admin
   onCursoSeleccionado(curso, materia: NgModel) {
     this.cursoSeleccionado = true;
@@ -223,7 +216,7 @@ export class CalificacionesEstudiantesComponent implements OnInit, OnDestroy {
     }
   }
 
-  onValidarCambios(curso) {
+  onValidarCambios() {
     if (this.servicioCalificaciones.auxCambios && this.ComboCurso.panelOpen) {
       const dialogRef = this.popup.open(CalificacionesEstudiantePopupComponent);
       dialogRef.afterClosed().subscribe(() => {
@@ -238,7 +231,7 @@ export class CalificacionesEstudiantesComponent implements OnInit, OnDestroy {
 
   obtenerNotas(form: NgForm) {
     if (form.value.curso != null && form.value.materia != null) {
-      this.calificacionesChange=false;
+      this.calificacionesChange = false;
       this.servicioCalificaciones
         .obtenerCalificacionesEstudiantesXCursoXMateria(
           form.value.curso,
@@ -253,6 +246,7 @@ export class CalificacionesEstudiantesComponent implements OnInit, OnDestroy {
             a.apellido > b.apellido ? 1 : b.apellido > a.apellido ? -1 : 0
           );
           this.dataSource = new MatTableDataSource(this.estudiantes);
+          this.dataSource.filter = this.filtroEstudiante;
           this.dataSource.paginator = this.paginator;
           this.dataSource.paginator.firstPage();
         });
