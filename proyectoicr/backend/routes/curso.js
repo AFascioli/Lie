@@ -35,7 +35,7 @@ router.get("/", checkAuthMiddleware, (req, res) => {
     })
     .catch(() => {
       res.status(500).json({
-        message: "Mensaje de error especifico",
+        message: "Ocurrió un error al querer devolver los cursos",
       });
     });
 });
