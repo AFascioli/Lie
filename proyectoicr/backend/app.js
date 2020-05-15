@@ -22,6 +22,7 @@ options = {
   useFindAndModify: false,
 };
 
+//Conexion a la base de datos
 mongoose
   .connect(Ambiente.stringDeConexion, options)
   .then(() => {
