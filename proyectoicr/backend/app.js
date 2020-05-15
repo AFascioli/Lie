@@ -37,7 +37,7 @@ let gfs;
 conn.once("open", () => {
   gfs = Grid(conn.db, mongoose.mongo);
   gfs.collection("imagen");
-  console.log("Conexión por imagenes a base de datos local");
+  console.log("Conexión por imagenes a base de datos");
 });
 
 app.get("/imagen/:filename", (req, res) => {
