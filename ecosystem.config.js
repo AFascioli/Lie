@@ -2,7 +2,7 @@ module.exports = {
   apps : [{
     name: 'lie',
     script: 'server.js',
-    cwd: './lie/proyectoicr/backend'
+    cwd: './source/proyectoicr/backend'
   }],
   deploy :{
      production : {
@@ -11,7 +11,7 @@ module.exports = {
       key: 'C:/Users/Administrador/Downloads/UTN/PF/Keys_ec2/softwarelie.pem',
       ref: 'origin/testpm2',
       repo : 'git@github.com:AFascioli/Lie.git',
-      path : '.',
+      path : '/home/ubuntu',
       'post-deploy' : 'npm install && pm2 startOrRestart ecosystem.config.js'
     }
   }
