@@ -12,7 +12,7 @@ module.exports = {
       ref: 'origin/testpm2',
       repo : 'git@github.com:AFascioli/Lie.git',
       path : '/home/ubuntu',
-      'post-deploy' : 'npm install ./proyectoicr && pm2 startOrRestart ecosystem.config.js'
+      'post-deploy' : 'npm install ./proyectoicr && pm2 startOrRestart ./proyectoicr/ecosystem.config.js'
     }
   }
 };
