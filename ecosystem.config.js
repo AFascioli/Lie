@@ -2,7 +2,7 @@ module.exports = {
   apps : [{
     name: 'lie',
     script: 'server.js',
-    cwd: './source/proyectoicr/backend'
+    cwd: './proyectoicr/backend'
   }],
   deploy :{
      production : {
