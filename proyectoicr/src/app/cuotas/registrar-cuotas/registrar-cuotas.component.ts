@@ -85,7 +85,6 @@ export class RegistrarCuotasComponent implements OnInit, OnDestroy {
         break;
       }
     }
-    this.isLoading = true;
     this.cuotasService
       .obtenerEstadoCuotasDeCurso(curso.value, nroMes + 2)
       .pipe(takeUntil(this.unsubscribe))
@@ -137,7 +136,6 @@ export class RegistrarCuotasComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.unsubscribe))
       .subscribe((response) => {
         this.cursos = response.cursos;
-        console.log(response.cursos);
         // this.cursos.sort((a, b) =>
         //   a.nombre.charAt(0) > b.nombre.charAt(0)
         //     ? 1
@@ -156,7 +154,7 @@ export class RegistrarCuotasComponent implements OnInit, OnDestroy {
         cuotasCambiadas.push(cuota);
       }
     });
-    this.isLoading = true;
+    //this.isLoading = true;
     this.cuotasService
       .publicarEstadoCuotasDeCurso(cuotasCambiadas)
       .pipe(takeUntil(this.unsubscribe))

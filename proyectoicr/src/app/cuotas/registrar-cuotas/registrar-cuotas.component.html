@@ -2,11 +2,7 @@
   Registrar pago de cuotas
 </h1>
 
-<mat-card class="card-spinner" *ngIf="isLoading">
-  <mat-spinner class="spinner" [diameter]="60"></mat-spinner>
-</mat-card>
-
-<mat-card class="card-body-componente" *ngIf="!isLoading">
+<mat-card class="card-body-componente">
   <div class="div-mes-curso-fecha">
     <div>
       <mat-form-field class="mes">
@@ -68,7 +64,8 @@
     ciclo lectivo
   </p>
   <br />
-  <div *ngIf="!cursoNotSelected">
+  <mat-spinner class="spinner" [diameter]="60" *ngIf="isLoading"></mat-spinner>
+  <div *ngIf="!cursoNotSelected && !isLoading">
     <table
       mat-table
       [dataSource]="cuotasXEstudiante"

@@ -237,14 +237,14 @@ router.post("/publicarEstadoCuotas", checkAuthMiddleware, (req, res) => {
   for (let i = 0; i <= final; i++) {
     Inscripcion.findById(req.body[i]._id)
       .then((inscripcion) => {
-        inscripcion.cuotas[req.body[i].mes - 1].pagado = !inscripcion.cuotas[
-          req.body[i].mes - 1
+        inscripcion.cuotas[req.body[i].mes - 3].pagado = !inscripcion.cuotas[
+          req.body[i].mes - 3
         ].pagado;
         inscripcion.save();
       })
       .catch(() => {
         res.status(500).json({
-          message: "Mensaje de error especifico",
+          message: "Ocurrio un error al querer registrar las cuotas",
         });
       });
   }
