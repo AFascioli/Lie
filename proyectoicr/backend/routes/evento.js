@@ -97,7 +97,7 @@ router.post("/registrar", upload, async (req, res, next) => {
             //   "El evento se realizará en la fecha " + evento.fechaEvento + "."
             // );
             res.status(201).json({
-              message: "Evento creado exitosamente",
+              message: "Evento registrado exitosamente",
               exito: true,
             });
           });
@@ -106,27 +106,29 @@ router.post("/registrar", upload, async (req, res, next) => {
     })
     .catch(() => {
       res.status(500).json({
-        message: "Se presentaron problemas al querer agregar un evento",
+        message: "Se presentaron problemas al querer registrar un evento",
       });
     });
 });
 
-//Modifica el evento en la base de datos
+//Registra el evento en la base de datos
 //@params: evento a publicar
-router.post("/modificar", upload, async (req, res) => {
-  let filenames = req.body.filenames;
-  console.log(req.body.filenames);
-  leerFilename = () => {
+router.post("/modificar", upload, async (req, res, next) => {
+  leerFilenames = () => {
     return new Promise((resolve, reject) => {
+      let filenames = [];
       for (let index = 0; index < req.files.length; index++) {
         filenames.push(req.files[index].filename);
       }
-      resolve(filenames);
+      if (filenames.length == req.files.length) {
+        resolve(filenames);
+      } else {
+        reject("No se pudo obtener los nombres de las imagenes.");
+      }
     });
   };
 
-  if (req.files != null) {
-    console.log("entro al de con fotos");
+  if (req.files.length != 0) {
     Evento.findByIdAndUpdate(req.body._id, {
       titulo: req.body.titulo,
       descripcion: req.body.descripcion,
@@ -134,20 +136,21 @@ router.post("/modificar", upload, async (req, res) => {
       horaInicio: req.body.horaInicio,
       horaFin: req.body.horaFin,
       tags: req.body.tags,
-      filenames: await leerFilename(),
+      filenames: await leerFilenames(),
       autor: req.body.idAutor,
     })
       .exec()
-      .then(() => {
-        //Completar con código de la notificación COMPLETAR CON LO DE ARRIBA
-        res.status(201).json({
-          message: "Evento modificado exitosamente",
-          exito: true,
-        });
-      })
-      .catch(() => {
-        res.status(500).json({
-          message: "No se pudo modificar el evento correctamente",
+      .then((eventoModificado) => {
+        eventoModificado.save().then(() => {
+          // this.notificarPorEvento(
+          //   this.evento.tags,
+          //   this.evento.titulo,
+          //   "El evento se realizará en la fecha " + evento.fechaEvento + "."
+          // );
+          res.status(201).json({
+            message: "Evento modificado exitosamente",
+            exito: true,
+          });
         });
       });
   } else {
@@ -158,23 +161,88 @@ router.post("/modificar", upload, async (req, res) => {
       horaInicio: req.body.horaInicio,
       horaFin: req.body.horaFin,
       tags: req.body.tags,
+      filenames: [],
       autor: req.body.idAutor,
     })
       .exec()
-      .then(() => {
-        //Completar con código de la notificación COMPLETAR CON LO DE ARRIBA
-        res.status(201).json({
-          message: "Evento modificado exitosamente",
-          exito: true,
-        });
-      })
-      .catch(() => {
-        res.status(500).json({
-          message: "No se pudo modificar el evento correctamente",
+      .then((eventoModificado) => {
+        eventoModificado.save().then(() => {
+          // this.notificarPorEvento(
+          //   this.evento.tags,
+          //   this.evento.titulo,
+          //   "El evento se realizará en la fecha " + evento.fechaEvento + "."
+          // );
+          res.status(201).json({
+            message: "Evento modificado exitosamente",
+            exito: true,
+          });
         });
       });
   }
 });
+
+// //Modifica el evento en la base de datos
+// //@params: evento a publicar
+// router.post("/modificar", upload, async (req, res) => {
+//   let filenames = req.body.filenames;
+//   leerFilename = () => {
+//     return new Promise((resolve, reject) => {
+//       for (let index = 0; index < req.files.length; index++) {
+//         filenames.push(req.files[index].filename);
+//       }
+//       resolve(filenames);
+//     });
+//   };
+
+//   if (req.files != null) {
+//     Evento.findByIdAndUpdate(req.body._id, {
+//       titulo: req.body.titulo,
+//       descripcion: req.body.descripcion,
+//       fechaEvento: req.body.fechaEvento,
+//       horaInicio: req.body.horaInicio,
+//       horaFin: req.body.horaFin,
+//       tags: req.body.tags,
+//       filenames: await leerFilename(),
+//       autor: req.body.idAutor,
+//     })
+//       .exec()
+//       .then(() => {
+//         //Completar con código de la notificación COMPLETAR CON LO DE ARRIBA
+//         res.status(201).json({
+//           message: "Evento modificado exitosamente",
+//           exito: true,
+//         });
+//       })
+//       .catch(() => {
+//         res.status(500).json({
+//           message: "No se pudo modificar el evento correctamente",
+//         });
+//       });
+//   } else {
+//     Evento.findByIdAndUpdate(req.body._id, {
+//       titulo: req.body.titulo,
+//       descripcion: req.body.descripcion,
+//       fechaEvento: req.body.fechaEvento,
+//       horaInicio: req.body.horaInicio,
+//       horaFin: req.body.horaFin,
+//       tags: req.body.tags,
+//       autor: req.body.idAutor,
+//     })
+//       .exec()
+//       .then(() => {
+//         //Completar con código de la notificación COMPLETAR CON LO DE ARRIBA
+//         res.status(201).json({
+//           message: "Evento modificado exitosamente",
+//           exito: true,
+//         });
+//       })
+//       .catch(() => {
+//         res.status(500).json({
+//           message: "No se pudo modificar el evento correctamente",
+//         });
+//       });
+//   }
+// });
 
 //Obtiene todos los eventos que estan almacenados en la base de datos
 router.get("", (req, res, next) => {
