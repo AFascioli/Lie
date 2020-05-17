@@ -80,6 +80,8 @@
         [(ngModel)]="nroDocEstSelec"
         maxlength="8"
         placeholder="Ingrese número de documento"
+        type="number"
+        (keypress)="checkNumeros($event)"
         required
       />
     </mat-form-field>

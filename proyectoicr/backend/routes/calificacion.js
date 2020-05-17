@@ -13,7 +13,7 @@ router.get("/materiasDesaprobadas", (req, res) => {
 
   Inscripcion.findOne({
     idEstudiante: mongoose.Types.ObjectId(req.query.idEstudiante),
-    año: fechaActual.getFullYear()
+    año: fechaActual.getFullYear(),
   }).then(async (inscripcion) => {
     let idEstado = await ClaseEstado.obtenerIdEstado(
       "CalificacionesXMateria",
@@ -26,19 +26,21 @@ router.get("/materiasDesaprobadas", (req, res) => {
       idEstado
     );
 
-    if(idsCXMDesaprobadas.length!=0){
-      let materiasDesaprobadas= await ClaseCXM.obtenerNombresMaterias(idsCXMDesaprobadas);
+    if (idsCXMDesaprobadas.length != 0) {
+      let materiasDesaprobadas = await ClaseCXM.obtenerNombresMaterias(
+        idsCXMDesaprobadas
+      );
 
       return res.status(200).json({
         message: "Materias desaprobadas obtenidas correctamente",
         exito: true,
-        materiasDesaprobadas: materiasDesaprobadas
+        materiasDesaprobadas: materiasDesaprobadas,
       });
     } else {
       return res.status(200).json({
         message: "El alumno seleccionado no tiene materias desaprobadas",
         exito: true,
-        materiasDesaprobadas: []
+        materiasDesaprobadas: [],
       });
     }
   });
