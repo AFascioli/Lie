@@ -27,7 +27,7 @@ export class MenuPrincipalAdultoResponsableComponent implements OnInit {
   cursos = [];
   private unsubscribe: Subject<void> = new Subject();
   readonly VAPID_PUBLIC =
-    "BMlC2dLJTBP6T1GCl3S3sDBmhERNVcjN7ff2a6JAoOg8bA_qXjikveleRwjz0Zn8c9-58mnrNo2K4p07UPK0DKQ";
+    "BDlC2dLJTBP6T1GCl3S3sDBmhERNVcjN7ff2a6JAoOg8bA_qXjikveleRwjz0Zn8c9-58mnrNo2K4p07UPK0DKQ";
 
   constructor(
     private swPush: SwPush,
@@ -53,6 +53,7 @@ export class MenuPrincipalAdultoResponsableComponent implements OnInit {
     if ("serviceWorker" in navigator) {
       navigator.serviceWorker.register("ngsw-worker.js").then((swreg) => {
         if (swreg.active) {
+          console.log('Entro al segundo if');
           this.subscribeToNotifications();
         }
       });
@@ -72,6 +73,7 @@ export class MenuPrincipalAdultoResponsableComponent implements OnInit {
           serverPublicKey: this.VAPID_PUBLIC,
         })
         .then((pushsub) => {
+          console.log('Paso requestSubscription');
           this.authService
             .addPushSubscriber(pushsub)
             .pipe(takeUntil(this.unsubscribe))
