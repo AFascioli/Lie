@@ -1,5 +1,7 @@
 proyectoicr/.vscode/settings.json
 proyectoicr/backend/assets/vapid_keys.js
+proyectoicr/dist
 proyectoicr/backend/node_modules
+proyectoicr/node_modules
 proyectoicr/backend/assets/comentarios_apropiados.js
 proyectoicr/backend/assets/comentarios_inapropiados.js
