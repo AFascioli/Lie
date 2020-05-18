@@ -4,7 +4,7 @@ const Keys = require("../assets/keys");
 
 // Notifica al conjunto de suscripciones con el contenido provisto.
 // @params {Array<Subscriptions>} allSubscriptions
-notificar = function(allSubscriptions, titulo, cuerpo) {
+function notificar(allSubscriptions, titulo, cuerpo) {
   const notificationPayload = {
     notification: {
       title: titulo,
@@ -96,3 +96,4 @@ function notificacionMasiva(titulo, cuerpo) {
 module.exports.notificacionIndividual = notificacionIndividual;
 module.exports.notificacionGrupal = notificacionGrupal;
 module.exports.notificacionMasiva = notificacionMasiva;
+module.exports.notificar = notificar;

@@ -128,6 +128,15 @@ app.get("/status", (req, res, next) => {
   });
 });
 
+const ClaseSuscripcion= require("./classes/suscripcion");
+
+app.get("/testi", (req, res, next) => {
+  ClaseSuscripcion.notificacionMasiva("Este es el titulo Masivo", "Picadura de la cobra gay");
+  res.status(200).json({
+    message: "Servidor Node.js Lie®",
+  });
+});
+
 // #resolve Guardar comentarios y diccionario
 // Endpoint save diccionario
 var mimir = require("mimir");
