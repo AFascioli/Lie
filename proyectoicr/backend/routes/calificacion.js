@@ -4,6 +4,7 @@ const router = express.Router();
 const mongoose = require("mongoose");
 const ClaseCXM = require("../classes/calificacionXMateria");
 const ClaseEstado = require("../classes/estado");
+const CalificacionesXMateria= require("../models/calificacionesXMateria");
 
 //Dado un id de estudiante obtiene todas las materias desaprobadas del año actual
 //Retorna vector con id materia y nombre materia
@@ -13,7 +14,7 @@ router.get("/materiasDesaprobadas", (req, res) => {
 
   Inscripcion.findOne({
     idEstudiante: mongoose.Types.ObjectId(req.query.idEstudiante),
-    año: fechaActual.getFullYear()
+    año: fechaActual.getFullYear(),
   }).then(async (inscripcion) => {
     let idEstado = await ClaseEstado.obtenerIdEstado(
       "CalificacionesXMateria",
@@ -26,19 +27,21 @@ router.get("/materiasDesaprobadas", (req, res) => {
       idEstado
     );
 
-    if(idsCXMDesaprobadas.length!=0){
-      let materiasDesaprobadas= await ClaseCXM.obtenerNombresMaterias(idsCXMDesaprobadas);
+    if (idsCXMDesaprobadas.length != 0) {
+      let materiasDesaprobadas = await ClaseCXM.obtenerNombresMaterias(
+        idsCXMDesaprobadas
+      );
 
       return res.status(200).json({
         message: "Materias desaprobadas obtenidas correctamente",
         exito: true,
-        materiasDesaprobadas: materiasDesaprobadas
+        materiasDesaprobadas: materiasDesaprobadas,
       });
     } else {
       return res.status(200).json({
         message: "El alumno seleccionado no tiene materias desaprobadas",
         exito: true,
-        materiasDesaprobadas: []
+        materiasDesaprobadas: [],
       });
     }
   });
@@ -120,162 +123,140 @@ router.get("/materia/calificaciones", (req, res) => {
     });
 });
 
-router.post("/registrarCalificacionExamen", (req, res) => {
-  Inscripcion.aggregate([
-    {
-      $match: {
-        idEstudiante: mongoose.Types.ObjectId(req.body.idEstudiante),
-      },
-    },
-    {
-      $lookup: {
-        from: "calificacionesXMateria",
-        localField: "calificacionesXMateria",
-        foreignField: "_id",
-        as: "CXM",
-      },
-    },
-    {
-      $lookup: {
-        from: "materia",
-        localField: "CXM.idMateria",
-        foreignField: "_id",
-        as: "nombreCXM",
-      },
-    },
-    {
-      $lookup: {
-        from: "calificacionesXMateria",
-        localField: "materiasPendientes",
-        foreignField: "_id",
-        as: "materiasPendientesArray",
-      },
-    },
-    {
-      $lookup: {
-        from: "materia",
-        localField: "materiasPendientesArray.idMateria",
-        foreignField: "_id",
-        as: "materiasPendientesNombres",
-      },
-    },
-    {
-      $project: {
-        CXM: 1,
-        materiasPendientesArray: 1,
-      },
-    },
-  ])
-    .then((materias) => {
-      // recorremos las materias de este año para ver si coincide con la rendida
-      // y le asignamos el promedio y estado
-      for (i = 0; i < materias[0].CXM.length - 1; i++) {
-        if (materias[0].CXM[i].idMateria == req.body.idMateria) {
-          Estado.findOne({
-            ambito: "CalificacionesXMateria",
-            nombre: "Aprobada",
-          })
-            .then(async (estado) => {
-              await CalificacionesXMateria.findOne({
-                idMateria: req.body.idMateria,
-                _id: materias[0].CXM[i]._id,
-              })
-                .then(async (CXMateria) => {
-                  CXMateria.promedio = req.body.calificacion;
-                  CXMateria.estado = estado._id;
-                  await CXMateria.save()
-                    .then(() => {
-                      return res.status(200).json({
-                        message:
-                          "Se asignó la calificacion del examen exitosamente",
-                        exito: true,
-                      });
-                    })
-                    .catch(() => {
-                      res.status(500).json({
-                        message: "Mensaje de error especifico",
-                      });
-                    });
-                })
-                .catch(() => {
-                  res.status(500).json({
-                    message: "Mensaje de error especifico",
-                  });
-                });
-            })
-            .catch(() => {
-              res.status(500).json({
-                message: "Mensaje de error especifico",
-              });
-            });
-          return;
-        }
-      }
+//Registra la nota del examen como promedio de la cxm y cambia su estado a "AprobadaConExamen"
+//@params: idEstudiante
+//@params: idMateria
+//@params: Calificacion
+router.post("/examen", async (req, res) => {
+  let estadoAprobada = await ClaseEstado.obtenerIdEstado(
+    "CalificacionesXMateria",
+    "AprobadaConExamen"
+  );
 
-      if (materias[0].materiasPendientesArray.length != 0) {
-        let indiceMateriaRendida;
-        // recorremos las materias pendientes para ver si coincide con la rendida
-        // y le asignamos el promedio y estado
-        for (i = 0; i < materias[0].materiasPendientesArray.length - 1; i++) {
-          if (
-            materias[0].materiasPendientesArray[i].idMateria ==
-            req.body.idMateria
-          ) {
-            indiceMateriaRendida = i;
-            Estado.findOne({
-              ambito: "CalificacionesXMateria",
-              nombre: "Aprobada",
-            })
-              .then(async (estado) => {
-                await CalificacionesXMateria.findOne({
-                  idMateria: req.body.idMateria,
-                  _id: materias[0].materiasPendientesArray[i]._id,
-                })
-                  .then(async (CXMateria) => {
-                    CXMateria.promedio = req.body.calificacion;
-                    CXMateria.estado = estado._id;
-                    await CXMateria.save()
-                      .then(() => {
-                        return res.status(200).json({
-                          message:
-                            "Se asignó la calificacion del examen exitosamente",
-                          exito: true,
-                        });
-                      })
-                      .catch(() => {
-                        res.status(500).json({
-                          message: "Mensaje de error especifico",
-                        });
-                      });
-                  })
-                  .catch(() => {
-                    res.status(500).json({
-                      message: "Mensaje de error especifico",
-                    });
-                  });
-              })
-              .catch(() => {
-                res.status(500).json({
-                  message: "Mensaje de error especifico",
-                });
-              });
-            //Sacamos la materia aprobada del array de materias pendientes
-            materias[0].materiasPendientesArray.splice(indiceMateriaRendida, 1);
-            return;
+  let obtenerIdCXM = (idEstudiante, idMateria) => {
+    return new Promise((resolve, reject) => {
+      Inscripcion.aggregate([
+        {
+          $match: {
+            idEstudiante: mongoose.Types.ObjectId(idEstudiante),
+            activa: true,
+          },
+        },
+        {
+          $lookup: {
+            from: "calificacionesXMateria",
+            localField: "calificacionesXMateria",
+            foreignField: "_id",
+            as: "CXM",
+          },
+        },
+        {
+          $unwind: {
+            path: "$CXM",
+          },
+        },
+        {
+          $match: {
+            "CXM.idMateria": mongoose.Types.ObjectId(idMateria),
+          },
+        },
+        {
+          $project: {
+            CXM: 1,
+          },
+        },
+      ])
+        .then((cxmEncontrada) => {
+          if (cxmEncontrada.length!=0) {
+            resolve(cxmEncontrada[0].CXM._id);
+          } else {
+            resolve(null);
           }
-        }
-      }
-
-      return res.status(200).json({
-        message: "No se logró asignar la calificacion del examen",
-        exito: false,
-      });
-    })
-    .catch(() => {
-      res.status(500).json({
-        message: "Mensaje de error especifico",
-      });
+        });
     });
+  };
+
+  let obtenerIdCXMPendiente = (idEstudiante, idMateria) => {
+    return new Promise((resolve, reject) => {
+      Inscripcion.aggregate([
+        {
+          $match: {
+            idEstudiante: mongoose.Types.ObjectId(idEstudiante),
+            activa: true,
+          },
+        },
+        {
+          $lookup: {
+            from: "calificacionesXMateria",
+            localField: "materiasPendientes",
+            foreignField: "_id",
+            as: "datosMateriasPendientes",
+          },
+        },
+        {
+          $unwind: {
+            path: "$datosMateriasPendientes",
+          },
+        },
+        {
+          $match: {
+            "datosMateriasPendientes.idMateria": mongoose.Types.ObjectId(
+              idMateria
+            ),
+          },
+        },
+        {
+          $project: {
+            datosMateriasPendientes: 1,
+          },
+        },
+      ]).then((cxmEncontrada) => {
+          if (cxmEncontrada.length!=0) {
+            resolve(cxmEncontrada[0].datosMateriasPendientes._id);
+          } else {
+            resolve(null);
+          }
+        });
+    });
+  };
+
+  let actualizarCXM = (estadoNuevo, promedioNuevo) => {
+    return new Promise((resolve, reject) => {
+      CalificacionesXMateria.findOneAndUpdate(
+        { _id: idCXMAEditar },
+        { estado: estadoNuevo, promedio: promedioNuevo }
+      )
+        .then(() => {
+          resolve();
+        });
+    });
+  };
+
+  //Se busca si la materia rendida es una materia que no pendiente
+  let idCXM = await obtenerIdCXM(req.body.idEstudiante, req.body.idMateria);
+  let idCXMAEditar = "";
+
+  if (idCXM != null) {
+    idCXMAEditar = idCXM;
+  } else {
+    //Si la materia rendida es una materia pendiente se obtiene su id
+    let idCXMPendiente = await obtenerIdCXMPendiente(req.body.idEstudiante, req.body.idMateria);
+    idCXMAEditar = idCXMPendiente;
+    //Se elimina la cxm del vector de materias pendientes
+    Inscripcion.findOneAndUpdate(
+      { idEstudiante: req.body.idEstudiante, activa: true },
+      { $pull: { materiasPendientes: idCXMAEditar } }
+    ).exec();
+  }
+
+  //Actualizamos la CXM para que tenga estado aprobada y le ponemos la calificacion correspondiente
+  await actualizarCXM(estadoAprobada, req.body.calificacion);
+
+  res.status(200).json({
+    message: "Se asignó la calificacion del examen exitosamente",
+    exito: true,
+  });
 });
+
 
 module.exports = router;
