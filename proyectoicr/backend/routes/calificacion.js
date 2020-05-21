@@ -15,6 +15,7 @@ router.get("/materiasDesaprobadas", (req, res) => {
   Inscripcion.findOne({
     idEstudiante: mongoose.Types.ObjectId(req.query.idEstudiante),
     año: fechaActual.getFullYear(),
+    activa: true
   }).then(async (inscripcion) => {
     let idEstado = await ClaseEstado.obtenerIdEstado(
       "CalificacionesXMateria",
