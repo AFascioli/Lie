@@ -86,67 +86,87 @@ notificarSancion = async function (idEstudiante) {
 //@params: tipo (sancion)
 //@params: cantidad (sancion)
 //@params: fecha (sancion)
-router.post("/registrarSancion", checkAuthMiddleware, (req, res) => {
-  let modificarSancion = false;
-  let indice = 0;
-  Inscripcion.findOne({
-    idEstudiante: req.body.idEstudiante,
-    activa: true,
-  }).then((inscripcion) => {
-    for (let index = 0; index < inscripcion.sanciones.length; index++) {
-      if (
-        ClaseAsistencia.esFechaActual(inscripcion.sanciones[index].fecha) &&
-        inscripcion.sanciones[index].tipo == req.body.tipoSancion
-      ) {
-        modificarSancion = true;
-        indice = index;
-      }
-    }
-    if (!modificarSancion) {
-      Inscripcion.findOneAndUpdate(
-        {
-          idEstudiante: req.body.idEstudiante,
-          activa: true,
-        },
-        {
-          $push: {
-            sanciones: {
-              tipo: req.body.tipoSancion,
-              cantidad: req.body.cantidad,
-              fecha: req.body.fecha,
-            },
-          },
+router.post("/registrarSancion", checkAuthMiddleware, async (req, res) => {
+  if (req.body.tipoSancion == "Suspencion") {
+    let estadoSuspendido = await ClaseEstado.obtenerIdEstado(
+      "Inscripcion",
+      "Suspendido"
+    );
+    Inscripcion.findOneAndUpdate(
+      {
+        idEstudiante: req.body.idEstudiante,
+        activa: true,
+      },
+      { estado: estadoSuspendido }
+    ).then(() => {
+      return res.status(200).json({
+        message: "Se ha registrado la sanción del estudiante correctamente",
+        exito: true,
+      });
+    });
+  }else{
+
+    let modificarSancion = false;
+    let indice = 0;
+    Inscripcion.findOne({
+      idEstudiante: req.body.idEstudiante,
+      activa: true,
+    }).then((inscripcion) => {
+      for (let index = 0; index < inscripcion.sanciones.length; index++) {
+        if (
+          ClaseAsistencia.esFechaActual(inscripcion.sanciones[index].fecha) &&
+          inscripcion.sanciones[index].tipo == req.body.tipoSancion
+        ) {
+          modificarSancion = true;
+          indice = index;
         }
-      )
-        .then(
-          res.status(200).json({
-            message: "Se ha registrado la sanción del estudiante correctamente",
-            exito: true,
-          })
+      }
+      if (!modificarSancion) {
+        Inscripcion.findOneAndUpdate(
+          {
+            idEstudiante: req.body.idEstudiante,
+            activa: true,
+          },
+          {
+            $push: {
+              sanciones: {
+                tipo: req.body.tipoSancion,
+                cantidad: req.body.cantidad,
+                fecha: req.body.fecha,
+              },
+            },
+          }
         )
-        .catch(() => {
-          res.status(500).json({
-            message: "Mensaje de error especifico",
+          .then(
+            res.status(200).json({
+              message: "Se ha registrado la sanción del estudiante correctamente",
+              exito: true,
+            })
+          )
+          .catch(() => {
+            res.status(500).json({
+              message: "Mensaje de error especifico",
+            });
           });
-        });
-    } else {
-      inscripcion.sanciones[indice].cantidad += req.body.cantidad;
-      inscripcion
-        .save()
-        .then(() => {
-          notificarSancion(req.body.idEstudiante);
-          res.status(200).json({
-            message: "Se ha registrado la sanción del estudiante correctamente",
-            exito: true,
+      } else {
+        inscripcion.sanciones[indice].cantidad += req.body.cantidad;
+        inscripcion
+          .save()
+          .then(() => {
+            notificarSancion(req.body.idEstudiante);
+            res.status(200).json({
+              message: "Se ha registrado la sanción del estudiante correctamente",
+              exito: true,
+            });
+          })
+          .catch(() => {
+            res.status(500).json({
+              message: "Mensaje de error especifico",
+            });
           });
-        })
-        .catch(() => {
-          res.status(500).json({
-            message: "Mensaje de error especifico",
-          });
-        });
-    }
-  });
+      }
+    });
+  }
 });
 
 //Obtiene el estado de las cuotas de todos los estudiantes de un curso
