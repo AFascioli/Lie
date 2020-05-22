@@ -60,7 +60,7 @@ const routes: Routes = [
         path: "definirAgenda",
         component: DefinirAgendaComponent,
         canActivate: [RoleGuard],
-        data: { rolesValidos: ["Admin", "Director"] },
+        data: { rolesValidos: ["Admin", "Director", "Preceptor"] },
       },
       {
         path: "home",
