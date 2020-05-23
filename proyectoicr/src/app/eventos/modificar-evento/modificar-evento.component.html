@@ -50,36 +50,53 @@
         <mat-datepicker touchUi #picker></mat-datepicker>
       </mat-form-field>
       <div>
-        <mat-form-field class="mat-form-hora" [class.mat-form-hora-mobile]="mobileQuery.matches">
+        <mat-form-field
+          class="mat-form-hora"
+          [class.mat-form-hora-mobile]="mobileQuery.matches"
+        >
           <div class="hora">
             <input
+              name="nombreInicio"
+              [(ngModel)]="horaInicioEvento"
               matInput
-              name="horaInicio"
-              ngModel
-              #horaInicio="ngModel"
-              placeholder="Hora inicio *"
-              id="pickerInicio"
-              [(ngModel)]="evento.horaInicio"
+              [ngxTimepicker]="picker1"
+              [format]="24"
+              [value]="horaInicioEvento"
+              readonly
+              required
             />
+            <ngx-material-timepicker
+              #picker1
+            ></ngx-material-timepicker>
           </div>
         </mat-form-field>
         &nbsp;
-        <mat-form-field class="mat-form-hora" [class.mat-form-hora-mobile]="mobileQuery.matches">
+        <mat-form-field
+          class="mat-form-hora"
+          [class.mat-form-hora-mobile]="mobileQuery.matches"
+        >
           <div class="hora">
             <input
+              name="nombreFin"
+              [(ngModel)]="horaFinEvento"
               matInput
-              name="horaFin"
-              ngModel
-              #horaFin="ngModel"
-              placeholder="Hora fin *"
-              id="pickerFin"
-              [(ngModel)]="evento.horaFin"
+              [ngxTimepicker]="picker2"
+              [format]="24"
+              [value]="horaFinEvento"
+              readonly
+              required
             />
+            <ngx-material-timepicker
+              #picker2
+            ></ngx-material-timepicker>
           </div>
         </mat-form-field>
       </div>
 
-      <mat-form-field class="chip-list" [class.mat-form-field-mobile]="mobileQuery.matches">
+      <mat-form-field
+        class="chip-list"
+        [class.mat-form-field-mobile]="mobileQuery.matches"
+      >
         <mat-chip-list #chipList aria-label="Seleccion de chips">
           <mat-chip
             *ngFor="let chip of chips"
@@ -139,15 +156,13 @@
         <div *ngFor="let image of imagenesCargadas; let i = index">
           <div class="mySlides fade">
             <button
-            type="button"
-            mat-icon-button
-            class="boton-borrar"
-            matTooltip="Eliminar imagen"
-          >
-            <mat-icon (click)="onEliminarImagen(i)"
-              >cancel</mat-icon
+              type="button"
+              mat-icon-button
+              class="boton-borrar"
+              matTooltip="Eliminar imagen"
             >
-          </button>
+              <mat-icon (click)="onEliminarImagen(i)">cancel</mat-icon>
+            </button>
             <img [src]="image" style="width: 100%;" />
           </div>
         </div>

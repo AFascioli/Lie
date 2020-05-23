@@ -7,7 +7,7 @@ import {
   ChangeDetectorRef,
 } from "@angular/core";
 import { COMMA, ENTER } from "@angular/cdk/keycodes";
-import { FormControl, NgForm } from "@angular/forms";
+import { FormControl, NgForm, NgModel } from "@angular/forms";
 import {
   MatAutocompleteSelectedEvent,
   MatAutocomplete,
@@ -18,7 +18,6 @@ import { map, startWith, takeUntil } from "rxjs/operators";
 import { EventosService } from "../eventos.service";
 import { Router } from "@angular/router";
 import { MatSnackBar, MatDialog } from "@angular/material";
-import Rolldate from "../../../assets/rolldate.min.js";
 import { CancelPopupComponent } from "src/app/popup-genericos/cancel-popup.component";
 import { Evento } from "../evento.model";
 import { environment } from "src/environments/environment";
@@ -47,13 +46,13 @@ export class ModificarEventoComponent implements OnInit, OnDestroy {
   filteredChips: Observable<string[]>;
   chips: string[] = [];
   allChips: string[] = ["1A", "2A", "3A", "4A", "5A", "6A", "Todos los cursos"];
-  horaInicio: string;
-  horaFin: string;
   evento: Evento;
   slideIndex = 1;
   private unsubscribe: Subject<void> = new Subject();
   _mobileQueryListener: () => void;
   mobileQuery: MediaQueryList;
+  horaInicioEvento: string;
+  horaFinEvento: string;
 
   constructor(
     public eventoService: EventosService,
@@ -93,6 +92,8 @@ export class ModificarEventoComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.evento = this.eventoService.evento;
+    this.horaInicioEvento= this.evento.horaInicio;
+    this.horaFinEvento= this.evento.horaFin;
     this.fechaActual = new Date();
     if (this.evento.filenames.length != 0) {
       for (let index = 0; index < this.evento.filenames.length; index++) {
@@ -105,7 +106,6 @@ export class ModificarEventoComponent implements OnInit, OnDestroy {
       }, 500);
     }
     this.chips = this.evento.tags;
-    this.inicializarPickers();
   }
 
   add(event: MatChipInputEvent): void {
@@ -140,31 +140,6 @@ export class ModificarEventoComponent implements OnInit, OnDestroy {
     }
     this.chipsInput.nativeElement.value = "";
     this.chipsCtrl.setValue(null);
-  }
-
-  inicializarPickers() {
-    new Rolldate({
-      el: "#pickerInicio",
-      format: "hh:mm",
-      minStep: 15,
-      lang: {
-        title: "Seleccione hora de inicio del evento",
-        hour: "",
-        min: "",
-      },
-      confirm: (date) => {
-        this.evento.horaInicio = date;
-      },
-    });
-    new Rolldate({
-      el: "#pickerFin",
-      format: "hh:mm",
-      minStep: 15,
-      lang: { title: "Seleccione hora de fin del evento", hour: "", min: "" },
-      confirm: (date) => {
-        this.evento.horaFin = date;
-      },
-    });
   }
 
   remove(chip: string): void {
@@ -238,8 +213,8 @@ export class ModificarEventoComponent implements OnInit, OnDestroy {
         this.evento.titulo,
         this.evento.descripcion,
         fechaEvento,
-        this.evento.horaInicio,
-        this.evento.horaFin,
+        this.horaInicioEvento,
+        this.horaFinEvento,
         this.evento.tags,
         this.imagesFile,
         this.evento.filenames,
@@ -264,7 +239,6 @@ export class ModificarEventoComponent implements OnInit, OnDestroy {
   }
 
   onGuardarEvento(form: NgForm) {
-    console.log(form);
     if (form.valid && this.evento.tags.length != 0) {
       if(this.evento.horaInicio!="" && this.evento.horaFin!=""){
         if(this.horaEventoEsValido(this.evento.horaInicio, this.evento.horaFin)){
