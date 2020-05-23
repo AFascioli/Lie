@@ -56,28 +56,36 @@
       <mat-form-field class="mat-form-hora" [class.mat-form-field-hora-mobile]="mobileQuery.matches">
         <div class="hora">
           <input
-            matInput
-            name="horaInicio"
-            ngModel
-            #horaInicio="ngModel"
-            placeholder="Hora inicio *"
-            id="pickerInicio"
-            readonly
-          />
+              name="nombreInicio"
+              [(ngModel)]="horaInicioEvento"
+              matInput
+              [ngxTimepicker]="picker1"
+              [format]="24"
+              placeholder="Hora inicio de evento"
+              readonly
+              required
+            />
+            <ngx-material-timepicker
+              #picker1
+            ></ngx-material-timepicker>
         </div>
       </mat-form-field>
       &nbsp;
       <mat-form-field class="mat-form-hora" [class.mat-form-field-hora-mobile]="mobileQuery.matches">
         <div class="hora">
           <input
-            matInput
-            name="horaFin"
-            ngModel
-            #horaFin="ngModel"
-            placeholder="Hora fin *"
-            id="pickerFin"
-            readonly
-          />
+              name="nombreFin"
+              [(ngModel)]="horaFinEvento"
+              matInput
+              [ngxTimepicker]="picker2"
+              [format]="24"
+              placeholder="Hora fin de evento"
+              readonly
+              required
+            />
+            <ngx-material-timepicker
+              #picker2
+            ></ngx-material-timepicker>
         </div>
       </mat-form-field>
     </div>

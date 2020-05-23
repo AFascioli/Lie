@@ -240,8 +240,8 @@ export class ModificarEventoComponent implements OnInit, OnDestroy {
 
   onGuardarEvento(form: NgForm) {
     if (form.valid && this.evento.tags.length != 0) {
-      if(this.evento.horaInicio!="" && this.evento.horaFin!=""){
-        if(this.horaEventoEsValido(this.evento.horaInicio, this.evento.horaFin)){
+      if(this.horaInicioEvento!="" && this.horaInicioEvento!=""){
+        if(this.horaEventoEsValido(this.horaInicioEvento, this.horaFinEvento)){
           this.modificarEvento();
         }else{
           this.snackBar.open(
