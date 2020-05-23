@@ -17,6 +17,7 @@ import { MatPaginatorIntl } from "@angular/material";
 import { Subject } from "rxjs";
 import { takeUntil } from "rxjs/operators";
 import { MediaMatcher } from "@angular/cdk/layout";
+import { debug } from "util";
 
 @Component({
   selector: "app-calificaciones-estudiantes",
@@ -329,14 +330,16 @@ export class CalificacionesEstudiantesComponent implements OnInit, OnDestroy {
 
   checkNotas(event, cal) {
     var inputValue = event.which;
-    var concat = cal + String.fromCharCode(inputValue);
+    concat = String.fromCharCode(inputValue);
+    if (cal != 0) var concat = cal + String.fromCharCode(inputValue);
+
     if (
       !(inputValue >= 48 && inputValue <= 57) &&
       inputValue != 32 &&
       inputValue != 0
     )
       event.preventDefault();
-    else if (cal != "" && Number(concat) > 10) event.preventDefault();
+    else if (cal != 0 && Number(concat) > 10) event.preventDefault();
     else this.servicioCalificaciones.auxCambios = true;
   }
 }

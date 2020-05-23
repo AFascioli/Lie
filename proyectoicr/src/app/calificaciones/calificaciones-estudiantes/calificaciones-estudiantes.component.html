@@ -81,6 +81,7 @@
     <mat-card *ngIf="estudiantes.length != 0">
       <table
         mat-table
+        #table
         [class.table-mobile]="mobileQuery.matches"
         [dataSource]="dataSource"
       >
@@ -123,7 +124,7 @@
           <td
             class="columnas-chicas"
             mat-cell
-            *matCellDef="let estudiante; let i = index"
+            *matCellDef="let estudiante; let row"
             [ngClass]="{ bajoPromedio: this.promedio < 6 }"
           >
             <input
@@ -132,6 +133,7 @@
               name="nota1{{ estudiante.calificaciones[0] }}"
               type="number"
               pattern="([0-9]|0[1-9]|10)"
+              [value]="estudiante.calificaciones[0]"
               (keypress)="checkNotas($event, estudiante.calificaciones[0])"
               (change)="onCalificacionChange()"
               [ngClass]="{ bajoPromedio: this.promedio < 6 }"
@@ -146,7 +148,7 @@
           <td
             class="columnas-chicas"
             mat-cell
-            *matCellDef="let estudiante; let i = index"
+            *matCellDef="let estudiante; let row"
             [ngClass]="{ bajoPromedio: this.promedio < 6 }"
           >
             <input
@@ -158,6 +160,7 @@
               (keypress)="checkNotas($event, estudiante.calificaciones[1])"
               (change)="onCalificacionChange()"
               [ngClass]="{ bajoPromedio: this.promedio < 6 }"
+              [value]="estudiante.calificaciones[1]"
             />
             <p *ngIf="!rolConPermisosEdicion || !puedeEditarCalificaciones">
               {{ estudiante.calificaciones[1] }}
@@ -169,7 +172,7 @@
           <td
             class="columnas-chicas"
             mat-cell
-            *matCellDef="let estudiante; let i = index"
+            *matCellDef="let estudiante; let row"
             [ngClass]="{ bajoPromedio: this.promedio < 6 }"
           >
             <input
@@ -181,6 +184,7 @@
               (keypress)="checkNotas($event, estudiante.calificaciones[2])"
               (change)="onCalificacionChange()"
               [ngClass]="{ bajoPromedio: this.promedio < 6 }"
+              [value]="estudiante.calificaciones[2]"
             />
             <p *ngIf="!rolConPermisosEdicion || !puedeEditarCalificaciones">
               {{ estudiante.calificaciones[2] }}
@@ -192,7 +196,7 @@
           <td
             class="columnas-chicas"
             mat-cell
-            *matCellDef="let estudiante; let i = index"
+            *matCellDef="let estudiante; let row"
             [ngClass]="{ bajoPromedio: this.promedio < 6 }"
           >
             <input
@@ -204,6 +208,7 @@
               (keypress)="checkNotas($event, estudiante.calificaciones[3])"
               (change)="onCalificacionChange()"
               [ngClass]="{ bajoPromedio: this.promedio < 6 }"
+              [value]="estudiante.calificaciones[3]"
             />
             <p *ngIf="!rolConPermisosEdicion || !puedeEditarCalificaciones">
               {{ estudiante.calificaciones[3] }}
@@ -215,7 +220,7 @@
           <td
             class="columnas-chicas"
             mat-cell
-            *matCellDef="let estudiante; let i = index"
+            *matCellDef="let estudiante; let row"
             [ngClass]="{ bajoPromedio: this.promedio < 6 }"
           >
             <input
@@ -227,6 +232,7 @@
               (keypress)="checkNotas($event, estudiante.calificaciones[4])"
               (change)="onCalificacionChange()"
               [ngClass]="{ bajoPromedio: this.promedio < 6 }"
+              [value]="estudiante.calificaciones[4]"
             />
             <p *ngIf="!rolConPermisosEdicion || !puedeEditarCalificaciones">
               {{ estudiante.calificaciones[4] }}
@@ -238,7 +244,7 @@
           <td
             class="columnas-chicas"
             mat-cell
-            *matCellDef="let estudiante; let i = index"
+            *matCellDef="let estudiante; let row"
             [ngClass]="{ bajoPromedio: this.promedio < 6 }"
           >
             <input
@@ -250,6 +256,7 @@
               (keypress)="checkNotas($event, estudiante.calificaciones[5])"
               (change)="onCalificacionChange()"
               [ngClass]="{ bajoPromedio: this.promedio < 6 }"
+              [value]="estudiante.calificaciones[5]"
             />
             <p *ngIf="!rolConPermisosEdicion || !puedeEditarCalificaciones">
               {{ estudiante.calificaciones[5] }}
