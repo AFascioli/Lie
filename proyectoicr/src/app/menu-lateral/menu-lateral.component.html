@@ -99,15 +99,6 @@
               <p class="usuario">{{ usuario }}</p>
             </div>
           </div>
-          <!-- <mat-expansion-panel class="opcion"> -->
-          <!-- <mat-expansion-panel-header> -->
-          <!-- <mat-panel-title> -->
-          <!-- <a mat-list-item> -->
-          <!-- <mat-icon>wc</mat-icon> -->
-          <!-- <p class="titulo-expansion">Cursos</b> -->
-          <!-- </a> -->
-          <!-- </mat-panel-title> -->
-          <!-- </mat-expansion-panel-header> -->
           <mat-spinner
             *ngIf="isLoading"
             class="spinner"
@@ -207,18 +198,6 @@
               <mat-icon class="iconSinExpansion" svgIcon="check"></mat-icon>
               <p class="titulo-expansion">Visualizar calificaciones</p>
             </a>
-            <!-- </mat-expansion-panel> -->
-            <!-- <mat-expansion-panel class="opcion"> -->
-            <!-- (opened)="panelOpenState = true"
-            (closed)="panelOpenState = false" -->
-            <!-- <mat-expansion-panel-header> -->
-            <!-- <mat-panel-title> -->
-            <!-- <a mat-list-item> -->
-            <!-- <mat-icon>school</mat-icon> -->
-            <!-- <p class="titulo-expansion">Estudiantes</b> -->
-            <!-- </a> -->
-            <!-- </mat-panel-title> -->
-            <!-- </mat-expansion-panel-header> -->
             <a
               mat-list-item
               class="sinExpansion"
@@ -245,47 +224,6 @@
               ></mat-icon>
               <p class="titulo-expansion">Buscar Estudiante</p>
             </a>
-            <!-- </mat-expansion-panel> -->
-            <!-- <mat-expansion-panel class="opcion">
-            <mat-expansion-panel-header>
-              <mat-panel-title>
-                <a mat-list-item ng-Focus="onSelected(this)">
-                  <mat-icon>event</mat-icon>
-                  <p class="titulo-expansion">Eventos</b>
-                </a>
-              </mat-panel-title>
-            </mat-expansion-panel-header>
-            <a
-              mat-list-item
-              class="opciones-expansion"
-              routerLink="/registrarEvento"
-              *ngIf="permisos.eventos > 1"
-              (click)="cerrarMenuLateral(sideNav)"
-            >
-              Registrar
-            </a>
-          </mat-expansion-panel> -->
-            <!-- <mat-expansion-panel
-            class="opcion"
-            *ngIf="permisos.registrarEmpleado >= 1"
-          >
-            <mat-expansion-panel-header>
-              <mat-panel-title>
-                <a mat-list-item>
-                  <mat-icon>person</mat-icon>
-                  <p class="titulo-expansion">Personal</b>
-                </a>
-              </mat-panel-title>
-            </mat-expansion-panel-header>
-            <a
-              mat-list-item
-              class="opciones-expansion"
-              routerLink="/altaEmpleado"
-              (click)="cerrarMenuLateral(sideNav)"
-            >
-              Registrar
-            </a>
-          </mat-expansion-panel> -->
             <a
               class="sinExpansion"
               routerLink="/registrarEvento"
@@ -307,8 +245,6 @@
               <mat-icon class="iconSinExpansion">person_add</mat-icon>
               <p class="titulo-expansion">Registrar Personal</p>
             </a>
-            <!-- </mat-panel-title>
-          </mat-expansion-panel-header> -->
           </div>
         </mat-accordion>
       </mat-nav-list>

@@ -49,8 +49,17 @@
     lectivo
   </p>
   <br />
-  <div class="contenedor-tabla" *ngIf="!cursoNotSelected">
-    <table mat-table [dataSource]="estudiantesXDivision" *ngIf="estudiantesXDivision.length!=0">
+  <mat-spinner
+    *ngIf="isLoadingStudents && !cursoNotSelected"
+    class="spinner"
+    [diameter]="60"
+  ></mat-spinner>
+  <div class="contenedor-tabla" *ngIf="!cursoNotSelected && !isLoadingStudents">
+    <table
+      mat-table
+      [dataSource]="estudiantesXDivision"
+      *ngIf="estudiantesXDivision.length != 0"
+    >
       <ng-container matColumnDef="apellido">
         <th class="nombre-apellido" mat-header-cell *matHeaderCellDef>
           Apellido/s
