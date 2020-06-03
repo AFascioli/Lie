@@ -25,8 +25,9 @@ function notificar(allSubscriptions, titulo, cuerpo) {
     }
   };
 
+
   webpush.setVapidDetails(
-    "https://my-site.com/contact",
+    "https://proyectolie.software",
     Keys.vapid_public_key,
     Keys.vapid_private_key
   );
@@ -40,7 +41,7 @@ function notificar(allSubscriptions, titulo, cuerpo) {
             console.log(">Notif. enviada.");
           })
           .catch(e => {
-            console.log(e.headers.body);
+            console.log(e);
           })
       )
     );

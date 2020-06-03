@@ -27,7 +27,7 @@ export class MenuPrincipalAdultoResponsableComponent implements OnInit {
   cursos = [];
   private unsubscribe: Subject<void> = new Subject();
   readonly VAPID_PUBLIC =
-    "BDlC2dLJTBP6T1GCl3S3sDBmhERNVcjN7ff2a6JAoOg8bA_qXjikveleRwjz0Zn8c9-58mnrNo2K4p07UPK0DKQ";
+    "BMlC2dLJTBP6T1GCl3S3sDBmhERNVcjN7ff2a6JAoOg8bA_qXjikveleRwjz0Zn8c9-58mnrNo2K4p07UPK0DKQ";
 
   constructor(
     private swPush: SwPush,
