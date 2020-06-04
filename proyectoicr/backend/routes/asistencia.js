@@ -1,14 +1,15 @@
 const express = require("express");
-const Inscripcion = require("../models/inscripcion");
-const AsistenciaDiaria = require("../models/asistenciaDiaria");
-const CicloLectivo = require("../models/cicloLectivo");
 const router = express.Router();
 const mongoose = require("mongoose");
 const checkAuthMiddleware = require("../middleware/check-auth");
-const ClaseAsistencia = require("../classes/asistencia");
-const Estudiante = require("../models/estudiante");
-const Suscripcion = require("../classes/suscripcion");
 const Estado = require("../models/estado");
+const Estudiante = require("../models/estudiante");
+const Inscripcion = require("../models/inscripcion");
+const CicloLectivo = require("../models/cicloLectivo");
+const AsistenciaDiaria = require("../models/asistenciaDiaria");
+const AdultoResponsable= require("../models/adultoResponsable");
+const Suscripcion = require("../classes/suscripcion");
+const ClaseAsistencia = require("../classes/asistencia");
 
 //Retorna vector con datos de los estudiantes y presente. Si ya se registro una asistencia para
 //el dia de hoy se retorna ese valor de la asistencia, sino se "construye" una nueva
@@ -697,12 +698,13 @@ router.post("/retiro", checkAuthMiddleware, (req, res) => {
                                     cuerpo = cuerpo + ".";
                                 }
                               }
-                              //Envio de la notificación
-                              Suscripcion.notificacionGrupal(
-                                ...estudiante.adultoResponsable,
-                                "Retiro anticipado",
-                                this.cuerpo
-                              );
+                              for(const idAR of estudiante.adultoResponsable){
+                                AdultoResponsable.findById(idAR).then(ar =>{
+                                  //Envio de la notificación
+                                  Suscripcion.notificacionIndividual(ar.idUsuario,"Retiro anticipado",
+                                  this.cuerpo);
+                                });
+                              }
                             })
                             .catch(() => {
                               res.status(500).json({
