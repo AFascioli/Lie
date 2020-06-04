@@ -40,10 +40,10 @@ router.get("/", checkAuthMiddleware, (req, res) => {
     });
 });
 
-notificarSancion = async function (idEstudiante) {
+notificarSancion = async function (idEstudiante,sancion) {
   titulo = "Nueva sanción.";
   await Estudiante.findById(idEstudiante).then((estudiante) => {
-    cuerpo = `Se le ha registrado una nueva sanción a ${estudiante.apellido} ${estudiante.nombre}.`;
+    cuerpo = `Se le ha registrado una nueva sanción (${sancion}) a ${estudiante.apellido} ${estudiante.nombre}.`;
   });
 
   AdultoResponsable.aggregate([
@@ -137,11 +137,13 @@ router.post("/registrarSancion", checkAuthMiddleware, async (req, res) => {
             },
           }
         )
-          .then(
+          .then(()=>{
+            notificarSancion(req.body.idEstudiante,req.body.tipoSancion.toLowerCase());
             res.status(200).json({
               message: "Se ha registrado la sanción del estudiante correctamente",
               exito: true,
             })
+          }
           )
           .catch(() => {
             res.status(500).json({
@@ -153,7 +155,7 @@ router.post("/registrarSancion", checkAuthMiddleware, async (req, res) => {
         inscripcion
           .save()
           .then(() => {
-            notificarSancion(req.body.idEstudiante);
+            notificarSancion(req.body.idEstudiante,req.body.tipoSancion.toLowerCase());
             res.status(200).json({
               message: "Se ha registrado la sanción del estudiante correctamente",
               exito: true,
