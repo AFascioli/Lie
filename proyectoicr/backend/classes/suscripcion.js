@@ -1,6 +1,8 @@
 const webpush = require("web-push");
 const Usuario = require("../models/usuario");
 const Keys = require("../assets/keys");
+const Estudiante = require("../models/estudiante");
+const AdultoResponsable = require("../models/adultoResponsable");
 
 // Notifica al conjunto de suscripciones con el contenido provisto.
 // @params {Array<Subscriptions>} allSubscriptions
@@ -94,7 +96,22 @@ function notificacionMasiva(titulo, cuerpo) {
     });
 }
 
+//Obtener id de usuario de los AR de un estudiante dado
+//@params: idEstudiante
+async function obtenerIdsUsuarios(idEstudiante){
+  let vectorIdsUsuarios=[];
+  await Estudiante.findById(idEstudiante,{adultoResponsable:1,_id:0}).then(async objConids =>{
+    for(const idAR of objConids.adultoResponsable){
+      await AdultoResponsable.findById(idAR, {idUsuario:1,_id:0}).then(objConId =>{
+        vectorIdsUsuarios.push(objConId.idUsuario);
+      });
+    }
+  });
+  return vectorIdsUsuarios;
+}
+
 module.exports.notificacionIndividual = notificacionIndividual;
 module.exports.notificacionGrupal = notificacionGrupal;
 module.exports.notificacionMasiva = notificacionMasiva;
 module.exports.notificar = notificar;
+module.exports.obtenerIdsUsuarios = obtenerIdsUsuarios;

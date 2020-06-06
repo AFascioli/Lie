@@ -7,9 +7,37 @@ const Estudiante = require("../models/estudiante");
 const Inscripcion = require("../models/inscripcion");
 const CicloLectivo = require("../models/cicloLectivo");
 const AsistenciaDiaria = require("../models/asistenciaDiaria");
-const AdultoResponsable= require("../models/adultoResponsable");
-const Suscripcion = require("../classes/suscripcion");
+const AdultoResponsable = require("../models/adultoResponsable");
+const ClaseSuscripcion = require("../classes/suscripcion");
 const ClaseAsistencia = require("../classes/asistencia");
+
+validarLibreInasistencias = function (idEst, valorInasistencia) {
+  Estado.find({ nombre: "Suspendido", ambito: "Inscripcion" })
+    .then((estado) => {
+      Inscripcion.findOne({
+        idEstudiante: idEst,
+        activa: true,
+      }).then((inscripcion) => {
+        if (
+          inscripcion.contadorInasistenciasInjustificada % 14 == 0 &&
+          valorInasistencia == 1
+        ) {
+          Inscripcion.findOneAndUpdate(
+            {
+              idEstudiante: idEst,
+              activa: true,
+            },
+            { estado: mongoose.Types.ObjectId(estado[0]._id) }
+          ).exec();
+        }
+      });
+    })
+    .catch(() => {
+      res.status(500).json({
+        message: "No se pudo obtener el estado suspendido",
+      });
+    });
+};
 
 //Retorna vector con datos de los estudiantes y presente. Si ya se registro una asistencia para
 //el dia de hoy se retorna ese valor de la asistencia, sino se "construye" una nueva
@@ -232,12 +260,14 @@ router.get("", checkAuthMiddleware, (req, res) => {
 // luego crea la asistencia diaria usando la _id de la inscripcion, luego guarda la asistenciaDiaria y
 // guarda la _id de esta asistenciaDiaria en el vector de asistenciasDiarias de la inscripcion.
 // Si ya se tomo asistencia en el dia, se actualiza el valor presente de la asistencia individual.
-router.post("", checkAuthMiddleware, (req, res) => {
+router.post("", checkAuthMiddleware, async (req, res) => {
+  let idsEstudiantes = [];
   if (req.query.asistenciaNueva == "true") {
     req.body.forEach((estudiante) => {
       var valorInasistencia = 0;
       if (!estudiante.presente) {
         valorInasistencia = 1;
+        idsEstudiantes.push(estudiante._id);
       }
       Inscripcion.findOne({
         idEstudiante: estudiante._id,
@@ -266,6 +296,7 @@ router.post("", checkAuthMiddleware, (req, res) => {
       AsistenciaDiaria.findById(estudiante.idAsistencia).then((asistencia) => {
         //si estaba presente en la bd y se cambio a ausente incrementa contador inasistencia
         if (asistencia.presente && !estudiante.presente) {
+          idsEstudiantes.push(estudiante._id);
           AsistenciaDiaria.findByIdAndUpdate(estudiante.idAsistencia, {
             presente: estudiante.presente,
           }).then(() => {
@@ -296,38 +327,27 @@ router.post("", checkAuthMiddleware, (req, res) => {
       });
     });
   }
+
+  if (idsEstudiantes.length > 0) {
+    for (const idEstudiante of idsEstudiantes) {
+      let idsUsuarios = await ClaseSuscripcion.obtenerIdsUsuarios(idEstudiante);
+      if (idsUsuarios.length > 0) {
+        let datosEstudiante = req.body.filter((estudiante) => {
+          return estudiante._id == idEstudiante;
+        });
+
+        ClaseSuscripcion.notificacionGrupal(
+          idsUsuarios,
+          `Ausente`,
+          `Falta registrada al estudiante ${datosEstudiante[0].nombre} ${datosEstudiante[0].apellido}`
+        );
+      }
+    }
+  }
   return res
     .status(201)
     .json({ message: "Asistencia registrada exitosamente", exito: true });
 });
-
-validarLibreInasistencias = function (idEst, valorInasistencia) {
-  Estado.find({ nombre: "Suspendido", ambito: "Inscripcion" })
-    .then((estado) => {
-      Inscripcion.findOne({
-        idEstudiante: idEst,
-        activa: true,
-      }).then((inscripcion) => {
-        if (
-          inscripcion.contadorInasistenciasInjustificada % 14 == 0 &&
-          valorInasistencia == 1
-        ) {
-          Inscripcion.findOneAndUpdate(
-            {
-              idEstudiante: idEst,
-              activa: true,
-            },
-            { estado: mongoose.Types.ObjectId(estado[0]._id) }
-          ).exec();
-        }
-      });
-    })
-    .catch(() => {
-      res.status(500).json({
-        message: "No se pudo obtener el estado suspendido",
-      });
-    });
-};
 
 //Este metodo filtra las inscripciones por estudiante y retorna el contador de inasistencias (injustificada y justificada)
 router.get("/asistenciaEstudiante", (req, res) => {
@@ -626,7 +646,7 @@ router.post("/retiro", checkAuthMiddleware, (req, res) => {
           actualizacionInasistencia = 1;
         }
         AsistenciaDiaria.findById(inscripcion.asistenciaDiaria[0])
-          .select({ retiroAnticipado: 1, presente: 1, justificado:1 })
+          .select({ retiroAnticipado: 1, presente: 1, justificado: 1 })
           .then((asistencia) => {
             if (asistencia) {
               if (!asistencia.presente) {
@@ -650,10 +670,9 @@ router.post("/retiro", checkAuthMiddleware, (req, res) => {
                     }
                   )
                     .then(() => {
-                      if(!asistencia.justificado){
+                      if (!asistencia.justificado) {
                         //Si el estudiante tiene ya registrada una falta pero esta justificada, el retiro no deberia sumar mas inasistencias
-                        inscripcion.contadorInasistenciasInjustificada +=
-                          actualizacionInasistencia;
+                        inscripcion.contadorInasistenciasInjustificada += actualizacionInasistencia;
                       }
                       inscripcion
                         .save()
@@ -698,11 +717,14 @@ router.post("/retiro", checkAuthMiddleware, (req, res) => {
                                     cuerpo = cuerpo + ".";
                                 }
                               }
-                              for(const idAR of estudiante.adultoResponsable){
-                                AdultoResponsable.findById(idAR).then(ar =>{
+                              for (const idAR of estudiante.adultoResponsable) {
+                                AdultoResponsable.findById(idAR).then((ar) => {
                                   //Envio de la notificación
-                                  Suscripcion.notificacionIndividual(ar.idUsuario,"Retiro anticipado",
-                                  this.cuerpo);
+                                  ClaseSuscripcion.notificacionIndividual(
+                                    ar.idUsuario,
+                                    "Retiro anticipado",
+                                    this.cuerpo
+                                  );
                                 });
                               }
                             })

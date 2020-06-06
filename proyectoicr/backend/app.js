@@ -129,42 +129,10 @@ app.get("/status", (req, res, next) => {
 });
 
 const ClaseSuscripcion = require("./classes/suscripcion");
-const Estudiante = require("./models/estudiante");
-const AdultoR = require("./models/adultoResponsable");
 
-app.get("/testi", (req, res, next) => {
-  // ClaseSuscripcion.notificacionMasiva("Este es el titulo Masivo", "Picadura de la cobra gay");
-  // res.status(200).json({
-  //   message: "Servidor Node.js Lie®",
-  // });
-  Estudiante.findById(req.query.idEstudiante)
-    .then((estudiante) => {
-      //Construcción del cuerpo de la notificación.
-      var cuerpo =
-        "Se ha registrado un retiro anticipado de " +
-        estudiante.apellido +
-        " " +
-        estudiante.nombre +
-        ". ";
-      AdultoR.findById(estudiante.adultoResponsable[0]).then((arEncontrado) => {
-        //Envio de la notificación
-        let vector = [arEncontrado.idUsuario];
-        // ClaseSuscripcion.notificar(suscripciones,"Titulo","Cuerpo");
-        ClaseSuscripcion.notificacionGrupal(
-          vector,
-          "Retiro anticipado",
-          this.cuerpo
-        );
-        res.status(200).json({
-          message: "Done",
-        });
-      });
-    })
-    .catch(() => {
-      res.status(500).json({
-        message: "Mensaje de error especifico",
-      });
-    });
+app.get("/testi", async (req, res, next) => {
+  let ids=await ClaseSuscripcion.obtenerIdsUsuarios("5d0ee07c489bdd0830bd1d0d");
+    res.status(200).json({res:ids, msg:"Ok"});
 });
 
 // #resolve Guardar comentarios y diccionario
