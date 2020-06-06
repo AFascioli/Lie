@@ -17,7 +17,7 @@ validarLibreInasistencias = function (idEst, valorInasistencia) {
       Inscripcion.findOne({
         idEstudiante: idEst,
         activa: true,
-      }).then((inscripcion) => {
+      }).then(async (inscripcion) => {
         if (
           inscripcion.contadorInasistenciasInjustificada % 14 == 0 &&
           valorInasistencia == 1
@@ -29,6 +29,16 @@ validarLibreInasistencias = function (idEst, valorInasistencia) {
             },
             { estado: mongoose.Types.ObjectId(estado[0]._id) }
           ).exec();
+        } else if (inscripcion.contadorInasistenciasInjustificada % 12 == 0) {
+          //No fijamos si el estudiante tiene 12 inasistencias, para luego notificar a los AR
+          let idsUsuarios = await ClaseSuscripcion.obtenerIdsUsuarios(idEst);
+          Estudiante.findById(idEst).then((estudianteEncontrado) => {
+            ClaseSuscripcion.notificacionGrupal(
+              idsUsuarios,
+              "Atención",
+              `El estudiante ${estudianteEncontrado.nombre} ${estudianteEncontrado.apellido} tiene solo 3 inasistencias antes de que sea suspendido`
+            );
+          });
         }
       });
     })
