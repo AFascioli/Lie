@@ -1,14 +1,16 @@
 const express = require("express");
 const router = express.Router();
 const checkAuthMiddleware = require("../middleware/check-auth");
-const CicloLectivo = require("../models/cicloLectivo");
 const cron = require("node-schedule");
+const CalificacionesXMateria = require("../models/calificacionesXMateria");
+const CicloLectivo = require("../models/cicloLectivo");
 const Inscripcion = require("../models/inscripcion");
 const Estado = require("../models/estado");
 const Estudiante = require("../models/estudiante");
 const ClaseCXM = require("../classes/calificacionXMateria");
 const ClaseEstado = require("../classes/estado");
-const CalificacionesXMateria = require("../models/calificacionesXMateria");
+const ClaseEstudiante = require("../classes/estudiante");
+const ClaseSuscripcion = require("../classes/suscripcion");
 
 router.get("/", checkAuthMiddleware, (req, res) => {
   let fechaActual = new Date();
@@ -132,7 +134,7 @@ router.use("/procesoAutomaticoTercerTrimestre", (req, res) => {
   };
 
   cron.scheduleJob(
-     fechas,
+    fechas,
     // date.setSeconds(date.getSeconds() + 5),
     async () => {
       let cxmTotales = await obtenerTodasCXM(2020);
@@ -175,22 +177,39 @@ router.use("/procesoAutomaticoTercerTrimestre", (req, res) => {
           idEstadoCXM
         );
         contadorMateriasDesaprobadas = arrayCXMDesaprobadas.length;
+        let textoNotificacion = "";
         if (contadorMateriasDesaprobadas > 3) {
           idEstadoInscripcion = await ClaseEstado.obtenerIdEstado(
             "Inscripcion",
             "Examenes pendientes"
           );
+          textoNotificacion = " debe rendir materias";
         } else {
           idEstadoInscripcion = await ClaseEstado.obtenerIdEstado(
             "Inscripcion",
             "Promovido"
           );
+          textoNotificacion = " fue promovido";
         }
         contadorMateriasDesaprobadas = 0;
         Inscripcion.findByIdAndUpdate(inscripcion._id, {
           estado: idEstadoInscripcion,
         })
-          .exec()
+          .then(async () => {
+            let idsUsuarios = await ClaseSuscripcion.obtenerIdsUsuarios(
+              inscripcion.idEstudiante
+            );
+            if (idsUsuarios.length > 0) {
+              let datosEstudiante = ClaseEstudiante.obtenerNombreYApellido(
+                inscripcion.idEstudiante
+              );
+              ClaseSuscripcion.notificacionGrupal(
+                idsUsuarios,
+                "Cierre ciclo lectivo",
+                `El estudiante ${datosEstudiante.nombre} ${datosEstudiante.apellido} ${textoNotificacion}`
+              );
+            }
+          })
           .catch(() => {
             res.status(500).json({
               message: "Mensaje de error especifico",
