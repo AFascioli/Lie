@@ -36,7 +36,7 @@ const storage = new GridFsStorage({
   },
 });
 
-var upload = multer({ storage: storage }).array("images", 5);
+var upload = multer({ storage: storage }).array("images", 15);
 
 //Registra el evento en la base de datos
 //@params: evento a publicar
