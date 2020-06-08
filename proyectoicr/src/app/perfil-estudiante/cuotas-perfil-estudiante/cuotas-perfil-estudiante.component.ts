@@ -63,6 +63,8 @@ export class CuotasPerfilEstudianteComponent implements OnInit, OnDestroy {
         return "Octubre";
       case 11:
         return "Noviembre";
+      case 12:
+        return "Diciembre";
     }
   }
 }

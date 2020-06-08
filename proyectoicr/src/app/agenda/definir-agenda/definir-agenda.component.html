@@ -2,7 +2,6 @@
   <mat-spinner class="spinner" [diameter]="60"></mat-spinner>
 </mat-card>
 
-
 <h1 *ngIf="!isLoading" class="componente-titulo">
   Definir agenda de curso
 </h1>
@@ -197,7 +196,7 @@
                   [disabled]="indice != i"
                   [(ngModel)]="agendaCurso.fin"
                   min="08:15"
-                  max="13:30"
+                  max="14:15"
                   readonly
                   required
                 />
