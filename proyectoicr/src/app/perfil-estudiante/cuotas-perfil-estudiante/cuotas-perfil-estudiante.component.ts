@@ -35,7 +35,6 @@ export class CuotasPerfilEstudianteComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.unsubscribe))
       .subscribe((respuesta) => {
         this.estadoCuotasXMes = respuesta.cuotas;
-        console.log(this.estadoCuotasXMes);
       });
   }
 
