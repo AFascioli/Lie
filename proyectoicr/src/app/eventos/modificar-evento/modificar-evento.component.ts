@@ -197,11 +197,14 @@ export class ModificarEventoComponent implements OnInit, OnDestroy {
   }
 
   onEliminarImagen(index) {
-    if (index > this.evento.filenames.length - 1 && this.imagesFile.length > 0)
-      this.imagesFile.splice(index - this.evento.filenames.length, 1);
+    this.imagesFile.splice(index, 1);
     this.imagenesCargadas.splice(index, 1);
     this.evento.filenames.splice(index, 1);
     this.moveFromCurrentSlide(1);
+    this.snackBar.open("Se elimino imagen correctamente", "", {
+      panelClass: ["snack-bar-exito"],
+      duration: 1500,
+    });
   }
 
   showSlide(n) {

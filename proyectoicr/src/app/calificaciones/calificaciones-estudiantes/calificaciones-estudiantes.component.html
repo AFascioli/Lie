@@ -17,9 +17,11 @@
           #trimestre="ngModel"
           matNativeControl
           required
+          #comboTrimestre
           placeholder="Seleccione trimestre"
           name="trimestre"
           [(ngModel)]="trimestreSeleccionado"
+          (openedChange)="onValidarCambios()"
           (selectionChange)="onTrimestreChange(form)"
         >
           <mat-option value="1">Primer</mat-option>
@@ -33,11 +35,11 @@
           placeholder="Seleccione curso"
           name="curso"
           ngModel
-          #ComboCurso
+          #comboCurso
           #curso="ngModel"
           matNativeControl
           required
-          (openedChange)="onValidarCambios(curso)"
+          (openedChange)="onValidarCambios()"
           (selectionChange)="onCursoSeleccionado(curso, materia)"
         >
           <mat-option *ngFor="let objCurso of cursos" [value]="objCurso.id">
@@ -77,7 +79,6 @@
         placeholder="Estudiante"
       />
     </mat-form-field>
-
     <mat-card *ngIf="estudiantes.length != 0">
       <table
         mat-table
@@ -296,9 +297,6 @@
     </div>
     <p class="aviso" *ngIf="estudiantes.length == 0 && materiaSeleccionada">
       No se encuentran estudiantes registrados en este curso
-    </p>
-    <p class="aviso" *ngIf="cursoSeleccionado && materia.value == null">
-      Por favor, selecciona una materia
     </p>
     <div class="div-button">
       <button

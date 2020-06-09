@@ -1,4 +1,4 @@
-import { AutenticacionService } from 'src/app/login/autenticacionService.service';
+import { AutenticacionService } from "src/app/login/autenticacionService.service";
 import { NgForm } from "@angular/forms";
 import {
   Component,
@@ -64,10 +64,10 @@ export class DefinirAgendaComponent implements OnInit, OnDestroy {
     "14:15",
   ];
   nuevo: number;
-  isLoading = true;
+  isLoading = false;
   huboCambios = false;
   fechaActual: Date;
-  fueraPeriodoDefinirAgenda=false;
+  fueraPeriodoDefinirAgenda = false;
   _mobileQueryListener: () => void;
   mobileQuery: MediaQueryList;
 
@@ -102,8 +102,8 @@ export class DefinirAgendaComponent implements OnInit, OnDestroy {
           this.materias = response.materias;
         });
       this.obtenerDocentes();
-    }else{
-      this.fueraPeriodoDefinirAgenda=true;
+    } else {
+      this.fueraPeriodoDefinirAgenda = true;
     }
   }
 
@@ -117,9 +117,7 @@ export class DefinirAgendaComponent implements OnInit, OnDestroy {
       this.servicioAuth.getFechasCicloLectivo().fechaInicioPrimerTrimestre
     );
 
-    return (
-      this.fechaActual.getTime() < fechaInicioPrimerTrimestre.getTime()
-    );
+    return this.fechaActual.getTime() < fechaInicioPrimerTrimestre.getTime();
   }
 
   obtenerDocentes() {
@@ -133,6 +131,13 @@ export class DefinirAgendaComponent implements OnInit, OnDestroy {
             nombre: `${response.docentes[i].apellido}, ${response.docentes[i].nombre}`,
           });
         }
+        this.docentes.sort((a, b) =>
+          a.nombre.charAt(0) > b.nombre.charAt(0)
+            ? 1
+            : b.nombre.charAt(0) > a.nombre.charAt(0)
+            ? -1
+            : 0
+        );
       });
   }
 
@@ -146,6 +151,7 @@ export class DefinirAgendaComponent implements OnInit, OnDestroy {
         .subscribe((rtdo) => {
           this.dataSource.data = rtdo.agenda;
           this.huboCambios = false;
+          this.isLoading = false;
         });
     } else {
       idCurso.reset(this.idCursoSeleccionado);
@@ -157,10 +163,12 @@ export class DefinirAgendaComponent implements OnInit, OnDestroy {
   }
 
   obtenerCursos() {
+    this.isLoading = true;
     this.servicioEstudiante
       .obtenerCursos()
       .pipe(takeUntil(this.unsubscribe))
       .subscribe((response) => {
+        this.isLoading = false;
         this.cursos = response.cursos;
         this.cursos.sort((a, b) =>
           a.nombre.charAt(0) > b.nombre.charAt(0)
@@ -169,7 +177,6 @@ export class DefinirAgendaComponent implements OnInit, OnDestroy {
             ? -1
             : 0
         );
-        this.isLoading = false;
       });
   }
 

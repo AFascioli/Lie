@@ -50,10 +50,10 @@ mat-form-field {
   display: flex;
 }
 
- .boton-borrar {
-  position: absolute!important;
-  right:5px !important;
-  top: 5px!important;
+.boton-borrar {
+  position: absolute !important;
+  right: 5px !important;
+  top: 5px !important;
 }
 
 .card-body-componente {

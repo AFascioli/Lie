@@ -57,7 +57,8 @@ export class CalificacionesEstudiantesComponent implements OnInit, OnDestroy {
   _mobileQueryListener: () => void;
   mobileQuery: MediaQueryList;
 
-  @ViewChild("ComboCurso", { static: false }) ComboCurso: any;
+  @ViewChild("comboCurso", { static: false }) comboCurso: any;
+  @ViewChild("comboTrimestre", { static: false }) comboTrimestre: any;
   @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
 
   constructor(
@@ -218,13 +219,17 @@ export class CalificacionesEstudiantesComponent implements OnInit, OnDestroy {
   }
 
   onValidarCambios() {
-    if (this.servicioCalificaciones.auxCambios && this.ComboCurso.panelOpen) {
+    if (
+      (this.servicioCalificaciones.auxCambios && this.comboCurso.panelOpen) ||
+      (this.servicioCalificaciones.auxCambios && this.comboTrimestre.panelOpen)
+    ) {
       const dialogRef = this.popup.open(CalificacionesEstudiantePopupComponent);
       dialogRef.afterClosed().subscribe(() => {
         if (this.servicioCalificaciones.avisoResult) {
           this.servicioCalificaciones.avisoResult = false;
         } else {
-          this.ComboCurso.close();
+          this.comboCurso.close();
+          this.comboTrimestre.close();
         }
       });
     }
