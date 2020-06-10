@@ -312,6 +312,17 @@ export class EstudiantesService implements OnDestroy {
     });
   }
 
+  public esEstadoSuspendido(idEstado) {
+    let params = new HttpParams().set("idEstado", idEstado);
+
+    return this.http.get<{
+      message: string;
+      exito: boolean;
+    }>(environment.apiUrl + "/estudiante/estado/suspendido", {
+      params: params,
+    });
+  }
+
   public esEstudianteSuspendido(idEstudiante) {
     let params = new HttpParams().set("idEstudiante", idEstudiante);
 

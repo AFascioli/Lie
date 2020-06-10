@@ -12,6 +12,7 @@ const Estado = require("../models/estado");
 
 //Retorna vector con datos de los estudiantes y presente. Si ya se registro una asistencia para
 //el dia de hoy se retorna ese valor de la asistencia, sino se "construye" una nueva
+// @params: req.query.curso Nombre en string del curso que se esta por tomar asistencia
 router.get("", checkAuthMiddleware, (req, res) => {
   Inscripcion.aggregate([
     {
@@ -625,7 +626,7 @@ router.post("/retiro", checkAuthMiddleware, (req, res) => {
           actualizacionInasistencia = 1;
         }
         AsistenciaDiaria.findById(inscripcion.asistenciaDiaria[0])
-          .select({ retiroAnticipado: 1, presente: 1, justificado:1 })
+          .select({ retiroAnticipado: 1, presente: 1, justificado: 1 })
           .then((asistencia) => {
             if (asistencia) {
               if (!asistencia.presente) {
@@ -649,10 +650,9 @@ router.post("/retiro", checkAuthMiddleware, (req, res) => {
                     }
                   )
                     .then(() => {
-                      if(!asistencia.justificado){
+                      if (!asistencia.justificado) {
                         //Si el estudiante tiene ya registrada una falta pero esta justificada, el retiro no deberia sumar mas inasistencias
-                        inscripcion.contadorInasistenciasInjustificada +=
-                          actualizacionInasistencia;
+                        inscripcion.contadorInasistenciasInjustificada += actualizacionInasistencia;
                       }
                       inscripcion
                         .save()
