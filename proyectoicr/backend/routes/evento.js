@@ -128,7 +128,26 @@ router.post("/modificar", upload, async (req, res, next) => {
     });
   };
 
+  /*  borrarImagenesEventos = async (idEvento) => {
+    return new Promise((resolve, reject) => {
+      Evento.findById(idEvento).then(async (evento) => {
+        let largo = evento.filenames.length;
+        for (let index = 0; index < largo; index++) {
+          await ImagenFiles.findOneAndDelete({
+            filename: evento.filenames[index],
+          }).then((file) => {
+            ImagenChunks.deleteMany({
+              files_id: file._id,
+            }).exec();
+          });
+        }
+      });
+      resolve(true);
+    });
+  };*/
+
   if (req.files.length != 0) {
+    // await borrarImagenesEventos(req.body._id);
     Evento.findByIdAndUpdate(req.body._id, {
       titulo: req.body.titulo,
       descripcion: req.body.descripcion,
@@ -154,6 +173,7 @@ router.post("/modificar", upload, async (req, res, next) => {
         });
       });
   } else {
+    // await borrarImagenesEventos(req.body._id);
     Evento.findByIdAndUpdate(req.body._id, {
       titulo: req.body.titulo,
       descripcion: req.body.descripcion,
@@ -180,69 +200,6 @@ router.post("/modificar", upload, async (req, res, next) => {
       });
   }
 });
-
-// //Modifica el evento en la base de datos
-// //@params: evento a publicar
-// router.post("/modificar", upload, async (req, res) => {
-//   let filenames = req.body.filenames;
-//   leerFilename = () => {
-//     return new Promise((resolve, reject) => {
-//       for (let index = 0; index < req.files.length; index++) {
-//         filenames.push(req.files[index].filename);
-//       }
-//       resolve(filenames);
-//     });
-//   };
-
-//   if (req.files != null) {
-//     Evento.findByIdAndUpdate(req.body._id, {
-//       titulo: req.body.titulo,
-//       descripcion: req.body.descripcion,
-//       fechaEvento: req.body.fechaEvento,
-//       horaInicio: req.body.horaInicio,
-//       horaFin: req.body.horaFin,
-//       tags: req.body.tags,
-//       filenames: await leerFilename(),
-//       autor: req.body.idAutor,
-//     })
-//       .exec()
-//       .then(() => {
-//         //Completar con código de la notificación COMPLETAR CON LO DE ARRIBA
-//         res.status(201).json({
-//           message: "Evento modificado exitosamente",
-//           exito: true,
-//         });
-//       })
-//       .catch(() => {
-//         res.status(500).json({
-//           message: "No se pudo modificar el evento correctamente",
-//         });
-//       });
-//   } else {
-//     Evento.findByIdAndUpdate(req.body._id, {
-//       titulo: req.body.titulo,
-//       descripcion: req.body.descripcion,
-//       fechaEvento: req.body.fechaEvento,
-//       horaInicio: req.body.horaInicio,
-//       horaFin: req.body.horaFin,
-//       tags: req.body.tags,
-//       autor: req.body.idAutor,
-//     })
-//       .exec()
-//       .then(() => {
-//         //Completar con código de la notificación COMPLETAR CON LO DE ARRIBA
-//         res.status(201).json({
-//           message: "Evento modificado exitosamente",
-//           exito: true,
-//         });
-//       })
-//       .catch(() => {
-//         res.status(500).json({
-//           message: "No se pudo modificar el evento correctamente",
-//         });
-//       });
-//   }
-// });
 
 //Obtiene todos los eventos que estan almacenados en la base de datos
 router.get("", (req, res, next) => {
@@ -524,9 +481,10 @@ router.get("/id", checkAuthMiddleware, (req, res) => {
         res.json({ evento: null, exito: true, message: "exito" });
       }
     })
-    .catch(() => {
+    .catch((error) => {
       res.status(500).json({
-        message: "Mensaje de error especifico",
+        message: "Ocurrio un error al querer obtener el evento",
+        info: "Es en /evento/id-linea 475 " + error,
       });
     });
 });

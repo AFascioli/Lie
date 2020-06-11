@@ -15,7 +15,7 @@ import { takeUntil } from "rxjs/operators";
 @Component({
   selector: "app-alta-estudiantes",
   templateUrl: "./alta-estudiantes.component.html",
-  styleUrls: ["./alta-estudiantes.component.css"]
+  styleUrls: ["./alta-estudiantes.component.css"],
 })
 export class AltaEstudiantesComponent implements OnInit, OnDestroy {
   maxDate = new Date();
@@ -58,14 +58,14 @@ export class AltaEstudiantesComponent implements OnInit, OnDestroy {
     this.suscripcion = this.servicioUbicacion
       .getProvinciasListener()
       .pipe(takeUntil(this.unsubscribe))
-      .subscribe(provinciasActualizadas => {
+      .subscribe((provinciasActualizadas) => {
         this.provincias = provinciasActualizadas;
       });
     this.servicioUbicacion.getLocalidades();
     this.suscripcion = this.servicioUbicacion
       .getLocalidadesListener()
       .pipe(takeUntil(this.unsubscribe))
-      .subscribe(localidadesActualizadas => {
+      .subscribe((localidadesActualizadas) => {
         this.localidades = localidadesActualizadas;
         this.nombreProvinciaSeleccionada = "Cordoba";
         this.FiltrarLocalidades();
@@ -75,7 +75,7 @@ export class AltaEstudiantesComponent implements OnInit, OnDestroy {
     this.suscripcion = this.servicioUbicacion
       .getNacionalidadesListener()
       .pipe(takeUntil(this.unsubscribe))
-      .subscribe(nacionalidadesActualizadas => {
+      .subscribe((nacionalidadesActualizadas) => {
         this.nacionalidades = nacionalidadesActualizadas;
         this.nacionalidades.sort((a, b) =>
           a.name > b.name ? 1 : b.name > a.name ? -1 : 0
@@ -93,7 +93,7 @@ export class AltaEstudiantesComponent implements OnInit, OnDestroy {
     if (form.invalid) {
       this.snackBar.open("Faltan campos por completar", "", {
         panelClass: ["snack-bar-fracaso"],
-        duration: 4000
+        duration: 4000,
       });
     } else {
       this.servicioEstudiante
@@ -117,17 +117,17 @@ export class AltaEstudiantesComponent implements OnInit, OnDestroy {
           form.value.telefono
         )
         .pipe(takeUntil(this.unsubscribe))
-        .subscribe(respuesta => {
+        .subscribe((respuesta) => {
           if (respuesta.exito) {
             this.snackBar.open(respuesta.message, "", {
               panelClass: ["snack-bar-exito"],
-              duration: 4000
+              duration: 4000,
             });
             form.resetForm();
           } else {
             this.snackBar.open(respuesta.message, "", {
               panelClass: ["snack-bar-fracaso"],
-              duration: 4000
+              duration: 4000,
             });
           }
         });
@@ -136,17 +136,17 @@ export class AltaEstudiantesComponent implements OnInit, OnDestroy {
 
   FiltrarLocalidades() {
     const idProvinciaSeleccionada = this.provincias.find(
-      provincia => provincia.nombre === this.nombreProvinciaSeleccionada
+      (provincia) => provincia.nombre === this.nombreProvinciaSeleccionada
     ).id;
     this.localidadesFiltradas = [...this.localidades];
     this.localidadesFiltradas = this.localidadesFiltradas.filter(
-      localidad => localidad.id_provincia == idProvinciaSeleccionada
+      (localidad) => localidad.id_provincia == idProvinciaSeleccionada
     );
   }
 
   popUpCancelar() {
     this.dialog.open(CancelPopupComponent, {
-      width: "250px"
+      width: "250px",
     });
   }
 
