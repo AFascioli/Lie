@@ -667,6 +667,32 @@ router.get("/suspendido", (req, res) => {
     });
 });
 
+router.get("/estado/suspendido", (req, res) => {
+  Estado.findOne({
+    nombre: "Suspendido",
+    ambito: "Inscripcion",
+  })
+    .then((estado) => {
+      if (req.body.idEstado == estado._id.toString()) {
+        res.status(200).json({
+          message: "El estado es suspendido",
+          exito: true,
+        });
+      } else {
+        res.status(200).json({
+          message: "El estado no es suspendido",
+          exito: false,
+        });
+      }
+    })
+    .catch(() => {
+      res.status(500).json({
+        message:
+          "Ah ocurrido un error al validar si el estudiante esta suspendido.",
+      });
+    });
+});
+
 router.get("/reincorporacion", (req, res) => {
   Estado.findOne({
     nombre: "Inscripto",
