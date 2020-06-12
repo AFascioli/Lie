@@ -72,11 +72,11 @@ export class EventosService {
     horaFin: string,
     tags: any[],
     images: any,
-    filenames: string,
+    filenames: string[],
     _id: string,
-    autor: string
+    autor: string,
+    filenamesBorrados: string[]
   ) {
-    debugger;
     let eventoModificado = new FormData();
     const fechaEventoString = fechaEvento.toString();
     eventoModificado.append("_id", _id);
@@ -105,6 +105,14 @@ export class EventosService {
       eventoModificado.append("tags", tags[i]);
     }
     eventoModificado.append("idAutor", autor);
+
+    if (filenamesBorrados.length != 0) {
+      for (var i = 0; i < filenamesBorrados.length; i++) {
+        eventoModificado.append("filenamesBorrados", filenamesBorrados[i]);
+      }
+    } else {
+      eventoModificado.append("filenamesBorrados", null);
+    }
 
     return this.http.post<{ message: string; exito: boolean }>(
       environment.apiUrl + "/evento/modificar",

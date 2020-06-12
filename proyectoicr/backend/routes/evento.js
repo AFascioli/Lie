@@ -116,89 +116,73 @@ router.post("/registrar", upload, async (req, res, next) => {
 router.post("/modificar", upload, async (req, res, next) => {
   leerFilenames = () => {
     return new Promise((resolve, reject) => {
-      let filenames = [];
+      let filenamesEvento = [];
+      if (req.body.filenames) {
+        filenamesEvento = req.body.filenames;
+      }
+      // Se sacan los filenames borrados
+      filenamesEvento = filenamesEvento.filter((filename) => {
+        if (!req.body.filenamesBorrados.includes(filename)) {
+          return true;
+        } else {
+          return false;
+        }
+      });
+
+      // Se agregan los filenames nuevos
       for (let index = 0; index < req.files.length; index++) {
-        filenames.push(req.files[index].filename);
+        filenamesEvento.push(req.files[index].filename); //1
       }
-      if (filenames.length == req.files.length) {
-        resolve(filenames);
-      } else {
-        reject("No se pudo obtener los nombres de las imagenes.");
-      }
+      // if (filenamesEvento.length == req.files.length) {
+      resolve(filenamesEvento);
+      // } else {
+      //   resolve([]);
+      // }
     });
   };
 
-  /*  borrarImagenesEventos = async (idEvento) => {
-    return new Promise((resolve, reject) => {
-      Evento.findById(idEvento).then(async (evento) => {
-        let largo = evento.filenames.length;
-        for (let index = 0; index < largo; index++) {
-          await ImagenFiles.findOneAndDelete({
-            filename: evento.filenames[index],
-          }).then((file) => {
-            ImagenChunks.deleteMany({
-              files_id: file._id,
-            }).exec();
-          });
-        }
-      });
+  borrarImagenes = async (filenamesBorrados) => {
+    return new Promise(async (resolve, reject) => {
+      for (let index = 0; index < filenamesBorrados.lenght; index++) {
+        await ImagenFiles.findOneAndDelete({
+          filename: filenamesBorrados[index],
+        }).then((file) => {
+          ImagenChunks.deleteMany({
+            files_id: file._id,
+          }).exec();
+        });
+      }
       resolve(true);
     });
-  };*/
+  };
 
-  if (req.files.length != 0) {
-    // await borrarImagenesEventos(req.body._id);
-    Evento.findByIdAndUpdate(req.body._id, {
-      titulo: req.body.titulo,
-      descripcion: req.body.descripcion,
-      fechaEvento: req.body.fechaEvento,
-      horaInicio: req.body.horaInicio,
-      horaFin: req.body.horaFin,
-      tags: req.body.tags,
-      filenames: await leerFilenames(),
-      autor: req.body.idAutor,
-    })
-      .exec()
-      .then((eventoModificado) => {
-        eventoModificado.save().then(() => {
-          // this.notificarPorEvento(
-          //   this.evento.tags,
-          //   this.evento.titulo,
-          //   "El evento se realizará en la fecha " + evento.fechaEvento + "."
-          // );
-          res.status(201).json({
-            message: "Evento modificado exitosamente",
-            exito: true,
-          });
+  await borrarImagenes(req.body.filenamesBorrados);
+  let filenames = await leerFilenames();
+
+  Evento.findByIdAndUpdate(req.body._id, {
+    titulo: req.body.titulo,
+    descripcion: req.body.descripcion,
+    fechaEvento: req.body.fechaEvento,
+    horaInicio: req.body.horaInicio,
+    horaFin: req.body.horaFin,
+    tags: req.body.tags,
+    filenames: filenames,
+    autor: req.body.idAutor,
+  })
+    .exec()
+    .then((eventoModificado) => {
+      eventoModificado.save().then(() => {
+        // this.notificarPorEvento(
+        //   this.evento.tags,
+        //   this.evento.titulo,
+        //   "El evento se realizará en la fecha " + evento.fechaEvento + "."
+        // );
+        res.status(201).json({
+          message: "Evento modificado exitosamente",
+          exito: true,
         });
       });
-  } else {
-    // await borrarImagenesEventos(req.body._id);
-    Evento.findByIdAndUpdate(req.body._id, {
-      titulo: req.body.titulo,
-      descripcion: req.body.descripcion,
-      fechaEvento: req.body.fechaEvento,
-      horaInicio: req.body.horaInicio,
-      horaFin: req.body.horaFin,
-      tags: req.body.tags,
-      filenames: [],
-      autor: req.body.idAutor,
-    })
-      .exec()
-      .then((eventoModificado) => {
-        eventoModificado.save().then(() => {
-          // this.notificarPorEvento(
-          //   this.evento.tags,
-          //   this.evento.titulo,
-          //   "El evento se realizará en la fecha " + evento.fechaEvento + "."
-          // );
-          res.status(201).json({
-            message: "Evento modificado exitosamente",
-            exito: true,
-          });
-        });
-      });
-  }
+    });
 });
 
 //Obtiene todos los eventos que estan almacenados en la base de datos

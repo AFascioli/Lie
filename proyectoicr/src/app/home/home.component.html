@@ -27,7 +27,7 @@
     <div class="container-img">
       <img
         [src]="getImage(evento.filenames[0])"
-        *ngIf="evento.filenames[0]"
+        *ngIf="evento.filenames.length > 0"
         style="width: 100%;"
       />
       <button

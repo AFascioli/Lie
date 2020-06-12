@@ -38,6 +38,7 @@ export class ModificarEventoComponent implements OnInit, OnDestroy {
   fechaActual: Date;
   imagesFile: any = [];
   imagenesCargadas: any[] = [];
+  filenamesBorrados: any[] = [];
   message: string;
   selectable = true;
   removable = true;
@@ -95,6 +96,7 @@ export class ModificarEventoComponent implements OnInit, OnDestroy {
     this.evento = this.eventoService.evento;
     this.fechaActual = new Date();
     if (this.evento.filenames.length != 0) {
+      console.log("filenames OnInit", this.evento.filenames);
       for (let index = 0; index < this.evento.filenames.length; index++) {
         this.imagenesCargadas.push(
           environment.apiUrl + `/imagen/${this.evento.filenames[index]}`
@@ -197,10 +199,20 @@ export class ModificarEventoComponent implements OnInit, OnDestroy {
   }
 
   onEliminarImagen(index) {
-    this.imagesFile.splice(index, 1);
+    console.log("imagenesFile", this.imagesFile.lenght);
+    console.log("imagenesCarg", this.imagenesCargadas.length);
+    console.log("evento.filenames", this.evento.filenames.length);
+    if (
+      index > this.evento.filenames.length - 1 &&
+      this.imagesFile.length > 0
+    ) {
+      this.imagesFile.splice(index - this.evento.filenames.length, 1);
+    } else {
+      this.filenamesBorrados.push(this.evento.filenames[index]);
+    }
     this.imagenesCargadas.splice(index, 1);
     this.evento.filenames.splice(index, 1);
-    this.moveFromCurrentSlide(1);
+    // this.moveFromCurrentSlide(1);
     this.snackBar.open("Se elimino imagen correctamente", "", {
       panelClass: ["snack-bar-exito"],
       duration: 1500,
@@ -236,6 +248,7 @@ export class ModificarEventoComponent implements OnInit, OnDestroy {
 
   modificarEvento() {
     let fechaEvento = new Date(this.evento.fechaEvento);
+    console.log("filenames que vienen de la bd: ", this.evento.filenames);
     this.eventoService
       .modificarEvento(
         this.evento.titulo,
@@ -247,7 +260,8 @@ export class ModificarEventoComponent implements OnInit, OnDestroy {
         this.imagesFile,
         this.evento.filenames,
         this.evento._id,
-        this.evento.autor
+        this.evento.autor,
+        this.filenamesBorrados
       )
       .pipe(takeUntil(this.unsubscribe))
       .subscribe((rtdo) => {
