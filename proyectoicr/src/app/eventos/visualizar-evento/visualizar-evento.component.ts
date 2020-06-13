@@ -40,9 +40,7 @@ export class VisualizarEventoComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.evento = this.eventoService.eventoSeleccionado;
-    setTimeout(() => {
-      this.showSlide(1);
-    }, 500);
+    this.showSlide(1);
     this.eventoService
       .obtenerComentariosDeEvento()
       .pipe(takeUntil(this.unsubscribe))

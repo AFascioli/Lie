@@ -187,9 +187,7 @@ export class ModificarEventoComponent implements OnInit, OnDestroy {
       (imagenCargada.resized && imagenCargada.resized.dataURL) ||
         imagenCargada.dataURL
     );
-    setTimeout(() => {
-      this.showSlide(1);
-    }, 500);
+    this.showSlide(1);
   }
 
   moveFromCurrentSlide(n) {
