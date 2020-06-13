@@ -96,7 +96,6 @@ export class ModificarEventoComponent implements OnInit, OnDestroy {
     this.evento = this.eventoService.evento;
     this.fechaActual = new Date();
     if (this.evento.filenames.length != 0) {
-      console.log("filenames OnInit", this.evento.filenames);
       for (let index = 0; index < this.evento.filenames.length; index++) {
         this.imagenesCargadas.push(
           environment.apiUrl + `/imagen/${this.evento.filenames[index]}`
@@ -199,9 +198,6 @@ export class ModificarEventoComponent implements OnInit, OnDestroy {
   }
 
   onEliminarImagen(index) {
-    console.log("imagenesFile", this.imagesFile.lenght);
-    console.log("imagenesCarg", this.imagenesCargadas.length);
-    console.log("evento.filenames", this.evento.filenames.length);
     if (
       index > this.evento.filenames.length - 1 &&
       this.imagesFile.length > 0
@@ -212,7 +208,7 @@ export class ModificarEventoComponent implements OnInit, OnDestroy {
     }
     this.imagenesCargadas.splice(index, 1);
     this.evento.filenames.splice(index, 1);
-    // this.moveFromCurrentSlide(1);
+    this.moveFromCurrentSlide(1);
     this.snackBar.open("Se elimino imagen correctamente", "", {
       panelClass: ["snack-bar-exito"],
       duration: 1500,
@@ -248,7 +244,6 @@ export class ModificarEventoComponent implements OnInit, OnDestroy {
 
   modificarEvento() {
     let fechaEvento = new Date(this.evento.fechaEvento);
-    console.log("filenames que vienen de la bd: ", this.evento.filenames);
     this.eventoService
       .modificarEvento(
         this.evento.titulo,
