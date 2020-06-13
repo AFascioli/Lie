@@ -19,7 +19,7 @@
         required
         (selectionChange)="onCursoSeleccionado(curso)"
       >
-        <mat-option *ngFor="let objCurso of cursos" [value]="objCurso.curso">
+        <mat-option *ngFor="let objCurso of cursos" [value]="objCurso.nombre">
           {{ objCurso.nombre }}
         </mat-option>
       </mat-select>
