@@ -1,9 +1,11 @@
 <mat-card class="cardSpinner" *ngIf="isLoading">
-  <mat-spinner class="spinner" [diameter]="60" ></mat-spinner>
+  <mat-spinner class="spinner" [diameter]="60"></mat-spinner>
 </mat-card>
 
-<h1 *ngIf="!isLoading" class="componente-titulo">Registrar retiro anticipado</h1>
-<mat-card class="card-body-componente"  *ngIf="!isLoading">
+<h1 *ngIf="!isLoading" class="componente-titulo">
+  Registrar retiro anticipado
+</h1>
+<mat-card class="card-body-componente" *ngIf="!isLoading">
   <p class="aviso" *ngIf="fueraPeriodoCicloLectivo">
     Atención, no se puede registrar el retiro anticipado debido a que estamos
     fuera del ciclo lectivo
@@ -34,7 +36,7 @@
         El estudiante seleccionado no tiene registrado ningún tutor
       </p>
       <table
-      [class.table-mobile]="mobileQuery.matches"
+        [class.table-mobile]="mobileQuery.matches"
         mat-table
         [dataSource]="tutores"
         *ngIf="tutores && tutores.length != 0"
@@ -103,13 +105,17 @@
     </div>
     <br />
 
-    <mat-radio-group aria-label="Select an option" class="opciones" [class.opciones-mobile]="mobileQuery.matches">
+    <mat-radio-group
+      aria-label="Select an option"
+      class="opciones"
+      [class.opciones-mobile]="mobileQuery.matches"
+    >
       <mat-radio-button
         (change)="CambiarTipoRetiro()"
         [checked]="antes10am"
         value="1"
         ><span class="label-radio-button"
-          >Antes de las 10:00 de la mañana</span
+          >Antes de las 10:00 am</span
         ></mat-radio-button
       >
       <mat-radio-button
@@ -117,7 +123,7 @@
         [checked]="!antes10am"
         value="2"
         ><span class="label-radio-button"
-          >Después de las 10:00 de la mañana</span
+          >Después de las 10:00 am</span
         ></mat-radio-button
       >
     </mat-radio-group>

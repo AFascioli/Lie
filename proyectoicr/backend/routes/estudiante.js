@@ -244,7 +244,8 @@ router.get("/documento", checkAuthMiddleware, (req, res, next) => {
     })
     .catch(() => {
       res.status(500).json({
-        message: "Mensaje de error especifico",
+        message:
+          "Ocurrió un error al querer obtener el estudiante por documento",
       });
     });
 });
@@ -308,11 +309,11 @@ router.get("/nombreyapellido", checkAuthMiddleware, (req, res, next) => {
   Estudiante.find({
     nombre: { $regex: new RegExp(nombre, "i") },
     apellido: { $regex: new RegExp(apellido, "i") },
-    activo: true
+    activo: true,
   })
     .then((documents) => {
       res.status(200).json({
-        estudiantes: documents
+        estudiantes: documents,
       });
     })
     .catch(() => {
@@ -433,14 +434,14 @@ router.get("/cuotasEstudiante", (req, res) => {
     })
     .catch(() => {
       res.status(500).json({
-        message: "Mensaje de error especifico",
+        message: "No se logró obtener las cuotas correctamente",
       });
     });
 });
 
 router.get("/sancionesEstudiante", (req, res) => {
-  let objetoDate= new Date();
-  let añoActual=objetoDate.getFullYear();
+  let objetoDate = new Date();
+  let añoActual = objetoDate.getFullYear();
   Estudiante.aggregate([
     {
       $match: {
@@ -486,11 +487,13 @@ router.get("/sancionesEstudiante", (req, res) => {
   ])
     .then((inscripciones) => {
       let sanciones = [];
-      if(inscripciones.length>1){
-        inscripciones.forEach(inscripcion => {
-          sanciones=sanciones.concat(inscripcion.InscripcionEstudiante.sanciones);
+      if (inscripciones.length > 1) {
+        inscripciones.forEach((inscripcion) => {
+          sanciones = sanciones.concat(
+            inscripcion.InscripcionEstudiante.sanciones
+          );
         });
-      }else{
+      } else {
         sanciones = inscripciones[0].InscripcionEstudiante.sanciones;
       }
 
@@ -655,6 +658,32 @@ router.get("/suspendido", (req, res) => {
           });
         }
       });
+    })
+    .catch(() => {
+      res.status(500).json({
+        message:
+          "Ah ocurrido un error al validar si el estudiante esta suspendido.",
+      });
+    });
+});
+
+router.get("/estado/suspendido", (req, res) => {
+  Estado.findOne({
+    nombre: "Suspendido",
+    ambito: "Inscripcion",
+  })
+    .then((estado) => {
+      if (req.body.idEstado == estado._id.toString()) {
+        res.status(200).json({
+          message: "El estado es suspendido",
+          exito: true,
+        });
+      } else {
+        res.status(200).json({
+          message: "El estado no es suspendido",
+          exito: false,
+        });
+      }
     })
     .catch(() => {
       res.status(500).json({

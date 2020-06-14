@@ -1,11 +1,14 @@
 <h1 class="componente-titulo">
-  Registrar sanciones ciclo lectivo {{ fechaActual.getFullYear() }}
+  Registrar sanción ciclo lectivo {{ fechaActual.getFullYear() }}
 </h1>
 <mat-card class="card-body-componente">
   <form #form="ngForm">
     <div class="ubicacion-fecha" *ngIf="!fueraPeriodoCicloLectivo">
       <b>Fecha: </b>
-      <mat-form-field class="mat-form-Fecha" [class.mat-form-field-mobile]="mobileQuery.matches">
+      <mat-form-field
+        class="mat-form-Fecha"
+        [class.mat-form-field-mobile]="mobileQuery.matches"
+      >
         <input
           [disabled]="true"
           ngModel
@@ -19,7 +22,11 @@
         {{ fechaActual | date: "dd/MM/yyyy" }}&nbsp;
       </mat-form-field>
     </div>
-    <div class="contenido" *ngIf="!fueraPeriodoCicloLectivo" [class.contenido-mobile]="mobileQuery.matches">
+    <div
+      class="contenido"
+      *ngIf="!fueraPeriodoCicloLectivo"
+      [class.contenido-mobile]="mobileQuery.matches"
+    >
       <mat-card>
         <p class="titulo-datos-est">Datos del estudiante</p>
         <mat-card-subtitle>
@@ -66,7 +73,10 @@
         />
       </mat-form-field>
     </div>
-    <p class="aviso" *ngIf="fueraPeriodoCicloLectivo">Atención, no se puede registrar sanciones debido a que estamos fuera del ciclo lectivo </p>
+    <p class="aviso" *ngIf="fueraPeriodoCicloLectivo">
+      Atención, no se puede registrar sanciones debido a que estamos fuera del
+      ciclo lectivo
+    </p>
     <br />
     <div class="div-button">
       <button

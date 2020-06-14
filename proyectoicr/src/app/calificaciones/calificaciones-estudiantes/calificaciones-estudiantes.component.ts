@@ -8,7 +8,7 @@ import {
   OnDestroy,
   ChangeDetectorRef,
 } from "@angular/core";
-import { MatDialog, MatSnackBar } from "@angular/material";
+import { MatDialog, MatSnackBar, MatDialogRef } from "@angular/material";
 import { NgForm, NgModel } from "@angular/forms";
 import { MatPaginator, PageEvent } from "@angular/material/paginator";
 import { MatTableDataSource } from "@angular/material/table";
@@ -17,6 +17,7 @@ import { MatPaginatorIntl } from "@angular/material";
 import { Subject } from "rxjs";
 import { takeUntil } from "rxjs/operators";
 import { MediaMatcher } from "@angular/cdk/layout";
+import { debug } from "util";
 
 @Component({
   selector: "app-calificaciones-estudiantes",
@@ -26,7 +27,7 @@ import { MediaMatcher } from "@angular/cdk/layout";
 export class CalificacionesEstudiantesComponent implements OnInit, OnDestroy {
   cursos: any[];
   materias: any[];
-  estudiantes: any[]=[];
+  estudiantes: any[] = [];
   displayedColumns: string[] = [
     "apellido",
     "nombre",
@@ -49,12 +50,15 @@ export class CalificacionesEstudiantesComponent implements OnInit, OnDestroy {
   promedio = 0;
   dataSource: MatTableDataSource<any>;
   indexEst = 0;
-  cursoSeleccionado: boolean=false;
-  materiaSeleccionada:boolean=false;
+  cursoSeleccionado: boolean = false;
+  materiaSeleccionada: boolean = false;
+  filtroEstudiante: string;
   private unsubscribe: Subject<void> = new Subject();
   _mobileQueryListener: () => void;
   mobileQuery: MediaQueryList;
 
+  @ViewChild("comboCurso", { static: false }) comboCurso: any;
+  @ViewChild("comboTrimestre", { static: false }) comboTrimestre: any;
   @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
 
   constructor(
@@ -76,6 +80,7 @@ export class CalificacionesEstudiantesComponent implements OnInit, OnDestroy {
     this.obtenerTrimestreActual();
     this.validarPermisos();
     this.obtenerCursos();
+    this.servicioCalificaciones.auxCambios = false;
   }
 
   ngOnDestroy() {
@@ -97,22 +102,24 @@ export class CalificacionesEstudiantesComponent implements OnInit, OnDestroy {
 
   obtenerCursos() {
     if (this.servicioAutenticacion.getRol() == "Docente") {
-      this.servicioAutenticacion.obtenerIdEmpleado(this.servicioAutenticacion.getId()).subscribe(response  => {
-        this.idDocente=response.id;
-        this.servicioEstudiante
-          .obtenerCursosDeDocente(this.idDocente)
-          .pipe(takeUntil(this.unsubscribe))
-          .subscribe(response => {
-            this.cursos = response.cursos;
-            this.cursos.sort((a, b) =>
-              a.curso.charAt(0) > b.curso.charAt(0)
-                ? 1
-                : b.curso.charAt(0) > a.curso.charAt(0)
-                ? -1
-                : 0
-            );
-          });
-      })
+      this.servicioAutenticacion
+        .obtenerIdEmpleado(this.servicioAutenticacion.getId())
+        .subscribe((response) => {
+          this.idDocente = response.id;
+          this.servicioEstudiante
+            .obtenerCursosDeDocente(this.idDocente)
+            .pipe(takeUntil(this.unsubscribe))
+            .subscribe((response) => {
+              this.cursos = response.cursos;
+              this.cursos.sort((a, b) =>
+                a.nombre.charAt(0) > b.nombre.charAt(0)
+                  ? 1
+                  : b.nombre.charAt(0) > a.nombre.charAt(0)
+                  ? -1
+                  : 0
+              );
+            });
+        });
     } else {
       this.servicioEstudiante
         .obtenerCursos()
@@ -120,12 +127,12 @@ export class CalificacionesEstudiantesComponent implements OnInit, OnDestroy {
         .subscribe((response) => {
           this.cursos = response.cursos;
           this.cursos.sort((a, b) =>
-          a.nombre.charAt(0) > b.nombre.charAt(0)
-            ? 1
-            : b.nombre.charAt(0) > a.nombre.charAt(0)
-            ? -1
-            : 0
-        );
+            a.nombre.charAt(0) > b.nombre.charAt(0)
+              ? 1
+              : b.nombre.charAt(0) > a.nombre.charAt(0)
+              ? -1
+              : 0
+          );
         });
     }
   }
@@ -178,18 +185,10 @@ export class CalificacionesEstudiantesComponent implements OnInit, OnDestroy {
     }
   }
 
-  // applyFilter(filterValue: string) {
-  //   filterValue = filterValue.trim(); // Remove whitespace
-  //   filterValue = filterValue.toLowerCase(); // Datasource defaults to lowercase matches
-  //   //ACA CREO Q ESTA EL PROBLEMA
-  //   this.dataSource = new MatTableDataSource(this.servicioEstudiante.estudiantes);
-  //   this.dataSource.filter = filterValue;
-  // }
-
   //Se obtienen las materias del curso seleccionado segun el docente logueado o todas si el rol logueado es Admin
   onCursoSeleccionado(curso, materia: NgModel) {
-    this.cursoSeleccionado=true;
-    this.materiaSeleccionada=false;
+    this.cursoSeleccionado = true;
+    this.materiaSeleccionada = false;
     this.estudiantes = [];
     this.materias = null;
     materia.reset();
@@ -198,13 +197,13 @@ export class CalificacionesEstudiantesComponent implements OnInit, OnDestroy {
       this.servicioAutenticacion.getRol() != "Admin"
     ) {
       this.servicioEstudiante
-        .obtenerMateriasXCursoXDocente(
-          curso.value,
-          this.idDocente
-        )
+        .obtenerMateriasXCursoXDocente(curso.value, this.idDocente)
         .pipe(takeUntil(this.unsubscribe))
         .subscribe((respuesta) => {
           this.materias = respuesta.materias;
+          this.materias.sort((a, b) =>
+            a.nombre > b.nombre ? 1 : b.nombre > a.nombre ? -1 : 0
+          );
         });
     } else {
       this.servicioEstudiante
@@ -212,12 +211,33 @@ export class CalificacionesEstudiantesComponent implements OnInit, OnDestroy {
         .pipe(takeUntil(this.unsubscribe))
         .subscribe((respuesta) => {
           this.materias = respuesta.materias;
+          this.materias.sort((a, b) =>
+            a.nombre > b.nombre ? 1 : b.nombre > a.nombre ? -1 : 0
+          );
         });
+    }
+  }
+
+  onValidarCambios() {
+    if (
+      (this.servicioCalificaciones.auxCambios && this.comboCurso.panelOpen) ||
+      (this.servicioCalificaciones.auxCambios && this.comboTrimestre.panelOpen)
+    ) {
+      const dialogRef = this.popup.open(CalificacionesEstudiantePopupComponent);
+      dialogRef.afterClosed().subscribe(() => {
+        if (this.servicioCalificaciones.avisoResult) {
+          this.servicioCalificaciones.avisoResult = false;
+        } else {
+          this.comboCurso.close();
+          this.comboTrimestre.close();
+        }
+      });
     }
   }
 
   obtenerNotas(form: NgForm) {
     if (form.value.curso != null && form.value.materia != null) {
+      this.calificacionesChange = false;
       this.servicioCalificaciones
         .obtenerCalificacionesEstudiantesXCursoXMateria(
           form.value.curso,
@@ -226,12 +246,13 @@ export class CalificacionesEstudiantesComponent implements OnInit, OnDestroy {
         )
         .pipe(takeUntil(this.unsubscribe))
         .subscribe((respuesta) => {
-          this.materiaSeleccionada=true;
+          this.materiaSeleccionada = true;
           this.estudiantes = [...respuesta.estudiantes];
           this.estudiantes = this.estudiantes.sort((a, b) =>
             a.apellido > b.apellido ? 1 : b.apellido > a.apellido ? -1 : 0
           );
           this.dataSource = new MatTableDataSource(this.estudiantes);
+          this.dataSource.filter = this.filtroEstudiante;
           this.dataSource.paginator = this.paginator;
           this.dataSource.paginator.firstPage();
         });
@@ -251,7 +272,7 @@ export class CalificacionesEstudiantesComponent implements OnInit, OnDestroy {
   calcularPromedio(index, cantidad) {
     if (cantidad != 0) {
       var notas: number = 0;
-      this.estudiantes[index].calificaciones.forEach((nota) => {
+      this.dataSource.filteredData[index].calificaciones.forEach((nota) => {
         if (nota != 0 && nota != null) notas = notas + nota;
       });
       this.promedio = notas / cantidad;
@@ -296,6 +317,7 @@ export class CalificacionesEstudiantesComponent implements OnInit, OnDestroy {
             });
           }
         });
+      this.servicioCalificaciones.auxCambios = false;
     }
   }
 
@@ -313,14 +335,17 @@ export class CalificacionesEstudiantesComponent implements OnInit, OnDestroy {
 
   checkNotas(event, cal) {
     var inputValue = event.which;
-    var concat = cal + String.fromCharCode(inputValue);
+    concat = String.fromCharCode(inputValue);
+    if (cal != 0) var concat = cal + String.fromCharCode(inputValue);
+
     if (
       !(inputValue >= 48 && inputValue <= 57) &&
       inputValue != 32 &&
       inputValue != 0
     )
       event.preventDefault();
-    else if (cal != "" && Number(concat) > 10) event.preventDefault();
+    else if (cal != 0 && Number(concat) > 10) event.preventDefault();
+    else this.servicioCalificaciones.auxCambios = true;
   }
 }
 
@@ -333,4 +358,28 @@ export function getDutchPaginatorIntl() {
   paginatorIntl.nextPageLabel = "Página siguiente";
   paginatorIntl.previousPageLabel = "Página anterior";
   return paginatorIntl;
+}
+
+@Component({
+  selector: "app-calificaciones-estudiantes-popup",
+  templateUrl: "./calificaciones-estudiantes-popup.component.html",
+  styleUrls: ["./calificaciones-estudiantes.component.css"],
+})
+export class CalificacionesEstudiantePopupComponent {
+  constructor(
+    public dialogRef: MatDialogRef<CalificacionesEstudiantePopupComponent>,
+    public calificacionesServicio: CalificacionesService
+  ) {}
+
+  onYesClick(): void {
+    this.calificacionesServicio.auxCambios = false;
+    this.calificacionesServicio.avisoResult = true;
+    this.dialogRef.close();
+  }
+
+  onNoClick(): void {
+    this.calificacionesServicio.auxCambios = true;
+    this.calificacionesServicio.avisoResult = false;
+    this.dialogRef.close();
+  }
 }

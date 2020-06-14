@@ -37,7 +37,7 @@ export class VisualizarAgendaComponent implements OnInit, OnDestroy {
   mobileQuery: MediaQueryList;
   private unsubscribe: Subject<void> = new Subject();
   isLoading = true;
-  agendaVacia: boolean=false;
+  agendaVacia: boolean = false;
 
   constructor(
     public servicioEstudiante: EstudiantesService,
@@ -83,12 +83,12 @@ export class VisualizarAgendaComponent implements OnInit, OnDestroy {
   actualizarInterfaz(idCurso) {
     (async () => {
       let agenda: any = await this.obtenerAgenda(idCurso.value);
-      if(agenda.length!=0){
+      if (agenda.length != 0) {
         agenda.forEach((materia, index) => {
           this.setInGrid(index.toString(), materia);
         });
-      }else{
-        this.agendaVacia=true;
+      } else {
+        this.agendaVacia = true;
       }
     })();
   }
@@ -143,7 +143,7 @@ export class VisualizarAgendaComponent implements OnInit, OnDestroy {
     this.colores[6] = "#e7b2a5";
     this.colores[7] = "#6e5773";
     this.colores[8] = "#f1935c";
-    this.colores[9] = "#a3f7bf";
+    this.colores[9] = "#627a68";
     this.colores[10] = "#ce0f3d";
   }
 

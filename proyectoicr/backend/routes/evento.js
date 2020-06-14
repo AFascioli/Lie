@@ -37,7 +37,7 @@ const storage = new GridFsStorage({
   },
 });
 
-var upload = multer({ storage: storage }).array("images", 5);
+var upload = multer({ storage: storage }).array("images", 15);
 
 //Registra el evento en la base de datos
 //@params: evento a publicar
@@ -112,7 +112,7 @@ router.post("/registrar", upload, async (req, res, next) => {
               "."
             );
             res.status(201).json({
-              message: "Evento creado exitosamente",
+              message: "Evento registrado exitosamente",
               exito: true,
             });
           });
@@ -121,74 +121,83 @@ router.post("/registrar", upload, async (req, res, next) => {
     })
     .catch(() => {
       res.status(500).json({
-        message: "Se presentaron problemas al querer agregar un evento",
+        message: "Se presentaron problemas al querer registrar un evento",
       });
     });
 });
 
-//Modifica el evento en la base de datos
+//Registra el evento en la base de datos
 //@params: evento a publicar
-router.post("/modificar", upload, async (req, res) => {
-  let filenames = req.body.filenames;
-  console.log(req.body.filenames);
-  leerFilename = () => {
+router.post("/modificar", upload, async (req, res, next) => {
+  leerFilenames = () => {
     return new Promise((resolve, reject) => {
-      for (let index = 0; index < req.files.length; index++) {
-        filenames.push(req.files[index].filename);
+      let filenamesEvento = [];
+      if (req.body.filenames) {
+        filenamesEvento = req.body.filenames;
       }
-      resolve(filenames);
+      // Se sacan los filenames borrados
+      filenamesEvento = filenamesEvento.filter((filename) => {
+        if (!req.body.filenamesBorrados.includes(filename)) {
+          return true;
+        } else {
+          return false;
+        }
+      });
+
+      // Se agregan los filenames nuevos
+      for (let index = 0; index < req.files.length; index++) {
+        filenamesEvento.push(req.files[index].filename); //1
+      }
+      // if (filenamesEvento.length == req.files.length) {
+      resolve(filenamesEvento);
+      // } else {
+      //   resolve([]);
+      // }
     });
   };
 
-  if (req.files != null) {
-    console.log("entro al de con fotos");
-    Evento.findByIdAndUpdate(req.body._id, {
-      titulo: req.body.titulo,
-      descripcion: req.body.descripcion,
-      fechaEvento: req.body.fechaEvento,
-      horaInicio: req.body.horaInicio,
-      horaFin: req.body.horaFin,
-      tags: req.body.tags,
-      filenames: await leerFilename(),
-      autor: req.body.idAutor,
-    })
-      .exec()
-      .then(() => {
-        //Completar con código de la notificación COMPLETAR CON LO DE ARRIBA
+  borrarImagenes = async (filenamesBorrados) => {
+    return new Promise(async (resolve, reject) => {
+      for (let index = 0; index < filenamesBorrados.lenght; index++) {
+        await ImagenFiles.findOneAndDelete({
+          filename: filenamesBorrados[index],
+        }).then((file) => {
+          ImagenChunks.deleteMany({
+            files_id: file._id,
+          }).exec();
+        });
+      }
+      resolve(true);
+    });
+  };
+
+  await borrarImagenes(req.body.filenamesBorrados);
+  let filenames = await leerFilenames();
+
+  Evento.findByIdAndUpdate(req.body._id, {
+    titulo: req.body.titulo,
+    descripcion: req.body.descripcion,
+    fechaEvento: req.body.fechaEvento,
+    horaInicio: req.body.horaInicio,
+    horaFin: req.body.horaFin,
+    tags: req.body.tags,
+    filenames: filenames,
+    autor: req.body.idAutor,
+  })
+    .exec()
+    .then((eventoModificado) => {
+      eventoModificado.save().then(() => {
+        // this.notificarPorEvento(
+        //   this.evento.tags,
+        //   this.evento.titulo,
+        //   "El evento se realizará en la fecha " + evento.fechaEvento + "."
+        // );
         res.status(201).json({
           message: "Evento modificado exitosamente",
           exito: true,
         });
-      })
-      .catch(() => {
-        res.status(500).json({
-          message: "No se pudo modificar el evento correctamente",
-        });
       });
-  } else {
-    Evento.findByIdAndUpdate(req.body._id, {
-      titulo: req.body.titulo,
-      descripcion: req.body.descripcion,
-      fechaEvento: req.body.fechaEvento,
-      horaInicio: req.body.horaInicio,
-      horaFin: req.body.horaFin,
-      tags: req.body.tags,
-      autor: req.body.idAutor,
-    })
-      .exec()
-      .then(() => {
-        //Completar con código de la notificación COMPLETAR CON LO DE ARRIBA
-        res.status(201).json({
-          message: "Evento modificado exitosamente",
-          exito: true,
-        });
-      })
-      .catch(() => {
-        res.status(500).json({
-          message: "No se pudo modificar el evento correctamente",
-        });
-      });
-  }
+    });
 });
 
 //Obtiene todos los eventos que estan almacenados en la base de datos
@@ -469,9 +478,10 @@ router.get("/id", checkAuthMiddleware, (req, res) => {
         res.json({ evento: null, exito: true, message: "exito" });
       }
     })
-    .catch(() => {
+    .catch((error) => {
       res.status(500).json({
-        message: "Mensaje de error especifico",
+        message: "Ocurrio un error al querer obtener el evento",
+        info: "Es en /evento/id-linea 475 " + error,
       });
     });
 });

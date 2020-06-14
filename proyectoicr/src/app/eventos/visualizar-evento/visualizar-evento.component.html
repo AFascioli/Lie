@@ -46,19 +46,21 @@
   </div>
 
   <div class="prueba">
-  <mat-card-content *ngIf="evento.descripcion">
-    <p class="descripcion">
-      <b>
-        Descripción:
-      </b>
-    <app-read-more
-    [text]="evento.descripcion"
-    [maxHeight]="45"
-    [readAll]="false"
-    ></app-read-more>
-    </p>
-  </mat-card-content>
-</div>
+    <mat-card-content *ngIf="evento.descripcion">
+      <p class="descripcion">
+        <b>
+          Descripción:
+        </b>
+      </p>
+      <p style="margin-left: 5px;">
+        <app-read-more
+          [text]="evento.descripcion"
+          [maxHeight]="45"
+          [readAll]="false"
+        ></app-read-more>
+      </p>
+    </mat-card-content>
+  </div>
 
   <br />
   <mat-divider class="divisor"></mat-divider>
@@ -108,7 +110,6 @@
           class="test"
           *ngFor="let comentario of eventoService.comentarios; let i = index"
         >
-
           <div class="datos-comentario">
             <p class="nombre-autor">
               <b>{{ comentario.apellido }}, {{ comentario.nombre }} </b>
@@ -137,7 +138,7 @@
           </div>
           <p class="texto-comentario">
             <app-read-more
-              [text]="comentario.comentario"
+              [text]="comentario.cuerpo"
               [maxHeight]="40"
               [readAll]="false"
             ></app-read-more>

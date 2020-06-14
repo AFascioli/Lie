@@ -10,7 +10,7 @@ import { browserRefresh } from "src/app/app.component";
 @Component({
   selector: "app-buscar-estudiantes",
   templateUrl: "./buscar-estudiantes.component.html",
-  styleUrls: ["./buscar-estudiantes.component.css"]
+  styleUrls: ["./buscar-estudiantes.component.css"],
 })
 export class BuscarEstudiantesComponent implements OnInit {
   estudiantes: Estudiante[] = [];
@@ -76,7 +76,7 @@ export class BuscarEstudiantesComponent implements OnInit {
     } else {
       this.snackBar.open("Faltan campos por completar", "", {
         panelClass: ["snack-bar-fracaso"],
-        duration: 4000
+        duration: 4000,
       });
     }
   }
@@ -89,22 +89,32 @@ export class BuscarEstudiantesComponent implements OnInit {
 
   onCancelar() {
     this.dialog.open(BuscarPopupComponent, {
-      width: "250px"
+      width: "250px",
     });
+  }
+
+  checkNumeros(event) {
+    var inputValue = event.which;
+    if (
+      !(inputValue >= 48 && inputValue <= 57) &&
+      inputValue != 32 &&
+      inputValue != 0
+    ) {
+      event.preventDefault();
+    }
   }
 }
 
 @Component({
   selector: "app-buscar-popup",
   templateUrl: "./buscar-popup.component.html",
-  styleUrls: ["./buscar-estudiantes.component.css"]
+  styleUrls: ["./buscar-estudiantes.component.css"],
 })
 export class BuscarPopupComponent {
   constructor(
     public dialogRef: MatDialogRef<BuscarPopupComponent>,
     public router: Router
-  ) {
-  }
+  ) {}
 
   onYesClick(): void {
     this.router.navigate(["./home"]);

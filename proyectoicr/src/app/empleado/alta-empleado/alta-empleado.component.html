@@ -1,5 +1,5 @@
 <h1 class="componente-titulo">
-  Registrar empleado
+  Registrar personal
 </h1>
 <mat-card class="card-body-componente">
   <meta charset="utf-8" />
@@ -10,7 +10,7 @@
       [expanded]="true"
     >
       <mat-expansion-panel-header>
-        <b>Datos del empleado</b>
+        <b>Datos personales</b>
       </mat-expansion-panel-header>
       <mat-form-field [class.mat-form-field-mobile]="mobileQuery.matches">
         <input
@@ -25,9 +25,6 @@
           required
           (keypress)="checkLetras($event)"
         />
-        <mat-error *ngIf="apellido.invalid"
-          >Por favor ingrese un apellido válido</mat-error
-        >
       </mat-form-field>
       <br />
       <mat-form-field [class.mat-form-field-mobile]="mobileQuery.matches">
@@ -43,9 +40,6 @@
           required
           (keypress)="checkLetras($event)"
         />
-        <mat-error *ngIf="nombre.invalid"
-          >Por favor ingrese un nombre válido</mat-error
-        >
       </mat-form-field>
       <br />
 
@@ -81,9 +75,6 @@
           required
           (keypress)="checkNumeros($event)"
         />
-        <mat-error *ngIf="nroDocumento.invalid"
-          >Por favor ingrese un número de documento válido</mat-error
-        >
       </mat-form-field>
       <br />
       <mat-form-field [class.mat-form-field-mobile]="mobileQuery.matches">
@@ -149,9 +140,6 @@
           placeholder="Ingrese número de teléfono"
           (keypress)="checkNumeros($event)"
         />
-        <mat-error *ngIf="telefono.invalid"
-          >Por favor ingrese un número de telefono válido</mat-error
-        >
       </mat-form-field>
       <br />
       <mat-form-field [class.mat-form-field-mobile]="mobileQuery.matches">
@@ -162,12 +150,9 @@
           #email="ngModel"
           placeholder="Ingrese email"
           type="email"
+          pattern="^([a-zA-Z0-9_\-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([a-zA-Z0-9\-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$"
           required
-          email
         />
-        <mat-error *ngIf="email.invalid"
-          >Por favor ingrese un email válido</mat-error
-        >
       </mat-form-field>
       <br />
       <mat-form-field [class.mat-form-field-mobile]="mobileQuery.matches">

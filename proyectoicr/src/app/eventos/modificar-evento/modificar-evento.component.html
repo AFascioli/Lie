@@ -163,7 +163,11 @@
               class="boton-borrar"
               matTooltip="Eliminar imagen"
             >
-              <mat-icon (click)="onEliminarImagen(i)">cancel</mat-icon>
+              <mat-icon
+                (click)="onEliminarImagen(i)"
+                style="color: white; font-size: 26px;"
+                >cancel</mat-icon
+              >
             </button>
             <img [src]="image" style="width: 100%;" />
           </div>

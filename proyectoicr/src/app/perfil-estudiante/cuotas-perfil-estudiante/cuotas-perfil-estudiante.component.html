@@ -1,12 +1,16 @@
 <h1 class="componente-titulo">Historial de cuotas</h1>
 <mat-card class="card-body-componente">
-  <table mat-table [dataSource]="cuotasV" [class.table-mobile]="mobileQuery.matches">
+  <table
+    mat-table
+    [dataSource]="estadoCuotasXMes"
+    [class.table-mobile]="mobileQuery.matches"
+  >
     <ng-container matColumnDef="Mes">
       <th class="columnas-normales" mat-header-cell *matHeaderCellDef>
         Mes
       </th>
       <td class="columnas-normales" mat-cell *matCellDef="let i = index">
-        {{ getMes(cuotasV[i][0]) }}
+        {{ getMes(estadoCuotasXMes[i][0]) }}
       </td>
     </ng-container>
 
@@ -16,7 +20,7 @@
       </th>
       <td class="columnas-normales" mat-cell *matCellDef="let i = index">
         <mat-checkbox
-          [checked]="cuotasV[i][1]"
+          [checked]="estadoCuotasXMes[i][1]"
           [disabled]="true"
         ></mat-checkbox>
         <ng-template #noTieneNotas>
@@ -29,10 +33,11 @@
   </table>
   <div class="div-button">
     <button
-    mat-raised-button
-    [routerLink]="['/perfilEstudiante']"
-    class="button-warn" >
-       Volver
+      mat-raised-button
+      [routerLink]="['/perfilEstudiante']"
+      class="button-warn"
+    >
+      Volver
     </button>
   </div>
 </mat-card>

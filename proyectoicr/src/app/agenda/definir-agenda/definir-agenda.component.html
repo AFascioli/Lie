@@ -1,12 +1,7 @@
-<mat-card class="card-spinner" *ngIf="isLoading">
-  <mat-spinner class="spinner" [diameter]="60"></mat-spinner>
-</mat-card>
-
-
 <h1 *ngIf="!isLoading" class="componente-titulo">
   Definir agenda de curso
 </h1>
-<mat-card class="card-body-componente" *ngIf="!isLoading">
+<mat-card class="card-body-componente">
   <form #form="ngForm" *ngIf="!fueraPeriodoDefinirAgenda">
     <mat-form-field>
       <mat-select
@@ -24,7 +19,12 @@
         </mat-option>
       </mat-select>
     </mat-form-field>
-    <div class="contenedor-tabla">
+
+    <mat-card class="card-spinner" *ngIf="isLoading && curso != null">
+      <mat-spinner class="spinner" [diameter]="60"></mat-spinner>
+    </mat-card>
+
+    <div class="contenedor-tabla" *ngIf="!isLoading">
       <table
         #tabla
         mat-table
@@ -197,7 +197,7 @@
                   [disabled]="indice != i"
                   [(ngModel)]="agendaCurso.fin"
                   min="08:15"
-                  max="13:30"
+                  max="14:15"
                   readonly
                   required
                 />

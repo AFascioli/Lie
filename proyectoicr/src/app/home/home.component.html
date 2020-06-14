@@ -1,7 +1,7 @@
 <h1 class="componente-titulo">
   Instituto Cristo Rey
 </h1>
-<ng-container *ngIf="eventos.length != 0">
+<ng-container *ngIf="eventos.length != 0 && !isLoading">
   <mat-card
     class="card-body-componente"
     *ngFor="let evento of eventos; let j = index"
@@ -27,14 +27,18 @@
     <div class="container-img">
       <img
         [src]="getImage(evento.filenames[0])"
-        *ngIf="evento.filenames[0]"
+        *ngIf="evento.filenames.length > 0"
         style="width: 100%;"
       />
       <button
         type="button"
         mat-icon-button
         class="boton-editar"
-        *ngIf="conocerUsuarioLogueado(j) && evento.filenames.length != 0 && !eventoYaOcurrio(j)"
+        *ngIf="
+          conocerUsuarioLogueado(j) &&
+          evento.filenames.length != 0 &&
+          !eventoYaOcurrio(j)
+        "
         matTooltip="Editar evento"
       >
         <mat-icon (click)="onEditar(evento)">mode_edit </mat-icon>
@@ -88,9 +92,16 @@
     </div>
   </mat-card>
 
-  <mat-card class="card-body-componente" *ngIf="eventos.length == 0">
+  <mat-card
+    class="card-body-componente"
+    *ngIf="eventos.length == 0 && isLoading"
+  >
     <h1 class="titulo-aviso">
       No existen eventos publicados por la institución
     </h1>
   </mat-card>
 </ng-container>
+
+<mat-card class="card-spinner" *ngIf="isLoading">
+  <mat-spinner class="spinner" [diameter]="60"></mat-spinner>
+</mat-card>
