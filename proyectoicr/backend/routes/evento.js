@@ -10,7 +10,6 @@ const clasificador = require("../middleware/clasificador");
 const multer = require("multer");
 const Usuario = require("../models/usuario");
 const path = require("path");
-const Admin = require("../models/administrador");
 const Ambiente = require("../assets/ambiente");
 const GridFsStorage = require("multer-gridfs-storage");
 const Suscripcion = require("../classes/suscripcion");
@@ -268,15 +267,12 @@ router.post("/registrarComentario", clasificador, async (req, res, next) => {
             });
           });
       } else if (rol == "Admin") {
-        Admin.findOne({ email: emailUsuario })
+        Usuario.findOne({ email: emailUsuario })
           .then((usuario) => {
-            apellido = usuario.apellido;
-            nombre = usuario.nombre;
-            idUsuario = usuario.idUsuario;
             resolve({
-              apellido: apellido,
-              nombre: nombre,
-              idUsuario: idUsuario,
+              apellido: "Nistrador", //Para evitar tener una tabla en bd con nombre y apellido de admin, se hardcodea aca
+              nombre: "Admi",
+              idUsuario: usuario._id,
             });
           })
           .catch(() => {

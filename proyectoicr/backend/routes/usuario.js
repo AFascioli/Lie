@@ -294,4 +294,40 @@ router.get("/obtenerNombreApellido", (req, res) => {
   }
 });
 
+//Registra a un nuevo usuario Admin
+//@params: email del usuario
+//@params: contraseña del usuario
+router.post("/signup/admin", async (req, res) => {
+  try {
+    const usuarioExiste = await Usuario.findOne({ email: req.body.email });
+    if (usuarioExiste) {
+      return res.status(200).json({
+        message: "Ya existe un usuario con el email ingresado",
+        exito: false
+      });
+    }
+    const rol = await Rol.findOne({ tipo: "Admin" });
+    const hashPass = await bcrypt.hash(req.body.password, 10);
+    const usuario = new Usuario({
+      email: req.body.email,
+      password: hashPass,
+      rol: rol._id,
+    });
+    await usuario.save();
+
+    return res.status(201).json({
+      message: "Usuario creado exitosamente",
+      exito: true,
+      id: usuario._id,
+    });
+  } catch (error) {
+    res.status(200).json({
+      message:
+        "Ocurrió un error al querer crear el usuario. Detalle: " +
+        error.message,
+      exito: false
+    });
+  }
+});
+
 module.exports = router;

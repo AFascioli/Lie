@@ -271,7 +271,7 @@ router.get("", checkAuthMiddleware, (req, res) => {
 // luego crea la asistencia diaria usando la _id de la inscripcion, luego guarda la asistenciaDiaria y
 // guarda la _id de esta asistenciaDiaria en el vector de asistenciasDiarias de la inscripcion.
 // Si ya se tomo asistencia en el dia, se actualiza el valor presente de la asistencia individual.
-router.post("", checkAuthMiddleware, (req, res) => {
+router.post("", checkAuthMiddleware, async(req, res) => {
   let idsEstudiantes = [];
   req.body.forEach((estudiante) => {
     var valorInasistencia = 0;
