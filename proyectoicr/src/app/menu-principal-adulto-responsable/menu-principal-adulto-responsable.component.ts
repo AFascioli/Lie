@@ -53,7 +53,6 @@ export class MenuPrincipalAdultoResponsableComponent implements OnInit {
     if ("serviceWorker" in navigator) {
       navigator.serviceWorker.register("ngsw-worker.js").then((swreg) => {
         if (swreg.active) {
-          console.log('Entro al segundo if');
           this.subscribeToNotifications();
         }
       });
