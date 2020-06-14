@@ -22,6 +22,7 @@ options = {
   useFindAndModify: false,
 };
 
+//Conexion a la base de datos
 mongoose
   .connect(Ambiente.stringDeConexion, options)
   .then(() => {
@@ -37,7 +38,7 @@ let gfs;
 conn.once("open", () => {
   gfs = Grid(conn.db, mongoose.mongo);
   gfs.collection("imagen");
-  console.log("Conexión por imagenes a base de datos local");
+  console.log("Conexión por imagenes a base de datos");
 });
 
 app.get("/imagen/:filename", (req, res) => {
@@ -103,6 +104,13 @@ app.get("/status", (req, res, next) => {
   res.status(200).json({
     message: "Servidor Node.js Lie®",
   });
+});
+
+const ClaseSuscripcion = require("./classes/suscripcion");
+
+app.get("/testi", async (req, res, next) => {
+  let ids=await ClaseSuscripcion.obtenerIdsUsuarios("5d0ee07c489bdd0830bd1d0d");
+    res.status(200).json({res:ids, msg:"Ok"});
 });
 
 // #resolve Guardar comentarios y diccionario

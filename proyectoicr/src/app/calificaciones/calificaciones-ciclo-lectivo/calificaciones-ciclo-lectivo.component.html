@@ -54,8 +54,6 @@
       <table
         mat-table
         [dataSource]="dataSource"
-        matTableExporter
-        #exporter="matTableExporter"
         [class.table-mobile]="mobileQuery.matches"
       >
         <ng-container matColumnDef="apellido">
@@ -475,9 +473,9 @@
       </mat-paginator>
     </div>
     <div [hidden]="!estudiantes">
-      <button mat-button (click)="exporter.exportTable('xlsx', {fileName:'Calificaciones', Props: {Author: this.servicioEstudianteAutenticacion.getUsuarioAutenticado()}})">
+      <!-- <button mat-button (click)="exporter.exportTable('xlsx', {fileName:'Calificaciones', Props: {Author: this.servicioEstudianteAutenticacion.getUsuarioAutenticado()}})">
         EXPORTAR
-      </button>
+      </button> -->
     </div>
     <div class="div-button">
       <button mat-raised-button class="button-warn" (click)="onCancelar()">

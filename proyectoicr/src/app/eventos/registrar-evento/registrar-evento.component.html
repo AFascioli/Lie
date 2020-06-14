@@ -50,42 +50,38 @@
       <mat-form-field class="mat-form-hora">
         <div class="hora">
           <input
-            [name]="horaInicioSeleccionada"
-            ngModel
-            #horaInicioSeleccionada="ngModel"
-            matInput
-            [(ngModel)]="horaInicio"
-            [ngxTimepicker]="picker1"
-            [format]="24"
-            min="07:30"
-            readonly
-            required
-          />
-          <ngx-material-timepicker
-            [minutesGap]="15"
-            #picker1
-          ></ngx-material-timepicker>
+              name="nombreInicio"
+              [(ngModel)]="horaInicioEvento"
+              matInput
+              [ngxTimepicker]="picker1"
+              [format]="24"
+              placeholder="Hora inicio de evento"
+              readonly
+              required
+            />
+            <ngx-material-timepicker
+              [minutesGap]="15"
+              #picker1
+            ></ngx-material-timepicker>
         </div>
       </mat-form-field>
       &nbsp;
       <mat-form-field class="mat-form-hora">
         <div class="hora">
           <input
-            [name]="horaFinSeleccionada"
-            ngModel
-            #horaFinSeleccionada="ngModel"
-            [(ngModel)]="horaFin"
-            matInput
-            [ngxTimepicker]="picker2"
-            [format]="24"
-            min="07:30"
-            readonly
-            required
-          />
-          <ngx-material-timepicker
-            [minutesGap]="15"
-            #picker2
-          ></ngx-material-timepicker>
+              name="nombreFin"
+              [(ngModel)]="horaFinEvento"
+              matInput
+              [ngxTimepicker]="picker2"
+              [format]="24"
+              placeholder="Hora fin de evento"
+              readonly
+              required
+            />
+            <ngx-material-timepicker
+              [minutesGap]="15"
+              #picker2
+            ></ngx-material-timepicker>
         </div>
       </mat-form-field>
     </div>

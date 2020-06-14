@@ -117,7 +117,7 @@ export class CalificacionesService {
       calificacion: calificacion
     };
     return this.http.post<{ message: string; exito: boolean }>(
-      environment.apiUrl + "/calificacion/registrarCalificacionExamen",
+      environment.apiUrl + "/calificacion/examen",
       datosExamen
     );
   }

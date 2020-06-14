@@ -56,14 +56,19 @@
         >
           <div class="hora">
             <input
+              name="nombreInicio"
+              [(ngModel)]="horaInicioEvento"
               matInput
-              name="horaInicio"
-              ngModel
-              #horaInicio="ngModel"
-              placeholder="Hora inicio *"
-              id="pickerInicio"
-              [(ngModel)]="evento.horaInicio"
+              [ngxTimepicker]="picker1"
+              [format]="24"
+              [value]="horaInicioEvento"
+              placeholder="Hora inicio de evento"
+              readonly
+              required
             />
+            <ngx-material-timepicker
+              #picker1
+            ></ngx-material-timepicker>
           </div>
         </mat-form-field>
         &nbsp;
@@ -73,14 +78,19 @@
         >
           <div class="hora">
             <input
+              name="nombreFin"
+              [(ngModel)]="horaFinEvento"
               matInput
-              name="horaFin"
-              ngModel
-              #horaFin="ngModel"
-              placeholder="Hora fin *"
-              id="pickerFin"
-              [(ngModel)]="evento.horaFin"
+              [ngxTimepicker]="picker2"
+              [format]="24"
+              [value]="horaFinEvento"
+              placeholder="Hora fin de evento"
+              readonly
+              required
             />
+            <ngx-material-timepicker
+              #picker2
+            ></ngx-material-timepicker>
           </div>
         </mat-form-field>
       </div>

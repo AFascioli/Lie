@@ -63,6 +63,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    console.log('Bucket apuntando a localhost');
     this.fechaActual = new Date();
     this.servicioEvento
       .obtenerEvento()
@@ -72,6 +73,7 @@ export class HomeComponent implements OnInit, OnDestroy {
         this.eventos.sort((a, b) => this.compareFechaEventos(a, b));
         this.isLoading = false;
       });
+      console.log(navigator);
     if ("serviceWorker" in navigator) {
       navigator.serviceWorker.register("ngsw-worker.js").then((swreg) => {
         if (swreg.active) {
