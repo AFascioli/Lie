@@ -5,7 +5,7 @@ import { MatSnackBar } from "@angular/material";
 import { MatDialog } from "@angular/material";
 import { takeUntil } from "rxjs/operators";
 import { Subject } from "rxjs";
-import { NgForm } from '@angular/forms';
+import { NgForm } from "@angular/forms";
 
 @Component({
   selector: "app-justificacion-inasistencia",
@@ -59,16 +59,15 @@ export class JustificacionInasistenciaComponent implements OnInit, OnDestroy {
   }
 
   //Se fija si el usuario hizo cambios en la interfaz
-  huboCambios(){
-    for(const inasistencia of this.ultimasInasistencias){
-      console.log(inasistencia.justificado);
-      if(inasistencia.justificado) return true;
-    };
+  huboCambios() {
+    for (const inasistencia of this.ultimasInasistencias) {
+      if (inasistencia.justificado) return true;
+    }
     return false;
   }
 
   justificarInasistencia() {
-    if(this.huboCambios()){
+    if (this.huboCambios()) {
       this.servicioAsistencia
         .justificarInasistencia(this.ultimasInasistencias)
         .pipe(takeUntil(this.unsubscribe))
@@ -92,11 +91,15 @@ export class JustificacionInasistenciaComponent implements OnInit, OnDestroy {
             );
           }
         );
-    }else{
-      this.snackBar.open("No se seleccionó ninguna inasistencia para justificar", "", {
-        panelClass: ["snack-bar-fracaso"],
-        duration: 4500,
-      });
+    } else {
+      this.snackBar.open(
+        "No se seleccionó ninguna inasistencia para justificar",
+        "",
+        {
+          panelClass: ["snack-bar-fracaso"],
+          duration: 4500,
+        }
+      );
     }
   }
 

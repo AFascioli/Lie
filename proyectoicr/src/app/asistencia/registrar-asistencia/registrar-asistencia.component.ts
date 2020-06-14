@@ -24,6 +24,7 @@ export class RegistrarAsistenciaComponent implements OnInit, OnDestroy {
   fueraPeriodoCicloLectivo = false;
   isLoading = true;
   private unsubscribe: Subject<void> = new Subject();
+  isLoadingStudents: boolean = true;
 
   constructor(
     private servicioEstudiante: EstudiantesService,
@@ -60,17 +61,17 @@ export class RegistrarAsistenciaComponent implements OnInit, OnDestroy {
         .subscribe((response) => {
           this.cursos = response.cursos;
           this.cursos.sort((a, b) =>
-          a.nombre.charAt(0) > b.nombre.charAt(0)
-            ? 1
-            : b.nombre.charAt(0) > a.nombre.charAt(0)
-            ? -1
-            : 0
-        );
-          this.isLoading=false;
+            a.nombre.charAt(0) > b.nombre.charAt(0)
+              ? 1
+              : b.nombre.charAt(0) > a.nombre.charAt(0)
+              ? -1
+              : 0
+          );
+          this.isLoading = false;
         });
     } else {
       this.fueraPeriodoCicloLectivo = true;
-      this.isLoading=false;
+      this.isLoading = false;
     }
   }
 
@@ -98,13 +99,14 @@ export class RegistrarAsistenciaComponent implements OnInit, OnDestroy {
       .subscribe(
         (respuesta) => {
           this.asistenciaNueva = respuesta.asistenciaNueva;
-          if(respuesta.estudiantes.length!=0){
+          if (respuesta.estudiantes.length != 0) {
             this.estudiantesXDivision = respuesta.estudiantes.sort((a, b) =>
               a.apellido > b.apellido ? 1 : b.apellido > a.apellido ? -1 : 0
             );
-          }else{
-            this.estudiantesXDivision =[];
+          } else {
+            this.estudiantesXDivision = [];
           }
+          this.isLoadingStudents = false;
         },
         (error) => {
           console.error(

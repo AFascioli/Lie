@@ -5,7 +5,7 @@ import { environment } from "src/environments/environment";
 import { EstudiantesService } from "../estudiantes/estudiante.service";
 
 @Injectable({
-  providedIn: "root"
+  providedIn: "root",
 })
 export class AsistenciaService {
   estudianteSeleccionado: Estudiante;
@@ -27,7 +27,7 @@ export class AsistenciaService {
   public justificarInasistencia(ultimasInasistencias: any[]) {
     let datosInasistencia = {
       ultimasInasistencias: ultimasInasistencias,
-      idEstudiante: this.estudianteSeleccionado._id
+      idEstudiante: this.estudianteSeleccionado._id,
     };
     return this.http.post<{ message: string; exito: boolean }>(
       environment.apiUrl + "/asistencia/inasistencia/justificada",
@@ -47,7 +47,7 @@ export class AsistenciaService {
       contadorInasistenciasInjustificada: number;
       contadorInasistenciasJustificada: number;
     }>(environment.apiUrl + "/asistencia/asistenciaEstudiante", {
-      params: params
+      params: params,
     });
   }
   //Obtiene las ultimas 5 inasistencias de un estudiante determinado
@@ -62,7 +62,7 @@ export class AsistenciaService {
       exito: boolean;
       inasistencias: any[];
     }>(environment.apiUrl + "/asistencia/inasistencias", {
-      params: params
+      params: params,
     });
   }
   //Registra la asistencia diaria de todos los estudiantes de un curso en la base de datos
@@ -85,7 +85,7 @@ export class AsistenciaService {
   public registrarLlegadaTarde(antes8am) {
     let datosLlegadaTarde = {
       antes8am: antes8am,
-      idEstudiante: this.estudianteSeleccionado._id
+      idEstudiante: this.estudianteSeleccionado._id,
     };
     return this.http.post<{ message: string; exito: boolean }>(
       environment.apiUrl + "/asistencia/llegadaTarde",
@@ -97,10 +97,18 @@ export class AsistenciaService {
   //@params: booleano: si es true el estudiante se retiró antes de las 10 am
   //@params: id del estudiante
   //@params:
-  public registrarRetiroAnticipado(idEstudiante: string, antes10am: Boolean, tutoresSeleccionados: Array<any>) {
+  public registrarRetiroAnticipado(
+    idEstudiante: string,
+    antes10am: Boolean,
+    tutoresSeleccionados: Array<any>
+  ) {
     return this.http.post<{ message: string; exito: string }>(
       environment.apiUrl + "/asistencia/retiro",
-      { idEstudiante: idEstudiante, antes10am: antes10am, tutoresSeleccionados: tutoresSeleccionados }
+      {
+        idEstudiante: idEstudiante,
+        antes10am: antes10am,
+        tutoresSeleccionados: tutoresSeleccionados,
+      }
     );
   }
 }

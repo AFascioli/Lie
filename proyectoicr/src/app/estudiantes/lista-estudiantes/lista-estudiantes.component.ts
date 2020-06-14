@@ -65,7 +65,7 @@ export class ListaEstudiantesComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     if ((this.servicio.retornoDesdeAcciones = false)) {
-      this.isLoading = true;
+      this.isLoading = false;
     } else {
       this.servicio
         .getEstudiantesListener()
@@ -88,7 +88,7 @@ export class ListaEstudiantesComponent implements OnInit, OnDestroy {
                     .subscribe((response) => {
                       this.materiasPendientes.push(
                         response.materiasDesaprobadas.length > 0
-                        );
+                      );
                     });
                 }
               });

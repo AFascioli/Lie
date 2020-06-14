@@ -99,195 +99,153 @@
               <p class="usuario">{{ usuario }}</p>
             </div>
           </div>
-          <!-- <mat-expansion-panel class="opcion"> -->
-          <!-- <mat-expansion-panel-header> -->
-          <!-- <mat-panel-title> -->
-          <!-- <a mat-list-item> -->
-          <!-- <mat-icon>wc</mat-icon> -->
-          <!-- <p class="titulo-expansion">Cursos</b> -->
-          <!-- </a> -->
-          <!-- </mat-panel-title> -->
-          <!-- </mat-expansion-panel-header> -->
-          <a
-            mat-list-item
-            class="sinExpansion"
-            routerLink="/definirAgenda"
-            *ngIf="permisos.agendaCursos > 1"
-            (click)="cerrarMenuLateral(sideNav)"
-          >
-            <mat-icon class="iconSinExpansion" svgIcon="agenda"></mat-icon>
-            <p class="titulo-expansion">Definir agenda de curso</p>
-          </a>
-          <mat-divider *ngIf="permisos.agendaCursos > 1"></mat-divider>
-          <a
-            mat-list-item
-            class="sinExpansion"
-            routerLink="/visualizarAgenda"
-            *ngIf="permisos.agendaCursos > 1"
-            (click)="cerrarMenuLateral(sideNav)"
-          >
-            <mat-icon class="iconSinExpansion">view_module</mat-icon>
-            <p class="titulo-expansion">Visualizar agenda de curso</p>
-          </a>
-          <mat-divider *ngIf="permisos.agendaCursos > 1"></mat-divider>
-          <a
-            mat-list-item
-            class="sinExpansion"
-            routerLink="/asistencia"
-            *ngIf="permisos.asistencia > 1"
-            (click)="cerrarMenuLateral(sideNav)"
-          >
-            <mat-icon class="iconSinExpansion" svgIcon="asistencia"></mat-icon>
-            <p class="titulo-expansion">Registrar asistencia</p>
-          </a>
-          <mat-divider
-            *ngIf="permisos.asistencia > 1 && permisos.cuotas > 1"
-          ></mat-divider>
-          <a
-            mat-list-item
-            class="sinExpansion"
-            routerLink="/registrarCuotas"
-            *ngIf="permisos.cuotas > 1"
-            (click)="cerrarMenuLateral(sideNav)"
-          >
-            <mat-icon class="iconSinExpansion" svgIcon="pagoCuota"></mat-icon>
-            <p class="titulo-expansion">Registrar pago de cuotas</p>
-          </a>
-          <mat-divider
-            *ngIf="permisos.cuotas > 1 && permisos.inscribirEstudiante > 1"
-          ></mat-divider>
-          <a
-            mat-list-item
-            class="sinExpansion"
-            routerLink="/documentosEstudiante"
-            *ngIf="permisos.inscribirEstudiante > 1"
-            (click)="cerrarMenuLateral(sideNav)"
-          >
-            <mat-icon class="iconSinExpansion" svgIcon="inscripcion"></mat-icon>
-            <p class="titulo-expansion">Registrar documentos de inscripción</p>
-          </a>
-          <mat-divider
-            *ngIf="permisos.inscribirEstudiante > 1 && permisos.notas >= 1"
-          ></mat-divider>
-          <a
-            mat-list-item
-            class="sinExpansion"
-            routerLink="/calificacionesEstudiantes"
-            *ngIf="permisos.notas > 1"
-            (click)="cerrarMenuLateral(sideNav)"
-          >
-            <mat-icon
-              class="iconSinExpansion"
-              svgIcon="calificacion"
-            ></mat-icon>
-            <p class="titulo-expansion">Registrar calificaciones</p>
-          </a>
-          <a
-            mat-list-item
-            class="sinExpansion"
-            routerLink="/calificacionesEstudiantes"
-            *ngIf="permisos.notas == 1"
-            (click)="cerrarMenuLateral(sideNav)"
-          >
-            <mat-icon class="iconSinExpansion" svgIcon="check"></mat-icon>
-            <p class="titulo-expansion">Visualizar calificaciones</p>
-          </a>
-          <!-- </mat-expansion-panel> -->
-          <!-- <mat-expansion-panel class="opcion"> -->
-          <!-- (opened)="panelOpenState = true"
-            (closed)="panelOpenState = false" -->
-          <!-- <mat-expansion-panel-header> -->
-          <!-- <mat-panel-title> -->
-          <!-- <a mat-list-item> -->
-          <!-- <mat-icon>school</mat-icon> -->
-          <!-- <p class="titulo-expansion">Estudiantes</b> -->
-          <!-- </a> -->
-          <!-- </mat-panel-title> -->
-          <!-- </mat-expansion-panel-header> -->
-          <a
-            mat-list-item
-            class="sinExpansion"
-            routerLink="/alta"
-            *ngIf="permisos.inscribirEstudiante > 1"
-            (click)="cerrarMenuLateral(sideNav)"
-          >
-            <mat-icon class="iconSinExpansion" svgIcon="addStudent"></mat-icon>
-            <p class="titulo-expansion">Registrar Estudiante</p>
-          </a>
-          <mat-divider *ngIf="permisos.inscribirEstudiante > 1"></mat-divider>
-          <a
-            mat-list-item
-            class="sinExpansion"
-            routerLink="/buscar"
-            (click)="cerrarMenuLateral(sideNav)"
-          >
-            <mat-icon class="iconSinExpansion" svgIcon="findStudent"></mat-icon>
-            <p class="titulo-expansion">Buscar Estudiante</p>
-          </a>
-          <!-- </mat-expansion-panel> -->
-          <!-- <mat-expansion-panel class="opcion">
-            <mat-expansion-panel-header>
-              <mat-panel-title>
-                <a mat-list-item ng-Focus="onSelected(this)">
-                  <mat-icon>event</mat-icon>
-                  <p class="titulo-expansion">Eventos</b>
-                </a>
-              </mat-panel-title>
-            </mat-expansion-panel-header>
+          <mat-spinner
+            *ngIf="isLoading"
+            class="spinner"
+            [diameter]="60"
+          ></mat-spinner>
+
+          <div *ngIf="!isLoading">
             <a
               mat-list-item
-              class="opciones-expansion"
+              class="sinExpansion"
+              routerLink="/definirAgenda"
+              *ngIf="permisos.agendaCursos > 1"
+              (click)="cerrarMenuLateral(sideNav)"
+            >
+              <mat-icon class="iconSinExpansion" svgIcon="agenda"></mat-icon>
+              <p class="titulo-expansion">Definir agenda de curso</p>
+            </a>
+            <mat-divider *ngIf="permisos.agendaCursos > 1"></mat-divider>
+            <a
+              mat-list-item
+              class="sinExpansion"
+              routerLink="/visualizarAgenda"
+              *ngIf="permisos.agendaCursos > 1"
+              (click)="cerrarMenuLateral(sideNav)"
+            >
+              <mat-icon class="iconSinExpansion">view_module</mat-icon>
+              <p class="titulo-expansion">Visualizar agenda de curso</p>
+            </a>
+            <mat-divider *ngIf="permisos.agendaCursos > 1"></mat-divider>
+            <a
+              mat-list-item
+              class="sinExpansion"
+              routerLink="/asistencia"
+              *ngIf="permisos.asistencia > 1"
+              (click)="cerrarMenuLateral(sideNav)"
+            >
+              <mat-icon
+                class="iconSinExpansion"
+                svgIcon="asistencia"
+              ></mat-icon>
+              <p class="titulo-expansion">Registrar asistencia</p>
+            </a>
+            <mat-divider
+              *ngIf="permisos.asistencia > 1 && permisos.cuotas > 1"
+            ></mat-divider>
+            <a
+              mat-list-item
+              class="sinExpansion"
+              routerLink="/registrarCuotas"
+              *ngIf="permisos.cuotas > 1"
+              (click)="cerrarMenuLateral(sideNav)"
+            >
+              <mat-icon class="iconSinExpansion" svgIcon="pagoCuota"></mat-icon>
+              <p class="titulo-expansion">Registrar pago de cuotas</p>
+            </a>
+            <mat-divider
+              *ngIf="permisos.cuotas > 1 && permisos.inscribirEstudiante > 1"
+            ></mat-divider>
+            <a
+              mat-list-item
+              class="sinExpansion"
+              routerLink="/documentosEstudiante"
+              *ngIf="permisos.inscribirEstudiante > 1"
+              (click)="cerrarMenuLateral(sideNav)"
+            >
+              <mat-icon
+                class="iconSinExpansion"
+                svgIcon="inscripcion"
+              ></mat-icon>
+              <p class="titulo-expansion">
+                Registrar documentos de inscripción
+              </p>
+            </a>
+            <mat-divider
+              *ngIf="permisos.inscribirEstudiante > 1 && permisos.notas >= 1"
+            ></mat-divider>
+            <a
+              mat-list-item
+              class="sinExpansion"
+              routerLink="/calificacionesEstudiantes"
+              *ngIf="permisos.notas > 1"
+              (click)="cerrarMenuLateral(sideNav)"
+            >
+              <mat-icon
+                class="iconSinExpansion"
+                svgIcon="calificacion"
+              ></mat-icon>
+              <p class="titulo-expansion">Registrar calificaciones</p>
+            </a>
+            <a
+              mat-list-item
+              class="sinExpansion"
+              routerLink="/calificacionesEstudiantes"
+              *ngIf="permisos.notas == 1"
+              (click)="cerrarMenuLateral(sideNav)"
+            >
+              <mat-icon class="iconSinExpansion" svgIcon="check"></mat-icon>
+              <p class="titulo-expansion">Visualizar calificaciones</p>
+            </a>
+            <a
+              mat-list-item
+              class="sinExpansion"
+              routerLink="/alta"
+              *ngIf="permisos.inscribirEstudiante > 1"
+              (click)="cerrarMenuLateral(sideNav)"
+            >
+              <mat-icon
+                class="iconSinExpansion"
+                svgIcon="addStudent"
+              ></mat-icon>
+              <p class="titulo-expansion">Registrar estudiante</p>
+            </a>
+            <mat-divider *ngIf="permisos.inscribirEstudiante > 1"></mat-divider>
+            <a
+              mat-list-item
+              class="sinExpansion"
+              routerLink="/buscar"
+              (click)="cerrarMenuLateral(sideNav)"
+            >
+              <mat-icon
+                class="iconSinExpansion"
+                svgIcon="findStudent"
+              ></mat-icon>
+              <p class="titulo-expansion">Buscar estudiante</p>
+            </a>
+            <a
+              class="sinExpansion"
               routerLink="/registrarEvento"
               *ngIf="permisos.eventos > 1"
               (click)="cerrarMenuLateral(sideNav)"
-            >
-              Registrar
-            </a>
-          </mat-expansion-panel> -->
-          <!-- <mat-expansion-panel
-            class="opcion"
-            *ngIf="permisos.registrarEmpleado >= 1"
-          >
-            <mat-expansion-panel-header>
-              <mat-panel-title>
-                <a mat-list-item>
-                  <mat-icon>person</mat-icon>
-                  <p class="titulo-expansion">Personal</b>
-                </a>
-              </mat-panel-title>
-            </mat-expansion-panel-header>
-            <a
               mat-list-item
-              class="opciones-expansion"
+              ng-Focus="onSelected(this)"
+            >
+              <mat-icon class="iconSinExpansion">event</mat-icon>
+              <p class="titulo-expansion">Registrar evento</p>
+            </a>
+            <a
+              class="sinExpansion"
+              *ngIf="permisos.registrarEmpleado >= 1"
+              mat-list-item
               routerLink="/altaEmpleado"
               (click)="cerrarMenuLateral(sideNav)"
             >
-              Registrar
+              <mat-icon class="iconSinExpansion">person_add</mat-icon>
+              <p class="titulo-expansion">Registrar personal</p>
             </a>
-          </mat-expansion-panel> -->
-          <a
-            class="sinExpansion"
-            routerLink="/registrarEvento"
-            *ngIf="permisos.eventos > 1"
-            (click)="cerrarMenuLateral(sideNav)"
-            mat-list-item
-            ng-Focus="onSelected(this)"
-          >
-            <mat-icon class="iconSinExpansion">event</mat-icon>
-            <p class="titulo-expansion">Registrar Eventos</p>
-          </a>
-          <a
-            class="sinExpansion"
-            *ngIf="permisos.registrarEmpleado >= 1"
-            mat-list-item
-            routerLink="/altaEmpleado"
-            (click)="cerrarMenuLateral(sideNav)"
-          >
-            <mat-icon class="iconSinExpansion">person_add</mat-icon>
-            <p class="titulo-expansion">Registrar Personal</p>
-          </a>
-          <!-- </mat-panel-title>
-          </mat-expansion-panel-header> -->
+          </div>
         </mat-accordion>
       </mat-nav-list>
     </mat-sidenav>

@@ -8,6 +8,8 @@ import { environment } from "src/environments/environment";
 })
 export class CalificacionesService {
   estudianteSeleccionado: Estudiante;
+  auxCambios=false;
+  avisoResult=false;
 
   constructor(public http: HttpClient) {}
 

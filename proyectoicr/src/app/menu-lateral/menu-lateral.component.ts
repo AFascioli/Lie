@@ -45,6 +45,7 @@ export class MenuLateralComponent implements OnInit, OnDestroy {
   };
   _mobileQueryListener: () => void;
   mobileQuery: MediaQueryList;
+  isLoading: boolean = true;
 
   //Basicamente tenemos comportamiento que se fija si el display es menor a 600 px o no
   constructor(
@@ -61,35 +62,47 @@ export class MenuLateralComponent implements OnInit, OnDestroy {
     this._mobileQueryListener = () => changeDetectorRef.detectChanges();
     this.mobileQuery.addListener(this._mobileQueryListener);
     this.matIconRegistry.addSvgIcon(
-      'agenda',
+      "agenda",
       this.domSanitizer.bypassSecurityTrustResourceUrl("../assets/agenda.svg")
     );
     this.matIconRegistry.addSvgIcon(
-      'addStudent',
-      this.domSanitizer.bypassSecurityTrustResourceUrl("../assets/addStudent.svg")
+      "addStudent",
+      this.domSanitizer.bypassSecurityTrustResourceUrl(
+        "../assets/addStudent.svg"
+      )
     );
     this.matIconRegistry.addSvgIcon(
-      'pagoCuota',
-      this.domSanitizer.bypassSecurityTrustResourceUrl("../assets/pagoCuota.svg")
+      "pagoCuota",
+      this.domSanitizer.bypassSecurityTrustResourceUrl(
+        "../assets/pagoCuota.svg"
+      )
     );
     this.matIconRegistry.addSvgIcon(
-      'calificacion',
-      this.domSanitizer.bypassSecurityTrustResourceUrl("../assets/calificacion.svg")
+      "calificacion",
+      this.domSanitizer.bypassSecurityTrustResourceUrl(
+        "../assets/calificacion.svg"
+      )
     );
     this.matIconRegistry.addSvgIcon(
-      'asistencia',
-      this.domSanitizer.bypassSecurityTrustResourceUrl("../assets/asistencia.svg")
+      "asistencia",
+      this.domSanitizer.bypassSecurityTrustResourceUrl(
+        "../assets/asistencia.svg"
+      )
     );
     this.matIconRegistry.addSvgIcon(
-      'findStudent',
-      this.domSanitizer.bypassSecurityTrustResourceUrl("../assets/findStudent.svg")
+      "findStudent",
+      this.domSanitizer.bypassSecurityTrustResourceUrl(
+        "../assets/findStudent.svg"
+      )
     );
     this.matIconRegistry.addSvgIcon(
-      'inscripcion',
-      this.domSanitizer.bypassSecurityTrustResourceUrl("../assets/inscripcion.svg")
+      "inscripcion",
+      this.domSanitizer.bypassSecurityTrustResourceUrl(
+        "../assets/inscripcion.svg"
+      )
     );
     this.matIconRegistry.addSvgIcon(
-      'check',
+      "check",
       this.domSanitizer.bypassSecurityTrustResourceUrl("../assets/check.svg")
     );
   }
@@ -112,6 +125,7 @@ export class MenuLateralComponent implements OnInit, OnDestroy {
 
     this.rol = this.authService.getRol();
     this.usuario = this.authService.getUsuarioAutenticado();
+    this.isLoading = false;
   }
 
   onClickHome() {
@@ -124,7 +138,7 @@ export class MenuLateralComponent implements OnInit, OnDestroy {
     });
 
     popup.afterClosed().subscribe((resultado) => {
-      if(resultado){
+      if (resultado) {
         this.authService.logout();
         this.router.navigate(["./login"]);
       }
@@ -145,9 +159,7 @@ export class MenuLateralComponent implements OnInit, OnDestroy {
   styleUrls: ["./menu-lateral.component.css"],
 })
 export class CerrarSesionPopupComponent {
-  constructor(
-    public dialogRef: MatDialogRef<CerrarSesionPopupComponent>
-  ) {}
+  constructor(public dialogRef: MatDialogRef<CerrarSesionPopupComponent>) {}
 
   onYesClick(): void {
     this.dialogRef.close(true);

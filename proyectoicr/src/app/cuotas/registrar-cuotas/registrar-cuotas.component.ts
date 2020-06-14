@@ -23,12 +23,10 @@ export class RegistrarCuotasComponent implements OnInit, OnDestroy {
 
   mesSeleccionado: any;
   fechaActual: Date;
-  fueraPeriodoCicloLectivo: Boolean=false;
+  fueraPeriodoCicloLectivo: Boolean = false;
   cursos: any[];
   cursoEstudiante: any;
   meses: string[] = [
-    "Enero",
-    "Febrero",
     "Marzo",
     "Abril",
     "Mayo",
@@ -38,12 +36,11 @@ export class RegistrarCuotasComponent implements OnInit, OnDestroy {
     "Septiembre",
     "Octubre",
     "Noviembre",
-    "Diciembre",
   ];
   cursoNotSelected: Boolean = true;
   cuotasXEstudiante: any[] = [];
   displayedColumns: string[] = ["apellido", "nombre", "accion"];
-  isLoading: Boolean =false;
+  isLoading: Boolean = false;
   private unsubscribe: Subject<void> = new Subject();
 
   ngOnInit() {
@@ -64,10 +61,12 @@ export class RegistrarCuotasComponent implements OnInit, OnDestroy {
     }
 
     if (
-      !(this.fechaActualEnCicloLectivo() ||
-      this.autenticacionService.getRol() == "Admin")
+      !(
+        this.fechaActualEnCicloLectivo() ||
+        this.autenticacionService.getRol() == "Admin"
+      )
     ) {
-       this.fueraPeriodoCicloLectivo = true;
+      this.fueraPeriodoCicloLectivo = true;
     }
   }
 
@@ -86,19 +85,18 @@ export class RegistrarCuotasComponent implements OnInit, OnDestroy {
         break;
       }
     }
-    this.isLoading=true;
     this.cuotasService
-      .obtenerEstadoCuotasDeCurso(curso.value, nroMes)
+      .obtenerEstadoCuotasDeCurso(curso.value, nroMes + 2)
       .pipe(takeUntil(this.unsubscribe))
-      .subscribe(rtdo => {
-        if(rtdo.cuotasXEstudiante.length!=0){
+      .subscribe((rtdo) => {
+        if (rtdo.cuotasXEstudiante.length != 0) {
           this.cuotasXEstudiante = rtdo.cuotasXEstudiante.sort((a, b) =>
             a.apellido > b.apellido ? 1 : b.apellido > a.apellido ? -1 : 0
           );
-        }else{
+        } else {
           this.cuotasXEstudiante = [];
         }
-        this.isLoading=false;
+        this.isLoading = false;
         this.cursoNotSelected = false;
       });
   }
@@ -138,13 +136,13 @@ export class RegistrarCuotasComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.unsubscribe))
       .subscribe((response) => {
         this.cursos = response.cursos;
-        this.cursos.sort((a, b) =>
-          a.nombre.charAt(0) > b.nombre.charAt(0)
-            ? 1
-            : b.nombre.charAt(0) > a.nombre.charAt(0)
-            ? -1
-            : 0
-        );
+        // this.cursos.sort((a, b) =>
+        //   a.nombre.charAt(0) > b.nombre.charAt(0)
+        //     ? 1
+        //     : b.nombre.charAt(0) > a.nombre.charAt(0)
+        //     ? -1
+        //     : 0
+        // );
       });
     this.cursoEstudiante = "";
   }
@@ -156,12 +154,12 @@ export class RegistrarCuotasComponent implements OnInit, OnDestroy {
         cuotasCambiadas.push(cuota);
       }
     });
-    this.isLoading=true;
+    //this.isLoading = true;
     this.cuotasService
       .publicarEstadoCuotasDeCurso(cuotasCambiadas)
       .pipe(takeUntil(this.unsubscribe))
       .subscribe((rtdo) => {
-        this.isLoading=false;
+        this.isLoading = false;
         if (cuotasCambiadas.length == 0) {
           this.snackBar.open(
             "No se ha realizado ninguna modificación en las cuotas",

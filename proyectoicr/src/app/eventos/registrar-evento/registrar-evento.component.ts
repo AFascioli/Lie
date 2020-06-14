@@ -40,7 +40,21 @@ export class RegistrarEventoComponent implements OnInit, OnDestroy {
   chipsCtrl = new FormControl();
   filteredChips: Observable<string[]>;
   chips: string[] = [];
-  allChips: string[] = ["1A","1B", "2A","2B", "3A","3B", "4A","4B", "5A","5B", "6A","6B", "Todos los cursos"];
+  allChips: string[] = [
+    "1A",
+    "1B",
+    "2A",
+    "2B",
+    "3A",
+    "3B",
+    "4A",
+    "4B",
+    "5A",
+    "5B",
+    "6A",
+    "6B",
+    "Todos los cursos",
+  ];
   horaInicio = "";
   horaFin = "";
 
@@ -61,7 +75,7 @@ export class RegistrarEventoComponent implements OnInit, OnDestroy {
     public changeDetectorRef: ChangeDetectorRef,
     public media: MediaMatcher
   ) {
-    this.mobileQuery = media.matchMedia("(max-width: 800px)"); //Estaba en 800, lo tiro a 1000
+    this.mobileQuery = media.matchMedia("(max-width: 800px)");
     this._mobileQueryListener = () => changeDetectorRef.detectChanges();
     this.mobileQuery.addListener(this._mobileQueryListener);
     this.filtrarChips();
@@ -69,7 +83,6 @@ export class RegistrarEventoComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.fechaActual = new Date();
-    this.inicializarPickers();
   }
 
   registrarEvento(fechaEvento, form) {
@@ -155,7 +168,6 @@ export class RegistrarEventoComponent implements OnInit, OnDestroy {
 
       if ((value || "").trim()) {
         if (this.allChips.includes(value)) this.chips.push(value.trim());
-
       }
 
       if (input) {
@@ -164,7 +176,6 @@ export class RegistrarEventoComponent implements OnInit, OnDestroy {
 
       this.chipsCtrl.setValue(null);
     }
-
   }
 
   remove(chip: string): void {
@@ -177,7 +188,7 @@ export class RegistrarEventoComponent implements OnInit, OnDestroy {
 
   //Agregado que cuando se selecciona una opcion, el input pierde focus para
   //que sea mas facil que el usuario pueda elegir otra
-  selected(event: MatAutocompleteSelectedEvent,chipsInput: HTMLElement): void {
+  selected(event: MatAutocompleteSelectedEvent, chipsInput: HTMLElement): void {
     if (event.option.viewValue == "Todos los cursos") {
       this.chips = [];
       this.chips.push(event.option.viewValue);
@@ -250,7 +261,7 @@ export class RegistrarEventoComponent implements OnInit, OnDestroy {
 
   onEliminarImagen(index) {
     this.imgURL.splice(index, 1);
-    this.imagesFile.splice(index,1);
+    this.imagesFile.splice(index, 1);
     this.moveFromCurrentSlide(1);
   }
 

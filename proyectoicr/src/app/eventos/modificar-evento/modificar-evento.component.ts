@@ -38,6 +38,7 @@ export class ModificarEventoComponent implements OnInit, OnDestroy {
   fechaActual: Date;
   imagesFile: any = [];
   imagenesCargadas: any[] = [];
+  filenamesBorrados: any[] = [];
   message: string;
   selectable = true;
   removable = true;
@@ -186,9 +187,7 @@ export class ModificarEventoComponent implements OnInit, OnDestroy {
       (imagenCargada.resized && imagenCargada.resized.dataURL) ||
         imagenCargada.dataURL
     );
-    setTimeout(() => {
-      this.showSlide(1);
-    }, 500);
+    this.showSlide(1);
   }
 
   moveFromCurrentSlide(n) {
@@ -197,11 +196,21 @@ export class ModificarEventoComponent implements OnInit, OnDestroy {
   }
 
   onEliminarImagen(index) {
-    if (index > this.evento.filenames.length - 1 && this.imagesFile.length > 0)
+    if (
+      index > this.evento.filenames.length - 1 &&
+      this.imagesFile.length > 0
+    ) {
       this.imagesFile.splice(index - this.evento.filenames.length, 1);
+    } else {
+      this.filenamesBorrados.push(this.evento.filenames[index]);
+    }
     this.imagenesCargadas.splice(index, 1);
     this.evento.filenames.splice(index, 1);
     this.moveFromCurrentSlide(1);
+    this.snackBar.open("Se elimino imagen correctamente", "", {
+      panelClass: ["snack-bar-exito"],
+      duration: 1500,
+    });
   }
 
   showSlide(n) {
@@ -244,7 +253,8 @@ export class ModificarEventoComponent implements OnInit, OnDestroy {
         this.imagesFile,
         this.evento.filenames,
         this.evento._id,
-        this.evento.autor
+        this.evento.autor,
+        this.filenamesBorrados
       )
       .pipe(takeUntil(this.unsubscribe))
       .subscribe((rtdo) => {
@@ -264,30 +274,27 @@ export class ModificarEventoComponent implements OnInit, OnDestroy {
   }
 
   onGuardarEvento(form: NgForm) {
-    console.log(form);
     if (form.valid && this.evento.tags.length != 0) {
-      if(this.evento.horaInicio!="" && this.evento.horaFin!=""){
-        if(this.horaEventoEsValido(this.evento.horaInicio, this.evento.horaFin)){
+      if (this.evento.horaInicio != "" && this.evento.horaFin != "") {
+        if (
+          this.horaEventoEsValido(this.evento.horaInicio, this.evento.horaFin)
+        ) {
           this.modificarEvento();
-        }else{
+        } else {
           this.snackBar.open(
             "La hora de finalización del evento es menor que la hora de inicio",
             "",
             {
               duration: 4500,
-              panelClass: ["snack-bar-fracaso"]
+              panelClass: ["snack-bar-fracaso"],
             }
           );
         }
-      }else{
-        this.snackBar.open(
-          "Faltan campos por completar",
-          "",
-          {
-            duration: 4500,
-            panelClass: ["snack-bar-fracaso"]
-          }
-        );
+      } else {
+        this.snackBar.open("Faltan campos por completar", "", {
+          duration: 4500,
+          panelClass: ["snack-bar-fracaso"],
+        });
       }
     } else {
       this.snackBar.open("Faltan campos por completar", "", {
