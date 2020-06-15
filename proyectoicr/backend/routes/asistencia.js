@@ -333,6 +333,7 @@ validarLibreInasistencias = function (idEst, valorInasistencia) {
         activa: true,
       }).then((inscripcion) => {
         if (
+          inscripcion.contadorInasistenciasInjustificada != 0 &&
           inscripcion.contadorInasistenciasInjustificada % 14 == 0 &&
           valorInasistencia == 1
         ) {
