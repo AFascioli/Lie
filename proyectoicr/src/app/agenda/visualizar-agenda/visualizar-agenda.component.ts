@@ -86,6 +86,7 @@ export class VisualizarAgendaComponent implements OnInit, OnDestroy {
       if (agenda.length != 0) {
         agenda.forEach((materia, index) => {
           this.setInGrid(index.toString(), materia);
+          this.agendaVacia = false;
         });
       } else {
         this.agendaVacia = true;
@@ -134,20 +135,21 @@ export class VisualizarAgendaComponent implements OnInit, OnDestroy {
   }
 
   getColorVector() {
-    this.colores[0] = "#eb9788";
-    this.colores[1] = "#c05c7e";
-    this.colores[2] = "#f3826f";
-    this.colores[3] = "#ffb961";
-    this.colores[4] = "#899857";
-    this.colores[5] = "#ba6b57";
-    this.colores[6] = "#e7b2a5";
-    this.colores[7] = "#6e5773";
-    this.colores[8] = "#f1935c";
-    this.colores[9] = "#627a68";
-    this.colores[10] = "#ce0f3d";
+    this.colores[0] = "#0794DB"; // azul
+    this.colores[1] = "#08AF1C"; // verde
+    this.colores[2] = "#FF5733"; // naranja
+    this.colores[3] = "#DCA801"; // amarillo
+    this.colores[4] = "#900C3F"; // bordo
+    this.colores[5] = "#9003CD"; // morado
+    this.colores[6] = "#03B0A5"; // celeste
+    this.colores[7] = "#383838"; // negro
+    this.colores[8] = "#CE0090"; // rosa
+    this.colores[9] = "#81B002"; // verde mar
+    this.colores[10] = "#CD170B"; // rojo
   }
 
   getMateriasDistintas() {
+    this.materiasDistintas = [];
     for (let i = 0; i < this.materias.length; i++) {
       if (
         this.materiasDistintas.length == 0 ||
