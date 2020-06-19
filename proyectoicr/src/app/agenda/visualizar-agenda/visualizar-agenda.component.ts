@@ -62,15 +62,7 @@ export class VisualizarAgendaComponent implements OnInit, OnDestroy {
         .obtenerAgendaDeCurso(idCurso)
         .pipe(takeUntil(this.unsubscribe))
         .subscribe(async (agenda) => {
-          if (agenda.exito) {
-            this.cursoSelected = true;
-          } else {
-            this.cursoSelected = false;
-            this.snackBar.open(agenda.message, "", {
-              panelClass: ["snack-bar-fracaso"],
-              duration: 3000,
-            });
-          }
+          if (agenda.exito) this.cursoSelected = true;
           this.materias = agenda.agenda;
           this.getMateriasDistintas();
           this.getColorVector();
