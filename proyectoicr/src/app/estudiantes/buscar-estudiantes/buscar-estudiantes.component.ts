@@ -81,6 +81,21 @@ export class BuscarEstudiantesComponent implements OnInit {
     }
   }
 
+  checkLetras(event) {
+    var inputValue = event.which;
+    if (
+      !(
+        (inputValue >= 65 && inputValue <= 122) ||
+        inputValue == 209 ||
+        inputValue == 241
+      ) &&
+      inputValue != 32 &&
+      inputValue != 0
+    ) {
+      event.preventDefault();
+    }
+  }
+
   // Cuando el usuario cambia de opcion de busqueda, deshabilita los inputs segun corresponda
   DeshabilitarInputs(form: NgForm) {
     this.buscarPorNomYAp = !this.buscarPorNomYAp;
