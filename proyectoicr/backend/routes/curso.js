@@ -40,7 +40,7 @@ router.get("/", checkAuthMiddleware, (req, res) => {
     });
 });
 
-notificarSancion = async function (idEstudiante,sancion) {
+notificarSancion = async function (idEstudiante, sancion) {
   titulo = "Nueva sanción.";
   await Estudiante.findById(idEstudiante).then((estudiante) => {
     cuerpo = `Se le ha registrado una nueva sanción (${sancion}) a ${estudiante.apellido} ${estudiante.nombre}.`;
@@ -104,8 +104,7 @@ router.post("/registrarSancion", checkAuthMiddleware, async (req, res) => {
         exito: true,
       });
     });
-  }else{
-
+  } else {
     let modificarSancion = false;
     let indice = 0;
     Inscripcion.findOne({
@@ -137,14 +136,17 @@ router.post("/registrarSancion", checkAuthMiddleware, async (req, res) => {
             },
           }
         )
-          .then(()=>{
-            notificarSancion(req.body.idEstudiante,req.body.tipoSancion.toLowerCase());
+          .then(() => {
+            notificarSancion(
+              req.body.idEstudiante,
+              req.body.tipoSancion.toLowerCase()
+            );
             res.status(200).json({
-              message: "Se ha registrado la sanción del estudiante correctamente",
+              message:
+                "Se ha registrado la sanción del estudiante correctamente",
               exito: true,
-            })
-          }
-          )
+            });
+          })
           .catch(() => {
             res.status(500).json({
               message: "Mensaje de error especifico",
@@ -155,9 +157,13 @@ router.post("/registrarSancion", checkAuthMiddleware, async (req, res) => {
         inscripcion
           .save()
           .then(() => {
-            notificarSancion(req.body.idEstudiante,req.body.tipoSancion.toLowerCase());
+            notificarSancion(
+              req.body.idEstudiante,
+              req.body.tipoSancion.toLowerCase()
+            );
             res.status(200).json({
-              message: "Se ha registrado la sanción del estudiante correctamente",
+              message:
+                "Se ha registrado la sanción del estudiante correctamente",
               exito: true,
             });
           })
@@ -1063,9 +1069,24 @@ router.post("/inscripcion", checkAuthMiddleware, async (req, res) => {
     });
   };
 
+  var aumentarCupo = (idCurso) => {
+    return new Promise((resolve, reject) => {
+      Curso.findByIdAndUpdate(idCurso, { $inc: { capacidad: 1 } })
+        .then(() => {
+          resolve();
+        })
+        .catch(() => {
+          res.status(500).json({
+            message: "No se pudo aumentar el cupo del curso",
+          });
+        });
+    });
+  };
+
   var cursoSeleccionado = await obtenerCurso();
   var estadoInscriptoInscripcion = await obtenerEstadoInscriptoInscripcion();
   var inscripcion = await obtenerInscripcion();
+  var añoActual = await obtenerAñoCicloLectivo();
   let cuotasAnteriores = [];
 
   //Si el estudiante tiene una inscripcion anteriormente, se obtienen las CXM que esten desaprobadas,
@@ -1088,9 +1109,12 @@ router.post("/inscripcion", checkAuthMiddleware, async (req, res) => {
       materiasPendientesNuevas.push(...idsCXMDesaprobadas);
     }
     await inscripcion.save();
+
+    if (añoActual == inscripcion.año) {
+      aumentarCupo(inscripcion.idCurso);
+    }
   }
 
-  var añoActual = await obtenerAñoCicloLectivo();
   var materiasDelCurso = await obtenerMateriasDeCurso(req.body.idCurso);
   var cuotas = [];
   if (cuotasAnteriores.length == 0) {

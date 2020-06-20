@@ -86,13 +86,13 @@ router.post("/login", (req, res) => {
                       duracionToken: 43200,
                       rol: rol.tipo,
                       idPersona: idPersona,
-                      message: "Bienvenido a Lié",
                       exito: true,
                     });
                   })
                   .catch(() => {
                     res.status(500).json({
-                      message: "Mensaje de error especifico",
+                      message: "El docente no esta registrado",
+                      exito: false,
                     });
                   });
               } else {
@@ -101,14 +101,14 @@ router.post("/login", (req, res) => {
                   duracionToken: 43200,
                   rol: rol.tipo,
                   idPersona: usuarioEncontrado._id,
-                  message: "Bienvenido a Lié",
                   exito: true,
                 });
               }
             })
             .catch(() => {
               res.status(500).json({
-                message: "Mensaje de error especifico",
+                message: "El rol asignado al usuario no existe",
+                exito: false,
               });
             });
         }
@@ -116,7 +116,8 @@ router.post("/login", (req, res) => {
     })
     .catch(() => {
       res.status(500).json({
-        message: "Mensaje de error especifico",
+        message: "No hay un usuario registrado con este mail",
+        exito: false,
       });
     });
 });
@@ -303,7 +304,7 @@ router.post("/signup/admin", async (req, res) => {
     if (usuarioExiste) {
       return res.status(200).json({
         message: "Ya existe un usuario con el email ingresado",
-        exito: false
+        exito: false,
       });
     }
     const rol = await Rol.findOne({ tipo: "Admin" });
@@ -325,7 +326,7 @@ router.post("/signup/admin", async (req, res) => {
       message:
         "Ocurrió un error al querer crear el usuario. Detalle: " +
         error.message,
-      exito: false
+      exito: false,
     });
   }
 });
