@@ -1501,7 +1501,7 @@ router.post("/agenda", async (req, res) => {
 
 router.get("/estudiantes/inscripcion", async (req, res) => {
   let numeroCursoPasado;
-  let añoPasado = 2020;
+  let añoPasado = 2020; //#resolve
   await Curso.findById(req.query.idCurso).then((curso) => {
     numeroCursoPasado = parseInt(curso.nombre, 10) - 1;
   });
