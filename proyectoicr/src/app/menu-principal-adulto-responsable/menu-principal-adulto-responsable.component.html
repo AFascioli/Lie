@@ -4,6 +4,9 @@
     style="cursor: pointer;"
     (click)="onEstudianteClick(estudiante.idEstudiante)"
   >
+    <div *ngIf="mostrarTooltip" class="tooltip-lie">
+      Clickea para ver mas detalles!
+    </div>
     <mat-icon class="icon-estudiante">face</mat-icon>
     <p class="nombre-estudiante">
       {{ estudiante.nombre }} {{ estudiante.apellido }}

@@ -6,7 +6,12 @@ import { SwPush } from "@angular/service-worker";
 import { AutenticacionService } from "../login/autenticacionService.service";
 import { Router } from "@angular/router";
 import { Evento } from "../eventos/evento.model";
-import { MatSnackBar, MatDialogRef, MatDialog } from "@angular/material";
+import {
+  MatSnackBar,
+  MatDialogRef,
+  MatDialog,
+  MatTooltip,
+} from "@angular/material";
 import { Subject } from "rxjs";
 import { takeUntil } from "rxjs/operators";
 
@@ -25,6 +30,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   evento: Evento;
   enProcesoDeBorrado: boolean = false;
   isLoading: boolean = true;
+  mostrarTooltip: boolean = true;
 
   constructor(
     public snackBar: MatSnackBar,
@@ -79,6 +85,10 @@ export class HomeComponent implements OnInit, OnDestroy {
         }
       });
     }
+
+    setTimeout(() => {
+      this.mostrarTooltip = false;
+    }, 6010);
   }
 
   //Compara la fecha del evento con la fecha actual para deshabilitar el boton editar

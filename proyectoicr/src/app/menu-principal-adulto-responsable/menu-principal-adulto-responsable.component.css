@@ -102,3 +102,8 @@ time.icon span {
   margin-top: 2%;
   margin-bottom: 0%;
 }
+
+.tooltip-lie {
+  right: 2% !important;
+  top: 7% !important;
+}
