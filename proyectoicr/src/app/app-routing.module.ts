@@ -1,3 +1,4 @@
+import { InscripcionCursoComponent } from './inscripcion/inscripcion-curso/inscripcion-curso.component';
 import { MenuPrincipalAdultoResponsableComponent } from "./menu-principal-adulto-responsable/menu-principal-adulto-responsable.component";
 import { RegistrarSancionesComponent } from "./sanciones/registrar-sanciones/registrar-sanciones.component";
 import { RegistrarCuotasComponent } from "./cuotas/registrar-cuotas/registrar-cuotas.component";
@@ -337,6 +338,18 @@ const routes: Routes = [
           ],
         },
       },
+      {
+        path: "inscripcionCurso",
+        component: InscripcionCursoComponent,
+        canActivate: [RoleGuard],
+        data: {
+          rolesValidos: [
+            "Admin",
+            "Preceptor",
+            "Director",
+          ],
+        },
+      }
     ],
   },
 ];

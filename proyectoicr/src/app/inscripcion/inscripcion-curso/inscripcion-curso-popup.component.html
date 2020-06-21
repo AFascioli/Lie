@@ -1,0 +1,23 @@
+<div>
+  <h3 mat-dialog-title class="titulo-popup">Confirmar</h3>
+  <div mat-dialog-content>
+    <p class="texto-popup">¿Desea confirmar la acción?</p>
+  </div>
+  <div mat-dialog-actions class="button-popup">
+    <button
+      mat-raised-button
+      (click)="onYesConfirmarClick()"
+      cdkFocusInitial
+      class="button-primary"
+    >
+      Sí
+    </button>
+    <button
+      mat-raised-button
+      (click)="onNoCancelarConfirmarClick()"
+      class="button-warn"
+    >
+      No
+    </button>
+  </div>
+</div>

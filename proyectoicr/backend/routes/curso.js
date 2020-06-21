@@ -1622,6 +1622,7 @@ router.get("/estudiantes/inscripcion", async (req, res) => {
       apellido: inscripcion.datosEstudiantes[0].apellido,
       cursoAnterior: inscripcion.datosCurso[0].nombre,
       idInscripcion: inscripcion._id,
+      seleccionado:false
     };
     estudiantesRespuesta.push(estudianteRefinado);
   });
@@ -1633,6 +1634,7 @@ router.get("/estudiantes/inscripcion", async (req, res) => {
       apellido: inscripcion.datosEstudiantes[0].apellido,
       cursoAnterior: inscripcion.datosCurso[0].nombre,
       idInscripcion: inscripcion._id,
+      seleccionado:false
     };
     estudiantesRespuesta.push(estudianteRefinado);
   });
@@ -1644,12 +1646,14 @@ router.get("/estudiantes/inscripcion", async (req, res) => {
       apellido: estudiante.apellido,
       cursoAnterior: "-",
       idInscripcion: null,
+      seleccionado:false //Agregado para facilitar saber quien se debe inscribir
     };
     estudiantesRespuesta.push(estudianteRefinado);
   });
 
   res.status(200).json({
     estudiantes: estudiantesRespuesta,
+    exito:true
   });
 });
 
