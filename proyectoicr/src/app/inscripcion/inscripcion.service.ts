@@ -4,12 +4,26 @@ import { HttpClient, HttpParams } from "@angular/common/http";
 import { environment } from "src/environments/environment";
 
 @Injectable({
-  providedIn: "root"
+  providedIn: "root",
 })
 export class InscripcionService {
   estudianteSeleccionado: Estudiante;
 
   constructor(public http: HttpClient) {}
+
+  //Obtiene todos los cursos que están almacenados en la base de datos
+  public obtenerCursos() {
+    return this.http.get<{ cursos: any[] }>(environment.apiUrl + "/curso");
+  }
+
+  //Dado un curso, obtiene todos los estudiantes que se pueden inscribir a ese curso
+  //@params: idCurso
+  public obtenerEstudiantesInscripcionCurso(idCurso) {
+    let params = new HttpParams().set("idCurso", idCurso);
+    return this.http.get<{ estudiantes: any[]; exito: boolean }>(
+      environment.apiUrl + "/curso/estudiantes/inscripcion", {params: params}
+    );
+  }
 
   //Inscribe a un estudiante a un curso y los documentos entregados durante la inscripción
   //@params: id estudiante que se quiere inscribir
@@ -25,7 +39,7 @@ export class InscripcionService {
       {
         idEstudiante: idEstudiante,
         idCurso: idCurso,
-        documentosEntregados: documentosEntregados
+        documentosEntregados: documentosEntregados,
       }
     );
   }
@@ -48,10 +62,12 @@ export class InscripcionService {
       "idEstudiante",
       this.estudianteSeleccionado._id
     );
-    return this.http.get<{ message: string; exito: boolean; cursos: any[], cursoActual: any }>(
-      environment.apiUrl + "/curso/cursosDeEstudiante",
-      { params: params }
-    );
+    return this.http.get<{
+      message: string;
+      exito: boolean;
+      cursos: any[];
+      cursoActual: any;
+    }>(environment.apiUrl + "/curso/cursosDeEstudiante", { params: params });
   }
   //Obtiene el estado de los documentos de los estudiantes de un curso determinado
   //el estado es true en el caso de que el documento haya sido entregado
@@ -63,7 +79,7 @@ export class InscripcionService {
       message: string;
       exito: boolean;
     }>(environment.apiUrl + "/curso/documentos", {
-      params: params
+      params: params,
     });
   }
   //Registra si los documentos fueron entregados o no por los estudiantes de un curso
