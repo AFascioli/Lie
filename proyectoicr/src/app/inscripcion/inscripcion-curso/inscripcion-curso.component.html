@@ -24,7 +24,7 @@
         mat-table
         #table
         [dataSource]="dataSource"
-        *ngIf="estudiantes"
+        *ngIf="estudiantes && !loading"
       >
         <ng-container matColumnDef="apellido">
           <th class="columnas-normales" mat-header-cell *matHeaderCellDef>
@@ -79,6 +79,7 @@
         <tr mat-header-row *matHeaderRowDef="columnasTabla"></tr>
         <tr mat-row *matRowDef="let row; columns: columnasTabla"></tr>
       </table>
+    <mat-spinner *ngIf="loading" class="spinner" [diameter]="60"></mat-spinner>
     <div class="div-button">
       <button
         mat-raised-button

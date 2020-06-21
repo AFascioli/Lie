@@ -18,6 +18,7 @@ export class InscripcionCursoComponent implements OnInit {
   cursos: any[];
   estudiantes: any[];
   seSeleccionoCurso = false;
+  loading = false;
   columnasTabla: string[] = [
     "apellido",
     "nombre",
@@ -48,6 +49,7 @@ export class InscripcionCursoComponent implements OnInit {
   }
 
   onCursoSeleccionado(cursoSeleccionado) {
+    this.loading = true;
     this.servicioInscripcion
       .obtenerEstudiantesInscripcionCurso(cursoSeleccionado.value)
       .subscribe((response) => {
@@ -56,6 +58,7 @@ export class InscripcionCursoComponent implements OnInit {
           a.apellido > b.apellido ? 1 : b.apellido > a.apellido ? -1 : 0
         );
         this.dataSource = new MatTableDataSource(this.estudiantes);
+        this.loading = false;
         this.seSeleccionoCurso = true;
       });
   }
@@ -87,7 +90,7 @@ export class InscripcionCursoComponent implements OnInit {
               this.inscribirEstudiantes();
             }
           });
-      }else{
+      } else {
         this.snackBar.open("No se ha seleccionado ningún estudiante", "", {
           panelClass: ["snack-bar-fracaso"],
           duration: 4500,
