@@ -944,18 +944,23 @@ router.get("/materias", checkAuthMiddleware, (req, res) => {
 //@params: array documentos entregados en inscripcion: true si se entregó ese documente
 router.post("/inscripcion", checkAuthMiddleware, async (req, res) => {
   //Dado una id de curso, encuentra todos los datos del mismo
-  if(ClaseInscripcion.inscribirEstudiante(req)){
+  if (
+    ClaseInscripcion.inscribirEstudiante(
+      req.body.idCurso,
+      req.body.idEstudiante,
+      req.body.documentosEntregados
+    )
+  ) {
     res.status(201).json({
       message: "Estudiante inscripto exitosamente",
       exito: true,
     });
-  }else{
+  } else {
     res.status(400).json({
       message: "Ocurrió un error al quere inscribir al estudiante",
       exito: false,
     });
   }
-
 
   // nuevaInscripcion
   //   .save()
@@ -1435,7 +1440,7 @@ router.get("/estudiantes/inscripcion", async (req, res) => {
       apellido: inscripcion.datosEstudiantes[0].apellido,
       cursoAnterior: inscripcion.datosCurso[0].nombre,
       idInscripcion: inscripcion._id,
-      seleccionado:false
+      seleccionado: false,
     };
     estudiantesRespuesta.push(estudianteRefinado);
   });
@@ -1447,7 +1452,7 @@ router.get("/estudiantes/inscripcion", async (req, res) => {
       apellido: inscripcion.datosEstudiantes[0].apellido,
       cursoAnterior: inscripcion.datosCurso[0].nombre,
       idInscripcion: inscripcion._id,
-      seleccionado:false
+      seleccionado: false,
     };
     estudiantesRespuesta.push(estudianteRefinado);
   });
@@ -1459,19 +1464,52 @@ router.get("/estudiantes/inscripcion", async (req, res) => {
       apellido: estudiante.apellido,
       cursoAnterior: "-",
       idInscripcion: null,
-      seleccionado:false //Agregado para facilitar saber quien se debe inscribir
+      seleccionado: false, //Agregado para facilitar saber quien se debe inscribir
     };
     estudiantesRespuesta.push(estudianteRefinado);
   });
 
   res.status(200).json({
     estudiantes: estudiantesRespuesta,
-    exito:true
+    exito: true,
   });
 });
 
 router.post("/estudiantes/inscripcion", async (req, res) => {
+  let documentosEntregados = [
+    {
+      nombre: "Fotocopia documento",
+      entregado: false,
+    },
+    {
+      nombre: "Ficha medica",
+      entregado: false,
+    },
+    {
+      nombre: "Informe año anterior",
+      entregado: false,
+    },
+  ];
 
+  for (const estudiante of req.body.estudiantes) {
+    if (
+      !ClaseInscripcion.inscribirEstudiante(
+        req.body.idCurso,
+        estudiante.idEstudiante,
+        documentosEntregados
+      )
+    ) {
+      return res.status(400).json({
+        exito: false,
+        message: "Ocurrió un error al querer escribir a los estudiantes",
+      });
+    }
+  }
+
+  res.status(400).json({
+    exito: true,
+    message: "Estudiantes inscriptos correctamente",
+  });
 });
 
 module.exports = router;

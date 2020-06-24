@@ -25,10 +25,10 @@ exports.obtenerAñoHabilitado = function (inscripcion) {
   return siguiente;
 };
 
-exports.inscribirEstudiante = async function (req) {
+exports.inscribirEstudiante = async function (idCurso, idEstudiante, documentosEntregados) {
   let obtenerCurso = () => {
     return new Promise((resolve, reject) => {
-      Curso.findOne({ _id: req.body.idCurso })
+      Curso.findOne({ _id: idCurso })
         .then((curso) => {
           resolve(curso);
         })
@@ -39,7 +39,7 @@ exports.inscribirEstudiante = async function (req) {
   let obtenerInscripcion = () => {
     return new Promise((resolve, reject) => {
       Inscripcion.findOne({
-        idEstudiante: req.body.idEstudiante,
+        idEstudiante: idEstudiante,
         activa: true, //#resolve ver si es necesario filtrar por estado
       })
         .then((inscripcion) => {
@@ -143,7 +143,7 @@ exports.inscribirEstudiante = async function (req) {
     );
     var inscripcion = await obtenerInscripcion();
     var añoActual = await obtenerAñoCicloLectivo();
-    var materiasDelCurso = await obtenerMateriasDeCurso(req.body.idCurso);
+    var materiasDelCurso = await obtenerMateriasDeCurso(idCurso);
     let cuotasAnteriores = [];
 
     //Si el estudiante tiene una inscripcion anteriormente, se obtienen las CXM que esten desaprobadas,
@@ -187,9 +187,9 @@ exports.inscribirEstudiante = async function (req) {
     );
 
     const nuevaInscripcion = new Inscripcion({
-      idEstudiante: req.body.idEstudiante,
+      idEstudiante: idEstudiante,
       idCurso: cursoSeleccionado._id,
-      documentosEntregados: req.body.documentosEntregados,
+      documentosEntregados: documentosEntregados,
       activa: true,
       estado: estadoInscriptoInscripcion._id,
       contadorInasistenciasInjustificada: 0,
@@ -204,14 +204,14 @@ exports.inscribirEstudiante = async function (req) {
 
     await nuevaInscripcion.save();
     cursoSeleccionado.capacidad = cursoSeleccionado.capacidad - 1;
-    cursoSeleccionado.save();
+    await cursoSeleccionado.save();
     let idEstadoInscriptoEstudiante = await ClaseEstado.obtenerIdEstado(
       "Estudiante",
       "Inscripto"
     );
 
     await actualizarEstadoEstudiante(
-      req.body.idEstudiante,
+      idEstudiante,
       idEstadoInscriptoEstudiante
     );
     return true;
