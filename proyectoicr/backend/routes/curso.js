@@ -944,244 +944,57 @@ router.get("/materias", checkAuthMiddleware, (req, res) => {
 //@params: array documentos entregados en inscripcion: true si se entregó ese documente
 router.post("/inscripcion", checkAuthMiddleware, async (req, res) => {
   //Dado una id de curso, encuentra todos los datos del mismo
-  var obtenerCurso = () => {
-    return new Promise((resolve, reject) => {
-      Curso.findOne({ _id: req.body.idCurso }).then((curso) => {
-        resolve(curso);
-      });
+  if(ClaseInscripcion.inscribirEstudiante(req)){
+    res.status(201).json({
+      message: "Estudiante inscripto exitosamente",
+      exito: true,
     });
-  };
-
-  var obtenerEstadoInscriptoInscripcion = () => {
-    return new Promise((resolve, reject) => {
-      Estado.findOne({
-        nombre: "Inscripto",
-        ambito: "Inscripcion",
-      })
-        .then((estado) => {
-          resolve(estado);
-        })
-        .catch(() => {
-          res.status(500).json({
-            message: "Mensaje de error especifico",
-          });
-        });
+  }else{
+    res.status(400).json({
+      message: "Ocurrió un error al quere inscribir al estudiante",
+      exito: false,
     });
-  };
-
-  var obtenerInscripcion = () => {
-    return new Promise((resolve, reject) => {
-      Inscripcion.findOne({
-        idEstudiante: req.body.idEstudiante,
-        activa: true,
-      })
-        .then((inscripcion) => {
-          resolve(inscripcion);
-        })
-        .catch(() => {
-          res.status(500).json({
-            message: "Mensaje de error especifico",
-          });
-        });
-    });
-  };
-
-  var obtenerEstadoCursandoMateria = () => {
-    return new Promise((resolve, reject) => {
-      Estado.findOne({
-        nombre: "Cursando",
-        ambito: "CalificacionesXMateria",
-      })
-        .then((estado) => {
-          resolve(estado);
-        })
-        .catch(() => {
-          res.status(500).json({
-            message: "Mensaje de error especifico",
-          });
-        });
-    });
-  };
-
-  //Dada una id de curso, obtiene las ids de las materias que se dan en ese curso
-  var obtenerMateriasDeCurso = (idCurso) => {
-    return new Promise((resolve, reject) => {
-      Curso.aggregate([
-        {
-          $match: {
-            _id: mongoose.Types.ObjectId(idCurso),
-          },
-        },
-        {
-          $unwind: "$materias",
-        },
-        {
-          $lookup: {
-            from: "materiasXCurso",
-            localField: "materias",
-            foreignField: "_id",
-            as: "materiasDelCurso",
-          },
-        },
-        {
-          $group: {
-            _id: {
-              idMateria: "$materiasDelCurso.idMateria",
-            },
-          },
-        },
-      ])
-        .then((materiasDelCurso) => {
-          resolve(materiasDelCurso);
-        })
-        .catch(() => {
-          res.status(500).json({
-            message: "Mensaje de error especifico",
-          });
-        });
-    });
-  };
-
-  var crearCuotas = () => {
-    return new Promise((resolve, reject) => {
-      cuotas = [];
-
-      for (var i = 0; i < 12; i++) {
-        let cuota = { mes: i + 1, pagado: false };
-        cuotas.push(cuota);
-      }
-      resolve(cuotas);
-    });
-  };
-
-  var obtenerAñoCicloLectivo = () => {
-    let fechaActual = new Date();
-    return new Promise((resolve, reject) => {
-      CicloLectivo.findOne({ año: fechaActual.getFullYear() })
-        .then((cicloLectivo) => {
-          resolve(cicloLectivo.año);
-        })
-        .catch(() => {
-          res.status(500).json({
-            message: "Mensaje de error especifico",
-          });
-        });
-    });
-  };
-
-  var aumentarCupo = (idCurso) => {
-    return new Promise((resolve, reject) => {
-      Curso.findByIdAndUpdate(idCurso, { $inc: { capacidad: 1 } })
-        .then(() => {
-          resolve();
-        })
-        .catch(() => {
-          res.status(500).json({
-            message: "No se pudo aumentar el cupo del curso",
-          });
-        });
-    });
-  };
-
-  var cursoSeleccionado = await obtenerCurso();
-  var estadoInscriptoInscripcion = await obtenerEstadoInscriptoInscripcion();
-  var inscripcion = await obtenerInscripcion();
-  var añoActual = await obtenerAñoCicloLectivo();
-  let cuotasAnteriores = [];
-
-  //Si el estudiante tiene una inscripcion anteriormente, se obtienen las CXM que esten desaprobadas,
-  //ya sea las que estan en materiasPendientes y las CXM con estado "Desaprobada"
-  var materiasPendientesNuevas = [];
-  if (inscripcion != null) {
-    inscripcion.activa = false;
-    cuotasAnteriores = inscripcion.cuotas;
-
-    var idEstadoDesaprobadaMateria = await ClaseEstado.obtenerIdEstado(
-      "CalificacionesXMateria",
-      "Desaprobada"
-    );
-    var idsCXMDesaprobadas = await ClaseCalifXMateria.obtenerMateriasDesaprobadasv2(
-      inscripcion.materiasPendientes,
-      inscripcion.calificacionesXMateria,
-      idEstadoDesaprobadaMateria
-    );
-    if (idsCXMDesaprobadas.length != 0) {
-      materiasPendientesNuevas.push(...idsCXMDesaprobadas);
-    }
-    await inscripcion.save();
-
-    if (añoActual == inscripcion.año) {
-      aumentarCupo(inscripcion.idCurso);
-    }
   }
 
-  var materiasDelCurso = await obtenerMateriasDeCurso(req.body.idCurso);
-  var cuotas = [];
-  if (cuotasAnteriores.length == 0) {
-    cuotas = await crearCuotas();
-  } else {
-    cuotas = cuotasAnteriores;
-  }
-  var estadoCursandoMateria = await obtenerEstadoCursandoMateria();
-  var idsCXMNuevas = await ClaseCalifXMateria.crearCXM(
-    materiasDelCurso,
-    estadoCursandoMateria._id
-  );
 
-  const nuevaInscripcion = new Inscripcion({
-    idEstudiante: req.body.idEstudiante,
-    idCurso: cursoSeleccionado._id,
-    documentosEntregados: req.body.documentosEntregados,
-    activa: true,
-    estado: estadoInscriptoInscripcion._id,
-    contadorInasistenciasInjustificada: 0,
-    contadorInasistenciasJustificada: 0,
-    contadorLlegadasTarde: 0,
-    calificacionesXMateria: idsCXMNuevas,
-    materiasPendientes: materiasPendientesNuevas,
-    año: añoActual,
-    cuotas: cuotas,
-    sanciones: [],
-  });
-
-  nuevaInscripcion
-    .save()
-    .then(() => {
-      cursoSeleccionado.capacidad = cursoSeleccionado.capacidad - 1;
-      cursoSeleccionado.save();
-      //Le cambiamos el estado al estudiante
-      //SE PUEDE CAMBIAR CON EL METODO OBTENERIDESTADO #resolve
-      Estado.findOne({
-        nombre: "Inscripto",
-        ambito: "Estudiante",
-      })
-        .then(async (estadoEstudiante) => {
-          await Estudiante.findByIdAndUpdate(req.body.idEstudiante, {
-            estado: estadoEstudiante._id,
-          })
-            .then(async () => {
-              await res.status(201).json({
-                message: "Estudiante inscripto exitosamente",
-                exito: true,
-              });
-            })
-            .catch(() => {
-              res.status(500).json({
-                message: "Mensaje de error especifico",
-              });
-            });
-        })
-        .catch(() => {
-          res.status(500).json({
-            message: "Mensaje de error especifico",
-          });
-        });
-    })
-    .catch(() => {
-      res.status(500).json({
-        message: "Mensaje de error especifico",
-      });
-    });
+  // nuevaInscripcion
+  //   .save()
+  //   .then(() => {
+  //     cursoSeleccionado.capacidad = cursoSeleccionado.capacidad - 1;
+  //     cursoSeleccionado.save();
+  //     //Le cambiamos el estado al estudiante
+  //     //SE PUEDE CAMBIAR CON EL METODO OBTENERIDESTADO #resolve
+  //     Estado.findOne({
+  //       nombre: "Inscripto",
+  //       ambito: "Estudiante",
+  //     })
+  //       .then(async (estadoEstudiante) => {
+  //         await Estudiante.findByIdAndUpdate(req.body.idEstudiante, {
+  //           estado: estadoEstudiante._id,
+  //         })
+  //           .then(async () => {
+  //             await res.status(201).json({
+  //               message: "Estudiante inscripto exitosamente",
+  //               exito: true,
+  //             });
+  //           })
+  //           .catch(() => {
+  //             res.status(500).json({
+  //               message: "Mensaje de error especifico",
+  //             });
+  //           });
+  //       })
+  //       .catch(() => {
+  //         res.status(500).json({
+  //           message: "Mensaje de error especifico",
+  //         });
+  //       });
+  //   })
+  //   .catch(() => {
+  //     res.status(500).json({
+  //       message: "Mensaje de error especifico",
+  //     });
+  //   });
 });
 
 //Registra las calificaciones todos los estudiantes de un curso para una materia
@@ -1655,6 +1468,10 @@ router.get("/estudiantes/inscripcion", async (req, res) => {
     estudiantes: estudiantesRespuesta,
     exito:true
   });
+});
+
+router.post("/estudiantes/inscripcion", async (req, res) => {
+
 });
 
 module.exports = router;
