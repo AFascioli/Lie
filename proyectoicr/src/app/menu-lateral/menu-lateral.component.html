@@ -245,6 +245,19 @@
               <mat-icon class="iconSinExpansion">person_add</mat-icon>
               <p class="titulo-expansion">Registrar personal</p>
             </a>
+            <a
+              class="sinExpansion"
+              *ngIf="permisos.inscribirEstudiante >= 1"
+              mat-list-item
+              routerLink="/inscripcionCurso"
+              (click)="cerrarMenuLateral(sideNav)"
+            >
+              <mat-icon
+                class="iconSinExpansion"
+                svgIcon="asistencia"
+              ></mat-icon>
+              <p class="titulo-expansion">Inscripción por curso</p>
+            </a>
           </div>
         </mat-accordion>
       </mat-nav-list>

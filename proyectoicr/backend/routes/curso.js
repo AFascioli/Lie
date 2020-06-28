@@ -1319,7 +1319,8 @@ router.post("/agenda", async (req, res) => {
 
 router.get("/estudiantes/inscripcion", async (req, res) => {
   let numeroCursoPasado;
-  let añoPasado = 2020; //#resolve
+  let dateActual = new Date();
+  let añoPasado = dateActual.getFullYear() - 1;
   await Curso.findById(req.query.idCurso).then((curso) => {
     numeroCursoPasado = parseInt(curso.nombre, 10) - 1;
   });
