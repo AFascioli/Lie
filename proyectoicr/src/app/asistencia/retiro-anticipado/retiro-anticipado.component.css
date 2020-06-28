@@ -35,7 +35,7 @@ table {
   margin-bottom: 3% !important;
 }
 
-.table-mobile{
+.table-mobile {
   width: 98%;
 }
 
@@ -58,28 +58,22 @@ th {
   text-align: center;
 }
 
-.aviso {
-  margin-bottom: 0;
-  text-align: center;
-  font-size: 19px;
-}
-
 .columna-checkbox {
   padding-right: 12px;
 }
 
-.mat-form-Fecha{
+.mat-form-Fecha {
   text-align: center !important;
 }
 
-.opciones{
+.opciones {
   text-align: center;
   display: grid;
-  grid-template-columns: repeat(2,1fr);
+  grid-template-columns: repeat(2, 1fr);
   margin: 0 auto;
   width: 80%;
 }
 
-.opciones-mobile{
+.opciones-mobile {
   width: 100%;
 }

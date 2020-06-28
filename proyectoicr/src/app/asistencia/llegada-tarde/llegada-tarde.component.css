@@ -31,48 +31,42 @@
   white-space: normal !important;
 }
 
-.titulo-datos-est{
+.titulo-datos-est {
   font-size: 20px;
   font-weight: bold;
   text-align: center;
 }
 
-.parrafo{
+.parrafo {
   text-align: center;
 }
 
-.input-fecha{
+.input-fecha {
   width: 0%;
   color: black !important;
 }
 
-.aviso{
-  margin-bottom: 0;
-  text-align: center;
-  font-size: 19px;
-}
-
-.mat-form-fecha{
+.mat-form-fecha {
   text-align: center !important;
 }
 
-.opciones{
+.opciones {
   display: grid;
-  grid-template-columns: repeat(2,1fr);
+  grid-template-columns: repeat(2, 1fr);
   width: 80%;
   margin: 0 auto;
   text-align: center;
 }
 
-.opciones-mobile{
+.opciones-mobile {
   width: 90%;
 }
 
-.datos-estudiante{
+.datos-estudiante {
   width: 50%;
   margin: 0 auto;
 }
 
-.datos-estudiante-mobile{
+.datos-estudiante-mobile {
   width: 70%;
 }

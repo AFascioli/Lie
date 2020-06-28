@@ -32,11 +32,31 @@ input[type="number"] {
 
 .componente-titulo {
   text-align: center;
+  font-weight: 600;
+  color: #181a21;
+  margin-top: 1%;
+  /* text-shadow: 1px 1px 2px #c7c7c7; */
+  font-size: 33px;
+}
+
+.aviso {
+  text-align: center;
+  margin-top: 1% !important;
+  margin-bottom: 0% !important;
+}
+
+.aviso b {
+  font-size: 19px !important;
+  font-weight: 500 !important;
+}
+
+/* .componente-titulo {
+  text-align: center;
   color: #2f6483;
   margin-top: 1%;
   text-shadow: 1px 1px 2px #323233;
   font-size: 35px;
-}
+} */
 
 .card-body-componente {
   /* Para que no se comprima al pasar a vistas mobile, y la segunda linea para que aparezca el scroll.*/
