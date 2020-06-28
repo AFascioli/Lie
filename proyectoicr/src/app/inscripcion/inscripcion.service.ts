@@ -21,7 +21,8 @@ export class InscripcionService {
   public obtenerEstudiantesInscripcionCurso(idCurso) {
     let params = new HttpParams().set("idCurso", idCurso);
     return this.http.get<{ estudiantes: any[]; exito: boolean }>(
-      environment.apiUrl + "/curso/estudiantes/inscripcion", {params: params}
+      environment.apiUrl + "/curso/estudiantes/inscripcion",
+      { params: params }
     );
   }
 
@@ -40,6 +41,16 @@ export class InscripcionService {
         idEstudiante: idEstudiante,
         idCurso: idCurso,
         documentosEntregados: documentosEntregados,
+      }
+    );
+  }
+
+  public inscribirEstudiantesCurso(estudiantes: any[], idCurso: string) {
+    return this.http.post<{ message: string; exito: boolean }>(
+      environment.apiUrl + "/curso/estudiantes/inscripcion",
+      {
+        estudiantes: estudiantes,
+        idCurso: idCurso,
       }
     );
   }

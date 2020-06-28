@@ -1361,6 +1361,7 @@ router.get("/estudiantes/inscripcion", async (req, res) => {
           $in: idsCursos,
         },
         año: añoPasado,
+        activa: true,
         estado: {
           $in: estadosInscripcionesABuscar,
         },
@@ -1490,9 +1491,11 @@ router.post("/estudiantes/inscripcion", async (req, res) => {
       entregado: false,
     },
   ];
+  console.log("estudiantes", req.body.estudiantes);
 
   for (const estudiante of req.body.estudiantes) {
     if (
+      estudiante.seleccionado &&
       !ClaseInscripcion.inscribirEstudiante(
         req.body.idCurso,
         estudiante.idEstudiante,
@@ -1506,7 +1509,7 @@ router.post("/estudiantes/inscripcion", async (req, res) => {
     }
   }
 
-  res.status(400).json({
+  res.status(200).json({
     exito: true,
     message: "Estudiantes inscriptos correctamente",
   });
