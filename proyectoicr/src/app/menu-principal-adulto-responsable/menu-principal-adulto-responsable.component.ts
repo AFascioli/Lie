@@ -10,8 +10,8 @@ import { Component, OnInit, ChangeDetectorRef } from "@angular/core";
 import { AdultoResponsableService } from "../adulto-responsable/adultoResponsable.service";
 import { Estudiante } from "../estudiantes/estudiante.model";
 import { MediaMatcher } from "@angular/cdk/layout";
-import { takeUntil } from 'rxjs/operators';
-import { Subject } from 'rxjs';
+import { takeUntil } from "rxjs/operators";
+import { Subject } from "rxjs";
 import { SwPush } from "@angular/service-worker";
 
 @Component({
@@ -28,6 +28,7 @@ export class MenuPrincipalAdultoResponsableComponent implements OnInit {
   private unsubscribe: Subject<void> = new Subject();
   readonly VAPID_PUBLIC =
     "BMlC2dLJTBP6T1GCl3S3sDBmhERNVcjN7ff2a6JAoOg8bA_qXjikveleRwjz0Zn8c9-58mnrNo2K4p07UPK0DKQ";
+  mostrarTooltip: boolean = true;
 
   constructor(
     private swPush: SwPush,
@@ -53,11 +54,14 @@ export class MenuPrincipalAdultoResponsableComponent implements OnInit {
     if ("serviceWorker" in navigator) {
       navigator.serviceWorker.register("ngsw-worker.js").then((swreg) => {
         if (swreg.active) {
-          console.log('Entro al segundo if');
           this.subscribeToNotifications();
         }
       });
     }
+
+    setTimeout(() => {
+      this.mostrarTooltip = false;
+    }, 6010);
   }
 
   ngOnDestroy() {
@@ -68,22 +72,22 @@ export class MenuPrincipalAdultoResponsableComponent implements OnInit {
   subscribeToNotifications() {
     // if (Notification.permission === "granted") {
     // } else {
-      this.swPush
-        .requestSubscription({
-          serverPublicKey: this.VAPID_PUBLIC,
-        })
-        .then((pushsub) => {
-          console.log('Paso requestSubscription');
-          this.authService
-            .addPushSubscriber(pushsub)
-            .pipe(takeUntil(this.unsubscribe))
-            .subscribe((res) => {
-              console.log("Se suscribió a recibir notificaciones push.");
-            });
-        })
-        .catch((err) =>
-          console.error("No se pudo suscribir a las notificaciones push.", err)
-        );
+    this.swPush
+      .requestSubscription({
+        serverPublicKey: this.VAPID_PUBLIC,
+      })
+      .then((pushsub) => {
+        console.log("Paso requestSubscription");
+        this.authService
+          .addPushSubscriber(pushsub)
+          .pipe(takeUntil(this.unsubscribe))
+          .subscribe((res) => {
+            console.log("Se suscribió a recibir notificaciones push.");
+          });
+      })
+      .catch((err) =>
+        console.error("No se pudo suscribir a las notificaciones push.", err)
+      );
     // }
   }
 

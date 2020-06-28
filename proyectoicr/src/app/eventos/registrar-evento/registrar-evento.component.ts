@@ -40,10 +40,24 @@ export class RegistrarEventoComponent implements OnInit, OnDestroy {
   chipsCtrl = new FormControl();
   filteredChips: Observable<string[]>;
   chips: string[] = [];
-  allChips: string[] = ["1A","1B", "2A","2B", "3A","3B", "4A","4B", "5A","5B", "6A","6B", "Todos los cursos"];
+  allChips: string[] = [
+    "1A",
+    "1B",
+    "2A",
+    "2B",
+    "3A",
+    "3B",
+    "4A",
+    "4B",
+    "5A",
+    "5B",
+    "6A",
+    "6B",
+    "Todos los cursos",
+  ];
   horaInicioEvento: string;
   horaFinEvento: string;
-
+  horaMinimaEvento: string;
 
   slideIndex = 1;
   fechaActual: Date;
@@ -70,6 +84,7 @@ export class RegistrarEventoComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.fechaActual = new Date();
+    this.horaMinimaEvento = `${this.fechaActual.getHours() + 2}:00`;
   }
 
   registrarEvento(fechaEvento, form) {

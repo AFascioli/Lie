@@ -298,7 +298,7 @@ router.use("/procesoAutomaticoFinExamenes", (req, res) => {
         }).then(async () => {
           let idEstadoEstudiante = await ClaseEstado.obtenerIdEstado(
             "Estudiante",
-            "Registrado"
+            "Pendiente de inscripcion"
           );
           Estudiante.findByIdAndUpdate(inscripcion.idEstudiante, {
             estado: idEstadoEstudiante,

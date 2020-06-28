@@ -127,6 +127,7 @@ import { ErrorInterceptor } from "./error-interceptor";
 import { ErrorComponent } from "./error/error.component";
 import { ImageUploadModule } from "ng2-imageupload";
 import { MenuPrincipalAdultoResponsableComponent } from "./menu-principal-adulto-responsable/menu-principal-adulto-responsable.component";
+import { InscripcionCursoComponent, InscripcionCursoPopupComponent } from './inscripcion/inscripcion-curso/inscripcion-curso.component';
 
 @NgModule({
   declarations: [
@@ -185,6 +186,8 @@ import { MenuPrincipalAdultoResponsableComponent } from "./menu-principal-adulto
     RegistrarSancionesComponent,
     SancionesEstudianteComponent,
     MenuPrincipalAdultoResponsableComponent,
+    InscripcionCursoComponent,
+    InscripcionCursoPopupComponent
   ],
   //entryComponents declara los componentes que se generan dinamicamente dentro de otros.
   entryComponents: [
@@ -196,6 +199,7 @@ import { MenuPrincipalAdultoResponsableComponent } from "./menu-principal-adulto
     PerfilEstudiantePopupComponent,
     BuscarPopupComponent,
     InscripcionPopupComponent,
+    InscripcionCursoPopupComponent,
     RetiroPopupComponent,
     CambiarPasswordPopupComponent,
     CerrarSesionPopupComponent,
