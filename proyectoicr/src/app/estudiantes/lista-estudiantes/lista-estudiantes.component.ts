@@ -205,6 +205,11 @@ export class ListaEstudiantesComponent implements OnInit, OnDestroy {
     this.router.navigate(["./calificacionesExamenes"]);
   }
 
+  onNotificarReunion(indice) {
+    this.asignarEstudianteSeleccionado(indice);
+    this.router.navigate(["./solicitudReunion"]);
+  }
+
   onReincorporar(indice) {
     this.asignarEstudianteSeleccionado(indice);
     this.dialog

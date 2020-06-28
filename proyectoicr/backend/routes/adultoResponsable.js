@@ -6,6 +6,42 @@ const checkAuthMiddleware = require("../middleware/check-auth");
 const Inscripcion = require("../models/inscripcion");
 const Curso = require("../models/curso");
 
+router.get("/", (req, res) => {
+  AdultoResponsable.find(
+    {
+      estudiantes: { $in: [req.query.idEstudiante] },
+      tutor: false,
+    },
+    { idUsuario: 1, nombre: 1, apellido: 1, _id: 0 }
+  )
+    .then((adultosResponsables) => {
+      if (adultosResponsables.length > 0) {
+        adultosResponsables.forEach((adulto) => {
+          adulto.seleccionado = false;
+        });
+        res.status(200).json({
+          exito: true,
+          message: "Se encontro los adultos responsables del estudiante",
+          adultosResponsables: adultosResponsables,
+        });
+      } else {
+        res.status(200).json({
+          exito: true,
+          message: "El estudiante no tiene adultos responsables registrados",
+          adultosResponsables: adultosResponsables,
+        });
+      }
+    })
+    .catch((e) => {
+      res.status(400).json({
+        exito: false,
+        message:
+          "Ocurrió un error al buscar los adultos responsables del estudiante" +
+          e,
+      });
+    });
+});
+
 //Registra un nuevo adulto responsable en la base de datos
 router.post("/", checkAuthMiddleware, (req, res) => {
   AdultoResponsable.findOne({

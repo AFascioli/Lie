@@ -331,4 +331,31 @@ router.post("/signup/admin", async (req, res) => {
   }
 });
 
+router.post("/reunion/adultoResponsable", (req, res) => {
+  let idUsuarios = [];
+  req.body.adultosResponsables.forEach((adulto) => {
+    adulto.seleccionado && idUsuarios.push(adulto.idUsuario);
+  });
+
+  Empleado.findOne({ idUsuario: req.body.idUsuarioEmpleado })
+    .then((empleado) => {
+      Suscripcion.notificacionGrupal(
+        idUsuarios,
+        `Solicitud de reunión de ${empleado.apellido} ${empleado.nombre}`,
+        cuerpo
+      );
+      res.status(200).json({
+        message: "Se envió la notificación a los adultos responsables",
+        exito: true,
+      });
+    })
+    .catch((e) => {
+      res.status(400).json({
+        message:
+          "Ocurrió un error al querer notificar a los adultos responsables",
+        exito: false,
+      });
+    });
+});
+
 module.exports = router;

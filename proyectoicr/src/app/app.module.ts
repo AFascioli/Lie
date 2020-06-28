@@ -71,7 +71,10 @@ import {
 } from "./asistencia/retiro-anticipado/retiro-anticipado.component";
 import { DocumentosInscripcionComponent } from "./inscripcion/documentos-inscripcion/documentos-inscripcion.component";
 import { MatGridListModule } from "@angular/material/grid-list";
-import { CalificacionesEstudiantesComponent, CalificacionesEstudiantePopupComponent } from "./calificaciones/calificaciones-estudiantes/calificaciones-estudiantes.component";
+import {
+  CalificacionesEstudiantesComponent,
+  CalificacionesEstudiantePopupComponent,
+} from "./calificaciones/calificaciones-estudiantes/calificaciones-estudiantes.component";
 import { CalificacionesCicloLectivoComponent } from "./calificaciones/calificaciones-ciclo-lectivo/calificaciones-ciclo-lectivo.component";
 import { LlegadaTardeComponent } from "./asistencia/llegada-tarde/llegada-tarde.component";
 import {
@@ -127,7 +130,11 @@ import { ErrorInterceptor } from "./error-interceptor";
 import { ErrorComponent } from "./error/error.component";
 import { ImageUploadModule } from "ng2-imageupload";
 import { MenuPrincipalAdultoResponsableComponent } from "./menu-principal-adulto-responsable/menu-principal-adulto-responsable.component";
-import { InscripcionCursoComponent, InscripcionCursoPopupComponent } from './inscripcion/inscripcion-curso/inscripcion-curso.component';
+import {
+  InscripcionCursoComponent,
+  InscripcionCursoPopupComponent,
+} from "./inscripcion/inscripcion-curso/inscripcion-curso.component";
+import { SolicitudReunionComponent } from "./solicitud-reunion/solicitud-reunion.component";
 
 @NgModule({
   declarations: [
@@ -187,7 +194,8 @@ import { InscripcionCursoComponent, InscripcionCursoPopupComponent } from './ins
     SancionesEstudianteComponent,
     MenuPrincipalAdultoResponsableComponent,
     InscripcionCursoComponent,
-    InscripcionCursoPopupComponent
+    InscripcionCursoPopupComponent,
+    SolicitudReunionComponent,
   ],
   //entryComponents declara los componentes que se generan dinamicamente dentro de otros.
   entryComponents: [
