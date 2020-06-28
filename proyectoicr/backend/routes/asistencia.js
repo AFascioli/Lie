@@ -381,6 +381,35 @@ router.post("", checkAuthMiddleware, async(req, res) => {
     .json({ message: "Asistencia registrada exitosamente", exito: true });
 });
 
+validarLibreInasistencias = function (idEst, valorInasistencia) {
+  Estado.find({ nombre: "Suspendido", ambito: "Inscripcion" })
+    .then((estado) => {
+      Inscripcion.findOne({
+        idEstudiante: idEst,
+        activa: true,
+      }).then((inscripcion) => {
+        if (
+          inscripcion.contadorInasistenciasInjustificada != 0 &&
+          inscripcion.contadorInasistenciasInjustificada % 14 == 0 &&
+          valorInasistencia == 1
+        ) {
+          Inscripcion.findOneAndUpdate(
+            {
+              idEstudiante: idEst,
+              activa: true,
+            },
+            { estado: mongoose.Types.ObjectId(estado[0]._id) }
+          ).exec();
+        }
+      });
+    })
+    .catch(() => {
+      res.status(500).json({
+        message: "No se pudo obtener el estado suspendido",
+      });
+    });
+};
+
 //Este metodo filtra las inscripciones por estudiante y retorna el contador de inasistencias (injustificada y justificada)
 router.get("/asistenciaEstudiante", (req, res) => {
   Inscripcion.find({ idEstudiante: req.query.idEstudiante })

@@ -47,7 +47,7 @@ export class InscripcionEstudianteComponent implements OnInit, OnDestroy {
   mobileQuery: MediaQueryList;
   fechaDentroDeRangoInscripcion: boolean = true;
   private unsubscribe: Subject<void> = new Subject();
-  isLoading: boolean = false;
+  isLoading: boolean = true;
   cursoActual: any;
 
   constructor(
@@ -88,6 +88,7 @@ export class InscripcionEstudianteComponent implements OnInit, OnDestroy {
         this.estudianteEstaInscripto = response.exito;
       });
     this.obtenerCursosEstudiante();
+    this.isLoading = false;
   }
 
   fechaActualEnRangoFechasInscripcion() {
@@ -134,13 +135,11 @@ export class InscripcionEstudianteComponent implements OnInit, OnDestroy {
           });
           this.obtenerCursosEstudiante();
           this.obtenerCapacidadCurso();
-          this.isLoading = false;
         } else {
           this.snackBar.open(response.message, "", {
             duration: 4500,
             panelClass: ["snack-bar-fracaso"],
           });
-          this.isLoading = false;
         }
       });
   }
@@ -200,7 +199,6 @@ export class InscripcionEstudianteComponent implements OnInit, OnDestroy {
           .pipe(takeUntil(this.unsubscribe))
           .subscribe((resultado) => {
             if (resultado) {
-              this.isLoading = true;
               this.inscribirEstudiante();
               this.estudianteEstaInscripto = true;
             }
