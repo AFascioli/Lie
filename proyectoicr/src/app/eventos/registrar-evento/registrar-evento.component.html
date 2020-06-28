@@ -50,14 +50,14 @@
       <mat-form-field class="mat-form-hora">
         <div class="hora">
           <input
-            [name]="horaInicioSeleccionada"
-            ngModel
-            #horaInicioSeleccionada="ngModel"
+            name="nombreInicio"
+            [(ngModel)]="horaInicioEvento"
             matInput
-            [(ngModel)]="horaInicio"
             [ngxTimepicker]="picker1"
             [format]="24"
-            min="07:30"
+            placeholder="Hora inicio de evento"
+            [min]="horaMinimaEvento"
+            max="22:00"
             readonly
             required
           />
@@ -71,14 +71,14 @@
       <mat-form-field class="mat-form-hora">
         <div class="hora">
           <input
-            [name]="horaFinSeleccionada"
-            ngModel
-            #horaFinSeleccionada="ngModel"
-            [(ngModel)]="horaFin"
+            name="nombreFin"
+            [(ngModel)]="horaFinEvento"
             matInput
             [ngxTimepicker]="picker2"
             [format]="24"
-            min="07:30"
+            placeholder="Hora fin de evento"
+            [min]="horaMinimaEvento"
+            max="22:00"
             readonly
             required
           />

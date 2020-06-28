@@ -10,10 +10,10 @@ const clasificador = require("../middleware/clasificador");
 const multer = require("multer");
 const Usuario = require("../models/usuario");
 const path = require("path");
-const Admin = require("../models/administrador");
 const Ambiente = require("../assets/ambiente");
 const GridFsStorage = require("multer-gridfs-storage");
 const Suscripcion = require("../classes/suscripcion");
+const Inscripcion = require("../models/inscripcion");
 
 const storage = new GridFsStorage({
   url: Ambiente.stringDeConexion,
@@ -68,12 +68,19 @@ router.post("/registrar", upload, async (req, res, next) => {
           filenames: await leerFilenames(),
           autor: usuario._id,
         });
-        evento.save().then(() => {
-          // this.notificarPorEvento(
-          //   this.evento.tags,
-          //   this.evento.titulo,
-          //   "El evento se realizará en la fecha " + evento.fechaEvento + "."
-          // );
+        evento.save().then((eventoCreado) => {
+          let fechaDelEvento = new Date(eventoCreado.fechaEvento);
+          notificarPorEvento(
+            eventoCreado.tags,
+            eventoCreado.titulo,
+            "El evento se realizara el día " +
+              fechaDelEvento.getDate() +
+              "/" +
+              (fechaDelEvento.getMonth() + 1) +
+              "/" +
+              fechaDelEvento.getFullYear() +
+              "."
+          );
           res.status(201).json({
             message: "Evento creado exitosamente",
             exito: true,
@@ -90,12 +97,19 @@ router.post("/registrar", upload, async (req, res, next) => {
             tags: req.body.tags,
             autor: usuario._id,
           });
-          evento.save().then(() => {
-            // this.notificarPorEvento(
-            //   this.evento.tags,
-            //   this.evento.titulo,
-            //   "El evento se realizará en la fecha " + evento.fechaEvento + "."
-            // );
+          evento.save().then((eventoCreado) => {
+            let fechaDelEvento = new Date(eventoCreado.fechaEvento);
+            notificarPorEvento(
+              eventoCreado.tags,
+              eventoCreado.titulo,
+              "El evento se realizara el día " +
+              fechaDelEvento.getDate() +
+              "/" +
+              (fechaDelEvento.getMonth() + 1) +
+              "/" +
+              fechaDelEvento.getFullYear() +
+              "."
+            );
             res.status(201).json({
               message: "Evento registrado exitosamente",
               exito: true,
@@ -253,15 +267,12 @@ router.post("/registrarComentario", clasificador, async (req, res, next) => {
             });
           });
       } else if (rol == "Admin") {
-        Admin.findOne({ email: emailUsuario })
+        Usuario.findOne({ email: emailUsuario })
           .then((usuario) => {
-            apellido = usuario.apellido;
-            nombre = usuario.nombre;
-            idUsuario = usuario.idUsuario;
             resolve({
-              apellido: apellido,
-              nombre: nombre,
-              idUsuario: idUsuario,
+              apellido: "Nistrador", //Para evitar tener una tabla en bd con nombre y apellido de admin, se hardcodea aca
+              nombre: "Admi",
+              idUsuario: usuario._id,
             });
           })
           .catch(() => {
@@ -326,15 +337,13 @@ router.delete("/eliminarEvento", checkAuthMiddleware, (req, res, next) => {
           ImagenChunks.deleteMany({
             files_id: file._id,
           }).exec();
-
-          //this.notificarPorEvento(
-          //     evento.tags,
-          //     evento.titulo,
-          //     "Se ha cancelado el evento."
-          //   );
         });
       }
-
+      notificarPorEvento(
+        evento.tags,
+        evento.titulo,
+        "Ha sido cancelado."
+      );
       return res.status(202).json({
         message: "Evento eliminado exitosamente",
         exito: true,
@@ -370,7 +379,7 @@ notificarPorEvento = function (tags, titulo, cuerpo) {
   if (tags.includes("Todos los cursos")) {
     Suscripcion.notificacionMasiva(evento.titulo, this.cuerpo);
   } else {
-    Inscripcion.agreggate([
+    Inscripcion.aggregate([
       {
         $lookup: {
           from: "curso",
@@ -388,7 +397,7 @@ notificarPorEvento = function (tags, titulo, cuerpo) {
       {
         $match: {
           $expr: {
-            $in: ["$icurso.nombre", ["5A"]],
+            $in: ["$icurso.nombre", tags],
           },
         },
       },
@@ -415,8 +424,8 @@ notificarPorEvento = function (tags, titulo, cuerpo) {
       {
         $lookup: {
           from: "adultoResponsable",
-          localField: "idAdulto",
-          foreignField: "string",
+          localField: "conest.adultoResponsable",
+          foreignField: "_id",
           as: "conadulto",
         },
       },
@@ -433,9 +442,9 @@ notificarPorEvento = function (tags, titulo, cuerpo) {
         },
       },
     ]).then((response) => {
-      let idtutores;
+      let idtutores = [];
       response.forEach((conadulto) => {
-        idtutores.push(conadulto[0].idUsuario);
+        idtutores.push(conadulto.conadulto.idUsuario);
       });
       Suscripcion.notificacionGrupal(idtutores, titulo, cuerpo);
     });

@@ -1,4 +1,5 @@
 export const environment = {
   production: true,
-  apiUrl: 'https://secure.proyectolie.software'
+  //apiUrl:"http://localhost:3000"
+   apiUrl: 'secure.proyectolie.software'
 };

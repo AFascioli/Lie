@@ -93,12 +93,14 @@ export class ListaEstudiantesComponent implements OnInit, OnDestroy {
                 }
               });
 
-            this.servicio
-              .esEstudianteSuspendido(this.estudiantes[i]._id)
-              .pipe(takeUntil(this.unsubscribe))
-              .subscribe((response) => {
-                this.suspendido[i] = response.exito;
-              });
+            if (this.inscripto[i]) {
+              this.servicio
+                .esEstudianteSuspendido(this.estudiantes[i]._id)
+                .pipe(takeUntil(this.unsubscribe))
+                .subscribe((response) => {
+                  this.suspendido[i] = response.exito;
+                });
+            }
           }
         });
 

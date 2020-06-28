@@ -55,8 +55,9 @@ export class RegistrarEventoComponent implements OnInit, OnDestroy {
     "6B",
     "Todos los cursos",
   ];
-  horaInicio = "";
-  horaFin = "";
+  horaInicioEvento: string;
+  horaFinEvento: string;
+  horaMinimaEvento: string;
 
   slideIndex = 1;
   fechaActual: Date;
@@ -83,6 +84,7 @@ export class RegistrarEventoComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.fechaActual = new Date();
+    this.horaMinimaEvento = `${this.fechaActual.getHours() + 2}:00`;
   }
 
   registrarEvento(fechaEvento, form) {
@@ -91,8 +93,8 @@ export class RegistrarEventoComponent implements OnInit, OnDestroy {
         form.value.titulo,
         form.value.descripcion,
         fechaEvento,
-        this.horaInicio,
-        this.horaFin,
+        this.horaInicioEvento,
+        this.horaFinEvento,
         this.chips,
         this.imagesFile
       )
@@ -118,8 +120,8 @@ export class RegistrarEventoComponent implements OnInit, OnDestroy {
     if (form.valid && this.chips.length != 0) {
       const fechaEvento = form.value.fechaEvento.toString();
       if (
-        (this.horaInicio == "" && this.horaFin == "") ||
-        this.horaEventoEsValido(this.horaInicio, this.horaFin)
+        (this.horaInicioEvento == "" && this.horaFinEvento == "") ||
+        this.horaEventoEsValido(this.horaInicioEvento, this.horaFinEvento)
       ) {
         this.registrarEvento(fechaEvento, form);
       } else {
@@ -212,31 +214,6 @@ export class RegistrarEventoComponent implements OnInit, OnDestroy {
     return this.allChips.filter(
       (chip) => chip.toLowerCase().indexOf(filterValue) === 0
     );
-  }
-
-  inicializarPickers() {
-    new Rolldate({
-      el: "#pickerInicio",
-      format: "hh:mm",
-      minStep: 15,
-      lang: {
-        title: "Seleccione hora de inicio del evento",
-        hour: "",
-        min: "",
-      },
-      confirm: (date) => {
-        this.horaInicio = date;
-      },
-    });
-    new Rolldate({
-      el: "#pickerFin",
-      format: "hh:mm",
-      minStep: 15,
-      lang: { title: "Seleccione hora de fin del evento", hour: "", min: "" },
-      confirm: (date) => {
-        this.horaFin = date;
-      },
-    });
   }
 
   resizeOptions: ResizeOptions = {

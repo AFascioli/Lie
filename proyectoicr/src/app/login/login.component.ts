@@ -24,7 +24,16 @@ export class LoginComponent implements OnDestroy {
 
   iniciarSesion() {
     if (this.password && this.email) {
-      this.authService.login(this.email, this.password);
+      this.authService
+        .login(this.email, this.password)
+        .subscribe((respuesta) => {
+          if (!respuesta.exito) {
+            this.snackBar.open(respuesta.message, "", {
+              panelClass: ["snack-bar-fracaso"],
+              duration: 4000,
+            });
+          }
+        });
     } else {
       this.snackBar.open("Faltan campos por completar", "", {
         panelClass: ["snack-bar-fracaso"],

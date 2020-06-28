@@ -1,0 +1,103 @@
+<h1 class="componente-titulo">
+  Inscribir estudiantes a un curso
+</h1>
+<mat-card class="card-body-componente">
+  <form #form="ngForm">
+    <div class="div-select">
+      <mat-form-field class="curso">
+        <mat-select
+          placeholder="Seleccione curso"
+          name="curso"
+          ngModel
+          #cursoSeleccionado="ngModel"
+          matNativeControl
+          required
+          (selectionChange)="onCursoSeleccionado(cursoSeleccionado)"
+        >
+          <mat-option *ngFor="let objCurso of cursos" [value]="objCurso.id">
+            {{ objCurso.nombre }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+    <p class="aviso" *ngIf="estudiantes && estudiantes.length == 0 && !loading">
+      <b>No hay estudiantes para inscribir al curso seleccionado </b>
+    </p>
+    <table
+      mat-table
+      #table
+      [dataSource]="dataSource"
+      *ngIf="estudiantes && estudiantes.length > 0 && !loading"
+    >
+      <ng-container matColumnDef="apellido">
+        <th class="columnas-normales" mat-header-cell *matHeaderCellDef>
+          Apellido/s
+        </th>
+        <td
+          class="columnas-normales"
+          mat-cell
+          *matCellDef="let estudiante; let i = index"
+        >
+          {{ estudiante.apellido }}
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="nombre">
+        <th class="columnas-normales" mat-header-cell *matHeaderCellDef>
+          Nombre/s
+        </th>
+        <td
+          class="columnas-normales"
+          mat-cell
+          *matCellDef="let estudiante; let i = index"
+        >
+          {{ estudiante.nombre }}
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="curso anterior">
+        <th class="columnas-chicas" mat-header-cell *matHeaderCellDef>
+          Curso anterior
+        </th>
+        <td
+          class="columnas-chicas"
+          mat-cell
+          *matCellDef="let estudiante; let i = index"
+        >
+          {{ estudiante.cursoAnterior }}
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="seleccionar">
+        <th class="columnas-chicas" mat-header-cell *matHeaderCellDef>
+          Seleccionar
+        </th>
+        <td
+          class="columnas-chicas"
+          mat-cell
+          *matCellDef="let estudiante; let i = index"
+        >
+          <mat-checkbox
+            [checked]="estudiante.seleccionado"
+            (change)="estudiante.seleccionado = !estudiante.seleccionado"
+          >
+          </mat-checkbox>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="columnasTabla"></tr>
+      <tr mat-row *matRowDef="let row; columns: columnasTabla"></tr>
+    </table>
+    <mat-spinner *ngIf="loading" class="spinner" [diameter]="60"></mat-spinner>
+    <div class="div-button">
+      <button
+        mat-raised-button
+        class="button-primary"
+        mat-raised-button
+        (click)="openDialogo()"
+      >
+        Inscribir
+      </button>
+      <button mat-raised-button [routerLink]="['/home']" class="button-warn">
+        Volver
+      </button>
+    </div>
+  </form>
+</mat-card>
