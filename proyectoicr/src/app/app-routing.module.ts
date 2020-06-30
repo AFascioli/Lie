@@ -42,6 +42,7 @@ import { RouteEventoGuard } from "./routeEvento.guard";
 import { DefinirAgendaComponent } from "./agenda/definir-agenda/definir-agenda.component";
 import { CalificacionesCicloLectivoComponent } from "./calificaciones/calificaciones-ciclo-lectivo/calificaciones-ciclo-lectivo.component";
 import { SolicitudReunionComponent } from "./solicitud-reunion/solicitud-reunion.component";
+import { SolicitudReunionAdultoResponsableComponent } from "./solicitud-reunion-adulto-responsable/solicitud-reunion-adulto-responsable.component";
 
 const routes: Routes = [
   { path: "login", component: LoginComponent },
@@ -75,6 +76,12 @@ const routes: Routes = [
         canActivate: [RoleGuard],
         data: { rolesValidos: ["Admin", "AdultoResponsable"] },
         component: MenuPrincipalAdultoResponsableComponent,
+      },
+      {
+        path: "solicitudReunionAR",
+        canActivate: [RoleGuard],
+        data: { rolesValidos: ["Admin", "AdultoResponsable"] },
+        component: SolicitudReunionAdultoResponsableComponent,
       },
       {
         path: "visualizarEvento",

@@ -6,6 +6,7 @@ const checkAuthMiddleware = require("../middleware/check-auth");
 const Inscripcion = require("../models/inscripcion");
 const Curso = require("../models/curso");
 
+// Retorna los adultos responsables de un estudiante
 router.get("/", (req, res) => {
   AdultoResponsable.find(
     {

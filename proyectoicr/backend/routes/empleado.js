@@ -17,19 +17,19 @@ router.post("/", checkAuthMiddleware, (req, res) => {
     telefono: req.body.telefono,
     email: req.body.email,
     tipoEmpleado: req.body.tipoEmpleado,
-    idUsuario: req.body.idUsuario
+    idUsuario: req.body.idUsuario,
   });
   empleado
     .save()
     .then(() => {
       res.status(201).json({
         message: "El empleado fue registrado exitosamente",
-        exito: true
+        exito: true,
       });
     })
     .catch(() => {
       res.status(500).json({
-        message: "Mensaje de error especifico"
+        message: "Mensaje de error especifico",
       });
     });
 });
@@ -38,33 +38,66 @@ router.post("/", checkAuthMiddleware, (req, res) => {
 router.get("/docente", checkAuthMiddleware, (req, res) => {
   Empleado.find({ tipoEmpleado: "Docente" })
     .select("nombre apellido")
-    .then(docentes => {
+    .then((docentes) => {
       res.status(201).json({
-        docentes: docentes
+        docentes: docentes,
       });
     })
     .catch(() => {
       res.status(500).json({
-        message: "Mensaje de error especifico"
+        message: "Mensaje de error especifico",
       });
     });
 });
 
 //Obtiene la id del empleado dada la idUsuario
 router.get("/id", checkAuthMiddleware, (req, res) => {
-  Empleado.findOne({idUsuario: req.query.idUsuario}).then(empleado => {
-     if(empleado){
-       res.status(200).json({
-         exito: true,
-         message: "Id obtenida correctamente",
-         id: empleado._id
-       })
-     }
-  }).catch(() => {
-    res.status(500).json({
-      message: "Mensaje de error especifico",
+  Empleado.findOne({ idUsuario: req.query.idUsuario })
+    .then((empleado) => {
+      if (empleado) {
+        res.status(200).json({
+          exito: true,
+          message: "Id obtenida correctamente",
+          id: empleado._id,
+        });
+      }
+    })
+    .catch(() => {
+      res.status(500).json({
+        message: "Mensaje de error especifico",
+      });
     });
-  });
+});
+
+// Retorna todos los docentes que enseñan en el curso del estudiante
+//@params: idEstudiante del cual buscar los docentes
+router.get("/estudiante", checkAuthMiddleware, (req, res) => {
+  // recordar de devolver los idUsuario de los empleados
+  AdultoResponsable.find(
+    {
+      estudiantes: { $in: [req.query.idEstudiante] },
+      tutor: false,
+    },
+    { idUsuario: 1, nombre: 1, apellido: 1, _id: 0 }
+  )
+    .then((docentes) => {
+      if (docentes.length > 0) {
+        docentes.forEach((docente) => {
+          docente.seleccionado = false;
+        });
+        res.status(200).json({
+          exito: true,
+          message: "Se encontro los docentes del estudiante",
+          docentes: docentes,
+        });
+      }
+    })
+    .catch((e) => {
+      res.status(400).json({
+        exito: false,
+        message: "Ocurrió un error al buscar los docentes del estudiante" + e,
+      });
+    });
 });
 
 module.exports = router;
