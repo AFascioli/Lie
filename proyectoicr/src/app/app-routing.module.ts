@@ -79,7 +79,7 @@ const routes: Routes = [
       },
       {
         path: "solicitudReunionAR",
-        canActivate: [RoleGuard],
+        canActivate: [RoleGuard,RouteGuard],
         data: { rolesValidos: ["Admin", "AdultoResponsable"] },
         component: SolicitudReunionAdultoResponsableComponent,
       },

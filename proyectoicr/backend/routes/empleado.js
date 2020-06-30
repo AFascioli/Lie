@@ -1,6 +1,8 @@
 const express = require("express");
 const router = express.Router();
+const mongoose = require("mongoose");
 const Empleado = require("../models/empleado");
+const Inscripcion = require("../models/inscripcion");
 const checkAuthMiddleware = require("../middleware/check-auth");
 
 //Registra un nuevo empleado en la base de datos
@@ -71,31 +73,89 @@ router.get("/id", checkAuthMiddleware, (req, res) => {
 
 // Retorna todos los docentes que enseñan en el curso del estudiante
 //@params: idEstudiante del cual buscar los docentes
-router.get("/estudiante", checkAuthMiddleware, (req, res) => {
-  // recordar de devolver los idUsuario de los empleados
-  AdultoResponsable.find(
+router.get("/estudiante",  (req, res) => {
+  Inscripcion.aggregate([
     {
-      estudiantes: { $in: [req.query.idEstudiante] },
-      tutor: false,
+      $match: {
+        idEstudiante: mongoose.Types.ObjectId(req.query.idEstudiante),
+        activa: true,
+      },
     },
-    { idUsuario: 1, nombre: 1, apellido: 1, _id: 0 }
-  )
-    .then((docentes) => {
-      if (docentes.length > 0) {
-        docentes.forEach((docente) => {
-          docente.seleccionado = false;
-        });
-        res.status(200).json({
+    {
+      $lookup: {
+        from: "curso",
+        localField: "idCurso",
+        foreignField: "_id",
+        as: "datosCurso",
+      },
+    },
+    {
+      $lookup: {
+        from: "materiasXCurso",
+        localField: "datosCurso.materias",
+        foreignField: "_id",
+        as: "datosMXC",
+      },
+    },
+    {
+      $lookup: {
+        from: "empleado",
+        localField: "datosMXC.idDocente",
+        foreignField: "_id",
+        as: "datosDocente",
+      },
+    },
+    {
+      $lookup: {
+        from: "materia",
+        localField: "datosMXC.idMateria",
+        foreignField: "_id",
+        as: "datosMateria",
+      },
+    },
+    {
+      $lookup: {
+        from: "usuario",
+        localField: "datosDocente.idUsuario",
+        foreignField: "_id",
+        as: "datosUsuario",
+      },
+    },
+    {
+      $project: {
+        "datosDocente.nombre": 1,
+        "datosDocente.apellido": 1,
+        "datosMateria.nombre": 1,
+        "datosUsuario._id": 1,
+      },
+    },
+  ])
+    .then((resultado) => {
+      let docentes = [];
+      console.log(resultado[0].datosDocente);
+      for (let index = 0; index < resultado[0].datosDocente.length; index++) {
+        let docente = {
+          apellido: resultado[0].datosDocente[index].apellido,
+          nombre: resultado[0].datosDocente[index].nombre,
+          materia: resultado[0].datosMateria[index].nombre,
+          idUsuario: resultado[0].datosUsuario[index]._id,
+          seleccionado:false
+        };
+        docentes.push(docente);
+      }
+      console.log(docentes);
+      res
+        .status(200)
+        .json({
+          message: "Docentes obtenidos correctamente",
           exito: true,
-          message: "Se encontro los docentes del estudiante",
           docentes: docentes,
         });
-      }
     })
-    .catch((e) => {
-      res.status(400).json({
+    .catch((error) => {
+      res.status(500).json({
+        message: "Ocurrió un error al querer acceder a los docentes",
         exito: false,
-        message: "Ocurrió un error al buscar los docentes del estudiante" + e,
       });
     });
 });

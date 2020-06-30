@@ -3,7 +3,11 @@
 </h1>
 
 <mat-card class="card-body-componente">
-  <table mat-table [dataSource]="docentes" *ngIf="docentes.length != 0">
+  <table
+    mat-table
+    [dataSource]="docentes"
+    *ngIf="docentes && docentes.length != 0"
+  >
     <ng-container matColumnDef="apellido">
       <th class="columnas-normales" mat-header-cell *matHeaderCellDef>
         Apellido/s
@@ -20,14 +24,26 @@
         {{ docente.nombre }}
       </td>
     </ng-container>
+    <ng-container matColumnDef="materia">
+      <th class="columnas-normales" mat-header-cell *matHeaderCellDef>
+        Materia
+      </th>
+      <td class="columnas-normales" mat-cell *matCellDef="let docente">
+        {{ docente.materia }}
+      </td>
+    </ng-container>
     <ng-container matColumnDef="notificar">
       <th class="columnas-normales" mat-header-cell *matHeaderCellDef>
         Notificar
       </th>
-      <td class="columnas-normales" mat-cell *matCellDef="let docente">
+      <td
+        class="columnas-normales"
+        mat-cell
+        *matCellDef="let docente; let i = index"
+      >
         <mat-checkbox
-          [checked]="docente.seleccionado"
-          (change)="docente.seleccionado = !docente.seleccionado"
+          (change)="onSeleccionado(i)"
+          [checked]="docentes[i].seleccionado"
         >
         </mat-checkbox>
       </td>
@@ -36,7 +52,11 @@
     <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
   </table>
 
-  <mat-form-field>
+  <p class="aviso" *ngIf="docentes && docentes.length == 0">
+    Los docentes de este curso no pueden recibir notificaciones
+  </p>
+
+  <mat-form-field *ngIf="docentes && docentes.length != 0">
     <textarea
       matInput
       name="cuerpo"
@@ -51,7 +71,12 @@
   </mat-form-field>
 
   <div class="div-button">
-    <button class="button-primary" (click)="onEnviar(cuerpo)" mat-raised-button>
+    <button
+      class="button-primary"
+      *ngIf="docentes && docentes.length != 0"
+      (click)="onEnviar(cuerpo)"
+      mat-raised-button
+    >
       Enviar
     </button>
     <button

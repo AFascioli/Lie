@@ -11,14 +11,14 @@ import { AdultoResponsableService } from "../adulto-responsable/adultoResponsabl
 })
 export class SolicitudReunionAdultoResponsableComponent implements OnInit {
   private unsubscribe: Subject<void> = new Subject();
-  docentes = [];
-  displayedColumns: string[] = ["apellido", "nombre", "notificar"];
+  docentes;
+  displayedColumns: string[] = ["apellido", "nombre","materia", "notificar"];
   constructor(
     public snackBar: MatSnackBar,
     public servicioAR: AdultoResponsableService
   ) {}
 
-  ngOnInit(): void {
+  ngOnInit() {
     this.servicioAR
       .getDocentesDeEstudiante()
       .pipe(takeUntil(this.unsubscribe))
@@ -60,5 +60,11 @@ export class SolicitudReunionAdultoResponsableComponent implements OnInit {
     //       });
     //     }
     //   });
+  }
+
+  //Solo se puede seleccionar un docente para enviarle notificacion
+  onSeleccionado(index:number){
+    this.docentes.forEach(docente => docente.seleccionado && (docente.seleccionado= !docente.seleccionado));
+    this.docentes[index].seleccionado=true;
   }
 }
