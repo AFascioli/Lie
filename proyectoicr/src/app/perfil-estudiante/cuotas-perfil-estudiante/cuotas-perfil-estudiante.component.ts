@@ -11,6 +11,8 @@ import { MediaMatcher } from "@angular/cdk/layout";
   styleUrls: ["./cuotas-perfil-estudiante.component.css"],
 })
 export class CuotasPerfilEstudianteComponent implements OnInit, OnDestroy {
+  apellidoEstudiante: string;
+  nombreEstudiante: string;
   estudiante: Estudiante;
   estadoCuotasXMes: any[] = [];
   datasource: any[] = [];
@@ -36,6 +38,8 @@ export class CuotasPerfilEstudianteComponent implements OnInit, OnDestroy {
       .subscribe((respuesta) => {
         this.estadoCuotasXMes = respuesta.cuotas;
       });
+      this.apellidoEstudiante = this.servicio.estudianteSeleccionado.apellido;
+      this.nombreEstudiante = this.servicio.estudianteSeleccionado.nombre;
   }
 
   ngOnDestroy() {

@@ -1,3 +1,4 @@
+import { EstudiantesService } from "./../../estudiantes/estudiante.service";
 import { Component, OnInit, OnDestroy } from "@angular/core";
 import { AsistenciaService } from "src/app/asistencia/asistencia.service";
 import { Label } from "ng2-charts";
@@ -12,6 +13,8 @@ import { Subject } from "rxjs";
   styleUrls: ["./inasistencias-estudiante.component.css"],
 })
 export class InasistenciasEstudianteComponent implements OnInit, OnDestroy {
+  apellidoEstudiante: string;
+  nombreEstudiante: string;
   displayedColumns: string[] = ["tipo", "cantidad"];
   contadorInasistenciaJustificada: number;
   contadorInasistenciaInjustificada: number;
@@ -39,7 +42,10 @@ export class InasistenciasEstudianteComponent implements OnInit, OnDestroy {
   public barChartPlugins = [pluginDataLabels];
   public barChartLegend;
 
-  constructor(public servicioAsistencia: AsistenciaService) {}
+  constructor(
+    public servicioAsistencia: AsistenciaService,
+    public servicioEstudiante: EstudiantesService
+  ) {}
 
   ngOnDestroy() {
     this.unsubscribe.next();
@@ -47,6 +53,8 @@ export class InasistenciasEstudianteComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.apellidoEstudiante = this.servicioEstudiante.estudianteSeleccionado.apellido;
+    this.nombreEstudiante = this.servicioEstudiante.estudianteSeleccionado.nombre;
     this.servicioAsistencia
       .obtenerInasistenciasDeEstudiante()
       .pipe(takeUntil(this.unsubscribe))
