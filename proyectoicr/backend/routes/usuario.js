@@ -8,6 +8,9 @@ const Suscripcion = require("../classes/suscripcion");
 const router = express.Router();
 const Keys = require("../assets/keys");
 const mongoose = require("mongoose");
+const Estudiante = require("../models/estudiante");
+const checkAuthMiddleware = require("../middleware/check-auth");
+const AdultoResponsable = require("../models/adultoResponsable");
 
 //Compara la contraseña ingresada por el usuario con la contraseña pasada por parametro
 //si coinciden entonces le permite cambiar la contraseña, sino se lo deniega
@@ -187,54 +190,38 @@ router.get("/permisosDeRol", (req, res) => {
 //@params: email del usuario
 //@params: contraseña del usuario
 router.post("/signup", (req, res) => {
-  Usuario.findOne({ email: req.body.email })
-    .then((usuario) => {
-      if (usuario) {
-        return res.status(200).json({
-          message: "Ya existe un usuario con el email ingresado",
-          exito: false,
-        });
-      } else {
-        Rol.findOne({ tipo: req.body.rol })
-          .then((rol) => {
-            bcrypt
-              .hash(req.body.password, 10)
-              .then((hash) => {
-                const usuario = new Usuario({
-                  email: req.body.email,
-                  password: hash,
-                  rol: rol._id,
-                });
-                usuario
-                  .save()
-                  .then(() => {
-                    res.status(201).json({
-                      message: "Usuario creado exitosamente",
-                      exito: true,
-                      id: usuario._id,
-                    });
-                  })
-                  .catch((err) => {
-                    res.status(200).json({
-                      message:
-                        "Ocurrieron mensajes al querer salir de la página" +
-                        err,
-                      exito: false,
-                    });
-                  });
-              })
-              .catch(() => {
-                res.status(500).json({
-                  message: "Mensaje de error especifico",
-                });
-              });
-          })
-          .catch(() => {
-            res.status(500).json({
-              message: "Mensaje de error especifico",
-            });
+  Rol.findOne({ tipo: req.body.rol })
+    .then((rol) => {
+      bcrypt
+        .hash(req.body.password, 10)
+        .then((hash) => {
+          const usuario = new Usuario({
+            email: req.body.email,
+            password: hash,
+            rol: rol._id,
           });
-      }
+          usuario
+            .save()
+            .then(() => {
+              res.status(201).json({
+                message: "Usuario creado exitosamente",
+                exito: true,
+                id: usuario._id,
+              });
+            })
+            .catch((err) => {
+              res.status(200).json({
+                message:
+                  "Ocurrieron mensajes al querer salir de la página" + err,
+                exito: false,
+              });
+            });
+        })
+        .catch(() => {
+          res.status(500).json({
+            message: "Mensaje de error especifico",
+          });
+        });
     })
     .catch(() => {
       res.status(500).json({
@@ -329,6 +316,63 @@ router.post("/signup/admin", async (req, res) => {
       exito: false,
     });
   }
+});
+
+//Validar que los datos sean correctos
+router.get("/validate", checkAuthMiddleware, async (req, res) => {
+  Usuario.findOne({
+    email: req.query.email,
+  }).then((adultoResponsable) => {
+    if (adultoResponsable != null) {
+      res.status(200).json({
+        message: "Ya existe un usuario con ese email.",
+        exito: false,
+      });
+    } else {
+      AdultoResponsable.findOne({
+        numeroDocumento: req.query.DNI,
+        tipoDocumento: req.query.TipoDocumento,
+      }).then((adultoResponsable) => {
+        if (adultoResponsable != null) {
+          res.status(200).json({
+            message: "Ya existe un usuario con ese tipo y número de documento.",
+            exito: false,
+          });
+        } else {
+          Empleado.findOne({
+            numeroDocumento: req.query.DNI,
+            tipoDocumento: req.query.TipoDocumento,
+          }).then((empleado) => {
+            if (empleado != null) {
+              res.status(200).json({
+                message:
+                  "Ya existe un usuario con ese tipo y número de documento.",
+                exito: false,
+              });
+            } else {
+              Estudiante.findOne({
+                numeroDocumento: req.query.DNI,
+                tipoDocumento: req.query.TipoDocumento,
+              }).then((estudiante) => {
+                if (estudiante != null) {
+                  res.status(200).json({
+                    message:
+                      "Ya existe un usuario con ese tipo y número de documento.",
+                    exito: false,
+                  });
+                } else {
+                  res.status(200).json({
+                    message: "Validado correctamente",
+                    exito: true,
+                  });
+                }
+              });
+            }
+          });
+        }
+      });
+    }
+  });
 });
 
 module.exports = router;
