@@ -18,6 +18,7 @@ import { Subject } from "rxjs";
 import { takeUntil } from "rxjs/operators";
 import { MediaMatcher } from "@angular/cdk/layout";
 import { debug } from "util";
+import { disableDebugTools } from '@angular/platform-browser';
 
 @Component({
   selector: "app-calificaciones-estudiantes",
@@ -237,7 +238,7 @@ export class CalificacionesEstudiantesComponent implements OnInit, OnDestroy {
   }
 
   obtenerNotas(form: NgForm) {
-    this.isLoading2=true;
+    this.isLoading2 = true;
     if (form.value.curso != null && form.value.materia != null) {
       this.calificacionesChange = false;
       this.servicioCalificaciones
@@ -257,7 +258,7 @@ export class CalificacionesEstudiantesComponent implements OnInit, OnDestroy {
           this.dataSource.filter = this.filtroEstudiante;
           this.dataSource.paginator = this.paginator;
           this.dataSource.paginator.firstPage();
-          this.isLoading2=false;
+          this.isLoading2 = false;
         });
     }
   }
@@ -350,6 +351,30 @@ export class CalificacionesEstudiantesComponent implements OnInit, OnDestroy {
     else if (cal != 0 && Number(concat) > 10) event.preventDefault();
     else this.servicioCalificaciones.auxCambios = true;
   }
+
+  evitarLasFlechas(event) {
+    var inputValue = event.which;
+    if (
+      inputValue == 37 ||
+      inputValue == 38 ||
+      inputValue == 39 ||
+      inputValue == 40
+    ) {
+      event.stopPropagation();
+      event.preventDefault();
+    }
+  }
+
+  // ponerEnNull(cal, estudiante, indexC) {
+  //   console.log(estudiante);
+  //   if (cal == 0)
+  //   estudiante.calificaciones[indexC] = null;
+  // }
+
+  // ponerEn0(cal, estudiante, indexC) {
+  //   if(cal==null)
+  //   estudiante.calificaciones[indexC] = 0;
+  // }
 }
 
 export class PaginatorOverviewExample {}

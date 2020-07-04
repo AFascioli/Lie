@@ -1,7 +1,7 @@
-<h1 *ngIf="rolConPermisosEdicion" class="componente-titulo">
+<h1 *ngIf="rolConPermisosEdicion && !isLoading" class="componente-titulo">
   Registrar calificaciones ciclo lectivo {{ fechaActual.getFullYear() }}
 </h1>
-<h1 *ngIf="!rolConPermisosEdicion" class="componente-titulo">
+<h1 *ngIf="!rolConPermisosEdicion && !isLoading" class="componente-titulo">
   Visualizar calificaciones ciclo lectivo {{ fechaActual.getFullYear() }}
 </h1>
 <mat-card class="card-spinner" *ngIf="isLoading">
@@ -137,6 +137,7 @@
               type="number"
               pattern="([0-9]|0[1-9]|10)"
               [value]="estudiante.calificaciones[0]"
+              (keydown)="evitarLasFlechas($event)"
               (keypress)="checkNotas($event, estudiante.calificaciones[0])"
               (change)="onCalificacionChange()"
               [ngClass]="{ bajoPromedio: this.promedio < 6 }"
@@ -160,6 +161,7 @@
               name="nota2{{ estudiante.calificaciones[1] }}"
               type="number"
               pattern="([0-9]|0[1-9]|10)"
+              (keydown)="evitarLasFlechas($event)"
               (keypress)="checkNotas($event, estudiante.calificaciones[1])"
               (change)="onCalificacionChange()"
               [ngClass]="{ bajoPromedio: this.promedio < 6 }"
@@ -184,6 +186,7 @@
               name="nota3{{ estudiante.calificaciones[2] }}"
               type="number"
               pattern="([0-9]|0[1-9]|10)"
+              (keydown)="evitarLasFlechas($event)"
               (keypress)="checkNotas($event, estudiante.calificaciones[2])"
               (change)="onCalificacionChange()"
               [ngClass]="{ bajoPromedio: this.promedio < 6 }"
@@ -208,6 +211,7 @@
               name="nota4{{ estudiante.calificaciones[3] }}"
               type="number"
               pattern="([0-9]|0[1-9]|10)"
+              (keydown)="evitarLasFlechas($event)"
               (keypress)="checkNotas($event, estudiante.calificaciones[3])"
               (change)="onCalificacionChange()"
               [ngClass]="{ bajoPromedio: this.promedio < 6 }"
@@ -232,6 +236,7 @@
               name="nota5{{ estudiante.calificaciones[4] }}"
               type="number"
               pattern="([0-9]|0[1-9]|10)"
+              (keydown)="evitarLasFlechas($event)"
               (keypress)="checkNotas($event, estudiante.calificaciones[4])"
               (change)="onCalificacionChange()"
               [ngClass]="{ bajoPromedio: this.promedio < 6 }"
@@ -256,10 +261,11 @@
               type="number"
               pattern="([0-9]|0[1-9]|10)"
               name="nota6{{ estudiante.calificaciones[5] }}"
+              (keydown)="evitarLasFlechas($event)"
               (keypress)="checkNotas($event, estudiante.calificaciones[5])"
               (change)="onCalificacionChange()"
               [ngClass]="{ bajoPromedio: this.promedio < 6 }"
-              [value]="estudiante.calificaciones[5]"
+
             />
             <p *ngIf="!rolConPermisosEdicion || !puedeEditarCalificaciones">
               {{ estudiante.calificaciones[5] }}
