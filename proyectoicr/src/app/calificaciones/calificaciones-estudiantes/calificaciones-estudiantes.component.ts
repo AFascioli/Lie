@@ -44,6 +44,7 @@ export class CalificacionesEstudiantesComponent implements OnInit, OnDestroy {
   idDocente: string;
   rolConPermisosEdicion = false;
   isLoading = true;
+  isLoading2 = false;
   fechaActual: Date;
   calificacionesChange = false;
   puedeEditarCalificaciones = false;
@@ -236,6 +237,7 @@ export class CalificacionesEstudiantesComponent implements OnInit, OnDestroy {
   }
 
   obtenerNotas(form: NgForm) {
+    this.isLoading2=true;
     if (form.value.curso != null && form.value.materia != null) {
       this.calificacionesChange = false;
       this.servicioCalificaciones
@@ -255,6 +257,7 @@ export class CalificacionesEstudiantesComponent implements OnInit, OnDestroy {
           this.dataSource.filter = this.filtroEstudiante;
           this.dataSource.paginator = this.paginator;
           this.dataSource.paginator.firstPage();
+          this.isLoading2=false;
         });
     }
   }

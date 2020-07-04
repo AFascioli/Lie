@@ -67,7 +67,9 @@
         </mat-select>
       </mat-form-field>
     </div>
-    <mat-form-field class="filtro" *ngIf="estudiantes.length != 0">
+    <br />
+    <mat-spinner *ngIf="isLoading2" class="spinner" [diameter]="60"></mat-spinner>
+    <mat-form-field class="filtro" *ngIf="estudiantes.length != 0 && !isLoading2">
       <mat-label>Filtrar estudiante</mat-label>
       <input
         matInput
@@ -79,7 +81,7 @@
         placeholder="Estudiante"
       />
     </mat-form-field>
-    <mat-card *ngIf="estudiantes.length != 0">
+    <mat-card *ngIf="estudiantes.length != 0 && !isLoading2">
       <table
         mat-table
         #table
@@ -287,7 +289,7 @@
       </table>
     </mat-card>
 
-    <div [hidden]="!(estudiantes.length != 0)">
+    <div [hidden]="!(estudiantes.length != 0 && !isLoading2)">
       <mat-paginator
         (page)="pageEvent = indexEstudiante()"
         [pageSizeOptions]="[10, 20, 30, 35]"
