@@ -73,7 +73,7 @@ router.get("/id", checkAuthMiddleware, (req, res) => {
 
 // Retorna todos los docentes que enseñan en el curso del estudiante
 //@params: idEstudiante del cual buscar los docentes
-router.get("/estudiante",  (req, res) => {
+router.get("/estudiante", (req, res) => {
   Inscripcion.aggregate([
     {
       $match: {
@@ -132,25 +132,21 @@ router.get("/estudiante",  (req, res) => {
   ])
     .then((resultado) => {
       let docentes = [];
-      console.log(resultado[0].datosDocente);
       for (let index = 0; index < resultado[0].datosDocente.length; index++) {
         let docente = {
           apellido: resultado[0].datosDocente[index].apellido,
           nombre: resultado[0].datosDocente[index].nombre,
           materia: resultado[0].datosMateria[index].nombre,
           idUsuario: resultado[0].datosUsuario[index]._id,
-          seleccionado:false
+          seleccionado: false,
         };
         docentes.push(docente);
       }
-      console.log(docentes);
-      res
-        .status(200)
-        .json({
-          message: "Docentes obtenidos correctamente",
-          exito: true,
-          docentes: docentes,
-        });
+      res.status(200).json({
+        message: "Docentes obtenidos correctamente",
+        exito: true,
+        docentes: docentes,
+      });
     })
     .catch((error) => {
       res.status(500).json({

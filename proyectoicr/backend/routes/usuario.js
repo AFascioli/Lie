@@ -8,6 +8,7 @@ const Suscripcion = require("../classes/suscripcion");
 const router = express.Router();
 const Keys = require("../assets/keys");
 const mongoose = require("mongoose");
+const AdultoResponsable = require("../models/adultoResponsable");
 
 //Compara la contraseña ingresada por el usuario con la contraseña pasada por parametro
 //si coinciden entonces le permite cambiar la contraseña, sino se lo deniega
@@ -331,6 +332,7 @@ router.post("/signup/admin", async (req, res) => {
   }
 });
 
+// Solicitud para planificar una reunión con adultos responsables del estudiante
 router.post("/reunion/adultoResponsable", (req, res) => {
   let idUsuarios = [];
   req.body.adultosResponsables.forEach((adulto) => {
@@ -342,7 +344,7 @@ router.post("/reunion/adultoResponsable", (req, res) => {
       Suscripcion.notificacionGrupal(
         idUsuarios,
         `Solicitud de reunión de ${empleado.apellido} ${empleado.nombre}`,
-        cuerpo
+        req.body.cuerpo
       );
       res.status(200).json({
         message: "Se envió la notificación a los adultos responsables",
@@ -353,6 +355,28 @@ router.post("/reunion/adultoResponsable", (req, res) => {
       res.status(400).json({
         message:
           "Ocurrió un error al querer notificar a los adultos responsables",
+        exito: false,
+      });
+    });
+});
+
+// Solicitud para planificar una reunión con un docente.
+router.post("/reunion/docente", (req, res) => {
+  AdultoResponsable.findOne({ idUsuario: req.body.idAdulto })
+    .then((adulto) => {
+      Suscripcion.notificacionIndividual(
+        req.body.idDocente,
+        `Solicitud de reunión de ${adulto.apellido} ${adulto.nombre}`,
+        req.body.cuerpo
+      );
+      res.status(200).json({
+        message: "Se envió la notificación al docente",
+        exito: true,
+      });
+    })
+    .catch((e) => {
+      res.status(400).json({
+        message: "Ocurrió un error al querer notificar al docente",
         exito: false,
       });
     });
