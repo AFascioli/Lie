@@ -581,7 +581,7 @@ router.post("/llegadaTarde", checkAuthMiddleware, (req, res) => {
         var fechaHoy = new Date();
         fechaHoy.setHours(fechaHoy.getHours() - 3);
         let estudianteAusente = false;
-        //Chequea si el estudiante tiene o no AsistenciaDiaria
+        //Chequea si el estudiante tiene o no el array de AsistenciaDiaria
         if (ultimaAD == null) {
           return res.status(200).json({
             message:
