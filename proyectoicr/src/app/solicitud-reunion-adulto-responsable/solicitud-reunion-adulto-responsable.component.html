@@ -42,7 +42,7 @@
         *matCellDef="let docente; let i = index"
       >
         <mat-checkbox
-          (change)="onSeleccionado(i)"
+          (change)="onSeleccionado(i, $event)"
           [checked]="docentes[i].seleccionado"
         >
         </mat-checkbox>
