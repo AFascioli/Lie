@@ -42,25 +42,47 @@ export class SolicitudReunionComponent implements OnInit {
   }
 
   onEnviar(cuerpo) {
-    this.servicio
-      .notificarReunionAR(
-        this.adultosResponsables,
-        cuerpo.value,
-        this.servicioAutenticacion.getId()
-      )
-      .pipe(takeUntil(this.unsubscribe))
-      .subscribe((respuesta) => {
-        if (respuesta.exito) {
-          this.snackBar.open(respuesta.message, "", {
-            panelClass: ["snack-bar-exito"],
-            duration: 4500,
-          });
-        } else {
-          this.snackBar.open(respuesta.message, "", {
-            panelClass: ["snack-bar-fracaso"],
-            duration: 4500,
-          });
+    if (this.validarCampos(cuerpo.value)) {
+      this.servicio
+        .notificarReunionAR(
+          this.adultosResponsables,
+          cuerpo.value,
+          this.servicioAutenticacion.getId()
+        )
+        .pipe(takeUntil(this.unsubscribe))
+        .subscribe((respuesta) => {
+          if (respuesta.exito) {
+            this.snackBar.open(respuesta.message, "", {
+              panelClass: ["snack-bar-exito"],
+              duration: 4500,
+            });
+          } else {
+            this.snackBar.open(respuesta.message, "", {
+              panelClass: ["snack-bar-fracaso"],
+              duration: 4500,
+            });
+          }
+        });
+    }
+  }
+
+  validarCampos(cuerpo) {
+    let ARSeleccionados = this.adultosResponsables.filter((adulto) => {
+      return adulto.seleccionado;
+    });
+
+    if (cuerpo && ARSeleccionados.length > 0) {
+      return true;
+    } else {
+      this.snackBar.open(
+        "Por favor seleccione un adulto responsable y escriba una descripción de la notificación",
+        "",
+        {
+          panelClass: ["snack-bar-fracaso"],
+          duration: 4500,
         }
-      });
+      );
+      return false;
+    }
   }
 }
