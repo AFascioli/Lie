@@ -17,8 +17,6 @@ import { MatPaginatorIntl } from "@angular/material";
 import { Subject } from "rxjs";
 import { takeUntil } from "rxjs/operators";
 import { MediaMatcher } from "@angular/cdk/layout";
-import { debug } from "util";
-import { disableDebugTools } from '@angular/platform-browser';
 
 @Component({
   selector: "app-calificaciones-estudiantes",
@@ -341,7 +339,7 @@ export class CalificacionesEstudiantesComponent implements OnInit, OnDestroy {
     var inputValue = event.which;
     concat = String.fromCharCode(inputValue);
     if (cal != 0) var concat = cal + String.fromCharCode(inputValue);
-
+    if (cal == 0) var concat = String.fromCharCode(inputValue) + cal;
     if (
       !(inputValue >= 48 && inputValue <= 57) &&
       inputValue != 32 &&
@@ -349,10 +347,12 @@ export class CalificacionesEstudiantesComponent implements OnInit, OnDestroy {
     )
       event.preventDefault();
     else if (cal != 0 && Number(concat) > 10) event.preventDefault();
+    else if (cal == 0 && Number(concat) > 10) event.preventDefault();
+
     else this.servicioCalificaciones.auxCambios = true;
   }
 
-  evitarLasFlechas(event) {
+  deshabilitarFlechas(event) {
     var inputValue = event.which;
     if (
       inputValue == 37 ||
@@ -364,17 +364,6 @@ export class CalificacionesEstudiantesComponent implements OnInit, OnDestroy {
       event.preventDefault();
     }
   }
-
-  // ponerEnNull(cal, estudiante, indexC) {
-  //   console.log(estudiante);
-  //   if (cal == 0)
-  //   estudiante.calificaciones[indexC] = null;
-  // }
-
-  // ponerEn0(cal, estudiante, indexC) {
-  //   if(cal==null)
-  //   estudiante.calificaciones[indexC] = 0;
-  // }
 }
 
 export class PaginatorOverviewExample {}
