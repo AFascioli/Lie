@@ -136,13 +136,13 @@ export class RegistrarCuotasComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.unsubscribe))
       .subscribe((response) => {
         this.cursos = response.cursos;
-        // this.cursos.sort((a, b) =>
-        //   a.nombre.charAt(0) > b.nombre.charAt(0)
-        //     ? 1
-        //     : b.nombre.charAt(0) > a.nombre.charAt(0)
-        //     ? -1
-        //     : 0
-        // );
+        this.cursos.sort((a, b) =>
+          a.nombre.charAt(0) > b.nombre.charAt(0)
+            ? 1
+            : b.nombre.charAt(0) > a.nombre.charAt(0)
+            ? -1
+            : 0
+        );
       });
     this.cursoEstudiante = "";
   }
