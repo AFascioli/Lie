@@ -4,7 +4,7 @@ const router = express.Router();
 const mongoose = require("mongoose");
 const ClaseCXM = require("../classes/calificacionXMateria");
 const ClaseEstado = require("../classes/estado");
-const CalificacionesXMateria= require("../models/calificacionesXMateria");
+const CalificacionesXMateria = require("../models/calificacionesXMateria");
 
 //Dado un id de estudiante obtiene todas las materias desaprobadas del año actual
 //Retorna vector con id materia y nombre materia
@@ -15,7 +15,7 @@ router.get("/materiasDesaprobadas", (req, res) => {
   Inscripcion.findOne({
     idEstudiante: mongoose.Types.ObjectId(req.query.idEstudiante),
     año: fechaActual.getFullYear(),
-    activa: true
+    activa: true,
   }).then(async (inscripcion) => {
     let idEstado = await ClaseEstado.obtenerIdEstado(
       "CalificacionesXMateria",
@@ -166,14 +166,13 @@ router.post("/examen", async (req, res) => {
             CXM: 1,
           },
         },
-      ])
-        .then((cxmEncontrada) => {
-          if (cxmEncontrada.length!=0) {
-            resolve(cxmEncontrada[0].CXM._id);
-          } else {
-            resolve(null);
-          }
-        });
+      ]).then((cxmEncontrada) => {
+        if (cxmEncontrada.length != 0) {
+          resolve(cxmEncontrada[0].CXM._id);
+        } else {
+          resolve(null);
+        }
+      });
     });
   };
 
@@ -212,12 +211,12 @@ router.post("/examen", async (req, res) => {
           },
         },
       ]).then((cxmEncontrada) => {
-          if (cxmEncontrada.length!=0) {
-            resolve(cxmEncontrada[0].datosMateriasPendientes._id);
-          } else {
-            resolve(null);
-          }
-        });
+        if (cxmEncontrada.length != 0) {
+          resolve(cxmEncontrada[0].datosMateriasPendientes._id);
+        } else {
+          resolve(null);
+        }
+      });
     });
   };
 
@@ -226,10 +225,9 @@ router.post("/examen", async (req, res) => {
       CalificacionesXMateria.findOneAndUpdate(
         { _id: idCXMAEditar },
         { estado: estadoNuevo, promedio: promedioNuevo }
-      )
-        .then(() => {
-          resolve();
-        });
+      ).then(() => {
+        resolve();
+      });
     });
   };
 
@@ -241,7 +239,10 @@ router.post("/examen", async (req, res) => {
     idCXMAEditar = idCXM;
   } else {
     //Si la materia rendida es una materia pendiente se obtiene su id
-    let idCXMPendiente = await obtenerIdCXMPendiente(req.body.idEstudiante, req.body.idMateria);
+    let idCXMPendiente = await obtenerIdCXMPendiente(
+      req.body.idEstudiante,
+      req.body.idMateria
+    );
     idCXMAEditar = idCXMPendiente;
     //Se elimina la cxm del vector de materias pendientes
     Inscripcion.findOneAndUpdate(
@@ -254,10 +255,9 @@ router.post("/examen", async (req, res) => {
   await actualizarCXM(estadoAprobada, req.body.calificacion);
 
   res.status(200).json({
-    message: "Se asignó la calificacion del examen exitosamente",
+    message: "Se asignó la calificación del examen exitosamente",
     exito: true,
   });
 });
-
 
 module.exports = router;
