@@ -129,6 +129,8 @@ import {
   InscripcionCursoComponent,
   InscripcionCursoPopupComponent,
 } from "./inscripcion/inscripcion-curso/inscripcion-curso.component";
+import { SolicitudReunionComponent } from "./solicitud-reunion/solicitud-reunion.component";
+import { SolicitudReunionAdultoResponsableComponent } from './solicitud-reunion-adulto-responsable/solicitud-reunion-adulto-responsable.component';
 
 @NgModule({
   declarations: [
@@ -188,6 +190,8 @@ import {
     MenuPrincipalAdultoResponsableComponent,
     InscripcionCursoComponent,
     InscripcionCursoPopupComponent,
+    SolicitudReunionComponent,
+    SolicitudReunionAdultoResponsableComponent,
   ],
   //entryComponents declara los componentes que se generan dinamicamente dentro de otros.
   entryComponents: [

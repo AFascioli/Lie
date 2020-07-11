@@ -108,6 +108,7 @@ router.get("/id", checkAuthMiddleware, (req, res) => {
       });
     });
 });
+
 //Obtiene los adultos responsable de un estudiante
 router.get("/adultosResponsables", (req, res) => {
   Estudiante.aggregate([

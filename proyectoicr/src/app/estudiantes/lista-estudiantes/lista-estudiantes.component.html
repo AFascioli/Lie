@@ -88,13 +88,18 @@
           *ngIf="permisos.inscribirEstudiante >= 1 && inscripto[i]"
           ><b>Visualizar perfil de estudiante</b></mat-card
         >
-        <!-- #wip -->
         <mat-card
           class="opcion"
           [class.opcion-mobile]="mobileQuery.matches"
           (click)="onReincorporar(i)"
           *ngIf="permisos.inscribirEstudiante >= 1 && suspendido[i]"
           ><b>Reincorporar estudiante</b></mat-card
+        >
+        <mat-card
+          class="opcion"
+          [class.opcion-mobile]="mobileQuery.matches"
+          (click)="onNotificarReunion(i)"
+          ><b>Enviar notificación de reunión</b></mat-card
         >
       </div>
     </mat-expansion-panel>

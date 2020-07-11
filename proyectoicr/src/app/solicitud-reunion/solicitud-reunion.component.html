@@ -1,0 +1,82 @@
+<h1 class="componente-titulo">
+  Solicitud de reunión con adulto responsable
+</h1>
+
+<mat-card class="card-body-componente">
+  <table
+    mat-table
+    [dataSource]="adultosResponsables"
+    *ngIf="adultosResponsables.length != 0"
+  >
+    <ng-container matColumnDef="apellido">
+      <th class="columnas-normales" mat-header-cell *matHeaderCellDef>
+        Apellido/s
+      </th>
+      <td
+        class="columnas-normales"
+        mat-cell
+        *matCellDef="let adultoResponsable"
+      >
+        {{ adultoResponsable.apellido }}
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="nombre">
+      <th class="columnas-normales" mat-header-cell *matHeaderCellDef>
+        Nombre/s
+      </th>
+      <td
+        class="columnas-normales"
+        mat-cell
+        *matCellDef="let adultoResponsable"
+      >
+        {{ adultoResponsable.nombre }}
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="notificar">
+      <th class="columnas-normales" mat-header-cell *matHeaderCellDef>
+        Notificar
+      </th>
+      <td
+        class="columnas-normales"
+        mat-cell
+        *matCellDef="let adultoResponsable"
+      >
+        <mat-checkbox
+          [checked]="adultoResponsable.seleccionado"
+          (change)="
+            adultoResponsable.seleccionado = !adultoResponsable.seleccionado
+          "
+        >
+        </mat-checkbox>
+      </td>
+    </ng-container>
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+  </table>
+  <p *ngIf="adultosResponsables.length == 0" class="aviso">
+    <b>El estudiante no tiene adultos responsables asignados</b>
+  </p>
+
+  <mat-form-field>
+    <textarea
+      matInput
+      name="cuerpo"
+      ngModel
+      #cuerpo="ngModel"
+      rows="3"
+      placeholder="Ingrese el cuerpo de la notificación"
+      type="text"
+      [maxLength]="90"
+    >
+    </textarea>
+  </mat-form-field>
+
+  <div class="div-button">
+    <button class="button-primary" (click)="onEnviar(cuerpo)" mat-raised-button>
+      Enviar
+    </button>
+    <button mat-raised-button [routerLink]="['/buscar/lista']" class="button-warn">
+      Volver
+    </button>
+  </div>
+</mat-card>

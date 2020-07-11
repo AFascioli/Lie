@@ -1,6 +1,8 @@
 const express = require("express");
 const router = express.Router();
+const mongoose = require("mongoose");
 const Empleado = require("../models/empleado");
+const Inscripcion = require("../models/inscripcion");
 const checkAuthMiddleware = require("../middleware/check-auth");
 
 //Registra un nuevo empleado en la base de datos
@@ -17,19 +19,19 @@ router.post("/", checkAuthMiddleware, (req, res) => {
     telefono: req.body.telefono,
     email: req.body.email,
     tipoEmpleado: req.body.tipoEmpleado,
-    idUsuario: req.body.idUsuario
+    idUsuario: req.body.idUsuario,
   });
   empleado
     .save()
     .then(() => {
       res.status(201).json({
         message: "El empleado fue registrado exitosamente",
-        exito: true
+        exito: true,
       });
     })
     .catch(() => {
       res.status(500).json({
-        message: "Mensaje de error especifico"
+        message: "Mensaje de error especifico",
       });
     });
 });
@@ -38,33 +40,120 @@ router.post("/", checkAuthMiddleware, (req, res) => {
 router.get("/docente", checkAuthMiddleware, (req, res) => {
   Empleado.find({ tipoEmpleado: "Docente" })
     .select("nombre apellido")
-    .then(docentes => {
+    .then((docentes) => {
       res.status(201).json({
-        docentes: docentes
+        docentes: docentes,
       });
     })
     .catch(() => {
       res.status(500).json({
-        message: "Mensaje de error especifico"
+        message: "Mensaje de error especifico",
       });
     });
 });
 
 //Obtiene la id del empleado dada la idUsuario
 router.get("/id", checkAuthMiddleware, (req, res) => {
-  Empleado.findOne({idUsuario: req.query.idUsuario}).then(empleado => {
-     if(empleado){
-       res.status(200).json({
-         exito: true,
-         message: "Id obtenida correctamente",
-         id: empleado._id
-       })
-     }
-  }).catch(() => {
-    res.status(500).json({
-      message: "Mensaje de error especifico",
+  Empleado.findOne({ idUsuario: req.query.idUsuario })
+    .then((empleado) => {
+      if (empleado) {
+        res.status(200).json({
+          exito: true,
+          message: "Id obtenida correctamente",
+          id: empleado._id,
+        });
+      }
+    })
+    .catch(() => {
+      res.status(500).json({
+        message: "Mensaje de error especifico",
+      });
     });
-  });
+});
+
+// Retorna todos los docentes que enseñan en el curso del estudiante
+//@params: idEstudiante del cual buscar los docentes
+router.get("/estudiante", (req, res) => {
+  Inscripcion.aggregate([
+    {
+      $match: {
+        idEstudiante: mongoose.Types.ObjectId(req.query.idEstudiante),
+        activa: true,
+      },
+    },
+    {
+      $lookup: {
+        from: "curso",
+        localField: "idCurso",
+        foreignField: "_id",
+        as: "datosCurso",
+      },
+    },
+    {
+      $lookup: {
+        from: "materiasXCurso",
+        localField: "datosCurso.materias",
+        foreignField: "_id",
+        as: "datosMXC",
+      },
+    },
+    {
+      $lookup: {
+        from: "empleado",
+        localField: "datosMXC.idDocente",
+        foreignField: "_id",
+        as: "datosDocente",
+      },
+    },
+    {
+      $lookup: {
+        from: "materia",
+        localField: "datosMXC.idMateria",
+        foreignField: "_id",
+        as: "datosMateria",
+      },
+    },
+    {
+      $lookup: {
+        from: "usuario",
+        localField: "datosDocente.idUsuario",
+        foreignField: "_id",
+        as: "datosUsuario",
+      },
+    },
+    {
+      $project: {
+        "datosDocente.nombre": 1,
+        "datosDocente.apellido": 1,
+        "datosMateria.nombre": 1,
+        "datosUsuario._id": 1,
+      },
+    },
+  ])
+    .then((resultado) => {
+      let docentes = [];
+      for (let index = 0; index < resultado[0].datosDocente.length; index++) {
+        let docente = {
+          apellido: resultado[0].datosDocente[index].apellido,
+          nombre: resultado[0].datosDocente[index].nombre,
+          materia: resultado[0].datosMateria[index].nombre,
+          idUsuario: resultado[0].datosUsuario[index]._id,
+          seleccionado: false,
+        };
+        docentes.push(docente);
+      }
+      res.status(200).json({
+        message: "Docentes obtenidos correctamente",
+        exito: true,
+        docentes: docentes,
+      });
+    })
+    .catch((error) => {
+      res.status(500).json({
+        message: "Ocurrió un error al querer acceder a los docentes",
+        exito: false,
+      });
+    });
 });
 
 module.exports = router;

@@ -5,6 +5,7 @@ import { Injectable, OnDestroy } from "@angular/core";
 import { AutenticacionService } from "../login/autenticacionService.service";
 import { Subject } from "rxjs";
 import { takeUntil } from "rxjs/operators";
+import { EstudiantesService } from "../estudiantes/estudiante.service";
 
 @Injectable({
   providedIn: "root",
@@ -15,7 +16,8 @@ export class AdultoResponsableService implements OnDestroy {
 
   constructor(
     public http: HttpClient,
-    public authServicio: AutenticacionService
+    public authServicio: AutenticacionService,
+    public servicioEstudiante: EstudiantesService
   ) {}
 
   registrarAdultoResponsable(
@@ -97,6 +99,33 @@ export class AdultoResponsableService implements OnDestroy {
       message: string;
     }>(environment.apiUrl + "/adultoResponsable/estudiantes", {
       params: params,
+    });
+  }
+
+  //Obtiene todos los docentes de un estudiante pasado por parámetro
+  //@params: id del estudiante
+  public getDocentesDeEstudiante() {
+    let params = new HttpParams().set(
+      "idEstudiante",
+      this.servicioEstudiante.estudianteSeleccionado._id
+    );
+    return this.http.get<{
+      message: string;
+      exito: boolean;
+      docentes: any[];
+    }>(environment.apiUrl + "/empleado/estudiante", {
+      params: params,
+    });
+  }
+
+  public notificarReunionDocente(idDocente, cuerpo, idAdulto) {
+    return this.http.post<{
+      message: string;
+      exito: boolean;
+    }>(environment.apiUrl + "/usuario/reunion/docente", {
+      idDocente: idDocente,
+      cuerpo: cuerpo,
+      idAdulto: idAdulto,
     });
   }
 }

@@ -1,17 +1,16 @@
-import {
-  Component,
-  OnInit,
-  ElementRef,
-  ViewChild,
-  ChangeDetectorRef,
-} from "@angular/core";
+import { Component, OnInit, ChangeDetectorRef } from "@angular/core";
 import { EstudiantesService } from "../estudiantes/estudiante.service";
 import { Estudiante } from "../estudiantes/estudiante.model";
 import { Router } from "@angular/router";
-import { MatDialogRef, MatDialog } from "@angular/material";
+import {
+  MatDialogRef,
+  MatDialog,
+  MatGridTileHeaderCssMatStyler,
+} from "@angular/material";
 import { MediaMatcher } from "@angular/cdk/layout";
 import { Subject } from "rxjs";
 import { takeUntil } from "rxjs/operators";
+import { AutenticacionService } from "../login/autenticacionService.service";
 
 @Component({
   selector: "app-perfil-estudiante",
@@ -33,6 +32,7 @@ export class PerfilEstudianteComponent implements OnInit {
 
   constructor(
     public servicio: EstudiantesService,
+    public servicioAutenticación: AutenticacionService,
     public router: Router,
     public popup: MatDialog,
     public changeDetectorRef: ChangeDetectorRef,
@@ -60,6 +60,12 @@ export class PerfilEstudianteComponent implements OnInit {
   ngOnDestroy() {
     this.unsubscribe.next();
     this.unsubscribe.complete();
+  }
+
+  esAdultoResponsable() {
+    return this.servicioAutenticación.getRol() == "Adulto Responsable"
+      ? true
+      : false;
   }
 
   onCancelar() {
@@ -92,6 +98,10 @@ export class PerfilEstudianteComponent implements OnInit {
 
   onClickDatosEstudiante() {
     this.router.navigate(["./datosPerfilEstudiante"]);
+  }
+
+  onClickSolicitudReunion() {
+    this.router.navigate(["/solicitudReunionAR"]);
   }
 }
 @Component({

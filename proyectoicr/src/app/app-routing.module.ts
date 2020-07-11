@@ -1,4 +1,4 @@
-import { InscripcionCursoComponent } from './inscripcion/inscripcion-curso/inscripcion-curso.component';
+import { InscripcionCursoComponent } from "./inscripcion/inscripcion-curso/inscripcion-curso.component";
 import { MenuPrincipalAdultoResponsableComponent } from "./menu-principal-adulto-responsable/menu-principal-adulto-responsable.component";
 import { RegistrarSancionesComponent } from "./sanciones/registrar-sanciones/registrar-sanciones.component";
 import { RegistrarCuotasComponent } from "./cuotas/registrar-cuotas/registrar-cuotas.component";
@@ -41,6 +41,8 @@ import { SancionesEstudianteComponent } from "./perfil-estudiante/sanciones-estu
 import { RouteEventoGuard } from "./routeEvento.guard";
 import { DefinirAgendaComponent } from "./agenda/definir-agenda/definir-agenda.component";
 import { CalificacionesCicloLectivoComponent } from "./calificaciones/calificaciones-ciclo-lectivo/calificaciones-ciclo-lectivo.component";
+import { SolicitudReunionComponent } from "./solicitud-reunion/solicitud-reunion.component";
+import { SolicitudReunionAdultoResponsableComponent } from "./solicitud-reunion-adulto-responsable/solicitud-reunion-adulto-responsable.component";
 
 const routes: Routes = [
   { path: "login", component: LoginComponent },
@@ -74,6 +76,12 @@ const routes: Routes = [
         canActivate: [RoleGuard],
         data: { rolesValidos: ["Admin", "AdultoResponsable"] },
         component: MenuPrincipalAdultoResponsableComponent,
+      },
+      {
+        path: "solicitudReunionAR",
+        canActivate: [RoleGuard,RouteGuard],
+        data: { rolesValidos: ["Admin", "AdultoResponsable"] },
+        component: SolicitudReunionAdultoResponsableComponent,
       },
       {
         path: "visualizarEvento",
@@ -127,6 +135,12 @@ const routes: Routes = [
         data: { rolesValidos: ["Admin", "Preceptor", "Director", "Docente"] },
       },
       {
+        path: "solicitudReunion",
+        component: SolicitudReunionComponent,
+        canActivate: [RouteGuard, RoleGuard],
+        data: { rolesValidos: ["Admin", "Preceptor", "Director", "Docente"] },
+      },
+      {
         path: "retiroAnticipado",
         component: RetiroAnticipadoComponent,
         canActivate: [RouteGuard, RoleGuard],
@@ -148,7 +162,7 @@ const routes: Routes = [
         path: "calificacionesCicloLectivo",
         component: CalificacionesCicloLectivoComponent,
         canActivate: [RoleGuard],
-        data: { rolesValidos: ["Admin", "Preceptor", "Director", "Docente"] }
+        data: { rolesValidos: ["Admin", "Preceptor", "Director", "Docente"] },
       },
       {
         path: "registrarCuotas",
@@ -330,12 +344,7 @@ const routes: Routes = [
         component: VisualizarAgendaComponent,
         canActivate: [RoleGuard],
         data: {
-          rolesValidos: [
-            "Admin",
-            "Preceptor",
-            "Director",
-            "Docente",
-          ],
+          rolesValidos: ["Admin", "Preceptor", "Director", "Docente"],
         },
       },
       {
@@ -343,13 +352,9 @@ const routes: Routes = [
         component: InscripcionCursoComponent,
         canActivate: [RoleGuard],
         data: {
-          rolesValidos: [
-            "Admin",
-            "Preceptor",
-            "Director",
-          ],
+          rolesValidos: ["Admin", "Preceptor", "Director"],
         },
-      }
+      },
     ],
   },
 ];

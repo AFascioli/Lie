@@ -194,6 +194,33 @@ export class EstudiantesService implements OnDestroy {
     });
   }
 
+  //Obtiene todos adultos responsables de un estudiante pasado por parámetro
+  //@params: id del estudiante
+  public getARDeEstudiante() {
+    let params = new HttpParams().set(
+      "idEstudiante",
+      this.estudianteSeleccionado._id
+    );
+    return this.http.get<{
+      message: string;
+      exito: boolean;
+      adultosResponsables: any[];
+    }>(environment.apiUrl + "/adultoResponsable", {
+      params: params,
+    });
+  }
+
+  public notificarReunionAR(adultosResponsables, cuerpo, idUsuarioEmpleado) {
+    return this.http.post<{
+      message: string;
+      exito: boolean;
+    }>(environment.apiUrl + "/usuario/reunion/adultoResponsable", {
+      adultosResponsables: adultosResponsables,
+      cuerpo: cuerpo,
+      idUsuarioEmpleado: idUsuarioEmpleado,
+    });
+  }
+
   //Modifica en la base de datos los datos de un estudiante seleccionado
   //@params: datos del estudiante
   public modificarEstudiante(

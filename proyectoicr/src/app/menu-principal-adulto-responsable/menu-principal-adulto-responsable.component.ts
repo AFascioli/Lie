@@ -70,25 +70,25 @@ export class MenuPrincipalAdultoResponsableComponent implements OnInit {
   }
 
   subscribeToNotifications() {
-    // if (Notification.permission === "granted") {
-    // } else {
-    this.swPush
-      .requestSubscription({
-        serverPublicKey: this.VAPID_PUBLIC,
-      })
-      .then((pushsub) => {
-        console.log("Paso requestSubscription");
-        this.authService
-          .addPushSubscriber(pushsub)
-          .pipe(takeUntil(this.unsubscribe))
-          .subscribe((res) => {
-            console.log("Se suscribió a recibir notificaciones push.");
-          });
-      })
-      .catch((err) =>
-        console.error("No se pudo suscribir a las notificaciones push.", err)
-      );
-    // }
+    if (Notification.permission === "granted") {
+    } else {
+      this.swPush
+        .requestSubscription({
+          serverPublicKey: this.VAPID_PUBLIC,
+        })
+        .then((pushsub) => {
+          console.log("Paso requestSubscription");
+          this.authService
+            .addPushSubscriber(pushsub)
+            .pipe(takeUntil(this.unsubscribe))
+            .subscribe((res) => {
+              console.log("Se suscribió a recibir notificaciones push.");
+            });
+        })
+        .catch((err) =>
+          console.error("No se pudo suscribir a las notificaciones push.", err)
+        );
+    }
   }
 
   obtenerDatosEstudiante() {
