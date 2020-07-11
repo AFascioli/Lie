@@ -1,5 +1,5 @@
 <h1 class="componente-titulo">
-  Registrar pago de cuotas
+  Registrar pago de cuotas ciclo lectivo {{ fechaActual.getFullYear() }}
 </h1>
 
 <mat-card class="card-body-componente">
@@ -64,7 +64,6 @@
     ciclo lectivo
   </p>
   <br />
-  <mat-spinner class="spinner" [diameter]="60" *ngIf="isLoading"></mat-spinner>
   <div *ngIf="!cursoNotSelected && !isLoading">
     <table
       mat-table
@@ -114,7 +113,7 @@
   <div class="div-button">
     <button
       class="button-primary"
-      (click)="onGuardar(mes, curso)"
+      (click)="onGuardar()"
       mat-raised-button
       [disabled]="cursoNotSelected"
     >

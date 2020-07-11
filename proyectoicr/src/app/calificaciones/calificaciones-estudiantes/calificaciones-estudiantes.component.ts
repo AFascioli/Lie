@@ -17,7 +17,6 @@ import { MatPaginatorIntl } from "@angular/material";
 import { Subject } from "rxjs";
 import { takeUntil } from "rxjs/operators";
 import { MediaMatcher } from "@angular/cdk/layout";
-import { debug } from "util";
 
 @Component({
   selector: "app-calificaciones-estudiantes",
@@ -44,6 +43,7 @@ export class CalificacionesEstudiantesComponent implements OnInit, OnDestroy {
   idDocente: string;
   rolConPermisosEdicion = false;
   isLoading = true;
+  isLoading2 = false;
   fechaActual: Date;
   calificacionesChange = false;
   puedeEditarCalificaciones = false;
@@ -236,6 +236,7 @@ export class CalificacionesEstudiantesComponent implements OnInit, OnDestroy {
   }
 
   obtenerNotas(form: NgForm) {
+    this.isLoading2 = true;
     if (form.value.curso != null && form.value.materia != null) {
       this.calificacionesChange = false;
       this.servicioCalificaciones
@@ -255,6 +256,7 @@ export class CalificacionesEstudiantesComponent implements OnInit, OnDestroy {
           this.dataSource.filter = this.filtroEstudiante;
           this.dataSource.paginator = this.paginator;
           this.dataSource.paginator.firstPage();
+          this.isLoading2 = false;
         });
     }
   }
@@ -337,7 +339,7 @@ export class CalificacionesEstudiantesComponent implements OnInit, OnDestroy {
     var inputValue = event.which;
     concat = String.fromCharCode(inputValue);
     if (cal != 0) var concat = cal + String.fromCharCode(inputValue);
-
+    if (cal == 0) var concat = String.fromCharCode(inputValue) + cal;
     if (
       !(inputValue >= 48 && inputValue <= 57) &&
       inputValue != 32 &&
@@ -345,7 +347,22 @@ export class CalificacionesEstudiantesComponent implements OnInit, OnDestroy {
     )
       event.preventDefault();
     else if (cal != 0 && Number(concat) > 10) event.preventDefault();
+    else if (cal == 0 && Number(concat) > 10) event.preventDefault();
+
     else this.servicioCalificaciones.auxCambios = true;
+  }
+
+  deshabilitarFlechas(event) {
+    var inputValue = event.which;
+    if (
+      inputValue == 37 ||
+      inputValue == 38 ||
+      inputValue == 39 ||
+      inputValue == 40
+    ) {
+      event.stopPropagation();
+      event.preventDefault();
+    }
   }
 }
 

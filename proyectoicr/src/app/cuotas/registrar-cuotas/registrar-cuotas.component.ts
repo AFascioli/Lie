@@ -78,7 +78,6 @@ export class RegistrarCuotasComponent implements OnInit, OnDestroy {
   //Busca los estudiantes segun el curso que se selecciono en pantalla. Los orden alfabeticamente
   onCursoSeleccionado(curso, mes) {
     let nroMes: any = 0;
-
     for (let i = 0; i < this.meses.length; i++) {
       if (mes.value == this.meses[i]) {
         nroMes = i + 1;
@@ -96,7 +95,6 @@ export class RegistrarCuotasComponent implements OnInit, OnDestroy {
         } else {
           this.cuotasXEstudiante = [];
         }
-        this.isLoading = false;
         this.cursoNotSelected = false;
       });
   }
@@ -136,13 +134,13 @@ export class RegistrarCuotasComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.unsubscribe))
       .subscribe((response) => {
         this.cursos = response.cursos;
-        // this.cursos.sort((a, b) =>
-        //   a.nombre.charAt(0) > b.nombre.charAt(0)
-        //     ? 1
-        //     : b.nombre.charAt(0) > a.nombre.charAt(0)
-        //     ? -1
-        //     : 0
-        // );
+        this.cursos.sort((a, b) =>
+          a.nombre.charAt(0) > b.nombre.charAt(0)
+            ? 1
+            : b.nombre.charAt(0) > a.nombre.charAt(0)
+            ? -1
+            : 0
+        );
       });
     this.cursoEstudiante = "";
   }
@@ -154,12 +152,10 @@ export class RegistrarCuotasComponent implements OnInit, OnDestroy {
         cuotasCambiadas.push(cuota);
       }
     });
-    //this.isLoading = true;
     this.cuotasService
       .publicarEstadoCuotasDeCurso(cuotasCambiadas)
       .pipe(takeUntil(this.unsubscribe))
       .subscribe((rtdo) => {
-        this.isLoading = false;
         if (cuotasCambiadas.length == 0) {
           this.snackBar.open(
             "No se ha realizado ninguna modificación en las cuotas",

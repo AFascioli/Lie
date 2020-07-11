@@ -392,4 +392,17 @@ export class AutenticacionService implements OnDestroy {
       params: params
     });
   }
+
+  validarDatos(dni, tipoDoc, email) {
+    let params = new HttpParams()
+      .set("DNI", dni)
+      .set("TipoDocumento", tipoDoc)
+      .set("email", email);
+    return this.http.get<{
+      exito: boolean;
+      message: string;
+    }>(environment.apiUrl + "/usuario/validate", {
+      params: params,
+    });
+  }
 }

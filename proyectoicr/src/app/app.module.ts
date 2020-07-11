@@ -23,7 +23,6 @@ import {
   MatInputModule,
   MatPaginatorIntl,
 } from "@angular/material";
-// import { MatIconRegistry } from "@angular/material/icon";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { MatPaginatorModule } from "@angular/material/paginator";
@@ -35,7 +34,6 @@ import { CancelPopupComponent } from "./popup-genericos/cancel-popup.component";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { HttpClientModule, HTTP_INTERCEPTORS } from "@angular/common/http";
 import { NgxMaterialTimepickerModule } from "ngx-material-timepicker";
-// import { MatTableExporterModule } from "mat-table-exporter";
 import { EstudiantesService } from "./estudiantes/estudiante.service";
 import {
   BuscarEstudiantesComponent,
@@ -65,13 +63,13 @@ import {
   InscripcionEstudianteComponent,
   InscripcionPopupComponent,
 } from "./inscripcion/inscripcion-estudiantes/inscripcion-estudiantes.component";
-import {
-  RetiroAnticipadoComponent,
-  RetiroPopupComponent,
-} from "./asistencia/retiro-anticipado/retiro-anticipado.component";
+import { RetiroAnticipadoComponent } from "./asistencia/retiro-anticipado/retiro-anticipado.component";
 import { DocumentosInscripcionComponent } from "./inscripcion/documentos-inscripcion/documentos-inscripcion.component";
 import { MatGridListModule } from "@angular/material/grid-list";
-import { CalificacionesEstudiantesComponent, CalificacionesEstudiantePopupComponent } from "./calificaciones/calificaciones-estudiantes/calificaciones-estudiantes.component";
+import {
+  CalificacionesEstudiantesComponent,
+  CalificacionesEstudiantePopupComponent,
+} from "./calificaciones/calificaciones-estudiantes/calificaciones-estudiantes.component";
 import { CalificacionesCicloLectivoComponent } from "./calificaciones/calificaciones-ciclo-lectivo/calificaciones-ciclo-lectivo.component";
 import { LlegadaTardeComponent } from "./asistencia/llegada-tarde/llegada-tarde.component";
 import {
@@ -127,7 +125,10 @@ import { ErrorInterceptor } from "./error-interceptor";
 import { ErrorComponent } from "./error/error.component";
 import { ImageUploadModule } from "ng2-imageupload";
 import { MenuPrincipalAdultoResponsableComponent } from "./menu-principal-adulto-responsable/menu-principal-adulto-responsable.component";
-import { InscripcionCursoComponent, InscripcionCursoPopupComponent } from './inscripcion/inscripcion-curso/inscripcion-curso.component';
+import {
+  InscripcionCursoComponent,
+  InscripcionCursoPopupComponent,
+} from "./inscripcion/inscripcion-curso/inscripcion-curso.component";
 
 @NgModule({
   declarations: [
@@ -152,7 +153,6 @@ import { InscripcionCursoComponent, InscripcionCursoPopupComponent } from './ins
     InscripcionEstudianteComponent,
     InscripcionPopupComponent,
     RetiroAnticipadoComponent,
-    RetiroPopupComponent,
     DocumentosInscripcionComponent,
     CalificacionesEstudiantesComponent,
     CalificacionesCicloLectivoComponent,
@@ -187,7 +187,7 @@ import { InscripcionCursoComponent, InscripcionCursoPopupComponent } from './ins
     SancionesEstudianteComponent,
     MenuPrincipalAdultoResponsableComponent,
     InscripcionCursoComponent,
-    InscripcionCursoPopupComponent
+    InscripcionCursoPopupComponent,
   ],
   //entryComponents declara los componentes que se generan dinamicamente dentro de otros.
   entryComponents: [
@@ -200,7 +200,6 @@ import { InscripcionCursoComponent, InscripcionCursoPopupComponent } from './ins
     BuscarPopupComponent,
     InscripcionPopupComponent,
     InscripcionCursoPopupComponent,
-    RetiroPopupComponent,
     CambiarPasswordPopupComponent,
     CerrarSesionPopupComponent,
     PreferenciasPopupComponent,
@@ -242,12 +241,10 @@ import { InscripcionCursoComponent, InscripcionCursoPopupComponent } from './ins
     MatSnackBarModule,
     MatGridListModule,
     ChartsModule,
-    // MatIconRegistry,
     MatPaginatorModule,
     NgxMaterialTimepickerModule,
     ImageUploadModule,
     MatTooltipModule,
-    // MatTableExporterModule,
     MatCarouselModule.forRoot(),
     ServiceWorkerModule.register("ngsw-worker.js", {
       enabled: environment.production,

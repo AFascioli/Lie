@@ -581,29 +581,41 @@ router.post("/llegadaTarde", checkAuthMiddleware, (req, res) => {
         var fechaHoy = new Date();
         fechaHoy.setHours(fechaHoy.getHours() - 3);
         let estudianteAusente = false;
-        //Chequea si el estudiante tiene o no AsistenciaDiaria
+        //Chequea si el estudiante tiene o no el array de AsistenciaDiaria
         if (ultimaAD == null) {
           return res.status(200).json({
             message:
               "El estudiante no tiene registrada una asistencia para el dia de hoy",
             exito: false,
-          });
+          })
         } else {
           //Compara si la ultima asistencia fue el dia de hoy
-          if (!ClaseAsistencia.esFechaActual(ultimaAD.fecha)) {
-            var nuevaAsistencia = new AsistenciaDiaria({
-              idInscripcion: inscripcion._id,
-              fecha: fechaHoy,
-              presente: true,
-              retiroAnticipado: false,
-              valorInasistencia: 0,
-              justificado: false,
-              llegadaTarde: true,
-            });
-            await nuevaAsistencia.save().then((ADultima) => {
-              ADcreada = ADultima;
-              ultimaAD = ADultima;
-            });
+          if (!ClaseAsistencia.esFechaActual(ultimaAD.fecha))
+          {
+            if(!ultimaAD.llegadaTarde)
+            {
+              var nuevaAsistencia = new AsistenciaDiaria({
+                idInscripcion: inscripcion._id,
+                fecha: fechaHoy,
+                presente: true,
+                retiroAnticipado: false,
+                valorInasistencia: 0,
+                justificado: false,
+                llegadaTarde: true,
+              });
+              await nuevaAsistencia.save().then((ADultima) => {
+                ADcreada = ADultima;
+                ultimaAD = ADultima;
+              });
+            }
+            else
+            {
+              return res.status(200).json({
+                message:
+                  "Ya exite una llegada tarde registrada para el estudiante seleccionado",
+                exito: false,
+              });
+            }
           } else {
             //Estudiante tiene una AD que se la crearon el dia de hoy
             if (!ultimaAD.llegadaTarde) {
