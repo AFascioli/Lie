@@ -15,6 +15,7 @@ import { takeUntil } from "rxjs/operators";
   styleUrls: ["./inscripcion-curso.component.css"],
 })
 export class InscripcionCursoComponent implements OnInit {
+  fechaActual: Date;
   cursos: any[];
   estudiantes: any[];
   seSeleccionoCurso = false;
@@ -37,6 +38,7 @@ export class InscripcionCursoComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.fechaActual= new Date();
     this.servicioInscripcion.obtenerCursos().subscribe((response) => {
       this.cursos = response.cursos;
       this.cursos.sort((a, b) =>

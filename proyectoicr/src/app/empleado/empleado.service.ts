@@ -6,7 +6,7 @@ import { Subject } from "rxjs";
 import { takeUntil } from "rxjs/operators";
 
 @Injectable({
-  providedIn: "root"
+  providedIn: "root",
 })
 export class EmpleadoService implements OnDestroy {
   constructor(
@@ -34,32 +34,40 @@ export class EmpleadoService implements OnDestroy {
   ) {
     let subject = new Subject<any>();
     this.authServicio
-      .crearUsuario(email, numeroDocumento.toString(), tipoEmpleado)
-      .pipe(takeUntil(this.unsubscribe))
-      .subscribe(res => {
+      .validarDatos(numeroDocumento, tipoDocumento, email)
+      .subscribe((res) => {
         if (res.exito) {
-          let idUsuario = res.id;
-          const empleado: Empleado = {
-            apellido,
-            nombre,
-            tipoDocumento,
-            numeroDocumento,
-            sexo,
-            nacionalidad,
-            fechaNacimiento,
-            telefono,
-            email,
-            tipoEmpleado,
-            idUsuario
-          };
-          this.http
-            .post<{ message: string; exito: boolean }>(
-              "http://localhost:3000/empleado",
-              empleado
-            )
+          this.authServicio
+            .crearUsuario(email, numeroDocumento.toString(), tipoEmpleado)
             .pipe(takeUntil(this.unsubscribe))
-            .subscribe(response => {
-              subject.next(response);
+            .subscribe((res) => {
+              if (res.exito) {
+                let idUsuario = res.id;
+                const empleado: Empleado = {
+                  apellido,
+                  nombre,
+                  tipoDocumento,
+                  numeroDocumento,
+                  sexo,
+                  nacionalidad,
+                  fechaNacimiento,
+                  telefono,
+                  email,
+                  tipoEmpleado,
+                  idUsuario,
+                };
+                this.http
+                  .post<{ message: string; exito: boolean }>(
+                    "http://localhost:3000/empleado",
+                    empleado
+                  )
+                  .pipe(takeUntil(this.unsubscribe))
+                  .subscribe((response) => {
+                    subject.next(response);
+                  });
+              } else {
+                subject.next(res);
+              }
             });
         } else {
           subject.next(res);

@@ -12,6 +12,7 @@ import { Subject } from "rxjs";
   styleUrls: ["./visualizar-agenda.component.css"],
 })
 export class VisualizarAgendaComponent implements OnInit, OnDestroy {
+  fechaActual: Date;
   dias = ["Hora", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes"];
   //Agrego Hora en los dos vectores para que el calculo sea siempre +1 +2
   modulo = [
@@ -52,6 +53,7 @@ export class VisualizarAgendaComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.fechaActual=new Date();
     this.obtenerCursos();
   }
 

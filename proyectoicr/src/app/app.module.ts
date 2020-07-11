@@ -23,7 +23,6 @@ import {
   MatInputModule,
   MatPaginatorIntl,
 } from "@angular/material";
-// import { MatIconRegistry } from "@angular/material/icon";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { MatPaginatorModule } from "@angular/material/paginator";
@@ -35,7 +34,6 @@ import { CancelPopupComponent } from "./popup-genericos/cancel-popup.component";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { HttpClientModule, HTTP_INTERCEPTORS } from "@angular/common/http";
 import { NgxMaterialTimepickerModule } from "ngx-material-timepicker";
-// import { MatTableExporterModule } from "mat-table-exporter";
 import { EstudiantesService } from "./estudiantes/estudiante.service";
 import {
   BuscarEstudiantesComponent,
@@ -65,10 +63,7 @@ import {
   InscripcionEstudianteComponent,
   InscripcionPopupComponent,
 } from "./inscripcion/inscripcion-estudiantes/inscripcion-estudiantes.component";
-import {
-  RetiroAnticipadoComponent,
-  RetiroPopupComponent,
-} from "./asistencia/retiro-anticipado/retiro-anticipado.component";
+import { RetiroAnticipadoComponent } from "./asistencia/retiro-anticipado/retiro-anticipado.component";
 import { DocumentosInscripcionComponent } from "./inscripcion/documentos-inscripcion/documentos-inscripcion.component";
 import { MatGridListModule } from "@angular/material/grid-list";
 import {
@@ -160,7 +155,6 @@ import { SolicitudReunionAdultoResponsableComponent } from './solicitud-reunion-
     InscripcionEstudianteComponent,
     InscripcionPopupComponent,
     RetiroAnticipadoComponent,
-    RetiroPopupComponent,
     DocumentosInscripcionComponent,
     CalificacionesEstudiantesComponent,
     CalificacionesCicloLectivoComponent,
@@ -210,7 +204,6 @@ import { SolicitudReunionAdultoResponsableComponent } from './solicitud-reunion-
     BuscarPopupComponent,
     InscripcionPopupComponent,
     InscripcionCursoPopupComponent,
-    RetiroPopupComponent,
     CambiarPasswordPopupComponent,
     CerrarSesionPopupComponent,
     PreferenciasPopupComponent,
@@ -252,12 +245,10 @@ import { SolicitudReunionAdultoResponsableComponent } from './solicitud-reunion-
     MatSnackBarModule,
     MatGridListModule,
     ChartsModule,
-    // MatIconRegistry,
     MatPaginatorModule,
     NgxMaterialTimepickerModule,
     ImageUploadModule,
     MatTooltipModule,
-    // MatTableExporterModule,
     MatCarouselModule.forRoot(),
     ServiceWorkerModule.register("ngsw-worker.js", {
       enabled: environment.production,

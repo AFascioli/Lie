@@ -29,6 +29,7 @@ export class DocumentosInscripcionComponent implements OnInit, OnDestroy {
   fueraPeriodoCicloLectivo = false;
   fechaActual: Date;
   isLoading = true;
+  isLoading2=false;
   private unsubscribe: Subject<void> = new Subject();
   _mobileQueryListener: () => void;
   mobileQuery: MediaQueryList;
@@ -96,6 +97,7 @@ export class DocumentosInscripcionComponent implements OnInit, OnDestroy {
 
   //Cuando el usuario selecciona una division, se obtienen los datos del estudiantes necesarios
   onCursoSeleccionado(curso) {
+    this.isLoading2=true;
     this.cursoSeleccionado = true;
     this.servicioInscripcion
       .obtenerDocumentosDeEstudiantesXCurso(curso.value)
@@ -112,6 +114,7 @@ export class DocumentosInscripcionComponent implements OnInit, OnDestroy {
                 : 0
           );
         }
+        this.isLoading2 = false;
       });
     this.documentosEntregadosOnChange = false;
   }

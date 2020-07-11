@@ -34,42 +34,55 @@ export class AdultoResponsableService implements OnDestroy {
     idEstudiante: string
   ) {
     var subject = new Subject<any>();
-    this.authServicio
-      .crearUsuario(email, numeroDocumento.toString(), "AdultoResponsable")
-      .pipe(takeUntil(this.unsubscribe))
-      .subscribe((res) => {
+    this.authServicio.validarDatos(numeroDocumento, tipoDocumento, email).subscribe(
+      (res) => {
         if (res.exito) {
-          let idUsuario = res.id;
-          const adultoResponsable: AdultoResponsable = {
-            apellido,
-            nombre,
-            tipoDocumento,
-            numeroDocumento,
-            sexo,
-            nacionalidad,
-            fechaNacimiento,
-            telefono,
-            email,
-            tutor,
-            idUsuario,
-          };
-          let datos = {
-            AR: adultoResponsable,
-            idEstudiante: idEstudiante,
-          };
-          this.http
-            .post<{ message: string; exito: boolean }>(
-              environment.apiUrl + "/adultoResponsable",
-              { datos: datos }
+          this.authServicio
+            .crearUsuario(
+              email,
+              numeroDocumento.toString(),
+              "AdultoResponsable"
             )
             .pipe(takeUntil(this.unsubscribe))
-            .subscribe((response) => {
-              subject.next(response);
+            .subscribe((res) => {
+              if (res.exito) {
+                let idUsuario = res.id;
+                const adultoResponsable: AdultoResponsable = {
+                  apellido,
+                  nombre,
+                  tipoDocumento,
+                  numeroDocumento,
+                  sexo,
+                  nacionalidad,
+                  fechaNacimiento,
+                  telefono,
+                  email,
+                  tutor,
+                  idUsuario,
+                };
+                let datos = {
+                  AR: adultoResponsable,
+                  idEstudiante: idEstudiante,
+                };
+                this.http
+                  .post<{ message: string; exito: boolean }>(
+                    environment.apiUrl + "/adultoResponsable",
+                    { datos: datos }
+                  )
+                  .pipe(takeUntil(this.unsubscribe))
+                  .subscribe((response) => {
+                    subject.next(response);
+                  });
+              } else {
+                subject.next(res);
+              }
             });
         } else {
           subject.next(res);
         }
-      });
+      }
+    );
+
     return subject.asObservable();
   }
 

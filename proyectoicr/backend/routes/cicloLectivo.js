@@ -11,6 +11,8 @@ const ClaseCXM = require("../classes/calificacionXMateria");
 const ClaseEstado = require("../classes/estado");
 const ClaseEstudiante = require("../classes/estudiante");
 const ClaseSuscripcion = require("../classes/suscripcion");
+const Curso = require("../models/curso");
+const curso = require("../models/curso");
 
 router.get("/", checkAuthMiddleware, (req, res) => {
   let fechaActual = new Date();
@@ -249,6 +251,12 @@ router.use("/procesoAutomaticoFinExamenes", (req, res) => {
     // fechaActual.setSeconds(fechaActual.getSeconds() + 5),
     fechaFinExamenes,
     async () => {
+      Curso.find().then((cursos) => {
+        cursos.forEach((curso) => {
+          curso.capacidad = 30;
+          curso.save();
+        });
+      });
       let obtenerInscripcionesActivas = () => {
         return new Promise((resolve, reject) => {
           Inscripcion.find({ activa: true })

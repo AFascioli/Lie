@@ -5,6 +5,7 @@ const Estudiante = require("../models/estudiante");
 const checkAuthMiddleware = require("../middleware/check-auth");
 const Inscripcion = require("../models/inscripcion");
 const Curso = require("../models/curso");
+const usuario = require("../models/usuario");
 
 // Retorna los adultos responsables de un estudiante
 router.get("/", (req, res) => {
@@ -45,52 +46,40 @@ router.get("/", (req, res) => {
 
 //Registra un nuevo adulto responsable en la base de datos
 router.post("/", checkAuthMiddleware, (req, res) => {
-  AdultoResponsable.findOne({
+  const adultoResponsable = new AdultoResponsable({
+    apellido: req.body.datos.AR.apellido,
+    nombre: req.body.datos.AR.nombre,
     tipoDocumento: req.body.datos.AR.tipoDocumento,
     numeroDocumento: req.body.datos.AR.numeroDocumento,
-  }).then((AR) => {
-    if (AR) {
-      return res.status(200).json({
-        message: "El adulto responsable ya esta registrado",
-        exito: false,
-      });
-    } else {
-      const adultoResponsable = new AdultoResponsable({
-        apellido: req.body.datos.AR.apellido,
-        nombre: req.body.datos.AR.nombre,
-        tipoDocumento: req.body.datos.AR.tipoDocumento,
-        numeroDocumento: req.body.datos.AR.numeroDocumento,
-        sexo: req.body.datos.AR.sexo,
-        nacionalidad: req.body.datos.AR.nacionalidad,
-        fechaNacimiento: req.body.datos.AR.fechaNacimiento,
-        telefono: req.body.datos.AR.telefono,
-        email: req.body.datos.AR.email,
-        tutor: req.body.datos.AR.tutor,
-        idUsuario: req.body.datos.AR.idUsuario,
-        estudiantes: [],
-      });
-      adultoResponsable.estudiantes.push(req.body.datos.idEstudiante);
-      adultoResponsable
-        .save()
-        .then((ARGuardado) => {
-          Estudiante.findByIdAndUpdate(req.body.datos.idEstudiante, {
-            $addToSet: { adultoResponsable: ARGuardado._id },
-          }).then(() => {
-            res.status(201).json({
-              message: "El adulto responsable fue registrado exitosamente",
-              exito: true,
-            });
-          });
-        })
-        .catch((e) => {
-          res.status(500).json({
-            message:
-              "Se presentó un error al querer registrar el adulto responsable. El error fue el siguiente: " +
-              e,
-          });
-        });
-    }
+    sexo: req.body.datos.AR.sexo,
+    nacionalidad: req.body.datos.AR.nacionalidad,
+    fechaNacimiento: req.body.datos.AR.fechaNacimiento,
+    telefono: req.body.datos.AR.telefono,
+    email: req.body.datos.AR.email,
+    tutor: req.body.datos.AR.tutor,
+    idUsuario: req.body.datos.AR.idUsuario,
+    estudiantes: [],
   });
+  adultoResponsable.estudiantes.push(req.body.datos.idEstudiante);
+  adultoResponsable
+    .save()
+    .then((ARGuardado) => {
+      Estudiante.findByIdAndUpdate(req.body.datos.idEstudiante, {
+        $addToSet: { adultoResponsable: ARGuardado._id },
+      }).then(() => {
+        res.status(201).json({
+          message: "El adulto responsable fue registrado exitosamente",
+          exito: true,
+        });
+      });
+    })
+    .catch((e) => {
+      res.status(500).json({
+        message:
+          "Se presentó un error al querer registrar el adulto responsable. El error fue el siguiente: " +
+          e,
+      });
+    });
 });
 
 //Retorna nombre, apellido, curso e id de los estudiantes a cargo de un Adulto Responsable
