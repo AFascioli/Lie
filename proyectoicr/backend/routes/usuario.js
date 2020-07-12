@@ -366,6 +366,7 @@ router.post("/reunion/docente", (req, res) => {
         exito: false,
       });
     });
+});
 
 //Validar que los datos sean correctos
 router.get("/validate", checkAuthMiddleware, async (req, res) => {
