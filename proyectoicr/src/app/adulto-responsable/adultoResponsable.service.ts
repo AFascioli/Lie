@@ -34,8 +34,9 @@ export class AdultoResponsableService implements OnDestroy {
     idEstudiante: string
   ) {
     var subject = new Subject<any>();
-    this.authServicio.validarDatos(numeroDocumento, tipoDocumento, email).subscribe(
-      (res) => {
+    this.authServicio
+      .validarDatos(numeroDocumento, tipoDocumento, email)
+      .subscribe((res) => {
         if (res.exito) {
           this.authServicio
             .crearUsuario(
@@ -80,8 +81,7 @@ export class AdultoResponsableService implements OnDestroy {
         } else {
           subject.next(res);
         }
-      }
-    );
+      });
 
     return subject.asObservable();
   }
@@ -126,6 +126,17 @@ export class AdultoResponsableService implements OnDestroy {
       idDocente: idDocente,
       cuerpo: cuerpo,
       idAdulto: idAdulto,
+    });
+  }
+
+  public getPreferenciasAR(idUsuarioAR) {
+    let params = new HttpParams().set("idUsuarioAR", idUsuarioAR);
+    return this.http.get<{
+      message: string;
+      exito: boolean;
+      preferenciasPush: any[];
+    }>(environment.apiUrl + "/adultoResponsable/preferencias", {
+      params: params,
     });
   }
 }

@@ -1,6 +1,6 @@
 .div-button {
-  margin-top: 6%;
-  text-align: right;
+  text-align: center;
+  margin-top: 2%;
 }
 
 .botones-preferencias {
@@ -11,10 +11,29 @@
   margin-top: 3%;
 }
 
-.acciones{
+.acciones {
   width: 35%;
 }
 
-.button-primary{
+.button-primary:first-of-type {
   margin-bottom: 3% !important;
+}
+
+.toggles {
+  text-align: left;
+  margin: auto;
+  display: grid;
+}
+
+h3 {
+  text-align: center !important;
+  margin-top: 0px;
+}
+
+.mat-slide-toggle {
+  margin-top: 0.5rem !important;
+}
+
+.card-body-componente {
+  max-width: 45%;
 }

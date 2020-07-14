@@ -160,4 +160,16 @@ router.get("/estudiantes", checkAuthMiddleware, async (req, res) => {
   }
 });
 
+router.get("/preferencias", (req, res) => {
+  AdultoResponsable.findOne({ idUsuario: req.query.idUsuarioAR }).then(
+    (adultoR) => {
+      res.status(200).json({
+        message: "Preferencias buscadas correctamente",
+        exito: true,
+        preferenciasPush: adultoR.preferenciasPush,
+      });
+    }
+  );
+});
+
 module.exports = router;
