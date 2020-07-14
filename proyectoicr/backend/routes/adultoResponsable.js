@@ -59,7 +59,15 @@ router.post("/", checkAuthMiddleware, (req, res) => {
     tutor: req.body.datos.AR.tutor,
     idUsuario: req.body.datos.AR.idUsuario,
     estudiantes: [],
+    preferenciasPush: [
+      { nombre: "Retiro Anticipado", acepta: true },
+      { nombre: "Creacion de evento", acepta: true },
+      { nombre: "Cancelacion de evento", acepta: true },
+      { nombre: "Inasistencia", acepta: true },
+      { nombre: "Falta 12", acepta: true },
+    ],
   });
+
   adultoResponsable.estudiantes.push(req.body.datos.idEstudiante);
   adultoResponsable
     .save()
