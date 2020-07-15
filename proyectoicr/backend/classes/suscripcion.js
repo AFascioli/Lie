@@ -115,8 +115,21 @@ async function obtenerIdsUsuarios(idEstudiante) {
   return vectorIdsUsuarios;
 }
 
+//Filtra los AR y devuelve su idUsuario si este acepta recepcion del tipo de notificacion dado
+async function filtrarARPorPreferencias(idsUsuariosAR,tipoNotificacion){
+  let idsUsuariosAceptan=[];
+  for (const idUsuarioAR of idsUsuariosAR) {
+    await AdultoResponsable.findOne({idUsuario: idUsuarioAR}).then(adultoEncontrado =>{
+      let aceptaNotificacion=adultoEncontrado.preferenciasPush.some(preferencia => (preferencia.nombre==tipoNotificacion && preferencia.acepta));
+      aceptaNotificacion && idsUsuariosAceptan.push(idUsuarioAR);
+    })
+  }
+  return idsUsuariosAceptan;
+}
+
 module.exports.notificacionIndividual = notificacionIndividual;
 module.exports.notificacionGrupal = notificacionGrupal;
 module.exports.notificacionMasiva = notificacionMasiva;
 module.exports.notificar = notificar;
 module.exports.obtenerIdsUsuarios = obtenerIdsUsuarios;
+module.exports.filtrarARPorPreferencias = filtrarARPorPreferencias;
