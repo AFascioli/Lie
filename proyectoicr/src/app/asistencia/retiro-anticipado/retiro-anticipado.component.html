@@ -41,7 +41,6 @@
         [dataSource]="tutores"
         *ngIf="tutores && tutores.length != 0"
       >
-        <!-- Columna para selección de los adultos -->
         <ng-container matColumnDef="seleccion">
           <th mat-header-cell *matHeaderCellDef></th>
           <td mat-cell *matCellDef="let row">
@@ -54,7 +53,6 @@
             </mat-checkbox>
           </td>
         </ng-container>
-        <!-- Fin de prueba -->
         <ng-container matColumnDef="apellido">
           <th class="columnas-normales" mat-header-cell *matHeaderCellDef>
             Apellido

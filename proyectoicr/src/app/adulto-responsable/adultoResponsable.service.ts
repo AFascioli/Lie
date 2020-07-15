@@ -12,7 +12,11 @@ import { EstudiantesService } from "../estudiantes/estudiante.service";
 })
 export class AdultoResponsableService implements OnDestroy {
   adultoResponsableEstudiante: AdultoResponsable;
+  adultosResponsablesFiltrados: AdultoResponsable[];
   private unsubscribe: Subject<void> = new Subject();
+  adultoResponsableSeleccionado: AdultoResponsable;
+  retornoDesdeAcciones: boolean;
+  busquedaARXNombre: boolean;
 
   constructor(
     public http: HttpClient,
@@ -34,8 +38,9 @@ export class AdultoResponsableService implements OnDestroy {
     idEstudiante: string
   ) {
     var subject = new Subject<any>();
-    this.authServicio.validarDatos(numeroDocumento, tipoDocumento, email).subscribe(
-      (res) => {
+    this.authServicio
+      .validarDatos(numeroDocumento, tipoDocumento, email)
+      .subscribe((res) => {
         if (res.exito) {
           this.authServicio
             .crearUsuario(
@@ -80,8 +85,7 @@ export class AdultoResponsableService implements OnDestroy {
         } else {
           subject.next(res);
         }
-      }
-    );
+      });
 
     return subject.asObservable();
   }
@@ -127,5 +131,31 @@ export class AdultoResponsableService implements OnDestroy {
       cuerpo: cuerpo,
       idAdulto: idAdulto,
     });
+  }
+
+  //Me retorna todos los adultos responsables cuyo tipo y numero de documento coinciden con los pasados por parámetro
+  //@params: tipo de documento del adulto responsable
+  //@params: número de documento del adulto responsable
+  public buscarAdultoResponsableXDocumento(tipo: string, numero: number) {
+    let params = new HttpParams()
+      .set("tipo", tipo)
+      .set("numero", numero.toString());
+    return this.http.get<{ adultosResponsables: AdultoResponsable[] }>(
+      environment.apiUrl + "/adultoResponsable/documento",
+      { params: params }
+    );
+  }
+
+  //Me retorna todos los  adultos responsables cuyo nombre y apellido coinciden con los pasados por parámetro
+  //@params: nombre del adulto responsable
+  //@params: apellido del adulto responsable
+  public buscarAdultoResponsableXNombre(nombre: string, apellido: string) {
+    let params = new HttpParams()
+      .set("nombre", nombre)
+      .set("apellido", apellido);
+    return this.http.get<{ adultosResponsables: AdultoResponsable[] }>(
+      environment.apiUrl + "/adultoResponsable/nombre",
+      { params: params }
+    );
   }
 }

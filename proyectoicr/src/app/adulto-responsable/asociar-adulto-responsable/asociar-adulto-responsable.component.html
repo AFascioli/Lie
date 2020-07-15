@@ -1,0 +1,201 @@
+<h1 class="componente-titulo">Asociar adulto responsable</h1>
+
+<mat-card class="card-body-componente">
+  <form #form="ngForm">
+    <mat-radio-group class="opciones-busqueda" aria-label="Select an option">
+      <mat-radio-button
+        [checked]="buscarPorNomYAp"
+        (change)="deshabilitarInputs(form)"
+        value="1"
+        ><span class="label-radio-button"
+          >Buscar por nombre y apellido</span
+        ></mat-radio-button
+      >
+      <mat-radio-button
+        [checked]="!buscarPorNomYAp"
+        (change)="deshabilitarInputs(form)"
+        value="2"
+        ><span class="label-radio-button">
+          Buscar por documento</span
+        ></mat-radio-button
+      >
+    </mat-radio-group>
+    <br />
+    <mat-form-field>
+      <input
+        [disabled]="!buscarPorNomYAp"
+        ngModel
+        #apellido="ngModel"
+        matInput
+        name="apellido"
+        placeholder="Ingrese apellido"
+        type="text"
+        maxlength="20"
+        required
+        (keypress)="checkLetras($event)"
+      />
+    </mat-form-field>
+    <br />
+    <mat-form-field>
+      <input
+        [disabled]="!buscarPorNomYAp"
+        ngModel
+        #nombre="ngModel"
+        matInput
+        name="nombre"
+        placeholder="Ingrese nombre"
+        maxlength="20"
+        type="text"
+        required
+        (keypress)="checkLetras($event)"
+      />
+    </mat-form-field>
+    <br />
+    <mat-form-field>
+      <mat-select
+        [disabled]="buscarPorNomYAp"
+        placeholder="Seleccione tipo de documento"
+        name="tipoDocumento"
+        ngModel
+        #tipoDocumento="ngModel"
+        matNativeControl
+        required
+      >
+        <mat-option value="DNI">DNI</mat-option>
+        <mat-option value="Cedula de Identidad">Cédula de Identidad</mat-option>
+        <mat-option value="Libreta de Enrolamiento"
+          >Libreta de Enrolamiento</mat-option
+        >
+        <mat-option value="Libreta Civica">Libreta Cívica</mat-option>
+        <mat-option value="Pasaporte">Pasaporte</mat-option>
+      </mat-select>
+    </mat-form-field>
+    <br />
+    <mat-form-field>
+      <input
+        [disabled]="buscarPorNomYAp"
+        matInput
+        name="numeroDocumento"
+        ngModel
+        #numeroDocumento="ngModel"
+        maxlength="8"
+        placeholder="Ingrese número de documento"
+        type="text"
+        (keypress)="checkNumeros($event)"
+        required
+      />
+    </mat-form-field>
+    <br />
+    <div class="div-button">
+      <button class="button-primary" (click)="onBuscar(form)" mat-raised-button>
+        Buscar
+      </button>
+      <button mat-raised-button (click)="onCancelar()" class="button-warn">
+        Cancelar
+      </button>
+    </div>
+  </form>
+
+  <div class="contenido" *ngIf="ARFiltrados.length != 0">
+    <h3 class="titulo-tutores">
+      Adultos responsables filtrados
+    </h3>
+    <table mat-table [dataSource]="ARFiltrados">
+      <ng-container matColumnDef="seleccion">
+        <th mat-header-cell *matHeaderCellDef></th>
+        <td mat-cell *matCellDef="let row">
+          <mat-checkbox
+            class="columna-checkbox"
+            (click)="$event.stopPropagation()"
+            (change)="$event ? seleccion.toggle(row) : null"
+            [checked]="seleccion.isSelected(row)"
+          >
+          </mat-checkbox>
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="apellido">
+        <th class="columnas-normales" mat-header-cell *matHeaderCellDef>
+          Apellido
+        </th>
+        <td class="columnas-normales" mat-cell *matCellDef="let tutor">
+          {{ tutor.apellido }}
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="nombre">
+        <th class="columnas-normales" mat-header-cell *matHeaderCellDef>
+          Nombre
+        </th>
+        <td class="columnas-normales" mat-cell *matCellDef="let tutor">
+          {{ tutor.nombre }}
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="tipoDocumento">
+        <th class="columnas-normales" mat-header-cell *matHeaderCellDef>
+          Tipo
+        </th>
+        <td class="columnas-normales" mat-cell *matCellDef="let tutor">
+          {{ tutor.tipoDocumento }}
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="nroDocumento">
+        <th class="columnas-normales" mat-header-cell *matHeaderCellDef>
+          Número
+        </th>
+        <td class="columnas-normales" mat-cell *matCellDef="let tutor">
+          {{ tutor.numeroDocumento }}
+        </td>
+      </ng-container>
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr
+        mat-row
+        *matRowDef="let row; columns: displayedColumns"
+        (click)="seleccion.toggle(row)"
+      ></tr>
+    </table>
+  </div>
+
+  <div class="contenido">
+    <h3 class="titulo-tutores">
+      Adultos responsables ya asociados
+    </h3>
+    <p *ngIf="ARAsociados.length == 0">
+      El estudiante seleccionado no tiene asociado ningún tutor
+    </p>
+    <table mat-table [dataSource]="ARAsociados" *ngIf="ARAsociados.length != 0">
+      <ng-container matColumnDef="apellido">
+        <th class="columnas-normales" mat-header-cell *matHeaderCellDef>
+          Apellido/s
+        </th>
+        <td class="columnas-normales" mat-cell *matCellDef="let tutor">
+          {{ tutor.apellido }}
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="nombre">
+        <th class="columnas-normales" mat-header-cell *matHeaderCellDef>
+          Nombre/s
+        </th>
+        <td class="columnas-normales" mat-cell *matCellDef="let tutor">
+          {{ tutor.nombre }}
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="telefono">
+        <th class="columnas-normales" mat-header-cell *matHeaderCellDef>
+          Teléfono
+        </th>
+        <td class="columnas-normales" mat-cell *matCellDef="let tutor">
+          {{ tutor.telefono }}
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="email">
+        <th class="columnas-normales" mat-header-cell *matHeaderCellDef>
+          Email
+        </th>
+        <td class="columnas-normales" mat-cell *matCellDef="let tutor">
+          {{ tutor.email }}
+        </td>
+      </ng-container>
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+    </table>
+  </div>
+</mat-card>
