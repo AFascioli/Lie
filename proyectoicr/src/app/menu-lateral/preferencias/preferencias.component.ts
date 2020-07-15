@@ -16,6 +16,7 @@ export class PreferenciasComponent implements OnInit, OnDestroy {
   private unsubscribe: Subject<void> = new Subject();
   notificaciones: boolean;
   preferencias: any[];
+  idUsuarioAR: string;
 
   constructor(
     public router: Router,
@@ -27,9 +28,8 @@ export class PreferenciasComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     if (this.servicio.getRol() == "AdultoResponsable") {
-      let idUsuarioAR = this.servicio.getId();
-      this.servicioAR.getPreferenciasAR(idUsuarioAR).subscribe((response) => {
-        console.log("response", response);
+      this.idUsuarioAR = this.servicio.getId();
+      this.servicioAR.getPreferenciasAR(this.idUsuarioAR).subscribe((response) => {
         this.preferencias = response.preferenciasPush;
       });
     }
@@ -53,14 +53,27 @@ export class PreferenciasComponent implements OnInit, OnDestroy {
   }
 
   onGuardar() {
-    this.snackBar.open(
-      "Se han guardado las configuraciones de manera exitosa",
-      "",
-      {
-        panelClass: ["snack-bar-exito"],
-        duration: 4500,
+    this.servicioAR.actualizarPreferenciasAR(this.idUsuarioAR, this.preferencias).subscribe(response =>{
+      if(response.exito){
+        this.snackBar.open(
+          response.message,
+          "",
+          {
+            panelClass: ["snack-bar-exito"],
+            duration: 4500,
+          }
+        );
+      }else{
+        this.snackBar.open(
+          response.message,
+          "",
+          {
+            panelClass: ["snack-bar-fracaso"],
+            duration: 4500,
+          }
+        );
       }
-    );
+    });
   }
 
   pruebaNotificacion() {

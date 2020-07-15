@@ -1,7 +1,7 @@
 <h1 class="componente-titulo">Preferencias</h1>
 <mat-card class="card-body-componente">
   <meta charset="utf-8" />
-  <div class="botones-preferencias">
+  <div class="botones-preferencias" >
     <button
       mat-button
       class="button-primary acciones"
@@ -17,7 +17,7 @@
       Notificación de prueba
     </button>
     <br />
-    <div class="toggles">
+    <div class="toggles" *ngIf="preferencias">
       <h3>Recibir notificaciones por:</h3>
       <mat-slide-toggle
         [checked]="preferencias[0].acepta"
@@ -51,7 +51,7 @@
       </mat-slide-toggle>
     </div>
   </div>
-  <div class="div-button">
+  <div class="div-button" *ngIf="preferencias">
     <button
       type="submit"
       (click)="onGuardar()"

@@ -172,4 +172,21 @@ router.get("/preferencias", (req, res) => {
   );
 });
 
+router.post("/preferencias", (req, res) => {
+  AdultoResponsable.findOneAndUpdate(
+    { idUsuario: req.body.idUsuarioAR },
+    { preferenciasPush: req.body.preferencias }
+  ).then((adultoR) => {
+    res.status(200).json({
+      message: "Preferencias actualizadas correctamente",
+      exito: true,
+    });
+  }).catch(error =>{
+    res.status(200).json({
+      message: "Ocurrió un error al actualizar las preferencias",
+      exito: false,
+    });
+  });
+});
+
 module.exports = router;
