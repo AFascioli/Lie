@@ -24,7 +24,7 @@ export class AdultoResponsableService implements OnDestroy {
     public servicioEstudiante: EstudiantesService
   ) {}
 
-  registrarAdultoResponsable(
+  public registrarAdultoResponsable(
     apellido: string,
     nombre: string,
     tipoDocumento: string,
@@ -156,6 +156,21 @@ export class AdultoResponsableService implements OnDestroy {
     return this.http.get<{ adultosResponsables: AdultoResponsable[] }>(
       environment.apiUrl + "/adultoResponsable/nombre",
       { params: params }
+    );
+  }
+
+  //Asocia el adulto responsable al estudiante
+  //@params: id del estudiante
+  public asociarAdultoResponsable(
+    idEstudiante: string,
+    adultosResponsables: Array<any>
+  ) {
+    return this.http.post<{ message: string; exito: string }>(
+      environment.apiUrl + "/adultoResponsable/estudiante",
+      {
+        idEstudiante: idEstudiante,
+        adultosResponsables: adultosResponsables,
+      }
     );
   }
 }

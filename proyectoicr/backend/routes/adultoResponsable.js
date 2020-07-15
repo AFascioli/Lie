@@ -44,6 +44,49 @@ router.get("/", (req, res) => {
     });
 });
 
+//Busqueda de un adulto responsable por nombre y apellido ignorando mayusculas
+router.get("/nombre", checkAuthMiddleware, (req, res, next) => {
+  const nombre = req.query.nombre;
+  const apellido = req.query.apellido;
+  AdultoResponsable.find({
+    nombre: { $regex: new RegExp(nombre, "i") },
+    apellido: { $regex: new RegExp(apellido, "i") },
+  })
+    .then((documents) => {
+      res.status(200).json({
+        adultosResponsables: documents,
+      });
+    })
+    .catch(() => {
+      res.status(500).json({
+        message:
+          "Ocurrió un error al querer obtener el adulto responsable por nombre",
+      });
+    });
+});
+
+//Obtiene un estudiante dado un numero y tipo de documento
+router.get("/documento", checkAuthMiddleware, (req, res, next) => {
+  const tipo = req.query.tipo;
+  const numero = req.query.numero;
+
+  AdultoResponsable.find({
+    tipoDocumento: tipo,
+    numeroDocumento: numero,
+  })
+    .then((documents) => {
+      res.status(200).json({
+        adultosResponsables: documents,
+      });
+    })
+    .catch(() => {
+      res.status(500).json({
+        message:
+          "Ocurrió un error al querer obtener el estudiante por documento",
+      });
+    });
+});
+
 //Registra un nuevo adulto responsable en la base de datos
 router.post("/", checkAuthMiddleware, (req, res) => {
   const adultoResponsable = new AdultoResponsable({
@@ -80,6 +123,23 @@ router.post("/", checkAuthMiddleware, (req, res) => {
           e,
       });
     });
+});
+
+//Asocia un adulto responsable a un estudiante
+router.post("/estudiante", checkAuthMiddleware, (req, res) => {
+  for (const idAR of req.body.adultosResponsables) {
+    let adultoResponsable = AdultoResponsable.findById(idAR._id);
+    adultoResponsable.estudiantes.push(req.body.idEstudiante);
+    adultoResponsable.save().then((ARGuardado) => {
+      Estudiante.findByIdAndUpdate(req.body.idEstudiante, {
+        $addToSet: { adultoResponsable: ARGuardado._id },
+      });
+    });
+  }
+  res.status(201).json({
+    message: "El adulto responsable fue asociado exitosamente",
+    exito: true,
+  });
 });
 
 //Retorna nombre, apellido, curso e id de los estudiantes a cargo de un Adulto Responsable

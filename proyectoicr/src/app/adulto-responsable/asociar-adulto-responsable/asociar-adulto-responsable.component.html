@@ -96,11 +96,15 @@
     </div>
   </form>
 
-  <div class="contenido" *ngIf="ARFiltrados.length != 0">
+  <div class="contenido">
     <h3 class="titulo-tutores">
       Adultos responsables filtrados
     </h3>
-    <table mat-table [dataSource]="ARFiltrados">
+    <p *ngIf="ARFiltrados.length == 0">
+      No se encontraron adultos responsables que coincidan con los datos
+      ingresados
+    </p>
+    <table mat-table [dataSource]="ARFiltrados" *ngIf="ARFiltrados.length != 0">
       <ng-container matColumnDef="seleccion">
         <th mat-header-cell *matHeaderCellDef></th>
         <td mat-cell *matCellDef="let row">

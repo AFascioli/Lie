@@ -303,7 +303,7 @@ router.patch("/modificar", checkAuthMiddleware, (req, res, next) => {
     });
 });
 
-//Busqueda de un estudisante por nombre y apellido ignorando mayusculas
+//Busqueda de un estudiante por nombre y apellido ignorando mayusculas
 router.get("/nombreyapellido", checkAuthMiddleware, (req, res, next) => {
   const nombre = req.query.nombre;
   const apellido = req.query.apellido;
@@ -319,7 +319,7 @@ router.get("/nombreyapellido", checkAuthMiddleware, (req, res, next) => {
     })
     .catch(() => {
       res.status(500).json({
-        message: "Mensaje de error especifico",
+        message: "Ocurrió un error al querer obtener el estudiante por nombre",
       });
     });
 });

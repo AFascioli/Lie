@@ -1,3 +1,4 @@
+import { EstudiantesService } from "src/app/estudiantes/estudiante.service";
 import { AdultoResponsable } from "../adultoResponsable.model";
 import { AdultoResponsableService } from "../adultoResponsable.service";
 import { Component, OnInit } from "@angular/core";
@@ -31,12 +32,19 @@ export class AsociarAdultoResponsableComponent implements OnInit {
   constructor(
     public dialog: MatDialog,
     public servicio: AdultoResponsableService,
-    private router: Router,
+    public estudiantesService: EstudiantesService,
     private snackBar: MatSnackBar,
     public popup: MatDialog
   ) {}
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.estudiantesService
+      .getTutoresDeEstudiante()
+      .pipe(takeUntil(this.unsubscribe))
+      .subscribe((respuesta) => {
+        this.ARAsociados = respuesta.tutores;
+      });
+  }
 
   // Si el formulario no es valido no hace nada, luego controla que tipo de busqueda es
   onBuscar(form: NgForm) {
