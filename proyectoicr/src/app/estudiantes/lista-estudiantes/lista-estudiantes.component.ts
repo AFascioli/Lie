@@ -200,6 +200,11 @@ export class ListaEstudiantesComponent implements OnInit, OnDestroy {
     this.router.navigate(["./altaAdultoResponsable"]);
   }
 
+  onAsociarAR(indice) {
+    this.asignarEstudianteSeleccionado(indice);
+    this.router.navigate(["./asociarAdultoResponsable"]);
+  }
+
   onRegistrarExamenes(indice) {
     this.asignarEstudianteSeleccionado(indice);
     this.router.navigate(["./calificacionesExamenes"]);

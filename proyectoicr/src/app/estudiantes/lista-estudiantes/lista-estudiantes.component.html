@@ -101,6 +101,12 @@
           (click)="onNotificarReunion(i)"
           ><b>Enviar notificación de reunión</b></mat-card
         >
+        <mat-card
+          class="opcion"
+          [class.opcion-mobile]="mobileQuery.matches"
+          (click)="onAsociarAR(i)"
+          ><b>Asociar AR</b></mat-card
+        >
       </div>
     </mat-expansion-panel>
   </div>

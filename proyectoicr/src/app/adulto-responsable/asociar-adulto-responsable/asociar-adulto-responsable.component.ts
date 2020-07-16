@@ -6,7 +6,6 @@ import { takeUntil } from "rxjs/operators";
 import { NgForm } from "@angular/forms";
 import { Subject } from "rxjs";
 import { MatDialog, MatSnackBar } from "@angular/material";
-import { Router } from "@angular/router";
 import { CancelPopupComponent } from "src/app/popup-genericos/cancel-popup.component";
 import { SelectionModel } from "@angular/cdk/collections";
 
@@ -21,13 +20,7 @@ export class AsociarAdultoResponsableComponent implements OnInit {
   ARAsociados: AdultoResponsable[] = [];
   private unsubscribe: Subject<void> = new Subject();
   seleccion = new SelectionModel(true, []);
-  displayedColumns: string[] = [
-    "seleccion",
-    "apellido",
-    "nombre",
-    "tipoDocumento",
-    "nroDocumento",
-  ];
+  displayedColumns: string[];
 
   constructor(
     public dialog: MatDialog,
@@ -46,6 +39,17 @@ export class AsociarAdultoResponsableComponent implements OnInit {
       });
   }
 
+  setColumns() {
+    this.displayedColumns = [
+      "seleccion",
+      "apellido",
+      "nombre",
+      "telefono",
+      "tipoDocumento",
+      "nroDocumento",
+    ];
+  }
+
   // Si el formulario no es valido no hace nada, luego controla que tipo de busqueda es
   onBuscar(form: NgForm) {
     if (form.valid) {
@@ -57,6 +61,7 @@ export class AsociarAdultoResponsableComponent implements OnInit {
           )
           .pipe(takeUntil(this.unsubscribe))
           .subscribe((response) => {
+            this.setColumns();
             this.ARFiltrados = response.adultosResponsables;
           });
       } else {
@@ -68,6 +73,7 @@ export class AsociarAdultoResponsableComponent implements OnInit {
           .pipe(takeUntil(this.unsubscribe))
           .subscribe((response) => {
             this.ARFiltrados = response.adultosResponsables;
+            this.setColumns();
           });
       }
     } else {
@@ -76,6 +82,21 @@ export class AsociarAdultoResponsableComponent implements OnInit {
         duration: 4000,
       });
     }
+  }
+
+  onAsociar() {
+    this.servicio
+      .asociarAdultoResponsable(
+        this.estudiantesService.estudianteSeleccionado._id,
+        this.seleccion.selected
+      )
+      .pipe(takeUntil(this.unsubscribe))
+      .subscribe((response) => {
+        this.snackBar.open(response.message, "", {
+          panelClass: ["snack-bar-exito"],
+          duration: 4000,
+        });
+      });
   }
 
   checkLetras(event) {

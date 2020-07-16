@@ -359,7 +359,7 @@ const routes: Routes = [
       {
         path: "asociarAdultoResponsable",
         component: AsociarAdultoResponsableComponent,
-        canActivate: [RoleGuard],
+        canActivate: [RoleGuard, RouteGuard],
         data: {
           rolesValidos: ["Admin", "Preceptor", "Director"],
         },
