@@ -17,10 +17,16 @@ import { SelectionModel } from "@angular/cdk/collections";
 export class AsociarAdultoResponsableComponent implements OnInit {
   buscarPorNomYAp = true;
   ARFiltrados: AdultoResponsable[] = [];
-  ARAsociados: AdultoResponsable[] = [];
+  ARAsociados: any[] = [];
   private unsubscribe: Subject<void> = new Subject();
   seleccion = new SelectionModel(true, []);
   displayedColumns: string[];
+  displayedColumnsAsociados: string[] = [
+    "apellido",
+    "nombre",
+    "numerodocumento",
+    "telefono",
+  ];
 
   constructor(
     public dialog: MatDialog,
@@ -31,12 +37,7 @@ export class AsociarAdultoResponsableComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.estudiantesService
-      .getTutoresDeEstudiante()
-      .pipe(takeUntil(this.unsubscribe))
-      .subscribe((respuesta) => {
-        this.ARAsociados = respuesta.tutores;
-      });
+    this.obtenerARAsociados();
   }
 
   setColumns() {
@@ -48,6 +49,15 @@ export class AsociarAdultoResponsableComponent implements OnInit {
       "tipoDocumento",
       "nroDocumento",
     ];
+  }
+
+  obtenerARAsociados() {
+    this.estudiantesService
+      .getTutoresDeEstudiante()
+      .pipe(takeUntil(this.unsubscribe))
+      .subscribe((respuesta) => {
+        this.ARAsociados = respuesta.tutores;
+      });
   }
 
   // Si el formulario no es valido no hace nada, luego controla que tipo de busqueda es
@@ -96,6 +106,7 @@ export class AsociarAdultoResponsableComponent implements OnInit {
           panelClass: ["snack-bar-exito"],
           duration: 4000,
         });
+        this.obtenerARAsociados();
       });
   }
 

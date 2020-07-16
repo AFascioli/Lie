@@ -6,6 +6,7 @@ const checkAuthMiddleware = require("../middleware/check-auth");
 const Inscripcion = require("../models/inscripcion");
 const Curso = require("../models/curso");
 const usuario = require("../models/usuario");
+const adultoResponsable = require("../models/adultoResponsable");
 
 // Retorna los adultos responsables de un estudiante
 router.get("/", (req, res) => {
@@ -128,11 +129,12 @@ router.post("/", checkAuthMiddleware, (req, res) => {
 //Asocia un adulto responsable a un estudiante
 router.post("/estudiante", checkAuthMiddleware, (req, res) => {
   for (const idAR of req.body.adultosResponsables) {
-    let adultoResponsable = AdultoResponsable.findById(idAR._id);
-    adultoResponsable.estudiantes.push(req.body.idEstudiante);
-    adultoResponsable.save().then((ARGuardado) => {
-      Estudiante.findByIdAndUpdate(req.body.idEstudiante, {
-        $addToSet: { adultoResponsable: ARGuardado._id },
+    AdultoResponsable.findById(idAR._id).then(async (adultoResponsable) => {
+      await adultoResponsable.estudiantes.push(req.body.idEstudiante);
+      await adultoResponsable.save().then((ARGuardado) => {
+        Estudiante.findByIdAndUpdate(req.body.idEstudiante, {
+          $addToSet: { adultoResponsable: ARGuardado._id },
+        }).exec();
       });
     });
   }

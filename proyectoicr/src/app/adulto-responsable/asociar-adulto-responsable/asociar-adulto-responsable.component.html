@@ -170,6 +170,7 @@
       </table>
     </div>
   </div>
+  <br />
   <div class="div-button">
     <button class="button-primary" (click)="onAsociar()" mat-raised-button>
       Asociar
@@ -183,45 +184,41 @@
     <p *ngIf="ARAsociados.length == 0">
       El estudiante seleccionado no tiene asociado ningún tutor
     </p>
-    <table
-      mat-table
-      [dataSource]="ARAsociados"
-      *ngIf="ARAsociados && ARAsociados.length != 0"
-    >
+    <table mat-table [dataSource]="ARAsociados" *ngIf="ARAsociados.length != 0">
       <ng-container matColumnDef="apellido">
         <th class="columnas-normales" mat-header-cell *matHeaderCellDef>
           Apellido/s
         </th>
-        <td class="columnas-normales" mat-cell *matCellDef="let tutor">
-          {{ tutor.apellido }}
+        <td class="columnas-normales" mat-cell *matCellDef="let AR">
+          {{ AR.apellido }}
         </td>
       </ng-container>
       <ng-container matColumnDef="nombre">
         <th class="columnas-normales" mat-header-cell *matHeaderCellDef>
           Nombre/s
         </th>
-        <td class="columnas-normales" mat-cell *matCellDef="let tutor">
-          {{ tutor.nombre }}
+        <td class="columnas-normales" mat-cell *matCellDef="let AR">
+          {{ AR.nombre }}
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="numerodocumento">
+        <th class="columnas-normales" mat-header-cell *matHeaderCellDef>
+          Número documento
+        </th>
+        <td class="columnas-normales" mat-cell *matCellDef="let AR">
+          {{ AR.numeroDocumento }}
         </td>
       </ng-container>
       <ng-container matColumnDef="telefono">
         <th class="columnas-normales" mat-header-cell *matHeaderCellDef>
           Teléfono
         </th>
-        <td class="columnas-normales" mat-cell *matCellDef="let tutor">
-          {{ tutor.telefono }}
+        <td class="columnas-normales" mat-cell *matCellDef="let AR">
+          {{ AR.telefono }}
         </td>
       </ng-container>
-      <ng-container matColumnDef="email">
-        <th class="columnas-normales" mat-header-cell *matHeaderCellDef>
-          Email
-        </th>
-        <td class="columnas-normales" mat-cell *matCellDef="let tutor">
-          {{ tutor.email }}
-        </td>
-      </ng-container>
-      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-      <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+      <tr mat-header-row *matHeaderRowDef="displayedColumnsAsociados"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumnsAsociados"></tr>
     </table>
   </div>
 </mat-card>

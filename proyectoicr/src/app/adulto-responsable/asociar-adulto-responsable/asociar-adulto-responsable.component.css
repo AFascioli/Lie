@@ -12,6 +12,7 @@
 
 .columna-checkbox {
   padding-right: 12px;
+  width: 5% !important;
 }
 
 .columnas-normales {
@@ -54,4 +55,19 @@ form {
 
 .mat-form-field {
   width: 78.5%;
+}
+
+table {
+  width: 98%;
+  margin: 0 auto;
+}
+
+th {
+  font-weight: bold;
+  font-size: 15px;
+}
+
+td,
+th {
+  text-align: center !important;
 }
