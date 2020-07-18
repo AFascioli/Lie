@@ -125,14 +125,16 @@ export class MenuPrincipalAdultoResponsableComponent implements OnInit {
   }
 
   onEstudianteClick(idEstudiante: string) {
-    this.servicioEstudiante
-      .obtenerEstudiantePorId(idEstudiante)
-      .subscribe((response) => {
-        if (response.exito) {
-          this.asignarEstudianteSeleccionado(response.estudiante);
-          this.router.navigate(["./perfilEstudiante"]);
-        }
-      });
+    if (this.cursos[0]) {
+      this.servicioEstudiante
+        .obtenerEstudiantePorId(idEstudiante)
+        .subscribe((response) => {
+          if (response.exito) {
+            this.asignarEstudianteSeleccionado(response.estudiante);
+            this.router.navigate(["./perfilEstudiante"]);
+          }
+        });
+    }
   }
 
   onEventoClick(idEvento: string) {
