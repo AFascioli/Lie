@@ -42,6 +42,7 @@ import {
 import {
   ListaEstudiantesComponent,
   ReincorporarPopupComponent,
+  AsociarAdultoResponsablePopupComponent,
 } from "./estudiantes/lista-estudiantes/lista-estudiantes.component";
 import {
   MostrarEstudiantesComponent,
@@ -191,6 +192,7 @@ import { AsociarAdultoResponsableComponent } from "./adulto-responsable/asociar-
     MenuPrincipalAdultoResponsableComponent,
     InscripcionCursoComponent,
     InscripcionCursoPopupComponent,
+    AsociarAdultoResponsablePopupComponent,
     SolicitudReunionComponent,
     SolicitudReunionAdultoResponsableComponent,
     AsociarAdultoResponsableComponent,
@@ -198,6 +200,7 @@ import { AsociarAdultoResponsableComponent } from "./adulto-responsable/asociar-
   //entryComponents declara los componentes que se generan dinamicamente dentro de otros.
   entryComponents: [
     CancelPopupComponent,
+    AsociarAdultoResponsablePopupComponent,
     MostrarPopupComponent,
     BorrarPopupComponent,
     AsistenciaPopupComponent,

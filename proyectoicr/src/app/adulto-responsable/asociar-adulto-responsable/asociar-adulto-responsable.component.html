@@ -116,7 +116,8 @@
               class="columna-checkbox"
               (click)="$event.stopPropagation()"
               (change)="$event ? seleccion.toggle(row) : null"
-              [checked]="seleccion.isSelected(row)"
+              [checked]="seleccion.isSelected(row) || row.selected"
+              [disabled]="row.selected"
             >
             </mat-checkbox>
           </td>

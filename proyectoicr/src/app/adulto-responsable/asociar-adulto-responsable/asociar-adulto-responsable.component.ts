@@ -16,7 +16,7 @@ import { SelectionModel } from "@angular/cdk/collections";
 })
 export class AsociarAdultoResponsableComponent implements OnInit {
   buscarPorNomYAp = true;
-  ARFiltrados: AdultoResponsable[] = [];
+  ARFiltrados: any[] = [];
   ARAsociados: any[] = [];
   private unsubscribe: Subject<void> = new Subject();
   seleccion = new SelectionModel(true, []);
@@ -60,6 +60,17 @@ export class AsociarAdultoResponsableComponent implements OnInit {
       });
   }
 
+  comparar(ARFiltrados) {
+    ARFiltrados.forEach((AR) => {
+      this.ARAsociados.forEach((ARAS) => {
+        if (ARAS._id == AR._id) {
+          AR["selected"] = true;
+        }
+      });
+    });
+    this.ARFiltrados = ARFiltrados;
+  }
+
   // Si el formulario no es valido no hace nada, luego controla que tipo de busqueda es
   onBuscar(form: NgForm) {
     if (form.valid) {
@@ -71,8 +82,8 @@ export class AsociarAdultoResponsableComponent implements OnInit {
           )
           .pipe(takeUntil(this.unsubscribe))
           .subscribe((response) => {
+            this.comparar(response.adultosResponsables);
             this.setColumns();
-            this.ARFiltrados = response.adultosResponsables;
           });
       } else {
         this.servicio
@@ -82,7 +93,7 @@ export class AsociarAdultoResponsableComponent implements OnInit {
           )
           .pipe(takeUntil(this.unsubscribe))
           .subscribe((response) => {
-            this.ARFiltrados = response.adultosResponsables;
+            this.comparar(response.adultosResponsables);
             this.setColumns();
           });
       }

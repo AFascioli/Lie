@@ -37,13 +37,6 @@
         <mat-card
           class="opcion"
           [class.opcion-mobile]="mobileQuery.matches"
-          (click)="onRegistrarAR(i)"
-          *ngIf="permisos.inscribirEstudiante > 1"
-          ><b>Registrar adulto responsable</b></mat-card
-        >
-        <mat-card
-          class="opcion"
-          [class.opcion-mobile]="mobileQuery.matches"
           (click)="onRegistrarExamenes(i)"
           *ngIf="
             permisos.notas > 1 &&
@@ -105,7 +98,8 @@
           class="opcion"
           [class.opcion-mobile]="mobileQuery.matches"
           (click)="onAsociarAR(i)"
-          ><b>Asociar AR</b></mat-card
+          *ngIf="permisos.inscribirEstudiante > 1"
+          ><b>Asociar adulto responsable</b></mat-card
         >
       </div>
     </mat-expansion-panel>
