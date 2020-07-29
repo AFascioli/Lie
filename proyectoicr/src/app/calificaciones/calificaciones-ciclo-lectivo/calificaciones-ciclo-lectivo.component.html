@@ -69,8 +69,6 @@
     <div [hidden]="!estudiantes">
       <table
         mat-table
-        matTableExporter
-        #exporter="matTableExporter"
         [dataSource]="dataSource"
         [class.table-mobile]="mobileQuery.matches"
       >
