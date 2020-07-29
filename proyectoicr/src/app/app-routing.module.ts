@@ -1,3 +1,4 @@
+import { AsociarAdultoResponsableComponent } from "./adulto-responsable/asociar-adulto-responsable/asociar-adulto-responsable.component";
 import { InscripcionCursoComponent } from "./inscripcion/inscripcion-curso/inscripcion-curso.component";
 import { MenuPrincipalAdultoResponsableComponent } from "./menu-principal-adulto-responsable/menu-principal-adulto-responsable.component";
 import { RegistrarSancionesComponent } from "./sanciones/registrar-sanciones/registrar-sanciones.component";
@@ -79,7 +80,7 @@ const routes: Routes = [
       },
       {
         path: "solicitudReunionAR",
-        canActivate: [RoleGuard,RouteGuard],
+        canActivate: [RoleGuard, RouteGuard],
         data: { rolesValidos: ["Admin", "AdultoResponsable"] },
         component: SolicitudReunionAdultoResponsableComponent,
       },
@@ -351,6 +352,14 @@ const routes: Routes = [
         path: "inscripcionCurso",
         component: InscripcionCursoComponent,
         canActivate: [RoleGuard],
+        data: {
+          rolesValidos: ["Admin", "Preceptor", "Director"],
+        },
+      },
+      {
+        path: "asociarAdultoResponsable",
+        component: AsociarAdultoResponsableComponent,
+        canActivate: [RoleGuard, RouteGuard],
         data: {
           rolesValidos: ["Admin", "Preceptor", "Director"],
         },

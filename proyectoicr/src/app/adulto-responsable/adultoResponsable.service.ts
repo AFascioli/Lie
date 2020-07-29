@@ -12,7 +12,11 @@ import { EstudiantesService } from "../estudiantes/estudiante.service";
 })
 export class AdultoResponsableService implements OnDestroy {
   adultoResponsableEstudiante: AdultoResponsable;
+  adultosResponsablesFiltrados: AdultoResponsable[];
   private unsubscribe: Subject<void> = new Subject();
+  adultoResponsableSeleccionado: AdultoResponsable;
+  retornoDesdeAcciones: boolean;
+  busquedaARXNombre: boolean;
 
   constructor(
     public http: HttpClient,
@@ -20,7 +24,7 @@ export class AdultoResponsableService implements OnDestroy {
     public servicioEstudiante: EstudiantesService
   ) {}
 
-  registrarAdultoResponsable(
+  public registrarAdultoResponsable(
     apellido: string,
     nombre: string,
     tipoDocumento: string,
@@ -129,6 +133,46 @@ export class AdultoResponsableService implements OnDestroy {
     });
   }
 
+  //Me retorna todos los adultos responsables cuyo tipo y numero de documento coinciden con los pasados por parámetro
+  //@params: tipo de documento del adulto responsable
+  //@params: número de documento del adulto responsable
+  public buscarAdultoResponsableXDocumento(tipo: string, numero: number) {
+    let params = new HttpParams()
+      .set("tipo", tipo)
+      .set("numero", numero.toString());
+    return this.http.get<{ adultosResponsables: AdultoResponsable[] }>(
+      environment.apiUrl + "/adultoResponsable/documento",
+      { params: params }
+    );
+  }
+
+  //Me retorna todos los  adultos responsables cuyo nombre y apellido coinciden con los pasados por parámetro
+  //@params: nombre del adulto responsable
+  //@params: apellido del adulto responsable
+  public buscarAdultoResponsableXNombre(nombre: string, apellido: string) {
+    let params = new HttpParams()
+      .set("nombre", nombre)
+      .set("apellido", apellido);
+    return this.http.get<{ adultosResponsables: AdultoResponsable[] }>(
+      environment.apiUrl + "/adultoResponsable/nombre",
+      { params: params }
+    );
+  }
+
+  //Asocia el adulto responsable al estudiante
+  //@params: id del estudiante
+  public asociarAdultoResponsable(
+    idEstudiante: string,
+    adultosResponsables: Array<any>
+  ) {
+    return this.http.post<{ message: string; exito: string }>(
+      environment.apiUrl + "/adultoResponsable/estudiante",
+      {
+        idEstudiante: idEstudiante,
+        adultosResponsables: adultosResponsables,
+      }
+    );
+    
   public getPreferenciasAR(idUsuarioAR) {
     let params = new HttpParams().set("idUsuarioAR", idUsuarioAR);
     return this.http.get<{

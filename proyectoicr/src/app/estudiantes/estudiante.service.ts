@@ -15,7 +15,7 @@ export class EstudiantesService implements OnDestroy {
   private estudiantesXDivisionActualizados = new Subject<any[]>();
   estudiantesBuscados = new Subject<Estudiante[]>();
   private divisionXCursoActualizada = new Subject<any[]>();
-  estudianteSeleccionado: Estudiante;
+  public estudianteSeleccionado: Estudiante;
   retornoDesdeAcciones: Boolean;
   busquedaEstudianteXNombre: boolean;
   private unsubscribe: Subject<void> = new Subject();
