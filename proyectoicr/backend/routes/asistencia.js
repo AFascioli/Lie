@@ -31,14 +31,20 @@ validarLibreInasistencias = function (idEst, valorInasistencia) {
           ).exec();
         } else if (inscripcion.contadorInasistenciasInjustificada % 12 == 0) {
           //No fijamos si el estudiante tiene 12 inasistencias, para luego notificar a los AR
-          let idsUsuarios = await ClaseSuscripcion.obtenerIdsUsuarios(idEst);
-          Estudiante.findById(idEst).then((estudianteEncontrado) => {
-            ClaseSuscripcion.notificacionGrupal(
-              idsUsuarios,
-              "Atención",
-              `El estudiante ${estudianteEncontrado.nombre} ${estudianteEncontrado.apellido} tiene solo 3 inasistencias antes de que sea suspendido`
-            );
-          });
+          let idsUsuariosAR = await ClaseSuscripcion.obtenerIdsUsuarios(idEst);
+          let idsUsuarios = await ClaseSuscripcion.filtrarARPorPreferencias(
+            idsUsuariosAR,
+            "Falta 12"
+          );
+          //Si existen ARs que aceptan este tipo de notificacion, manda
+          idsUsuarios.length > 0 &&
+            Estudiante.findById(idEst).then((estudianteEncontrado) => {
+              ClaseSuscripcion.notificacionGrupal(
+                idsUsuarios,
+                "Atención",
+                `El estudiante ${estudianteEncontrado.nombre} ${estudianteEncontrado.apellido} tiene solo 3 inasistencias antes de que sea suspendido`
+              );
+            });
         }
       });
     })
@@ -271,7 +277,7 @@ router.get("", checkAuthMiddleware, (req, res) => {
 // luego crea la asistencia diaria usando la _id de la inscripcion, luego guarda la asistenciaDiaria y
 // guarda la _id de esta asistenciaDiaria en el vector de asistenciasDiarias de la inscripcion.
 // Si ya se tomo asistencia en el dia, se actualiza el valor presente de la asistencia individual.
-router.post("", checkAuthMiddleware, async(req, res) => {
+router.post("", checkAuthMiddleware, async (req, res) => {
   let idsEstudiantes = [];
   req.body.forEach((estudiante) => {
     var valorInasistencia = 0;
@@ -362,7 +368,13 @@ router.post("", checkAuthMiddleware, async(req, res) => {
   });
   if (idsEstudiantes.length > 0) {
     for (const idEstudiante of idsEstudiantes) {
-      let idsUsuarios = await ClaseSuscripcion.obtenerIdsUsuarios(idEstudiante);
+      let idsUsuariosAR = await ClaseSuscripcion.obtenerIdsUsuarios(
+        idEstudiante
+      );
+      let idsUsuarios = await ClaseSuscripcion.filtrarARPorPreferencias(
+        idsUsuariosAR,
+        "Inasistencia"
+      );
       if (idsUsuarios.length > 0) {
         let datosEstudiante = req.body.filter((estudiante) => {
           return estudiante._id == idEstudiante;
@@ -587,13 +599,11 @@ router.post("/llegadaTarde", checkAuthMiddleware, (req, res) => {
             message:
               "El estudiante no tiene registrada una asistencia para el dia de hoy",
             exito: false,
-          })
+          });
         } else {
           //Compara si la ultima asistencia fue el dia de hoy
-          if (!ClaseAsistencia.esFechaActual(ultimaAD.fecha))
-          {
-            if(!ultimaAD.llegadaTarde)
-            {
+          if (!ClaseAsistencia.esFechaActual(ultimaAD.fecha)) {
+            if (!ultimaAD.llegadaTarde) {
               var nuevaAsistencia = new AsistenciaDiaria({
                 idInscripcion: inscripcion._id,
                 fecha: fechaHoy,
@@ -607,9 +617,7 @@ router.post("/llegadaTarde", checkAuthMiddleware, (req, res) => {
                 ADcreada = ADultima;
                 ultimaAD = ADultima;
               });
-            }
-            else
-            {
+            } else {
               return res.status(200).json({
                 message:
                   "Ya exite una llegada tarde registrada para el estudiante seleccionado",
@@ -749,63 +757,59 @@ router.post("/retiro", checkAuthMiddleware, (req, res) => {
                       }
                       inscripcion
                         .save()
-                        .then(() => {
+                        .then(async () => {
                           //Envio de notificación a los adultos responsables del estudiante. #working
-                          Estudiante.findById(req.body.idEstudiante)
-                            .then((estudiante) => {
-                              //Construcción del cuerpo de la notificación.
-                              var tutores = req.body.tutoresSeleccionados;
-                              var cuerpo =
-                                "Se ha registrado un retiro anticipado de " +
-                                estudiante.apellido +
+                          let idsUsuariosAR = await ClaseSuscripcion.obtenerIdsUsuarios(
+                            req.body.idEstudiante
+                          );
+                          let idsUsuarios = await ClaseSuscripcion.filtrarARPorPreferencias(
+                            idsUsuariosAR,
+                            "Retiro Anticipado"
+                          );
+
+                          if (idsUsuarios.length > 0) {
+                            var tutores = req.body.tutoresSeleccionados;
+                            var cuerpo =
+                              "Se ha registrado un retiro anticipado de " +
+                              estudiante.apellido +
+                              " " +
+                              estudiante.nombre +
+                              ". ";
+
+                            if (tutores.length > 0) {
+                              cuerpo =
+                                cuerpo +
+                                "El estudiante fue retirado por " +
+                                tutores[0].apellido +
                                 " " +
-                                estudiante.nombre +
-                                ". ";
+                                tutores[0].nombre;
 
-                              if (tutores.length > 0) {
-                                cuerpo =
-                                  cuerpo +
-                                  "El estudiante fue retirado por " +
-                                  tutores[0].apellido +
-                                  " " +
-                                  tutores[0].nombre;
-
-                                for (let i = 0; i < tutores.length; i++) {
-                                  if (i == tutores.length - 1) {
-                                    cuerpo =
-                                      cuerpo +
-                                      " y " +
-                                      tutores[i].apellido +
-                                      " " +
-                                      tutores[i].nombre;
-                                  } else if (i != 0) {
-                                    cuerpo =
-                                      cuerpo +
-                                      ", " +
-                                      tutores[i].apellido +
-                                      " " +
-                                      tutores[i].nombre;
-                                  }
-                                  if (i == tutores.length - 1)
-                                    cuerpo = cuerpo + ".";
+                              for (let i = 0; i < tutores.length; i++) {
+                                if (i == tutores.length - 1) {
+                                  cuerpo =
+                                    cuerpo +
+                                    " y " +
+                                    tutores[i].apellido +
+                                    " " +
+                                    tutores[i].nombre;
+                                } else if (i != 0) {
+                                  cuerpo =
+                                    cuerpo +
+                                    ", " +
+                                    tutores[i].apellido +
+                                    " " +
+                                    tutores[i].nombre;
                                 }
+                                if (i == tutores.length - 1)
+                                  cuerpo = cuerpo + ".";
                               }
-                              for (const idAR of estudiante.adultoResponsable) {
-                                AdultoResponsable.findById(idAR).then((ar) => {
-                                  //Envio de la notificación
-                                  ClaseSuscripcion.notificacionIndividual(
-                                    ar.idUsuario,
-                                    "Retiro anticipado",
-                                    this.cuerpo
-                                  );
-                                });
-                              }
-                            })
-                            .catch(() => {
-                              res.status(500).json({
-                                message: "Mensaje de error especifico",
-                              });
-                            });
+                            }
+                            ClaseSuscripcion.notificacionGrupal(
+                              idsUsuarios,
+                              "Retiro anticipado",
+                              this.cuerpo
+                            );
+                          }
                           res.status(200).json({
                             message:
                               "Retiro anticipado exitosamente registrado",
