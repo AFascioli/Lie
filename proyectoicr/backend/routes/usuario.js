@@ -426,6 +426,5 @@ router.post("/reunion/docente", (req, res) => {
       }
     });
   });
-});
 
 module.exports = router;

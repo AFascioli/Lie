@@ -441,7 +441,7 @@ notificarPorEvento = function (tags, titulo, cuerpo) {
           "conadulto.idUsuario": 1,
         },
       },
-    ]).then((response) => {
+    ]).then(async (response) => {
       let idtutores = [];
       response.forEach((conadulto) => {
         idtutores.push(conadulto.conadulto.idUsuario);

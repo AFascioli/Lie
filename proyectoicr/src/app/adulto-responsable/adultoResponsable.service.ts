@@ -172,6 +172,7 @@ export class AdultoResponsableService implements OnDestroy {
         adultosResponsables: adultosResponsables,
       }
     );
+  }
     
   public getPreferenciasAR(idUsuarioAR) {
     let params = new HttpParams().set("idUsuarioAR", idUsuarioAR);
