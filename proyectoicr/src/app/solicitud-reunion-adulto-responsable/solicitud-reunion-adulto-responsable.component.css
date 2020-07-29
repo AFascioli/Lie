@@ -47,3 +47,8 @@ mat-form-field {
   margin: 2rem;
   margin-bottom: 0px;
 }
+
+.aviso b {
+  font-size: 19px !important;
+  font-weight: 500 !important;
+}

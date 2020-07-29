@@ -125,7 +125,8 @@ router.get("/estudiantes", checkAuthMiddleware, async (req, res) => {
                 resolve(datosEstudiante);
               });
             } else {
-              resolve(null);
+              datosEstudiante.curso=null;
+              resolve(datosEstudiante);
             }
           });
         })

@@ -135,6 +135,7 @@ export class CalificacionesExamenesComponent implements OnInit, OnDestroy {
           .pipe(takeUntil(this.unsubscribe))
           .subscribe((rtdo) => {
             if (rtdo.exito) {
+              this.resetearForm();
               this.snackBar.open(rtdo.message, "", {
                 panelClass: ["snack-bar-exito"],
                 duration: 3000,
@@ -156,11 +157,18 @@ export class CalificacionesExamenesComponent implements OnInit, OnDestroy {
           }
         );
       } else {
+        this.resetearForm();
         this.snackBar.open("Se ha registrado la materia desaprobada.", "", {
           panelClass: ["snack-bar-exito"],
           duration: 3000,
         });
       }
     }
+  }
+
+  resetearForm() {
+    this.condicionExamen = null;
+    this.idMateriaSeleccionada = null;
+    this.notaExamen = null;
   }
 }

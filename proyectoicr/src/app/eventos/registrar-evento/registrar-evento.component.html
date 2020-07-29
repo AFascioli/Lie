@@ -40,6 +40,8 @@
         [matDatepicker]="picker"
         placeholder="Seleccione fecha de evento"
         (click)="picker.open()"
+        [(ngModel)]="fechaSeleccionada"
+        (focusout)="setearHoraMinima()"
         required
         readonly
       />

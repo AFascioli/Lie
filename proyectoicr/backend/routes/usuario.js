@@ -368,6 +368,7 @@ router.post("/reunion/docente", (req, res) => {
     });
 });
 
+
   //Validar que los datos sean correctos
   router.get("/validate", checkAuthMiddleware, async (req, res) => {
     Usuario.findOne({

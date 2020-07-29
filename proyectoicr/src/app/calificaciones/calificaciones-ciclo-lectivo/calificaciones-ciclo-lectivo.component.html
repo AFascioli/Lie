@@ -19,7 +19,7 @@
           (selectionChange)="onCursoSeleccionado(curso, materia)"
         >
           <mat-option *ngFor="let objCurso of cursos" [value]="objCurso.id">
-            {{ objCurso.curso }}
+            {{ objCurso.nombre }}
           </mat-option>
         </mat-select>
       </mat-form-field>
@@ -42,6 +42,22 @@
         </mat-select>
       </mat-form-field>
     </div>
+    <div [hidden]="!estudiantes" class="div-button">
+      <button
+        mat-button
+        (click)="
+          exporter.exportTable('xlsx', {
+            fileName: 'Calificaciones',
+            Props: {
+              Author: this.servicioEstudianteAutenticacion.getUsuarioAutenticado()
+            }
+          })
+        "
+      >
+        <mat-icon>file_download </mat-icon>
+        EXPORTAR A EXCEL
+      </button>
+    </div>
     <!-- <mat-form-field class="filtro" *ngIf="estudiantes">
       <mat-label>Filtrar estudiante</mat-label>
       <input
@@ -53,6 +69,8 @@
     <div [hidden]="!estudiantes">
       <table
         mat-table
+        matTableExporter
+        #exporter="matTableExporter"
         [dataSource]="dataSource"
         [class.table-mobile]="mobileQuery.matches"
       >
@@ -182,7 +200,9 @@
           </td>
         </ng-container>
         <ng-container matColumnDef="prom1">
-          <th class="columnas-promedios" mat-header-cell *matHeaderCellDef>P1</th>
+          <th class="columnas-promedios" mat-header-cell *matHeaderCellDef>
+            P1
+          </th>
           <td
             class="columnas-promedios"
             mat-cell
@@ -287,7 +307,9 @@
           </td>
         </ng-container>
         <ng-container matColumnDef="prom2">
-          <th class="columnas-promedios" mat-header-cell *matHeaderCellDef>P2</th>
+          <th class="columnas-promedios" mat-header-cell *matHeaderCellDef>
+            P2
+          </th>
           <td
             class="columnas-promedios"
             mat-cell
@@ -392,7 +414,9 @@
           </td>
         </ng-container>
         <ng-container matColumnDef="prom3">
-          <th class="columnas-promedios" mat-header-cell *matHeaderCellDef>P3</th>
+          <th class="columnas-promedios" mat-header-cell *matHeaderCellDef>
+            P3
+          </th>
           <td
             class="columnas-promedios"
             mat-cell
@@ -407,7 +431,11 @@
           </td>
         </ng-container>
         <ng-container matColumnDef="prom">
-          <th class="columnas-promedios promedio"  mat-header-cell *matHeaderCellDef>
+          <th
+            class="columnas-promedios promedio"
+            mat-header-cell
+            *matHeaderCellDef
+          >
             Final
           </th>
           <td
@@ -426,27 +454,52 @@
         </ng-container>
 
         <ng-container matColumnDef="estudiante" class="header">
-          <th class="header" mat-header-cell *matHeaderCellDef [attr.colspan]="2">
+          <th
+            class="header"
+            mat-header-cell
+            *matHeaderCellDef
+            [attr.colspan]="2"
+          >
             Estudiante
           </th>
         </ng-container>
         <ng-container matColumnDef="primerTrimestre" class="header">
-          <th class="header" mat-header-cell *matHeaderCellDef [attr.colspan]="7">
+          <th
+            class="header"
+            mat-header-cell
+            *matHeaderCellDef
+            [attr.colspan]="7"
+          >
             Primer Trimestre
           </th>
         </ng-container>
         <ng-container matColumnDef="segundoTrimestre" class="header">
-          <th class="header" mat-header-cell *matHeaderCellDef [attr.colspan]="7">
+          <th
+            class="header"
+            mat-header-cell
+            *matHeaderCellDef
+            [attr.colspan]="7"
+          >
             Segundo Trimestre
           </th>
         </ng-container>
         <ng-container matColumnDef="tercerTrimestre" class="header">
-          <th class="header" mat-header-cell *matHeaderCellDef [attr.colspan]="7">
+          <th
+            class="header"
+            mat-header-cell
+            *matHeaderCellDef
+            [attr.colspan]="7"
+          >
             Tercer Trimestre
           </th>
         </ng-container>
         <ng-container matColumnDef="promedio" class="header">
-          <th class="header" mat-header-cell *matHeaderCellDef [attr.colspan]="1">
+          <th
+            class="header"
+            mat-header-cell
+            *matHeaderCellDef
+            [attr.colspan]="1"
+          >
             Promedio
           </th>
         </ng-container>
@@ -471,11 +524,6 @@
         class="paginator"
       >
       </mat-paginator>
-    </div>
-    <div [hidden]="!estudiantes">
-      <!-- <button mat-button (click)="exporter.exportTable('xlsx', {fileName:'Calificaciones', Props: {Author: this.servicioEstudianteAutenticacion.getUsuarioAutenticado()}})">
-        EXPORTAR
-      </button> -->
     </div>
     <div class="div-button">
       <button mat-raised-button class="button-warn" (click)="onCancelar()">

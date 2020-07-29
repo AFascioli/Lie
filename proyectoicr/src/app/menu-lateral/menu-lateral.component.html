@@ -173,6 +173,19 @@
             </a>
 
             <a
+            mat-list-item
+            class="sinExpansion"
+            routerLink="/calificacionesCicloLectivo"
+            (click)="cerrarMenuLateral(sideNav)"
+          >
+            <mat-icon
+              class="iconSinExpansion"
+              svgIcon="calificacion"
+            ></mat-icon>
+            <p class="titulo-expansion">Visualizar calificaciones ciclo lectivo</p>
+          </a>
+
+            <a
               mat-list-item
               class="sinExpansion"
               routerLink="/documentosEstudiante"

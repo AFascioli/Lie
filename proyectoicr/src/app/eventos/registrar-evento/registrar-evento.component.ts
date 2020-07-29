@@ -58,7 +58,7 @@ export class RegistrarEventoComponent implements OnInit, OnDestroy {
   horaInicioEvento: string;
   horaFinEvento: string;
   horaMinimaEvento: string;
-
+  fechaSeleccionada: Date;
   slideIndex = 1;
   fechaActual: Date;
   imagesFile: any = [];
@@ -148,6 +148,14 @@ export class RegistrarEventoComponent implements OnInit, OnDestroy {
     return variableDateInicio < variableDateFin;
   }
 
+  setearHoraMinima() {
+    if (
+      this.fechaSeleccionada.getDay() == this.fechaActual.getDay() &&
+      this.fechaSeleccionada.getMonth() == this.fechaActual.getMonth()
+    )
+      this.horaMinimaEvento = `${this.fechaActual.getHours() + 2}:00`;
+    else this.horaMinimaEvento = "07:00";
+  }
   popUpCancelar() {
     this.dialog.open(CancelPopupComponent, {
       width: "250px",
