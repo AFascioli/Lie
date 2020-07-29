@@ -5,60 +5,59 @@ const checkAuthMiddleware = require("../middleware/check-auth");
 const Estado = require("../models/estado");
 const Estudiante = require("../models/estudiante");
 const Inscripcion = require("../models/inscripcion");
-const CicloLectivo = require("../models/cicloLectivo");
 const AsistenciaDiaria = require("../models/asistenciaDiaria");
-const AdultoResponsable = require("../models/adultoResponsable");
 const ClaseSuscripcion = require("../classes/suscripcion");
 const ClaseAsistencia = require("../classes/asistencia");
+const ClaseEstado = require("../classes/estado");
 
-validarLibreInasistencias = function (idEst, valorInasistencia) {
-  Estado.find({ nombre: "Suspendido", ambito: "Inscripcion" })
-    .then((estado) => {
-      Inscripcion.findOne({
-        idEstudiante: idEst,
-        activa: true,
-      }).then(async (inscripcion) => {
-        if (
-          inscripcion.contadorInasistenciasInjustificada % 14 == 0 &&
-          valorInasistencia == 1
-        ) {
-          Inscripcion.findOneAndUpdate(
-            {
-              idEstudiante: idEst,
-              activa: true,
-            },
-            { estado: mongoose.Types.ObjectId(estado[0]._id) }
-          ).exec();
-        } else if (inscripcion.contadorInasistenciasInjustificada % 12 == 0) {
-          //No fijamos si el estudiante tiene 12 inasistencias, para luego notificar a los AR
-          let idsUsuariosAR = await ClaseSuscripcion.obtenerIdsUsuarios(idEst);
-          let idsUsuarios = await ClaseSuscripcion.filtrarARPorPreferencias(
-            idsUsuariosAR,
-            "Falta 12"
+
+async function validarLibreInasistencias (idEst, valorInasistencia){
+  const idEstadoSuspendido = await ClaseEstado.obtenerIdEstado("Inscripcion", "Suspendido");
+  const idEstadoActiva = await ClaseEstado.obtenerIdEstado("Inscripcion", "Activa");
+  Inscripcion.findOne({
+    idEstudiante: idEst,
+    estado: idEstadoActiva,
+  }).then(async (inscripcion) => {
+    if (
+      inscripcion.contadorInasistenciasInjustificada % 14 == 0 &&
+      valorInasistencia == 1
+    ) {
+      Inscripcion.findOneAndUpdate(
+        {
+          idEstudiante: idEst,
+          estado: idEstadoActiva,
+        },
+        { estado: mongoose.Types.ObjectId(idEstadoSuspendido) }
+      ).exec();
+    } else if (inscripcion.contadorInasistenciasInjustificada % 12 == 0) {
+      //No fijamos si el estudiante tiene 12 inasistencias, para luego notificar a los AR
+      let idsUsuariosAR = await ClaseSuscripcion.obtenerIdsUsuarios(idEst);
+      let idsUsuarios = await ClaseSuscripcion.filtrarARPorPreferencias(
+        idsUsuariosAR,
+        "Falta 12"
+      );
+      //Si existen ARs que aceptan este tipo de notificacion, manda
+      idsUsuarios.length > 0 &&
+        Estudiante.findById(idEst).then((estudianteEncontrado) => {
+          ClaseSuscripcion.notificacionGrupal(
+            idsUsuarios,
+            "Atención",
+            `El estudiante ${estudianteEncontrado.nombre} ${estudianteEncontrado.apellido} tiene solo 3 inasistencias antes de que sea suspendido`
           );
-          //Si existen ARs que aceptan este tipo de notificacion, manda
-          idsUsuarios.length > 0 &&
-            Estudiante.findById(idEst).then((estudianteEncontrado) => {
-              ClaseSuscripcion.notificacionGrupal(
-                idsUsuarios,
-                "Atención",
-                `El estudiante ${estudianteEncontrado.nombre} ${estudianteEncontrado.apellido} tiene solo 3 inasistencias antes de que sea suspendido`
-              );
-            });
-        }
-      });
-    })
-    .catch(() => {
+        });
+    }
+  }).catch(() => {
       res.status(500).json({
         message: "No se pudo obtener el estado suspendido",
       });
     });
-};
+}
 
 //Retorna vector con datos de los estudiantes y presente. Si ya se registro una asistencia para
 //el dia de hoy se retorna ese valor de la asistencia, sino se "construye" una nueva
 // @params: req.query.curso Nombre en string del curso que se esta por tomar asistencia
-router.get("", checkAuthMiddleware, (req, res) => {
+router.get("",  async (req, res) => {
+  const idEstadoActiva = await ClaseEstado.obtenerIdEstado("Inscripcion", "Activa");
   Inscripcion.aggregate([
     {
       $lookup: {
@@ -71,7 +70,7 @@ router.get("", checkAuthMiddleware, (req, res) => {
     {
       $match: {
         "curso.nombre": req.query.curso,
-        activa: true,
+        estado: mongoose.Types.ObjectId(idEstadoActiva),
       },
     },
     {
@@ -132,7 +131,7 @@ router.get("", checkAuthMiddleware, (req, res) => {
           {
             $match: {
               "curso.nombre": req.query.curso,
-              activa: true,
+              estado: mongoose.Types.ObjectId(idEstadoActiva),
             },
           },
           {
@@ -231,7 +230,7 @@ router.get("", checkAuthMiddleware, (req, res) => {
             },
           },
           {
-            $match: { "curso.nombre": req.query.curso, activa: true },
+            $match: { "curso.nombre": req.query.curso, estado: mongoose.Types.ObjectId(idEstadoActiva) },
           },
           {
             $project: {
@@ -392,35 +391,6 @@ router.post("", checkAuthMiddleware, async (req, res) => {
     .status(201)
     .json({ message: "Asistencia registrada exitosamente", exito: true });
 });
-
-validarLibreInasistencias = function (idEst, valorInasistencia) {
-  Estado.find({ nombre: "Suspendido", ambito: "Inscripcion" })
-    .then((estado) => {
-      Inscripcion.findOne({
-        idEstudiante: idEst,
-        activa: true,
-      }).then((inscripcion) => {
-        if (
-          inscripcion.contadorInasistenciasInjustificada != 0 &&
-          inscripcion.contadorInasistenciasInjustificada % 14 == 0 &&
-          valorInasistencia == 1
-        ) {
-          Inscripcion.findOneAndUpdate(
-            {
-              idEstudiante: idEst,
-              activa: true,
-            },
-            { estado: mongoose.Types.ObjectId(estado[0]._id) }
-          ).exec();
-        }
-      });
-    })
-    .catch(() => {
-      res.status(500).json({
-        message: "No se pudo obtener el estado suspendido",
-      });
-    });
-};
 
 //Este metodo filtra las inscripciones por estudiante y retorna el contador de inasistencias (injustificada y justificada)
 router.get("/asistenciaEstudiante", (req, res) => {
