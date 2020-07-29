@@ -50,6 +50,7 @@
             name="materiaRendida"
             ngModel
             #materiaRendida="ngModel"
+            [(ngModel)]="idMateriaSeleccionada"
             matNativeControl
             (selectionChange)="onMateriaChange(materiaRendida.value)"
             required
@@ -72,6 +73,7 @@
             name="condicion"
             ngModel
             #condicion="ngModel"
+            [(ngModel)]="condicionExamen"
             (selectionChange)="onCondicionChage(condicion.viewModel)"
             matNativeControl
             required

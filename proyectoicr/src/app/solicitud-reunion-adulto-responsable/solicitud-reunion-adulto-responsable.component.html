@@ -3,6 +3,9 @@
 </h1>
 
 <mat-card class="card-body-componente">
+  <p class="aviso" *ngIf="docentes == null || docentes.length == 0">
+    <b> No existen docentes asociados para este curso </b>
+  </p>
   <table
     mat-table
     [dataSource]="docentes"

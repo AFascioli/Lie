@@ -9,8 +9,8 @@
         <mat-panel-title>
           <b class="titulo-expansion-panel">
             {{ estudiante.apellido }}, {{ estudiante.nombre }} -
-            {{ estudiante.tipoDocumento }}: {{ estudiante.numeroDocumento }} </b
-          ><b *ngIf="inscripto[i]">- Curso: {{ this.cursos[i] }} </b>
+            {{ estudiante.tipoDocumento }}: {{ estudiante.numeroDocumento }}</b
+          ><b class="titulo-expansion-panel" *ngIf="inscripto[i]">&nbsp;- Curso: {{ this.cursos[i] }} </b>
         </mat-panel-title>
       </mat-expansion-panel-header>
       <div

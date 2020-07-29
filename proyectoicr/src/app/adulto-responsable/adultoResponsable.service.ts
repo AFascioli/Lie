@@ -172,5 +172,25 @@ export class AdultoResponsableService implements OnDestroy {
         adultosResponsables: adultosResponsables,
       }
     );
+    
+  public getPreferenciasAR(idUsuarioAR) {
+    let params = new HttpParams().set("idUsuarioAR", idUsuarioAR);
+    return this.http.get<{
+      message: string;
+      exito: boolean;
+      preferenciasPush: any[];
+    }>(environment.apiUrl + "/adultoResponsable/preferencias", {
+      params: params,
+    });
+  }
+
+  public actualizarPreferenciasAR(idUsuarioAR, preferencias: any[]) {
+    return this.http.post<{
+      message: string;
+      exito: boolean;
+    }>(environment.apiUrl + "/adultoResponsable/preferencias", {
+      idUsuarioAR: idUsuarioAR,
+      preferencias: preferencias
+    });
   }
 }

@@ -4,14 +4,14 @@
     style="cursor: pointer;"
     (click)="onEstudianteClick(estudiante.idEstudiante)"
   >
-    <div *ngIf="mostrarTooltip" class="tooltip-lie">
+    <div *ngIf="mostrarTooltip && cursos[0]" class="tooltip-lie">
       Clickea para ver mas detalles!
     </div>
     <mat-icon class="icon-estudiante">face</mat-icon>
     <p class="nombre-estudiante">
       {{ estudiante.nombre }} {{ estudiante.apellido }}
     </p>
-    <div class="curso">
+    <div class="curso" *ngIf="cursos[0]">
       <mat-chip-list>
         <mat-chip>{{ estudiante.curso }}</mat-chip>
       </mat-chip-list>

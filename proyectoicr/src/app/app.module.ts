@@ -23,6 +23,7 @@ import {
   MatInputModule,
   MatPaginatorIntl,
 } from "@angular/material";
+import { MatTableExporterModule } from 'mat-table-exporter';
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { MatPaginatorModule } from "@angular/material/paginator";
@@ -254,6 +255,7 @@ import { AsociarAdultoResponsableComponent } from "./adulto-responsable/asociar-
     NgxMaterialTimepickerModule,
     ImageUploadModule,
     MatTooltipModule,
+    MatTableExporterModule,
     MatCarouselModule.forRoot(),
     ServiceWorkerModule.register("ngsw-worker.js", {
       enabled: environment.production,

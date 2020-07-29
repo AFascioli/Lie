@@ -278,7 +278,7 @@ router.post("/publicarEstadoCuotas", checkAuthMiddleware, (req, res) => {
   }
   res.status(200).json({
     message:
-      "Se ha registrado el estado de las cuotas de un curso de manera exitosa",
+      "El estado de las cuotas se ha registrado correctamente",
     exito: true,
   });
 });
