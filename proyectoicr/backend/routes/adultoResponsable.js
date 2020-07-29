@@ -59,7 +59,15 @@ router.post("/", checkAuthMiddleware, (req, res) => {
     tutor: req.body.datos.AR.tutor,
     idUsuario: req.body.datos.AR.idUsuario,
     estudiantes: [],
+    preferenciasPush: [
+      { nombre: "Retiro Anticipado", acepta: true },
+      { nombre: "Creacion de evento", acepta: true },
+      { nombre: "Cancelacion de evento", acepta: true },
+      { nombre: "Inasistencia", acepta: true },
+      { nombre: "Falta 12", acepta: true },
+    ],
   });
+
   adultoResponsable.estudiantes.push(req.body.datos.idEstudiante);
   adultoResponsable
     .save()
@@ -150,6 +158,35 @@ router.get("/estudiantes", checkAuthMiddleware, async (req, res) => {
         error,
     });
   }
+});
+
+router.get("/preferencias", (req, res) => {
+  AdultoResponsable.findOne({ idUsuario: req.query.idUsuarioAR }).then(
+    (adultoR) => {
+      res.status(200).json({
+        message: "Preferencias buscadas correctamente",
+        exito: true,
+        preferenciasPush: adultoR.preferenciasPush,
+      });
+    }
+  );
+});
+
+router.post("/preferencias", (req, res) => {
+  AdultoResponsable.findOneAndUpdate(
+    { idUsuario: req.body.idUsuarioAR },
+    { preferenciasPush: req.body.preferencias }
+  ).then((adultoR) => {
+    res.status(200).json({
+      message: "Preferencias actualizadas correctamente",
+      exito: true,
+    });
+  }).catch(error =>{
+    res.status(200).json({
+      message: "Ocurrió un error al actualizar las preferencias",
+      exito: false,
+    });
+  });
 });
 
 module.exports = router;

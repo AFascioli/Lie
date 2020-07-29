@@ -342,7 +342,7 @@ router.delete("/eliminarEvento", checkAuthMiddleware, (req, res, next) => {
       notificarPorEvento(
         evento.tags,
         evento.titulo,
-        "Ha sido cancelado."
+        "Ha sido cancelado." //No cambiar texto, se usa en notificarEvento
       );
       return res.status(202).json({
         message: "Evento eliminado exitosamente",
@@ -446,7 +446,13 @@ notificarPorEvento = function (tags, titulo, cuerpo) {
       response.forEach((conadulto) => {
         idtutores.push(conadulto.conadulto.idUsuario);
       });
-      Suscripcion.notificacionGrupal(idtutores, titulo, cuerpo);
+      let idsUsuarios=[];
+      if(cuerpo=="Ha sido cancelado."){
+        idsUsuarios= await Suscripcion.filtrarARPorPreferencias(idtutores, "Cancelacion de evento");
+      }else{
+        idsUsuarios= await Suscripcion.filtrarARPorPreferencias(idtutores, "Creacion de evento");
+      }
+      Suscripcion.notificacionGrupal(idsUsuarios, titulo, cuerpo);
     });
   }
 };
