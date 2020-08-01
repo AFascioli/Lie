@@ -7,15 +7,17 @@ const CicloLectivo = require("../models/cicloLectivo");
 const ClaseEstado = require("../classes/estado");
 const ClaseCalifXMateria = require("../classes/calificacionXMateria");
 
-exports.obtenerAñoHabilitado = function (inscripcion) {
+exports.obtenerAñoHabilitado = function (inscripcion, añoLectivo) {
   let añoActual;
+  let fechaActual = new Date();
   let siguiente;
   añoActual = parseInt(inscripcion[0].cursoActual[0].nombre, 10);
 
   if (
     inscripcion[0].estadoInscripcion[0].nombre == "Promovido" ||
     inscripcion[0].estadoInscripcion[0].nombre ==
-      "Promovido con examenes pendientes"
+      "Promovido con examenes pendientes" ||
+    añoLectivo > fechaActual.getFullYear()
   ) {
     siguiente = añoActual + 1;
   } else {
@@ -221,23 +223,17 @@ exports.inscribirEstudiante = async function (
   }
 };
 
-exports.inscribirEstudianteProximoAño = async function (idCurso, idEstudiante) {
+exports.inscribirEstudianteProximoAnio = async function (
+  idCurso,
+  idEstudiante
+) {
+  let fechaActual = new Date();
+
   let obtenerCurso = (añoActual) => {
     return new Promise((resolve, reject) => {
       Curso.findOne({ _id: idCurso, añoLectivo: añoActual })
         .then((curso) => {
           resolve(curso);
-        })
-        .catch((err) => reject(err));
-    });
-  };
-
-  let obtenerAñoCicloLectivo = () => {
-    let fechaActual = new Date();
-    return new Promise((resolve, reject) => {
-      CicloLectivo.findOne({ año: fechaActual.getFullYear() + 1 })
-        .then((cicloLectivo) => {
-          resolve(cicloLectivo.año);
         })
         .catch((err) => reject(err));
     });
@@ -249,8 +245,7 @@ exports.inscribirEstudianteProximoAño = async function (idCurso, idEstudiante) 
       "Pendiente"
     );
 
-    var añoActual = await obtenerAñoCicloLectivo();
-    var cursoSeleccionado = await obtenerCurso(añoActual);
+    var cursoSeleccionado = await obtenerCurso(fechaActual.getFullYear() + 1);
 
     const nuevaInscripcion = new Inscripcion({
       idEstudiante: idEstudiante,
@@ -260,6 +255,7 @@ exports.inscribirEstudianteProximoAño = async function (idCurso, idEstudiante) 
       contadorInasistenciasInjustificada: 0,
       contadorInasistenciasJustificada: 0,
       contadorLlegadasTarde: 0,
+      año: fechaActual.getFullYear() + 1,
     });
 
     await nuevaInscripcion.save();

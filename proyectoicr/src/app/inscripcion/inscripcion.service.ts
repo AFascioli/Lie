@@ -51,7 +51,7 @@ export class InscripcionService {
   //@params: array documentos entregados en inscripcion: true si se entregó ese documente
   public inscribirEstudianteProximoAño(idEstudiante: string, idCurso: string) {
     return this.http.post<{ message: string; exito: boolean }>(
-      environment.apiUrl + "/curso/inscripcionProximoAño",
+      environment.apiUrl + "/curso/inscripcionProximoAnio",
       {
         idEstudiante: idEstudiante,
         idCurso: idCurso,
@@ -82,11 +82,10 @@ export class InscripcionService {
 
   //Obtiene todos los cursos a los que se puede inscribir un estudiante de acuerdo
   //a su estado académico (promovido - libre) y su curso actual
-  public obtenerCursosInscripcionEstudiante() {
-    let params = new HttpParams().set(
-      "idEstudiante",
-      this.estudianteSeleccionado._id
-    );
+  public obtenerCursosInscripcionEstudiante(añoLectivo: any) {
+    let params = new HttpParams()
+      .set("idEstudiante", this.estudianteSeleccionado._id)
+      .set("añoLectivo", añoLectivo);
     return this.http.get<{
       message: string;
       exito: boolean;

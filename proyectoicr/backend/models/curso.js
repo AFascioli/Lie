@@ -4,6 +4,7 @@ const cursoSchema = mongoose.Schema({
   nombre: String,
   materias: [{ type: mongoose.Schema.Types.ObjectId, ref: "materiasXCurso" }],
   capacidad: Number,
+  añoLectivo: Number,
 });
 
 module.exports = mongoose.model("curso", cursoSchema, "curso");

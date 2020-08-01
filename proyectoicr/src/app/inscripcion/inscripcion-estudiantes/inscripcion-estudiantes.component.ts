@@ -87,7 +87,7 @@ export class InscripcionEstudianteComponent implements OnInit, OnDestroy {
       .subscribe((response) => {
         this.estudianteEstaInscripto = response.exito;
       });
-    this.obtenerCursosEstudiante();
+
     this.isLoading = false;
   }
 
@@ -112,7 +112,6 @@ export class InscripcionEstudianteComponent implements OnInit, OnDestroy {
   }
 
   onYearSelected(yearSelected) {
-    debugger;
     if (yearSelected.value == "actual") {
       this.yearSelected = this.fechaActual.getFullYear();
       this.nextYearSelect = false;
@@ -120,6 +119,7 @@ export class InscripcionEstudianteComponent implements OnInit, OnDestroy {
       this.yearSelected = this.fechaActual.getFullYear() + 1;
       this.nextYearSelect = true;
     }
+    this.obtenerCursosEstudiante();
   }
 
   //Cambia el valor de entregado del documento seleccionado por el usuario
@@ -175,6 +175,7 @@ export class InscripcionEstudianteComponent implements OnInit, OnDestroy {
             duration: 4500,
           });
           this.obtenerCursosEstudiante();
+          this.obtenerCapacidadCurso();
         } else {
           this.snackBar.open(response.message, "", {
             duration: 4500,
@@ -186,7 +187,7 @@ export class InscripcionEstudianteComponent implements OnInit, OnDestroy {
 
   obtenerCursosEstudiante() {
     this.servicioInscripcion
-      .obtenerCursosInscripcionEstudiante()
+      .obtenerCursosInscripcionEstudiante(this.yearSelected)
       .pipe(takeUntil(this.unsubscribe))
       .subscribe((response) => {
         if (response.cursoActual != "") {
