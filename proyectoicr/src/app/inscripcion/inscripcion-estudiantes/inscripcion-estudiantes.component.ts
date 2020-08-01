@@ -7,7 +7,6 @@ import {
   ChangeDetectorRef,
   OnDestroy,
 } from "@angular/core";
-import { Router } from "@angular/router";
 import {
   MatDialogRef,
   MatDialog,
@@ -35,7 +34,6 @@ export class InscripcionEstudianteComponent implements OnInit, OnDestroy {
   nombreEstudiante: string;
   _idEstudiante: string;
   matConfig = new MatDialogConfig();
-  seleccionDeAnio: boolean = false;
   fechaActual: Date;
   estudianteEstaInscripto: boolean;
   documentosEntregados = [
@@ -49,6 +47,8 @@ export class InscripcionEstudianteComponent implements OnInit, OnDestroy {
   private unsubscribe: Subject<void> = new Subject();
   isLoading: boolean = true;
   cursoActual: any;
+  yearSelected: any;
+  nextYearSelect: boolean;
 
   constructor(
     public servicioEstudiante: EstudiantesService,
@@ -111,6 +111,17 @@ export class InscripcionEstudianteComponent implements OnInit, OnDestroy {
     this.obtenerCapacidadCurso();
   }
 
+  onYearSelected(yearSelected) {
+    debugger;
+    if (yearSelected.value == "actual") {
+      this.yearSelected = this.fechaActual.getFullYear();
+      this.nextYearSelect = false;
+    } else {
+      this.yearSelected = this.fechaActual.getFullYear() + 1;
+      this.nextYearSelect = true;
+    }
+  }
+
   //Cambia el valor de entregado del documento seleccionado por el usuario
   registrarDocumento(indexDoc: number) {
     this.documentosEntregados[indexDoc].entregado = !this.documentosEntregados[
@@ -119,6 +130,14 @@ export class InscripcionEstudianteComponent implements OnInit, OnDestroy {
   }
 
   inscribirEstudiante() {
+    if (this.yearSelected == this.fechaActual.getFullYear()) {
+      this.inscribirEstudianteAñoActual();
+    } else {
+      this.inscribirEstudianteProximoAño();
+    }
+  }
+
+  inscribirEstudianteAñoActual() {
     this.servicioInscripcion
       .inscribirEstudiante(
         this._idEstudiante,
@@ -135,6 +154,27 @@ export class InscripcionEstudianteComponent implements OnInit, OnDestroy {
           });
           this.obtenerCursosEstudiante();
           this.obtenerCapacidadCurso();
+        } else {
+          this.snackBar.open(response.message, "", {
+            duration: 4500,
+            panelClass: ["snack-bar-fracaso"],
+          });
+        }
+      });
+  }
+
+  inscribirEstudianteProximoAño() {
+    this.servicioInscripcion
+      .inscribirEstudianteProximoAño(this._idEstudiante, this.cursoSeleccionado)
+      .pipe(takeUntil(this.unsubscribe))
+      .subscribe((response) => {
+        let exito = response.exito;
+        if (exito) {
+          this.snackBar.open(response.message, "", {
+            panelClass: ["snack-bar-exito"],
+            duration: 4500,
+          });
+          this.obtenerCursosEstudiante();
         } else {
           this.snackBar.open(response.message, "", {
             duration: 4500,

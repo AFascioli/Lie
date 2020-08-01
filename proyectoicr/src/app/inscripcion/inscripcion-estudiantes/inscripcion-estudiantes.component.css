@@ -83,6 +83,10 @@
   color: black;
 }
 
+.selectYear {
+  margin-right: 10px;
+}
+
 .mensaje-atencion-curso {
   color: black;
   font-weight: bold;

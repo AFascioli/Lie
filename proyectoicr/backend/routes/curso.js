@@ -277,8 +277,7 @@ router.post("/publicarEstadoCuotas", checkAuthMiddleware, (req, res) => {
       });
   }
   res.status(200).json({
-    message:
-      "El estado de las cuotas se ha registrado correctamente",
+    message: "El estado de las cuotas se ha registrado correctamente",
     exito: true,
   });
 });
@@ -936,8 +935,6 @@ router.get("/materias", checkAuthMiddleware, (req, res) => {
     });
 });
 
-//router.get("/estadoCuotas", checkAuthMiddleware, (req, res) => {});
-
 //Inscribe a un estudiante a un curso y los documentos entregados durante la inscripción
 //@params: id estudiante que se quiere inscribir
 //@params: id curso al que se lo quiere inscribir
@@ -961,45 +958,30 @@ router.post("/inscripcion", checkAuthMiddleware, async (req, res) => {
       exito: false,
     });
   }
+});
 
-  // nuevaInscripcion
-  //   .save()
-  //   .then(() => {
-  //     cursoSeleccionado.capacidad = cursoSeleccionado.capacidad - 1;
-  //     cursoSeleccionado.save();
-  //     //Le cambiamos el estado al estudiante
-  //     //SE PUEDE CAMBIAR CON EL METODO OBTENERIDESTADO #resolve
-  //     Estado.findOne({
-  //       nombre: "Inscripto",
-  //       ambito: "Estudiante",
-  //     })
-  //       .then(async (estadoEstudiante) => {
-  //         await Estudiante.findByIdAndUpdate(req.body.idEstudiante, {
-  //           estado: estadoEstudiante._id,
-  //         })
-  //           .then(async () => {
-  //             await res.status(201).json({
-  //               message: "Estudiante inscripto exitosamente",
-  //               exito: true,
-  //             });
-  //           })
-  //           .catch(() => {
-  //             res.status(500).json({
-  //               message: "Mensaje de error especifico",
-  //             });
-  //           });
-  //       })
-  //       .catch(() => {
-  //         res.status(500).json({
-  //           message: "Mensaje de error especifico",
-  //         });
-  //       });
-  //   })
-  //   .catch(() => {
-  //     res.status(500).json({
-  //       message: "Mensaje de error especifico",
-  //     });
-  //   });
+//Inscribe a un estudiante a un curso y los documentos entregados durante la inscripción
+//@params: id estudiante que se quiere inscribir
+//@params: id curso al que se lo quiere inscribir
+//@params: array documentos entregados en inscripcion: true si se entregó ese documente
+router.post("/inscripcionProximoAño", checkAuthMiddleware, async (req, res) => {
+  //Dado una id de curso, encuentra todos los datos del mismo
+  if (
+    ClaseInscripcion.inscribirEstudianteProximoAño(
+      req.body.idCurso,
+      req.body.idEstudiante
+    )
+  ) {
+    res.status(201).json({
+      message: "Estudiante inscripto exitosamente",
+      exito: true,
+    });
+  } else {
+    res.status(400).json({
+      message: "Ocurrió un error al quere inscribir al estudiante",
+      exito: false,
+    });
+  }
 });
 
 //Registra las calificaciones todos los estudiantes de un curso para una materia

@@ -1,6 +1,7 @@
 <h1 class="componente-titulo">
-  Inscribir estudiante a un curso para el ciclo lectivo {{fechaActual.getFullYear()}}
+  Inscribir estudiante a un curso
 </h1>
+
 <mat-card class="card-body-componente" *ngIf="!isLoading">
   <form #form="ngForm">
     <p class="aviso" *ngIf="!fechaDentroDeRangoInscripcion">
@@ -37,13 +38,32 @@
                 >Atención, el estudiante seleccionado ya esta inscripto en el
                 curso
               </b>
-              <label [innerHTML]= "cursoActual"  class="mensaje-atencion-curso"> </label>
+              <label [innerHTML]="cursoActual" class="mensaje-atencion-curso">
+              </label>
             </p>
           </mat-card-subtitle>
         </mat-card>
       </div>
       <div class="div-select">
-        <mat-form-field class="curso">
+        <mat-form-field class="selectYear">
+          <mat-select
+            placeholder="Seleccione año"
+            name="year"
+            ngModel
+            #yearSelected="ngModel"
+            matNativeControl
+            required
+            (selectionChange)="onYearSelected(yearSelected)"
+          >
+            <mat-option value="actual">
+              {{ fechaActual.getFullYear() }}</mat-option
+            >
+            <mat-option value="proximo">
+              {{ fechaActual.getFullYear() + 1 }}</mat-option
+            >
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field>
           <mat-select
             placeholder="Seleccione curso"
             name="curso"
@@ -76,15 +96,24 @@
               >
             </mat-panel-title>
           </mat-expansion-panel-header>
-          <mat-checkbox (change)="registrarDocumento(0)">
+          <mat-checkbox
+            (change)="registrarDocumento(0)"
+            [disabled]="nextYearSelect"
+          >
             Fotocopia del documento</mat-checkbox
           >
           <br />
-          <mat-checkbox (change)="registrarDocumento(1)">
+          <mat-checkbox
+            (change)="registrarDocumento(1)"
+            [disabled]="nextYearSelect"
+          >
             Ficha médica</mat-checkbox
           >
           <br />
-          <mat-checkbox (change)="registrarDocumento(2)">
+          <mat-checkbox
+            (change)="registrarDocumento(2)"
+            [disabled]="nextYearSelect"
+          >
             Informe año anterior</mat-checkbox
           >
         </mat-expansion-panel>

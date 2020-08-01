@@ -45,6 +45,20 @@ export class InscripcionService {
     );
   }
 
+  //Inscribe a un estudiante a un curso y los documentos entregados durante la inscripción
+  //@params: id estudiante que se quiere inscribir
+  //@params: id curso al que se lo quiere inscribir
+  //@params: array documentos entregados en inscripcion: true si se entregó ese documente
+  public inscribirEstudianteProximoAño(idEstudiante: string, idCurso: string) {
+    return this.http.post<{ message: string; exito: boolean }>(
+      environment.apiUrl + "/curso/inscripcionProximoAño",
+      {
+        idEstudiante: idEstudiante,
+        idCurso: idCurso,
+      }
+    );
+  }
+
   public inscribirEstudiantesCurso(estudiantes: any[], idCurso: string) {
     return this.http.post<{ message: string; exito: boolean }>(
       environment.apiUrl + "/curso/estudiantes/inscripcion",

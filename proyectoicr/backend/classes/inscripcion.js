@@ -25,7 +25,11 @@ exports.obtenerAñoHabilitado = function (inscripcion) {
   return siguiente;
 };
 
-exports.inscribirEstudiante = async function (idCurso, idEstudiante, documentosEntregados) {
+exports.inscribirEstudiante = async function (
+  idCurso,
+  idEstudiante,
+  documentosEntregados
+) {
   let obtenerCurso = () => {
     return new Promise((resolve, reject) => {
       Curso.findOne({ _id: idCurso })
@@ -210,10 +214,58 @@ exports.inscribirEstudiante = async function (idCurso, idEstudiante, documentosE
       "Inscripto"
     );
 
-    await actualizarEstadoEstudiante(
-      idEstudiante,
-      idEstadoInscriptoEstudiante
+    await actualizarEstadoEstudiante(idEstudiante, idEstadoInscriptoEstudiante);
+    return true;
+  } catch (error) {
+    return false;
+  }
+};
+
+exports.inscribirEstudianteProximoAño = async function (idCurso, idEstudiante) {
+  let obtenerCurso = (añoActual) => {
+    return new Promise((resolve, reject) => {
+      Curso.findOne({ _id: idCurso, añoLectivo: añoActual })
+        .then((curso) => {
+          resolve(curso);
+        })
+        .catch((err) => reject(err));
+    });
+  };
+
+  let obtenerAñoCicloLectivo = () => {
+    let fechaActual = new Date();
+    return new Promise((resolve, reject) => {
+      CicloLectivo.findOne({ año: fechaActual.getFullYear() + 1 })
+        .then((cicloLectivo) => {
+          resolve(cicloLectivo.año);
+        })
+        .catch((err) => reject(err));
+    });
+  };
+
+  try {
+    var estadoPendienteInscripcion = await ClaseEstado.obtenerIdEstado(
+      "Inscripcion",
+      "Pendiente"
     );
+
+    var añoActual = await obtenerAñoCicloLectivo();
+    var cursoSeleccionado = await obtenerCurso(añoActual);
+
+    const nuevaInscripcion = new Inscripcion({
+      idEstudiante: idEstudiante,
+      idCurso: cursoSeleccionado._id,
+      activa: false,
+      estado: estadoPendienteInscripcion._id,
+      contadorInasistenciasInjustificada: 0,
+      contadorInasistenciasJustificada: 0,
+      contadorLlegadasTarde: 0,
+    });
+
+    await nuevaInscripcion.save();
+    cursoSeleccionado.capacidad = cursoSeleccionado.capacidad - 1;
+    await cursoSeleccionado.save();
+
     return true;
   } catch (error) {
     return false;
