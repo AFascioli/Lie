@@ -73,12 +73,13 @@ router.get("/id", checkAuthMiddleware, (req, res) => {
 
 // Retorna todos los docentes que enseñan en el curso del estudiante
 //@params: idEstudiante del cual buscar los docentes
-router.get("/estudiante", (req, res) => {
+router.get("/estudiante", async(req, res) => {
+  let idEstadoActiva = await ClaseEstado.obtenerIdEstado("Inscripcion", "Activa"); 
   Inscripcion.aggregate([
     {
       $match: {
         idEstudiante: mongoose.Types.ObjectId(req.query.idEstudiante),
-        activa: true,
+        estado: mongoose.Types.ObjectId(idEstadoActiva),
       },
     },
     {

@@ -25,6 +25,7 @@ exports.obtenerAñoHabilitado = function (inscripcion) {
   return siguiente;
 };
 
+//#resolve Modificar este metodo segun la nueva logica de ciclo lectivo
 exports.inscribirEstudiante = async function (idCurso, idEstudiante, documentosEntregados) {
   let obtenerCurso = () => {
     return new Promise((resolve, reject) => {
@@ -37,10 +38,11 @@ exports.inscribirEstudiante = async function (idCurso, idEstudiante, documentosE
   };
 
   let obtenerInscripcion = () => {
-    return new Promise((resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
+      let idEstadoActiva = await ClaseEstado.obtenerIdEstado("Inscripcion", "Activa"); 
       Inscripcion.findOne({
         idEstudiante: idEstudiante,
-        activa: true, //#resolve ver si es necesario filtrar por estado
+        estado: idEstadoActiva, //#resolve ver si es necesario filtrar por estado
       })
         .then((inscripcion) => {
           resolve(inscripcion);
@@ -145,11 +147,18 @@ exports.inscribirEstudiante = async function (idCurso, idEstudiante, documentosE
     var añoActual = await obtenerAñoCicloLectivo();
     var materiasDelCurso = await obtenerMateriasDeCurso(idCurso);
     let cuotasAnteriores = [];
+    let contadorInasistenciasInjustificada=0;
+    let contadorInasistenciasJustificada=0;
+    let contadorLlegadasTarde=0;
 
     //Si el estudiante tiene una inscripcion anteriormente, se obtienen las CXM que esten desaprobadas,
     //ya sea las que estan en materiasPendientes y las CXM con estado "Desaprobada"
     var materiasPendientesNuevas = [];
     if (inscripcion != null) {
+      contadorInasistenciasInjustificada=inscripcion.contadorInasistenciasInjustificada;
+      contadorInasistenciasJustificada=inscripcion.contadorInasistenciasJustificada;
+      contadorLlegadasTarde=inscripcion.contadorLlegadasTarde;
+
       inscripcion.activa = false;
       // cuotasAnteriores = inscripcion.cuotas;
 
@@ -192,9 +201,9 @@ exports.inscribirEstudiante = async function (idCurso, idEstudiante, documentosE
       documentosEntregados: documentosEntregados,
       activa: true,
       estado: estadoInscriptoInscripcion._id,
-      contadorInasistenciasInjustificada: 0,
-      contadorInasistenciasJustificada: 0,
-      contadorLlegadasTarde: 0,
+      contadorInasistenciasInjustificada: contadorInasistenciasInjustificada,
+      contadorInasistenciasJustificada: contadorInasistenciasJustificada,
+      contadorLlegadasTarde: contadorLlegadasTarde,
       calificacionesXMateria: idsCXMNuevas,
       materiasPendientes: materiasPendientesNuevas,
       año: añoActual,

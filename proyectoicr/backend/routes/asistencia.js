@@ -277,6 +277,7 @@ router.get("",  async (req, res) => {
 // guarda la _id de esta asistenciaDiaria en el vector de asistenciasDiarias de la inscripcion.
 // Si ya se tomo asistencia en el dia, se actualiza el valor presente de la asistencia individual.
 router.post("", checkAuthMiddleware, async (req, res) => {
+  let idEstadoActiva = await ClaseEstado.obtenerIdEstado("Inscripcion", "Activa");
   let idsEstudiantes = [];
   req.body.forEach((estudiante) => {
     var valorInasistencia = 0;
@@ -286,7 +287,7 @@ router.post("", checkAuthMiddleware, async (req, res) => {
     }
     Inscripcion.findOne({
       idEstudiante: estudiante._id,
-      activa: true,
+      estado: idEstadoActiva,
     }).then(async (inscripcion) => {
       if (inscripcion.asistenciaDiaria.length > 0) {
         var idAD =
@@ -322,7 +323,7 @@ router.post("", checkAuthMiddleware, async (req, res) => {
                 Inscripcion.findOneAndUpdate(
                   {
                     idEstudiante: estudiante._id,
-                    activa: true,
+                    estado: idEstadoActiva,
                   },
                   { $inc: { contadorInasistenciasInjustificada: 1 } }
                 ).exec();
@@ -337,7 +338,7 @@ router.post("", checkAuthMiddleware, async (req, res) => {
                 Inscripcion.findOneAndUpdate(
                   {
                     idEstudiante: estudiante._id,
-                    activa: true,
+                    estado: idEstadoActiva,
                   },
                   { $inc: { contadorInasistenciasInjustificada: -1 } }
                 ).exec();
@@ -393,8 +394,9 @@ router.post("", checkAuthMiddleware, async (req, res) => {
 });
 
 //Este metodo filtra las inscripciones por estudiante y retorna el contador de inasistencias (injustificada y justificada)
-router.get("/asistenciaEstudiante", (req, res) => {
-  Inscripcion.find({ idEstudiante: req.query.idEstudiante })
+router.get("/asistenciaEstudiante", async (req, res) => {
+  let idEstadoActiva = await ClaseEstado.obtenerIdEstado("Inscripcion", "Activa");
+  Inscripcion.find({ idEstudiante: req.query.idEstudiante, estado: idEstadoActiva })
     .then((inscripciones) => {
       let contadorInjustificadas = 0;
       let contadorJustificadas = 0;
@@ -427,7 +429,8 @@ router.get("/asistenciaEstudiante", (req, res) => {
 });
 
 //Recibe vector con inasistencias, cada una tiene su _id y si fue o no justificada
-router.post("/inasistencia/justificada", checkAuthMiddleware, (req, res) => {
+router.post("/inasistencia/justificada", checkAuthMiddleware, async (req, res) => {
+  let idEstadoActiva = await ClaseEstado.obtenerIdEstado("Inscripcion", "Activa");  
   let contador = 0;
   req.body.ultimasInasistencias.forEach((inasistencia) => {
     if (inasistencia.justificado) {
@@ -438,7 +441,7 @@ router.post("/inasistencia/justificada", checkAuthMiddleware, (req, res) => {
     }
   });
   Inscripcion.findOneAndUpdate(
-    { idEstudiante: req.body.idEstudiante, activa: true },
+    { idEstudiante: req.body.idEstudiante, estado: idEstadoActiva },
     {
       $inc: {
         contadorInasistenciasJustificada: contador,
@@ -465,12 +468,14 @@ router.post("/inasistencia/justificada", checkAuthMiddleware, (req, res) => {
 //Se obtienen las ultimas 5 inasistencias del estudiante, se permite justificar las inasistencias
 //que fueron creadas en los ultimos 5 dias
 //Se utiliza para la justificacion de inasistencias
-router.get("/inasistencias", (req, res) => {
+router.get("/inasistencias", async (req, res) => {
+  let idEstadoActiva = await ClaseEstado.obtenerIdEstado("Inscripcion", "Activa");   
   let ultimasInasistencias = [];
   Inscripcion.aggregate([
     {
       $match: {
         idEstudiante: mongoose.Types.ObjectId(req.query.idEstudiante),
+        estado: mongoose.Types.ObjectId(idEstadoActiva)
       },
     },
     {
@@ -551,9 +556,11 @@ router.get("/inasistencias", (req, res) => {
   Para cualquiera de los casos se le asigna presente al estudiante para ese dia. La llegada tarde puede ser antes de las 8
   am o despues de ese horario. Si es antes de las 8 am y tiene acumuladas 4 llegadas tardes
  de ese tipo le asigna una falta injustificada. Si es despues de las 8 am se le asigna media falta injustificada.  */
-router.post("/llegadaTarde", checkAuthMiddleware, (req, res) => {
+router.post("/llegadaTarde", checkAuthMiddleware, async (req, res) => {
+  let idEstadoActiva = await ClaseEstado.obtenerIdEstado("Inscripcion", "Activa"); 
   Inscripcion.findOne({
     idEstudiante: req.body.idEstudiante,
+    estado: idEstadoActiva
   })
     .then((inscripcion) => {
       AsistenciaDiaria.findById(
@@ -680,9 +687,10 @@ router.post("/llegadaTarde", checkAuthMiddleware, (req, res) => {
 });
 
 //Obtiene la id de la asistencia diaria del dia de hoy, y cambia los valores de la inasistencia para indicar el retiro correspondiente
-router.post("/retiro", checkAuthMiddleware, (req, res) => {
+router.post("/retiro", checkAuthMiddleware, async (req, res) => {
+  let idEstadoActiva = await ClaseEstado.obtenerIdEstado("Inscripcion", "Activa"); 
   Inscripcion.findOne(
-    { idEstudiante: req.body.idEstudiante, activa: true },
+    { idEstudiante: req.body.idEstudiante, estado: idEstadoActiva },
     { asistenciaDiaria: { $slice: -1 } }
   )
     .then((inscripcion) => {

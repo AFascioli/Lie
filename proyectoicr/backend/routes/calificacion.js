@@ -9,13 +9,14 @@ const CalificacionesXMateria = require("../models/calificacionesXMateria");
 //Dado un id de estudiante obtiene todas las materias desaprobadas del año actual
 //Retorna vector con id materia y nombre materia
 //@param: idEstudiante
-router.get("/materiasDesaprobadas", (req, res) => {
+router.get("/materiasDesaprobadas", async (req, res) => {
   let fechaActual = new Date();
+  let idEstadoActiva = await ClaseEstado.obtenerIdEstado("Inscripcion", "Activa"); 
 
   Inscripcion.findOne({
     idEstudiante: mongoose.Types.ObjectId(req.query.idEstudiante),
     año: fechaActual.getFullYear(),
-    activa: true,
+    estado: idEstadoActiva,
   }).then(async (inscripcion) => {
     let idEstado = await ClaseEstado.obtenerIdEstado(
       "CalificacionesXMateria",
@@ -49,12 +50,13 @@ router.get("/materiasDesaprobadas", (req, res) => {
 });
 
 //Dado una id de estudiante y un trimestre obtiene todas las materias con sus respectivas calificaciones
-router.get("/materia/calificaciones", (req, res) => {
+router.get("/materia/calificaciones", async (req, res) => {
+  let idEstadoActiva = await ClaseEstado.obtenerIdEstado("Inscripcion", "Activa"); 
   Inscripcion.aggregate([
     {
       $match: {
         idEstudiante: mongoose.Types.ObjectId(req.query.idEstudiante),
-        activa: true,
+        estado: mongoose.Types.ObjectId(idEstadoActiva),
       },
     },
     {
@@ -135,12 +137,13 @@ router.post("/examen", async (req, res) => {
   );
 
   let obtenerIdCXM = (idEstudiante, idMateria) => {
-    return new Promise((resolve, reject) => {
+    return new Promise(async(resolve, reject) => {
+      let idEstadoActiva = await ClaseEstado.obtenerIdEstado("Inscripcion", "Activa"); 
       Inscripcion.aggregate([
         {
           $match: {
             idEstudiante: mongoose.Types.ObjectId(idEstudiante),
-            activa: true,
+            estado: mongoose.Types.ObjectId(idEstadoActiva),
           },
         },
         {
@@ -177,12 +180,13 @@ router.post("/examen", async (req, res) => {
   };
 
   let obtenerIdCXMPendiente = (idEstudiante, idMateria) => {
-    return new Promise((resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
+      let idEstadoActiva = await ClaseEstado.obtenerIdEstado("Inscripcion", "Activa"); 
       Inscripcion.aggregate([
         {
           $match: {
             idEstudiante: mongoose.Types.ObjectId(idEstudiante),
-            activa: true,
+            estado: mongoose.Types.ObjectId(idEstadoActiva),
           },
         },
         {
@@ -243,10 +247,11 @@ router.post("/examen", async (req, res) => {
       req.body.idEstudiante,
       req.body.idMateria
     );
+    let idEstadoActiva = await ClaseEstado.obtenerIdEstado("Inscripcion", "Activa"); 
     idCXMAEditar = idCXMPendiente;
     //Se elimina la cxm del vector de materias pendientes
     Inscripcion.findOneAndUpdate(
-      { idEstudiante: req.body.idEstudiante, activa: true },
+      { idEstudiante: req.body.idEstudiante, estado: idEstadoActiva },
       { $pull: { materiasPendientes: idCXMAEditar } }
     ).exec();
   }
