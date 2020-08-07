@@ -20,7 +20,7 @@ const ClaseAsistencia = require("../classes/asistencia");
 
 // Obtiene todos los cursos que están almacenados en la base de datos
 router.get("/", checkAuthMiddleware, (req, res) => {
-  Curso.find()
+  Curso.find({ añoLectivo: parseInt(req.query.anioLectivo) })
     .select({ nombre: 1, _id: 1 })
     .then((cursos) => {
       var respuesta = [];
@@ -1473,6 +1473,39 @@ router.get("/estudiantes/inscripcion", async (req, res) => {
   });
 });
 
+//Validar si el estudiante tiene o no inscripcion pendiente
+//@params: id estudiante que se quiere verificar
+router.get("/estudiante/inscripcionPendiente", async (req, res) => {
+  var estadoPendienteInscripcion = await ClaseEstado.obtenerIdEstado(
+    "Inscripcion",
+    "Pendiente"
+  );
+
+  Inscripcion.find({ idEstudiante: req.query.idEstudiante }).then(
+    (inscripciones) => {
+      console.log(estadoPendienteInscripcion);
+      console.log(inscripciones);
+      inscripciones.forEach((inscripcion) => {
+        console.log(inscripcion.estado);
+        if (inscripcion.estado.equals(estadoPendienteInscripcion)) {
+          console.log("ejecuta");
+          return res.status(200).json({
+            inscripcionPendiente: true,
+            exito: true,
+          });
+        }
+      });
+      res.status(200).json({
+        inscripcionPendiente: false,
+        exito: true,
+      });
+    }
+  );
+});
+
+//Inscribe un conjunto de estudiantes a un curso para el año en curso
+//@params: lista de estudiantes
+//@params: id curso al que se lo quiere inscribir
 router.post("/estudiantes/inscripcion", async (req, res) => {
   let documentosEntregados = [
     {
@@ -1497,6 +1530,31 @@ router.post("/estudiantes/inscripcion", async (req, res) => {
         req.body.idCurso,
         estudiante.idEstudiante,
         documentosEntregados
+      )
+    ) {
+      return res.status(400).json({
+        exito: false,
+        message: "Ocurrió un error al querer escribir a los estudiantes",
+      });
+    }
+  }
+
+  res.status(200).json({
+    exito: true,
+    message: "Estudiantes inscriptos correctamente",
+  });
+});
+
+//Inscribe un conjunto de estudiantes a un curso para el proximo año
+//@params: lista de estudiantes
+//@params: id curso al que se lo quiere inscribir
+router.post("/estudiantes/inscripcionProximoAnio", async (req, res) => {
+  for (const estudiante of req.body.estudiantes) {
+    if (
+      estudiante.seleccionado &&
+      !ClaseInscripcion.inscribirEstudianteProximoAnio(
+        req.body.idCurso,
+        estudiante.idEstudiante
       )
     ) {
       return res.status(400).json({

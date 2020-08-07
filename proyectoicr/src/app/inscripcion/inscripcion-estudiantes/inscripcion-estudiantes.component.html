@@ -58,7 +58,7 @@
             <mat-option value="actual">
               {{ fechaActual.getFullYear() }}</mat-option
             >
-            <mat-option value="proximo">
+            <mat-option value="proximo" *ngIf="!tieneInscripcionPendiente">
               {{ fechaActual.getFullYear() + 1 }}</mat-option
             >
           </mat-select>

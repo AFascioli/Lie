@@ -12,8 +12,11 @@ export class InscripcionService {
   constructor(public http: HttpClient) {}
 
   //Obtiene todos los cursos que están almacenados en la base de datos
-  public obtenerCursos() {
-    return this.http.get<{ cursos: any[] }>(environment.apiUrl + "/curso");
+  public obtenerCursos(añoLectivo) {
+    let params = new HttpParams().set("anioLectivo", añoLectivo);
+    return this.http.get<{ cursos: any[] }>(environment.apiUrl + "/curso", {
+      params: params,
+    });
   }
 
   //Dado un curso, obtiene todos los estudiantes que se pueden inscribir a ese curso
@@ -45,6 +48,16 @@ export class InscripcionService {
     );
   }
 
+  //Validar si el estudiante tiene o no inscripcion pendiente
+  //@params: id estudiante que se quiere verificar
+  public validarInscripcionPendiente(idEstudiante: string) {
+    let params = new HttpParams().set("idEstudiante", idEstudiante);
+    return this.http.get<{ inscripcionPendiente: boolean; exito: boolean }>(
+      environment.apiUrl + "/curso/estudiante/inscripcionPendiente",
+      { params: params }
+    );
+  }
+
   //Inscribe a un estudiante a un curso y los documentos entregados durante la inscripción
   //@params: id estudiante que se quiere inscribir
   //@params: id curso al que se lo quiere inscribir
@@ -59,9 +72,28 @@ export class InscripcionService {
     );
   }
 
+  //Inscribe un conjunto de estudiantes a un curso para el año en curso
+  //@params: lista de estudiantes
+  //@params: id curso al que se lo quiere inscribir
   public inscribirEstudiantesCurso(estudiantes: any[], idCurso: string) {
     return this.http.post<{ message: string; exito: boolean }>(
       environment.apiUrl + "/curso/estudiantes/inscripcion",
+      {
+        estudiantes: estudiantes,
+        idCurso: idCurso,
+      }
+    );
+  }
+
+  //Inscribe un conjunto de estudiantes a un curso para el proximo año
+  //@params: lista de estudiantes
+  //@params: id curso al que se lo quiere inscribir
+  public inscribirEstudiantesCursoProximoAño(
+    estudiantes: any[],
+    idCurso: string
+  ) {
+    return this.http.post<{ message: string; exito: boolean }>(
+      environment.apiUrl + "/curso/estudiantes/inscripcionProximoAnio",
       {
         estudiantes: estudiantes,
         idCurso: idCurso,

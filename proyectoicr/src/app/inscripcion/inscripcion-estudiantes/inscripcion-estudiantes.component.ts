@@ -49,6 +49,7 @@ export class InscripcionEstudianteComponent implements OnInit, OnDestroy {
   cursoActual: any;
   yearSelected: any;
   nextYearSelect: boolean;
+  tieneInscripcionPendiente: boolean = false;
 
   constructor(
     public servicioEstudiante: EstudiantesService,
@@ -77,7 +78,7 @@ export class InscripcionEstudianteComponent implements OnInit, OnDestroy {
     ) {
       this.fechaDentroDeRangoInscripcion = true;
     }
-    this.authService.getFechasCicloLectivo();
+    //this.authService.getFechasCicloLectivo();
     this.apellidoEstudiante = this.servicioEstudiante.estudianteSeleccionado.apellido;
     this.nombreEstudiante = this.servicioEstudiante.estudianteSeleccionado.nombre;
     this._idEstudiante = this.servicioEstudiante.estudianteSeleccionado._id;
@@ -87,7 +88,21 @@ export class InscripcionEstudianteComponent implements OnInit, OnDestroy {
       .subscribe((response) => {
         this.estudianteEstaInscripto = response.exito;
       });
-
+    this.servicioInscripcion
+      .obtenerCursosInscripcionEstudiante(this.fechaActual.getFullYear())
+      .pipe(takeUntil(this.unsubscribe))
+      .subscribe((response) => {
+        if (response.cursoActual != "") {
+          this.cursoActual = response.cursoActual.nombre;
+        }
+      });
+    this.servicioInscripcion
+      .validarInscripcionPendiente(this._idEstudiante)
+      .pipe(takeUntil(this.unsubscribe))
+      .subscribe((response) => {
+        console.log(response);
+        this.tieneInscripcionPendiente = response.inscripcionPendiente;
+      });
     this.isLoading = false;
   }
 
@@ -190,9 +205,6 @@ export class InscripcionEstudianteComponent implements OnInit, OnDestroy {
       .obtenerCursosInscripcionEstudiante(this.yearSelected)
       .pipe(takeUntil(this.unsubscribe))
       .subscribe((response) => {
-        if (response.cursoActual != "") {
-          this.cursoActual = response.cursoActual.nombre;
-        }
         this.cursos = response.cursos;
         this.cursos.sort((a, b) =>
           a.nombre.charAt(0) > b.nombre.charAt(0)
