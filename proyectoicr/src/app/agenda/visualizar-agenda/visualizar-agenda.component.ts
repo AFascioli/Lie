@@ -53,7 +53,7 @@ export class VisualizarAgendaComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.fechaActual=new Date();
+    this.fechaActual = new Date();
     this.obtenerCursos();
   }
 
@@ -90,7 +90,7 @@ export class VisualizarAgendaComponent implements OnInit, OnDestroy {
 
   obtenerCursos() {
     this.servicioEstudiante
-      .obtenerCursos()
+      .obtenerCursos(this.fechaActual.getFullYear())
       .pipe(takeUntil(this.unsubscribe))
       .subscribe((response) => {
         this.cursos = response.cursos;

@@ -122,7 +122,7 @@ export class CalificacionesEstudiantesComponent implements OnInit, OnDestroy {
         });
     } else {
       this.servicioEstudiante
-        .obtenerCursos()
+        .obtenerCursos(this.fechaActual.getFullYear())
         .pipe(takeUntil(this.unsubscribe))
         .subscribe((response) => {
           this.cursos = response.cursos;
@@ -348,7 +348,6 @@ export class CalificacionesEstudiantesComponent implements OnInit, OnDestroy {
       event.preventDefault();
     else if (cal != 0 && Number(concat) > 10) event.preventDefault();
     else if (cal == 0 && Number(concat) > 10) event.preventDefault();
-
     else this.servicioCalificaciones.auxCambios = true;
   }
 

@@ -29,6 +29,16 @@ export class InscripcionService {
     );
   }
 
+  //Dado un curso, obtiene todos los estudiantes que se pueden inscribir a ese curso
+  //@params: idCurso
+  public obtenerEstudiantesInscripcionCursoProximoAnio(idCurso) {
+    let params = new HttpParams().set("idCurso", idCurso);
+    return this.http.get<{ estudiantes: any[]; exito: boolean }>(
+      environment.apiUrl + "/curso/estudiantes/inscripcionPendiente",
+      { params: params }
+    );
+  }
+
   //Inscribe a un estudiante a un curso y los documentos entregados durante la inscripción
   //@params: id estudiante que se quiere inscribir
   //@params: id curso al que se lo quiere inscribir

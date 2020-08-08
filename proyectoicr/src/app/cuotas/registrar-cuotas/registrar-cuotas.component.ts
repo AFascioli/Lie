@@ -130,7 +130,7 @@ export class RegistrarCuotasComponent implements OnInit, OnDestroy {
     this.cursoNotSelected = true;
     this.mesSeleccionado = mes.value;
     this.servicioEstudiante
-      .obtenerCursos()
+      .obtenerCursos(this.fechaActual.getFullYear())
       .pipe(takeUntil(this.unsubscribe))
       .subscribe((response) => {
         this.cursos = response.cursos;

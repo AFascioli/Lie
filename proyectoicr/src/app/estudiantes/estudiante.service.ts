@@ -270,8 +270,11 @@ export class EstudiantesService implements OnDestroy {
   }
 
   //Obtiene todos los cursos que están almacenados en la base de datos
-  public obtenerCursos() {
-    return this.http.get<{ cursos: any[] }>(environment.apiUrl + "/curso");
+  public obtenerCursos(añoLectivo) {
+    let params = new HttpParams().set("anioLectivo", añoLectivo);
+    return this.http.get<{ cursos: any[] }>(environment.apiUrl + "/curso", {
+      params: params,
+    });
   }
 
   //Obtiene todos los cursos que son dictados por una docente

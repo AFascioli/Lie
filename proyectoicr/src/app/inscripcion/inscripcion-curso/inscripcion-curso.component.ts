@@ -53,6 +53,7 @@ export class InscripcionCursoComponent implements OnInit {
     }
     this.obtenerCursosEstudiantes();
   }
+
   obtenerCursosEstudiantes() {
     this.servicioInscripcion
       .obtenerCursos(this.yearSelected)
@@ -71,8 +72,30 @@ export class InscripcionCursoComponent implements OnInit {
   onCursoSeleccionado(cursoSeleccionado) {
     this.loading = true;
     this.cursoSeleccionado = cursoSeleccionado.value;
+    if (this.yearSelected == this.fechaActual.getFullYear()) {
+      this.obtenerEstudiantesAñoActual();
+    } else {
+      this.obtenerEstudiantesProximoAño();
+    }
+  }
+
+  obtenerEstudiantesAñoActual() {
     this.servicioInscripcion
-      .obtenerEstudiantesInscripcionCurso(cursoSeleccionado.value)
+      .obtenerEstudiantesInscripcionCurso(this.cursoSeleccionado)
+      .subscribe((response) => {
+        this.estudiantes = [...response.estudiantes];
+        this.estudiantes = this.estudiantes.sort((a, b) =>
+          a.apellido > b.apellido ? 1 : b.apellido > a.apellido ? -1 : 0
+        );
+        this.dataSource = new MatTableDataSource(this.estudiantes);
+        this.loading = false;
+        this.seSeleccionoCurso = true;
+      });
+  }
+
+  obtenerEstudiantesProximoAño() {
+    this.servicioInscripcion
+      .obtenerEstudiantesInscripcionCursoProximoAnio(this.cursoSeleccionado)
       .subscribe((response) => {
         this.estudiantes = [...response.estudiantes];
         this.estudiantes = this.estudiantes.sort((a, b) =>
