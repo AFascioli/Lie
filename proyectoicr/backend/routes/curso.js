@@ -986,7 +986,7 @@ router.post(
       )
     ) {
       res.status(201).json({
-        message: "Estudiante inscripto prueba exitoso exitosamente",
+        message: "Estudiante inscriptoprueba exitoso exitosamente",
         exito: true,
       });
     } else {

@@ -68,10 +68,10 @@
             placeholder="Seleccione curso"
             name="curso"
             ngModel
-            #cursoSeleccionado="ngModel"
+            #cursoSelec="ngModel"
             matNativeControl
             required
-            (selectionChange)="onCursoSeleccionado(cursoSeleccionado)"
+            (selectionChange)="onCursoSeleccionado(cursoSelec)"
           >
             <mat-option *ngFor="let objCurso of cursos" [value]="objCurso._id">
               {{ objCurso.nombre }}

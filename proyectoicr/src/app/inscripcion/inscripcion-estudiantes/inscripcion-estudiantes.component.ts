@@ -100,7 +100,6 @@ export class InscripcionEstudianteComponent implements OnInit, OnDestroy {
       .validarInscripcionPendiente(this._idEstudiante)
       .pipe(takeUntil(this.unsubscribe))
       .subscribe((response) => {
-        console.log(response);
         this.tieneInscripcionPendiente = response.inscripcionPendiente;
       });
     this.isLoading = false;
@@ -134,6 +133,7 @@ export class InscripcionEstudianteComponent implements OnInit, OnDestroy {
       this.yearSelected = this.fechaActual.getFullYear() + 1;
       this.nextYearSelect = true;
     }
+    this.capacidadCurso=-1;
     this.obtenerCursosEstudiante();
   }
 
@@ -163,12 +163,12 @@ export class InscripcionEstudianteComponent implements OnInit, OnDestroy {
       .subscribe((response) => {
         let exito = response.exito;
         if (exito) {
+          this.capacidadCurso--;
           this.snackBar.open(response.message, "", {
             panelClass: ["snack-bar-exito"],
             duration: 4500,
           });
           this.obtenerCursosEstudiante();
-          this.obtenerCapacidadCurso();
         } else {
           this.snackBar.open(response.message, "", {
             duration: 4500,
@@ -185,12 +185,12 @@ export class InscripcionEstudianteComponent implements OnInit, OnDestroy {
       .subscribe((response) => {
         let exito = response.exito;
         if (exito) {
+          this.capacidadCurso--;
           this.snackBar.open(response.message, "", {
             panelClass: ["snack-bar-exito"],
             duration: 4500,
           });
           this.obtenerCursosEstudiante();
-          this.obtenerCapacidadCurso();
         } else {
           this.snackBar.open(response.message, "", {
             duration: 4500,
@@ -253,7 +253,7 @@ export class InscripcionEstudianteComponent implements OnInit, OnDestroy {
           .subscribe((resultado) => {
             if (resultado) {
               this.inscribirEstudiante();
-              this.estudianteEstaInscripto = true;
+              this.estudianteEstaInscripto = false;
             }
           });
       }
