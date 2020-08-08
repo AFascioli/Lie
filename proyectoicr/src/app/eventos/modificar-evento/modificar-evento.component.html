@@ -35,6 +35,7 @@
       <mat-form-field [class.mat-form-field-mobile]="mobileQuery.matches">
         <input
           matInput
+          [(ngModel)]="evento.fechaEvento"
           name="fechaEvento"
           ngModel
           #fechaEvento="ngModel"
@@ -42,9 +43,9 @@
           [matDatepicker]="picker"
           placeholder="Seleccione fecha de evento"
           (click)="picker.open()"
+          (focusout)="setearHoraMinima()"
           required
           readonly
-          [(ngModel)]="evento.fechaEvento"
         />
         <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
         <mat-datepicker touchUi #picker></mat-datepicker>
@@ -63,12 +64,12 @@
               [format]="24"
               [value]="horaInicioEvento"
               placeholder="Hora inicio de evento"
+              [min]="horaMinimaEvento"
+              max="22:00"
               readonly
               required
             />
-            <ngx-material-timepicker
-              #picker1
-            ></ngx-material-timepicker>
+            <ngx-material-timepicker #picker1></ngx-material-timepicker>
           </div>
         </mat-form-field>
         &nbsp;
@@ -84,13 +85,13 @@
               [ngxTimepicker]="picker2"
               [format]="24"
               [value]="horaFinEvento"
+              [min]="horaMinimaEvento"
+              max="22:00"
               placeholder="Hora fin de evento"
               readonly
               required
             />
-            <ngx-material-timepicker
-              #picker2
-            ></ngx-material-timepicker>
+            <ngx-material-timepicker #picker2></ngx-material-timepicker>
           </div>
         </mat-form-field>
       </div>
