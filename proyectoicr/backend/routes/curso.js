@@ -87,6 +87,7 @@ notificarSancion = async function (idEstudiante, sancion) {
 //@params: cantidad (sancion)
 //@params: fecha (sancion)
 router.post("/registrarSancion", checkAuthMiddleware, async (req, res) => {
+  let idEstadoActiva = await ClaseEstado.obtenerIdEstado("Inscripcion", "Activa"); 
   if (req.body.tipoSancion == "Suspencion") {
     let estadoSuspendido = await ClaseEstado.obtenerIdEstado(
       "Inscripcion",
@@ -95,7 +96,7 @@ router.post("/registrarSancion", checkAuthMiddleware, async (req, res) => {
     Inscripcion.findOneAndUpdate(
       {
         idEstudiante: req.body.idEstudiante,
-        activa: true,
+        estado: idEstadoActiva,
       },
       { estado: estadoSuspendido }
     ).then(() => {
@@ -109,7 +110,7 @@ router.post("/registrarSancion", checkAuthMiddleware, async (req, res) => {
     let indice = 0;
     Inscripcion.findOne({
       idEstudiante: req.body.idEstudiante,
-      activa: true,
+      estado: idEstadoActiva,
     }).then((inscripcion) => {
       for (let index = 0; index < inscripcion.sanciones.length; index++) {
         if (
@@ -124,7 +125,7 @@ router.post("/registrarSancion", checkAuthMiddleware, async (req, res) => {
         Inscripcion.findOneAndUpdate(
           {
             idEstudiante: req.body.idEstudiante,
-            activa: true,
+            estado: idEstadoActiva,
           },
           {
             $push: {
@@ -180,7 +181,8 @@ router.post("/registrarSancion", checkAuthMiddleware, async (req, res) => {
 //Obtiene el estado de las cuotas de todos los estudiantes de un curso
 //@params: id del curso
 //@params: mes de la cuota
-router.get("/estadoCuotas", checkAuthMiddleware, (req, res) => {
+router.get("/estadoCuotas", checkAuthMiddleware, async (req, res) => {
+  let idEstadoActiva = await ClaseEstado.obtenerIdEstado("Inscripcion", "Activa"); 
   let fechaActual = new Date();
   // let añoActual = fechaActual.getFullYear();
   Curso.findById(req.query.idCurso)
@@ -193,7 +195,7 @@ router.get("/estadoCuotas", checkAuthMiddleware, (req, res) => {
         },
         {
           $match: {
-            activa: true,
+            estado: mongoose.Types.ObjectId(idEstadoActiva),
             idCurso: mongoose.Types.ObjectId(curso._id),
             "cuotas.mes": parseInt(req.query.mes, 10),
           },
@@ -260,10 +262,11 @@ router.get("/estadoCuotas", checkAuthMiddleware, (req, res) => {
 
 //Publica el estado de las cuotas de todos los estudiantes de un curso
 //@params: id de la inscripcion, mes de la cuota, estado cuota (pagada o no) y nombre y apellido
-router.post("/publicarEstadoCuotas", checkAuthMiddleware, (req, res) => {
-  final = req.body.length - 1;
+router.post("/publicarEstadoCuotas", checkAuthMiddleware, async(req, res) => {
+  let idEstadoActiva = await ClaseEstado.obtenerIdEstado("Inscripcion", "Activa"); 
+  let final = req.body.length - 1;
   for (let i = 0; i <= final; i++) {
-    Inscripcion.findById(req.body[i]._id)
+    Inscripcion.findOne({_id: req.body[i]._id, estado: idEstadoActiva})
       .then((inscripcion) => {
         inscripcion.cuotas[req.body[i].mes - 3].pagado = !inscripcion.cuotas[
           req.body[i].mes - 3
@@ -304,12 +307,13 @@ router.get("/capacidad", checkAuthMiddleware, (req, res) => {
 //Obtiene los cursos a los que se puede inscribir un estudiante de acuerdo al estado actual (promovido o libre)
 // o devuelve todos en el caso de que no este inscripto a ningun curso
 // @params: id del estudiante
-router.get("/cursosDeEstudiante", checkAuthMiddleware, (req, res) => {
+router.get("/cursosDeEstudiante", checkAuthMiddleware, async(req, res) => {
+  let idEstadoActiva = await ClaseEstado.obtenerIdEstado("Inscripcion", "Activa"); 
   Inscripcion.aggregate([
     {
       $match: {
         idEstudiante: mongoose.Types.ObjectId(req.query.idEstudiante),
-        activa: true,
+        estado: mongoose.Types.ObjectId(idEstadoActiva),
       },
     },
     {
@@ -433,7 +437,8 @@ router.get("/docente", checkAuthMiddleware, (req, res) => {
 
 //Obtiene los documentos con su estado de entrega (true en el caso de que fue entregado) de los estudiantes de un curso dado
 //@params: id del curso
-router.get("/documentos", checkAuthMiddleware, (req, res) => {
+router.get("/documentos", checkAuthMiddleware, async(req, res) => {
+  let idEstadoActiva = await ClaseEstado.obtenerIdEstado("Inscripcion", "Activa"); 
   Inscripcion.aggregate([
     {
       $lookup: {
@@ -454,6 +459,7 @@ router.get("/documentos", checkAuthMiddleware, (req, res) => {
     {
       $match: {
         "cursos.nombre": req.query.curso,
+        estado: mongoose.Types.ObjectId(idEstadoActiva)
       },
     },
     {
@@ -488,7 +494,8 @@ router.get("/documentos", checkAuthMiddleware, (req, res) => {
 router.get(
   "/estudiantes/materias/calificaciones",
   checkAuthMiddleware,
-  (req, res) => {
+  async(req, res) => {
+    let idEstadoActiva = await ClaseEstado.obtenerIdEstado("Inscripcion", "Activa"); 
     Inscripcion.aggregate([
       {
         $lookup: {
@@ -519,7 +526,7 @@ router.get(
       {
         $match: {
           "curso._id": mongoose.Types.ObjectId(req.query.idCurso),
-          activa: true,
+          estado: mongoose.Types.ObjectId(idEstadoActiva),
         },
       },
       {
@@ -614,12 +621,13 @@ router.get(
 router.get(
   "/estudiantes/materias/calificacionesCicloLectivo",
   checkAuthMiddleware,
-  (req, res) => {
+  async(req, res) => {
+    let idEstadoActiva = await ClaseEstado.obtenerIdEstado("Inscripcion", "Activa"); 
     Inscripcion.aggregate([
       {
         $match: {
           idCurso: mongoose.Types.ObjectId(req.query.idCurso),
-          activa: true,
+          estado: mongoose.Types.ObjectId(idEstadoActiva),
         },
       },
       {
@@ -750,17 +758,18 @@ router.get(
 
 //Obtiene el curso al que está inscripto un estudiante
 //@params: id del estudiante
-router.get("/estudiante", checkAuthMiddleware, (req, res) => {
+router.get("/estudiante", checkAuthMiddleware, async(req, res) => {
+  let idEstadoActiva = await ClaseEstado.obtenerIdEstado("Inscripcion", "Activa"); 
   Inscripcion.findOne({
     idEstudiante: mongoose.Types.ObjectId(req.query.idEstudiante),
-    activa: true,
+    estado: mongoose.Types.ObjectId(idEstadoActiva),
   }).then((inscripcion) => {
     if (inscripcion) {
       Inscripcion.aggregate([
         {
           $match: {
             idEstudiante: mongoose.Types.ObjectId(req.query.idEstudiante),
-            activa: true,
+            estado: mongoose.Types.ObjectId(idEstadoActiva),
           },
         },
         {
@@ -1009,12 +1018,14 @@ router.post("/inscripcion", checkAuthMiddleware, async (req, res) => {
 router.post(
   "/estudiantes/materias/calificaciones",
   checkAuthMiddleware,
-  (req, res) => {
+  async(req, res) => {
+    let idEstadoActiva = await ClaseEstado.obtenerIdEstado("Inscripcion", "Activa"); 
     req.body.forEach((estudiante) => {
       Inscripcion.aggregate([
         {
           $match: {
             idEstudiante: mongoose.Types.ObjectId(estudiante.idEstudiante),
+            estado: mongoose.Types.ObjectId(idEstadoActiva)
           },
         },
         {
@@ -1362,7 +1373,6 @@ router.get("/estudiantes/inscripcion", async (req, res) => {
           $in: idsCursos,
         },
         año: añoPasado,
-        activa: true,
         estado: {
           $in: estadosInscripcionesABuscar,
         },

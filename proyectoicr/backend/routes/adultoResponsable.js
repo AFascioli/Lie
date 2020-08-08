@@ -5,8 +5,7 @@ const Estudiante = require("../models/estudiante");
 const checkAuthMiddleware = require("../middleware/check-auth");
 const Inscripcion = require("../models/inscripcion");
 const Curso = require("../models/curso");
-const usuario = require("../models/usuario");
-const adultoResponsable = require("../models/adultoResponsable");
+const ClaseEstado = require("../classes/estado");
 
 // Retorna los adultos responsables de un estudiante
 router.get("/", (req, res) => {
@@ -170,16 +169,17 @@ router.get("/estudiantes", checkAuthMiddleware, async (req, res) => {
     return new Promise((resolve, reject) => {
       let datosEstudiante;
       Estudiante.findById(idEstudiante)
-        .then((estudiante) => {
+        .then(async (estudiante) => {
           datosEstudiante = {
             nombre: estudiante.nombre,
             apellido: estudiante.apellido,
             idEstudiante: estudiante._id,
             curso: null,
           };
+          const idEstadoActiva= await ClaseEstado.obtenerIdEstado("Inscripcion","Activa");
           Inscripcion.findOne({
             idEstudiante: idEstudiante,
-            activa: true,
+            estado: idEstadoActiva,
           }).then((inscripcion) => {
             if (inscripcion != null) {
               Curso.findById(inscripcion.idCurso).then((curso) => {
