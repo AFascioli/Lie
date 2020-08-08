@@ -3,18 +3,14 @@ const router = express.Router();
 const mongoose = require("mongoose");
 const checkAuthMiddleware = require("../middleware/check-auth");
 const Curso = require("../models/curso");
-const Estado = require("../models/estado");
 const Inscripcion = require("../models/inscripcion");
 const CalificacionesXTrimestre = require("../models/calificacionesXTrimestre");
 const Estudiante = require("../models/estudiante");
 const Horario = require("../models/horario");
-const Empleado = require("../models/empleado");
 const MateriaXCurso = require("../models/materiasXCurso");
 const AdultoResponsable = require("../models/adultoResponsable");
-const CicloLectivo = require("../models/cicloLectivo");
 const ClaseInscripcion = require("../classes/inscripcion");
 const ClaseEstado = require("../classes/estado");
-const ClaseCalifXMateria = require("../classes/calificacionXMateria");
 const Suscripcion = require("../classes/suscripcion");
 const ClaseAsistencia = require("../classes/asistencia");
 
@@ -1483,12 +1479,8 @@ router.get("/estudiante/inscripcionPendiente", async (req, res) => {
 
   Inscripcion.find({ idEstudiante: req.query.idEstudiante }).then(
     (inscripciones) => {
-      console.log(estadoPendienteInscripcion);
-      console.log(inscripciones);
       inscripciones.forEach((inscripcion) => {
-        console.log(inscripcion.estado);
         if (inscripcion.estado.equals(estadoPendienteInscripcion)) {
-          console.log("ejecuta");
           return res.status(200).json({
             inscripcionPendiente: true,
             exito: true,

@@ -27,6 +27,7 @@ export class AsociarAdultoResponsableComponent implements OnInit {
     "numerodocumento",
     "telefono",
   ];
+  busqueda: boolean = false;
 
   constructor(
     public dialog: MatDialog,
@@ -74,6 +75,7 @@ export class AsociarAdultoResponsableComponent implements OnInit {
   // Si el formulario no es valido no hace nada, luego controla que tipo de busqueda es
   onBuscar(form: NgForm) {
     if (form.valid) {
+      this.busqueda = true;
       if (this.buscarPorNomYAp) {
         this.servicio
           .buscarAdultoResponsableXNombre(
@@ -106,6 +108,7 @@ export class AsociarAdultoResponsableComponent implements OnInit {
   }
 
   onAsociar() {
+    this.busqueda = false;
     this.servicio
       .asociarAdultoResponsable(
         this.estudiantesService.estudianteSeleccionado._id,
@@ -113,6 +116,9 @@ export class AsociarAdultoResponsableComponent implements OnInit {
       )
       .pipe(takeUntil(this.unsubscribe))
       .subscribe((response) => {
+        if (this.seleccion.selected.length == this.ARFiltrados.length) {
+          this.ARFiltrados = [];
+        }
         this.snackBar.open(response.message, "", {
           panelClass: ["snack-bar-exito"],
           duration: 4000,
@@ -139,10 +145,6 @@ export class AsociarAdultoResponsableComponent implements OnInit {
   deshabilitarInputs(form: NgForm) {
     this.buscarPorNomYAp = !this.buscarPorNomYAp;
     form.resetForm();
-  }
-
-  onCancelar() {
-    this.popup.open(CancelPopupComponent);
   }
 
   ngOnDestroy() {

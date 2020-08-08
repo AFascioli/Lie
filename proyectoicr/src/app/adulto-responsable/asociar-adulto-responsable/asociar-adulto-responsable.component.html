@@ -90,19 +90,23 @@
       <button class="button-primary" (click)="onBuscar(form)" mat-raised-button>
         Buscar
       </button>
-      <button mat-raised-button (click)="onCancelar()" class="button-warn">
-        Cancelar
+      <button
+        mat-raised-button
+        [routerLink]="['/buscar/lista']"
+        class="button-primary"
+      >
+        Volver
       </button>
     </div>
   </form>
-
-  <div class="contenido">
+  <p *ngIf="ARFiltrados.length == 0 && busqueda">
+    No se encontro un adulto responsable que coincida con los datos ingresados
+  </p>
+  <div class="contenido" *ngIf="ARFiltrados.length != 0">
     <h3 class="titulo-tutores">
       Adultos responsables filtrados
     </h3>
-    <p *ngIf="ARFiltrados.length == 0">
-      No se encontro un adulto responsable que coincida con los datos ingresados
-    </p>
+
     <div>
       <table
         mat-table
@@ -170,12 +174,12 @@
         ></tr>
       </table>
     </div>
-  </div>
-  <br />
-  <div class="div-button">
-    <button class="button-primary" (click)="onAsociar()" mat-raised-button>
-      Asociar
-    </button>
+    <br />
+    <div class="div-button">
+      <button class="button-primary" (click)="onAsociar()" mat-raised-button>
+        Asociar
+      </button>
+    </div>
   </div>
 
   <div class="contenido">
@@ -183,7 +187,7 @@
       Adultos responsables ya asociados
     </h3>
     <p *ngIf="ARAsociados.length == 0">
-      El estudiante seleccionado no tiene asociado ningún tutor
+      El estudiante seleccionado no tiene asociado ningún adulto responsable
     </p>
     <table mat-table [dataSource]="ARAsociados" *ngIf="ARAsociados.length != 0">
       <ng-container matColumnDef="apellido">
