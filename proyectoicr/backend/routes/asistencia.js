@@ -10,43 +10,50 @@ const ClaseSuscripcion = require("../classes/suscripcion");
 const ClaseAsistencia = require("../classes/asistencia");
 const ClaseEstado = require("../classes/estado");
 
-
-async function validarLibreInasistencias (idEst, valorInasistencia){
-  const idEstadoSuspendido = await ClaseEstado.obtenerIdEstado("Inscripcion", "Suspendido");
-  const idEstadoActiva = await ClaseEstado.obtenerIdEstado("Inscripcion", "Activa");
+async function validarLibreInasistencias(idEst, valorInasistencia) {
+  const idEstadoSuspendido = await ClaseEstado.obtenerIdEstado(
+    "Inscripcion",
+    "Suspendido"
+  );
+  const idEstadoActiva = await ClaseEstado.obtenerIdEstado(
+    "Inscripcion",
+    "Activa"
+  );
   Inscripcion.findOne({
     idEstudiante: idEst,
     estado: idEstadoActiva,
-  }).then(async (inscripcion) => {
-    if (
-      inscripcion.contadorInasistenciasInjustificada % 14 == 0 &&
-      valorInasistencia == 1
-    ) {
-      Inscripcion.findOneAndUpdate(
-        {
-          idEstudiante: idEst,
-          estado: idEstadoActiva,
-        },
-        { estado: mongoose.Types.ObjectId(idEstadoSuspendido) }
-      ).exec();
-    } else if (inscripcion.contadorInasistenciasInjustificada % 12 == 0) {
-      //No fijamos si el estudiante tiene 12 inasistencias, para luego notificar a los AR
-      let idsUsuariosAR = await ClaseSuscripcion.obtenerIdsUsuarios(idEst);
-      let idsUsuarios = await ClaseSuscripcion.filtrarARPorPreferencias(
-        idsUsuariosAR,
-        "Falta 12"
-      );
-      //Si existen ARs que aceptan este tipo de notificacion, manda
-      idsUsuarios.length > 0 &&
-        Estudiante.findById(idEst).then((estudianteEncontrado) => {
-          ClaseSuscripcion.notificacionGrupal(
-            idsUsuarios,
-            "Atención",
-            `El estudiante ${estudianteEncontrado.nombre} ${estudianteEncontrado.apellido} tiene solo 3 inasistencias antes de que sea suspendido`
-          );
-        });
-    }
-  }).catch(() => {
+  })
+    .then(async (inscripcion) => {
+      if (
+        inscripcion.contadorInasistenciasInjustificada % 14 == 0 &&
+        valorInasistencia == 1
+      ) {
+        Inscripcion.findOneAndUpdate(
+          {
+            idEstudiante: idEst,
+            estado: idEstadoActiva,
+          },
+          { estado: mongoose.Types.ObjectId(idEstadoSuspendido) }
+        ).exec();
+      } else if (inscripcion.contadorInasistenciasInjustificada % 12 == 0) {
+        //No fijamos si el estudiante tiene 12 inasistencias, para luego notificar a los AR
+        let idsUsuariosAR = await ClaseSuscripcion.obtenerIdsUsuarios(idEst);
+        let idsUsuarios = await ClaseSuscripcion.filtrarARPorPreferencias(
+          idsUsuariosAR,
+          "Falta 12"
+        );
+        //Si existen ARs que aceptan este tipo de notificacion, manda
+        idsUsuarios.length > 0 &&
+          Estudiante.findById(idEst).then((estudianteEncontrado) => {
+            ClaseSuscripcion.notificacionGrupal(
+              idsUsuarios,
+              "Atención",
+              `El estudiante ${estudianteEncontrado.nombre} ${estudianteEncontrado.apellido} tiene solo 3 inasistencias antes de que sea suspendido`
+            );
+          });
+      }
+    })
+    .catch(() => {
       res.status(500).json({
         message: "No se pudo obtener el estado suspendido",
       });
@@ -56,8 +63,16 @@ async function validarLibreInasistencias (idEst, valorInasistencia){
 //Retorna vector con datos de los estudiantes y presente. Si ya se registro una asistencia para
 //el dia de hoy se retorna ese valor de la asistencia, sino se "construye" una nueva
 // @params: req.query.curso Nombre en string del curso que se esta por tomar asistencia
-router.get("",  async (req, res) => {
-  const idEstadoActiva = await ClaseEstado.obtenerIdEstado("Inscripcion", "Activa");
+router.get("", async (req, res) => {
+  const idEstadoActiva = await ClaseEstado.obtenerIdEstado(
+    "Inscripcion",
+    "Activa"
+  );
+  const idEstadoSuspendido = await ClaseEstado.obtenerIdEstado(
+    "Inscripcion",
+    "Suspendido"
+  );
+
   Inscripcion.aggregate([
     {
       $lookup: {
@@ -70,7 +85,12 @@ router.get("",  async (req, res) => {
     {
       $match: {
         "curso.nombre": req.query.curso,
-        estado: mongoose.Types.ObjectId(idEstadoActiva),
+        estado: {
+          $in: [
+            mongoose.Types.ObjectId(idEstadoActiva),
+            mongoose.Types.ObjectId(idEstadoSuspendido),
+          ],
+        },
       },
     },
     {
@@ -131,7 +151,12 @@ router.get("",  async (req, res) => {
           {
             $match: {
               "curso.nombre": req.query.curso,
-              estado: mongoose.Types.ObjectId(idEstadoActiva),
+              estado: {
+                $in: [
+                  mongoose.Types.ObjectId(idEstadoActiva),
+                  mongoose.Types.ObjectId(idEstadoSuspendido),
+                ],
+              },
             },
           },
           {
@@ -230,7 +255,15 @@ router.get("",  async (req, res) => {
             },
           },
           {
-            $match: { "curso.nombre": req.query.curso, estado: mongoose.Types.ObjectId(idEstadoActiva) },
+            $match: {
+              "curso.nombre": req.query.curso,
+              estado: {
+                $in: [
+                  mongoose.Types.ObjectId(idEstadoActiva),
+                  mongoose.Types.ObjectId(idEstadoSuspendido),
+                ],
+              },
+            },
           },
           {
             $project: {
@@ -277,7 +310,10 @@ router.get("",  async (req, res) => {
 // guarda la _id de esta asistenciaDiaria en el vector de asistenciasDiarias de la inscripcion.
 // Si ya se tomo asistencia en el dia, se actualiza el valor presente de la asistencia individual.
 router.post("", checkAuthMiddleware, async (req, res) => {
-  let idEstadoActiva = await ClaseEstado.obtenerIdEstado("Inscripcion", "Activa");
+  let idEstadoActiva = await ClaseEstado.obtenerIdEstado(
+    "Inscripcion",
+    "Activa"
+  );
   let idsEstudiantes = [];
   req.body.forEach((estudiante) => {
     var valorInasistencia = 0;
@@ -395,8 +431,14 @@ router.post("", checkAuthMiddleware, async (req, res) => {
 
 //Este metodo filtra las inscripciones por estudiante y retorna el contador de inasistencias (injustificada y justificada)
 router.get("/asistenciaEstudiante", async (req, res) => {
-  let idEstadoActiva = await ClaseEstado.obtenerIdEstado("Inscripcion", "Activa");
-  Inscripcion.find({ idEstudiante: req.query.idEstudiante, estado: idEstadoActiva })
+  let idEstadoActiva = await ClaseEstado.obtenerIdEstado(
+    "Inscripcion",
+    "Activa"
+  );
+  Inscripcion.find({
+    idEstudiante: req.query.idEstudiante,
+    estado: idEstadoActiva,
+  })
     .then((inscripciones) => {
       let contadorInjustificadas = 0;
       let contadorJustificadas = 0;
@@ -429,53 +471,63 @@ router.get("/asistenciaEstudiante", async (req, res) => {
 });
 
 //Recibe vector con inasistencias, cada una tiene su _id y si fue o no justificada
-router.post("/inasistencia/justificada", checkAuthMiddleware, async (req, res) => {
-  let idEstadoActiva = await ClaseEstado.obtenerIdEstado("Inscripcion", "Activa");  
-  let contador = 0;
-  req.body.ultimasInasistencias.forEach((inasistencia) => {
-    if (inasistencia.justificado) {
-      contador = contador + 1;
-      AsistenciaDiaria.findByIdAndUpdate(inasistencia.idAsistencia, {
-        justificado: true,
-      }).exec();
-    }
-  });
-  Inscripcion.findOneAndUpdate(
-    { idEstudiante: req.body.idEstudiante, estado: idEstadoActiva },
-    {
-      $inc: {
-        contadorInasistenciasJustificada: contador,
-        contadorInasistenciasInjustificada: contador * -1,
-      },
-    }
-  )
-    .then(() => {
-      res.status(200).json({
-        message: "Inasistencias justificadas correctamente",
-        exito: true,
-      });
-    })
-    .catch(() => {
-      res.status(500).json({
-        message:
-          "Ocurrió un error al querer publicar el estado de las inasistencias (justificada / injustificada). " +
-          "El error se puede describir de la siguiente manera: " +
-          error.message,
-      });
+router.post(
+  "/inasistencia/justificada",
+  checkAuthMiddleware,
+  async (req, res) => {
+    let idEstadoActiva = await ClaseEstado.obtenerIdEstado(
+      "Inscripcion",
+      "Activa"
+    );
+    let contador = 0;
+    req.body.ultimasInasistencias.forEach((inasistencia) => {
+      if (inasistencia.justificado) {
+        contador = contador + 1;
+        AsistenciaDiaria.findByIdAndUpdate(inasistencia.idAsistencia, {
+          justificado: true,
+        }).exec();
+      }
     });
-});
+    Inscripcion.findOneAndUpdate(
+      { idEstudiante: req.body.idEstudiante, estado: idEstadoActiva },
+      {
+        $inc: {
+          contadorInasistenciasJustificada: contador,
+          contadorInasistenciasInjustificada: contador * -1,
+        },
+      }
+    )
+      .then(() => {
+        res.status(200).json({
+          message: "Inasistencias justificadas correctamente",
+          exito: true,
+        });
+      })
+      .catch(() => {
+        res.status(500).json({
+          message:
+            "Ocurrió un error al querer publicar el estado de las inasistencias (justificada / injustificada). " +
+            "El error se puede describir de la siguiente manera: " +
+            error.message,
+        });
+      });
+  }
+);
 
 //Se obtienen las ultimas 5 inasistencias del estudiante, se permite justificar las inasistencias
 //que fueron creadas en los ultimos 5 dias
 //Se utiliza para la justificacion de inasistencias
 router.get("/inasistencias", async (req, res) => {
-  let idEstadoActiva = await ClaseEstado.obtenerIdEstado("Inscripcion", "Activa");   
+  let idEstadoActiva = await ClaseEstado.obtenerIdEstado(
+    "Inscripcion",
+    "Activa"
+  );
   let ultimasInasistencias = [];
   Inscripcion.aggregate([
     {
       $match: {
         idEstudiante: mongoose.Types.ObjectId(req.query.idEstudiante),
-        estado: mongoose.Types.ObjectId(idEstadoActiva)
+        estado: mongoose.Types.ObjectId(idEstadoActiva),
       },
     },
     {
@@ -557,10 +609,13 @@ router.get("/inasistencias", async (req, res) => {
   am o despues de ese horario. Si es antes de las 8 am y tiene acumuladas 4 llegadas tardes
  de ese tipo le asigna una falta injustificada. Si es despues de las 8 am se le asigna media falta injustificada.  */
 router.post("/llegadaTarde", checkAuthMiddleware, async (req, res) => {
-  let idEstadoActiva = await ClaseEstado.obtenerIdEstado("Inscripcion", "Activa"); 
+  let idEstadoActiva = await ClaseEstado.obtenerIdEstado(
+    "Inscripcion",
+    "Activa"
+  );
   Inscripcion.findOne({
     idEstudiante: req.body.idEstudiante,
-    estado: idEstadoActiva
+    estado: idEstadoActiva,
   })
     .then((inscripcion) => {
       AsistenciaDiaria.findById(
@@ -688,7 +743,10 @@ router.post("/llegadaTarde", checkAuthMiddleware, async (req, res) => {
 
 //Obtiene la id de la asistencia diaria del dia de hoy, y cambia los valores de la inasistencia para indicar el retiro correspondiente
 router.post("/retiro", checkAuthMiddleware, async (req, res) => {
-  let idEstadoActiva = await ClaseEstado.obtenerIdEstado("Inscripcion", "Activa"); 
+  let idEstadoActiva = await ClaseEstado.obtenerIdEstado(
+    "Inscripcion",
+    "Activa"
+  );
   Inscripcion.findOne(
     { idEstudiante: req.body.idEstudiante, estado: idEstadoActiva },
     { asistenciaDiaria: { $slice: -1 } }

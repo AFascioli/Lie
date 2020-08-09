@@ -368,63 +368,61 @@ router.post("/reunion/docente", (req, res) => {
     });
 });
 
-
-  //Validar que los datos sean correctos
-  router.get("/validate", checkAuthMiddleware, async (req, res) => {
-    Usuario.findOne({
-      email: req.query.email,
-    }).then((adultoResponsable) => {
-      if (adultoResponsable != null) {
-        res.status(200).json({
-          message: "Ya existe un usuario con ese email.",
-          exito: false,
-        });
-      } else {
-        AdultoResponsable.findOne({
-          numeroDocumento: req.query.DNI,
-          tipoDocumento: req.query.TipoDocumento,
-        }).then((adultoResponsable) => {
-          if (adultoResponsable != null) {
-            res.status(200).json({
-              message:
-                "Ya existe un usuario con ese tipo y número de documento.",
-              exito: false,
-            });
-          } else {
-            Empleado.findOne({
-              numeroDocumento: req.query.DNI,
-              tipoDocumento: req.query.TipoDocumento,
-            }).then((empleado) => {
-              if (empleado != null) {
-                res.status(200).json({
-                  message:
-                    "Ya existe un usuario con ese tipo y número de documento.",
-                  exito: false,
-                });
-              } else {
-                Estudiante.findOne({
-                  numeroDocumento: req.query.DNI,
-                  tipoDocumento: req.query.TipoDocumento,
-                }).then((estudiante) => {
-                  if (estudiante != null) {
-                    res.status(200).json({
-                      message:
-                        "Ya existe un usuario con ese tipo y número de documento.",
-                      exito: false,
-                    });
-                  } else {
-                    res.status(200).json({
-                      message: "Validado correctamente",
-                      exito: true,
-                    });
-                  }
-                });
-              }
-            });
-          }
-        });
-      }
-    });
+//Validar que los datos sean correctos
+router.get("/validate", checkAuthMiddleware, async (req, res) => {
+  Usuario.findOne({
+    email: req.query.email,
+  }).then((adultoResponsable) => {
+    if (adultoResponsable != null) {
+      res.status(200).json({
+        message: "Ya existe un usuario con ese email.",
+        exito: false,
+      });
+    } else {
+      AdultoResponsable.findOne({
+        numeroDocumento: req.query.DNI,
+        tipoDocumento: req.query.TipoDocumento,
+      }).then((adultoResponsable) => {
+        if (adultoResponsable != null) {
+          res.status(200).json({
+            message: "Ya existe un usuario con ese tipo y número de documento.",
+            exito: false,
+          });
+        } else {
+          Empleado.findOne({
+            numeroDocumento: req.query.DNI,
+            tipoDocumento: req.query.TipoDocumento,
+          }).then((empleado) => {
+            if (empleado != null) {
+              res.status(200).json({
+                message:
+                  "Ya existe un usuario con ese tipo y número de documento.",
+                exito: false,
+              });
+            } else {
+              Estudiante.findOne({
+                numeroDocumento: req.query.DNI,
+                tipoDocumento: req.query.TipoDocumento,
+              }).then((estudiante) => {
+                if (estudiante != null) {
+                  res.status(200).json({
+                    message:
+                      "Ya existe un usuario con ese tipo y número de documento.",
+                    exito: false,
+                  });
+                } else {
+                  res.status(200).json({
+                    message: "Validado correctamente",
+                    exito: true,
+                  });
+                }
+              });
+            }
+          });
+        }
+      });
+    }
   });
+});
 
 module.exports = router;

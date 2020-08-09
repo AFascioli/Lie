@@ -91,17 +91,18 @@ export class ListaEstudiantesComponent implements OnInit, OnDestroy {
                         response.materiasDesaprobadas.length > 0
                       );
                     });
+
+                  // Validación por suspendido
+                  console.log("Me entro en el if", this.inscripto);
+                  this.servicio
+                    .esEstudianteSuspendido(this.estudiantes[i]._id)
+                    .pipe(takeUntil(this.unsubscribe))
+                    .subscribe((response) => {
+                      console.log("response.exito", response.exito);
+                      this.suspendido[i] = response.exito;
+                    });
                 }
               });
-
-            if (this.inscripto[i]) {
-              this.servicio
-                .esEstudianteSuspendido(this.estudiantes[i]._id)
-                .pipe(takeUntil(this.unsubscribe))
-                .subscribe((response) => {
-                  this.suspendido[i] = response.exito;
-                });
-            }
           }
         });
 
