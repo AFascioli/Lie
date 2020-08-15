@@ -134,6 +134,7 @@ import {
 import { SolicitudReunionComponent } from "./solicitud-reunion/solicitud-reunion.component";
 import { SolicitudReunionAdultoResponsableComponent } from "./solicitud-reunion-adulto-responsable/solicitud-reunion-adulto-responsable.component";
 import { AsociarAdultoResponsableComponent } from "./adulto-responsable/asociar-adulto-responsable/asociar-adulto-responsable.component";
+import { BuscarAdultoResponsableComponent } from "./adulto-responsable/buscar-adulto-responsable/buscar-adulto-responsable.component";
 
 @NgModule({
   declarations: [
@@ -197,6 +198,7 @@ import { AsociarAdultoResponsableComponent } from "./adulto-responsable/asociar-
     SolicitudReunionComponent,
     SolicitudReunionAdultoResponsableComponent,
     AsociarAdultoResponsableComponent,
+    BuscarAdultoResponsableComponent
   ],
   //entryComponents declara los componentes que se generan dinamicamente dentro de otros.
   entryComponents: [

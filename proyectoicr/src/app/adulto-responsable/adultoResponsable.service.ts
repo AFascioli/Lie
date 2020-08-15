@@ -173,7 +173,7 @@ export class AdultoResponsableService implements OnDestroy {
       }
     );
   }
-    
+
   public getPreferenciasAR(idUsuarioAR) {
     let params = new HttpParams().set("idUsuarioAR", idUsuarioAR);
     return this.http.get<{
