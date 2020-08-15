@@ -65,7 +65,7 @@ router.get("/nombre", checkAuthMiddleware, (req, res, next) => {
     });
 });
 
-//Obtiene un estudiante dado un numero y tipo de documento
+//Obtiene un adulto responsable dado un numero y tipo de documento
 router.get("/documento", checkAuthMiddleware, (req, res, next) => {
   const tipo = req.query.tipo;
   const numero = req.query.numero;
@@ -74,15 +74,14 @@ router.get("/documento", checkAuthMiddleware, (req, res, next) => {
     tipoDocumento: tipo,
     numeroDocumento: numero,
   })
-    .then((documents) => {
+    .then((adultosResponsables) => {
       res.status(200).json({
-        adultosResponsables: documents,
+        adultosResponsables: adultosResponsables,
       });
     })
     .catch(() => {
       res.status(500).json({
-        message:
-          "Ocurrió un error al querer obtener el estudiante por documento",
+        message: "Ocurrió un error al querer obtener el adulto por documento",
       });
     });
 });
@@ -176,7 +175,10 @@ router.get("/estudiantes", checkAuthMiddleware, async (req, res) => {
             idEstudiante: estudiante._id,
             curso: null,
           };
-          const idEstadoActiva= await ClaseEstado.obtenerIdEstado("Inscripcion","Activa");
+          const idEstadoActiva = await ClaseEstado.obtenerIdEstado(
+            "Inscripcion",
+            "Activa"
+          );
           Inscripcion.findOne({
             idEstudiante: idEstudiante,
             estado: idEstadoActiva,
@@ -187,7 +189,7 @@ router.get("/estudiantes", checkAuthMiddleware, async (req, res) => {
                 resolve(datosEstudiante);
               });
             } else {
-              datosEstudiante.curso=null;
+              datosEstudiante.curso = null;
               resolve(datosEstudiante);
             }
           });
@@ -239,17 +241,46 @@ router.post("/preferencias", (req, res) => {
   AdultoResponsable.findOneAndUpdate(
     { idUsuario: req.body.idUsuarioAR },
     { preferenciasPush: req.body.preferencias }
-  ).then((adultoR) => {
-    res.status(200).json({
-      message: "Preferencias actualizadas correctamente",
-      exito: true,
+  )
+    .then((adultoR) => {
+      res.status(200).json({
+        message: "Preferencias actualizadas correctamente",
+        exito: true,
+      });
+    })
+    .catch((error) => {
+      res.status(200).json({
+        message: "Ocurrió un error al actualizar las preferencias",
+        exito: false,
+      });
     });
-  }).catch(error =>{
-    res.status(200).json({
-      message: "Ocurrió un error al actualizar las preferencias",
-      exito: false,
+});
+
+router.post("/modificar", (req, res) => {
+  AdultoResponsable.findByIdAndUpdate(req.body.adultoResponsable._id, {
+    apellido: req.body.adultoResponsable.apellido,
+    nombre: req.body.adultoResponsable.nombre,
+    tipoDocumento: req.body.adultoResponsable.tipoDocumento,
+    numeroDocumento: req.body.adultoResponsable.numeroDocumento,
+    sexo: req.body.adultoResponsable.sexo,
+    nacionalidad: req.body.adultoResponsable.nacionalidad,
+    fechaNacimiento: req.body.adultoResponsable.fechaNacimiento,
+    telefono: req.body.adultoResponsable.telefono,
+    email: req.body.adultoResponsable.email,
+    tutor: req.body.adultoResponsable.tutor,
+  })
+    .then((adulto) => {
+      res.status(200).json({
+        message: "Adulto modificado correctamente",
+        exito: true,
+      });
+    })
+    .catch((error) => {
+      res.status(200).json({
+        message: "Ocurrió un error al modificar el adulto" + error,
+        exito: false,
+      });
     });
-  });
 });
 
 module.exports = router;

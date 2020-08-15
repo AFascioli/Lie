@@ -14,7 +14,7 @@ export class AdultoResponsableService implements OnDestroy {
   adultoResponsableEstudiante: AdultoResponsable;
   adultosResponsablesFiltrados: AdultoResponsable[];
   private unsubscribe: Subject<void> = new Subject();
-  adultoResponsableSeleccionado: AdultoResponsable;
+  public adultoResponsableSeleccionado: AdultoResponsable;
   retornoDesdeAcciones: boolean;
   busquedaARXNombre: boolean;
 
@@ -53,6 +53,7 @@ export class AdultoResponsableService implements OnDestroy {
               if (res.exito) {
                 let idUsuario = res.id;
                 const adultoResponsable: AdultoResponsable = {
+                  _id: "",
                   apellido,
                   nombre,
                   tipoDocumento,
@@ -173,7 +174,7 @@ export class AdultoResponsableService implements OnDestroy {
       }
     );
   }
-    
+
   public getPreferenciasAR(idUsuarioAR) {
     let params = new HttpParams().set("idUsuarioAR", idUsuarioAR);
     return this.http.get<{
@@ -191,7 +192,15 @@ export class AdultoResponsableService implements OnDestroy {
       exito: boolean;
     }>(environment.apiUrl + "/adultoResponsable/preferencias", {
       idUsuarioAR: idUsuarioAR,
-      preferencias: preferencias
+      preferencias: preferencias,
+    });
+  }
+  public modificarAdultoResponsable(adultoResponsable) {
+    return this.http.post<{
+      message: string;
+      exito: boolean;
+    }>(environment.apiUrl + "/adultoResponsable/modificar", {
+      adultoResponsable: adultoResponsable,
     });
   }
 }
