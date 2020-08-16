@@ -44,6 +44,7 @@ import { DefinirAgendaComponent } from "./agenda/definir-agenda/definir-agenda.c
 import { CalificacionesCicloLectivoComponent } from "./calificaciones/calificaciones-ciclo-lectivo/calificaciones-ciclo-lectivo.component";
 import { SolicitudReunionComponent } from "./solicitud-reunion/solicitud-reunion.component";
 import { SolicitudReunionAdultoResponsableComponent } from "./solicitud-reunion-adulto-responsable/solicitud-reunion-adulto-responsable.component";
+import { ModificarAdultoResponsableComponent } from "./adulto-responsable/modificar-adulto-responsable/modificar-adulto-responsable.component";
 
 const routes: Routes = [
   { path: "login", component: LoginComponent },
@@ -59,6 +60,10 @@ const routes: Routes = [
         data: {
           rolesValidos: ["Admin", "Preceptor", "Director", "Docente"],
         },
+      },
+      {
+        path: "modificar",
+        component: ModificarAdultoResponsableComponent,
       },
       {
         path: "definirAgenda",
