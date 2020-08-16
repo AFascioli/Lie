@@ -40,21 +40,7 @@ export class ModificarAdultoResponsableComponent implements OnInit {
         );
       });
 
-    // this.adultoResponsable = this.servicioAR.adultoResponsableSeleccionado;
-    this.adultoResponsable = {
-      _id: "5dab99269f09c24d6414541f",
-      apellido: "La concha de tu madre _fucku_",
-      nombre: "Fran el gay",
-      tipoDocumento: "DNI",
-      numeroDocumento: 36,
-      sexo: "masculino",
-      nacionalidad: "Argentina",
-      fechaNacimiento: new Date(),
-      telefono: 612612612,
-      email: "string",
-      tutor: false,
-      idUsuario: "string",
-    };
+    this.adultoResponsable = this.servicioAR.adultoResponsableSeleccionado;
   }
 
   checkIfIsALetter(event) {
