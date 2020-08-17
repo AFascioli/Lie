@@ -126,6 +126,12 @@ input[type="number"] {
   color: #ffffff;
 }
 
+.botonAnchoTotal {
+  width: 100% !important;
+  background: #2f6483;
+  color: #ffffff;
+}
+
 /* Para cambiar el color de los toggle */
 .mat-slide-toggle.mat-checked .mat-slide-toggle-thumb {
   background-color: #2f6483 !important;
