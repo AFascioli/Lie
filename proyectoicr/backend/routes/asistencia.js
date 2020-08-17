@@ -21,7 +21,7 @@ async function validarLibreInasistencias(idEst, valorInasistencia) {
   );
   Inscripcion.findOne({
     idEstudiante: idEst,
-    estado: idEstadoActiva,
+    estado: idEstadoSuspendido,
   })
     .then(async (inscripcion) => {
       if (
