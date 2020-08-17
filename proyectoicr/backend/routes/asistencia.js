@@ -21,7 +21,7 @@ async function validarLibreInasistencias(idEst, valorInasistencia) {
   );
   Inscripcion.findOne({
     idEstudiante: idEst,
-    estado: idEstadoSuspendido,
+    estado: idEstadoActiva,
   })
     .then(async (inscripcion) => {
       if (
@@ -31,7 +31,7 @@ async function validarLibreInasistencias(idEst, valorInasistencia) {
         Inscripcion.findOneAndUpdate(
           {
             idEstudiante: idEst,
-            estado: idEstadoActiva,
+            estado: idEstadoSuspendido,
           },
           { estado: mongoose.Types.ObjectId(idEstadoSuspendido) }
         ).exec();
