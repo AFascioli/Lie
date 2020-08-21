@@ -165,7 +165,7 @@ export class DefinirAgendaComponent implements OnInit, OnDestroy {
   obtenerCursos() {
     this.isLoading = true;
     this.servicioEstudiante
-      .obtenerCursos()
+      .obtenerCursos(this.fechaActual.getFullYear())
       .pipe(takeUntil(this.unsubscribe))
       .subscribe((response) => {
         this.isLoading = false;

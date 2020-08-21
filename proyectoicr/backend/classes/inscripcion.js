@@ -7,15 +7,17 @@ const CicloLectivo = require("../models/cicloLectivo");
 const ClaseEstado = require("../classes/estado");
 const ClaseCalifXMateria = require("../classes/calificacionXMateria");
 
-exports.obtenerAñoHabilitado = function (inscripcion) {
+exports.obtenerAñoHabilitado = function (inscripcion, añoLectivo) {
   let añoActual;
+  let fechaActual = new Date();
   let siguiente;
   añoActual = parseInt(inscripcion[0].cursoActual[0].nombre, 10);
 
   if (
     inscripcion[0].estadoInscripcion[0].nombre == "Promovido" ||
     inscripcion[0].estadoInscripcion[0].nombre ==
-      "Promovido con examenes pendientes"
+      "Promovido con examenes pendientes" ||
+    añoLectivo > fechaActual.getFullYear()
   ) {
     siguiente = añoActual + 1;
   } else {
@@ -25,8 +27,11 @@ exports.obtenerAñoHabilitado = function (inscripcion) {
   return siguiente;
 };
 
-//#resolve Modificar este metodo segun la nueva logica de ciclo lectivo
-exports.inscribirEstudiante = async function (idCurso, idEstudiante, documentosEntregados) {
+exports.inscribirEstudiante = async function (
+  idCurso,
+  idEstudiante,
+  documentosEntregados
+) {
   let obtenerCurso = () => {
     return new Promise((resolve, reject) => {
       Curso.findOne({ _id: idCurso })
@@ -219,10 +224,52 @@ exports.inscribirEstudiante = async function (idCurso, idEstudiante, documentosE
       "Inscripto"
     );
 
-    await actualizarEstadoEstudiante(
-      idEstudiante,
-      idEstadoInscriptoEstudiante
+    await actualizarEstadoEstudiante(idEstudiante, idEstadoInscriptoEstudiante);
+    return true;
+  } catch (error) {
+    return false;
+  }
+};
+
+exports.inscribirEstudianteProximoAnio = async function (
+  idCurso,
+  idEstudiante
+) {
+  let fechaActual = new Date();
+
+  let obtenerCurso = (añoActual) => {
+    return new Promise((resolve, reject) => {
+      Curso.findOne({ _id: idCurso, añoLectivo: añoActual })
+        .then((curso) => {
+          resolve(curso);
+        })
+        .catch((err) => reject(err));
+    });
+  };
+
+  try {
+    var estadoPendienteInscripcion = await ClaseEstado.obtenerIdEstado(
+      "Inscripcion",
+      "Pendiente"
     );
+
+    var cursoSeleccionado = await obtenerCurso(fechaActual.getFullYear() + 1);
+
+    const nuevaInscripcion = new Inscripcion({
+      idEstudiante: idEstudiante,
+      idCurso: cursoSeleccionado._id,
+      activa: false,
+      estado: estadoPendienteInscripcion._id,
+      contadorInasistenciasInjustificada: 0,
+      contadorInasistenciasJustificada: 0,
+      contadorLlegadasTarde: 0,
+      año: fechaActual.getFullYear() + 1,
+    });
+
+    await nuevaInscripcion.save();
+    cursoSeleccionado.capacidad = cursoSeleccionado.capacidad - 1;
+    await cursoSeleccionado.save();
+
     return true;
   } catch (error) {
     return false;

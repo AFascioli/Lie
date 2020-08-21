@@ -3,41 +3,42 @@ const router = express.Router();
 const mongoose = require("mongoose");
 const checkAuthMiddleware = require("../middleware/check-auth");
 const Curso = require("../models/curso");
-const Estado = require("../models/estado");
 const Inscripcion = require("../models/inscripcion");
 const CalificacionesXTrimestre = require("../models/calificacionesXTrimestre");
 const Estudiante = require("../models/estudiante");
 const Horario = require("../models/horario");
-const Empleado = require("../models/empleado");
 const MateriaXCurso = require("../models/materiasXCurso");
 const AdultoResponsable = require("../models/adultoResponsable");
-const CicloLectivo = require("../models/cicloLectivo");
 const ClaseInscripcion = require("../classes/inscripcion");
 const ClaseEstado = require("../classes/estado");
-const ClaseCalifXMateria = require("../classes/calificacionXMateria");
 const Suscripcion = require("../classes/suscripcion");
 const ClaseAsistencia = require("../classes/asistencia");
+const CicloLectivo = require("../models/cicloLectivo");
 
 // Obtiene todos los cursos que están almacenados en la base de datos
 router.get("/", checkAuthMiddleware, (req, res) => {
-  Curso.find()
-    .select({ nombre: 1, _id: 1 })
-    .then((cursos) => {
-      var respuesta = [];
-      cursos.forEach((curso) => {
-        var cursoConId = {
-          id: curso._id,
-          nombre: curso.nombre,
-        };
-        respuesta.push(cursoConId);
-      });
-      res.status(200).json({ cursos: respuesta });
-    })
-    .catch(() => {
-      res.status(500).json({
-        message: "Ocurrió un error al querer devolver los cursos",
-      });
-    });
+  CicloLectivo.findOne({ año: parseInt(req.query.anioLectivo) }).then(
+    (cicloLectivo) => {
+      Curso.find({ cicloLectivo: cicloLectivo._id })
+        .select({ nombre: 1, _id: 1 })
+        .then((cursos) => {
+          var respuesta = [];
+          cursos.forEach((curso) => {
+            var cursoConId = {
+              id: curso._id,
+              nombre: curso.nombre,
+            };
+            respuesta.push(cursoConId);
+          });
+          res.status(200).json({ cursos: respuesta });
+        })
+        .catch(() => {
+          res.status(500).json({
+            message: "Ocurrió un error al querer devolver los cursos",
+          });
+        });
+    }
+  );
 });
 
 notificarSancion = async function (idEstudiante, sancion) {
@@ -354,10 +355,16 @@ router.get("/cursosDeEstudiante", checkAuthMiddleware, async (req, res) => {
       if (inscripcion.length != 0) {
         //El estudiante está inscripto a un curso y por ende se fija al curso al que se puede inscribir
         let siguiente;
-        siguiente = ClaseInscripcion.obtenerAñoHabilitado(inscripcion);
+        siguiente = ClaseInscripcion.obtenerAñoHabilitado(
+          inscripcion,
+          parseInt(req.query.añoLectivo, 10)
+        );
         let cursosDisponibles = [];
         //Buscamos los cursos que corresponden al que se puede inscribir el estudiante
-        Curso.find({ nombre: { $regex: siguiente } }).then((cursos) => {
+        Curso.find({
+          nombre: { $regex: siguiente },
+          añoLectivo: parseInt(req.query.añoLectivo, 10),
+        }).then((cursos) => {
           //Se agregan todos los cursos disponibles para inscribirse excepto el curso actual
           cursos.forEach((curso) => {
             if (!(curso.nombre == inscripcion[0].cursoActual[0].nombre)) {
@@ -374,7 +381,11 @@ router.get("/cursosDeEstudiante", checkAuthMiddleware, async (req, res) => {
       } else {
         //El estudiante no está inscripto a ningun curso, devuelve todos los cursos almacenados
         Curso.find()
-          .select({ nombre: 1, _id: 1 })
+          .select({
+            nombre: 1,
+            _id: 1,
+            añoLectivo: parseInt(req.query.añoLectivo, 10),
+          })
           .then((cursos) => {
             var respuesta = [];
             cursos.forEach((curso) => {
@@ -956,8 +967,6 @@ router.get("/materias", checkAuthMiddleware, (req, res) => {
     });
 });
 
-//router.get("/estadoCuotas", checkAuthMiddleware, (req, res) => {});
-
 //Inscribe a un estudiante a un curso y los documentos entregados durante la inscripción
 //@params: id estudiante que se quiere inscribir
 //@params: id curso al que se lo quiere inscribir
@@ -981,46 +990,35 @@ router.post("/inscripcion", checkAuthMiddleware, async (req, res) => {
       exito: false,
     });
   }
-
-  // nuevaInscripcion
-  //   .save()
-  //   .then(() => {
-  //     cursoSeleccionado.capacidad = cursoSeleccionado.capacidad - 1;
-  //     cursoSeleccionado.save();
-  //     //Le cambiamos el estado al estudiante
-  //     //SE PUEDE CAMBIAR CON EL METODO OBTENERIDESTADO #resolve
-  //     Estado.findOne({
-  //       nombre: "Inscripto",
-  //       ambito: "Estudiante",
-  //     })
-  //       .then(async (estadoEstudiante) => {
-  //         await Estudiante.findByIdAndUpdate(req.body.idEstudiante, {
-  //           estado: estadoEstudiante._id,
-  //         })
-  //           .then(async () => {
-  //             await res.status(201).json({
-  //               message: "Estudiante inscripto exitosamente",
-  //               exito: true,
-  //             });
-  //           })
-  //           .catch(() => {
-  //             res.status(500).json({
-  //               message: "Mensaje de error especifico",
-  //             });
-  //           });
-  //       })
-  //       .catch(() => {
-  //         res.status(500).json({
-  //           message: "Mensaje de error especifico",
-  //         });
-  //       });
-  //   })
-  //   .catch(() => {
-  //     res.status(500).json({
-  //       message: "Mensaje de error especifico",
-  //     });
-  //   });
 });
+
+//Inscribe a un estudiante a un curso y los documentos entregados durante la inscripción
+//@params: id estudiante que se quiere inscribir
+//@params: id curso al que se lo quiere inscribir
+//@params: array documentos entregados en inscripcion: true si se entregó ese documente
+router.post(
+  "/inscripcionProximoAnio",
+  checkAuthMiddleware,
+  async (req, res) => {
+    //Dado una id de curso, encuentra todos los datos del mismo
+    if (
+      ClaseInscripcion.inscribirEstudianteProximoAnio(
+        req.body.idCurso,
+        req.body.idEstudiante
+      )
+    ) {
+      res.status(201).json({
+        message: "Estudiante inscriptoprueba exitoso exitosamente",
+        exito: true,
+      });
+    } else {
+      res.status(400).json({
+        message: "Ocurrió un error al quere inscribir al estudiante",
+        exito: false,
+      });
+    }
+  }
+);
 
 //Registra las calificaciones todos los estudiantes de un curso para una materia
 //y un trimestre determinado en la base de datos
@@ -1501,6 +1499,35 @@ router.get("/estudiantes/inscripcion", async (req, res) => {
   });
 });
 
+//Validar si el estudiante tiene o no inscripcion pendiente
+//@params: id estudiante que se quiere verificar
+router.get("/estudiante/inscripcionPendiente", async (req, res) => {
+  var estadoPendienteInscripcion = await ClaseEstado.obtenerIdEstado(
+    "Inscripcion",
+    "Pendiente"
+  );
+
+  Inscripcion.find({ idEstudiante: req.query.idEstudiante }).then(
+    (inscripciones) => {
+      inscripciones.forEach((inscripcion) => {
+        if (inscripcion.estado.equals(estadoPendienteInscripcion)) {
+          return res.status(200).json({
+            inscripcionPendiente: true,
+            exito: true,
+          });
+        }
+      });
+      res.status(200).json({
+        inscripcionPendiente: false,
+        exito: true,
+      });
+    }
+  );
+});
+
+//Inscribe un conjunto de estudiantes a un curso para el año en curso
+//@params: lista de estudiantes
+//@params: id curso al que se lo quiere inscribir
 router.post("/estudiantes/inscripcion", async (req, res) => {
   let documentosEntregados = [
     {
@@ -1525,6 +1552,31 @@ router.post("/estudiantes/inscripcion", async (req, res) => {
         req.body.idCurso,
         estudiante.idEstudiante,
         documentosEntregados
+      )
+    ) {
+      return res.status(400).json({
+        exito: false,
+        message: "Ocurrió un error al querer escribir a los estudiantes",
+      });
+    }
+  }
+
+  res.status(200).json({
+    exito: true,
+    message: "Estudiantes inscriptos correctamente",
+  });
+});
+
+//Inscribe un conjunto de estudiantes a un curso para el proximo año
+//@params: lista de estudiantes
+//@params: id curso al que se lo quiere inscribir
+router.post("/estudiantes/inscripcionProximoAnio", async (req, res) => {
+  for (const estudiante of req.body.estudiantes) {
+    if (
+      estudiante.seleccionado &&
+      !ClaseInscripcion.inscribirEstudianteProximoAnio(
+        req.body.idCurso,
+        estudiante.idEstudiante
       )
     ) {
       return res.status(400).json({

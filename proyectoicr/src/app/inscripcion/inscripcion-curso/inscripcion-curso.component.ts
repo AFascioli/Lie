@@ -29,6 +29,8 @@ export class InscripcionCursoComponent implements OnInit {
   ];
   dataSource: MatTableDataSource<any>;
   matConfig = new MatDialogConfig();
+  yearSelected: any;
+  nextYearSelect: boolean;
   private unsubscribe: Subject<void> = new Subject();
 
   constructor(
@@ -38,24 +40,62 @@ export class InscripcionCursoComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.fechaActual= new Date();
-    this.servicioInscripcion.obtenerCursos().subscribe((response) => {
-      this.cursos = response.cursos;
-      this.cursos.sort((a, b) =>
-        a.nombre.charAt(0) > b.nombre.charAt(0)
-          ? 1
-          : b.nombre.charAt(0) > a.nombre.charAt(0)
-          ? -1
-          : 0
-      );
-    });
+    this.fechaActual = new Date();
+  }
+
+  onYearSelected(yearSelected) {
+    if (yearSelected.value == "actual") {
+      this.yearSelected = this.fechaActual.getFullYear();
+      this.nextYearSelect = false;
+    } else {
+      this.yearSelected = this.fechaActual.getFullYear() + 1;
+      this.nextYearSelect = true;
+    }
+    this.obtenerCursosEstudiantes();
+  }
+
+  obtenerCursosEstudiantes() {
+    this.servicioInscripcion
+      .obtenerCursos(this.yearSelected)
+      .subscribe((response) => {
+        this.cursos = response.cursos;
+        this.cursos.sort((a, b) =>
+          a.nombre.charAt(0) > b.nombre.charAt(0)
+            ? 1
+            : b.nombre.charAt(0) > a.nombre.charAt(0)
+            ? -1
+            : 0
+        );
+      });
   }
 
   onCursoSeleccionado(cursoSeleccionado) {
     this.loading = true;
     this.cursoSeleccionado = cursoSeleccionado.value;
+    if (this.yearSelected == this.fechaActual.getFullYear()) {
+      this.obtenerEstudiantesAñoActual();
+    } else {
+      this.obtenerEstudiantesProximoAño();
+    }
+  }
+
+  obtenerEstudiantesAñoActual() {
     this.servicioInscripcion
-      .obtenerEstudiantesInscripcionCurso(cursoSeleccionado.value)
+      .obtenerEstudiantesInscripcionCurso(this.cursoSeleccionado)
+      .subscribe((response) => {
+        this.estudiantes = [...response.estudiantes];
+        this.estudiantes = this.estudiantes.sort((a, b) =>
+          a.apellido > b.apellido ? 1 : b.apellido > a.apellido ? -1 : 0
+        );
+        this.dataSource = new MatTableDataSource(this.estudiantes);
+        this.loading = false;
+        this.seSeleccionoCurso = true;
+      });
+  }
+
+  obtenerEstudiantesProximoAño() {
+    this.servicioInscripcion
+      .obtenerEstudiantesInscripcionCursoProximoAnio(this.cursoSeleccionado)
       .subscribe((response) => {
         this.estudiantes = [...response.estudiantes];
         this.estudiantes = this.estudiantes.sort((a, b) =>
@@ -68,8 +108,47 @@ export class InscripcionCursoComponent implements OnInit {
   }
 
   inscribirEstudiantes() {
+    if (this.yearSelected == this.fechaActual.getFullYear()) {
+      this.inscribirEstudiantesAñoActual();
+    } else {
+      this.inscribirEstudiantesProximoAño();
+    }
+  }
+
+  inscribirEstudiantesAñoActual() {
     this.servicioInscripcion
       .inscribirEstudiantesCurso(this.estudiantes, this.cursoSeleccionado)
+      .subscribe((response) => {
+        console.log("response", response);
+        if (response.exito) {
+          this.snackBar.open(response.message, "", {
+            panelClass: ["snack-bar-exito"],
+            duration: 4500,
+          });
+          this.dataSource = new MatTableDataSource(
+            this.estudiantes.filter((estudiante) => {
+              return !estudiante.seleccionado;
+            })
+          );
+        } else {
+          this.snackBar.open(
+            "Ocurrió un error al inscribir los estudiantes seleccionados",
+            "",
+            {
+              panelClass: ["snack-bar-fracaso"],
+              duration: 4500,
+            }
+          );
+        }
+      });
+  }
+
+  inscribirEstudiantesProximoAño() {
+    this.servicioInscripcion
+      .inscribirEstudiantesCursoProximoAño(
+        this.estudiantes,
+        this.cursoSeleccionado
+      )
       .subscribe((response) => {
         console.log("response", response);
         if (response.exito) {

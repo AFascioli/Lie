@@ -1,4 +1,4 @@
-.div-button{
+.div-button {
   text-align: right;
 }
 
@@ -32,6 +32,10 @@ th {
   font-size: 15px;
 }
 
-.texto-popup{
+.texto-popup {
   text-align: center;
+}
+
+.selectYear {
+  margin-right: 10px;
 }

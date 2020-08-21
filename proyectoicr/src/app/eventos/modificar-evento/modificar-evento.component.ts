@@ -54,6 +54,7 @@ export class ModificarEventoComponent implements OnInit, OnDestroy {
   mobileQuery: MediaQueryList;
   horaInicioEvento: string;
   horaFinEvento: string;
+  horaMinimaEvento: string;
 
   constructor(
     public eventoService: EventosService,
@@ -93,8 +94,8 @@ export class ModificarEventoComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.evento = this.eventoService.evento;
-    this.horaInicioEvento= this.evento.horaInicio;
-    this.horaFinEvento= this.evento.horaFin;
+    this.horaInicioEvento = this.evento.horaInicio;
+    this.horaFinEvento = this.evento.horaFin;
     this.fechaActual = new Date();
     if (this.evento.filenames.length != 0) {
       for (let index = 0; index < this.evento.filenames.length; index++) {
@@ -107,6 +108,15 @@ export class ModificarEventoComponent implements OnInit, OnDestroy {
       }, 500);
     }
     this.chips = this.evento.tags;
+  }
+
+  setearHoraMinima() {
+    if (
+      this.evento.fechaEvento.getDay() == this.fechaActual.getDay() &&
+      this.evento.fechaEvento.getMonth() == this.fechaActual.getMonth()
+    )
+      this.horaMinimaEvento = `${this.fechaActual.getHours() + 2}:00`;
+    else this.horaMinimaEvento = "07:00";
   }
 
   add(event: MatChipInputEvent): void {
@@ -250,8 +260,10 @@ export class ModificarEventoComponent implements OnInit, OnDestroy {
 
   onGuardarEvento(form: NgForm) {
     if (form.valid && this.evento.tags.length != 0) {
-      if(this.horaInicioEvento!="" && this.horaFinEvento!=""){
-        if(this.horaEventoEsValido(this.horaInicioEvento, this.horaFinEvento)){
+      if (this.horaInicioEvento != "" && this.horaFinEvento != "") {
+        if (
+          this.horaEventoEsValido(this.horaInicioEvento, this.horaFinEvento)
+        ) {
           this.modificarEvento();
         } else {
           this.snackBar.open(

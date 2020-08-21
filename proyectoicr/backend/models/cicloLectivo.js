@@ -1,17 +1,12 @@
 const mongoose = require("mongoose");
 
 const cicloLectivoSchema = mongoose.Schema({
-  fechaInicioInscricpcion: Date,
-  fechaFinInscripcion: Date,
-  fechaInicioPrimerTrimestre: Date,
-  fechaFinPrimerTrimestre: Date,
-  fechaInicioSegundoTrimestre: Date,
-  fechaFinSegundoTrimestre: Date,
-  fechaInicioTercerTrimestre: Date,
-  fechaFinTercerTrimestre: Date,
-  fechaInicioExamenes: Date,
-  fechaFinExamenes: Date,
-  año: Number
+  horarioLLegadaTarde: Number,
+  horarioRetiroAnticipado: Number,
+  cantidadFaltasSuspension: Number,
+  cantidadMateriasInscripcionLibre: Number,
+  año: Number,
+  estado: [{ type: mongoose.Schema.Types.ObjectId, ref: "estado" }],
 });
 
 module.exports = mongoose.model(

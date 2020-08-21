@@ -122,7 +122,7 @@ export class CalificacionesEstudiantesComponent implements OnInit, OnDestroy {
         });
     } else {
       this.servicioEstudiante
-        .obtenerCursos()
+        .obtenerCursos(this.fechaActual.getFullYear())
         .pipe(takeUntil(this.unsubscribe))
         .subscribe((response) => {
           this.cursos = response.cursos;
@@ -178,7 +178,10 @@ export class CalificacionesEstudiantesComponent implements OnInit, OnDestroy {
 
   onTrimestreChange(form: NgForm) {
     this.obtenerNotas(form);
-    if (this.trimestreSeleccionado == this.trimestreActual) {
+    if (
+      this.trimestreSeleccionado == this.trimestreActual ||
+      this.servicioAutenticacion.getRol() == "Director"
+    ) {
       this.puedeEditarCalificaciones = true;
     } else {
       this.puedeEditarCalificaciones = false;
@@ -194,7 +197,7 @@ export class CalificacionesEstudiantesComponent implements OnInit, OnDestroy {
     materia.reset();
     if (
       this.rolConPermisosEdicion &&
-      this.servicioAutenticacion.getRol() != "Admin"
+      this.servicioAutenticacion.getRol() == "Docente"
     ) {
       this.servicioEstudiante
         .obtenerMateriasXCursoXDocente(curso.value, this.idDocente)
@@ -348,7 +351,6 @@ export class CalificacionesEstudiantesComponent implements OnInit, OnDestroy {
       event.preventDefault();
     else if (cal != 0 && Number(concat) > 10) event.preventDefault();
     else if (cal == 0 && Number(concat) > 10) event.preventDefault();
-
     else this.servicioCalificaciones.auxCambios = true;
   }
 

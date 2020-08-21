@@ -173,17 +173,19 @@
             </a>
 
             <a
-            mat-list-item
-            class="sinExpansion"
-            routerLink="/calificacionesCicloLectivo"
-            (click)="cerrarMenuLateral(sideNav)"
-          >
-            <mat-icon
-              class="iconSinExpansion"
-              svgIcon="calificacion"
-            ></mat-icon>
-            <p class="titulo-expansion">Visualizar calificaciones ciclo lectivo</p>
-          </a>
+              mat-list-item
+              class="sinExpansion"
+              routerLink="/calificacionesCicloLectivo"
+              (click)="cerrarMenuLateral(sideNav)"
+            >
+              <mat-icon
+                class="iconSinExpansion"
+                svgIcon="calificacion"
+              ></mat-icon>
+              <p class="titulo-expansion">
+                Visualizar calificaciones ciclo lectivo
+              </p>
+            </a>
 
             <a
               mat-list-item
@@ -258,6 +260,19 @@
             >
               <mat-icon class="iconSinExpansion">event</mat-icon>
               <p class="titulo-expansion">Registrar evento</p>
+            </a>
+
+            <a
+              mat-list-item
+              class="sinExpansion"
+              routerLink="/buscarAdultoResponsable"
+              (click)="cerrarMenuLateral(sideNav)"
+            >
+              <mat-icon
+                class="iconSinExpansion"
+                svgIcon="findStudent"
+              ></mat-icon>
+              <p class="titulo-expansion">Buscar adulto responsable</p>
             </a>
 
             <a

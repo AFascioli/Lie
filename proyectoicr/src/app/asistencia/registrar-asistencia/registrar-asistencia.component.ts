@@ -56,7 +56,7 @@ export class RegistrarAsistenciaComponent implements OnInit, OnDestroy {
       this.autenticacionService.getRol() == "Admin"
     ) {
       this.servicioEstudiante
-        .obtenerCursos()
+        .obtenerCursos(this.fechaActual.getFullYear())
         .pipe(takeUntil(this.unsubscribe))
         .subscribe((response) => {
           this.cursos = response.cursos;
