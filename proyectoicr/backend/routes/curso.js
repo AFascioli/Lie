@@ -13,27 +13,32 @@ const ClaseInscripcion = require("../classes/inscripcion");
 const ClaseEstado = require("../classes/estado");
 const Suscripcion = require("../classes/suscripcion");
 const ClaseAsistencia = require("../classes/asistencia");
+const CicloLectivo = require("../models/cicloLectivo");
 
 // Obtiene todos los cursos que están almacenados en la base de datos
 router.get("/", checkAuthMiddleware, (req, res) => {
-  Curso.find({ añoLectivo: parseInt(req.query.anioLectivo) })
-    .select({ nombre: 1, _id: 1 })
-    .then((cursos) => {
-      var respuesta = [];
-      cursos.forEach((curso) => {
-        var cursoConId = {
-          id: curso._id,
-          nombre: curso.nombre,
-        };
-        respuesta.push(cursoConId);
-      });
-      res.status(200).json({ cursos: respuesta });
-    })
-    .catch(() => {
-      res.status(500).json({
-        message: "Ocurrió un error al querer devolver los cursos",
-      });
-    });
+  CicloLectivo.findOne({ año: parseInt(req.query.anioLectivo) }).then(
+    (cicloLectivo) => {
+      Curso.find({ cicloLectivo: cicloLectivo._id })
+        .select({ nombre: 1, _id: 1 })
+        .then((cursos) => {
+          var respuesta = [];
+          cursos.forEach((curso) => {
+            var cursoConId = {
+              id: curso._id,
+              nombre: curso.nombre,
+            };
+            respuesta.push(cursoConId);
+          });
+          res.status(200).json({ cursos: respuesta });
+        })
+        .catch(() => {
+          res.status(500).json({
+            message: "Ocurrió un error al querer devolver los cursos",
+          });
+        });
+    }
+  );
 });
 
 notificarSancion = async function (idEstudiante, sancion) {
