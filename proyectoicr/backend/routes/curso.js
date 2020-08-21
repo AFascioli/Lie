@@ -538,9 +538,9 @@ router.get(
           "datosEstudiante._id": 1,
           "datosEstudiante.nombre": 1,
           "datosEstudiante.apellido": 1,
-          activa: 1,
           idCurso: 1,
           calificacionesXMateria: 1,
+          estado: 1,
         },
       },
       {
