@@ -14,6 +14,7 @@ const Ambiente = require("../assets/ambiente");
 const GridFsStorage = require("multer-gridfs-storage");
 const Suscripcion = require("../classes/suscripcion");
 const Inscripcion = require("../models/inscripcion");
+const mongoose = require("mongoose");
 
 const storage = new GridFsStorage({
   url: Ambiente.stringDeConexion,
@@ -74,12 +75,12 @@ router.post("/registrar", upload, async (req, res, next) => {
             eventoCreado.tags,
             eventoCreado.titulo,
             "El evento se realizara el día " +
-              fechaDelEvento.getDate() +
-              "/" +
-              (fechaDelEvento.getMonth() + 1) +
-              "/" +
-              fechaDelEvento.getFullYear() +
-              "."
+            fechaDelEvento.getDate() +
+            "/" +
+            (fechaDelEvento.getMonth() + 1) +
+            "/" +
+            fechaDelEvento.getFullYear() +
+            "."
           );
           res.status(201).json({
             message: "Evento creado exitosamente",
@@ -374,11 +375,12 @@ router.delete("/eliminarComentario", checkAuthMiddleware, (req, res, next) => {
   });
 });
 
-notificarPorEvento = function (tags, titulo, cuerpo) {
+notificarPorEvento = async function (tags, titulo, cuerpo) {
   //Notificar a los adultos que correspondan a los cursos de los tags/chips
   if (tags.includes("Todos los cursos")) {
     Suscripcion.notificacionMasiva(evento.titulo, this.cuerpo);
   } else {
+    let idEstadoActiva = await ClaseEstado.obtenerIdEstado("Inscripcion", "Activa");
     Inscripcion.aggregate([
       {
         $lookup: {
@@ -399,6 +401,7 @@ notificarPorEvento = function (tags, titulo, cuerpo) {
           $expr: {
             $in: ["$icurso.nombre", tags],
           },
+          estado: mongoose.Types.ObjectId(idEstadoActiva)
         },
       },
       {
@@ -446,11 +449,11 @@ notificarPorEvento = function (tags, titulo, cuerpo) {
       response.forEach((conadulto) => {
         idtutores.push(conadulto.conadulto.idUsuario);
       });
-      let idsUsuarios=[];
-      if(cuerpo=="Ha sido cancelado."){
-        idsUsuarios= await Suscripcion.filtrarARPorPreferencias(idtutores, "Cancelacion de evento");
-      }else{
-        idsUsuarios= await Suscripcion.filtrarARPorPreferencias(idtutores, "Creacion de evento");
+      let idsUsuarios = [];
+      if (cuerpo == "Ha sido cancelado.") {
+        idsUsuarios = await Suscripcion.filtrarARPorPreferencias(idtutores, "Cancelacion de evento");
+      } else {
+        idsUsuarios = await Suscripcion.filtrarARPorPreferencias(idtutores, "Creacion de evento");
       }
       Suscripcion.notificacionGrupal(idsUsuarios, titulo, cuerpo);
     });
