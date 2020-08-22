@@ -8,6 +8,8 @@ const mongoose = require("mongoose");
 const checkAuthMiddleware = require("../middleware/check-auth");
 const ClaseEstudiante = require("../classes/estudiante");
 const ClaseEstado = require("../classes/estado");
+const CicloLectivo = require("../models/cicloLectivo");
+const cicloLectivo = require("../models/cicloLectivo");
 
 //Registra un nuevo estudiante y pone su estado a registrado
 router.post("", checkAuthMiddleware, (req, res, next) => {
@@ -389,7 +391,12 @@ router.get("/tutores", (req, res) => {
 
 //Obtiene todas las cuotas de un estudiante pasado por parámetro
 //@params: id del estudiante
-router.get("/cuotasEstudiante", (req, res) => {
+router.get("/cuotasEstudiante", async (req, res) => {
+  let idEstadoActiva = await ClaseEstado.obtenerIdEstado(
+    "Inscripcion",
+    "Activa"
+  );
+
   Estudiante.aggregate([
     {
       $match: {
@@ -402,32 +409,31 @@ router.get("/cuotasEstudiante", (req, res) => {
         from: "inscripcion",
         localField: "_id",
         foreignField: "idEstudiante",
-        as: "InscripcionEstudiante",
+        as: "inscripcion",
+      },
+    },
+    {
+      $match: {
+        "inscripcion.estado": mongoose.Types.ObjectId(idEstadoActiva),
       },
     },
     {
       $project: {
         _id: 1,
-        InscripcionEstudiante: 1,
+        inscripcion: 1,
       },
     },
   ])
     .then((docs) => {
-      let docPosta = [];
-
-      for (let i = 0; i < docs[0].InscripcionEstudiante.length; i++) {
-        if (docs[0].InscripcionEstudiante[i].activa == true) {
-          docPosta.push(docs[0].InscripcionEstudiante[i]);
-        }
-      }
-      if (docPosta[0].cuotas.length == 0) {
+      console.log(docs);
+      if (docs[0].inscripcion[0].cuotas.length == 0) {
         return res.status(200).json({
           message: "El estudiante no tiene cuotas",
           exito: false,
         });
       }
       let cuo = [];
-      docPosta[0].cuotas.forEach((d) => {
+      docs[0].inscripcion[0].cuotas.forEach((d) => {
         cuo.push([d.mes, d.pagado]);
       });
       return res.status(200).json({
@@ -436,90 +442,94 @@ router.get("/cuotasEstudiante", (req, res) => {
         cuotas: cuo,
       });
     })
-    .catch(() => {
+    .catch((error) => {
       res.status(500).json({
         message: "No se logró obtener las cuotas correctamente",
+        error: error.message,
       });
     });
 });
 
-router.get("/sancionesEstudiante", (req, res) => {
+router.get("/sancionesEstudiante", async (req, res) => {
   let objetoDate = new Date();
   let añoActual = objetoDate.getFullYear();
-  Estudiante.aggregate([
-    {
-      $match: {
-        _id: mongoose.Types.ObjectId(req.query.idEstudiante),
-        activo: true,
+  CicloLectivo.findOne({ año: añoActual }).then((cicloLectivo) => {
+    Estudiante.aggregate([
+      {
+        $match: {
+          _id: mongoose.Types.ObjectId(req.query.idEstudiante),
+          activo: true,
+        },
       },
-    },
-    {
-      $lookup: {
-        from: "inscripcion",
-        localField: "_id",
-        foreignField: "idEstudiante",
-        as: "InscripcionEstudiante",
+      {
+        $lookup: {
+          from: "inscripcion",
+          localField: "_id",
+          foreignField: "idEstudiante",
+          as: "InscripcionEstudiante",
+        },
       },
-    },
-    {
-      $unwind: {
-        path: "$InscripcionEstudiante",
+      {
+        $unwind: {
+          path: "$InscripcionEstudiante",
+        },
       },
-    },
-    {
-      $match: {
-        "InscripcionEstudiante.año": añoActual,
+      {
+        $match: {
+          "InscripcionEstudiante.cicloLectivo": cicloLectivo._id,
+        },
       },
-    },
-    {
-      $project: {
-        _id: 1,
-        InscripcionEstudiante: 1,
+      {
+        $project: {
+          _id: 1,
+          InscripcionEstudiante: 1,
+        },
       },
-    },
-    {
-      $unwind: {
-        path: "$InscripcionEstudiante",
+      {
+        $unwind: {
+          path: "$InscripcionEstudiante",
+        },
       },
-    },
-    {
-      $project: {
-        _id: 0,
-        "InscripcionEstudiante.sanciones": 1,
+      {
+        $project: {
+          _id: 0,
+          "InscripcionEstudiante.sanciones": 1,
+        },
       },
-    },
-  ])
-    .then((inscripciones) => {
-      let sanciones = [];
-      if (inscripciones.length > 1) {
-        inscripciones.forEach((inscripcion) => {
-          sanciones = sanciones.concat(
-            inscripcion.InscripcionEstudiante.sanciones
-          );
-        });
-      } else {
-        sanciones = inscripciones[0].InscripcionEstudiante.sanciones;
-      }
+    ])
+      .then((inscripciones) => {
+        let sanciones = [];
+        if (inscripciones.length > 1) {
+          inscripciones.forEach((inscripcion) => {
+            sanciones = sanciones.concat(
+              inscripcion.InscripcionEstudiante.sanciones
+            );
+          });
+        } else {
+          sanciones = inscripciones[0].InscripcionEstudiante.sanciones;
+        }
 
-      if (sanciones.length == 0) {
-        return res.status(200).json({
-          message: "El estudiante no tiene sanciones",
-          exito: false,
-          sanciones: [],
+        if (sanciones.length == 0) {
+          return res.status(200).json({
+            message: "El estudiante no tiene sanciones",
+            exito: false,
+            sanciones: [],
+          });
+        } else {
+          return res.status(200).json({
+            message: "Se obtuvieron las sanciones exitosamente",
+            exito: true,
+            sanciones: sanciones,
+          });
+        }
+      })
+      .catch((error) => {
+        res.status(500).json({
+          message: "Ocurrió un error al querer obtener las sanciones",
+          error: error.message,
         });
-      } else {
-        return res.status(200).json({
-          message: "Se obtuvieron las sanciones exitosamente",
-          exito: true,
-          sanciones: sanciones,
-        });
-      }
-    })
-    .catch(() => {
-      res.status(500).json({
-        message: "Mensaje de error especifico",
       });
-    });
+  });
 });
 
 //Obtiene la agenda de un curso (materias, horario y día dictadas)

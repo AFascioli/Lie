@@ -24,9 +24,9 @@ import { MediaMatcher } from "@angular/cdk/layout";
   styleUrls: ["./calificaciones-ciclo-lectivo.component.css"],
 })
 export class CalificacionesCicloLectivoComponent implements OnInit, OnDestroy {
-  cursos: any[];
-  materias: any[];
-  estudiantes: any[];
+  cursos: any[] = [];
+  materias: any[] = [];
+  estudiantes: any[] = [];
   displayedColumns: string[] = [
     "apellido",
     "nombre",
@@ -148,8 +148,8 @@ export class CalificacionesCicloLectivoComponent implements OnInit, OnDestroy {
   // }
 
   onCursoSeleccionado(curso, materia: NgModel) {
-    this.estudiantes = null;
-    this.materias = null;
+    this.estudiantes = [];
+    this.materias = [];
     materia.reset();
     if (
       this.rolConPermisosEdicion &&
@@ -189,11 +189,12 @@ export class CalificacionesCicloLectivoComponent implements OnInit, OnDestroy {
           );
           this.reordenarCalificaciones();
           this.dataSource = new MatTableDataSource(this.estudiantes);
-          this.dataSource.paginator = this.paginator;
-          this.dataSource.paginator.firstPage();
+          //this.dataSource.paginator = this.paginator;
+          //this.dataSource.paginator.firstPage();
         });
     }
   }
+
   //Recibe la palabra que escribe el usuario y filtra tabla de html
   aplicarFiltro(valorFiltro: string) {
     valorFiltro = valorFiltro.trim();
