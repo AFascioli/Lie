@@ -93,12 +93,10 @@ export class ListaEstudiantesComponent implements OnInit, OnDestroy {
                     });
 
                   // Validación por suspendido
-                  console.log("Me entro en el if", this.inscripto);
                   this.servicio
                     .esEstudianteSuspendido(this.estudiantes[i]._id)
                     .pipe(takeUntil(this.unsubscribe))
                     .subscribe((response) => {
-                      console.log("response.exito", response.exito);
                       this.suspendido[i] = response.exito;
                     });
                 }

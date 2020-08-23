@@ -69,6 +69,7 @@
             name="curso"
             ngModel
             #cursoSelec="ngModel"
+            [(ngModel)]="cursoSeleccionado"
             matNativeControl
             required
             (selectionChange)="onCursoSeleccionado(cursoSelec)"
