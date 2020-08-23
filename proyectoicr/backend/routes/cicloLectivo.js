@@ -12,7 +12,7 @@ const ClaseEstado = require("../classes/estado");
 const ClaseEstudiante = require("../classes/estudiante");
 const ClaseSuscripcion = require("../classes/suscripcion");
 const Curso = require("../models/curso");
-const curso = require("../models/curso");
+const ClaseCicloLectivo = require("../classes/cicloLectivo");
 
 router.get("/", checkAuthMiddleware, (req, res) => {
   let fechaActual = new Date();
@@ -315,6 +315,49 @@ router.use("/procesoAutomaticoFinExamenes", (req, res) => {
       }
     }
   );
+});
+
+//Obtiene el estado del ciclo lectivo actual
+router.use("/estado", (req, res) => {
+  let añoActual = new Date().getFullYear();
+  CicloLectivo.aggregate([
+    {
+      $match: {
+        año: añoActual,
+      },
+    },
+    {
+      $lookup: {
+        from: "estado",
+        localField: "estado",
+        foreignField: "_id",
+        as: "datosEstado",
+      },
+    },
+  ])
+    .then((cicloLectivo) => {
+      res.status(200).json({
+        exito: true,
+        message: "Estado encontrado exitosamente",
+        estadoCiclo: cicloLectivo[0].datosEstado[0].nombre,
+      });
+    })
+    .catch((error) => {
+      res.status(400).json({
+        exito: false,
+        message:
+          "Ocurrió un error al obtener el estado del ciclo lectivo: " +
+          error.message,
+      });
+    });
+});
+
+router.use("/test", async (req, res) => {
+  let resultado =await ClaseCicloLectivo.cursosTienenAgenda();
+  res.status(200).json({
+    exito: true,
+    message: resultado,
+  });
 });
 
 module.exports = router;
