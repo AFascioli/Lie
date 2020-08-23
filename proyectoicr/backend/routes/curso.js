@@ -363,7 +363,6 @@ router.get("/cursosDeEstudiante", checkAuthMiddleware, async (req, res) => {
               parseInt(req.query.añoLectivo, 10)
             );
             let cursosDisponibles = [];
-            console.log(idCicloLectivo);
             //Buscamos los cursos que corresponden al que se puede inscribir el estudiante
             Curso.find({
               nombre: { $regex: siguiente },

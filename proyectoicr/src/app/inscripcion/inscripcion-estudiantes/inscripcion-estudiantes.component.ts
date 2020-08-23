@@ -126,7 +126,7 @@ export class InscripcionEstudianteComponent implements OnInit, OnDestroy {
   }
 
   onYearSelected(yearSelected) {
-    this.cursoSeleccionado = null;
+    this.cursoSeleccionado = "";
     if (yearSelected.value == "actual") {
       this.yearSelected = this.fechaActual.getFullYear();
       this.nextYearSelect = false;
@@ -134,7 +134,7 @@ export class InscripcionEstudianteComponent implements OnInit, OnDestroy {
       this.yearSelected = this.fechaActual.getFullYear() + 1;
       this.nextYearSelect = true;
     }
-    this.capacidadCurso = -1;
+    //this.capacidadCurso = -1;
     this.obtenerCursosEstudiante();
   }
 
