@@ -514,13 +514,16 @@
         <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
         <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
       </table>
-      <mat-paginator
-        (page)="pageEvent = indexEstudiante()"
-        [pageSizeOptions]="[10, 20, 30, 35]"
-        class="paginator"
-      >
-      </mat-paginator>
     </div>
+    <div [hidden]="!(estudiantes.length != 0)">
+      <mat-paginator
+      (page)="pageEvent = indexEstudiante()"
+      [pageSizeOptions]="[10, 20, 30, 35]"
+      class="paginator"
+    >
+    </mat-paginator>
+    </div>
+
     <div class="div-button">
       <button mat-raised-button class="button-warn" (click)="onCancelar()">
         Cancelar
