@@ -14,6 +14,8 @@ const ClaseEstado = require("../classes/estado");
 const Suscripcion = require("../classes/suscripcion");
 const ClaseAsistencia = require("../classes/asistencia");
 const CicloLectivo = require("../models/cicloLectivo");
+const { JsonExporterService } = require("cdk-table-exporter");
+const { stringify } = require("querystring");
 
 // Obtiene todos los cursos que están almacenados en la base de datos
 router.get("/", checkAuthMiddleware, (req, res) => {
@@ -1339,7 +1341,6 @@ router.post("/agenda", async (req, res) => {
   } else {
     res.json({ exito: true, message: "Horarios modificados correctamente" });
   }
-  // res.json({ exito: mxcNuevas, message: "Horarios modificados correctamente" });
 });
 
 router.get("/estudiantes/inscripcion", async (req, res) => {
@@ -1491,6 +1492,115 @@ router.get("/estudiantes/inscripcion", async (req, res) => {
       cursoAnterior: "-",
       idInscripcion: null,
       seleccionado: false, //Agregado para facilitar saber quien se debe inscribir
+    };
+    estudiantesRespuesta.push(estudianteRefinado);
+  });
+
+  res.status(200).json({
+    estudiantes: estudiantesRespuesta,
+    exito: true,
+  });
+});
+
+router.get("/estudiantes/inscripcionPendiente", async (req, res) => {
+  let cursoAnterior;
+  let añoAnterior;
+  let dateActual = new Date();
+  let idEstadoRegistrado = await ClaseEstado.obtenerIdEstado(
+    "Estudiante",
+    "Registrado"
+  );
+
+  let idEstadoInscripcionActiva = await ClaseEstado.obtenerIdEstado(
+    "Inscripcion",
+    "Activa"
+  );
+
+  let obtenerEstudiantesSinInscripcion = await Estudiante.find(
+    { estado: idEstadoRegistrado },
+    { nombre: 1, apellido: 1 }
+  );
+
+  let estudiantesRespuesta = [];
+
+  obtenerEstudiantesSinInscripcion.forEach((estudiante) => {
+    const estudianteRefinado = {
+      idEstudiante: estudiante._id,
+      nombre: estudiante.nombre,
+      apellido: estudiante.apellido,
+      cursoAnterior: "-",
+      idInscripcion: null,
+      seleccionado: false, //Agregado para facilitar saber quien se debe inscribir
+    };
+    estudiantesRespuesta.push(estudianteRefinado);
+  });
+
+  //Obtener curso y ciclo lectivo
+
+  await Curso.findById(req.query.idCurso).then((curso) => {
+    añoAnterior = parseInt(curso.nombre, 10) - 1;
+    let division = curso.nombre.substring(1, 2);
+    cursoAnterior = `${añoAnterior}${division}`;
+  });
+
+  if (añoAnterior == 0) {
+    return res.status(200).json({
+      estudiantes: estudiantesRespuesta,
+      exito: true,
+    });
+  }
+
+  let cicloLectivo = await CicloLectivo.findOne({
+    año: dateActual.getFullYear(),
+  }).exec();
+
+  let curso = await Curso.findOne({
+    nombre: cursoAnterior,
+    cicloLectivo: cicloLectivo._id,
+  }).exec();
+
+  let obtenerEstudiantesInscripcionActiva = await Inscripcion.aggregate([
+    {
+      $match: {
+        estado: mongoose.Types.ObjectId(idEstadoInscripcionActiva),
+        cicloLectivo: cicloLectivo._id,
+        idCurso: mongoose.Types.ObjectId(curso._id),
+      },
+    },
+    {
+      $lookup: {
+        from: "estudiante",
+        localField: "idEstudiante",
+        foreignField: "_id",
+        as: "datosEstudiante",
+      },
+    },
+    {
+      $lookup: {
+        from: "curso",
+        localField: "idCurso",
+        foreignField: "_id",
+        as: "datosCurso",
+      },
+    },
+    {
+      $project: {
+        "datosEstudiante._id": 1,
+        "datosEstudiante.nombre": 1,
+        "datosEstudiante.apellido": 1,
+        "datosCurso.nombre": 1,
+      },
+    },
+  ]);
+
+  obtenerEstudiantesInscripcionActiva.forEach((inscripcion) => {
+    const estudianteRefinado = {
+      idEstudiante: inscripcion.datosEstudiante[0]._id,
+      nombre: inscripcion.datosEstudiante[0].nombre,
+      apellido: inscripcion.datosEstudiante[0].apellido,
+      cursoAnterior: inscripcion.datosCurso[0].nombre,
+      idInscripcion: inscripcion._id,
+      seleccionado: false,
     };
     estudiantesRespuesta.push(estudianteRefinado);
   });
