@@ -1,1 +1,96 @@
-<p>ciclo-lectivo works!</p>
+<h1 class="componente-titulo">Administrar ciclo lectivo</h1>
+
+<div class="grid-container">
+  <mat-card class="opcion" [ngClass]="{ colorCard: this.iniciarCursado }">
+    <br /><b>Inicio de cursado</b>
+    <br />
+    <div>
+      <button
+        class="botones"
+        mat-raised-button
+        (click)="onCierreInicioCursado()"
+        [ngClass]="{ colorBoton: this.iniciarCursado }"
+        [disabled]="!this.iniciarCursado"
+      >
+        Iniciar ciclo lectivo
+      </button>
+    </div>
+  </mat-card>
+
+  <mat-card class="opcion" [ngClass]="{ colorCard: this.primerTrimestre }"
+    ><b>Cursando</b>
+    <br />
+    <b>Primer trimestre</b>
+    <br />
+    <div>
+      <button
+        class="botones"
+        mat-raised-button
+        (click)="onCierrePrimerTrimestre()"
+        [ngClass]="{ colorBoton: this.primerTrimestre }"
+        [disabled]="!this.primerTrimestre"
+      >
+        Cerrar trimestre
+      </button>
+    </div>
+  </mat-card>
+  <mat-card class="opcion" [ngClass]="{ colorCard: this.segundoTrimestre }"
+    ><b>Cursando</b>
+    <br />
+    <b>Segundo trimestre</b>
+    <br />
+    <div>
+      <button
+        class="botones"
+        mat-raised-button
+        (click)="onCierreSegundoTrimestre()"
+        [ngClass]="{ colorBoton: this.segundoTrimestre }"
+        [disabled]="!this.segundoTrimestre"
+      >
+        Cerrar trimestre
+      </button>
+    </div>
+  </mat-card>
+  <mat-card class="opcion" [ngClass]="{ colorCard: this.tercerTrimestre }"
+    ><b>Cursando</b>
+    <br />
+    <b>Tercer trimestre</b>
+    <br />
+    <div>
+      <button
+        class="botones"
+        mat-raised-button
+        (click)="onCierreTercerTrimestre()"
+        [ngClass]="{ colorBoton: this.tercerTrimestre }"
+        [disabled]="!this.tercerTrimestre"
+      >
+        Cerrar trimestre
+      </button>
+    </div>
+  </mat-card>
+  <mat-card class="opcion" [ngClass]="{ colorCard: this.fechasExamen }">
+    <br />
+    <b>Fecha de Exámenes</b>
+    <br />
+    <div>
+      <button
+        class="botones"
+        mat-raised-button
+        (click)="onCierreExamenes()"
+        [ngClass]="{ colorBoton: this.fechasExamen }"
+        [disabled]="!this.fechasExamen"
+      >
+        Finalizar exámenes
+      </button>
+    </div>
+  </mat-card>
+</div>
+<div class="div-button">
+  <button
+    mat-raised-button
+    [routerLink]="['/accionesDirector']"
+    class="button-warn"
+  >
+    Volver
+  </button>
+</div>

@@ -19,6 +19,21 @@
 
 .margen
 {
-  margin-left: 5%;
+  margin-left: 7%;
 }
 
+.margen2
+{
+  margin-left: 7%;
+  margin-top: 25px !important;
+}
+
+.mat-divider
+{
+  margin-left: 60px;
+}
+
+.mat-card .mat-divider-horizontal
+{
+  width: 85%;
+}

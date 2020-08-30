@@ -138,14 +138,14 @@ import { ModificarAdultoResponsableComponent } from './adulto-responsable/modifi
 import { BuscarAdultoResponsableComponent } from "./adulto-responsable/buscar-adulto-responsable/buscar-adulto-responsable.component";
 import { AccionesDirectorComponent } from './acciones-director/acciones-director.component';
 import { ParametrizarReglasNegocioComponent } from './acciones-director/parametrizar-reglas-negocio/parametrizar-reglas-negocio/parametrizar-reglas-negocio.component';
-import { CicloLectivoComponent } from './acciones-director/ciclo-lectivo/ciclo-lectivo/ciclo-lectivo.component';
+import { CicloLectivoComponent, PopUpCerrarEtapa } from './acciones-director/ciclo-lectivo/ciclo-lectivo/ciclo-lectivo.component';
 import { EstadoCursosComponent } from './acciones-director/estado-cursos/estado-cursos/estado-cursos.component';
-
 
 
 @NgModule({
   declarations: [
     AppComponent,
+    PopUpCerrarEtapa,
     ErrorComponent,
     AltaEstudiantesComponent,
     BuscarEstudiantesComponent,
@@ -233,6 +233,7 @@ import { EstadoCursosComponent } from './acciones-director/estado-cursos/estado-
     ReincorporarPopupComponent,
     ReadMoreComponent,
     ErrorComponent,
+    PopUpCerrarEtapa
   ],
   imports: [
     MatChipsModule,
