@@ -352,9 +352,6 @@ router.use("/estado", (req, res) => {
     });
 });
 
-// Crear el proximo ciclo lectivo
-// Crear los cursos del año siguiente
-// Actualizar el estado del actual de Creado a En primer trimestre
 router.get("/cicloLectivo/inicioCursado", async (req, res) => {
   // Validar que todas las agendas esten definidas
   let resultado = await ClaseCicloLectivo.cursosTienenAgenda();
@@ -378,6 +375,10 @@ router.get("/cicloLectivo/inicioCursado", async (req, res) => {
 
   // Pasar las inscripciones pendientes a activas (con todo lo que implica)
   let cambioInscripciones = await ClaseCicloLectivo.pasarInscripcionesAActivas();
+
+  // Crear el proximo ciclo lectivo
+  // Crear los cursos del año siguiente
+  // Actualizar el estado del actual de Creado a En primer trimestre
 
   res.status(200).json({
     exito: true,
