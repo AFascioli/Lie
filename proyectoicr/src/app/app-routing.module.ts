@@ -1,4 +1,4 @@
-import { BuscarAdultoResponsableComponent } from './adulto-responsable/buscar-adulto-responsable/buscar-adulto-responsable.component';
+import { BuscarAdultoResponsableComponent } from "./adulto-responsable/buscar-adulto-responsable/buscar-adulto-responsable.component";
 import { AsociarAdultoResponsableComponent } from "./adulto-responsable/asociar-adulto-responsable/asociar-adulto-responsable.component";
 import { InscripcionCursoComponent } from "./inscripcion/inscripcion-curso/inscripcion-curso.component";
 import { MenuPrincipalAdultoResponsableComponent } from "./menu-principal-adulto-responsable/menu-principal-adulto-responsable.component";
@@ -63,8 +63,11 @@ const routes: Routes = [
         },
       },
       {
-        path: "modificar",
+        path: "modificarAdultoResponsable",
         component: ModificarAdultoResponsableComponent,
+        data: {
+          rolesValidos: ["Admin", "Preceptor", "Director"],
+        },
       },
       {
         path: "definirAgenda",
@@ -367,12 +370,7 @@ const routes: Routes = [
         component: BuscarAdultoResponsableComponent,
         canActivate: [RoleGuard],
         data: {
-          rolesValidos: [
-            "Admin",
-            "Preceptor",
-            "Director",
-            "Docente"
-          ],
+          rolesValidos: ["Admin", "Preceptor", "Director", "Docente"],
         },
       },
       {

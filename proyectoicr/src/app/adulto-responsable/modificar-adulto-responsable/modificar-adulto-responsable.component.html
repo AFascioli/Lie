@@ -1,180 +1,165 @@
-<h1 class="componente-titulo">
-  Modificar adulto responsable
-</h1>
+<h1 class="componente-titulo">Modificar adulto responsable</h1>
 <mat-card class="card-body-componente">
   <meta charset="utf-8" />
   <form #form="ngForm">
-    <mat-expansion-panel
-      [class.mat-expansion-panel-mobile]="mobileQuery.matches"
-      [expanded]="true"
-    >
-      <mat-expansion-panel-header
-        ><b
-          >Datos del adulto responsable de: {{ apellidoEstudiante }},
-          {{ nombreEstudiante }}</b
-        ></mat-expansion-panel-header
-      >
-      <div class="datos-AR">
-        <mat-form-field [class.mat-form-field-mobile]="mobileQuery.matches">
-          <input
-            name="apellido"
-            minlength="2"
-            maxlength="40"
-            [(ngModel)]="adultoResponsable.apellido"
-            matInput
-            placeholder="Ingrese apellido/s"
-            type="text"
-            required
-            (keypress)="checkIfIsALetter($event)"
-          />
-        </mat-form-field>
-        <br />
-        <mat-form-field [class.mat-form-field-mobile]="mobileQuery.matches">
-          <input
-            name="nombre"
-            minlength="2"
-            maxlength="40"
-            [(ngModel)]="adultoResponsable.nombre"
-            matInput
-            placeholder="Ingrese nombre/s"
-            type="text"
-            required
-            (keypress)="checkIfIsALetter($event)"
-          />
-        </mat-form-field>
-        <br />
-        <mat-form-field [class.mat-form-field-mobile]="mobileQuery.matches">
-          <mat-select
-            placeholder="Seleccione tipo de documento"
-            name="tipoDocumento"
-            [(ngModel)]="adultoResponsable.tipoDocumento"
-            ngModel
-            #tipoDocumento="ngModel"
-            matNativeControl
-            required
-          >
-            <mat-option value="DNI">DNI</mat-option>
-            <mat-option value="Cedula de Identidad"
-              >Cédula de Identidad</mat-option
-            >
-            <mat-option value="Libreta de Enrolamiento"
-              >Libreta de Enrolamiento</mat-option
-            >
-            <mat-option value="Libreta Civica">Libreta Cívica</mat-option>
-            <mat-option value="Pasaporte">Pasaporte</mat-option>
-          </mat-select>
-        </mat-form-field>
-        <br />
-        <mat-form-field [class.mat-form-field-mobile]="mobileQuery.matches">
-          <input
-            name="numeroDocumento"
-            [(ngModel)]="adultoResponsable.numeroDocumento"
-            maxlength="8"
-            ngModel
-            #numeroDocumento="ngModel"
-            matInput
-            placeholder="Ingrese número de documento"
-            required
-            (keypress)="checkIfIsANumber($event)"
-          />
-        </mat-form-field>
-        <br />
-        <mat-form-field [class.mat-form-field-mobile]="mobileQuery.matches">
-          <mat-select
-            placeholder="Seleccione sexo"
-            [(ngModel)]="adultoResponsable.sexo"
-            name="sexo"
-            ngModel
-            #sexo="ngModel"
-            matNativeControl
-            required
-          >
-            <mat-option value="femenino">Femenino</mat-option>
-            <mat-option value="masculino">Masculino</mat-option>
-          </mat-select>
-        </mat-form-field>
-        <br />
-        <mat-form-field [class.mat-form-field-mobile]="mobileQuery.matches">
-          <input
-            matInput
-            [(ngModel)]="adultoResponsable.fechaNacimiento"
-            name="fechaNac"
-            ngModel
-            #fechaNac="ngModel"
-            [max]="maxDate"
-            [matDatepicker]="picker"
-            placeholder="Seleccione fecha de nacimiento"
-            (click)="picker.open()"
-            readonly
-            required
-          />
-          <mat-datepicker-toggle
-            matSuffix
-            [for]="picker"
-          ></mat-datepicker-toggle>
-          <mat-datepicker
-            touchUi
-            #picker
-            startView="multi-year"
-            disabled="false"
-          ></mat-datepicker>
-        </mat-form-field>
-        <br />
-        <mat-form-field [class.mat-form-field-mobile]="mobileQuery.matches">
-          <mat-select
-            placeholder="Seleccione nacionalidad"
-            [(ngModel)]="adultoResponsable.nacionalidad"
-            name="nacionalidad"
-            ngModel
-            #nacionalidad="ngModel"
-            matNativeControl
-          >
-            <mat-option
-              *ngFor="let nacionalidad of nacionalidades"
-              [value]="nacionalidad.name"
-            >
-              {{ nacionalidad.name }}
-            </mat-option>
-          </mat-select>
-        </mat-form-field>
-        <br />
-        <mat-form-field [class.mat-form-field-mobile]="mobileQuery.matches">
-          <input
-            matInput
-            [(ngModel)]="adultoResponsable.telefono"
-            name="telefono"
-            maxlength="20"
-            ngModel
-            #telefono="ngModel"
-            placeholder="Ingrese número de teléfono"
-            type="text"
-            (keypress)="checkIfIsANumber($event)"
-            required
-          />
-        </mat-form-field>
-        <br />
-        <mat-form-field [class.mat-form-field-mobile]="mobileQuery.matches">
-          <input
-            matInput
-            [(ngModel)]="adultoResponsable.email"
-            name="email"
-            ngModel
-            #Email="ngModel"
-            placeholder="Ingrese email"
-            type="email"
-            pattern="^([a-zA-Z0-9_\-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([a-zA-Z0-9\-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$"
-            required
-          />
-        </mat-form-field>
-        <br />
-        <mat-checkbox
-          [checked]="adultoResponsable.tutor"
-          (change)="adultoResponsable.tutor = !adultoResponsable.tutor"
+    <div class="datos-AR">
+      <br />
+      <mat-form-field [class.mat-form-field-mobile]="mobileQuery.matches">
+        <input
+          name="apellido"
+          minlength="2"
+          maxlength="40"
+          [(ngModel)]="adultoResponsable.apellido"
+          matInput
+          placeholder="Ingrese apellido/s"
+          type="text"
+          required
+          (keypress)="checkIfIsALetter($event)"
+        />
+      </mat-form-field>
+      <br />
+      <mat-form-field [class.mat-form-field-mobile]="mobileQuery.matches">
+        <input
+          name="nombre"
+          minlength="2"
+          maxlength="40"
+          [(ngModel)]="adultoResponsable.nombre"
+          matInput
+          placeholder="Ingrese nombre/s"
+          type="text"
+          required
+          (keypress)="checkIfIsALetter($event)"
+        />
+      </mat-form-field>
+      <br />
+      <mat-form-field [class.mat-form-field-mobile]="mobileQuery.matches">
+        <mat-select
+          placeholder="Seleccione tipo de documento"
+          name="tipoDocumento"
+          [(ngModel)]="adultoResponsable.tipoDocumento"
+          ngModel
+          #tipoDocumento="ngModel"
+          matNativeControl
+          required
         >
-          Tutor
-        </mat-checkbox>
-      </div>
-    </mat-expansion-panel>
+          <mat-option value="DNI">DNI</mat-option>
+          <mat-option value="Cedula de Identidad"
+            >Cédula de Identidad</mat-option
+          >
+          <mat-option value="Libreta de Enrolamiento"
+            >Libreta de Enrolamiento</mat-option
+          >
+          <mat-option value="Libreta Civica">Libreta Cívica</mat-option>
+          <mat-option value="Pasaporte">Pasaporte</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <br />
+      <mat-form-field [class.mat-form-field-mobile]="mobileQuery.matches">
+        <input
+          name="numeroDocumento"
+          [(ngModel)]="adultoResponsable.numeroDocumento"
+          maxlength="8"
+          ngModel
+          #numeroDocumento="ngModel"
+          matInput
+          placeholder="Ingrese número de documento"
+          required
+          (keypress)="checkIfIsANumber($event)"
+        />
+      </mat-form-field>
+      <br />
+      <mat-form-field [class.mat-form-field-mobile]="mobileQuery.matches">
+        <mat-select
+          placeholder="Seleccione sexo"
+          [(ngModel)]="adultoResponsable.sexo"
+          name="sexo"
+          ngModel
+          #sexo="ngModel"
+          matNativeControl
+          required
+        >
+          <mat-option value="femenino">Femenino</mat-option>
+          <mat-option value="masculino">Masculino</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <br />
+      <mat-form-field [class.mat-form-field-mobile]="mobileQuery.matches">
+        <input
+          matInput
+          [(ngModel)]="adultoResponsable.fechaNacimiento"
+          name="fechaNac"
+          ngModel
+          #fechaNac="ngModel"
+          [max]="maxDate"
+          [matDatepicker]="picker"
+          placeholder="Seleccione fecha de nacimiento"
+          (click)="picker.open()"
+          readonly
+          required
+        />
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker
+          touchUi
+          #picker
+          startView="multi-year"
+          disabled="false"
+        ></mat-datepicker>
+      </mat-form-field>
+      <br />
+      <mat-form-field [class.mat-form-field-mobile]="mobileQuery.matches">
+        <mat-select
+          placeholder="Seleccione nacionalidad"
+          [(ngModel)]="adultoResponsable.nacionalidad"
+          name="nacionalidad"
+          ngModel
+          #nacionalidad="ngModel"
+          matNativeControl
+        >
+          <mat-option
+            *ngFor="let nacionalidad of nacionalidades"
+            [value]="nacionalidad.name"
+          >
+            {{ nacionalidad.name }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+      <br />
+      <mat-form-field [class.mat-form-field-mobile]="mobileQuery.matches">
+        <input
+          matInput
+          [(ngModel)]="adultoResponsable.telefono"
+          name="telefono"
+          maxlength="20"
+          ngModel
+          #telefono="ngModel"
+          placeholder="Ingrese número de teléfono"
+          type="text"
+          (keypress)="checkIfIsANumber($event)"
+          required
+        />
+      </mat-form-field>
+      <br />
+      <mat-form-field [class.mat-form-field-mobile]="mobileQuery.matches">
+        <input
+          matInput
+          [(ngModel)]="adultoResponsable.email"
+          name="email"
+          ngModel
+          #Email="ngModel"
+          placeholder="Ingrese email"
+          type="email"
+          pattern="^([a-zA-Z0-9_\-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([a-zA-Z0-9\-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$"
+          required
+        />
+      </mat-form-field>
+      <br />
+      <mat-checkbox
+        [checked]="adultoResponsable.tutor"
+        (change)="adultoResponsable.tutor = !adultoResponsable.tutor"
+      >
+        Tutor
+      </mat-checkbox>
+    </div>
     <div class="div-button">
       <button
         (click)="onGuardar(form)"
@@ -183,7 +168,7 @@
       >
         Guardar
       </button>
-      <button mat-raised-button (click)="openPopUpVolver()" class="button-warn">
+      <button mat-raised-button [routerLink]="['/home']" class="button-warn">
         Volver
       </button>
     </div>
