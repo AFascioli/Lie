@@ -27,6 +27,43 @@ exports.obtenerAñoHabilitado = function (inscripcion, añoLectivo) {
   return siguiente;
 };
 
+//Dada una id de curso, obtiene las ids de las materias que se dan en ese curso
+function obtenerMateriasDeCurso(idCurso) {
+  return new Promise((resolve, reject) => {
+    Curso.aggregate([
+      {
+        $match: {
+          _id: mongoose.Types.ObjectId(idCurso),
+        },
+      },
+      {
+        $unwind: "$materias",
+      },
+      {
+        $lookup: {
+          from: "materiasXCurso",
+          localField: "materias",
+          foreignField: "_id",
+          as: "materiasDelCurso",
+        },
+      },
+      {
+        $group: {
+          _id: {
+            idMateria: "$materiasDelCurso.idMateria",
+          },
+        },
+      },
+    ])
+      .then((materiasDelCurso) => {
+        resolve(materiasDelCurso);
+      })
+      .catch((err) => reject(err));
+  });
+}
+
+module.exports.obtenerMateriasDeCurso = obtenerMateriasDeCurso;
+
 exports.inscribirEstudiante = async function (
   idCurso,
   idEstudiante,
@@ -44,48 +81,16 @@ exports.inscribirEstudiante = async function (
 
   let obtenerInscripcion = () => {
     return new Promise(async (resolve, reject) => {
-      let idEstadoActiva = await ClaseEstado.obtenerIdEstado("Inscripcion", "Activa"); 
+      let idEstadoActiva = await ClaseEstado.obtenerIdEstado(
+        "Inscripcion",
+        "Activa"
+      );
       Inscripcion.findOne({
         idEstudiante: idEstudiante,
         estado: idEstadoActiva, //#resolve ver si es necesario filtrar por estado
       })
         .then((inscripcion) => {
           resolve(inscripcion);
-        })
-        .catch((err) => reject(err));
-    });
-  };
-
-  //Dada una id de curso, obtiene las ids de las materias que se dan en ese curso
-  let obtenerMateriasDeCurso = (idCurso) => {
-    return new Promise((resolve, reject) => {
-      Curso.aggregate([
-        {
-          $match: {
-            _id: mongoose.Types.ObjectId(idCurso),
-          },
-        },
-        {
-          $unwind: "$materias",
-        },
-        {
-          $lookup: {
-            from: "materiasXCurso",
-            localField: "materias",
-            foreignField: "_id",
-            as: "materiasDelCurso",
-          },
-        },
-        {
-          $group: {
-            _id: {
-              idMateria: "$materiasDelCurso.idMateria",
-            },
-          },
-        },
-      ])
-        .then((materiasDelCurso) => {
-          resolve(materiasDelCurso);
         })
         .catch((err) => reject(err));
     });
@@ -152,17 +157,19 @@ exports.inscribirEstudiante = async function (
     var añoActual = await obtenerAñoCicloLectivo();
     var materiasDelCurso = await obtenerMateriasDeCurso(idCurso);
     let cuotasAnteriores = [];
-    let contadorInasistenciasInjustificada=0;
-    let contadorInasistenciasJustificada=0;
-    let contadorLlegadasTarde=0;
+    let contadorInasistenciasInjustificada = 0;
+    let contadorInasistenciasJustificada = 0;
+    let contadorLlegadasTarde = 0;
 
     //Si el estudiante tiene una inscripcion anteriormente, se obtienen las CXM que esten desaprobadas,
     //ya sea las que estan en materiasPendientes y las CXM con estado "Desaprobada"
     var materiasPendientesNuevas = [];
     if (inscripcion != null) {
-      contadorInasistenciasInjustificada=inscripcion.contadorInasistenciasInjustificada;
-      contadorInasistenciasJustificada=inscripcion.contadorInasistenciasJustificada;
-      contadorLlegadasTarde=inscripcion.contadorLlegadasTarde;
+      contadorInasistenciasInjustificada =
+        inscripcion.contadorInasistenciasInjustificada;
+      contadorInasistenciasJustificada =
+        inscripcion.contadorInasistenciasJustificada;
+      contadorLlegadasTarde = inscripcion.contadorLlegadasTarde;
 
       inscripcion.activa = false;
       // cuotasAnteriores = inscripcion.cuotas;

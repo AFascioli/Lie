@@ -1,7 +1,12 @@
+const mongoose = require("mongoose");
 const Curso = require("../models/curso");
+const Inscripcion = require("../models/inscripcion");
+const ClaseEstado = require("../classes/estado");
+const ClaseCXM = require("../classes/calificacionXMateria");
+const ClaseInscripcion = require("../classes/inscripcion");
 
-//Retorna un booleano segun si todos los cursos tienen definida la agenda
-exports.cursosTienenAgenda = () =>{
+//Retorna un array con los cursos que no tienen agenda
+exports.cursosTienenAgenda = () => {
   let añoActual = new Date().getFullYear();
   return new Promise((resolve, reject) => {
     Curso.aggregate([
@@ -18,13 +23,97 @@ exports.cursosTienenAgenda = () =>{
           "datosCicloLectivo.año": añoActual,
         },
       },
-    ]).then((cursosActuales) => {    
-      let todosTienenAgenda = cursosActuales.every(
-        (curso) => curso.materias.length != 0
-      );
-      resolve(todosTienenAgenda);
-    }).catch(eror =>{
-      reject();
+    ])
+      .then((cursosActuales) => {
+        let cursosSinAgenda = [];
+        cursosActuales.map((curso) => {
+          if (curso.materias.length == 0) {
+            cursosSinAgenda.push({ _id: curso._id, nombre: curso.nombre });
+          }
+        });
+        resolve(cursosSinAgenda);
+      })
+      .catch((error) => {
+        reject(null);
+      });
+  });
+};
+
+// Se obtienen las inscripciones pendientes del ciclo actual, a estas se les cambia el estado a activa
+// se les copian las materias pendientes de la inscripcion del año anterior y se les asignan las CXM correspondientes.
+exports.pasarInscripcionesAActivas = () => {
+  let añoActual = new Date().getFullYear();
+  return new Promise(async (resolve, reject) => {
+    let idPendiente = await ClaseEstado.obtenerIdEstado(
+      "Inscripcion",
+      "Pendiente"
+    );
+    let idActiva = await ClaseEstado.obtenerIdEstado("Inscripcion", "Activa");
+    let idInactiva = await ClaseEstado.obtenerIdEstado(
+      "Inscripcion",
+      "Inactiva"
+    );
+    let idCursandoCXM = await ClaseEstado.obtenerIdEstado(
+      "CalificacionesXMateria",
+      "Cursando"
+    );
+
+    Inscripcion.aggregate([
+      {
+        $match: {
+          estado: mongoose.Types.ObjectId(idPendiente),
+        },
+      },
+      {
+        $lookup: {
+          from: "cicloLectivo",
+          localField: "cicloLectivo",
+          foreignField: "_id",
+          as: "datosCiclo",
+        },
+      },
+      {
+        $match: {
+          "datosCiclo.año": añoActual,
+        },
+      },
+    ]).then(async (inscripcionesPendientes) => {
+      for (const inscripcion of inscripcionesPendientes) {
+        let materiasDelCurso = await ClaseInscripcion.obtenerMateriasDeCurso(
+          inscripcion.idCurso
+        );
+        let idsCXM = await ClaseCXM.crearCXM(materiasDelCurso, idCursandoCXM);
+
+        // Obtenemos la inscripcion del año anterior (filtrada por estudiante, estado que no sea inactiva y ciclo)
+        let inscripcionAnterior = await Inscripcion.aggregate([
+          {
+            $match: {
+              idEstudiante: mongoose.Types.ObjectId(inscripcion.idEstudiante),
+              estado: {
+                $ne: mongoose.Types.ObjectId(idInactiva),
+              },
+            },
+          },
+          {
+            $lookup: {
+              from: "cicloLectivo",
+              localField: "cicloLectivo",
+              foreignField: "_id",
+              as: "datosCiclo",
+            },
+          },
+          {
+            $match: {
+              "datosCiclo.año": añoActual - 1,
+            },
+          },
+        ]);
+
+        inscripcion.calificacionesXMateria = idsCXM;
+        inscripcion.materiasPendientes = inscripcionAnterior.materiasPendientes;
+        inscripcion.estado = idActiva;
+        Inscripcion.save();
+      }
     });
-  })
-}
+  });
+};

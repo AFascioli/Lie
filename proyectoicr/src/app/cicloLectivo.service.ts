@@ -25,4 +25,11 @@ export class CicloLectivoService implements OnDestroy {
       estadoCiclo: string;
     }>(`${environment.apiUrl}/cicloLectivo/estado`);
   }
+
+  inicioCursado() {
+    return this.http.get<{
+      exito: boolean;
+      message: string;
+    }>(`${environment.apiUrl}/cicloLectivo/inicioCursado`);
+  }
 }

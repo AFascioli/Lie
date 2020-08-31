@@ -41,6 +41,7 @@ exports.crearCalifXTrimestre = async function (califXMateriaNueva) {
   }
 };
 
+// Deprecado
 exports.crearDocsCalif = async function (materiasDelCurso, estado) {
   let idsCalXMateria = [];
   materiasDelCurso.forEach((elemento) => {

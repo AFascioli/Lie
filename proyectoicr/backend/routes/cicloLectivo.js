@@ -352,8 +352,33 @@ router.use("/estado", (req, res) => {
     });
 });
 
-router.use("/test", async (req, res) => {
-  let resultado =await ClaseCicloLectivo.cursosTienenAgenda();
+// Crear el proximo ciclo lectivo
+// Crear los cursos del año siguiente
+// Actualizar el estado del actual de Creado a En primer trimestre
+router.get("/cicloLectivo/inicioCursado", async (req, res) => {
+  // Validar que todas las agendas esten definidas
+  let resultado = await ClaseCicloLectivo.cursosTienenAgenda();
+
+  if (resultado.length != 0) {
+    let mensaje =
+      "Los siguientes cursos no tienen la agenda de cursado definida: ";
+
+    resultado.map((curso) => {
+      mensaje += curso.nombre + "; ";
+    });
+
+    mensaje = mensaje.slice(0, mensaje.length - 2);
+
+    return res.status(200).json({
+      cursosSinAgenda: resultado,
+      exito: false,
+      message: mensaje,
+    });
+  }
+
+  // Pasar las inscripciones pendientes a activas (con todo lo que implica)
+  let cambioInscripciones = await ClaseCicloLectivo.pasarInscripcionesAActivas();
+
   res.status(200).json({
     exito: true,
     message: resultado,
