@@ -2,8 +2,10 @@ const mongoose = require("mongoose");
 const Curso = require("../models/curso");
 const Inscripcion = require("../models/inscripcion");
 const ClaseEstado = require("../classes/estado");
+const CicloLectivo = require("../models/cicloLectivo");
 const ClaseCXM = require("../classes/calificacionXMateria");
 const ClaseInscripcion = require("../classes/inscripcion");
+const { forEach } = require("core-js/fn/array");
 
 //Retorna un array con los cursos que no tienen agenda
 exports.cursosTienenAgenda = () => {
@@ -116,4 +118,41 @@ exports.pasarInscripcionesAActivas = () => {
       }
     });
   });
+};
+
+exports.crearCursosParaCiclo = () => {
+  let añoActual = new Date().getFullYear();
+  CicloLectivo.findOne({ año: añoActual })
+    .then((cicloLectivo) => {
+      let nombresCursos = [
+        "1A",
+        "2A",
+        "3A",
+        "4A",
+        "5A",
+        "6A",
+        "1B",
+        "2B",
+        "3B",
+        "4B",
+        "5B",
+        "6B",
+      ];
+
+      nombresCursos.forEach((nombreCurso) => {
+        let nuevoCurso = new Curso({
+          nombre: nombreCurso,
+          materias: [],
+          capacidad: 30,
+          cicloLectivo: cicloLectivo._id,
+        });
+        nuevoCurso.save();
+      });
+    })
+    .catch((error) => {
+      console.log(
+        "Ocurrio un error creando los cursos para el nuevo ciclo lectivo " +
+          error.message
+      );
+    });
 };

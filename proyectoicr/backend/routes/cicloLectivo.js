@@ -352,8 +352,13 @@ router.use("/estado", (req, res) => {
     });
 });
 
-router.get("/cicloLectivo/inicioCursado", async (req, res) => {
+router.get("/inicioCursado", async (req, res) => {
   // Validar que todas las agendas esten definidas
+  let idCreado = await ClaseEstado.obtenerIdEstado("CicloLectivo", "Creado");
+  let idEnPrimerTrimestre = await ClaseEstado.obtenerIdEstado(
+    "CicloLectivo",
+    "En primer trimestre"
+  );
   let resultado = await ClaseCicloLectivo.cursosTienenAgenda();
 
   if (resultado.length != 0) {
@@ -377,12 +382,28 @@ router.get("/cicloLectivo/inicioCursado", async (req, res) => {
   let cambioInscripciones = await ClaseCicloLectivo.pasarInscripcionesAActivas();
 
   // Crear el proximo ciclo lectivo
+  let cicloProximo = new CicloLectivo({
+    horarioLLegadaTarde: 8,
+    horarioRetiroAnticipado: 10,
+    cantidadFaltasSuspension: 15,
+    cantidadMateriasInscripcionLibre: 3,
+    año: añoActual + 1,
+    estado: idCreado,
+  });
+  await cicloProximo.save();
+
   // Crear los cursos del año siguiente
+  ClaseCicloLectivo.crearCursosParaCiclo(cicloProximo._id);
+
   // Actualizar el estado del actual de Creado a En primer trimestre
+  CicloLectivo.findOneAndUpdate(
+    { año: añoActual, estado: idCreado },
+    { estado: idEnPrimerTrimestre }
+  ).exec();
 
   res.status(200).json({
     exito: true,
-    message: resultado,
+    message: "Inicio de cursado exitoso.",
   });
 });
 

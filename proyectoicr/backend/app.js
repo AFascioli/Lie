@@ -107,11 +107,7 @@ app.get("/status", (req, res, next) => {
 });
 
 const ClaseSuscripcion = require("./classes/suscripcion");
-
-app.get("/testi", async (req, res, next) => {
-  let ids=await ClaseSuscripcion.obtenerIdsUsuarios("5d0ee07c489bdd0830bd1d0d");
-    res.status(200).json({res:ids, msg:"Ok"});
-});
+app.get("/testi", async (req, res, next) => {});
 
 // #resolve Guardar comentarios y diccionario
 // Endpoint save diccionario
