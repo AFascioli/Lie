@@ -78,7 +78,6 @@ export class InscripcionEstudianteComponent implements OnInit, OnDestroy {
     ) {
       this.fechaDentroDeRangoInscripcion = true;
     }
-    //this.authService.getFechasCicloLectivo();
     this.apellidoEstudiante = this.servicioEstudiante.estudianteSeleccionado.apellido;
     this.nombreEstudiante = this.servicioEstudiante.estudianteSeleccionado.nombre;
     this._idEstudiante = this.servicioEstudiante.estudianteSeleccionado._id;
@@ -105,6 +104,7 @@ export class InscripcionEstudianteComponent implements OnInit, OnDestroy {
     this.isLoading = false;
   }
 
+  //#resolve hay que hacer una validacion nueva considerando el estado del ciclo lectivo
   fechaActualEnRangoFechasInscripcion() {
     let fechaInicioInscripcion = new Date(
       this.authService.getFechasCicloLectivo().fechaInicioInscripcion
@@ -134,7 +134,6 @@ export class InscripcionEstudianteComponent implements OnInit, OnDestroy {
       this.yearSelected = this.fechaActual.getFullYear() + 1;
       this.nextYearSelect = true;
     }
-    //this.capacidadCurso = -1;
     this.obtenerCursosEstudiante();
   }
 
