@@ -1,5 +1,11 @@
 table {
   width: 100%;
+  text-align: center;
+}
+
+.centrar
+{
+  text-align: center;
 }
 
 .mat-expansion-panel-body {
@@ -12,6 +18,10 @@ table {
 .mat-expansion-panel {
   background: #ffffff !important;
   box-shadow: 0px 0px 4px 0px rgba(0, 0, 0, 0.31) !important;
+  white-space: normal;
+  overflow-x: auto;
+  margin: auto;
+  max-width: 800px;
 }
 
 .div-button {
