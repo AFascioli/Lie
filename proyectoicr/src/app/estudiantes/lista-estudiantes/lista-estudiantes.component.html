@@ -9,8 +9,8 @@
         <mat-panel-title>
           <b class="titulo-expansion-panel">
             {{ estudiante.apellido }}, {{ estudiante.nombre }} -
-            {{ estudiante.tipoDocumento }}: {{ estudiante.numeroDocumento }} </b
-          ><b *ngIf="inscripto[i]">- Curso: {{ this.cursos[i] }} </b>
+            {{ estudiante.tipoDocumento }}: {{ estudiante.numeroDocumento }}</b
+          ><b class="titulo-expansion-panel" *ngIf="inscripto[i]">&nbsp;- Curso: {{ this.cursos[i] }} </b>
         </mat-panel-title>
       </mat-expansion-panel-header>
       <div
@@ -37,13 +37,6 @@
         <mat-card
           class="opcion"
           [class.opcion-mobile]="mobileQuery.matches"
-          (click)="onRegistrarAR(i)"
-          *ngIf="permisos.inscribirEstudiante > 1"
-          ><b>Registrar adulto responsable</b></mat-card
-        >
-        <mat-card
-          class="opcion"
-          [class.opcion-mobile]="mobileQuery.matches"
           (click)="onRegistrarExamenes(i)"
           *ngIf="
             permisos.notas > 1 &&
@@ -51,7 +44,7 @@
             correspondeRegistrarExamen(i) &&
             materiasPendientes[i]
           "
-          ><b>Registrar examen</b></mat-card
+          ><b>Registrar calificaciones de examen</b></mat-card
         >
         <mat-card
           class="opcion"
@@ -88,7 +81,6 @@
           *ngIf="permisos.inscribirEstudiante >= 1 && inscripto[i]"
           ><b>Visualizar perfil de estudiante</b></mat-card
         >
-        <!-- #wip -->
         <mat-card
           class="opcion"
           [class.opcion-mobile]="mobileQuery.matches"
@@ -96,11 +88,26 @@
           *ngIf="permisos.inscribirEstudiante >= 1 && suspendido[i]"
           ><b>Reincorporar estudiante</b></mat-card
         >
+        <mat-card
+          class="opcion"
+          [class.opcion-mobile]="mobileQuery.matches"
+          (click)="onNotificarReunion(i)"
+          ><b>Enviar notificación de reunión</b></mat-card
+        >
+        <mat-card
+          class="opcion"
+          [class.opcion-mobile]="mobileQuery.matches"
+          (click)="onAsociarAR(i)"
+          *ngIf="permisos.inscribirEstudiante > 1"
+          ><b>Asociar adulto responsable</b></mat-card
+        >
       </div>
     </mat-expansion-panel>
   </div>
 </mat-card>
 
 <mat-card *ngIf="estudiantes.length == 0 && !isLoading">
-  <p>No se encontraron estudiantes</p>
+  <p>
+    <b>No se encontraron estudiantes que coincidan con los datos ingresados</b>
+  </p>
 </mat-card>

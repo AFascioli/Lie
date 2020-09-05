@@ -1,14 +1,18 @@
 const express = require("express");
 const router = express.Router();
 const checkAuthMiddleware = require("../middleware/check-auth");
-const CicloLectivo = require("../models/cicloLectivo");
 const cron = require("node-schedule");
+const CalificacionesXMateria = require("../models/calificacionesXMateria");
+const CicloLectivo = require("../models/cicloLectivo");
 const Inscripcion = require("../models/inscripcion");
 const Estado = require("../models/estado");
 const Estudiante = require("../models/estudiante");
 const ClaseCXM = require("../classes/calificacionXMateria");
 const ClaseEstado = require("../classes/estado");
-const CalificacionesXMateria = require("../models/calificacionesXMateria");
+const ClaseEstudiante = require("../classes/estudiante");
+const ClaseSuscripcion = require("../classes/suscripcion");
+const Curso = require("../models/curso");
+const ClaseCicloLectivo = require("../classes/cicloLectivo");
 
 router.get("/", checkAuthMiddleware, (req, res) => {
   let fechaActual = new Date();
@@ -132,7 +136,7 @@ router.use("/procesoAutomaticoTercerTrimestre", (req, res) => {
   };
 
   cron.scheduleJob(
-     fechas,
+    fechas,
     // date.setSeconds(date.getSeconds() + 5),
     async () => {
       let cxmTotales = await obtenerTodasCXM(2020);
@@ -175,22 +179,39 @@ router.use("/procesoAutomaticoTercerTrimestre", (req, res) => {
           idEstadoCXM
         );
         contadorMateriasDesaprobadas = arrayCXMDesaprobadas.length;
+        let textoNotificacion = "";
         if (contadorMateriasDesaprobadas > 3) {
           idEstadoInscripcion = await ClaseEstado.obtenerIdEstado(
             "Inscripcion",
             "Examenes pendientes"
           );
+          textoNotificacion = " debe rendir materias";
         } else {
           idEstadoInscripcion = await ClaseEstado.obtenerIdEstado(
             "Inscripcion",
             "Promovido"
           );
+          textoNotificacion = " fue promovido";
         }
         contadorMateriasDesaprobadas = 0;
         Inscripcion.findByIdAndUpdate(inscripcion._id, {
           estado: idEstadoInscripcion,
         })
-          .exec()
+          .then(async () => {
+            let idsUsuarios = await ClaseSuscripcion.obtenerIdsUsuarios(
+              inscripcion.idEstudiante
+            );
+            if (idsUsuarios.length > 0) {
+              let datosEstudiante = ClaseEstudiante.obtenerNombreYApellido(
+                inscripcion.idEstudiante
+              );
+              ClaseSuscripcion.notificacionGrupal(
+                idsUsuarios,
+                "Cierre ciclo lectivo",
+                `El estudiante ${datosEstudiante.nombre} ${datosEstudiante.apellido} ${textoNotificacion}`
+              );
+            }
+          })
           .catch(() => {
             res.status(500).json({
               message: "Mensaje de error especifico",
@@ -230,6 +251,12 @@ router.use("/procesoAutomaticoFinExamenes", (req, res) => {
     // fechaActual.setSeconds(fechaActual.getSeconds() + 5),
     fechaFinExamenes,
     async () => {
+      Curso.find().then((cursos) => {
+        cursos.forEach((curso) => {
+          curso.capacidad = 30;
+          curso.save();
+        });
+      });
       let obtenerInscripcionesActivas = () => {
         return new Promise((resolve, reject) => {
           Inscripcion.find({ activa: true })
@@ -279,7 +306,7 @@ router.use("/procesoAutomaticoFinExamenes", (req, res) => {
         }).then(async () => {
           let idEstadoEstudiante = await ClaseEstado.obtenerIdEstado(
             "Estudiante",
-            "Registrado"
+            "Pendiente de inscripcion"
           );
           Estudiante.findByIdAndUpdate(inscripcion.idEstudiante, {
             estado: idEstadoEstudiante,
@@ -288,6 +315,96 @@ router.use("/procesoAutomaticoFinExamenes", (req, res) => {
       }
     }
   );
+});
+
+//Obtiene el estado del ciclo lectivo actual
+router.use("/estado", (req, res) => {
+  let añoActual = new Date().getFullYear();
+  CicloLectivo.aggregate([
+    {
+      $match: {
+        año: añoActual,
+      },
+    },
+    {
+      $lookup: {
+        from: "estado",
+        localField: "estado",
+        foreignField: "_id",
+        as: "datosEstado",
+      },
+    },
+  ])
+    .then((cicloLectivo) => {
+      res.status(200).json({
+        exito: true,
+        message: "Estado encontrado exitosamente",
+        estadoCiclo: cicloLectivo[0].datosEstado[0].nombre,
+      });
+    })
+    .catch((error) => {
+      res.status(400).json({
+        exito: false,
+        message:
+          "Ocurrió un error al obtener el estado del ciclo lectivo: " +
+          error.message,
+      });
+    });
+});
+
+router.get("/inicioCursado", async (req, res) => {
+  // Validar que todas las agendas esten definidas
+  let idCreado = await ClaseEstado.obtenerIdEstado("CicloLectivo", "Creado");
+  let idEnPrimerTrimestre = await ClaseEstado.obtenerIdEstado(
+    "CicloLectivo",
+    "En primer trimestre"
+  );
+  let resultado = await ClaseCicloLectivo.cursosTienenAgenda();
+
+  if (resultado.length != 0) {
+    let mensaje =
+      "Los siguientes cursos no tienen la agenda de cursado definida: ";
+
+    resultado.map((curso) => {
+      mensaje += curso.nombre + "; ";
+    });
+
+    mensaje = mensaje.slice(0, mensaje.length - 2);
+
+    return res.status(200).json({
+      cursosSinAgenda: resultado,
+      exito: false,
+      message: mensaje,
+    });
+  }
+
+  // Pasar las inscripciones pendientes a activas (con todo lo que implica)
+  let cambioInscripciones = await ClaseCicloLectivo.pasarInscripcionesAActivas();
+
+  // Crear el proximo ciclo lectivo
+  let cicloProximo = new CicloLectivo({
+    horarioLLegadaTarde: 8,
+    horarioRetiroAnticipado: 10,
+    cantidadFaltasSuspension: 15,
+    cantidadMateriasInscripcionLibre: 3,
+    año: añoActual + 1,
+    estado: idCreado,
+  });
+  await cicloProximo.save();
+
+  // Crear los cursos del año siguiente
+  ClaseCicloLectivo.crearCursosParaCiclo(cicloProximo._id);
+
+  // Actualizar el estado del actual de Creado a En primer trimestre
+  CicloLectivo.findOneAndUpdate(
+    { año: añoActual, estado: idCreado },
+    { estado: idEnPrimerTrimestre }
+  ).exec();
+
+  res.status(200).json({
+    exito: true,
+    message: "Inicio de cursado exitoso.",
+  });
 });
 
 module.exports = router;

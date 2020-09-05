@@ -8,6 +8,8 @@ import { environment } from "src/environments/environment";
 })
 export class CalificacionesService {
   estudianteSeleccionado: Estudiante;
+  auxCambios=false;
+  avisoResult=false;
 
   constructor(public http: HttpClient) {}
 
@@ -115,7 +117,7 @@ export class CalificacionesService {
       calificacion: calificacion
     };
     return this.http.post<{ message: string; exito: boolean }>(
-      environment.apiUrl + "/calificacion/registrarCalificacionExamen",
+      environment.apiUrl + "/calificacion/examen",
       datosExamen
     );
   }

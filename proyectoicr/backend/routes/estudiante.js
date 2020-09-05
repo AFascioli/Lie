@@ -2,11 +2,13 @@ const express = require("express");
 const Estudiante = require("../models/estudiante");
 const Estado = require("../models/estado");
 const Inscripcion = require("../models/inscripcion");
-//const Suscripcion = require("../classes/suscripcion");
 const router = express.Router();
 const mongoose = require("mongoose");
 const checkAuthMiddleware = require("../middleware/check-auth");
 const ClaseEstudiante = require("../classes/estudiante");
+const ClaseEstado = require("../classes/estado");
+const CicloLectivo = require("../models/cicloLectivo");
+const { error } = require("protractor");
 
 //Registra un nuevo estudiante y pone su estado a registrado
 router.post("", checkAuthMiddleware, (req, res, next) => {
@@ -24,67 +26,49 @@ router.post("", checkAuthMiddleware, (req, res, next) => {
         Estado.findOne({
           ambito: "Estudiante",
           nombre: "Registrado",
-        })
-          .then((estado) => {
-            ClaseEstudiante.CrearEstudiante(
-              req.body.apellido,
-              req.body.nombre,
-              req.body.tipoDocumento,
-              req.body.numeroDocumento,
-              req.body.cuil,
-              req.body.sexo,
-              req.body.calle,
-              req.body.numeroCalle,
-              req.body.piso,
-              req.body.departamento,
-              req.body.provincia,
-              req.body.localidad,
-              req.body.codigoPostal,
-              req.body.nacionalidad,
-              req.body.fechaNacimiento,
-              req.body.estadoCivil,
-              req.body.telefonoFijo,
-              [],
-              true,
-              estado._id
-            )
-              .then((estudiante) => {
-                estudiante
-                  .save()
-                  .then(() => {
-                    res.status(201).json({
-                      message: "Estudiante registrado correctamente",
-                      exito: true,
-                    });
-                  })
-                  .catch(() =>
-                    res.status(500).json({
-                      message:
-                        "Ocurrió un error al querer guardar en la base de datos a un estudiante",
-                      exito: false,
-                    })
-                  );
-              })
-              .catch(() => {
-                res.status(500).json({
-                  message: "Mensaje de error especifico",
-                });
+        }).then((estado) => {
+          ClaseEstudiante.CrearEstudiante(
+            req.body.apellido,
+            req.body.nombre,
+            req.body.tipoDocumento,
+            req.body.numeroDocumento,
+            req.body.cuil,
+            req.body.sexo,
+            req.body.calle,
+            req.body.numeroCalle,
+            req.body.piso,
+            req.body.departamento,
+            req.body.provincia,
+            req.body.localidad,
+            req.body.codigoPostal,
+            req.body.nacionalidad,
+            req.body.fechaNacimiento,
+            req.body.estadoCivil,
+            req.body.telefonoFijo,
+            [],
+            true,
+            estado._id
+          ).then((estudiante) => {
+            estudiante.save().then(() => {
+              res.status(201).json({
+                message: "Estudiante registrado correctamente",
+                exito: true,
               });
-          })
-          .catch(() => {
-            res.status(500).json({
-              message: "Mensaje de error especifico",
             });
           });
+        });
       }
     })
-    .catch(() => {
+    .catch((error) =>
       res.status(500).json({
-        message: "Mensaje de error especifico",
-      });
-    });
+        message: "Ocurrió un error al querer guardar un estudiante",
+        error: error.message,
+        exito: false,
+      })
+    );
 });
 
+//Devuelve un estudiante cuyo id se pasa por parámetro
 router.get("/id", checkAuthMiddleware, (req, res) => {
   Estudiante.findById(req.query.idEstudiante)
     .then((estudiante) => {
@@ -102,12 +86,14 @@ router.get("/id", checkAuthMiddleware, (req, res) => {
         });
       }
     })
-    .catch(() => {
+    .catch((error) => {
       res.status(500).json({
-        message: "Mensaje de error especifico",
+        message: "Ocurrió un error al querer obtener un estudiante",
+        error: error.message,
       });
     });
 });
+
 //Obtiene los adultos responsable de un estudiante
 router.get("/adultosResponsables", (req, res) => {
   Estudiante.aggregate([
@@ -154,42 +140,49 @@ router.get("/adultosResponsables", (req, res) => {
         tutores: AR,
       });
     })
-    .catch(() => {
+    .catch((error) => {
       res.status(500).json({
-        message: "Mensaje de error especifico",
+        message:
+          "Ocurrió un error al obtener los adultos responsable de un estudiante",
+        error: error.message,
       });
     });
 });
 
 //Borrado logico de un estudiante
-router.delete("/borrar", checkAuthMiddleware, (req, res, next) => {
-  Estado.findOne({
-    ambito: "Estudiante",
-    nombre: "De baja",
-  })
-    .then((estado) => {
-      Estudiante.findOneAndUpdate(
-        { _id: req.query._id },
-        { activo: false, estado: estado._id }
-      ).then(() => {
-        Inscripcion.findOne({
-          idEstudiante: req.query._id,
-          activa: true,
-        }).then((inscripcion) => {
-          if (inscripcion) {
-            inscripcion.activa = false;
-            inscripcion.save();
-          }
-          res.status(202).json({
-            message: "Estudiante exitosamente borrado",
-            exito: true,
-          });
+router.delete("/borrar", checkAuthMiddleware, async (req, res, next) => {
+  let idEstadoActiva = await ClaseEstado.obtenerIdEstado(
+    "Inscripcion",
+    "Activa"
+  );
+  let idEstadoInactiva = await ClaseEstado.obtenerIdEstado(
+    "Inscripcion",
+    "Inactiva"
+  );
+  let idEstadoDeBaja = await ClaseEstado.obtenerIdEstado("Estado", "De baja");
+  Estudiante.findOneAndUpdate(
+    { _id: req.query._id },
+    { activo: false, estado: idEstadoDeBaja }
+  )
+    .then(() => {
+      Inscripcion.findOne({
+        idEstudiante: req.query._id,
+        estado: idEstadoActiva,
+      }).then((inscripcion) => {
+        if (inscripcion) {
+          inscripcion.estado = idEstadoInactiva;
+          inscripcion.save();
+        }
+        res.status(202).json({
+          message: "Estudiante exitosamente borrado",
+          exito: true,
         });
       });
     })
-    .catch(() => {
+    .catch((error) => {
       res.status(500).json({
-        message: "Mensaje de error especifico",
+        message: "Ocurrió un borrar un estudiante",
+        error: error.message,
       });
     });
 });
@@ -198,31 +191,26 @@ router.delete("/borrar", checkAuthMiddleware, (req, res, next) => {
 router.get("/curso", checkAuthMiddleware, (req, res) => {
   Estudiante.findOne({ _id: req.query.idEstudiante, activo: true })
     .then((estudiante) => {
-      Estado.findById(estudiante.estado)
-        .then((estado) => {
-          if (estado.nombre == "Inscripto") {
-            res.status(200).json({
-              message:
-                "El estudiante seleccionado ya se encuentra inscripto en un curso",
-              exito: true,
-            });
-          } else {
-            res.status(200).json({
-              message:
-                "El estudiante seleccionado no esta inscripto en un curso",
-              exito: false,
-            });
-          }
-        })
-        .catch(() => {
-          res.status(500).json({
-            message: "Mensaje de error especifico",
+      Estado.findById(estudiante.estado).then((estado) => {
+        if (estado.nombre == "Inscripto") {
+          res.status(200).json({
+            message:
+              "El estudiante seleccionado ya se encuentra inscripto en un curso",
+            exito: true,
           });
-        });
+        } else {
+          res.status(200).json({
+            message: "El estudiante seleccionado no esta inscripto en un curso",
+            exito: false,
+          });
+        }
+      });
     })
-    .catch(() => {
+    .catch((error) => {
       res.status(500).json({
-        message: "Mensaje de error especifico",
+        message:
+          "Ocurrió un error al validar si el estudiante esta inscripto en un curso",
+        error: error.message,
       });
     });
 });
@@ -242,19 +230,25 @@ router.get("/documento", checkAuthMiddleware, (req, res, next) => {
         estudiantes: documents,
       });
     })
-    .catch(() => {
+    .catch((error) => {
       res.status(500).json({
-        message: "Mensaje de error especifico",
+        message:
+          "Ocurrió un error al querer obtener el estudiante por documento",
+        error: error.message,
       });
     });
 });
 
 //Recibe por parametros un vector de los estudiantes con los respectivos documentos entregados
-router.post("/documentos", checkAuthMiddleware, (req, res) => {
+router.post("/documentos", checkAuthMiddleware, async (req, res) => {
   try {
+    let idEstadoActiva = await ClaseEstado.obtenerIdEstado(
+      "Inscripcion",
+      "Activa"
+    );
     req.body.forEach((estudiante) => {
       Inscripcion.findOneAndUpdate(
-        { idEstudiante: estudiante.idEstudiante, activa: true },
+        { idEstudiante: estudiante.idEstudiante, estado: idEstadoActiva },
         { $set: { documentosEntregados: estudiante.documentosEntregados } }
       ).exec();
     });
@@ -262,11 +256,15 @@ router.post("/documentos", checkAuthMiddleware, (req, res) => {
       .status(201)
       .json({ message: "Documentos guardados correctamente", exito: true });
   } catch {
-    res.status(201).json({ message: e, exito: false });
+    res.status(500).json({
+      message: "Ocurrió un error al guardar los documentos del estudiante",
+      error: error.message,
+      exito: false,
+    });
   }
 });
 
-//Modifica un estudiante
+//Modifica los datos de un estudiante
 router.patch("/modificar", checkAuthMiddleware, (req, res, next) => {
   Estudiante.findByIdAndUpdate(req.body._id, {
     apellido: req.body.apellido,
@@ -293,31 +291,33 @@ router.patch("/modificar", checkAuthMiddleware, (req, res, next) => {
         exito: true,
       });
     })
-    .catch(() => {
+    .catch((error) => {
       res.status(200).json({
         message: "Ocurrió un problema al intentar modificar el estudiante",
         exito: false,
+        error: error.message,
       });
     });
 });
 
-//Busqueda de un estudisante por nombre y apellido ignorando mayusculas
+//Busqueda de un estudiante por nombre y apellido ignorando mayusculas
 router.get("/nombreyapellido", checkAuthMiddleware, (req, res, next) => {
   const nombre = req.query.nombre;
   const apellido = req.query.apellido;
   Estudiante.find({
     nombre: { $regex: new RegExp(nombre, "i") },
     apellido: { $regex: new RegExp(apellido, "i") },
-    activo: true
+    activo: true,
   })
     .then((documents) => {
       res.status(200).json({
-        estudiantes: documents
+        estudiantes: documents,
       });
     })
-    .catch(() => {
+    .catch((error) => {
       res.status(500).json({
-        message: "Mensaje de error especifico",
+        message: "Ocurrió un error al querer obtener el estudiante por nombre",
+        error: error.message,
       });
     });
 });
@@ -375,16 +375,22 @@ router.get("/tutores", (req, res) => {
         tutores: tutores,
       });
     })
-    .catch(() => {
+    .catch((error) => {
       res.status(500).json({
-        message: "Mensaje de error especifico",
+        message: "Ocurrió un error al obtener los tutores del estudiante",
+        error: error.message,
       });
     });
 });
 
 //Obtiene todas las cuotas de un estudiante pasado por parámetro
 //@params: id del estudiante
-router.get("/cuotasEstudiante", (req, res) => {
+router.get("/cuotasEstudiante", async (req, res) => {
+  let idEstadoActiva = await ClaseEstado.obtenerIdEstado(
+    "Inscripcion",
+    "Activa"
+  );
+
   Estudiante.aggregate([
     {
       $match: {
@@ -397,32 +403,31 @@ router.get("/cuotasEstudiante", (req, res) => {
         from: "inscripcion",
         localField: "_id",
         foreignField: "idEstudiante",
-        as: "InscripcionEstudiante",
+        as: "inscripcion",
+      },
+    },
+    {
+      $match: {
+        "inscripcion.estado": mongoose.Types.ObjectId(idEstadoActiva),
       },
     },
     {
       $project: {
         _id: 1,
-        InscripcionEstudiante: 1,
+        inscripcion: 1,
       },
     },
   ])
     .then((docs) => {
-      let docPosta = [];
-
-      for (let i = 0; i < docs[0].InscripcionEstudiante.length; i++) {
-        if (docs[0].InscripcionEstudiante[i].activa == true) {
-          docPosta.push(docs[0].InscripcionEstudiante[i]);
-        }
-      }
-      if (docPosta[0].cuotas.length == 0) {
+      console.log(docs);
+      if (docs[0].inscripcion[0].cuotas.length == 0) {
         return res.status(200).json({
           message: "El estudiante no tiene cuotas",
           exito: false,
         });
       }
       let cuo = [];
-      docPosta[0].cuotas.forEach((d) => {
+      docs[0].inscripcion[0].cuotas.forEach((d) => {
         cuo.push([d.mes, d.pagado]);
       });
       return res.status(200).json({
@@ -431,98 +436,110 @@ router.get("/cuotasEstudiante", (req, res) => {
         cuotas: cuo,
       });
     })
-    .catch(() => {
+    .catch((error) => {
       res.status(500).json({
-        message: "Mensaje de error especifico",
+        message: "No se logró obtener las cuotas correctamente",
+        error: error.message,
       });
     });
 });
 
-router.get("/sancionesEstudiante", (req, res) => {
-  let objetoDate= new Date();
-  let añoActual=objetoDate.getFullYear();
-  Estudiante.aggregate([
-    {
-      $match: {
-        _id: mongoose.Types.ObjectId(req.query.idEstudiante),
-        activo: true,
+//Obtiene todas las sanciones de un estudiante pasado por parámetro
+//@params: id del estudiante
+router.get("/sancionesEstudiante", async (req, res) => {
+  let objetoDate = new Date();
+  let añoActual = objetoDate.getFullYear();
+  CicloLectivo.findOne({ año: añoActual }).then((cicloLectivo) => {
+    Estudiante.aggregate([
+      {
+        $match: {
+          _id: mongoose.Types.ObjectId(req.query.idEstudiante),
+          activo: true,
+        },
       },
-    },
-    {
-      $lookup: {
-        from: "inscripcion",
-        localField: "_id",
-        foreignField: "idEstudiante",
-        as: "InscripcionEstudiante",
+      {
+        $lookup: {
+          from: "inscripcion",
+          localField: "_id",
+          foreignField: "idEstudiante",
+          as: "InscripcionEstudiante",
+        },
       },
-    },
-    {
-      $unwind: {
-        path: "$InscripcionEstudiante",
+      {
+        $unwind: {
+          path: "$InscripcionEstudiante",
+        },
       },
-    },
-    {
-      $match: {
-        "InscripcionEstudiante.año": añoActual,
+      {
+        $match: {
+          "InscripcionEstudiante.cicloLectivo": cicloLectivo._id,
+        },
       },
-    },
-    {
-      $project: {
-        _id: 1,
-        InscripcionEstudiante: 1,
+      {
+        $project: {
+          _id: 1,
+          InscripcionEstudiante: 1,
+        },
       },
-    },
-    {
-      $unwind: {
-        path: "$InscripcionEstudiante",
+      {
+        $unwind: {
+          path: "$InscripcionEstudiante",
+        },
       },
-    },
-    {
-      $project: {
-        _id: 0,
-        "InscripcionEstudiante.sanciones": 1,
+      {
+        $project: {
+          _id: 0,
+          "InscripcionEstudiante.sanciones": 1,
+        },
       },
-    },
-  ])
-    .then((inscripciones) => {
-      let sanciones = [];
-      if(inscripciones.length>1){
-        inscripciones.forEach(inscripcion => {
-          sanciones=sanciones.concat(inscripcion.InscripcionEstudiante.sanciones);
-        });
-      }else{
-        sanciones = inscripciones[0].InscripcionEstudiante.sanciones;
-      }
+    ])
+      .then((inscripciones) => {
+        let sanciones = [];
+        if (inscripciones.length > 1) {
+          inscripciones.forEach((inscripcion) => {
+            sanciones = sanciones.concat(
+              inscripcion.InscripcionEstudiante.sanciones
+            );
+          });
+        } else {
+          sanciones = inscripciones[0].InscripcionEstudiante.sanciones;
+        }
 
-      if (sanciones.length == 0) {
-        return res.status(200).json({
-          message: "El estudiante no tiene sanciones",
-          exito: false,
-          sanciones: [],
+        if (sanciones.length == 0) {
+          return res.status(200).json({
+            message: "El estudiante no tiene sanciones",
+            exito: false,
+            sanciones: [],
+          });
+        } else {
+          return res.status(200).json({
+            message: "Se obtuvieron las sanciones exitosamente",
+            exito: true,
+            sanciones: sanciones,
+          });
+        }
+      })
+      .catch((error) => {
+        res.status(500).json({
+          message: "Ocurrió un error al querer obtener las sanciones",
+          error: error.message,
         });
-      } else {
-        return res.status(200).json({
-          message: "Se obtuvieron las sanciones exitosamente",
-          exito: true,
-          sanciones: sanciones,
-        });
-      }
-    })
-    .catch(() => {
-      res.status(500).json({
-        message: "Mensaje de error especifico",
       });
-    });
+  });
 });
 
 //Obtiene la agenda de un curso (materias, horario y día dictadas)
 //@params: idEstudiante
-router.get("/agenda", checkAuthMiddleware, (req, res) => {
+router.get("/agenda", checkAuthMiddleware, async (req, res) => {
+  let idEstadoActiva = await ClaseEstado.obtenerIdEstado(
+    "Inscripcion",
+    "Activa"
+  );
   Inscripcion.aggregate([
     {
       $match: {
         idEstudiante: mongoose.Types.ObjectId(req.query.idEstudiante),
-        activa: true,
+        estado: mongoose.Types.ObjectId(idEstadoActiva),
       },
     },
     {
@@ -622,73 +639,104 @@ router.get("/agenda", checkAuthMiddleware, (req, res) => {
         });
       }
     })
-    .catch(() => {
+    .catch((error) => {
       res.status(500).json({
-        message: "Mensaje de error especifico",
+        message: "Ocurrrió un error al obtener la agenda de curso",
+        error: error.message,
       });
     });
 });
 
-router.get("/suspendido", (req, res) => {
+router.get("/suspendido", async (req, res) => {
+  let idEstadoSuspendido = await ClaseEstado.obtenerIdEstado(
+    "Inscripcion",
+    "Suspendido"
+  );
   Inscripcion.findOne({
-    idEstudiante: mongoose.Types.ObjectId(req.query.idEstudiante),
-    activa: true,
+    idEstudiante: req.query.idEstudiante,
+    estado: idEstadoSuspendido,
   })
     .then((inscripcion) => {
-      Estado.findOne({
-        nombre: "Suspendido",
-        ambito: "Inscripcion",
-      }).then((estado) => {
-        if (inscripcion.estado.toString() == estado._id.toString()) {
-          res.status(200).json({
-            message: "El estudiante esta suspendido",
-            exito: true,
-            inscripcion: inscripcion.estado,
-            estado: estado._id,
-          });
-        } else {
-          res.status(200).json({
-            message: "El estudiante no esta suspendido",
-            exito: false,
-            inscripcion: inscripcion.estado,
-            estado: estado._id,
-          });
-        }
-      });
+      if (inscripcion) {
+        res.status(200).json({
+          message: "El estudiante esta suspendido",
+          exito: true,
+        });
+      } else {
+        res.status(200).json({
+          message: "El estudiante no esta suspendido",
+          exito: false,
+        });
+      }
     })
-    .catch(() => {
+    .catch((error) => {
       res.status(500).json({
         message:
-          "Ah ocurrido un error al validar si el estudiante esta suspendido.",
+          "Ocurrió un error al validar si el estudiante esta suspendido ",
+        error: error.message,
       });
     });
 });
 
-router.get("/reincorporacion", (req, res) => {
+router.get("/estado/suspendido", (req, res) => {
   Estado.findOne({
-    nombre: "Inscripto",
+    nombre: "Suspendido",
     ambito: "Inscripcion",
-  }).then((estado) => {
-    Inscripcion.findOneAndUpdate(
-      { idEstudiante: mongoose.Types.ObjectId(req.query.idEstudiante) },
-      {
-        estado: estado._id,
-      }
-    )
-      .then(() => {
+  })
+    .then((estado) => {
+      if (req.body.idEstado == estado._id.toString()) {
         res.status(200).json({
-          message: "El estudiante esta reincorporado",
+          message: "El estado es suspendido",
           exito: true,
         });
-      })
-      .catch(() => {
-        res.status(500).json({
-          message:
-            "Ah ocurrido un error al registrar la reincorporación del estudiante.",
+      } else {
+        res.status(200).json({
+          message: "El estado no es suspendido",
           exito: false,
         });
+      }
+    })
+    .catch((error) => {
+      res.status(500).json({
+        message:
+          "Ah ocurrido un error al validar si el estudiante esta suspendido",
+        error: error.message,
       });
-  });
+    });
+});
+
+router.get("/reincorporacion", async (req, res) => {
+  let idEstadoActiva = await ClaseEstado.obtenerIdEstado(
+    "Inscripcion",
+    "Activa"
+  );
+  let idEstadoSuspendido = await ClaseEstado.obtenerIdEstado(
+    "Inscripcion",
+    "Suspendido"
+  );
+  Inscripcion.findOneAndUpdate(
+    {
+      idEstudiante: mongoose.Types.ObjectId(req.query.idEstudiante),
+      estado: idEstadoSuspendido,
+    },
+    {
+      estado: idEstadoActiva,
+    }
+  )
+    .then(() => {
+      res.status(200).json({
+        message: "El estudiante esta reincorporado",
+        exito: true,
+      });
+    })
+    .catch((error) => {
+      res.status(500).json({
+        message:
+          "Ocurrió un error al registrar la reincorporación del estudiante.",
+        error: error.message,
+        exito: false,
+      });
+    });
 });
 
 module.exports = router;

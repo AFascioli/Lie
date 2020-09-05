@@ -1,12 +1,8 @@
 <h1 class="componente-titulo">
-  Registrar pago de cuotas
+  Registrar pago de cuotas ciclo lectivo {{ fechaActual.getFullYear() }}
 </h1>
 
-<mat-card class="card-spinner" *ngIf="isLoading">
-  <mat-spinner class="spinner" [diameter]="60"></mat-spinner>
-</mat-card>
-
-<mat-card class="card-body-componente" *ngIf="!isLoading">
+<mat-card class="card-body-componente">
   <div class="div-mes-curso-fecha">
     <div>
       <mat-form-field class="mes">
@@ -63,10 +59,17 @@
       </mat-form-field>
     </div>
   </div>
-  <p class="aviso" *ngIf="fueraPeriodoCicloLectivo">Atención, no se puede registrar las cuotas debido a que estamos fuera del ciclo lectivo </p>
+  <p class="aviso" *ngIf="fueraPeriodoCicloLectivo">
+    Atención, no se puede registrar las cuotas debido a que estamos fuera del
+    ciclo lectivo
+  </p>
   <br />
-  <div *ngIf="!cursoNotSelected">
-    <table mat-table [dataSource]="cuotasXEstudiante" *ngIf="cuotasXEstudiante.length != 0">
+  <div *ngIf="!cursoNotSelected && !isLoading">
+    <table
+      mat-table
+      [dataSource]="cuotasXEstudiante"
+      *ngIf="cuotasXEstudiante.length != 0"
+    >
       <ng-container matColumnDef="apellido">
         <th class="nombre-apellido" mat-header-cell *matHeaderCellDef>
           Apellido/s
@@ -110,7 +113,7 @@
   <div class="div-button">
     <button
       class="button-primary"
-      (click)="onGuardar(mes, curso)"
+      (click)="onGuardar()"
       mat-raised-button
       [disabled]="cursoNotSelected"
     >

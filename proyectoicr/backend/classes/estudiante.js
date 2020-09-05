@@ -48,3 +48,9 @@ exports.CrearEstudiante = async function(
   });
   return estudiante;
 };
+
+exports.obtenerNombreYApellido= function(idEstudiante){
+  Estudiante.findById(idEstudiante).then(estudianteEncontrado => {
+    return {nombre: estudianteEncontrado.nombre, apellido: estudianteEncontrado.apellido};
+  });
+};

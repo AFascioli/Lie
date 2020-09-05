@@ -8,11 +8,13 @@ import { MediaMatcher } from "@angular/cdk/layout";
 @Component({
   selector: "app-datos-estudiante",
   templateUrl: "./cuotas-perfil-estudiante.component.html",
-  styleUrls: ["./cuotas-perfil-estudiante.component.css"]
+  styleUrls: ["./cuotas-perfil-estudiante.component.css"],
 })
 export class CuotasPerfilEstudianteComponent implements OnInit, OnDestroy {
+  apellidoEstudiante: string;
+  nombreEstudiante: string;
   estudiante: Estudiante;
-  cuotasV: any[] = [];
+  estadoCuotasXMes: any[] = [];
   datasource: any[] = [];
   displayedColumns: string[] = ["Mes", "Pagado"];
   private unsubscribe: Subject<void> = new Subject();
@@ -33,9 +35,11 @@ export class CuotasPerfilEstudianteComponent implements OnInit, OnDestroy {
     this.servicio
       .getCuotasDeEstudiante()
       .pipe(takeUntil(this.unsubscribe))
-      .subscribe(respuesta => {
-        this.cuotasV = respuesta.cuotas;
+      .subscribe((respuesta) => {
+        this.estadoCuotasXMes = respuesta.cuotas;
       });
+      this.apellidoEstudiante = this.servicio.estudianteSeleccionado.apellido;
+      this.nombreEstudiante = this.servicio.estudianteSeleccionado.nombre;
   }
 
   ngOnDestroy() {
@@ -43,13 +47,8 @@ export class CuotasPerfilEstudianteComponent implements OnInit, OnDestroy {
     this.unsubscribe.complete();
   }
 
-  //ver de hacerlo mejor
   getMes(i) {
     switch (i) {
-      case 1:
-        return "Enero";
-      case 2:
-        return "Febrero";
       case 3:
         return "Marzo";
       case 4:

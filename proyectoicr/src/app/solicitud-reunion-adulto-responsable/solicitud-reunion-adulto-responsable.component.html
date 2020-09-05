@@ -1,0 +1,98 @@
+<h1 class="componente-titulo">
+  Solicitud de reunión con docente
+</h1>
+
+<mat-card class="card-body-componente">
+  <p class="aviso" *ngIf="docentes == null || docentes.length == 0">
+    <b> No existen docentes asociados para este curso </b>
+  </p>
+  <table
+    mat-table
+    [dataSource]="docentes"
+    *ngIf="docentes && docentes.length != 0"
+  >
+    <ng-container matColumnDef="apellido">
+      <th class="columnas-normales" mat-header-cell *matHeaderCellDef>
+        Apellido/s
+      </th>
+      <td class="columnas-normales" mat-cell *matCellDef="let docente">
+        {{ docente.apellido }}
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="nombre">
+      <th class="columnas-normales" mat-header-cell *matHeaderCellDef>
+        Nombre/s
+      </th>
+      <td class="columnas-normales" mat-cell *matCellDef="let docente">
+        {{ docente.nombre }}
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="materia">
+      <th class="columnas-normales" mat-header-cell *matHeaderCellDef>
+        Materia
+      </th>
+      <td class="columnas-normales" mat-cell *matCellDef="let docente">
+        {{ docente.materia }}
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="notificar">
+      <th class="columnas-normales" mat-header-cell *matHeaderCellDef>
+        Notificar
+      </th>
+      <td
+        class="columnas-normales"
+        mat-cell
+        *matCellDef="let docente; let i = index"
+      >
+        <mat-checkbox
+          (change)="onSeleccionado(i, $event)"
+          [checked]="docentes[i].seleccionado"
+        >
+        </mat-checkbox>
+      </td>
+    </ng-container>
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+  </table>
+  <p class="aviso" *ngIf="docentes && docentes.length != 0">
+    Solo puede enviarle una solicitud a un solo docente
+  </p>
+
+  <p class="aviso" *ngIf="docentes && docentes.length == 0">
+    Los docentes de este curso no pueden recibir notificaciones
+  </p>
+  <form #form="ngForm">
+    <mat-form-field *ngIf="docentes && docentes.length != 0">
+      <textarea
+        matInput
+        name="cuerpo"
+        ngModel
+        #cuerpo="ngModel"
+        rows="3"
+        placeholder="Ingrese el cuerpo de la notificación"
+        type="text"
+        [maxLength]="200"
+      >
+      </textarea>
+    </mat-form-field>
+
+    <div class="div-button">
+      <button
+        class="button-primary"
+        *ngIf="docentes && docentes.length != 0"
+        (click)="onEnviar(form)"
+        mat-raised-button
+      >
+        Enviar
+      </button>
+
+      <button
+        mat-raised-button
+        [routerLink]="['/perfilEstudiante']"
+        class="button-warn"
+      >
+        Volver
+      </button>
+    </div>
+  </form>
+</mat-card>

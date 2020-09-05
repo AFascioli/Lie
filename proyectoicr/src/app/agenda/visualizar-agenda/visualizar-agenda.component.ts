@@ -12,6 +12,7 @@ import { Subject } from "rxjs";
   styleUrls: ["./visualizar-agenda.component.css"],
 })
 export class VisualizarAgendaComponent implements OnInit, OnDestroy {
+  fechaActual: Date;
   dias = ["Hora", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes"];
   //Agrego Hora en los dos vectores para que el calculo sea siempre +1 +2
   modulo = [
@@ -37,7 +38,7 @@ export class VisualizarAgendaComponent implements OnInit, OnDestroy {
   mobileQuery: MediaQueryList;
   private unsubscribe: Subject<void> = new Subject();
   isLoading = true;
-  agendaVacia: boolean=false;
+  agendaVacia: boolean = false;
 
   constructor(
     public servicioEstudiante: EstudiantesService,
@@ -52,6 +53,7 @@ export class VisualizarAgendaComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.fechaActual = new Date();
     this.obtenerCursos();
   }
 
@@ -62,15 +64,7 @@ export class VisualizarAgendaComponent implements OnInit, OnDestroy {
         .obtenerAgendaDeCurso(idCurso)
         .pipe(takeUntil(this.unsubscribe))
         .subscribe(async (agenda) => {
-          if (agenda.exito) {
-            this.cursoSelected = true;
-          } else {
-            this.cursoSelected = false;
-            this.snackBar.open(agenda.message, "", {
-              panelClass: ["snack-bar-fracaso"],
-              duration: 3000,
-            });
-          }
+          if (agenda.exito) this.cursoSelected = true;
           this.materias = agenda.agenda;
           this.getMateriasDistintas();
           this.getColorVector();
@@ -83,19 +77,20 @@ export class VisualizarAgendaComponent implements OnInit, OnDestroy {
   actualizarInterfaz(idCurso) {
     (async () => {
       let agenda: any = await this.obtenerAgenda(idCurso.value);
-      if(agenda.length!=0){
+      if (agenda.length != 0) {
         agenda.forEach((materia, index) => {
           this.setInGrid(index.toString(), materia);
+          this.agendaVacia = false;
         });
-      }else{
-        this.agendaVacia=true;
+      } else {
+        this.agendaVacia = true;
       }
     })();
   }
 
   obtenerCursos() {
     this.servicioEstudiante
-      .obtenerCursos()
+      .obtenerCursos(this.fechaActual.getFullYear())
       .pipe(takeUntil(this.unsubscribe))
       .subscribe((response) => {
         this.cursos = response.cursos;
@@ -134,20 +129,21 @@ export class VisualizarAgendaComponent implements OnInit, OnDestroy {
   }
 
   getColorVector() {
-    this.colores[0] = "#eb9788";
-    this.colores[1] = "#c05c7e";
-    this.colores[2] = "#f3826f";
-    this.colores[3] = "#ffb961";
-    this.colores[4] = "#899857";
-    this.colores[5] = "#ba6b57";
-    this.colores[6] = "#e7b2a5";
-    this.colores[7] = "#6e5773";
-    this.colores[8] = "#f1935c";
-    this.colores[9] = "#a3f7bf";
-    this.colores[10] = "#ce0f3d";
+    this.colores[0] = "#0794DB"; // azul
+    this.colores[1] = "#08AF1C"; // verde
+    this.colores[2] = "#FF5733"; // naranja
+    this.colores[3] = "#DCA801"; // amarillo
+    this.colores[4] = "#900C3F"; // bordo
+    this.colores[5] = "#9003CD"; // morado
+    this.colores[6] = "#03B0A5"; // celeste
+    this.colores[7] = "#383838"; // negro
+    this.colores[8] = "#CE0090"; // rosa
+    this.colores[9] = "#81B002"; // verde mar
+    this.colores[10] = "#CD170B"; // rojo
   }
 
   getMateriasDistintas() {
+    this.materiasDistintas = [];
     for (let i = 0; i < this.materias.length; i++) {
       if (
         this.materiasDistintas.length == 0 ||

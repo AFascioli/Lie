@@ -3,7 +3,7 @@
 </mat-card>
 
 <h1 *ngIf="!isLoading" class="componente-titulo">
-  Visualizar agenda de curso
+  Visualizar agenda de curso ciclo lectivo {{ fechaActual.getFullYear() }}
 </h1>
 
 <mat-card class="card-body-componente" *ngIf="!isLoading">
@@ -130,11 +130,14 @@
         </div>
       </div>
     </div>
-    <p class="agenda-vacia" *ngIf="agendaVacia">El curso seleccionado no tiene materias registradas</p>
-    <div class="div-button">
-      <button mat-raised-button [routerLink]="['/home']" class="button-warn">
-        Volver
-      </button>
-    </div>
+  </div>
+  <p class="agenda-vacia" *ngIf="agendaVacia">
+    El curso seleccionado no tiene materias registradas
+  </p>
+
+  <div class="div-button">
+    <button mat-raised-button [routerLink]="['/home']" class="button-warn">
+      Volver
+    </button>
   </div>
 </mat-card>

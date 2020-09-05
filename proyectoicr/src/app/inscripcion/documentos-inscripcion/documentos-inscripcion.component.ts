@@ -6,12 +6,12 @@ import { Component, OnInit, OnDestroy, ChangeDetectorRef } from "@angular/core";
 import { MatDialog, MatDialogConfig, MatSnackBar } from "@angular/material";
 import { takeUntil } from "rxjs/operators";
 import { Subject } from "rxjs";
-import { MediaMatcher } from '@angular/cdk/layout';
+import { MediaMatcher } from "@angular/cdk/layout";
 
 @Component({
   selector: "app-documentos-inscripcion",
   templateUrl: "./documentos-inscripcion.component.html",
-  styleUrls: ["./documentos-inscripcion.component.css"]
+  styleUrls: ["./documentos-inscripcion.component.css"],
 })
 export class DocumentosInscripcionComponent implements OnInit, OnDestroy {
   cursos: any[];
@@ -22,13 +22,14 @@ export class DocumentosInscripcionComponent implements OnInit, OnDestroy {
     "nombre",
     "fotocopiaDoc",
     "fichaMed",
-    "informeAnt"
+    "informeAnt",
   ];
   matConfig = new MatDialogConfig();
   documentosEntregadosOnChange = false;
   fueraPeriodoCicloLectivo = false;
   fechaActual: Date;
   isLoading = true;
+  isLoading2 = false;
   private unsubscribe: Subject<void> = new Subject();
   _mobileQueryListener: () => void;
   mobileQuery: MediaQueryList;
@@ -62,18 +63,18 @@ export class DocumentosInscripcionComponent implements OnInit, OnDestroy {
       this.autenticacionService.getRol() == "Admin"
     ) {
       this.servicioEstudiante
-        .obtenerCursos()
+        .obtenerCursos(this.fechaActual.getFullYear())
         .pipe(takeUntil(this.unsubscribe))
-        .subscribe(response => {
+        .subscribe((response) => {
           this.cursos = response.cursos;
           this.cursos.sort((a, b) =>
-          a.nombre.charAt(0) > b.nombre.charAt(0)
-            ? 1
-            : b.nombre.charAt(0) > a.nombre.charAt(0)
-            ? -1
-            : 0
-        );
-      this.isLoading = false;
+            a.nombre.charAt(0) > b.nombre.charAt(0)
+              ? 1
+              : b.nombre.charAt(0) > a.nombre.charAt(0)
+              ? -1
+              : 0
+          );
+          this.isLoading = false;
         });
     } else {
       this.fueraPeriodoCicloLectivo = true;
@@ -96,13 +97,14 @@ export class DocumentosInscripcionComponent implements OnInit, OnDestroy {
 
   //Cuando el usuario selecciona una division, se obtienen los datos del estudiantes necesarios
   onCursoSeleccionado(curso) {
+    this.isLoading2 = true;
     this.cursoSeleccionado = true;
     this.servicioInscripcion
       .obtenerDocumentosDeEstudiantesXCurso(curso.value)
       .pipe(takeUntil(this.unsubscribe))
-      .subscribe(estudiantes => {
+      .subscribe((estudiantes) => {
         this.estudiantesConDocumentos = estudiantes.documentos;
-        if(estudiantes.documentos.length!=0){
+        if (estudiantes.documentos.length != 0) {
           this.estudiantesConDocumentos = this.estudiantesConDocumentos.sort(
             (a, b) =>
               a.datosEstudiante[0].apellido > b.datosEstudiante[0].apellido
@@ -112,6 +114,7 @@ export class DocumentosInscripcionComponent implements OnInit, OnDestroy {
                 : 0
           );
         }
+        this.isLoading2 = false;
       });
     this.documentosEntregadosOnChange = false;
   }
@@ -128,20 +131,20 @@ export class DocumentosInscripcionComponent implements OnInit, OnDestroy {
     this.servicioInscripcion
       .registrarDocumentosInscripcion(this.estudiantesConDocumentos)
       .pipe(takeUntil(this.unsubscribe))
-      .subscribe(response => {
+      .subscribe((response) => {
         if (response.exito) {
           this.snackBar.open(
             "Se registró correctamente la documentación de los estudiantes",
             "",
             {
               panelClass: ["snack-bar-exito"],
-              duration: 4000
+              duration: 4000,
             }
           );
         } else {
           this.snackBar.open("Ocurrió un problema al tratar de guardar", "", {
             panelClass: ["snack-bar-fracaso"],
-            duration: 4500
+            duration: 4500,
           });
         }
       });
@@ -149,7 +152,7 @@ export class DocumentosInscripcionComponent implements OnInit, OnDestroy {
 
   onCancelar() {
     this.popup.open(CancelPopupComponent, {
-      width: "250px"
+      width: "250px",
     });
   }
 }

@@ -103,6 +103,7 @@ export class AutenticacionService implements OnDestroy {
     return this.fechasCicloLectivo;
   }
 
+  // Devuelve la id de usuario logeado.
   public getId() {
     return this.id;
   }
@@ -370,8 +371,8 @@ export class AutenticacionService implements OnDestroy {
 
   obtenerNombreApellido() {
     let params = new HttpParams()
-    .set("idUsuario", this.id)
-    .append("rol", this.rol);
+      .set("idUsuario", this.id)
+      .append("rol", this.rol);
     return this.http.get<{
       message: string;
       exito: boolean;
@@ -381,15 +382,27 @@ export class AutenticacionService implements OnDestroy {
     });
   }
 
-  obtenerIdEmpleado(idUsuario: string){
-    let params = new HttpParams()
-    .set("idUsuario", idUsuario);
+  obtenerIdEmpleado(idUsuario: string) {
+    let params = new HttpParams().set("idUsuario", idUsuario);
     return this.http.get<{
       message: string;
       exito: boolean;
       id: string;
     }>(environment.apiUrl + "/empleado/id", {
-      params: params
+      params: params,
+    });
+  }
+
+  validarDatos(dni, tipoDoc, email) {
+    let params = new HttpParams()
+      .set("DNI", dni)
+      .set("TipoDocumento", tipoDoc)
+      .set("email", email);
+    return this.http.get<{
+      exito: boolean;
+      message: string;
+    }>(environment.apiUrl + "/usuario/validate", {
+      params: params,
     });
   }
 }

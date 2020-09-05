@@ -40,10 +40,25 @@ export class RegistrarEventoComponent implements OnInit, OnDestroy {
   chipsCtrl = new FormControl();
   filteredChips: Observable<string[]>;
   chips: string[] = [];
-  allChips: string[] = ["1A","1B", "2A","2B", "3A","3B", "4A","4B", "5A","5B", "6A","6B", "Todos los cursos"];
-  horaInicio = "";
-  horaFin = "";
-
+  allChips: string[] = [
+    "1A",
+    "1B",
+    "2A",
+    "2B",
+    "3A",
+    "3B",
+    "4A",
+    "4B",
+    "5A",
+    "5B",
+    "6A",
+    "6B",
+    "Todos los cursos",
+  ];
+  horaInicioEvento: string;
+  horaFinEvento: string;
+  horaMinimaEvento: string;
+  fechaSeleccionada: Date;
   slideIndex = 1;
   fechaActual: Date;
   imagesFile: any = [];
@@ -61,7 +76,7 @@ export class RegistrarEventoComponent implements OnInit, OnDestroy {
     public changeDetectorRef: ChangeDetectorRef,
     public media: MediaMatcher
   ) {
-    this.mobileQuery = media.matchMedia("(max-width: 800px)"); //Estaba en 800, lo tiro a 1000
+    this.mobileQuery = media.matchMedia("(max-width: 800px)");
     this._mobileQueryListener = () => changeDetectorRef.detectChanges();
     this.mobileQuery.addListener(this._mobileQueryListener);
     this.filtrarChips();
@@ -69,7 +84,7 @@ export class RegistrarEventoComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.fechaActual = new Date();
-    this.inicializarPickers();
+    this.horaMinimaEvento = `${this.fechaActual.getHours() + 2}:00`;
   }
 
   registrarEvento(fechaEvento, form) {
@@ -78,8 +93,8 @@ export class RegistrarEventoComponent implements OnInit, OnDestroy {
         form.value.titulo,
         form.value.descripcion,
         fechaEvento,
-        this.horaInicio,
-        this.horaFin,
+        this.horaInicioEvento,
+        this.horaFinEvento,
         this.chips,
         this.imagesFile
       )
@@ -105,8 +120,8 @@ export class RegistrarEventoComponent implements OnInit, OnDestroy {
     if (form.valid && this.chips.length != 0) {
       const fechaEvento = form.value.fechaEvento.toString();
       if (
-        (this.horaInicio == "" && this.horaFin == "") ||
-        this.horaEventoEsValido(this.horaInicio, this.horaFin)
+        (this.horaInicioEvento == "" && this.horaFinEvento == "") ||
+        this.horaEventoEsValido(this.horaInicioEvento, this.horaFinEvento)
       ) {
         this.registrarEvento(fechaEvento, form);
       } else {
@@ -133,6 +148,14 @@ export class RegistrarEventoComponent implements OnInit, OnDestroy {
     return variableDateInicio < variableDateFin;
   }
 
+  setearHoraMinima() {
+    if (
+      this.fechaSeleccionada.getDay() == this.fechaActual.getDay() &&
+      this.fechaSeleccionada.getMonth() == this.fechaActual.getMonth()
+    )
+      this.horaMinimaEvento = `${this.fechaActual.getHours() + 2}:00`;
+    else this.horaMinimaEvento = "07:00";
+  }
   popUpCancelar() {
     this.dialog.open(CancelPopupComponent, {
       width: "250px",
@@ -173,7 +196,9 @@ export class RegistrarEventoComponent implements OnInit, OnDestroy {
     }
   }
 
-  selected(event: MatAutocompleteSelectedEvent): void {
+  //Agregado que cuando se selecciona una opcion, el input pierde focus para
+  //que sea mas facil que el usuario pueda elegir otra
+  selected(event: MatAutocompleteSelectedEvent, chipsInput: HTMLElement): void {
     if (event.option.viewValue == "Todos los cursos") {
       this.chips = [];
       this.chips.push(event.option.viewValue);
@@ -188,6 +213,7 @@ export class RegistrarEventoComponent implements OnInit, OnDestroy {
     }
     this.chipsInput.nativeElement.value = "";
     this.chipsCtrl.setValue(null);
+    chipsInput.blur();
   }
 
   private _filter(value: string): string[] {
@@ -196,31 +222,6 @@ export class RegistrarEventoComponent implements OnInit, OnDestroy {
     return this.allChips.filter(
       (chip) => chip.toLowerCase().indexOf(filterValue) === 0
     );
-  }
-
-  inicializarPickers() {
-    new Rolldate({
-      el: "#pickerInicio",
-      format: "hh:mm",
-      minStep: 15,
-      lang: {
-        title: "Seleccione hora de inicio del evento",
-        hour: "",
-        min: "",
-      },
-      confirm: (date) => {
-        this.horaInicio = date;
-      },
-    });
-    new Rolldate({
-      el: "#pickerFin",
-      format: "hh:mm",
-      minStep: 15,
-      lang: { title: "Seleccione hora de fin del evento", hour: "", min: "" },
-      confirm: (date) => {
-        this.horaFin = date;
-      },
-    });
   }
 
   resizeOptions: ResizeOptions = {
@@ -245,7 +246,7 @@ export class RegistrarEventoComponent implements OnInit, OnDestroy {
 
   onEliminarImagen(index) {
     this.imgURL.splice(index, 1);
-    this.imagesFile.splice(index,1);
+    this.imagesFile.splice(index, 1);
     this.moveFromCurrentSlide(1);
   }
 

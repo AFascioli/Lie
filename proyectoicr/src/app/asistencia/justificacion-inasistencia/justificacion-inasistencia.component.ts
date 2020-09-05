@@ -5,6 +5,7 @@ import { MatSnackBar } from "@angular/material";
 import { MatDialog } from "@angular/material";
 import { takeUntil } from "rxjs/operators";
 import { Subject } from "rxjs";
+import { NgForm } from "@angular/forms";
 
 @Component({
   selector: "app-justificacion-inasistencia",
@@ -57,30 +58,49 @@ export class JustificacionInasistenciaComponent implements OnInit, OnDestroy {
     }
   }
 
+  //Se fija si el usuario hizo cambios en la interfaz
+  huboCambios() {
+    for (const inasistencia of this.ultimasInasistencias) {
+      if (inasistencia.justificado) return true;
+    }
+    return false;
+  }
+
   justificarInasistencia() {
-    this.servicioAsistencia
-      .justificarInasistencia(this.ultimasInasistencias)
-      .pipe(takeUntil(this.unsubscribe))
-      .subscribe(
-        (response) => {
-          let tipoSnackBar = "snack-bar-fracaso";
-          if (response.exito) {
-            tipoSnackBar = "snack-bar-exito";
+    if (this.huboCambios()) {
+      this.servicioAsistencia
+        .justificarInasistencia(this.ultimasInasistencias)
+        .pipe(takeUntil(this.unsubscribe))
+        .subscribe(
+          (response) => {
+            let tipoSnackBar = "snack-bar-fracaso";
+            if (response.exito) {
+              tipoSnackBar = "snack-bar-exito";
+            }
+            this.snackBar.open(response.message, "", {
+              panelClass: [tipoSnackBar],
+              duration: 4500,
+            });
+            this.ngOnInit();
+          },
+          (error) => {
+            console.error(
+              "Ocurrió un error al querer publicar el estado de las inasistencias (justificada / injustificada). " +
+                "El error se puede describir de la siguiente manera: " +
+                error
+            );
           }
-          this.snackBar.open(response.message, "", {
-            panelClass: [tipoSnackBar],
-            duration: 4500,
-          });
-          this.ngOnInit();
-        },
-        (error) => {
-          console.error(
-            "Ocurrió un error al querer publicar el estado de las inasistencias (justificada / injustificada). " +
-              "El error se puede describir de la siguiente manera: " +
-              error
-          );
+        );
+    } else {
+      this.snackBar.open(
+        "No se seleccionó ninguna inasistencia para justificar",
+        "",
+        {
+          panelClass: ["snack-bar-fracaso"],
+          duration: 4500,
         }
       );
+    }
   }
 
   fechaActualEnPeriodoCursado() {

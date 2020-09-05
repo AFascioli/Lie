@@ -28,6 +28,7 @@ export class VisualizarEventoComponent implements OnInit, OnDestroy {
   horaFinal: string;
   private unsubscribe: Subject<void> = new Subject();
   slideIndex: number = 1;
+  isLoading: boolean = false;
 
   constructor(
     public eventoService: EventosService,
@@ -39,17 +40,17 @@ export class VisualizarEventoComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
+    this.isLoading = true;
     this.evento = this.eventoService.eventoSeleccionado;
-    setTimeout(() => {
-      this.showSlide(1);
-    }, 500);
     this.eventoService
       .obtenerComentariosDeEvento()
       .pipe(takeUntil(this.unsubscribe))
       .subscribe((rtdo) => {
         this.eventoService.comentarios = rtdo.comentarios.reverse();
         this.actualizarPermisos();
+        this.isLoading = false;
       });
+    this.showSlide(1);
   }
 
   ngOnDestroy() {

@@ -1,18 +1,78 @@
 const express = require("express");
-const Inscripcion = require("../models/inscripcion");
-const AsistenciaDiaria = require("../models/asistenciaDiaria");
-const CicloLectivo = require("../models/cicloLectivo");
 const router = express.Router();
 const mongoose = require("mongoose");
 const checkAuthMiddleware = require("../middleware/check-auth");
-const ClaseAsistencia = require("../classes/asistencia");
-const Estudiante = require("../models/estudiante");
-const Suscripcion = require("../classes/suscripcion");
 const Estado = require("../models/estado");
+const Estudiante = require("../models/estudiante");
+const Inscripcion = require("../models/inscripcion");
+const AsistenciaDiaria = require("../models/asistenciaDiaria");
+const ClaseSuscripcion = require("../classes/suscripcion");
+const ClaseAsistencia = require("../classes/asistencia");
+const ClaseEstado = require("../classes/estado");
+
+async function validarLibreInasistencias(idEst, valorInasistencia) {
+  const idEstadoSuspendido = await ClaseEstado.obtenerIdEstado(
+    "Inscripcion",
+    "Suspendido"
+  );
+  const idEstadoActiva = await ClaseEstado.obtenerIdEstado(
+    "Inscripcion",
+    "Activa"
+  );
+  Inscripcion.findOne({
+    idEstudiante: idEst,
+    estado: idEstadoActiva,
+  })
+    .then(async (inscripcion) => {
+      if (
+        inscripcion.contadorInasistenciasInjustificada % 14 == 0 &&
+        valorInasistencia == 1
+      ) {
+        Inscripcion.findOneAndUpdate(
+          {
+            idEstudiante: idEst,
+            estado: idEstadoSuspendido,
+          },
+          { estado: mongoose.Types.ObjectId(idEstadoSuspendido) }
+        ).exec();
+      } else if (inscripcion.contadorInasistenciasInjustificada % 12 == 0) {
+        //No fijamos si el estudiante tiene 12 inasistencias, para luego notificar a los AR
+        let idsUsuariosAR = await ClaseSuscripcion.obtenerIdsUsuarios(idEst);
+        let idsUsuarios = await ClaseSuscripcion.filtrarARPorPreferencias(
+          idsUsuariosAR,
+          "Falta 12"
+        );
+        //Si existen ARs que aceptan este tipo de notificacion, manda
+        idsUsuarios.length > 0 &&
+          Estudiante.findById(idEst).then((estudianteEncontrado) => {
+            ClaseSuscripcion.notificacionGrupal(
+              idsUsuarios,
+              "Atención",
+              `El estudiante ${estudianteEncontrado.nombre} ${estudianteEncontrado.apellido} tiene solo 3 inasistencias antes de que sea suspendido`
+            );
+          });
+      }
+    })
+    .catch(() => {
+      res.status(500).json({
+        message: "No se pudo obtener el estado suspendido",
+      });
+    });
+}
 
 //Retorna vector con datos de los estudiantes y presente. Si ya se registro una asistencia para
 //el dia de hoy se retorna ese valor de la asistencia, sino se "construye" una nueva
-router.get("", checkAuthMiddleware, (req, res) => {
+// @params: req.query.curso Nombre en string del curso que se esta por tomar asistencia
+router.get("", async (req, res) => {
+  const idEstadoActiva = await ClaseEstado.obtenerIdEstado(
+    "Inscripcion",
+    "Activa"
+  );
+  const idEstadoSuspendido = await ClaseEstado.obtenerIdEstado(
+    "Inscripcion",
+    "Suspendido"
+  );
+
   Inscripcion.aggregate([
     {
       $lookup: {
@@ -25,7 +85,12 @@ router.get("", checkAuthMiddleware, (req, res) => {
     {
       $match: {
         "curso.nombre": req.query.curso,
-        activa: true,
+        estado: {
+          $in: [
+            mongoose.Types.ObjectId(idEstadoActiva),
+            mongoose.Types.ObjectId(idEstadoSuspendido),
+          ],
+        },
       },
     },
     {
@@ -86,7 +151,12 @@ router.get("", checkAuthMiddleware, (req, res) => {
           {
             $match: {
               "curso.nombre": req.query.curso,
-              activa: true,
+              estado: {
+                $in: [
+                  mongoose.Types.ObjectId(idEstadoActiva),
+                  mongoose.Types.ObjectId(idEstadoSuspendido),
+                ],
+              },
             },
           },
           {
@@ -185,7 +255,15 @@ router.get("", checkAuthMiddleware, (req, res) => {
             },
           },
           {
-            $match: { "curso.nombre": req.query.curso, activa: true },
+            $match: {
+              "curso.nombre": req.query.curso,
+              estado: {
+                $in: [
+                  mongoose.Types.ObjectId(idEstadoActiva),
+                  mongoose.Types.ObjectId(idEstadoSuspendido),
+                ],
+              },
+            },
           },
           {
             $project: {
@@ -231,17 +309,80 @@ router.get("", checkAuthMiddleware, (req, res) => {
 // luego crea la asistencia diaria usando la _id de la inscripcion, luego guarda la asistenciaDiaria y
 // guarda la _id de esta asistenciaDiaria en el vector de asistenciasDiarias de la inscripcion.
 // Si ya se tomo asistencia en el dia, se actualiza el valor presente de la asistencia individual.
-router.post("", checkAuthMiddleware, (req, res) => {
-  if (req.query.asistenciaNueva == "true") {
-    req.body.forEach((estudiante) => {
-      var valorInasistencia = 0;
-      if (!estudiante.presente) {
-        valorInasistencia = 1;
-      }
-      Inscripcion.findOne({
-        idEstudiante: estudiante._id,
-        activa: true,
-      }).then(async (inscripcion) => {
+router.post("", checkAuthMiddleware, async (req, res) => {
+  let idEstadoActiva = await ClaseEstado.obtenerIdEstado(
+    "Inscripcion",
+    "Activa"
+  );
+  let idsEstudiantes = [];
+  req.body.forEach((estudiante) => {
+    var valorInasistencia = 0;
+    if (!estudiante.presente) {
+      valorInasistencia = 1;
+      idsEstudiantes.push(estudiante._id);
+    }
+    Inscripcion.findOne({
+      idEstudiante: estudiante._id,
+      estado: idEstadoActiva,
+    }).then(async (inscripcion) => {
+      if (inscripcion.asistenciaDiaria.length > 0) {
+        var idAD =
+          inscripcion.asistenciaDiaria[inscripcion.asistenciaDiaria.length - 1]
+            ._id;
+        AsistenciaDiaria.findById(idAD).then(async (asistencia) => {
+          if (!ClaseAsistencia.esFechaActual(asistencia.fecha)) {
+            // Condición si la ultima no asistencia corresponde al dia de hoy
+            var asistenciaEstudiante = new AsistenciaDiaria({
+              idInscripcion: inscripcion._id,
+              fecha: estudiante.fecha,
+              presente: estudiante.presente,
+              valorInasistencia: valorInasistencia,
+              justificado: false,
+              llegadaTarde: false,
+            });
+
+            await asistenciaEstudiante.save().then(async (asistenciaDiaria) => {
+              await inscripcion.asistenciaDiaria.push(asistenciaDiaria._id);
+              inscripcion.contadorInasistenciasInjustificada =
+                inscripcion.contadorInasistenciasInjustificada +
+                valorInasistencia;
+              inscripcion.save();
+            });
+          } else {
+            // Si la ultima asistencia si es de hoy
+            //Si estaba presente en la bd y se cambio a ausente incrementa contador inasistencia
+            if (asistencia.presente && !estudiante.presente) {
+              idsEstudiantes.push(estudiante._id);
+              AsistenciaDiaria.findByIdAndUpdate(asistencia._id, {
+                presente: estudiante.presente,
+              }).then(() => {
+                Inscripcion.findOneAndUpdate(
+                  {
+                    idEstudiante: estudiante._id,
+                    estado: idEstadoActiva,
+                  },
+                  { $inc: { contadorInasistenciasInjustificada: 1 } }
+                ).exec();
+              });
+              validarLibreInasistencias(estudiante._id, 1);
+            }
+            //Si estaba ausente y lo pasaron a presente decrementa contador inasistencia
+            else if (!asistencia.presente && estudiante.presente) {
+              AsistenciaDiaria.findByIdAndUpdate(asistencia._id, {
+                presente: estudiante.presente,
+              }).then(() => {
+                Inscripcion.findOneAndUpdate(
+                  {
+                    idEstudiante: estudiante._id,
+                    estado: idEstadoActiva,
+                  },
+                  { $inc: { contadorInasistenciasInjustificada: -1 } }
+                ).exec();
+              });
+            }
+          }
+        });
+      } else {
         var asistenciaEstudiante = new AsistenciaDiaria({
           idInscripcion: inscripcion._id,
           fecha: estudiante.fecha,
@@ -257,80 +398,47 @@ router.post("", checkAuthMiddleware, (req, res) => {
             inscripcion.contadorInasistenciasInjustificada + valorInasistencia;
           inscripcion.save();
         });
-      });
-      validarLibreInasistencias(estudiante._id, valorInasistencia);
+      }
     });
-  } else {
-    req.body.forEach((estudiante) => {
-      AsistenciaDiaria.findById(estudiante.idAsistencia).then((asistencia) => {
-        //si estaba presente en la bd y se cambio a ausente incrementa contador inasistencia
-        if (asistencia.presente && !estudiante.presente) {
-          AsistenciaDiaria.findByIdAndUpdate(estudiante.idAsistencia, {
-            presente: estudiante.presente,
-          }).then(() => {
-            Inscripcion.findOneAndUpdate(
-              {
-                idEstudiante: estudiante._id,
-                activa: true,
-              },
-              { $inc: { contadorInasistenciasInjustificada: 1 } }
-            ).exec();
-          });
-          validarLibreInasistencias(estudiante._id, 1);
-        }
-        //si estaba ausente y lo pasaron a presente decrementa contador inasistencia
-        else if (!asistencia.presente && estudiante.presente) {
-          AsistenciaDiaria.findByIdAndUpdate(estudiante.idAsistencia, {
-            presente: estudiante.presente,
-          }).then(() => {
-            Inscripcion.findOneAndUpdate(
-              {
-                idEstudiante: estudiante._id,
-                activa: true,
-              },
-              { $inc: { contadorInasistenciasInjustificada: -1 } }
-            ).exec();
-          });
-        }
-      });
-    });
+    validarLibreInasistencias(estudiante._id, valorInasistencia);
+  });
+  if (idsEstudiantes.length > 0) {
+    for (const idEstudiante of idsEstudiantes) {
+      let idsUsuariosAR = await ClaseSuscripcion.obtenerIdsUsuarios(
+        idEstudiante
+      );
+      let idsUsuarios = await ClaseSuscripcion.filtrarARPorPreferencias(
+        idsUsuariosAR,
+        "Inasistencia"
+      );
+      if (idsUsuarios.length > 0) {
+        let datosEstudiante = req.body.filter((estudiante) => {
+          return estudiante._id == idEstudiante;
+        });
+
+        ClaseSuscripcion.notificacionGrupal(
+          idsUsuarios,
+          `Ausente`,
+          `Falta registrada al estudiante ${datosEstudiante[0].nombre} ${datosEstudiante[0].apellido}`
+        );
+      }
+    }
   }
   return res
     .status(201)
     .json({ message: "Asistencia registrada exitosamente", exito: true });
 });
 
-validarLibreInasistencias = function (idEst, valorInasistencia) {
-  Estado.find({ nombre: "Suspendido", ambito: "Inscripcion" })
-    .then((estado) => {
-      Inscripcion.findOne({
-        idEstudiante: idEst,
-        activa: true,
-      }).then((inscripcion) => {
-        if (
-          inscripcion.contadorInasistenciasInjustificada % 14 == 0 &&
-          valorInasistencia == 1
-        ) {
-          Inscripcion.findOneAndUpdate(
-            {
-              idEstudiante: idEst,
-              activa: true,
-            },
-            { estado: mongoose.Types.ObjectId(estado[0]._id) }
-          ).exec();
-        }
-      });
-    })
-    .catch(() => {
-      res.status(500).json({
-        message: "No se pudo obtener el estado suspendido",
-      });
-    });
-};
-
 //Este metodo filtra las inscripciones por estudiante y retorna el contador de inasistencias (injustificada y justificada)
-router.get("/asistenciaEstudiante", (req, res) => {
-  Inscripcion.find({ idEstudiante: req.query.idEstudiante })
+router.get("/asistenciaEstudiante", async (req, res) => {
+  let idEstadoActiva = await ClaseEstado.obtenerIdEstado(
+    "Inscripcion",
+    "Activa"
+  );
+  Inscripcion.find({
+    idEstudiante: req.query.idEstudiante,
+    estado: idEstadoActiva,
+  })
     .then((inscripciones) => {
       let contadorInjustificadas = 0;
       let contadorJustificadas = 0;
@@ -363,50 +471,63 @@ router.get("/asistenciaEstudiante", (req, res) => {
 });
 
 //Recibe vector con inasistencias, cada una tiene su _id y si fue o no justificada
-router.post("/inasistencia/justificada", checkAuthMiddleware, (req, res) => {
-  let contador = 0;
-  req.body.ultimasInasistencias.forEach((inasistencia) => {
-    if (inasistencia.justificado) {
-      contador = contador + 1;
-      AsistenciaDiaria.findByIdAndUpdate(inasistencia.idAsistencia, {
-        justificado: true,
-      }).exec();
-    }
-  });
-  Inscripcion.findOneAndUpdate(
-    { idEstudiante: req.body.idEstudiante, activa: true },
-    {
-      $inc: {
-        contadorInasistenciasJustificada: contador,
-        contadorInasistenciasInjustificada: contador * -1,
-      },
-    }
-  )
-    .then(() => {
-      res.status(200).json({
-        message: "Inasistencias justificadas correctamente",
-        exito: true,
-      });
-    })
-    .catch(() => {
-      res.status(500).json({
-        message:
-          "Ocurrió un error al querer publicar el estado de las inasistencias (justificada / injustificada). " +
-          "El error se puede describir de la siguiente manera: " +
-          error.message,
-      });
+router.post(
+  "/inasistencia/justificada",
+  checkAuthMiddleware,
+  async (req, res) => {
+    let idEstadoActiva = await ClaseEstado.obtenerIdEstado(
+      "Inscripcion",
+      "Activa"
+    );
+    let contador = 0;
+    req.body.ultimasInasistencias.forEach((inasistencia) => {
+      if (inasistencia.justificado) {
+        contador = contador + 1;
+        AsistenciaDiaria.findByIdAndUpdate(inasistencia.idAsistencia, {
+          justificado: true,
+        }).exec();
+      }
     });
-});
+    Inscripcion.findOneAndUpdate(
+      { idEstudiante: req.body.idEstudiante, estado: idEstadoActiva },
+      {
+        $inc: {
+          contadorInasistenciasJustificada: contador,
+          contadorInasistenciasInjustificada: contador * -1,
+        },
+      }
+    )
+      .then(() => {
+        res.status(200).json({
+          message: "Inasistencias justificadas correctamente",
+          exito: true,
+        });
+      })
+      .catch(() => {
+        res.status(500).json({
+          message:
+            "Ocurrió un error al querer publicar el estado de las inasistencias (justificada / injustificada). " +
+            "El error se puede describir de la siguiente manera: " +
+            error.message,
+        });
+      });
+  }
+);
 
 //Se obtienen las ultimas 5 inasistencias del estudiante, se permite justificar las inasistencias
 //que fueron creadas en los ultimos 5 dias
 //Se utiliza para la justificacion de inasistencias
-router.get("/inasistencias", (req, res) => {
+router.get("/inasistencias", async (req, res) => {
+  let idEstadoActiva = await ClaseEstado.obtenerIdEstado(
+    "Inscripcion",
+    "Activa"
+  );
   let ultimasInasistencias = [];
   Inscripcion.aggregate([
     {
       $match: {
         idEstudiante: mongoose.Types.ObjectId(req.query.idEstudiante),
+        estado: mongoose.Types.ObjectId(idEstadoActiva),
       },
     },
     {
@@ -487,9 +608,14 @@ router.get("/inasistencias", (req, res) => {
   Para cualquiera de los casos se le asigna presente al estudiante para ese dia. La llegada tarde puede ser antes de las 8
   am o despues de ese horario. Si es antes de las 8 am y tiene acumuladas 4 llegadas tardes
  de ese tipo le asigna una falta injustificada. Si es despues de las 8 am se le asigna media falta injustificada.  */
-router.post("/llegadaTarde", checkAuthMiddleware, (req, res) => {
+router.post("/llegadaTarde", checkAuthMiddleware, async (req, res) => {
+  let idEstadoActiva = await ClaseEstado.obtenerIdEstado(
+    "Inscripcion",
+    "Activa"
+  );
   Inscripcion.findOne({
     idEstudiante: req.body.idEstudiante,
+    estado: idEstadoActiva,
   })
     .then((inscripcion) => {
       AsistenciaDiaria.findById(
@@ -499,7 +625,7 @@ router.post("/llegadaTarde", checkAuthMiddleware, (req, res) => {
         var fechaHoy = new Date();
         fechaHoy.setHours(fechaHoy.getHours() - 3);
         let estudianteAusente = false;
-        //Chequea si el estudiante tiene o no AsistenciaDiaria
+        //Chequea si el estudiante tiene o no el array de AsistenciaDiaria
         if (ultimaAD == null) {
           return res.status(200).json({
             message:
@@ -509,19 +635,27 @@ router.post("/llegadaTarde", checkAuthMiddleware, (req, res) => {
         } else {
           //Compara si la ultima asistencia fue el dia de hoy
           if (!ClaseAsistencia.esFechaActual(ultimaAD.fecha)) {
-            var nuevaAsistencia = new AsistenciaDiaria({
-              idInscripcion: inscripcion._id,
-              fecha: fechaHoy,
-              presente: true,
-              retiroAnticipado: false,
-              valorInasistencia: 0,
-              justificado: false,
-              llegadaTarde: true,
-            });
-            await nuevaAsistencia.save().then((ADultima) => {
-              ADcreada = ADultima;
-              ultimaAD = ADultima;
-            });
+            if (!ultimaAD.llegadaTarde) {
+              var nuevaAsistencia = new AsistenciaDiaria({
+                idInscripcion: inscripcion._id,
+                fecha: fechaHoy,
+                presente: true,
+                retiroAnticipado: false,
+                valorInasistencia: 0,
+                justificado: false,
+                llegadaTarde: true,
+              });
+              await nuevaAsistencia.save().then((ADultima) => {
+                ADcreada = ADultima;
+                ultimaAD = ADultima;
+              });
+            } else {
+              return res.status(200).json({
+                message:
+                  "Ya exite una llegada tarde registrada para el estudiante seleccionado",
+                exito: false,
+              });
+            }
           } else {
             //Estudiante tiene una AD que se la crearon el dia de hoy
             if (!ultimaAD.llegadaTarde) {
@@ -608,9 +742,13 @@ router.post("/llegadaTarde", checkAuthMiddleware, (req, res) => {
 });
 
 //Obtiene la id de la asistencia diaria del dia de hoy, y cambia los valores de la inasistencia para indicar el retiro correspondiente
-router.post("/retiro", checkAuthMiddleware, (req, res) => {
+router.post("/retiro", checkAuthMiddleware, async (req, res) => {
+  let idEstadoActiva = await ClaseEstado.obtenerIdEstado(
+    "Inscripcion",
+    "Activa"
+  );
   Inscripcion.findOne(
-    { idEstudiante: req.body.idEstudiante, activa: true },
+    { idEstudiante: req.body.idEstudiante, estado: idEstadoActiva },
     { asistenciaDiaria: { $slice: -1 } }
   )
     .then((inscripcion) => {
@@ -625,7 +763,7 @@ router.post("/retiro", checkAuthMiddleware, (req, res) => {
           actualizacionInasistencia = 1;
         }
         AsistenciaDiaria.findById(inscripcion.asistenciaDiaria[0])
-          .select({ retiroAnticipado: 1, presente: 1, justificado:1 })
+          .select({ retiroAnticipado: 1, presente: 1, justificado: 1 })
           .then((asistencia) => {
             if (asistencia) {
               if (!asistencia.presente) {
@@ -649,66 +787,65 @@ router.post("/retiro", checkAuthMiddleware, (req, res) => {
                     }
                   )
                     .then(() => {
-                      if(!asistencia.justificado){
+                      if (!asistencia.justificado) {
                         //Si el estudiante tiene ya registrada una falta pero esta justificada, el retiro no deberia sumar mas inasistencias
-                        inscripcion.contadorInasistenciasInjustificada +=
-                          actualizacionInasistencia;
+                        inscripcion.contadorInasistenciasInjustificada += actualizacionInasistencia;
                       }
                       inscripcion
                         .save()
-                        .then(() => {
+                        .then(async () => {
                           //Envio de notificación a los adultos responsables del estudiante. #working
-                          Estudiante.findById(req.body.idEstudiante)
-                            .then((estudiante) => {
-                              //Construcción del cuerpo de la notificación.
-                              var tutores = req.body.tutoresSeleccionados;
-                              var cuerpo =
-                                "Se ha registrado un retiro anticipado de " +
-                                estudiante.apellido +
+                          let idsUsuariosAR = await ClaseSuscripcion.obtenerIdsUsuarios(
+                            req.body.idEstudiante
+                          );
+                          let idsUsuarios = await ClaseSuscripcion.filtrarARPorPreferencias(
+                            idsUsuariosAR,
+                            "Retiro Anticipado"
+                          );
+
+                          if (idsUsuarios.length > 0) {
+                            var tutores = req.body.tutoresSeleccionados;
+                            var cuerpo =
+                              "Se ha registrado un retiro anticipado de " +
+                              estudiante.apellido +
+                              " " +
+                              estudiante.nombre +
+                              ". ";
+
+                            if (tutores.length > 0) {
+                              cuerpo =
+                                cuerpo +
+                                "El estudiante fue retirado por " +
+                                tutores[0].apellido +
                                 " " +
-                                estudiante.nombre +
-                                ". ";
+                                tutores[0].nombre;
 
-                              if (tutores.length > 0) {
-                                cuerpo =
-                                  cuerpo +
-                                  "El estudiante fue retirado por " +
-                                  tutores[0].apellido +
-                                  " " +
-                                  tutores[0].nombre;
-
-                                for (let i = 0; i < tutores.length; i++) {
-                                  if (i == tutores.length - 1) {
-                                    cuerpo =
-                                      cuerpo +
-                                      " y " +
-                                      tutores[i].apellido +
-                                      " " +
-                                      tutores[i].nombre;
-                                  } else if (i != 0) {
-                                    cuerpo =
-                                      cuerpo +
-                                      ", " +
-                                      tutores[i].apellido +
-                                      " " +
-                                      tutores[i].nombre;
-                                  }
-                                  if (i == tutores.length - 1)
-                                    cuerpo = cuerpo + ".";
+                              for (let i = 0; i < tutores.length; i++) {
+                                if (i == tutores.length - 1) {
+                                  cuerpo =
+                                    cuerpo +
+                                    " y " +
+                                    tutores[i].apellido +
+                                    " " +
+                                    tutores[i].nombre;
+                                } else if (i != 0) {
+                                  cuerpo =
+                                    cuerpo +
+                                    ", " +
+                                    tutores[i].apellido +
+                                    " " +
+                                    tutores[i].nombre;
                                 }
+                                if (i == tutores.length - 1)
+                                  cuerpo = cuerpo + ".";
                               }
-                              //Envio de la notificación
-                              // Suscripcion.notificacionGrupal(
-                              //   ...estudiante.adultoResponsable,
-                              //   "Retiro anticipado",
-                              //   this.cuerpo
-                              // );
-                            })
-                            .catch(() => {
-                              res.status(500).json({
-                                message: "Mensaje de error especifico",
-                              });
-                            });
+                            }
+                            ClaseSuscripcion.notificacionGrupal(
+                              idsUsuarios,
+                              "Retiro anticipado",
+                              this.cuerpo
+                            );
+                          }
                           res.status(200).json({
                             message:
                               "Retiro anticipado exitosamente registrado",

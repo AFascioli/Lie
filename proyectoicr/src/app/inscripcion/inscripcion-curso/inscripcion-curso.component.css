@@ -1,0 +1,41 @@
+.div-button {
+  text-align: right;
+}
+
+.div-select {
+  text-align: left !important;
+  margin-left: 4%;
+}
+
+table {
+  width: 95%;
+  margin: 0 auto;
+  margin-bottom: 4%;
+}
+
+.table-mobile {
+  width: 100%;
+  margin: 0;
+}
+
+.columnas-normales {
+  width: 16% !important;
+}
+
+.columnas-chicas {
+  width: 8%;
+  text-align: center;
+}
+
+th {
+  font-weight: bold;
+  font-size: 15px;
+}
+
+.texto-popup {
+  text-align: center;
+}
+
+.selectYear {
+  margin-right: 10px;
+}

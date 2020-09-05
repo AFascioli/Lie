@@ -8,7 +8,7 @@ import { environment } from "src/environments/environment";
 import { Evento } from "./evento.model";
 
 @Injectable({
-  providedIn: "root"
+  providedIn: "root",
 })
 export class EventosService {
   public evento: Evento;
@@ -41,7 +41,7 @@ export class EventosService {
     datosEvento.append("fechaEvento", fechaEvento);
     datosEvento.append("horaInicio", horaInicio);
     datosEvento.append("horaFin", horaFin);
-    if (images != null) {
+    if (images.length != 0) {
       for (var i = 0; i < images.length; i++) {
         datosEvento.append("images", images[i]);
       }
@@ -72,9 +72,10 @@ export class EventosService {
     horaFin: string,
     tags: any[],
     images: any,
-    filenames: string,
+    filenames: string[],
     _id: string,
-    autor: string
+    autor: string,
+    filenamesBorrados: string[]
   ) {
     let eventoModificado = new FormData();
     const fechaEventoString = fechaEvento.toString();
@@ -85,11 +86,13 @@ export class EventosService {
     eventoModificado.append("horaInicio", horaInicio);
     eventoModificado.append("horaFin", horaFin);
 
-    for (var i = 0; i < filenames.length; i++) {
-      eventoModificado.append("filenames", filenames[i]);
+    if (filenames.length != 0) {
+      for (var i = 0; i < filenames.length; i++) {
+        eventoModificado.append("filenames", filenames[i]);
+      }
     }
 
-    if (images != null) {
+    if (images.length != 0) {
       for (var i = 0; i < images.length; i++) {
         eventoModificado.append("images", images[i]);
       }
@@ -102,6 +105,14 @@ export class EventosService {
       eventoModificado.append("tags", tags[i]);
     }
     eventoModificado.append("idAutor", autor);
+
+    if (filenamesBorrados.length != 0) {
+      for (var i = 0; i < filenamesBorrados.length; i++) {
+        eventoModificado.append("filenamesBorrados", filenamesBorrados[i]);
+      }
+    } else {
+      eventoModificado.append("filenamesBorrados", null);
+    }
 
     return this.http.post<{ message: string; exito: boolean }>(
       environment.apiUrl + "/evento/modificar",
@@ -137,7 +148,7 @@ export class EventosService {
   public obtenerImagenEvento(imgUrl: string) {
     let params = new HttpParams().set("imgUrl", imgUrl);
     return this.http.get<File>(environment.apiUrl + "/evento/imagenes", {
-      params: params
+      params: params,
     });
   }
 
@@ -161,7 +172,7 @@ export class EventosService {
       comentario: comentario,
       emailUsuario: emailUsuario,
       rol: rol,
-      idEvento: idEvento
+      idEvento: idEvento,
     };
 
     return this.http.post<{

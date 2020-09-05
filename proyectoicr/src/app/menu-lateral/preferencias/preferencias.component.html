@@ -1,22 +1,57 @@
 <h1 class="componente-titulo">Preferencias</h1>
 <mat-card class="card-body-componente">
   <meta charset="utf-8" />
-  <div class="botones-preferencias">
-    <button mat-button class="button-primary acciones" (click)="cambiarPassword()">
+  <div class="botones-preferencias" >
+    <button
+      mat-button
+      class="button-primary acciones"
+      (click)="cambiarPassword()"
+    >
       Cambiar contraseña
     </button>
-    <button mat-button class="button-primary acciones" (click)="pruebaNotificacion()" >
+    <button
+      mat-button
+      class="button-primary acciones"
+      (click)="pruebaNotificacion()"
+    >
       Notificación de prueba
     </button>
     <br />
-    <mat-slide-toggle
-      [checked]="notificaciones"
-      (change)="onCambioPreferenciaSuscripcion()"
-    >
-      Deseo recibir las notificaciones
-    </mat-slide-toggle>
+    <div class="toggles" *ngIf="preferencias">
+      <h3>Recibir notificaciones por:</h3>
+      <mat-slide-toggle
+        [checked]="preferencias[0].acepta"
+        (change)="onChangePreferencias(0)"
+      >
+        Retiros anticipados
+      </mat-slide-toggle>
+      <mat-slide-toggle
+        [checked]="preferencias[1].acepta"
+        (change)="onChangePreferencias(1)"
+      >
+        Creación de evento
+      </mat-slide-toggle>
+      <mat-slide-toggle
+        [checked]="preferencias[2].acepta"
+        (change)="onChangePreferencias(2)"
+      >
+        Cancelaciones de eventos
+      </mat-slide-toggle>
+      <mat-slide-toggle
+        [checked]="preferencias[3].acepta"
+        (change)="onChangePreferencias(3)"
+      >
+        Inasistencias
+      </mat-slide-toggle>
+      <mat-slide-toggle
+        [checked]="preferencias[4].acepta"
+        (change)="onChangePreferencias(4)"
+      >
+        Alerta de cantidad de inasistencias
+      </mat-slide-toggle>
+    </div>
   </div>
-  <!-- <div class="div-button">
+  <div class="div-button" *ngIf="preferencias">
     <button
       type="submit"
       (click)="onGuardar()"
@@ -25,8 +60,5 @@
     >
       Guardar
     </button>
-    <button mat-raised-button (click)="onCancelar()" class="button-warn">
-      Cancelar
-    </button>
-  </div> -->
+  </div>
 </mat-card>

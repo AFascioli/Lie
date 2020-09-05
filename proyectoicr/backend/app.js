@@ -22,6 +22,7 @@ options = {
   useFindAndModify: false,
 };
 
+//Conexion a la base de datos
 mongoose
   .connect(Ambiente.stringDeConexion, options)
   .then(() => {
@@ -37,7 +38,7 @@ let gfs;
 conn.once("open", () => {
   gfs = Grid(conn.db, mongoose.mongo);
   gfs.collection("imagen");
-  console.log("Conexión por imagenes a base de datos local");
+  console.log("Conexión por imagenes a base de datos");
 });
 
 app.get("/imagen/:filename", (req, res) => {
@@ -77,28 +78,6 @@ app.use((req, res, next) => {
   next();
 });
 
-// app.get("/imagen/:filename", (req, res) => {
-//   gfs.files.findOne({ filename: req.params.filename }, (err, file) => {
-//     // Check if file
-//     if (!file || file.length === 0) {
-//       return res.status(404).json({
-//         err: "No file exists",
-//       });
-//     }
-
-//     // Check if image
-//     if (file.contentType === "image/jpeg" || file.contentType === "image/png") {
-//       // Read output to browser
-//       const readstream = gfs.createReadStream(file.filename);
-//       readstream.pipe(res);
-//     } else {
-//       res.status(404).json({
-//         err: "Not an image",
-//       });
-//     }
-//   });
-// });
-
 app.use("/estudiante", estudiantesRoutes);
 
 app.use("/ubicacion", ubicacionRoutes);
@@ -126,6 +105,9 @@ app.get("/status", (req, res, next) => {
     message: "Servidor Node.js Lie®",
   });
 });
+
+const ClaseSuscripcion = require("./classes/suscripcion");
+app.get("/testi", async (req, res, next) => {});
 
 // #resolve Guardar comentarios y diccionario
 // Endpoint save diccionario

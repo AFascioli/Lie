@@ -30,8 +30,10 @@
         name="apellido"
         placeholder="Ingrese apellido"
         type="text"
+        maxlength="20"
         [(ngModel)]="apellidoEstSelec"
         required
+        (keypress)="checkLetras($event)"
       />
     </mat-form-field>
     <br />
@@ -43,9 +45,11 @@
         matInput
         name="nombre"
         placeholder="Ingrese nombre"
+        maxlength="20"
         type="text"
         [(ngModel)]="nombreEstSelec"
         required
+        (keypress)="checkLetras($event)"
       />
     </mat-form-field>
     <br />
@@ -80,6 +84,8 @@
         [(ngModel)]="nroDocEstSelec"
         maxlength="8"
         placeholder="Ingrese número de documento"
+        type="text"
+        (keypress)="checkNumeros($event)"
         required
       />
     </mat-form-field>

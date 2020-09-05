@@ -24,9 +24,9 @@ import { MediaMatcher } from "@angular/cdk/layout";
   styleUrls: ["./calificaciones-ciclo-lectivo.component.css"],
 })
 export class CalificacionesCicloLectivoComponent implements OnInit, OnDestroy {
-  cursos: any[];
-  materias: any[];
-  estudiantes: any[];
+  cursos: any[] = [];
+  materias: any[] = [];
+  estudiantes: any[] = [];
   displayedColumns: string[] = [
     "apellido",
     "nombre",
@@ -115,26 +115,26 @@ export class CalificacionesCicloLectivoComponent implements OnInit, OnDestroy {
         .subscribe((response) => {
           this.cursos = response.cursos;
           this.cursos.sort((a, b) =>
-          a.nombre.charAt(0) > b.nombre.charAt(0)
-            ? 1
-            : b.nombre.charAt(0) > a.nombre.charAt(0)
-            ? -1
-            : 0
-        );
+            a.nombre.charAt(0) > b.nombre.charAt(0)
+              ? 1
+              : b.nombre.charAt(0) > a.nombre.charAt(0)
+              ? -1
+              : 0
+          );
         });
     } else {
       this.servicioEstudiante
-        .obtenerCursos()
+        .obtenerCursos(this.fechaActual.getFullYear())
         .pipe(takeUntil(this.unsubscribe))
         .subscribe((response) => {
           this.cursos = response.cursos;
           this.cursos.sort((a, b) =>
-          a.nombre.charAt(0) > b.nombre.charAt(0)
-            ? 1
-            : b.nombre.charAt(0) > a.nombre.charAt(0)
-            ? -1
-            : 0
-        );
+            a.nombre.charAt(0) > b.nombre.charAt(0)
+              ? 1
+              : b.nombre.charAt(0) > a.nombre.charAt(0)
+              ? -1
+              : 0
+          );
         });
     }
   }
@@ -148,8 +148,8 @@ export class CalificacionesCicloLectivoComponent implements OnInit, OnDestroy {
   // }
 
   onCursoSeleccionado(curso, materia: NgModel) {
-    this.estudiantes = null;
-    this.materias = null;
+    this.estudiantes = [];
+    this.materias = [];
     materia.reset();
     if (
       this.rolConPermisosEdicion &&
@@ -194,6 +194,7 @@ export class CalificacionesCicloLectivoComponent implements OnInit, OnDestroy {
         });
     }
   }
+
   //Recibe la palabra que escribe el usuario y filtra tabla de html
   aplicarFiltro(valorFiltro: string) {
     valorFiltro = valorFiltro.trim();

@@ -10,6 +10,9 @@ import { Component, OnInit, ChangeDetectorRef } from "@angular/core";
 import { AdultoResponsableService } from "../adulto-responsable/adultoResponsable.service";
 import { Estudiante } from "../estudiantes/estudiante.model";
 import { MediaMatcher } from "@angular/cdk/layout";
+import { takeUntil } from "rxjs/operators";
+import { Subject } from "rxjs";
+import { SwPush } from "@angular/service-worker";
 
 @Component({
   selector: "app-menu-principal-adulto-responsable",
@@ -22,8 +25,13 @@ export class MenuPrincipalAdultoResponsableComponent implements OnInit {
   _mobileQueryListener: () => void;
   mobileQuery: MediaQueryList;
   cursos = [];
+  private unsubscribe: Subject<void> = new Subject();
+  readonly VAPID_PUBLIC =
+    "BMlC2dLJTBP6T1GCl3S3sDBmhERNVcjN7ff2a6JAoOg8bA_qXjikveleRwjz0Zn8c9-58mnrNo2K4p07UPK0DKQ";
+  mostrarTooltip: boolean = true;
 
   constructor(
+    private swPush: SwPush,
     public authService: AutenticacionService,
     public servicioAR: AdultoResponsableService,
     public servicioEvento: EventosService,
@@ -43,6 +51,44 @@ export class MenuPrincipalAdultoResponsableComponent implements OnInit {
 
   ngOnInit() {
     this.obtenerDatosEstudiante();
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker.register("ngsw-worker.js").then((swreg) => {
+        if (swreg.active) {
+          this.subscribeToNotifications();
+        }
+      });
+    }
+
+    setTimeout(() => {
+      this.mostrarTooltip = false;
+    }, 6010);
+  }
+
+  ngOnDestroy() {
+    this.unsubscribe.next();
+    this.unsubscribe.complete();
+  }
+
+  subscribeToNotifications() {
+    if (Notification.permission === "granted") {
+    } else {
+      this.swPush
+        .requestSubscription({
+          serverPublicKey: this.VAPID_PUBLIC,
+        })
+        .then((pushsub) => {
+          console.log("Paso requestSubscription");
+          this.authService
+            .addPushSubscriber(pushsub)
+            .pipe(takeUntil(this.unsubscribe))
+            .subscribe((res) => {
+              console.log("Se suscribió a recibir notificaciones push.");
+            });
+        })
+        .catch((err) =>
+          console.error("No se pudo suscribir a las notificaciones push.", err)
+        );
+    }
   }
 
   obtenerDatosEstudiante() {
@@ -79,14 +125,16 @@ export class MenuPrincipalAdultoResponsableComponent implements OnInit {
   }
 
   onEstudianteClick(idEstudiante: string) {
-    this.servicioEstudiante
-      .obtenerEstudiantePorId(idEstudiante)
-      .subscribe((response) => {
-        if (response.exito) {
-          this.asignarEstudianteSeleccionado(response.estudiante);
-          this.router.navigate(["./perfilEstudiante"]);
-        }
-      });
+    if (this.cursos[0]) {
+      this.servicioEstudiante
+        .obtenerEstudiantePorId(idEstudiante)
+        .subscribe((response) => {
+          if (response.exito) {
+            this.asignarEstudianteSeleccionado(response.estudiante);
+            this.router.navigate(["./perfilEstudiante"]);
+          }
+        });
+    }
   }
 
   onEventoClick(idEvento: string) {

@@ -2,17 +2,32 @@
   Sanciones de {{ apellidoEstudiante }}, {{ nombreEstudiante }}
 </h1>
 <mat-card class="card-body-componente">
-  <h3 class="titulo-resumen" *ngIf="sanciones.length != 0"><b> Resumen de sanciones</b></h3>
-  <div *ngIf="sanciones.length != 0" class="grid-resumen" [class.grid-resumen-mobile]="mobileQuery.matches">
+  <div
+    *ngIf="sanciones.length != 0"
+    class="grid-resumen"
+    [class.grid-resumen-mobile]="mobileQuery.matches"
+  >
     <mat-card
-      ><b>{{ sumatoriaSanciones[0] }}</b><b>Llamados de atención</b>
+      ><b>{{ sumatoriaSanciones[0] }}</b
+      ><b>Llamados de atención</b>
     </mat-card>
-    <mat-card><b> {{ sumatoriaSanciones[1] }}</b> <b>Apercibimientos</b></mat-card>
-    <mat-card><b> {{ sumatoriaSanciones[2] }}</b> <b>Amonestaciones</b></mat-card>
-    <mat-card><b> {{ sumatoriaSanciones[3] }}</b> <b>Suspenciones</b></mat-card>
+    <mat-card
+      ><b> {{ sumatoriaSanciones[1] }}</b> <b>Apercibimientos</b></mat-card
+    >
+    <mat-card
+      ><b> {{ sumatoriaSanciones[2] }}</b> <b>Amonestaciones</b></mat-card
+    >
+    <mat-card
+      ><b> {{ sumatoriaSanciones[3] }}</b> <b>Suspenciones</b></mat-card
+    >
   </div>
 
-  <table mat-table [dataSource]="sanciones" *ngIf="sanciones.length != 0"  [class.table-mobile]="mobileQuery.matches">
+  <table
+    mat-table
+    [dataSource]="sanciones"
+    *ngIf="sanciones.length != 0"
+    [class.table-mobile]="mobileQuery.matches"
+  >
     <ng-container matColumnDef="fecha">
       <th class="columnas-normales" mat-header-cell *matHeaderCellDef>
         Fecha
@@ -42,7 +57,7 @@
   </table>
 
   <p *ngIf="sanciones.length == 0" class="sin-sanciones">
-   <b> El estudiante no presenta sanciones</b>
+    <b> El estudiante no presenta sanciones</b>
   </p>
   <div class="div-button">
     <button

@@ -1,3 +1,4 @@
+import { EstudiantesService } from "./../../estudiantes/estudiante.service";
 import { Component, OnInit, OnDestroy } from "@angular/core";
 import { AsistenciaService } from "src/app/asistencia/asistencia.service";
 import { Label } from "ng2-charts";
@@ -12,34 +13,39 @@ import { Subject } from "rxjs";
   styleUrls: ["./inasistencias-estudiante.component.css"],
 })
 export class InasistenciasEstudianteComponent implements OnInit, OnDestroy {
+  apellidoEstudiante: string;
+  nombreEstudiante: string;
   displayedColumns: string[] = ["tipo", "cantidad"];
   contadorInasistenciaJustificada: number;
   contadorInasistenciaInjustificada: number;
-  barChartLabels: Label[]=[];
+  barChartLabels: Label[] = [];
   private unsubscribe: Subject<void> = new Subject();
   public barChartOptions: ChartOptions = {
     responsive: true,
     legend: {
       labels: {
-        fontSize: 18
-      }
+        fontSize: 18,
+      },
     },
     plugins: {
       datalabels: {
         font: {
           size: 20,
-          weight: "bold"
-        }
-      }
-    }
+          weight: "bold",
+        },
+      },
+    },
   };
-  barDataSet=[];
+  barDataSet = [];
 
   public barChartType: ChartType = "pie";
   public barChartPlugins = [pluginDataLabels];
   public barChartLegend;
 
-  constructor(public servicioAsistencia: AsistenciaService) {}
+  constructor(
+    public servicioAsistencia: AsistenciaService,
+    public servicioEstudiante: EstudiantesService
+  ) {}
 
   ngOnDestroy() {
     this.unsubscribe.next();
@@ -47,6 +53,8 @@ export class InasistenciasEstudianteComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.apellidoEstudiante = this.servicioEstudiante.estudianteSeleccionado.apellido;
+    this.nombreEstudiante = this.servicioEstudiante.estudianteSeleccionado.nombre;
     this.servicioAsistencia
       .obtenerInasistenciasDeEstudiante()
       .pipe(takeUntil(this.unsubscribe))
@@ -56,19 +64,19 @@ export class InasistenciasEstudianteComponent implements OnInit, OnDestroy {
             response.contadorInasistenciasInjustificada;
           this.contadorInasistenciaJustificada =
             response.contadorInasistenciasJustificada;
-          this.barDataSet=[
+          this.barDataSet = [
             {
-              backgroundColor: ["rgb(263, 210, 97)","rgb(255, 185, 97)"],
+              backgroundColor: ["#38AECC", "#E9FE00"],
               data: [
                 response.contadorInasistenciasInjustificada,
-                response.contadorInasistenciasJustificada
-              ]
-            }
+                response.contadorInasistenciasJustificada,
+              ],
+            },
           ];
 
           this.barChartLabels = [
             "Inasistencias injustificadas",
-            "Inasistencias justificadas"
+            "Inasistencias justificadas",
           ];
         },
         (error) => {

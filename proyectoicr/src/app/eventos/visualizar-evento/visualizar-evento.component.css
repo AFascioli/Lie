@@ -55,10 +55,14 @@ div.mat-chip-list-wrapper {
   margin-bottom: 0px;
 }
 
+div.summary {
+  font-size: 20px !important;
+}
+
 .comentario {
   display: block;
-    margin: 0 auto;
-    margin-top: 2%;
+  margin: 0 auto;
+  margin-top: 2%;
 }
 
 p,
@@ -66,7 +70,8 @@ b {
   font-size: 20px;
 }
 
-.dia-evento, .hora-evento{
+.dia-evento,
+.hora-evento {
   margin-left: 25px;
 }
 
@@ -160,8 +165,7 @@ mat-icon {
   margin-bottom: 5px !important;
 }
 
-.dia-evento
-{
+.dia-evento {
   margin-bottom: 0px;
 }
 
@@ -188,7 +192,6 @@ mat-icon {
   word-wrap: break-word;
 }
 
-
 ::ng-deep
   .mat-button-wrapper
   > mat-icon.notranslate.material-icons.mat-icon-no-color.ng-star-inserted {
@@ -209,7 +212,6 @@ mat-icon {
 .mat-expansion-panel {
   box-shadow: none;
 }
-
 
 .contenedor-flexbox {
   display: flex;
@@ -297,7 +299,6 @@ mat-icon {
   animation-duration: 1.5s;
 }
 
-
 @-webkit-keyframes fade {
   from {
     opacity: 0.4;
@@ -315,4 +316,3 @@ mat-icon {
     opacity: 1;
   }
 }
-

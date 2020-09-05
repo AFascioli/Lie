@@ -1,12 +1,12 @@
-.mensaje-reincorporacion{
+.mensaje-reincorporacion {
   text-align: center;
 }
 
-.div-button{
+.div-button {
   text-align: right;
 }
 
-.aviso{
-  text-align: center;
-  margin-top: 2%;
+.aviso b {
+  font-size: 19px !important;
+  font-weight: 500 !important;
 }

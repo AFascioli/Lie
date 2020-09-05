@@ -32,11 +32,31 @@ input[type="number"] {
 
 .componente-titulo {
   text-align: center;
+  font-weight: 600;
+  color: #181a21;
+  margin: 0 0.5rem;
+  /* text-shadow: 1px 1px 2px #c7c7c7; */
+  font-size: 33px;
+}
+
+.aviso {
+  text-align: center;
+  margin-top: 1% !important;
+  margin-bottom: 0% !important;
+}
+
+.aviso b {
+  font-size: 19px !important;
+  font-weight: 500 !important;
+}
+
+/* .componente-titulo {
+  text-align: center;
   color: #2f6483;
   margin-top: 1%;
   text-shadow: 1px 1px 2px #323233;
   font-size: 35px;
-}
+} */
 
 .card-body-componente {
   /* Para que no se comprima al pasar a vistas mobile, y la segunda linea para que aparezca el scroll.*/
@@ -106,6 +126,12 @@ input[type="number"] {
   color: #ffffff;
 }
 
+.botonAnchoTotal {
+  width: 90% !important;
+  background: #2f6483;
+  color: #ffffff;
+}
+
 /* Para cambiar el color de los toggle */
 .mat-slide-toggle.mat-checked .mat-slide-toggle-thumb {
   background-color: #2f6483 !important;
@@ -150,7 +176,7 @@ input[type="number"] {
 /* Para que el expansion panel cuando se abre y se cierra tenga el color que debe */
 .mat-expansion-panel:not(.mat-expanded):not([aria-disabled="true"])
   .mat-expansion-panel-header:hover {
-    background-color:  #47988d59 !important;
+  background-color: #47988d59 !important;
 }
 
 /* Para que se muestre bien el dropdown menu */
@@ -184,4 +210,62 @@ input[type="number"] {
 /* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
   background: #727272;
+}
+
+.tooltip-lie {
+  background: rgb(92, 73, 187);
+  border-radius: 5rem 5rem 5rem 0rem;
+  padding: 0.75em;
+  display: block;
+  z-index: 2;
+  color: white;
+  height: fit-content;
+  width: fit-content;
+
+  max-width: 17%;
+  position: absolute;
+  right: 3%;
+  top: 3%;
+  animation-name: tooltipfade;
+  animation-duration: 6s;
+}
+
+@keyframes tooltipfade {
+  85% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 0.6;
+  }
+  95% {
+    opacity: 0.4;
+  }
+  97% {
+    opacity: 0.2;
+  }
+  99% {
+    opacity: 0;
+  }
+}
+
+.timepicker__header {
+  background-color: rgb(33, 70, 91) !important;
+}
+
+.clock-face__number > span.active {
+  background-color: rgb(33, 70, 91) !important;
+}
+
+.clock-face__number--outer > span.active {
+  background-color: rgb(33, 70, 91) !important;
+}
+.clock-face__clock-hand {
+  background-color: rgb(33, 70, 91) !important;
+}
+
+.clock-face__clock-hand_minute:before {
+  border: 4px solid rgb(33, 70, 91) !important;
+}
+.timepicker-button {
+  color: rgb(33, 70, 91) !important;
 }

@@ -6,7 +6,12 @@ import { SwPush } from "@angular/service-worker";
 import { AutenticacionService } from "../login/autenticacionService.service";
 import { Router } from "@angular/router";
 import { Evento } from "../eventos/evento.model";
-import { MatSnackBar, MatDialogRef, MatDialog } from "@angular/material";
+import {
+  MatSnackBar,
+  MatDialogRef,
+  MatDialog,
+  MatTooltip,
+} from "@angular/material";
 import { Subject } from "rxjs";
 import { takeUntil } from "rxjs/operators";
 
@@ -24,6 +29,8 @@ export class HomeComponent implements OnInit, OnDestroy {
     "BMlC2dLJTBP6T1GCl3S3sDBmhERNVcjN7ff2a6JAoOg8bA_qXjikveleRwjz0Zn8c9-58mnrNo2K4p07UPK0DKQ";
   evento: Evento;
   enProcesoDeBorrado: boolean = false;
+  isLoading: boolean = true;
+  mostrarTooltip: boolean = true;
 
   constructor(
     public snackBar: MatSnackBar,
@@ -69,6 +76,7 @@ export class HomeComponent implements OnInit, OnDestroy {
       .subscribe((rtdo) => {
         this.eventos = rtdo.eventos;
         this.eventos.sort((a, b) => this.compareFechaEventos(a, b));
+        this.isLoading = false;
       });
     if ("serviceWorker" in navigator) {
       navigator.serviceWorker.register("ngsw-worker.js").then((swreg) => {
@@ -77,19 +85,27 @@ export class HomeComponent implements OnInit, OnDestroy {
         }
       });
     }
+
+    setTimeout(() => {
+      this.mostrarTooltip = false;
+    }, 6010);
   }
 
   //Compara la fecha del evento con la fecha actual para deshabilitar el boton editar
   //si el evento ya paso. Si estamos en el dia del evento, devuelve true si ya estamos
   //en la misma hora que el evento
-  eventoYaOcurrio(indexEvento: number){
-    const fechaActual= new Date();
-    const fechaEvento= new Date(this.eventos[indexEvento].fechaEvento);
-    if(fechaActual.getMonth() == fechaEvento.getMonth() &&
-    fechaActual.getDate() == fechaEvento.getDate()){
-      const horaEvento= new Date('01/01/2020 ' +this.eventos[indexEvento].horaInicio);
-      return fechaActual.getHours()>=horaEvento.getHours();
-    }else{
+  eventoYaOcurrio(indexEvento: number) {
+    const fechaActual = new Date();
+    const fechaEvento = new Date(this.eventos[indexEvento].fechaEvento);
+    if (
+      fechaActual.getMonth() == fechaEvento.getMonth() &&
+      fechaActual.getDate() == fechaEvento.getDate()
+    ) {
+      const horaEvento = new Date(
+        "01/01/2020 " + this.eventos[indexEvento].horaInicio
+      );
+      return fechaActual.getHours() >= horaEvento.getHours();
+    } else {
       return fechaActual.getTime() > fechaEvento.getTime();
     }
   }

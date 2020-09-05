@@ -1,3 +1,6 @@
+import { BuscarAdultoResponsableComponent } from "./adulto-responsable/buscar-adulto-responsable/buscar-adulto-responsable.component";
+import { AsociarAdultoResponsableComponent } from "./adulto-responsable/asociar-adulto-responsable/asociar-adulto-responsable.component";
+import { InscripcionCursoComponent } from "./inscripcion/inscripcion-curso/inscripcion-curso.component";
 import { MenuPrincipalAdultoResponsableComponent } from "./menu-principal-adulto-responsable/menu-principal-adulto-responsable.component";
 import { RegistrarSancionesComponent } from "./sanciones/registrar-sanciones/registrar-sanciones.component";
 import { RegistrarCuotasComponent } from "./cuotas/registrar-cuotas/registrar-cuotas.component";
@@ -39,7 +42,14 @@ import { VisualizarAgendaComponent } from "./agenda/visualizar-agenda/visualizar
 import { SancionesEstudianteComponent } from "./perfil-estudiante/sanciones-estudiante/sanciones-estudiante.component";
 import { RouteEventoGuard } from "./routeEvento.guard";
 import { DefinirAgendaComponent } from "./agenda/definir-agenda/definir-agenda.component";
-import { CalificacionesCicloLectivoComponent } from './calificaciones/calificaciones-ciclo-lectivo/calificaciones-ciclo-lectivo.component';
+import { CalificacionesCicloLectivoComponent } from "./calificaciones/calificaciones-ciclo-lectivo/calificaciones-ciclo-lectivo.component";
+import { SolicitudReunionComponent } from "./solicitud-reunion/solicitud-reunion.component";
+import { SolicitudReunionAdultoResponsableComponent } from "./solicitud-reunion-adulto-responsable/solicitud-reunion-adulto-responsable.component";
+import { ModificarAdultoResponsableComponent } from "./adulto-responsable/modificar-adulto-responsable/modificar-adulto-responsable.component";
+import { AccionesDirectorComponent } from './acciones-director/acciones-director.component';
+import { ParametrizarReglasNegocioComponent } from './acciones-director/parametrizar-reglas-negocio/parametrizar-reglas-negocio.component';
+import { EstadoCursosComponent } from './acciones-director/estado-cursos/estado-cursos.component';
+import { CicloLectivoComponent } from './acciones-director/ciclo-lectivo/ciclo-lectivo/ciclo-lectivo.component';
 
 const routes: Routes = [
   { path: "login", component: LoginComponent },
@@ -56,7 +66,19 @@ const routes: Routes = [
           rolesValidos: ["Admin", "Preceptor", "Director", "Docente"],
         },
       },
-      { path: "definirAgenda", component: DefinirAgendaComponent },
+      {
+        path: "modificarAdultoResponsable",
+        component: ModificarAdultoResponsableComponent,
+        data: {
+          rolesValidos: ["Admin", "Preceptor", "Director"],
+        },
+      },
+      {
+        path: "definirAgenda",
+        component: DefinirAgendaComponent,
+        canActivate: [RoleGuard],
+        data: { rolesValidos: ["Admin", "Director", "Preceptor"] },
+      },
       {
         path: "home",
         canActivate: [RoleGuard],
@@ -68,6 +90,12 @@ const routes: Routes = [
         canActivate: [RoleGuard],
         data: { rolesValidos: ["Admin", "AdultoResponsable"] },
         component: MenuPrincipalAdultoResponsableComponent,
+      },
+      {
+        path: "solicitudReunionAR",
+        canActivate: [RoleGuard, RouteGuard],
+        data: { rolesValidos: ["Admin", "AdultoResponsable"] },
+        component: SolicitudReunionAdultoResponsableComponent,
       },
       {
         path: "visualizarEvento",
@@ -118,7 +146,13 @@ const routes: Routes = [
         path: "registrarSancion",
         component: RegistrarSancionesComponent,
         canActivate: [RouteGuard, RoleGuard],
-        data: { rolesValidos: ["Admin", "Preceptor", "Director"] },
+        data: { rolesValidos: ["Admin", "Preceptor", "Director", "Docente"] },
+      },
+      {
+        path: "solicitudReunion",
+        component: SolicitudReunionComponent,
+        canActivate: [RouteGuard, RoleGuard],
+        data: { rolesValidos: ["Admin", "Preceptor", "Director", "Docente"] },
       },
       {
         path: "retiroAnticipado",
@@ -141,8 +175,8 @@ const routes: Routes = [
       {
         path: "calificacionesCicloLectivo",
         component: CalificacionesCicloLectivoComponent,
-        // canActivate: [RoleGuard],
-        // data: { rolesValidos: ["Admin", "Preceptor", "Director", "Docente"] }
+        canActivate: [RoleGuard],
+        data: { rolesValidos: ["Admin", "Preceptor", "Director", "Docente"] },
       },
       {
         path: "registrarCuotas",
@@ -153,7 +187,7 @@ const routes: Routes = [
         path: "calificacionesExamenes",
         component: CalificacionesExamenesComponent,
         canActivate: [RoleGuard, RouteGuard],
-        data: { rolesValidos: ["Admin", "Preceptor", "Director", "Docente"] },
+        data: { rolesValidos: ["Admin", "Docente"] },
       },
       {
         path: "llegadaTarde",
@@ -322,6 +356,78 @@ const routes: Routes = [
       {
         path: "visualizarAgenda",
         component: VisualizarAgendaComponent,
+        canActivate: [RoleGuard],
+        data: {
+          rolesValidos: ["Admin", "Preceptor", "Director", "Docente"],
+        },
+      },
+      {
+        path: "inscripcionCurso",
+        component: InscripcionCursoComponent,
+        canActivate: [RoleGuard],
+        data: {
+          rolesValidos: ["Admin", "Preceptor", "Director"],
+        },
+      },
+      {
+        path: "accionesDirector",
+        component: AccionesDirectorComponent,
+        canActivate: [RoleGuard],
+        data: {
+          rolesValidos: [
+            "Admin",
+            "Director"
+          ],
+        },
+      },
+      {
+        path: "reglasDeNegocio",
+        component: ParametrizarReglasNegocioComponent,
+        canActivate: [RoleGuard],
+        data: {
+          rolesValidos: [
+            "Admin",
+            "Director",
+          ],
+        },
+      },
+      {
+        path: "estadoCursos",
+        component: EstadoCursosComponent,
+        canActivate: [RoleGuard],
+        data: {
+          rolesValidos: [
+            "Admin",
+            "Director",
+          ],
+        },
+      },
+      {
+        path: "estadoCicloLectivo",
+        component: CicloLectivoComponent,
+        canActivate: [RoleGuard],
+        data: {
+          rolesValidos: [
+            "Admin",
+            "Director",
+          ],
+        },
+      },
+      {
+        path: "buscarAdultoResponsable",
+        component: BuscarAdultoResponsableComponent,
+        canActivate: [RoleGuard],
+        data: {
+          rolesValidos: ["Admin", "Preceptor", "Director", "Docente"],
+        },
+      },
+      {
+        path: "asociarAdultoResponsable",
+        component: AsociarAdultoResponsableComponent,
+        canActivate: [RoleGuard, RouteGuard],
+        data: {
+          rolesValidos: ["Admin", "Preceptor", "Director"],
+        },
       },
     ],
   },

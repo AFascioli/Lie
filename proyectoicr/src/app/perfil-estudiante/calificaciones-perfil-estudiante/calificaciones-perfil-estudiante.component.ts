@@ -11,7 +11,7 @@ import { MediaMatcher } from "@angular/cdk/layout";
 @Component({
   selector: "app-calificaciones-perfil-estudiante",
   templateUrl: "./calificaciones-perfil-estudiante.component.html",
-  styleUrls: ["./calificaciones-perfil-estudiante.component.css"]
+  styleUrls: ["./calificaciones-perfil-estudiante.component.css"],
 })
 export class CalificacionesPerfilEstudianteComponent
   implements OnInit, OnDestroy {
@@ -27,7 +27,7 @@ export class CalificacionesPerfilEstudianteComponent
     "calif4",
     "calif5",
     "calif6",
-    "prom"
+    "prom",
   ];
   trimestreActual: string;
   fechaActual: Date;
@@ -57,7 +57,7 @@ export class CalificacionesPerfilEstudianteComponent
 
   ngOnInit() {
     this.fechaActual = new Date();
-    this.servicioEstudiante.obtenerCursoDeEstudiante().subscribe(response => {
+    this.servicioEstudiante.obtenerCursoDeEstudiante().subscribe((response) => {
       this.curso = response.curso;
     });
     this.apellidoEstudiante = this.servicioEstudiante.estudianteSeleccionado.apellido;
@@ -66,12 +66,17 @@ export class CalificacionesPerfilEstudianteComponent
     this.servicioCalificaciones
       .obtenerCalificacionesXMateriaXEstudiante(this.trimestreActual)
       .pipe(takeUntil(this.unsubscribe))
-      .subscribe(res => {
+      .subscribe((res) => {
         this.calificacionesXMateria = res.vectorCalXMat;
+        this.calificacionesXMateria.sort((a, b) =>
+          a.materia > b.materia ? 1 : b.materia > a.materia ? -1 : 0
+        );
       });
     this.servicioCalificaciones
-      .obtenerMateriasDesaprobadasEstudiante(this.servicioEstudiante.estudianteSeleccionado._id)
-      .subscribe(materias => {
+      .obtenerMateriasDesaprobadasEstudiante(
+        this.servicioEstudiante.estudianteSeleccionado._id
+      )
+      .subscribe((materias) => {
         if (materias.materiasDesaprobadas != null) {
           this.materiasPendientes = materias.materiasDesaprobadas;
         }
@@ -82,14 +87,14 @@ export class CalificacionesPerfilEstudianteComponent
     this.servicioCalificaciones
       .obtenerCalificacionesXMateriaXEstudiante(this.trimestreActual)
       .pipe(takeUntil(this.unsubscribe))
-      .subscribe(res => {
+      .subscribe((res) => {
         this.calificacionesXMateria = res.vectorCalXMat;
       });
   }
 
   calcularPromedio(index, cantidad) {
     var notas: number = 0;
-    this.calificacionesXMateria[index].calificaciones.forEach(nota => {
+    this.calificacionesXMateria[index].calificaciones.forEach((nota) => {
       if (nota != 0 && nota != null) notas = notas + nota;
     });
     this.promedio = notas / cantidad;
@@ -128,7 +133,7 @@ export class CalificacionesPerfilEstudianteComponent
   //notas tienen valor distinto a cero
   contadorNotasValidas(index): number {
     var cont = 0;
-    this.calificacionesXMateria[index].calificaciones.forEach(nota => {
+    this.calificacionesXMateria[index].calificaciones.forEach((nota) => {
       if (nota != 0 && nota != null) cont++;
     });
     return cont;

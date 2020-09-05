@@ -1,3 +1,4 @@
+import { AsociarAdultoResponsableComponent } from "./../../adulto-responsable/asociar-adulto-responsable/asociar-adulto-responsable.component";
 import { AsistenciaService } from "src/app/asistencia/asistencia.service";
 import { UbicacionService } from "src/app/ubicacion/ubicacion.service";
 import { CalificacionesService } from "../../calificaciones/calificaciones.service";
@@ -65,7 +66,7 @@ export class ListaEstudiantesComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     if ((this.servicio.retornoDesdeAcciones = false)) {
-      this.isLoading = true;
+      this.isLoading = false;
     } else {
       this.servicio
         .getEstudiantesListener()
@@ -88,16 +89,17 @@ export class ListaEstudiantesComponent implements OnInit, OnDestroy {
                     .subscribe((response) => {
                       this.materiasPendientes.push(
                         response.materiasDesaprobadas.length > 0
-                        );
+                      );
+                    });
+
+                  // Validación por suspendido
+                  this.servicio
+                    .esEstudianteSuspendido(this.estudiantes[i]._id)
+                    .pipe(takeUntil(this.unsubscribe))
+                    .subscribe((response) => {
+                      this.suspendido[i] = response.exito;
                     });
                 }
-              });
-
-            this.servicio
-              .esEstudianteSuspendido(this.estudiantes[i]._id)
-              .pipe(takeUntil(this.unsubscribe))
-              .subscribe((response) => {
-                this.suspendido[i] = response.exito;
               });
           }
         });
@@ -193,14 +195,31 @@ export class ListaEstudiantesComponent implements OnInit, OnDestroy {
     this.router.navigate(["./justificarInasistencia"]);
   }
 
-  onRegistrarAR(indice) {
+  onAsociarAR(indice) {
     this.asignarEstudianteSeleccionado(indice);
-    this.router.navigate(["./altaAdultoResponsable"]);
+    this.dialog
+      .open(AsociarAdultoResponsablePopupComponent, {
+        width: "250px",
+      })
+      .afterClosed()
+      .pipe(takeUntil(this.unsubscribe))
+      .subscribe((result) => {
+        if (result) {
+          this.router.navigate(["./altaAdultoResponsable"]);
+        } else {
+          this.router.navigate(["./asociarAdultoResponsable"]);
+        }
+      });
   }
 
   onRegistrarExamenes(indice) {
     this.asignarEstudianteSeleccionado(indice);
     this.router.navigate(["./calificacionesExamenes"]);
+  }
+
+  onNotificarReunion(indice) {
+    this.asignarEstudianteSeleccionado(indice);
+    this.router.navigate(["./solicitudReunion"]);
   }
 
   onReincorporar(indice) {
@@ -247,6 +266,26 @@ export class ReincorporarPopupComponent {
     this.dialogRef.close(true);
   }
   onNoClick(): void {
+    this.dialogRef.close(false);
+  }
+}
+
+@Component({
+  selector: "app-asociar-adulto-responsable-popup",
+  templateUrl: "./asociar-adulto-responsable-popup.component.html",
+  styleUrls: ["../buscar-estudiantes/buscar-estudiantes.component.css"],
+})
+export class AsociarAdultoResponsablePopupComponent {
+  constructor(
+    public dialogRef: MatDialogRef<ReincorporarPopupComponent>,
+    public router: Router,
+    public servicio: EstudiantesService
+  ) {}
+
+  addNewOne(): void {
+    this.dialogRef.close(true);
+  }
+  addOldOne(): void {
     this.dialogRef.close(false);
   }
 }

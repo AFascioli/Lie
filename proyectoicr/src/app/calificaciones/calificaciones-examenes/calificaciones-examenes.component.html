@@ -1,5 +1,5 @@
 <h1 class="componente-titulo">
-  Registrar calificación examen ciclo lectivo 2019
+  Registrar calificación examen ciclo lectivo {{ fechaActual.getFullYear() }}
 </h1>
 <mat-card class="card-body-componente">
   <form #form="ngForm">
@@ -25,8 +25,11 @@
         </mat-form-field>
       </div>
       <div class="contenido">
-        <mat-card class="datos-estudiante" [class.datos-estudiante-mobile]="mobileQuery.matches">
-            <p class="titulo-datos-est">Datos del estudiante</p>
+        <mat-card
+          class="datos-estudiante"
+          [class.datos-estudiante-mobile]="mobileQuery.matches"
+        >
+          <p class="titulo-datos-est">Datos del estudiante</p>
           <mat-card-subtitle>
             <b>Apellido/s: </b> {{ apellidoEstudiante }}
             <br />
@@ -39,13 +42,15 @@
       </p>
       <div class="div-selects" *ngIf="tieneMateriasDesaprobadas">
         <mat-form-field
-        [class.select-mobile]="mobileQuery.matches"
-        class="select">
+          [class.select-mobile]="mobileQuery.matches"
+          class="select"
+        >
           <mat-select
             placeholder="Seleccione materia"
             name="materiaRendida"
             ngModel
             #materiaRendida="ngModel"
+            [(ngModel)]="idMateriaSeleccionada"
             matNativeControl
             (selectionChange)="onMateriaChange(materiaRendida.value)"
             required
@@ -59,12 +64,16 @@
           </mat-select>
         </mat-form-field>
         <br />
-        <mat-form-field [class.select-mobile]="mobileQuery.matches" class="select">
+        <mat-form-field
+          [class.select-mobile]="mobileQuery.matches"
+          class="select"
+        >
           <mat-select
             placeholder="Seleccione condición"
             name="condicion"
             ngModel
             #condicion="ngModel"
+            [(ngModel)]="condicionExamen"
             (selectionChange)="onCondicionChage(condicion.viewModel)"
             matNativeControl
             required

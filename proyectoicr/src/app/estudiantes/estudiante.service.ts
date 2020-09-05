@@ -15,7 +15,7 @@ export class EstudiantesService implements OnDestroy {
   private estudiantesXDivisionActualizados = new Subject<any[]>();
   estudiantesBuscados = new Subject<Estudiante[]>();
   private divisionXCursoActualizada = new Subject<any[]>();
-  estudianteSeleccionado: Estudiante;
+  public estudianteSeleccionado: Estudiante;
   retornoDesdeAcciones: Boolean;
   busquedaEstudianteXNombre: boolean;
   private unsubscribe: Subject<void> = new Subject();
@@ -194,6 +194,33 @@ export class EstudiantesService implements OnDestroy {
     });
   }
 
+  //Obtiene todos adultos responsables de un estudiante pasado por parámetro
+  //@params: id del estudiante
+  public getARDeEstudiante() {
+    let params = new HttpParams().set(
+      "idEstudiante",
+      this.estudianteSeleccionado._id
+    );
+    return this.http.get<{
+      message: string;
+      exito: boolean;
+      adultosResponsables: any[];
+    }>(environment.apiUrl + "/adultoResponsable", {
+      params: params,
+    });
+  }
+
+  public notificarReunionAR(adultosResponsables, cuerpo, idUsuarioEmpleado) {
+    return this.http.post<{
+      message: string;
+      exito: boolean;
+    }>(environment.apiUrl + "/usuario/reunion/adultoResponsable", {
+      adultosResponsables: adultosResponsables,
+      cuerpo: cuerpo,
+      idUsuarioEmpleado: idUsuarioEmpleado,
+    });
+  }
+
   //Modifica en la base de datos los datos de un estudiante seleccionado
   //@params: datos del estudiante
   public modificarEstudiante(
@@ -243,8 +270,11 @@ export class EstudiantesService implements OnDestroy {
   }
 
   //Obtiene todos los cursos que están almacenados en la base de datos
-  public obtenerCursos() {
-    return this.http.get<{ cursos: any[] }>(environment.apiUrl + "/curso");
+  public obtenerCursos(añoLectivo) {
+    let params = new HttpParams().set("anioLectivo", añoLectivo);
+    return this.http.get<{ cursos: any[] }>(environment.apiUrl + "/curso", {
+      params: params,
+    });
   }
 
   //Obtiene todos los cursos que son dictados por una docente
@@ -308,6 +338,17 @@ export class EstudiantesService implements OnDestroy {
       curso: string;
       idCurso: string;
     }>(environment.apiUrl + "/curso/estudiante", {
+      params: params,
+    });
+  }
+
+  public esEstadoSuspendido(idEstado) {
+    let params = new HttpParams().set("idEstado", idEstado);
+
+    return this.http.get<{
+      message: string;
+      exito: boolean;
+    }>(environment.apiUrl + "/estudiante/estado/suspendido", {
       params: params,
     });
   }

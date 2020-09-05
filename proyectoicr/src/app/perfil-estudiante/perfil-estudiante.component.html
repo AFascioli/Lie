@@ -41,6 +41,14 @@
       >Datos estudiante</b
     ></mat-card
   >
+  <mat-card
+    class="opcion"
+    *ngIf="esAdultoResponsable"
+    (click)="onClickSolicitudReunion()"
+    ><mat-icon [inline]="true">message</mat-icon><br /><b
+      >Solicitud de reunión</b
+    ></mat-card
+  >
 </div>
 <div class="div-button" [class.div-button-mobile]="mobileQuery.matches">
   <button

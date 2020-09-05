@@ -6,7 +6,7 @@ import {
   Input,
   ChangeDetectorRef,
   OnDestroy,
-  Inject
+  Inject,
 } from "@angular/core";
 import { EstudiantesService } from "../estudiante.service";
 import { Subscription, Subject } from "rxjs";
@@ -15,7 +15,12 @@ import { NgForm } from "@angular/forms";
 import { Estudiante } from "../estudiante.model";
 import { Nacionalidad } from "../../ubicacion/nacionalidades.model";
 import { Localidad } from "../../ubicacion/localidades.model";
-import { MatDialog, MatDialogRef, MatSnackBar, MAT_DIALOG_DATA } from "@angular/material";
+import {
+  MatDialog,
+  MatDialogRef,
+  MatSnackBar,
+  MAT_DIALOG_DATA,
+} from "@angular/material";
 import { Router } from "@angular/router";
 import { MediaMatcher } from "@angular/cdk/layout";
 import { takeUntil } from "rxjs/operators";
@@ -23,7 +28,7 @@ import { takeUntil } from "rxjs/operators";
 @Component({
   selector: "app-mostrar-estudiantes",
   templateUrl: "./mostrar-estudiantes.component.html",
-  styleUrls: ["./mostrar-estudiantes.component.css"]
+  styleUrls: ["./mostrar-estudiantes.component.css"],
 })
 export class MostrarEstudiantesComponent implements OnInit, OnDestroy {
   nacionalidades: Nacionalidad[] = [];
@@ -62,7 +67,7 @@ export class MostrarEstudiantesComponent implements OnInit, OnDestroy {
     agendaCursos: 0,
     inscribirEstudiante: 0,
     registrarEmpleado: 0,
-    cuotas: 0
+    cuotas: 0,
   };
   _mobileQueryListener: () => void;
   mobileQuery: MediaQueryList;
@@ -109,14 +114,14 @@ export class MostrarEstudiantesComponent implements OnInit, OnDestroy {
     this.suscripcion = this.servicioUbicacion
       .getProvinciasListener()
       .pipe(takeUntil(this.unsubscribe))
-      .subscribe(provinciasActualizadas => {
+      .subscribe((provinciasActualizadas) => {
         this.provincias = provinciasActualizadas;
       });
     this.servicioUbicacion.getLocalidades();
     this.suscripcion = this.servicioUbicacion
       .getLocalidadesListener()
       .pipe(takeUntil(this.unsubscribe))
-      .subscribe(localidadesActualizadas => {
+      .subscribe((localidadesActualizadas) => {
         this.localidades = localidadesActualizadas;
         this.FiltrarLocalidades();
       });
@@ -124,24 +129,24 @@ export class MostrarEstudiantesComponent implements OnInit, OnDestroy {
     this.suscripcion = this.servicioUbicacion
       .getNacionalidadesListener()
       .pipe(takeUntil(this.unsubscribe))
-      .subscribe(nacionalidadesActualizadas => {
+      .subscribe((nacionalidadesActualizadas) => {
         this.nacionalidades = nacionalidadesActualizadas;
       });
     this.authService
       .obtenerPermisosDeRol()
       .pipe(takeUntil(this.unsubscribe))
-      .subscribe(response => {
+      .subscribe((response) => {
         this.permisos = response.permisos;
       });
   }
 
   FiltrarLocalidades() {
     const idProvinciaSeleccionada = this.provincias.find(
-      provincia => provincia.nombre === this.provinciaEstudiante
+      (provincia) => provincia.nombre === this.provinciaEstudiante
     ).id;
     this.localidadesFiltradas = [...this.localidades];
     this.localidadesFiltradas = this.localidadesFiltradas.filter(
-      localidad => localidad.id_provincia == idProvinciaSeleccionada
+      (localidad) => localidad.id_provincia == idProvinciaSeleccionada
     );
   }
 
@@ -173,17 +178,17 @@ export class MostrarEstudiantesComponent implements OnInit, OnDestroy {
           this.telefonoEstudiante
         )
         .pipe(takeUntil(this.unsubscribe))
-        .subscribe(resultado => {
+        .subscribe((resultado) => {
           if (resultado.exito) {
             this.modoEditar = false;
             this.snackBar.open(resultado.message, "", {
               panelClass: ["snack-bar-exito"],
-              duration: 4000
+              duration: 4000,
             });
           } else {
             this.snackBar.open(resultado.message, "", {
               panelClass: ["snack-bar-fracaso"],
-              duration: 4000
+              duration: 4000,
             });
           }
         });
@@ -191,12 +196,12 @@ export class MostrarEstudiantesComponent implements OnInit, OnDestroy {
       if (form.invalid) {
         this.snackBar.open("Faltan campos por completar", "", {
           panelClass: ["snack-bar-fracaso"],
-          duration: 4000
+          duration: 4000,
         });
       } else {
         this.snackBar.open("No se han realizado cambios en el formulario", "", {
-          panelClass: ["snack-bar-fracaso"],
-          duration: 4000
+          panelClass: ["snack-bar-aviso"],
+          duration: 4000,
         });
       }
     }
@@ -206,33 +211,39 @@ export class MostrarEstudiantesComponent implements OnInit, OnDestroy {
     if (tipo == "volver" && !this.modoEditar) {
       this.router.navigate(["./buscar/lista"]);
     } else {
-      let formInvalida=false;
-      let formModificada=false;
+      let formInvalida = false;
+      let formModificada = false;
       if (form.invalid) {
-        formInvalida=true;
+        formInvalida = true;
       } else {
-        formInvalida=false;
-        formModificada=form.dirty;
+        formInvalida = false;
+        formModificada = form.dirty;
       }
 
       let popup = this.dialog.open(MostrarPopupComponent, {
         width: "250px",
-        data: {tipoPopUp: tipo, formInvalida: formInvalida, formModificada: formModificada}
+        data: {
+          tipoPopUp: tipo,
+          formInvalida: formInvalida,
+          formModificada: formModificada,
+        },
       });
 
-      popup.afterClosed().subscribe(borrar => {
-        if(borrar){
+      popup.afterClosed().subscribe((borrar) => {
+        if (borrar) {
           this.servicioEstudiante
-          .borrarEstudiante(this.servicioEstudiante.estudianteSeleccionado._id)
-          .subscribe(rta => {
-            if(rta.exito){
-              this.snackBar.open(rta.message, "", {
-                panelClass: ["snack-bar-exito"],
-                duration: 4000
-              });
-              this.router.navigate(["./buscar/lista"]);
-            }
-          });
+            .borrarEstudiante(
+              this.servicioEstudiante.estudianteSeleccionado._id
+            )
+            .subscribe((rta) => {
+              if (rta.exito) {
+                this.snackBar.open(rta.message, "", {
+                  panelClass: ["snack-bar-exito"],
+                  duration: 4000,
+                });
+                this.router.navigate(["./buscar/lista"]);
+              }
+            });
         }
       });
     }
@@ -242,7 +253,7 @@ export class MostrarEstudiantesComponent implements OnInit, OnDestroy {
 @Component({
   selector: "app-mostrar-popup",
   templateUrl: "./mostrar-popup.component.html",
-  styleUrls: ["./mostrar-estudiantes.component.css"]
+  styleUrls: ["./mostrar-estudiantes.component.css"],
 })
 export class MostrarPopupComponent {
   tipoPopup: string;

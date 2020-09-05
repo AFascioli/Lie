@@ -41,6 +41,7 @@ exports.crearCalifXTrimestre = async function (califXMateriaNueva) {
   }
 };
 
+// Deprecado
 exports.crearDocsCalif = async function (materiasDelCurso, estado) {
   let idsCalXMateria = [];
   materiasDelCurso.forEach((elemento) => {
@@ -115,19 +116,19 @@ exports.obtenerMateriasDesaprobadasv2 = async function (
   idsCalificacionesXMateria,
   idEstado
 ) {
-  return new Promise(async(resolve, reject) => {
+  return new Promise(async (resolve, reject) => {
     var idsCXMDesaprobadas = [];
     if (arrayPendientes.length != 0) {
       idsCXMDesaprobadas.push(arrayPendientes);
     }
     for (const cxm of idsCalificacionesXMateria) {
-      await CalificacionesXMateria.findOne({ _id: cxm, estado: idEstado }).then(
-        (cxmEncontrada) => {
+      await CalificacionesXMateria.findOne({ _id: cxm, estado: idEstado })
+        .then((cxmEncontrada) => {
           if (cxmEncontrada != null) {
             idsCXMDesaprobadas.push(cxm);
           }
-        }
-      ).catch(()=> reject("Error"));
+        })
+        .catch(() => reject("Error"));
     }
     resolve(idsCXMDesaprobadas);
   });
@@ -147,46 +148,51 @@ exports.obtenerPromedioTotal = (trimestre1, trimestre2, trimestre3) => {
 //Dados los 3 vectores de calificaciones retorna un objeto que indica el estado y el promedio
 //que tendra la CXM correspondiente
 //@param: vector de calificaciones 1, 2 y 3 trimestre
-exports.obtenerEstadoYPromedioCXM= (trimestre1, trimestre2, trimestre3) => {
-  let promedioTrimestre3= this.obtenerPromedioDeTrimestre(trimestre3);
-  let promedioGeneral=this.obtenerPromedioTotal(trimestre1, trimestre2, trimestre3);
+exports.obtenerEstadoYPromedioCXM = (trimestre1, trimestre2, trimestre3) => {
+  let promedioTrimestre3 = this.obtenerPromedioDeTrimestre(trimestre3);
+  let promedioGeneral = this.obtenerPromedioTotal(
+    trimestre1,
+    trimestre2,
+    trimestre3
+  );
 
-  if(promedioTrimestre3<6){
-    return {aprobado: false, promedio: promedioGeneral};
-  }else{
-    if(promedioGeneral<6){
-      return {aprobado: false, promedio: promedioGeneral};
-    }else{
-      return {aprobado: true, promedio: promedioGeneral};
+  if (promedioTrimestre3 < 6) {
+    return { aprobado: false, promedio: promedioGeneral };
+  } else {
+    if (promedioGeneral < 6) {
+      return { aprobado: false, promedio: promedioGeneral };
+    } else {
+      return { aprobado: true, promedio: promedioGeneral };
     }
   }
 };
 
 //Dado un array de ids de cxm, obtiene el nombre e id de las materias
-exports.obtenerNombresMaterias =async (arrayIdCXM) => {
+exports.obtenerNombresMaterias = async (arrayIdCXM) => {
   return new Promise(async (resolve, reject) => {
-    let nombresMaterias=[];
-    for(const idCxm of arrayIdCXM){
+    let nombresMaterias = [];
+    for (const idCxm of arrayIdCXM) {
       await CalificacionesXMateria.aggregate([
         {
-          '$match': {
-            '_id': mongoose.Types.ObjectId(idCxm)
-          }
+          $match: {
+            _id: mongoose.Types.ObjectId(idCxm),
+          },
         },
         {
-          '$lookup': {
-            'from': 'materia',
-            'localField': 'idMateria',
-            'foreignField': '_id',
-            'as': 'datosMateria'
-          }
-        }, {
-          '$project': {
-            "datosMateria._id":1,
-            'datosMateria.nombre': 1
-          }
-        }
-      ]).then(datosMaterias => {
+          $lookup: {
+            from: "materia",
+            localField: "idMateria",
+            foreignField: "_id",
+            as: "datosMateria",
+          },
+        },
+        {
+          $project: {
+            "datosMateria._id": 1,
+            "datosMateria.nombre": 1,
+          },
+        },
+      ]).then((datosMaterias) => {
         nombresMaterias.push(datosMaterias[0].datosMateria[0]);
       });
     }

@@ -3,7 +3,7 @@
 </mat-card>
 
 <h1 *ngIf="!isLoading" class="componente-titulo">
-  Registrar documentación inscripción ciclo lectivo
+  Registrar documentos de inscripción ciclo lectivo
   {{ fechaActual.getFullYear() }}
 </h1>
 <mat-card class="card-body-componente" *ngIf="!isLoading">
@@ -19,8 +19,8 @@
         required
         (selectionChange)="onCursoSeleccionado(curso)"
       >
-        <mat-option *ngFor="let objCurso of cursos" [value]="objCurso.curso">
-          {{ objCurso.curso }}
+        <mat-option *ngFor="let objCurso of cursos" [value]="objCurso.nombre">
+          {{ objCurso.nombre }}
         </mat-option>
       </mat-select>
     </mat-form-field>
@@ -29,8 +29,14 @@
     Atención, no se puede registrar documentación debido a que estamos fuera de
     las fechas autorizadas
   </p>
-  <div *ngIf="estudiantesConDocumentos.length != 0">
-    <table mat-table [class.table-mobile]="mobileQuery.matches" [dataSource]="estudiantesConDocumentos">
+  <br />
+  <mat-spinner *ngIf="isLoading2" class="spinner" [diameter]="60"></mat-spinner>
+  <div *ngIf="estudiantesConDocumentos.length != 0 && !isLoading2">
+    <table
+      mat-table
+      [class.table-mobile]="mobileQuery.matches"
+      [dataSource]="estudiantesConDocumentos"
+    >
       <ng-container matColumnDef="apellido">
         <th class="columnas-tabla" mat-header-cell *matHeaderCellDef>
           Apellido/s
@@ -89,7 +95,10 @@
       <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
     </table>
   </div>
-  <p class="aviso" *ngIf="estudiantesConDocumentos.length == 0 && cursoSeleccionado">
+  <p
+    class="aviso"
+    *ngIf="estudiantesConDocumentos.length == 0 && cursoSeleccionado"
+  >
     No se encuentran estudiantes inscriptos en el curso seleccionado
   </p>
   <div class="div-button">

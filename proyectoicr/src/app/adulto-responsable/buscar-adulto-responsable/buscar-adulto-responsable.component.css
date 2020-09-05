@@ -1,0 +1,74 @@
+.contenido {
+  text-align: center;
+}
+
+.label-radio-button {
+  white-space: normal !important;
+}
+
+.titulo-tutores {
+  font-size: 21px;
+}
+
+.columna-checkbox {
+  padding-right: 12px;
+  width: 5% !important;
+}
+
+.columnas-normales {
+  width: 15% !important;
+  word-break: break-all;
+}
+
+.opciones-busqueda {
+  margin: 0 auto;
+  margin-top: 2%;
+  width: 80%;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.label-radio-button {
+  white-space: normal !important;
+}
+
+form {
+  text-align: center;
+}
+
+.div-button {
+  text-align: right;
+}
+
+.parrafo {
+  text-align: center;
+  margin: inherit;
+}
+
+.card-body-componente {
+  display: flex;
+  flex-direction: column;
+}
+
+.label-radio-button {
+  white-space: normal !important;
+}
+
+.mat-form-field {
+  width: 78.5%;
+}
+
+table {
+  width: 98%;
+  margin: 0 auto;
+}
+
+th {
+  font-weight: bold;
+  font-size: 15px;
+}
+
+td,
+th {
+  text-align: center !important;
+}
