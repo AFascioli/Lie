@@ -22,6 +22,7 @@ import { CancelPopupComponent } from "src/app/popup-genericos/cancel-popup.compo
 import { Router } from "@angular/router";
 import { MediaMatcher } from "@angular/cdk/layout";
 import { NgModel } from "@angular/forms";
+import { CicloLectivoService } from "src/app/cicloLectivo.service";
 
 @Component({
   selector: "app-definir-agenda",
@@ -79,7 +80,8 @@ export class DefinirAgendaComponent implements OnInit, OnDestroy {
     private snackBar: MatSnackBar,
     public router: Router,
     public changeDetectorRef: ChangeDetectorRef,
-    public media: MediaMatcher
+    public media: MediaMatcher,
+    public servicioCicloLectivo: CicloLectivoService
   ) {
     this.mobileQuery = media.matchMedia("(max-width: 880px)");
     this._mobileQueryListener = () => changeDetectorRef.detectChanges();
@@ -89,11 +91,7 @@ export class DefinirAgendaComponent implements OnInit, OnDestroy {
   @ViewChild(MatSort, { static: true }) sort: MatSort;
 
   ngOnInit() {
-    this.fechaActual = new Date();
-    if (
-      this.fechaActualEnCicloLectivo() ||
-      this.servicioAuth.getRol() == "Admin"
-    ) {
+    if (!this.inicioCursado() || this.servicioAuth.getRol() == "Admin") {
       this.obtenerCursos();
       this.servicioAgenda
         .obtenerMaterias()
@@ -118,6 +116,19 @@ export class DefinirAgendaComponent implements OnInit, OnDestroy {
     );
 
     return this.fechaActual.getTime() < fechaInicioPrimerTrimestre.getTime();
+  }
+
+  //Devuelve un booleano segun si se inicio o no el cursado
+  async inicioCursado() {
+    await this.servicioCicloLectivo
+      .obtenerEstadoCicloLectivo()
+      .subscribe((response) => {
+        if (response.exito) {
+          return response.estadoCiclo != "Creado";
+        } else {
+          return false;
+        }
+      });
   }
 
   obtenerDocentes() {

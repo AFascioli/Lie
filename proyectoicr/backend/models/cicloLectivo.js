@@ -6,7 +6,7 @@ const cicloLectivoSchema = mongoose.Schema({
   cantidadFaltasSuspension: Number,
   cantidadMateriasInscripcionLibre: Number,
   año: Number,
-  estado: [{ type: mongoose.Schema.Types.ObjectId, ref: "estado" }],
+  estado: { type: mongoose.Schema.Types.ObjectId, ref: "estado" },
 });
 
 module.exports = mongoose.model(

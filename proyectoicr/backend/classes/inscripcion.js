@@ -26,6 +26,43 @@ exports.obtenerAñoHabilitado = function (inscripcion, añoLectivo) {
   return siguiente;
 };
 
+//Dada una id de curso, obtiene las ids de las materias que se dan en ese curso
+function obtenerMateriasDeCurso(idCurso) {
+  return new Promise((resolve, reject) => {
+    Curso.aggregate([
+      {
+        $match: {
+          _id: mongoose.Types.ObjectId(idCurso),
+        },
+      },
+      {
+        $unwind: "$materias",
+      },
+      {
+        $lookup: {
+          from: "materiasXCurso",
+          localField: "materias",
+          foreignField: "_id",
+          as: "materiasDelCurso",
+        },
+      },
+      {
+        $group: {
+          _id: {
+            idMateria: "$materiasDelCurso.idMateria",
+          },
+        },
+      },
+    ])
+      .then((materiasDelCurso) => {
+        resolve(materiasDelCurso);
+      })
+      .catch((err) => reject(err));
+  });
+}
+
+module.exports.obtenerMateriasDeCurso = obtenerMateriasDeCurso;
+
 exports.inscribirEstudiante = async function (
   idCurso,
   idEstudiante,
@@ -48,47 +85,16 @@ exports.inscribirEstudiante = async function (
 
   let obtenerInscripcion = () => {
     return new Promise(async (resolve, reject) => {
+      let idEstadoActiva = await ClaseEstado.obtenerIdEstado(
+        "Inscripcion",
+        "Activa"
+      );
       Inscripcion.findOne({
         idEstudiante: idEstudiante,
         estado: idEstadoActiva,
       })
         .then((inscripcion) => {
           resolve(inscripcion);
-        })
-        .catch((err) => reject(err));
-    });
-  };
-
-  //Dada una id de curso, obtiene las ids de las materias que se dan en ese curso
-  let obtenerMateriasDeCurso = (idCurso) => {
-    return new Promise((resolve, reject) => {
-      Curso.aggregate([
-        {
-          $match: {
-            _id: mongoose.Types.ObjectId(idCurso),
-          },
-        },
-        {
-          $unwind: "$materias",
-        },
-        {
-          $lookup: {
-            from: "materiasXCurso",
-            localField: "materias",
-            foreignField: "_id",
-            as: "materiasDelCurso",
-          },
-        },
-        {
-          $group: {
-            _id: {
-              idMateria: "$materiasDelCurso.idMateria",
-            },
-          },
-        },
-      ])
-        .then((materiasDelCurso) => {
-          resolve(materiasDelCurso);
         })
         .catch((err) => reject(err));
     });
