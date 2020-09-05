@@ -42,30 +42,14 @@
         </mat-select>
       </mat-form-field>
     </div>
-    <!-- <div [hidden]="!estudiantes" class="div-button">
-      <button
-        mat-button
-        (click)="
-          exporter.exportTable('xlsx', {
-            fileName: 'Calificaciones',
-            Props: {
-              Author: this.servicioEstudianteAutenticacion.getUsuarioAutenticado()
-            }
-          })
-        "
-      >
-        <mat-icon>file_download </mat-icon>
-        EXPORTAR A EXCEL
-      </button>
-    </div> -->
-    <!-- <mat-form-field class="filtro" *ngIf="estudiantes">
+    <mat-form-field class="filtro" *ngIf="estudiantes.length != 0">
       <mat-label>Filtrar estudiante</mat-label>
       <input
         matInput
         (keyup)="aplicarFiltro($event.target.value)"
         placeholder="Estudiante"
       />
-    </mat-form-field> -->
+    </mat-form-field>
     <div *ngIf="estudiantes.length != 0">
       <table
         mat-table
@@ -517,11 +501,11 @@
     </div>
     <div [hidden]="!(estudiantes.length != 0)">
       <mat-paginator
-      (page)="pageEvent = indexEstudiante()"
-      [pageSizeOptions]="[10, 20, 30, 35]"
-      class="paginator"
-    >
-    </mat-paginator>
+        (page)="pageEvent = indexEstudiante()"
+        [pageSizeOptions]="[10, 20, 30, 35]"
+        class="paginator"
+      >
+      </mat-paginator>
     </div>
 
     <div class="div-button">

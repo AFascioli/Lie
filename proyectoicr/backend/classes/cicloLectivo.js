@@ -5,7 +5,6 @@ const ClaseEstado = require("../classes/estado");
 const CicloLectivo = require("../models/cicloLectivo");
 const ClaseCXM = require("../classes/calificacionXMateria");
 const ClaseInscripcion = require("../classes/inscripcion");
-const { forEach } = require("core-js/fn/array");
 
 //Retorna un array con los cursos que no tienen agenda
 exports.cursosTienenAgenda = () => {
