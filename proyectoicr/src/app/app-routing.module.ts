@@ -46,6 +46,10 @@ import { CalificacionesCicloLectivoComponent } from "./calificaciones/calificaci
 import { SolicitudReunionComponent } from "./solicitud-reunion/solicitud-reunion.component";
 import { SolicitudReunionAdultoResponsableComponent } from "./solicitud-reunion-adulto-responsable/solicitud-reunion-adulto-responsable.component";
 import { ModificarAdultoResponsableComponent } from "./adulto-responsable/modificar-adulto-responsable/modificar-adulto-responsable.component";
+import { AccionesDirectorComponent } from './acciones-director/acciones-director.component';
+import { ParametrizarReglasNegocioComponent } from './acciones-director/parametrizar-reglas-negocio/parametrizar-reglas-negocio.component';
+import { EstadoCursosComponent } from './acciones-director/estado-cursos/estado-cursos.component';
+import { CicloLectivoComponent } from './acciones-director/ciclo-lectivo/ciclo-lectivo/ciclo-lectivo.component';
 
 const routes: Routes = [
   { path: "login", component: LoginComponent },
@@ -363,6 +367,50 @@ const routes: Routes = [
         canActivate: [RoleGuard],
         data: {
           rolesValidos: ["Admin", "Preceptor", "Director"],
+        },
+      },
+      {
+        path: "accionesDirector",
+        component: AccionesDirectorComponent,
+        canActivate: [RoleGuard],
+        data: {
+          rolesValidos: [
+            "Admin",
+            "Director"
+          ],
+        },
+      },
+      {
+        path: "reglasDeNegocio",
+        component: ParametrizarReglasNegocioComponent,
+        canActivate: [RoleGuard],
+        data: {
+          rolesValidos: [
+            "Admin",
+            "Director",
+          ],
+        },
+      },
+      {
+        path: "estadoCursos",
+        component: EstadoCursosComponent,
+        canActivate: [RoleGuard],
+        data: {
+          rolesValidos: [
+            "Admin",
+            "Director",
+          ],
+        },
+      },
+      {
+        path: "estadoCicloLectivo",
+        component: CicloLectivoComponent,
+        canActivate: [RoleGuard],
+        data: {
+          rolesValidos: [
+            "Admin",
+            "Director",
+          ],
         },
       },
       {

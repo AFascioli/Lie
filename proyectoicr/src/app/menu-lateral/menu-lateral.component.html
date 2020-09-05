@@ -285,6 +285,16 @@
               <mat-icon class="iconSinExpansion">person_add</mat-icon>
               <p class="titulo-expansion">Registrar personal</p>
             </a>
+
+            <a
+            class="sinExpansion"
+            mat-list-item
+            routerLink="/accionesDirector"
+            (click)="cerrarMenuLateral(sideNav)"
+          >
+            <mat-icon class="iconSinExpansion">settings</mat-icon>
+            <p class="titulo-expansion">Acciones Director</p>
+          </a>
           </div>
         </mat-accordion>
       </mat-nav-list>
