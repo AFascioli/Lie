@@ -1,0 +1,24 @@
+<h1 class="componente-titulo">Acciones Director</h1>
+
+<div class="grid-container">
+  <mat-card class="opcion" (click)="onClickEstadoCursos()"
+    ><mat-icon [inline]="true">group</mat-icon><br /><b
+      >Estado de cursos</b
+    ></mat-card
+  >
+  <mat-card class="opcion" (click)="onClickCicloLectivo()"
+    ><mat-icon [inline]="true">schedule</mat-icon><br /><b
+      >Ciclo lectivo</b
+    ></mat-card
+  >
+  <mat-card class="opcion" (click)="onClickReglasDeNegocio()"
+    ><mat-icon [inline]="true">school</mat-icon><br /><b
+      >Reglas de negocio</b
+    ></mat-card
+  >
+</div>
+<div class="div-button">
+  <button mat-raised-button [routerLink]="['/home']" class="button-warn">
+    Volver
+  </button>
+</div>

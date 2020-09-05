@@ -1,6 +1,5 @@
 const mongoose = require("mongoose");
 const Curso = require("../models/curso");
-const Estado = require("../models/estado");
 const Inscripcion = require("../models/inscripcion");
 const Estudiante = require("../models/estudiante");
 const CicloLectivo = require("../models/cicloLectivo");
@@ -79,6 +78,11 @@ exports.inscribirEstudiante = async function (
     });
   };
 
+  let idEstadoActiva = await ClaseEstado.obtenerIdEstado(
+    "Inscripcion",
+    "Activa"
+  );
+
   let obtenerInscripcion = () => {
     return new Promise(async (resolve, reject) => {
       let idEstadoActiva = await ClaseEstado.obtenerIdEstado(
@@ -87,7 +91,7 @@ exports.inscribirEstudiante = async function (
       );
       Inscripcion.findOne({
         idEstudiante: idEstudiante,
-        estado: idEstadoActiva, //#resolve ver si es necesario filtrar por estado
+        estado: idEstadoActiva,
       })
         .then((inscripcion) => {
           resolve(inscripcion);
@@ -106,26 +110,20 @@ exports.inscribirEstudiante = async function (
     return cuotas;
   };
 
-  let obtenerAñoCicloLectivo = () => {
-    let fechaActual = new Date();
+  let esCambioDeCurso = (idCurso, idCicloLectivo) => {
     return new Promise((resolve, reject) => {
-      CicloLectivo.findOne({ año: fechaActual.getFullYear() })
+      CicloLectivo.findById(idCicloLectivo)
         .then((cicloLectivo) => {
-          resolve(cicloLectivo.año);
+          if (añoLectivo == cicloLectivo.año) {
+            Curso.findByIdAndUpdate(idCurso, { $inc: { capacidad: 1 } }).then(
+              () => {
+                resolve();
+              }
+            );
+            cuotasAnteriores = inscripcion.cuotas;
+          }
         })
-        .catch((err) => reject(err));
-    });
-  };
-
-  let aumentarCupo = (idCurso) => {
-    return new Promise((resolve, reject) => {
-      Curso.findByIdAndUpdate(idCurso, { $inc: { capacidad: 1 } })
-        .then(() => {
-          resolve();
-        })
-        .catch(() => {
-          reject();
-        });
+        .catch((error) => reject(error));
     });
   };
 
@@ -145,16 +143,11 @@ exports.inscribirEstudiante = async function (
 
   try {
     var cursoSeleccionado = await obtenerCurso();
-    var estadoInscriptoInscripcion = await ClaseEstado.obtenerIdEstado(
-      "Inscripcion",
-      "Inscripto"
-    );
     var estadoCursandoMateria = await ClaseEstado.obtenerIdEstado(
       "CalificacionesXMateria",
       "Cursando"
     );
     var inscripcion = await obtenerInscripcion();
-    var añoActual = await obtenerAñoCicloLectivo();
     var materiasDelCurso = await obtenerMateriasDeCurso(idCurso);
     let cuotasAnteriores = [];
     let contadorInasistenciasInjustificada = 0;
@@ -172,7 +165,6 @@ exports.inscribirEstudiante = async function (
       contadorLlegadasTarde = inscripcion.contadorLlegadasTarde;
 
       inscripcion.activa = false;
-      // cuotasAnteriores = inscripcion.cuotas;
 
       var idEstadoDesaprobadaMateria = await ClaseEstado.obtenerIdEstado(
         "CalificacionesXMateria",
@@ -188,11 +180,9 @@ exports.inscribirEstudiante = async function (
       }
       await inscripcion.save();
 
-      //Si es cambio de curso
-      if (añoActual == inscripcion.año) {
-        aumentarCupo(inscripcion.idCurso);
-        cuotasAnteriores = inscripcion.cuotas;
-      }
+      var idCicloLectivo = await ClaseEstado.obtenerIdCicloLectivo(false);
+
+      esCambioDeCurso(inscripcion.idCurso, idCicloLectivo);
     }
 
     var cuotas = [];
@@ -211,14 +201,13 @@ exports.inscribirEstudiante = async function (
       idEstudiante: idEstudiante,
       idCurso: cursoSeleccionado._id,
       documentosEntregados: documentosEntregados,
-      activa: true,
-      estado: estadoInscriptoInscripcion._id,
+      estado: idEstadoActiva,
       contadorInasistenciasInjustificada: contadorInasistenciasInjustificada,
       contadorInasistenciasJustificada: contadorInasistenciasJustificada,
       contadorLlegadasTarde: contadorLlegadasTarde,
       calificacionesXMateria: idsCXMNuevas,
       materiasPendientes: materiasPendientesNuevas,
-      año: añoActual,
+      CicloLectivo: idCicloLectivo,
       cuotas: cuotas,
       sanciones: [],
     });
@@ -255,7 +244,7 @@ exports.inscribirEstudianteProximoAnio = async function (
   };
 
   try {
-    var estadoPendienteInscripcion = await ClaseEstado.obtenerIdEstado(
+    var idEstadoPendienteInscripcion = await ClaseEstado.obtenerIdEstado(
       "Inscripcion",
       "Pendiente"
     );
@@ -265,8 +254,7 @@ exports.inscribirEstudianteProximoAnio = async function (
     const nuevaInscripcion = new Inscripcion({
       idEstudiante: idEstudiante,
       idCurso: cursoSeleccionado._id,
-      activa: false,
-      estado: estadoPendienteInscripcion._id,
+      estado: idEstadoPendienteInscripcion,
       contadorInasistenciasInjustificada: 0,
       contadorInasistenciasJustificada: 0,
       contadorLlegadasTarde: 0,
