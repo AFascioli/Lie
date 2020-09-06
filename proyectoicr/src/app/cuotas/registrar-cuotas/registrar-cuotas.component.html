@@ -64,6 +64,9 @@
     ciclo lectivo
   </p>
   <br />
+  <mat-card class="card-spinner" *ngIf="isLoading">
+    <mat-spinner class="spinner" [diameter]="60"></mat-spinner>
+  </mat-card>
   <div *ngIf="!cursoNotSelected && !isLoading">
     <table
       mat-table
@@ -88,9 +91,7 @@
       </ng-container>
 
       <ng-container matColumnDef="accion">
-        <th class="cuotas" mat-header-cell *matHeaderCellDef>
-          Estado cuotas
-        </th>
+        <th class="cuotas" mat-header-cell *matHeaderCellDef>Estado cuotas</th>
         <td class="cuotas" mat-cell *matCellDef="let row">
           <mat-slide-toggle
             [checked]="row.pagado"

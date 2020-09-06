@@ -29,6 +29,7 @@ export class AsociarAdultoResponsableComponent implements OnInit {
     "telefono",
   ];
   busqueda: boolean = false;
+  isLoading: boolean = false;
 
   constructor(
     public dialog: MatDialog,
@@ -76,6 +77,7 @@ export class AsociarAdultoResponsableComponent implements OnInit {
   // Si el formulario no es valido no hace nada, luego controla que tipo de busqueda es
   onBuscar(form: NgForm) {
     if (form.valid) {
+      this.isLoading = true;
       this.busqueda = true;
       if (this.buscarPorNomYAp) {
         this.servicio
@@ -87,6 +89,7 @@ export class AsociarAdultoResponsableComponent implements OnInit {
           .subscribe((response) => {
             this.comparar(response.adultosResponsables);
             this.setColumns();
+            this.isLoading = false;
           });
       } else {
         this.servicio
@@ -98,6 +101,7 @@ export class AsociarAdultoResponsableComponent implements OnInit {
           .subscribe((response) => {
             this.comparar(response.adultosResponsables);
             this.setColumns();
+            this.isLoading = false;
           });
       }
     } else {
@@ -111,7 +115,7 @@ export class AsociarAdultoResponsableComponent implements OnInit {
   onAsociar() {
     this.busqueda = false;
     if (this.checkbox) {
-      this.checkbox=false;
+      this.checkbox = false;
       this.servicio
         .asociarAdultoResponsable(
           this.estudiantesService.estudianteSeleccionado._id,

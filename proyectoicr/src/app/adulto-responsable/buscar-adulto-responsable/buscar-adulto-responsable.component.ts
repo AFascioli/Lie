@@ -23,6 +23,7 @@ export class BuscarAdultoResponsableComponent implements OnInit {
     "telefono",
   ];
   busqueda: boolean = false;
+  isLoading: boolean = false;
 
   constructor(
     public dialog: MatDialog,
@@ -46,6 +47,7 @@ export class BuscarAdultoResponsableComponent implements OnInit {
   }
   // Si el formulario no es valido no hace nada, luego controla que tipo de busqueda es
   onBuscar(form: NgForm) {
+    this.isLoading = true;
     if (form.valid) {
       this.busqueda = true;
       if (this.buscarPorNomYAp) {
@@ -58,6 +60,7 @@ export class BuscarAdultoResponsableComponent implements OnInit {
           .subscribe((response) => {
             this.ARFiltrados = response.adultosResponsables;
             this.setColumns();
+            this.isLoading = false;
           });
       } else {
         this.servicio
@@ -69,6 +72,7 @@ export class BuscarAdultoResponsableComponent implements OnInit {
           .subscribe((response) => {
             this.ARFiltrados = response.adultosResponsables;
             this.setColumns();
+            this.isLoading = false;
           });
       }
     } else {
