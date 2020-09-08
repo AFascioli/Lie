@@ -2,7 +2,6 @@ const express = require("express");
 const router = express.Router();
 const mongoose = require("mongoose");
 const checkAuthMiddleware = require("../middleware/check-auth");
-const Estado = require("../models/estado");
 const Estudiante = require("../models/estudiante");
 const Inscripcion = require("../models/inscripcion");
 const AsistenciaDiaria = require("../models/asistenciaDiaria");
@@ -53,9 +52,10 @@ async function validarLibreInasistencias(idEst, valorInasistencia) {
           });
       }
     })
-    .catch(() => {
+    .catch((error) => {
       res.status(500).json({
         message: "No se pudo obtener el estado suspendido",
+        error: error.message,
       });
     });
 }
@@ -299,8 +299,8 @@ router.get("", async (req, res) => {
     .catch((error) => {
       res.status(500).json({
         message:
-          "Ocurrió un error al querer obtener el estado de la asistencia para cada alumno. El error es: " +
-          error.message,
+          "Ocurrió un error al querer obtener el estado de la asistencia para cada alumno",
+        error: error.message,
       });
     });
 });
@@ -464,8 +464,8 @@ router.get("/asistenciaEstudiante", async (req, res) => {
     .catch((error) => {
       res.status(500).json({
         message:
-          "Ocurrió un error al querer devolver los contadores de inasistencias. El error se puede describir de la siguiente manera: " +
-          error.message,
+          "Ocurrió un error al querer devolver los contadores de inasistencias",
+        error: error.message,
       });
     });
 });
@@ -503,12 +503,12 @@ router.post(
           exito: true,
         });
       })
-      .catch(() => {
+      .catch((error) => {
         res.status(500).json({
           message:
             "Ocurrió un error al querer publicar el estado de las inasistencias (justificada / injustificada). " +
-            "El error se puede describir de la siguiente manera: " +
-            error.message,
+            "El error se puede describir de la siguiente manera: ",
+          error: error.message,
         });
       });
   }
@@ -594,12 +594,11 @@ router.get("/inasistencias", async (req, res) => {
         inasistencias: [],
       });
     })
-    .catch(() => {
+    .catch((error) => {
       res.status(500).json({
         message:
-          "Ocurrió un error al querer obtener el estado de las inasistencias (justificada / injustificada). " +
-          "El error se puede describir de la siguiente manera: " +
-          error.message,
+          "Ocurrió un error al querer obtener el estado de las inasistencias (justificada / injustificada)",
+        error: error.message,
       });
     });
 });
@@ -734,9 +733,8 @@ router.post("/llegadaTarde", checkAuthMiddleware, async (req, res) => {
     .catch((error) => {
       res.status(500).json({
         message:
-          "Ocurrió un error al querer publicar la llegada tarde de un estudiante" +
-          "El error se puede describir de la siguiente manera: " +
-          error.message,
+          "Ocurrió un error al querer publicar la llegada tarde de un estudiante",
+        error: error.message,
       });
     });
 });
@@ -785,84 +783,69 @@ router.post("/retiro", checkAuthMiddleware, async (req, res) => {
                       retiroAnticipado: true,
                       $inc: { valorInasistencia: actualizacionInasistencia },
                     }
-                  )
-                    .then(() => {
-                      if (!asistencia.justificado) {
-                        //Si el estudiante tiene ya registrada una falta pero esta justificada, el retiro no deberia sumar mas inasistencias
-                        inscripcion.contadorInasistenciasInjustificada += actualizacionInasistencia;
-                      }
-                      inscripcion
-                        .save()
-                        .then(async () => {
-                          //Envio de notificación a los adultos responsables del estudiante. #working
-                          let idsUsuariosAR = await ClaseSuscripcion.obtenerIdsUsuarios(
-                            req.body.idEstudiante
-                          );
-                          let idsUsuarios = await ClaseSuscripcion.filtrarARPorPreferencias(
-                            idsUsuariosAR,
-                            "Retiro Anticipado"
-                          );
+                  ).then(() => {
+                    if (!asistencia.justificado) {
+                      //Si el estudiante tiene ya registrada una falta pero esta justificada, el retiro no deberia sumar mas inasistencias
+                      inscripcion.contadorInasistenciasInjustificada += actualizacionInasistencia;
+                    }
+                    inscripcion.save().then(async () => {
+                      //Envio de notificación a los adultos responsables del estudiante. #working
+                      let idsUsuariosAR = await ClaseSuscripcion.obtenerIdsUsuarios(
+                        req.body.idEstudiante
+                      );
+                      let idsUsuarios = await ClaseSuscripcion.filtrarARPorPreferencias(
+                        idsUsuariosAR,
+                        "Retiro Anticipado"
+                      );
 
-                          if (idsUsuarios.length > 0) {
-                            var tutores = req.body.tutoresSeleccionados;
-                            var cuerpo =
-                              "Se ha registrado un retiro anticipado de " +
-                              estudiante.apellido +
-                              " " +
-                              estudiante.nombre +
-                              ". ";
+                      if (idsUsuarios.length > 0) {
+                        var tutores = req.body.tutoresSeleccionados;
+                        var cuerpo =
+                          "Se ha registrado un retiro anticipado de " +
+                          estudiante.apellido +
+                          " " +
+                          estudiante.nombre +
+                          ". ";
 
-                            if (tutores.length > 0) {
+                        if (tutores.length > 0) {
+                          cuerpo =
+                            cuerpo +
+                            "El estudiante fue retirado por " +
+                            tutores[0].apellido +
+                            " " +
+                            tutores[0].nombre;
+
+                          for (let i = 0; i < tutores.length; i++) {
+                            if (i == tutores.length - 1) {
                               cuerpo =
                                 cuerpo +
-                                "El estudiante fue retirado por " +
-                                tutores[0].apellido +
+                                " y " +
+                                tutores[i].apellido +
                                 " " +
-                                tutores[0].nombre;
-
-                              for (let i = 0; i < tutores.length; i++) {
-                                if (i == tutores.length - 1) {
-                                  cuerpo =
-                                    cuerpo +
-                                    " y " +
-                                    tutores[i].apellido +
-                                    " " +
-                                    tutores[i].nombre;
-                                } else if (i != 0) {
-                                  cuerpo =
-                                    cuerpo +
-                                    ", " +
-                                    tutores[i].apellido +
-                                    " " +
-                                    tutores[i].nombre;
-                                }
-                                if (i == tutores.length - 1)
-                                  cuerpo = cuerpo + ".";
-                              }
+                                tutores[i].nombre;
+                            } else if (i != 0) {
+                              cuerpo =
+                                cuerpo +
+                                ", " +
+                                tutores[i].apellido +
+                                " " +
+                                tutores[i].nombre;
                             }
-                            ClaseSuscripcion.notificacionGrupal(
-                              idsUsuarios,
-                              "Retiro anticipado",
-                              this.cuerpo
-                            );
+                            if (i == tutores.length - 1) cuerpo = cuerpo + ".";
                           }
-                          res.status(200).json({
-                            message:
-                              "Retiro anticipado exitosamente registrado",
-                            exito: "exito",
-                          });
-                        })
-                        .catch(() => {
-                          res.status(500).json({
-                            message: "Mensaje de error especifico",
-                          });
-                        });
-                    })
-                    .catch(() => {
-                      res.status(500).json({
-                        message: "Mensaje de error especifico",
+                        }
+                        ClaseSuscripcion.notificacionGrupal(
+                          idsUsuarios,
+                          "Retiro anticipado",
+                          this.cuerpo
+                        );
+                      }
+                      res.status(200).json({
+                        message: "Retiro anticipado exitosamente registrado",
+                        exito: "exito",
                       });
                     });
+                  });
                 }
               }
             } else {
@@ -872,17 +855,13 @@ router.post("/retiro", checkAuthMiddleware, async (req, res) => {
                 exito: "faltaasistencia",
               });
             }
-          })
-          .catch(() => {
-            res.status(500).json({
-              message: "Mensaje de error especifico",
-            });
           });
       }
     })
-    .catch(() => {
+    .catch((error) => {
       res.status(500).json({
-        message: "Mensaje de error especifico",
+        message: "Ocurrió un error al querer registrar el retiro anticipado",
+        error: error.message,
       });
     });
 });

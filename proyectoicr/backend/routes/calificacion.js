@@ -50,7 +50,7 @@ router.get("/materiasDesaprobadas", async (req, res) => {
         materiasDesaprobadas: materiasDesaprobadas,
       });
     } else {
-      return res.status(200).json({
+      return res.status(404).json({
         message: "El alumno seleccionado no tiene materias desaprobadas",
         exito: true,
         materiasDesaprobadas: [],

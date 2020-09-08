@@ -34,12 +34,12 @@ router.get("/", (req, res) => {
         });
       }
     })
-    .catch((e) => {
+    .catch((error) => {
       res.status(400).json({
         exito: false,
         message:
-          "Ocurrió un error al buscar los adultos responsables del estudiante" +
-          e,
+          "Ocurrió un error al buscar los adultos responsables del estudiante",
+        error: error.message,
       });
     });
 });
@@ -57,10 +57,11 @@ router.get("/nombre", checkAuthMiddleware, (req, res, next) => {
         adultosResponsables: documents,
       });
     })
-    .catch(() => {
+    .catch((error) => {
       res.status(500).json({
         message:
           "Ocurrió un error al querer obtener el adulto responsable por nombre",
+        error: error.message,
       });
     });
 });
@@ -79,9 +80,10 @@ router.get("/documento", checkAuthMiddleware, (req, res, next) => {
         adultosResponsables: adultosResponsables,
       });
     })
-    .catch(() => {
+    .catch((error) => {
       res.status(500).json({
         message: "Ocurrió un error al querer obtener el adulto por documento",
+        error: error.message,
       });
     });
 });
@@ -123,31 +125,39 @@ router.post("/", checkAuthMiddleware, (req, res) => {
         });
       });
     })
-    .catch((e) => {
+    .catch((error) => {
       res.status(500).json({
         message:
-          "Se presentó un error al querer registrar el adulto responsable. El error fue el siguiente: " +
-          e,
+          "Se presentó un error al querer registrar el adulto responsable ",
+        error: error.message,
       });
     });
 });
 
 //Asocia un adulto responsable a un estudiante
 router.post("/estudiante", checkAuthMiddleware, (req, res) => {
-  for (const idAR of req.body.adultosResponsables) {
-    AdultoResponsable.findById(idAR._id).then(async (adultoResponsable) => {
-      await adultoResponsable.estudiantes.push(req.body.idEstudiante);
-      await adultoResponsable.save().then((ARGuardado) => {
-        Estudiante.findByIdAndUpdate(req.body.idEstudiante, {
-          $addToSet: { adultoResponsable: ARGuardado._id },
-        }).exec();
+  try {
+    for (const idAR of req.body.adultosResponsables) {
+      AdultoResponsable.findById(idAR._id).then(async (adultoResponsable) => {
+        await adultoResponsable.estudiantes.push(req.body.idEstudiante);
+        await adultoResponsable.save().then((ARGuardado) => {
+          Estudiante.findByIdAndUpdate(req.body.idEstudiante, {
+            $addToSet: { adultoResponsable: ARGuardado._id },
+          }).exec();
+        });
       });
+    }
+    res.status(201).json({
+      message: "El adulto responsable fue asociado exitosamente",
+      exito: true,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message:
+        "Se presentó un error al querer registrar el adulto responsable ",
+      error: error.message,
     });
   }
-  res.status(201).json({
-    message: "El adulto responsable fue asociado exitosamente",
-    exito: true,
-  });
 });
 
 //Retorna nombre, apellido, curso e id de los estudiantes a cargo de un Adulto Responsable
@@ -197,8 +207,8 @@ router.get("/estudiantes", checkAuthMiddleware, async (req, res) => {
         .catch((error) => {
           res.status(500).json({
             message:
-              "Se presentó un error al querer obtener los datos del estudiante. El error fue el siguiente: " +
-              error,
+              "Se presentó un error al querer obtener los datos del estudiante",
+            error: error.message,
           });
         });
     });
@@ -219,22 +229,27 @@ router.get("/estudiantes", checkAuthMiddleware, async (req, res) => {
   } catch (error) {
     res.status(500).json({
       message:
-        "Se presentó un error al querer obtener los datos del estudiante. El error fue el siguiente: " +
-        error,
+        "Se presentó un error al querer obtener los datos del estudiante",
+      error: error.message,
     });
   }
 });
 
 router.get("/preferencias", (req, res) => {
-  AdultoResponsable.findOne({ idUsuario: req.query.idUsuarioAR }).then(
-    (adultoR) => {
+  AdultoResponsable.findOne({ idUsuario: req.query.idUsuarioAR })
+    .then((adultoR) => {
       res.status(200).json({
         message: "Preferencias buscadas correctamente",
         exito: true,
         preferenciasPush: adultoR.preferenciasPush,
       });
-    }
-  );
+    })
+    .catch((error) => {
+      res.status(500).json({
+        message: "Se presentó un error al obtener las preferencias",
+        error: error.message,
+      });
+    });
 });
 
 router.post("/preferencias", (req, res) => {
@@ -251,7 +266,7 @@ router.post("/preferencias", (req, res) => {
     .catch((error) => {
       res.status(200).json({
         message: "Ocurrió un error al actualizar las preferencias",
-        exito: false,
+        error: error.message,
       });
     });
 });
@@ -277,8 +292,8 @@ router.post("/modificar", (req, res) => {
     })
     .catch((error) => {
       res.status(200).json({
-        message: "Ocurrió un error al modificar el adulto" + error,
-        exito: false,
+        message: "Ocurrió un error al modificar el adulto",
+        error: error.message,
       });
     });
 });

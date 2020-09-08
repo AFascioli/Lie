@@ -16,16 +16,9 @@ const AdultoResponsable = require("../models/adultoResponsable");
 //si coinciden entonces le permite cambiar la contraseña, sino se lo deniega
 router.post("/cambiarPassword", async (req, res) => {
   let passwordNueva;
-  await bcrypt
-    .hash(req.body.passwordNueva, 10)
-    .then((hash) => {
-      passwordNueva = hash;
-    })
-    .catch(() => {
-      res.status(500).json({
-        message: "Mensaje de error especifico",
-      });
-    });
+  await bcrypt.hash(req.body.passwordNueva, 10).then((hash) => {
+    passwordNueva = hash;
+  });
   Usuario.findOne({ email: req.body.usuario })
     .then((usuario) => {
       if (!bcrypt.compareSync(req.body.passwordVieja, usuario.password)) {
@@ -92,9 +85,10 @@ router.post("/login", (req, res) => {
                       exito: true,
                     });
                   })
-                  .catch(() => {
+                  .catch((error) => {
                     res.status(500).json({
                       message: "El docente no esta registrado",
+                      error: error.message,
                       exito: false,
                     });
                   });
@@ -108,18 +102,20 @@ router.post("/login", (req, res) => {
                 });
               }
             })
-            .catch(() => {
+            .catch((error) => {
               res.status(500).json({
                 message: "El rol asignado al usuario no existe",
+                error: error.message,
                 exito: false,
               });
             });
         }
       }
     })
-    .catch(() => {
+    .catch((error) => {
       res.status(500).json({
         message: "No hay un usuario registrado con este mail",
+        error: error.message,
         exito: false,
       });
     });
