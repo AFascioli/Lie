@@ -16,6 +16,7 @@ const ClaseAsistencia = require("../classes/asistencia");
 const CicloLectivo = require("../models/cicloLectivo");
 const { JsonExporterService } = require("cdk-table-exporter");
 const { stringify } = require("querystring");
+const { error } = require("protractor");
 
 // Obtiene todos los cursos que están almacenados en la base de datos
 router.get("/", checkAuthMiddleware, (req, res) => {
@@ -454,9 +455,10 @@ router.get("/docente", checkAuthMiddleware, (req, res) => {
         exito: true,
       });
     })
-    .catch(() => {
+    .catch((error) => {
       res.status(500).json({
-        message: "Mensaje de error especifico",
+        message: "Ocurrió un error al obtener los cursos del docente",
+        error: error.message,
       });
     });
 });
@@ -943,8 +945,22 @@ router.get("/materias", checkAuthMiddleware, (req, res) => {
       },
     },
     {
+      $group: {
+        _id: "$materiasDeCurso.idMateria",
+        idMateria: {
+          $first: "$materiasDeCurso.idMateria",
+        },
+        idDocente: {
+          $first: "$materiasDeCurso.idDocente",
+        },
+        materia: {
+          $first: "$materias",
+        },
+      },
+    },
+    {
       $project: {
-        materias: 1,
+        materia: 1,
       },
     },
   ])
@@ -952,8 +968,8 @@ router.get("/materias", checkAuthMiddleware, (req, res) => {
       var respuesta = [];
       rtdoMaterias.forEach((materia) => {
         var datosMateria = {
-          id: materia.materias[0]._id,
-          nombre: materia.materias[0].nombre,
+          id: materia.materia[0]._id,
+          nombre: materia.materia[0].nombre,
         };
         respuesta.push(datosMateria);
       });
@@ -964,9 +980,10 @@ router.get("/materias", checkAuthMiddleware, (req, res) => {
         exito: true,
       });
     })
-    .catch(() => {
+    .catch((error) => {
       res.status(500).json({
-        message: "Mensaje de error especifico",
+        message: "Ocurrió un error al obtener las materias del docente",
+        error: error.message,
       });
     });
 });
