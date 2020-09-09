@@ -8,7 +8,7 @@ const Curso = require("../models/curso");
 const ClaseEstado = require("../classes/estado");
 
 // Retorna los adultos responsables de un estudiante
-router.get("/", (req, res) => {
+router.get("/", checkAuthMiddleware, (req, res) => {
   AdultoResponsable.find(
     {
       estudiantes: { $in: [req.query.idEstudiante] },
@@ -128,7 +128,7 @@ router.post("/", checkAuthMiddleware, (req, res) => {
     .catch((error) => {
       res.status(500).json({
         message:
-          "Se presentó un error al querer registrar el adulto responsable ",
+          "Se presentó un error al querer registrar el adulto responsable",
         error: error.message,
       });
     });
@@ -154,7 +154,7 @@ router.post("/estudiante", checkAuthMiddleware, (req, res) => {
   } catch (error) {
     res.status(500).json({
       message:
-        "Se presentó un error al querer registrar el adulto responsable ",
+        "Se presentó un error al querer asociar el adulto responsable al estudiante",
       error: error.message,
     });
   }
@@ -235,7 +235,7 @@ router.get("/estudiantes", checkAuthMiddleware, async (req, res) => {
   }
 });
 
-router.get("/preferencias", (req, res) => {
+router.get("/preferencias", checkAuthMiddleware, (req, res) => {
   AdultoResponsable.findOne({ idUsuario: req.query.idUsuarioAR })
     .then((adultoR) => {
       res.status(200).json({
@@ -246,32 +246,32 @@ router.get("/preferencias", (req, res) => {
     })
     .catch((error) => {
       res.status(500).json({
-        message: "Se presentó un error al obtener las preferencias",
+        message: "Se presentó un error al querer obtener las preferencias",
         error: error.message,
       });
     });
 });
 
-router.post("/preferencias", (req, res) => {
+router.post("/preferencias", checkAuthMiddleware, (req, res) => {
   AdultoResponsable.findOneAndUpdate(
     { idUsuario: req.body.idUsuarioAR },
     { preferenciasPush: req.body.preferencias }
   )
-    .then((adultoR) => {
+    .then(() => {
       res.status(200).json({
         message: "Preferencias actualizadas correctamente",
         exito: true,
       });
     })
     .catch((error) => {
-      res.status(200).json({
+      res.status(500).json({
         message: "Ocurrió un error al actualizar las preferencias",
         error: error.message,
       });
     });
 });
 
-router.post("/modificar", (req, res) => {
+router.post("/modificar", checkAuthMiddleware, (req, res) => {
   AdultoResponsable.findByIdAndUpdate(req.body.adultoResponsable._id, {
     apellido: req.body.adultoResponsable.apellido,
     nombre: req.body.adultoResponsable.nombre,
@@ -291,8 +291,8 @@ router.post("/modificar", (req, res) => {
       });
     })
     .catch((error) => {
-      res.status(200).json({
-        message: "Ocurrió un error al modificar el adulto",
+      res.status(500).json({
+        message: "Ocurrió un error al querer modificar el adulto responsable",
         error: error.message,
       });
     });
