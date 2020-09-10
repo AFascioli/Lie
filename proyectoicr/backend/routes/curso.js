@@ -9,12 +9,11 @@ const Estudiante = require("../models/estudiante");
 const Horario = require("../models/horario");
 const MateriaXCurso = require("../models/materiasXCurso");
 const AdultoResponsable = require("../models/adultoResponsable");
+const CicloLectivo = require("../models/cicloLectivo");
 const ClaseInscripcion = require("../classes/inscripcion");
 const ClaseEstado = require("../classes/estado");
 const Suscripcion = require("../classes/suscripcion");
 const ClaseAsistencia = require("../classes/asistencia");
-const CicloLectivo = require("../models/cicloLectivo");
-const { error } = require("protractor");
 
 // Obtiene todos los cursos que están almacenados en la base de datos
 router.get("/", checkAuthMiddleware, (req, res) => {
@@ -1279,376 +1278,403 @@ router.post("/eliminarHorario", checkAuthMiddleware, (req, res) => {
 //para un curso dado, sino se modifica el horario de la mxc existente.
 //@params: id del curso
 //@params: agenda, que es un vector que tiene objetos con idMateria, idDocente, modificado  y el vector de horarios
-//, checkAuthMiddleware
 router.post("/agenda", checkAuthMiddleware, async (req, res) => {
-  var crearHorario = (horario) => {
-    return new Promise((resolve, reject) => {
-      horario.save().then((horarioGuardado) => {
-        resolve(horarioGuardado._id);
+  try {
+    var crearHorario = (horario) => {
+      return new Promise((resolve, reject) => {
+        horario.save().then((horarioGuardado) => {
+          resolve(horarioGuardado._id);
+        });
       });
-    });
-  };
+    };
 
-  var crearMateriaXCurso = (mxc) => {
-    return new Promise((resolve, reject) => {
-      mxc.save().then((mxcGuardada) => {
-        resolve(mxcGuardada._id);
+    var crearMateriaXCurso = (mxc) => {
+      return new Promise((resolve, reject) => {
+        mxc.save().then((mxcGuardada) => {
+          resolve(mxcGuardada._id);
+        });
       });
-    });
-  };
-  var mxcNuevas = [];
-  let vectorIdsMXC = [];
-  for (const materia of req.body.agenda) {
-    //Recorrer agenda del front
-    if (materia.idHorarios == null) {
-      //vemos si la mxc es nueva o una modificada
-      if (mxcNuevas.length != 0) {
-        for (const mxcNueva of mxcNuevas) {
-          //Recorrer mxcNuevas para saber si es una mxc nueva o es una ya creada que tiene un nuevo horario
-          if (mxcNueva.idMateria == materia.idMateria) {
-            mxcNueva.horarios.push({
-              dia: materia.dia,
-              inicio: materia.inicio,
-              fin: materia.fin,
-            });
-            break;
-          } else {
-            mxcNuevas.push({
-              idMateria: materia.idMateria,
-              idDocente: materia.idDocente,
-              horarios: [
-                { dia: materia.dia, inicio: materia.inicio, fin: materia.fin },
-              ],
-            });
-            break;
+    };
+    var mxcNuevas = [];
+    let vectorIdsMXC = [];
+    for (const materia of req.body.agenda) {
+      //Recorrer agenda del front
+      if (materia.idHorarios == null) {
+        //vemos si la mxc es nueva o una modificada
+        if (mxcNuevas.length != 0) {
+          for (const mxcNueva of mxcNuevas) {
+            //Recorrer mxcNuevas para saber si es una mxc nueva o es una ya creada que tiene un nuevo horario
+            if (mxcNueva.idMateria == materia.idMateria) {
+              mxcNueva.horarios.push({
+                dia: materia.dia,
+                inicio: materia.inicio,
+                fin: materia.fin,
+              });
+              break;
+            } else {
+              mxcNuevas.push({
+                idMateria: materia.idMateria,
+                idDocente: materia.idDocente,
+                horarios: [
+                  {
+                    dia: materia.dia,
+                    inicio: materia.inicio,
+                    fin: materia.fin,
+                  },
+                ],
+              });
+              break;
+            }
           }
+        } else {
+          mxcNuevas.push({
+            idMateria: materia.idMateria,
+            idDocente: materia.idDocente,
+            horarios: [
+              { dia: materia.dia, inicio: materia.inicio, fin: materia.fin },
+            ],
+          });
         }
-      } else {
-        mxcNuevas.push({
-          idMateria: materia.idMateria,
-          idDocente: materia.idDocente,
-          horarios: [
-            { dia: materia.dia, inicio: materia.inicio, fin: materia.fin },
-          ],
-        });
+      } else if (materia.modificado) {
+        //Se actualiza el nuevo horario para una mxc dada
+        Horario.findByIdAndUpdate(materia.idHorarios, {
+          dia: materia.dia,
+          horaInicio: materia.inicio,
+          horaFin: materia.fin,
+        }).exec();
       }
-    } else if (materia.modificado) {
-      //Se actualiza el nuevo horario para una mxc dada
-      Horario.findByIdAndUpdate(materia.idHorarios, {
-        dia: materia.dia,
-        horaInicio: materia.inicio,
-        horaFin: materia.fin,
-      }).exec();
     }
-  }
-  if (mxcNuevas.length != 0) {
-    //Hay mxc nuevas para guarda en la bd
-    for (const mxcNueva of mxcNuevas) {
-      let vectorIdsHorarios = [];
-      for (const horario of mxcNueva.horarios) {
-        let nuevoHorario = new Horario({
-          dia: horario.dia,
-          horaInicio: horario.inicio,
-          horaFin: horario.fin,
+    if (mxcNuevas.length != 0) {
+      //Hay mxc nuevas para guarda en la bd
+      for (const mxcNueva of mxcNuevas) {
+        let vectorIdsHorarios = [];
+        for (const horario of mxcNueva.horarios) {
+          let nuevoHorario = new Horario({
+            dia: horario.dia,
+            horaInicio: horario.inicio,
+            horaFin: horario.fin,
+          });
+          let idHorarioGuardado = await crearHorario(nuevoHorario);
+          vectorIdsHorarios.push(idHorarioGuardado);
+        }
+        let nuevaMateriaXCurso = new MateriaXCurso({
+          idMateria: mxcNueva.idMateria,
+          idDocente: mxcNueva.idDocente,
+          horarios: vectorIdsHorarios,
         });
-        let idHorarioGuardado = await crearHorario(nuevoHorario);
-        vectorIdsHorarios.push(idHorarioGuardado);
-      }
-      let nuevaMateriaXCurso = new MateriaXCurso({
-        idMateria: mxcNueva.idMateria,
-        idDocente: mxcNueva.idDocente,
-        horarios: vectorIdsHorarios,
-      });
 
-      let idMXC = await crearMateriaXCurso(nuevaMateriaXCurso);
-      vectorIdsMXC.push(idMXC);
+        let idMXC = await crearMateriaXCurso(nuevaMateriaXCurso);
+        vectorIdsMXC.push(idMXC);
+      }
+      Curso.findByIdAndUpdate(req.body.idCurso, {
+        $push: { materias: { $each: vectorIdsMXC } },
+      }).then(() => {
+        res.json({ exito: true, message: "Materias agregadas correctamente" });
+      });
+    } else {
+      res.json({ exito: true, message: "Horarios modificados correctamente" });
     }
-    Curso.findByIdAndUpdate(req.body.idCurso, {
-      $push: { materias: { $each: vectorIdsMXC } },
-    }).then(() => {
-      res.json({ exito: true, message: "Materias agregadas correctamente" });
+  } catch (error) {
+    res.status(500).json({
+      message: "Ocurrió un error al querer definir la agenda",
+      error: error.message,
     });
-  } else {
-    res.json({ exito: true, message: "Horarios modificados correctamente" });
   }
 });
 
+//Obtener los estudiantes que se pueden inscribir a un determinado curso
 router.get(
   "/estudiantes/inscripcion",
   checkAuthMiddleware,
   async (req, res) => {
-    let numeroCursoPasado;
-    let dateActual = new Date();
-    let añoPasado = dateActual.getFullYear() - 1;
-    await Curso.findById(req.query.idCurso).then((curso) => {
-      numeroCursoPasado = parseInt(curso.nombre, 10) - 1;
-    });
-    let cursosABuscar = [`${numeroCursoPasado}A`, `${numeroCursoPasado}B`];
+    try {
+      let numeroCursoPasado;
+      let dateActual = new Date();
+      let añoPasado = dateActual.getFullYear() - 1;
+      await Curso.findById(req.query.idCurso).then((curso) => {
+        numeroCursoPasado = parseInt(curso.nombre, 10) - 1;
+      });
+      let cursosABuscar = [`${numeroCursoPasado}A`, `${numeroCursoPasado}B`];
 
-    let idsCursos = await Curso.find(
-      { nombre: { $in: cursosABuscar } },
-      { _id: 1 }
-    );
-    idsCursos = idsCursos.map((curso) => {
-      return curso._id;
-    });
+      let idsCursos = await Curso.find(
+        { nombre: { $in: cursosABuscar } },
+        { _id: 1 }
+      );
+      idsCursos = idsCursos.map((curso) => {
+        return curso._id;
+      });
 
-    let idEstadoPromovido = await ClaseEstado.obtenerIdEstado(
-      "Inscripcion",
-      "Promovido"
-    );
-    let idEstadoPromovidoConExam = await ClaseEstado.obtenerIdEstado(
-      "Inscripcion",
-      "Promovido con examenes pendientes"
-    );
-    let idEstadoLibre = await ClaseEstado.obtenerIdEstado(
-      "Inscripcion",
-      "Libre"
-    );
-    let idEstadoRegistrado = await ClaseEstado.obtenerIdEstado(
-      "Estudiante",
-      "Registrado"
-    );
+      let idEstadoPromovido = await ClaseEstado.obtenerIdEstado(
+        "Inscripcion",
+        "Promovido"
+      );
+      let idEstadoPromovidoConExam = await ClaseEstado.obtenerIdEstado(
+        "Inscripcion",
+        "Promovido con examenes pendientes"
+      );
+      let idEstadoLibre = await ClaseEstado.obtenerIdEstado(
+        "Inscripcion",
+        "Libre"
+      );
+      let idEstadoRegistrado = await ClaseEstado.obtenerIdEstado(
+        "Estudiante",
+        "Registrado"
+      );
 
-    let estadosInscripcionesABuscar = [
-      mongoose.Types.ObjectId(idEstadoPromovido),
-      mongoose.Types.ObjectId(idEstadoPromovidoConExam),
-    ];
+      let estadosInscripcionesABuscar = [
+        mongoose.Types.ObjectId(idEstadoPromovido),
+        mongoose.Types.ObjectId(idEstadoPromovidoConExam),
+      ];
 
-    //Buscamos a todas las inscripciones que tengan estado Promovido o Promovido con exam pendientes, y que sean del
-    //año pasado. Filtrando tambien por los cursos que deben ser.
-    let obtenerEstudiantesConInscripcion = await Inscripcion.aggregate([
-      {
-        $match: {
-          idCurso: {
-            $in: idsCursos,
+      //Buscamos a todas las inscripciones que tengan estado Promovido o Promovido con exam pendientes, y que sean del
+      //año pasado. Filtrando tambien por los cursos que deben ser.
+      let obtenerEstudiantesConInscripcion = await Inscripcion.aggregate([
+        {
+          $match: {
+            idCurso: {
+              $in: idsCursos,
+            },
+            año: añoPasado,
+            estado: {
+              $in: estadosInscripcionesABuscar,
+            },
           },
-          año: añoPasado,
-          estado: {
-            $in: estadosInscripcionesABuscar,
+        },
+        {
+          $lookup: {
+            from: "estudiante",
+            localField: "idEstudiante",
+            foreignField: "_id",
+            as: "datosEstudiantes",
           },
         },
-      },
-      {
-        $lookup: {
-          from: "estudiante",
-          localField: "idEstudiante",
-          foreignField: "_id",
-          as: "datosEstudiantes",
+        {
+          $lookup: {
+            from: "curso",
+            localField: "idCurso",
+            foreignField: "_id",
+            as: "datosCurso",
+          },
         },
-      },
-      {
-        $lookup: {
-          from: "curso",
-          localField: "idCurso",
-          foreignField: "_id",
-          as: "datosCurso",
+        {
+          $project: {
+            "datosEstudiantes._id": 1,
+            "datosEstudiantes.nombre": 1,
+            "datosEstudiantes.apellido": 1,
+            "datosCurso.nombre": 1,
+          },
         },
-      },
-      {
-        $project: {
-          "datosEstudiantes._id": 1,
-          "datosEstudiantes.nombre": 1,
-          "datosEstudiantes.apellido": 1,
-          "datosCurso.nombre": 1,
+      ]);
+
+      let obtenerEstudiantesLibres = await Inscripcion.aggregate([
+        {
+          $match: {
+            idCurso: mongoose.Types.ObjectId(req.query.idCurso),
+            año: añoPasado,
+            estado: mongoose.Types.ObjectId(idEstadoLibre),
+          },
         },
-      },
-    ]);
-
-    let obtenerEstudiantesLibres = await Inscripcion.aggregate([
-      {
-        $match: {
-          idCurso: mongoose.Types.ObjectId(req.query.idCurso),
-          año: añoPasado,
-          estado: mongoose.Types.ObjectId(idEstadoLibre),
+        {
+          $lookup: {
+            from: "estudiante",
+            localField: "idEstudiante",
+            foreignField: "_id",
+            as: "datosEstudiantes",
+          },
         },
-      },
-      {
-        $lookup: {
-          from: "estudiante",
-          localField: "idEstudiante",
-          foreignField: "_id",
-          as: "datosEstudiantes",
+        {
+          $lookup: {
+            from: "curso",
+            localField: "idCurso",
+            foreignField: "_id",
+            as: "datosCurso",
+          },
         },
-      },
-      {
-        $lookup: {
-          from: "curso",
-          localField: "idCurso",
-          foreignField: "_id",
-          as: "datosCurso",
+        {
+          $project: {
+            "datosEstudiantes._id": 1,
+            "datosEstudiantes.nombre": 1,
+            "datosEstudiantes.apellido": 1,
+            "datosCurso.nombre": 1,
+          },
         },
-      },
-      {
-        $project: {
-          "datosEstudiantes._id": 1,
-          "datosEstudiantes.nombre": 1,
-          "datosEstudiantes.apellido": 1,
-          "datosCurso.nombre": 1,
-        },
-      },
-    ]);
+      ]);
 
-    let obtenerEstudiantesSinInscripcion = await Estudiante.find(
-      { estado: idEstadoRegistrado },
-      { nombre: 1, apellido: 1 }
-    );
+      let obtenerEstudiantesSinInscripcion = await Estudiante.find(
+        { estado: idEstadoRegistrado },
+        { nombre: 1, apellido: 1 }
+      );
 
-    let estudiantesRespuesta = [];
+      let estudiantesRespuesta = [];
 
-    obtenerEstudiantesConInscripcion.forEach((inscripcion) => {
-      const estudianteRefinado = {
-        idEstudiante: inscripcion.datosEstudiantes[0]._id,
-        nombre: inscripcion.datosEstudiantes[0].nombre,
-        apellido: inscripcion.datosEstudiantes[0].apellido,
-        cursoAnterior: inscripcion.datosCurso[0].nombre,
-        idInscripcion: inscripcion._id,
-        seleccionado: false,
-      };
-      estudiantesRespuesta.push(estudianteRefinado);
-    });
+      obtenerEstudiantesConInscripcion.forEach((inscripcion) => {
+        const estudianteRefinado = {
+          idEstudiante: inscripcion.datosEstudiantes[0]._id,
+          nombre: inscripcion.datosEstudiantes[0].nombre,
+          apellido: inscripcion.datosEstudiantes[0].apellido,
+          cursoAnterior: inscripcion.datosCurso[0].nombre,
+          idInscripcion: inscripcion._id,
+          seleccionado: false,
+        };
+        estudiantesRespuesta.push(estudianteRefinado);
+      });
 
-    obtenerEstudiantesLibres.forEach((inscripcion) => {
-      const estudianteRefinado = {
-        idEstudiante: inscripcion.datosEstudiantes[0]._id,
-        nombre: inscripcion.datosEstudiantes[0].nombre,
-        apellido: inscripcion.datosEstudiantes[0].apellido,
-        cursoAnterior: inscripcion.datosCurso[0].nombre,
-        idInscripcion: inscripcion._id,
-        seleccionado: false,
-      };
-      estudiantesRespuesta.push(estudianteRefinado);
-    });
+      obtenerEstudiantesLibres.forEach((inscripcion) => {
+        const estudianteRefinado = {
+          idEstudiante: inscripcion.datosEstudiantes[0]._id,
+          nombre: inscripcion.datosEstudiantes[0].nombre,
+          apellido: inscripcion.datosEstudiantes[0].apellido,
+          cursoAnterior: inscripcion.datosCurso[0].nombre,
+          idInscripcion: inscripcion._id,
+          seleccionado: false,
+        };
+        estudiantesRespuesta.push(estudianteRefinado);
+      });
 
-    obtenerEstudiantesSinInscripcion.forEach((estudiante) => {
-      const estudianteRefinado = {
-        idEstudiante: estudiante._id,
-        nombre: estudiante.nombre,
-        apellido: estudiante.apellido,
-        cursoAnterior: "-",
-        idInscripcion: null,
-        seleccionado: false, //Agregado para facilitar saber quien se debe inscribir
-      };
-      estudiantesRespuesta.push(estudianteRefinado);
-    });
+      obtenerEstudiantesSinInscripcion.forEach((estudiante) => {
+        const estudianteRefinado = {
+          idEstudiante: estudiante._id,
+          nombre: estudiante.nombre,
+          apellido: estudiante.apellido,
+          cursoAnterior: "-",
+          idInscripcion: null,
+          seleccionado: false, //Agregado para facilitar saber quien se debe inscribir
+        };
+        estudiantesRespuesta.push(estudianteRefinado);
+      });
 
-    res.status(200).json({
-      estudiantes: estudiantesRespuesta,
-      exito: true,
-    });
+      res.status(200).json({
+        estudiantes: estudiantesRespuesta,
+        exito: true,
+      });
+    } catch (error) {
+      res.status(500).json({
+        message:
+          "Ocurrió un error al querer obtener los estudiantes a inscribir a un curso",
+        error: error.message,
+      });
+    }
   }
 );
 
+//Obtener los estudiantes para la inscripcion pendiente a un curso (usada para la inscripcion por curso)
+//@params: id estudiante que se quiere verificar
 router.get(
   "/estudiantes/inscripcionPendiente",
   checkAuthMiddleware,
   async (req, res) => {
-    let cursoAnterior;
-    let añoAnterior;
-    let dateActual = new Date();
-    let idEstadoRegistrado = await ClaseEstado.obtenerIdEstado(
-      "Estudiante",
-      "Registrado"
-    );
+    try {
+      let cursoAnterior;
+      let añoAnterior;
+      let dateActual = new Date();
+      let idEstadoRegistrado = await ClaseEstado.obtenerIdEstado(
+        "Estudiante",
+        "Registrado"
+      );
 
-    let idEstadoInscripcionActiva = await ClaseEstado.obtenerIdEstado(
-      "Inscripcion",
-      "Activa"
-    );
+      let idEstadoInscripcionActiva = await ClaseEstado.obtenerIdEstado(
+        "Inscripcion",
+        "Activa"
+      );
 
-    let obtenerEstudiantesSinInscripcion = await Estudiante.find(
-      { estado: idEstadoRegistrado },
-      { nombre: 1, apellido: 1 }
-    );
+      let obtenerEstudiantesSinInscripcion = await Estudiante.find(
+        { estado: idEstadoRegistrado },
+        { nombre: 1, apellido: 1 }
+      );
 
-    let estudiantesRespuesta = [];
+      let estudiantesRespuesta = [];
 
-    obtenerEstudiantesSinInscripcion.forEach((estudiante) => {
-      const estudianteRefinado = {
-        idEstudiante: estudiante._id,
-        nombre: estudiante.nombre,
-        apellido: estudiante.apellido,
-        cursoAnterior: "-",
-        idInscripcion: null,
-        seleccionado: false, //Agregado para facilitar saber quien se debe inscribir
-      };
-      estudiantesRespuesta.push(estudianteRefinado);
-    });
+      obtenerEstudiantesSinInscripcion.forEach((estudiante) => {
+        const estudianteRefinado = {
+          idEstudiante: estudiante._id,
+          nombre: estudiante.nombre,
+          apellido: estudiante.apellido,
+          cursoAnterior: "-",
+          idInscripcion: null,
+          seleccionado: false, //Agregado para facilitar saber quien se debe inscribir
+        };
+        estudiantesRespuesta.push(estudianteRefinado);
+      });
 
-    //Obtener curso y ciclo lectivo
+      await Curso.findById(req.query.idCurso).then((curso) => {
+        añoAnterior = parseInt(curso.nombre, 10) - 1;
+        let division = curso.nombre.substring(1, 2);
+        cursoAnterior = `${añoAnterior}${division}`;
+      });
 
-    await Curso.findById(req.query.idCurso).then((curso) => {
-      añoAnterior = parseInt(curso.nombre, 10) - 1;
-      let division = curso.nombre.substring(1, 2);
-      cursoAnterior = `${añoAnterior}${division}`;
-    });
+      if (añoAnterior == 0) {
+        return res.status(200).json({
+          estudiantes: estudiantesRespuesta,
+          exito: true,
+        });
+      }
 
-    if (añoAnterior == 0) {
-      return res.status(200).json({
+      let cicloLectivo = await CicloLectivo.findOne({
+        año: dateActual.getFullYear(),
+      }).exec();
+
+      let curso = await Curso.findOne({
+        nombre: cursoAnterior,
+        cicloLectivo: cicloLectivo._id,
+      }).exec();
+
+      let obtenerEstudiantesInscripcionActiva = await Inscripcion.aggregate([
+        {
+          $match: {
+            estado: mongoose.Types.ObjectId(idEstadoInscripcionActiva),
+            cicloLectivo: cicloLectivo._id,
+            idCurso: mongoose.Types.ObjectId(curso._id),
+          },
+        },
+        {
+          $lookup: {
+            from: "estudiante",
+            localField: "idEstudiante",
+            foreignField: "_id",
+            as: "datosEstudiante",
+          },
+        },
+        {
+          $lookup: {
+            from: "curso",
+            localField: "idCurso",
+            foreignField: "_id",
+            as: "datosCurso",
+          },
+        },
+        {
+          $project: {
+            "datosEstudiante._id": 1,
+            "datosEstudiante.nombre": 1,
+            "datosEstudiante.apellido": 1,
+            "datosCurso.nombre": 1,
+          },
+        },
+      ]);
+
+      obtenerEstudiantesInscripcionActiva.forEach((inscripcion) => {
+        const estudianteRefinado = {
+          idEstudiante: inscripcion.datosEstudiante[0]._id,
+          nombre: inscripcion.datosEstudiante[0].nombre,
+          apellido: inscripcion.datosEstudiante[0].apellido,
+          cursoAnterior: inscripcion.datosCurso[0].nombre,
+          idInscripcion: inscripcion._id,
+          seleccionado: false,
+        };
+        estudiantesRespuesta.push(estudianteRefinado);
+      });
+
+      res.status(200).json({
         estudiantes: estudiantesRespuesta,
         exito: true,
       });
+    } catch (error) {
+      res.status(500).json({
+        message:
+          "Ocurrió un error al querer btener los estudiantes para la inscripcion pendiente a un curso",
+        error: error.message,
+      });
     }
-
-    let cicloLectivo = await CicloLectivo.findOne({
-      año: dateActual.getFullYear(),
-    }).exec();
-
-    let curso = await Curso.findOne({
-      nombre: cursoAnterior,
-      cicloLectivo: cicloLectivo._id,
-    }).exec();
-
-    let obtenerEstudiantesInscripcionActiva = await Inscripcion.aggregate([
-      {
-        $match: {
-          estado: mongoose.Types.ObjectId(idEstadoInscripcionActiva),
-          cicloLectivo: cicloLectivo._id,
-          idCurso: mongoose.Types.ObjectId(curso._id),
-        },
-      },
-      {
-        $lookup: {
-          from: "estudiante",
-          localField: "idEstudiante",
-          foreignField: "_id",
-          as: "datosEstudiante",
-        },
-      },
-      {
-        $lookup: {
-          from: "curso",
-          localField: "idCurso",
-          foreignField: "_id",
-          as: "datosCurso",
-        },
-      },
-      {
-        $project: {
-          "datosEstudiante._id": 1,
-          "datosEstudiante.nombre": 1,
-          "datosEstudiante.apellido": 1,
-          "datosCurso.nombre": 1,
-        },
-      },
-    ]);
-
-    obtenerEstudiantesInscripcionActiva.forEach((inscripcion) => {
-      const estudianteRefinado = {
-        idEstudiante: inscripcion.datosEstudiante[0]._id,
-        nombre: inscripcion.datosEstudiante[0].nombre,
-        apellido: inscripcion.datosEstudiante[0].apellido,
-        cursoAnterior: inscripcion.datosCurso[0].nombre,
-        idInscripcion: inscripcion._id,
-        seleccionado: false,
-      };
-      estudiantesRespuesta.push(estudianteRefinado);
-    });
-
-    res.status(200).json({
-      estudiantes: estudiantesRespuesta,
-      exito: true,
-    });
   }
 );
 
@@ -1663,8 +1689,8 @@ router.get(
       "Pendiente"
     );
 
-    Inscripcion.find({ idEstudiante: req.query.idEstudiante }).then(
-      (inscripciones) => {
+    Inscripcion.find({ idEstudiante: req.query.idEstudiante })
+      .then((inscripciones) => {
         inscripciones.forEach((inscripcion) => {
           if (inscripcion.estado.equals(estadoPendienteInscripcion)) {
             return res.status(200).json({
@@ -1677,8 +1703,14 @@ router.get(
           inscripcionPendiente: false,
           exito: true,
         });
-      }
-    );
+      })
+      .catch((error) => {
+        res.status(500).json({
+          message:
+            "Ocurrió un error al querer validar si el estudiante tiene o no inscripción pendiente",
+          error: error.messages,
+        });
+      });
   }
 );
 
@@ -1689,42 +1721,48 @@ router.post(
   "/estudiantes/inscripcion",
   checkAuthMiddleware,
   async (req, res) => {
-    let documentosEntregados = [
-      {
-        nombre: "Fotocopia documento",
-        entregado: false,
-      },
-      {
-        nombre: "Ficha medica",
-        entregado: false,
-      },
-      {
-        nombre: "Informe año anterior",
-        entregado: false,
-      },
-    ];
-    console.log("estudiantes", req.body.estudiantes);
+    try {
+      let documentosEntregados = [
+        {
+          nombre: "Fotocopia documento",
+          entregado: false,
+        },
+        {
+          nombre: "Ficha medica",
+          entregado: false,
+        },
+        {
+          nombre: "Informe año anterior",
+          entregado: false,
+        },
+      ];
 
-    for (const estudiante of req.body.estudiantes) {
-      if (
-        estudiante.seleccionado &&
-        !ClaseInscripcion.inscribirEstudiante(
-          req.body.idCurso,
-          estudiante.idEstudiante,
-          documentosEntregados
-        )
-      ) {
-        return res.status(400).json({
-          exito: false,
-          message: "Ocurrió un error al querer escribir a los estudiantes",
-        });
+      for (const estudiante of req.body.estudiantes) {
+        if (
+          estudiante.seleccionado &&
+          !ClaseInscripcion.inscribirEstudiante(
+            req.body.idCurso,
+            estudiante.idEstudiante,
+            documentosEntregados
+          )
+        ) {
+          return res.status(400).json({
+            exito: false,
+            message: "Ocurrió un error al querer escribir a los estudiantes",
+          });
+        }
       }
-    }
 
-    res.status(200).json({
-      exito: true,
-      message: "Estudiantes inscriptos correctamente",
-    });
+      res.status(200).json({
+        exito: true,
+        message: "Estudiantes inscriptos correctamente",
+      });
+    } catch (error) {
+      res.status(200).json({
+        error: error.message,
+        message: "Ocurrió un error al querer escribir a los estudiantes",
+      });
+    }
   }
 );
 
@@ -1735,25 +1773,32 @@ router.post(
   "/estudiantes/inscripcionProximoAnio",
   checkAuthMiddleware,
   async (req, res) => {
-    for (const estudiante of req.body.estudiantes) {
-      if (
-        estudiante.seleccionado &&
-        !ClaseInscripcion.inscribirEstudianteProximoAnio(
-          req.body.idCurso,
-          estudiante.idEstudiante
-        )
-      ) {
-        return res.status(400).json({
-          exito: false,
-          message: "Ocurrió un error al querer escribir a los estudiantes",
-        });
+    try {
+      for (const estudiante of req.body.estudiantes) {
+        if (
+          estudiante.seleccionado &&
+          !ClaseInscripcion.inscribirEstudianteProximoAnio(
+            req.body.idCurso,
+            estudiante.idEstudiante
+          )
+        ) {
+          return res.status(400).json({
+            exito: false,
+            message: "Ocurrió un error al querer escribir a los estudiantes",
+          });
+        }
       }
-    }
 
-    res.status(200).json({
-      exito: true,
-      message: "Estudiantes inscriptos correctamente",
-    });
+      res.status(200).json({
+        exito: true,
+        message: "Estudiantes inscriptos correctamente",
+      });
+    } catch (error) {
+      res.status(500).json({
+        error: error.message,
+        message: "Ocurrió un error al querer escribir a los estudiantes",
+      });
+    }
   }
 );
 

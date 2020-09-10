@@ -1,20 +1,20 @@
 const express = require("express");
-const Evento = require("../models/evento");
-const ImagenFiles = require("../models/imagen.files");
-const ImagenChunks = require("../models/imagen.chunks");
+const mongoose = require("mongoose");
 const router = express.Router();
-const AdultoResponsable = require("../models/adultoResponsable");
-const Empleado = require("../models/empleado");
-const checkAuthMiddleware = require("../middleware/check-auth");
-const clasificador = require("../middleware/clasificador");
 const multer = require("multer");
-const Usuario = require("../models/usuario");
 const path = require("path");
 const Ambiente = require("../assets/ambiente");
 const GridFsStorage = require("multer-gridfs-storage");
-const Suscripcion = require("../classes/suscripcion");
+const checkAuthMiddleware = require("../middleware/check-auth");
+const clasificador = require("../middleware/clasificador");
+const Evento = require("../models/evento");
+const ImagenFiles = require("../models/imagen.files");
+const ImagenChunks = require("../models/imagen.chunks");
+const AdultoResponsable = require("../models/adultoResponsable");
+const Empleado = require("../models/empleado");
+const Usuario = require("../models/usuario");
 const Inscripcion = require("../models/inscripcion");
-const mongoose = require("mongoose");
+const Suscripcion = require("../classes/suscripcion");
 
 const storage = new GridFsStorage({
   url: Ambiente.stringDeConexion,
@@ -75,12 +75,12 @@ router.post("/registrar", upload, async (req, res, next) => {
             eventoCreado.tags,
             eventoCreado.titulo,
             "El evento se realizara el día " +
-            fechaDelEvento.getDate() +
-            "/" +
-            (fechaDelEvento.getMonth() + 1) +
-            "/" +
-            fechaDelEvento.getFullYear() +
-            "."
+              fechaDelEvento.getDate() +
+              "/" +
+              (fechaDelEvento.getMonth() + 1) +
+              "/" +
+              fechaDelEvento.getFullYear() +
+              "."
           );
           res.status(201).json({
             message: "Evento creado exitosamente",
@@ -104,12 +104,12 @@ router.post("/registrar", upload, async (req, res, next) => {
               eventoCreado.tags,
               eventoCreado.titulo,
               "El evento se realizara el día " +
-              fechaDelEvento.getDate() +
-              "/" +
-              (fechaDelEvento.getMonth() + 1) +
-              "/" +
-              fechaDelEvento.getFullYear() +
-              "."
+                fechaDelEvento.getDate() +
+                "/" +
+                (fechaDelEvento.getMonth() + 1) +
+                "/" +
+                fechaDelEvento.getFullYear() +
+                "."
             );
             res.status(201).json({
               message: "Evento registrado exitosamente",
@@ -119,9 +119,10 @@ router.post("/registrar", upload, async (req, res, next) => {
         });
       }
     })
-    .catch(() => {
+    .catch((error) => {
       res.status(500).json({
         message: "Se presentaron problemas al querer registrar un evento",
+        error: error.message,
       });
     });
 });
@@ -146,13 +147,9 @@ router.post("/modificar", upload, async (req, res, next) => {
 
       // Se agregan los filenames nuevos
       for (let index = 0; index < req.files.length; index++) {
-        filenamesEvento.push(req.files[index].filename); //1
+        filenamesEvento.push(req.files[index].filename);
       }
-      // if (filenamesEvento.length == req.files.length) {
       resolve(filenamesEvento);
-      // } else {
-      //   resolve([]);
-      // }
     });
   };
 
@@ -380,7 +377,10 @@ notificarPorEvento = async function (tags, titulo, cuerpo) {
   if (tags.includes("Todos los cursos")) {
     Suscripcion.notificacionMasiva(evento.titulo, this.cuerpo);
   } else {
-    let idEstadoActiva = await ClaseEstado.obtenerIdEstado("Inscripcion", "Activa");
+    let idEstadoActiva = await ClaseEstado.obtenerIdEstado(
+      "Inscripcion",
+      "Activa"
+    );
     Inscripcion.aggregate([
       {
         $lookup: {
@@ -401,7 +401,7 @@ notificarPorEvento = async function (tags, titulo, cuerpo) {
           $expr: {
             $in: ["$icurso.nombre", tags],
           },
-          estado: mongoose.Types.ObjectId(idEstadoActiva)
+          estado: mongoose.Types.ObjectId(idEstadoActiva),
         },
       },
       {
@@ -451,9 +451,15 @@ notificarPorEvento = async function (tags, titulo, cuerpo) {
       });
       let idsUsuarios = [];
       if (cuerpo == "Ha sido cancelado.") {
-        idsUsuarios = await Suscripcion.filtrarARPorPreferencias(idtutores, "Cancelacion de evento");
+        idsUsuarios = await Suscripcion.filtrarARPorPreferencias(
+          idtutores,
+          "Cancelacion de evento"
+        );
       } else {
-        idsUsuarios = await Suscripcion.filtrarARPorPreferencias(idtutores, "Creacion de evento");
+        idsUsuarios = await Suscripcion.filtrarARPorPreferencias(
+          idtutores,
+          "Creacion de evento"
+        );
       }
       Suscripcion.notificacionGrupal(idsUsuarios, titulo, cuerpo);
     });

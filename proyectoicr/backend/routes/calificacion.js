@@ -1,10 +1,10 @@
 const express = require("express");
-const Inscripcion = require("../models/inscripcion");
 const router = express.Router();
 const mongoose = require("mongoose");
 const ClaseCXM = require("../classes/calificacionXMateria");
 const ClaseEstado = require("../classes/estado");
 const CalificacionesXMateria = require("../models/calificacionesXMateria");
+const Inscripcion = require("../models/inscripcion");
 
 //Dado un id de estudiante obtiene todas las materias desaprobadas del año actual
 //Retorna vector con id materia y nombre materia
