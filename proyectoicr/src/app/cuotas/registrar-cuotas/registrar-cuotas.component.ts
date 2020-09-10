@@ -77,6 +77,7 @@ export class RegistrarCuotasComponent implements OnInit, OnDestroy {
 
   //Busca los estudiantes segun el curso que se selecciono en pantalla. Los orden alfabeticamente
   onCursoSeleccionado(curso, mes) {
+    this.isLoading = true;
     let nroMes: any = 0;
     for (let i = 0; i < this.meses.length; i++) {
       if (mes.value == this.meses[i]) {
@@ -95,6 +96,7 @@ export class RegistrarCuotasComponent implements OnInit, OnDestroy {
         } else {
           this.cuotasXEstudiante = [];
         }
+        this.isLoading = false;
         this.cursoNotSelected = false;
       });
   }

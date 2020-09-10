@@ -29,9 +29,10 @@ router.post("/", checkAuthMiddleware, (req, res) => {
         exito: true,
       });
     })
-    .catch(() => {
+    .catch((error) => {
       res.status(500).json({
-        message: "Mensaje de error especifico",
+        message: "Ocurrió un error al querer registrar el empleado",
+        error: error.message,
       });
     });
 });
@@ -45,9 +46,11 @@ router.get("/docente", checkAuthMiddleware, (req, res) => {
         docentes: docentes,
       });
     })
-    .catch(() => {
+    .catch((error) => {
       res.status(500).json({
-        message: "Mensaje de error especifico",
+        message:
+          "Ocurrió un error al querer obtener todos los docentes de la institucion",
+        error: error.message,
       });
     });
 });
@@ -59,22 +62,27 @@ router.get("/id", checkAuthMiddleware, (req, res) => {
       if (empleado) {
         res.status(200).json({
           exito: true,
-          message: "Id obtenida correctamente",
+          message: "Id del empleado obtenida correctamente",
           id: empleado._id,
         });
       }
     })
-    .catch(() => {
+    .catch((error) => {
       res.status(500).json({
-        message: "Mensaje de error especifico",
+        message:
+          "Ocurrió un error al querer obtener la id del empleado dada la id de usuario",
+        error: error.message,
       });
     });
 });
 
 // Retorna todos los docentes que enseñan en el curso del estudiante
 //@params: idEstudiante del cual buscar los docentes
-router.get("/estudiante", async(req, res) => {
-  let idEstadoActiva = await ClaseEstado.obtenerIdEstado("Inscripcion", "Activa"); 
+router.get("/estudiante", checkAuthMiddleware, async (req, res) => {
+  let idEstadoActiva = await ClaseEstado.obtenerIdEstado(
+    "Inscripcion",
+    "Activa"
+  );
   Inscripcion.aggregate([
     {
       $match: {
@@ -151,8 +159,9 @@ router.get("/estudiante", async(req, res) => {
     })
     .catch((error) => {
       res.status(500).json({
-        message: "Ocurrió un error al querer acceder a los docentes",
-        exito: false,
+        message:
+          "Ocurrió un error al querer obtener los docentes de un estudiante",
+        error: error.message,
       });
     });
 });
