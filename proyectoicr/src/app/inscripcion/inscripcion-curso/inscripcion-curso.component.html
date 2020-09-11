@@ -38,14 +38,14 @@
         </mat-select>
       </mat-form-field>
     </div>
-    <p class="aviso" *ngIf="estudiantes && estudiantes.length == 0 && !loading">
+    <p class="aviso" *ngIf="estudiantes.length == 0 && !loading && seSeleccionoCurso && yearSelected">
       <b>No hay estudiantes para inscribir al curso seleccionado </b>
     </p>
     <table
       mat-table
       #table
       [dataSource]="dataSource"
-      *ngIf="estudiantes && estudiantes.length > 0 && !loading"
+      *ngIf="estudiantes.length > 0 && !loading"
     >
       <ng-container matColumnDef="apellido">
         <th class="columnas-normales" mat-header-cell *matHeaderCellDef>

@@ -17,7 +17,7 @@ import { takeUntil } from "rxjs/operators";
 export class InscripcionCursoComponent implements OnInit {
   fechaActual: Date;
   cursos: any[];
-  estudiantes: any[];
+  estudiantes=[];
   seSeleccionoCurso = false;
   cursoSeleccionado: string;
   loading = false;

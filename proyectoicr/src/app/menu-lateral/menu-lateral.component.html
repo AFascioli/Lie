@@ -132,7 +132,7 @@
 
             <a
               class="sinExpansion"
-              *ngIf="permisos.inscribirEstudiante >= 1"
+              *ngIf="permisos.inscribirEstudiante > 1"
               mat-list-item
               routerLink="/inscripcionCurso"
               (click)="cerrarMenuLateral(sideNav)"
@@ -267,6 +267,7 @@
               class="sinExpansion"
               routerLink="/buscarAdultoResponsable"
               (click)="cerrarMenuLateral(sideNav)"
+              *ngIf="rol != 'Docente'"
             >
               <mat-icon
                 class="iconSinExpansion"
