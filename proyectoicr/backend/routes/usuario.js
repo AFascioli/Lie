@@ -45,7 +45,7 @@ router.post("/cambiarPassword", checkAuthMiddleware, async (req, res) => {
 });
 
 //Genera el token y registra el rol que ingreso sesion
-router.post("/login", checkAuthMiddleware, (req, res) => {
+router.post("/login", (req, res) => {
   let usuarioEncontrado;
   Usuario.findOne({ email: req.body.email })
     .then((usuario) => {
