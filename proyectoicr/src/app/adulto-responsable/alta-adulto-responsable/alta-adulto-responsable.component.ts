@@ -115,29 +115,21 @@ export class AltaAdultoResponsableComponent implements OnInit, OnDestroy {
         this._idEstudiante
       )
       .pipe(takeUntil(this.unsubscribe))
-      .subscribe(
-        (response) => {
-          if (response.exito) {
-            this.snackBar.open(response.message, "", {
-              panelClass: ["snack-bar-exito"],
-              duration: 4000,
-            });
-            form.resetForm();
-            this.tutor = false;
-          } else {
-            this.snackBar.open(response.message, "", {
-              panelClass: ["snack-bar-fracaso"],
-              duration: 4000,
-            });
-          }
-        },
-        (error) => {
-          console.log(
-            "Se presentaron problemas al querer registrar el adulto responsable: ",
-            error
-          );
+      .subscribe((response) => {
+        if (response.exito) {
+          this.snackBar.open(response.message, "", {
+            panelClass: ["snack-bar-exito"],
+            duration: 4000,
+          });
+          form.resetForm();
+          this.tutor = false;
+        } else {
+          this.snackBar.open(response.message, "", {
+            panelClass: ["snack-bar-fracaso"],
+            duration: 4000,
+          });
         }
-      );
+      });
   }
 
   onGuardar(form: NgForm) {

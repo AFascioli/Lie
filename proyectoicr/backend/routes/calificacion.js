@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const mongoose = require("mongoose");
 const ClaseCXM = require("../classes/calificacionXMateria");
+const checkAuthMiddleware = require("../middleware/check-auth");
 const ClaseEstado = require("../classes/estado");
 const CalificacionesXMateria = require("../models/calificacionesXMateria");
 const Inscripcion = require("../models/inscripcion");

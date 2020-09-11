@@ -415,4 +415,44 @@ router.get("/inicioCursado", checkAuthMiddleware, async (req, res) => {
   }
 });
 
+//En el caso de que se pueda registrar la agenda devuelve true false caso contrario
+router.get("/registrarAgenda", checkAuthMiddleware, async (req, res) => {
+  let fechaActual = new Date();
+  let añoActual = fechaActual.getFullYear();
+  try {
+    CicloLectivo.aggregate([
+      {
+        $match: {
+          año: añoActual,
+        },
+      },
+      {
+        $lookup: {
+          from: "estado",
+          localField: "estado",
+          foreignField: "_id",
+          as: "datosEstado",
+        },
+      },
+    ]).then((cicloLectivo) => {
+      let nombre = cicloLectivo[0].datosEstado[0].nombre;
+      if (nombre === "Creado") {
+        return nres.status(200).json({
+          permiso: false,
+          message: "No esta habilitado el registro de la agenda",
+        });
+      }
+
+      res.status(200).json({
+        permiso: true,
+        message: "Está habilitado el registro de la agenda",
+      });
+    });
+  } catch (error) {
+    res.status(500).json({
+      error: error.message,
+      message: "Ocurrieron errores al querer validar los permisos",
+    });
+  }
+});
 module.exports = router;

@@ -1,12 +1,10 @@
 import { EstudiantesService } from "src/app/estudiantes/estudiante.service";
-import { AdultoResponsable } from "../adultoResponsable.model";
 import { AdultoResponsableService } from "../adultoResponsable.service";
 import { Component, OnInit } from "@angular/core";
 import { takeUntil } from "rxjs/operators";
 import { NgForm } from "@angular/forms";
 import { Subject } from "rxjs";
 import { MatDialog, MatSnackBar } from "@angular/material";
-import { CancelPopupComponent } from "src/app/popup-genericos/cancel-popup.component";
 import { SelectionModel } from "@angular/cdk/collections";
 
 @Component({
@@ -74,35 +72,42 @@ export class AsociarAdultoResponsableComponent implements OnInit {
     this.ARFiltrados = ARFiltrados;
   }
 
-  // Si el formulario no es valido no hace nada, luego controla que tipo de busqueda es
+  buscarARXNombre(form) {
+    this.servicio
+      .buscarAdultoResponsableXNombre(
+        form.value.nombre.trim(),
+        form.value.apellido.trim()
+      )
+      .pipe(takeUntil(this.unsubscribe))
+      .subscribe((response) => {
+        this.comparar(response.adultosResponsables);
+        this.setColumns();
+        this.isLoading = false;
+      });
+  }
+
+  buscarARXDoc(form) {
+    this.servicio
+      .buscarAdultoResponsableXDocumento(
+        form.value.tipoDocumento,
+        form.value.numeroDocumento
+      )
+      .pipe(takeUntil(this.unsubscribe))
+      .subscribe((response) => {
+        this.comparar(response.adultosResponsables);
+        this.setColumns();
+        this.isLoading = false;
+      });
+  }
+
   onBuscar(form: NgForm) {
     if (form.valid) {
       this.isLoading = true;
       this.busqueda = true;
       if (this.buscarPorNomYAp) {
-        this.servicio
-          .buscarAdultoResponsableXNombre(
-            form.value.nombre.trim(),
-            form.value.apellido.trim()
-          )
-          .pipe(takeUntil(this.unsubscribe))
-          .subscribe((response) => {
-            this.comparar(response.adultosResponsables);
-            this.setColumns();
-            this.isLoading = false;
-          });
+        this.buscarARXNombre(form);
       } else {
-        this.servicio
-          .buscarAdultoResponsableXDocumento(
-            form.value.tipoDocumento,
-            form.value.numeroDocumento
-          )
-          .pipe(takeUntil(this.unsubscribe))
-          .subscribe((response) => {
-            this.comparar(response.adultosResponsables);
-            this.setColumns();
-            this.isLoading = false;
-          });
+        this.buscarARXDoc(form);
       }
     } else {
       this.snackBar.open("Faltan campos por completar", "", {
