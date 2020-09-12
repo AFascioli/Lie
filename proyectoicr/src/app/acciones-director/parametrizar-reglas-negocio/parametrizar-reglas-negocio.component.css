@@ -1,0 +1,39 @@
+.div-button {
+  text-align: right;
+  margin-top: 1%;
+}
+
+.mat-form1 {
+  width: 29%;
+  margin-left: 15%;
+}
+.mat-form-hora2 {
+  width: 29%;
+  margin-left: 7%;
+}
+
+.center
+{
+  text-align: center;
+}
+
+.margen
+{
+  margin-left: 7%;
+}
+
+.margen2
+{
+  margin-left: 7%;
+  margin-top: 25px !important;
+}
+
+.mat-divider
+{
+  margin-left: 60px;
+}
+
+.mat-card .mat-divider-horizontal
+{
+  width: 85%;
+}

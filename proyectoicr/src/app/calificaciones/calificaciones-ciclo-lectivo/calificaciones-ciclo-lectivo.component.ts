@@ -189,8 +189,8 @@ export class CalificacionesCicloLectivoComponent implements OnInit, OnDestroy {
           );
           this.reordenarCalificaciones();
           this.dataSource = new MatTableDataSource(this.estudiantes);
-          //this.dataSource.paginator = this.paginator;
-          //this.dataSource.paginator.firstPage();
+          this.dataSource.paginator = this.paginator;
+          this.dataSource.paginator.firstPage();
         });
     }
   }

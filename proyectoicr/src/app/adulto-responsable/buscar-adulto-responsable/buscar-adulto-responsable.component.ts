@@ -1,12 +1,10 @@
 import { EstudiantesService } from "src/app/estudiantes/estudiante.service";
-import { AdultoResponsable } from "../adultoResponsable.model";
 import { AdultoResponsableService } from "../adultoResponsable.service";
 import { Component, OnInit } from "@angular/core";
 import { takeUntil } from "rxjs/operators";
 import { NgForm } from "@angular/forms";
 import { Subject } from "rxjs";
 import { MatDialog, MatSnackBar } from "@angular/material";
-import { SelectionModel } from "@angular/cdk/collections";
 
 @Component({
   selector: "app-buscar-adulto-responsable",
@@ -17,7 +15,6 @@ export class BuscarAdultoResponsableComponent implements OnInit {
   buscarPorNomYAp = true;
   ARFiltrados: any[] = [];
   private unsubscribe: Subject<void> = new Subject();
-  seleccion = new SelectionModel(true, []);
   displayedColumns: string[];
   displayedColumnsAsociados: string[] = [
     "apellido",
@@ -35,8 +32,7 @@ export class BuscarAdultoResponsableComponent implements OnInit {
     public popup: MatDialog
   ) {}
 
-  ngOnInit() {
-  }
+  ngOnInit() {}
 
   setColumns() {
     this.displayedColumns = [
@@ -45,7 +41,7 @@ export class BuscarAdultoResponsableComponent implements OnInit {
       "telefono",
       "tipoDocumento",
       "nroDocumento",
-      "editar"
+      "editar",
     ];
   }
   // Si el formulario no es valido no hace nada, luego controla que tipo de busqueda es
@@ -71,6 +67,7 @@ export class BuscarAdultoResponsableComponent implements OnInit {
           )
           .pipe(takeUntil(this.unsubscribe))
           .subscribe((response) => {
+            this.ARFiltrados = response.adultosResponsables;
             this.setColumns();
           });
       }
@@ -102,11 +99,6 @@ export class BuscarAdultoResponsableComponent implements OnInit {
     form.resetForm();
   }
 
-  ngOnDestroy() {
-    this.unsubscribe.next();
-    this.unsubscribe.complete();
-  }
-
   checkNumeros(event) {
     var inputValue = event.which;
     if (
@@ -116,5 +108,14 @@ export class BuscarAdultoResponsableComponent implements OnInit {
     ) {
       event.preventDefault();
     }
+  }
+
+  onEditarAdultoResponsable(row) {
+    this.servicio.adultoResponsableSeleccionado = this.ARFiltrados[row];
+  }
+
+  ngOnDestroy() {
+    this.unsubscribe.next();
+    this.unsubscribe.complete();
   }
 }

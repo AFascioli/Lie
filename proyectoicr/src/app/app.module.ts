@@ -136,11 +136,16 @@ import { SolicitudReunionAdultoResponsableComponent } from "./solicitud-reunion-
 import { AsociarAdultoResponsableComponent } from "./adulto-responsable/asociar-adulto-responsable/asociar-adulto-responsable.component";
 import { ModificarAdultoResponsableComponent } from './adulto-responsable/modificar-adulto-responsable/modificar-adulto-responsable.component';
 import { BuscarAdultoResponsableComponent } from "./adulto-responsable/buscar-adulto-responsable/buscar-adulto-responsable.component";
+import { AccionesDirectorComponent } from './acciones-director/acciones-director.component';
+import { ParametrizarReglasNegocioComponent } from './acciones-director/parametrizar-reglas-negocio/parametrizar-reglas-negocio.component';
+import { CicloLectivoComponent, PopUpCerrarEtapa } from './acciones-director/ciclo-lectivo/ciclo-lectivo/ciclo-lectivo.component';
+import { EstadoCursosComponent } from './acciones-director/estado-cursos/estado-cursos.component';
 
 
 @NgModule({
   declarations: [
     AppComponent,
+    PopUpCerrarEtapa,
     ErrorComponent,
     AltaEstudiantesComponent,
     BuscarEstudiantesComponent,
@@ -201,7 +206,11 @@ import { BuscarAdultoResponsableComponent } from "./adulto-responsable/buscar-ad
     SolicitudReunionAdultoResponsableComponent,
     AsociarAdultoResponsableComponent,
     ModificarAdultoResponsableComponent,
-    BuscarAdultoResponsableComponent
+    BuscarAdultoResponsableComponent,
+    AccionesDirectorComponent,
+    ParametrizarReglasNegocioComponent,
+    CicloLectivoComponent,
+    EstadoCursosComponent
   ],
   //entryComponents declara los componentes que se generan dinamicamente dentro de otros.
   entryComponents: [
@@ -224,6 +233,7 @@ import { BuscarAdultoResponsableComponent } from "./adulto-responsable/buscar-ad
     ReincorporarPopupComponent,
     ReadMoreComponent,
     ErrorComponent,
+    PopUpCerrarEtapa
   ],
   imports: [
     MatChipsModule,

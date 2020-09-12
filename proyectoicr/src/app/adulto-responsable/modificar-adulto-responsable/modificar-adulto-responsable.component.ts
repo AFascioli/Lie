@@ -5,6 +5,7 @@ import { MediaMatcher } from "@angular/cdk/layout";
 import { UbicacionService } from "src/app/ubicacion/ubicacion.service";
 import { NgForm } from "@angular/forms";
 import { MatSnackBar } from "@angular/material";
+import { Router } from "@angular/router";
 
 @Component({
   selector: "app-modificar-adulto-responsable",
@@ -16,20 +17,26 @@ export class ModificarAdultoResponsableComponent implements OnInit {
   nacionalidades: any[];
   _mobileQueryListener: () => void;
   mobileQuery: MediaQueryList;
+  maxDate = new Date();
 
   constructor(
     public servicioAR: AdultoResponsableService,
     public media: MediaMatcher,
     public changeDetectorRef: ChangeDetectorRef,
     public servicioUbicacion: UbicacionService,
-    public snackBar: MatSnackBar
+    public snackBar: MatSnackBar,
+    public router: Router
   ) {
+    if (!this.servicioAR.adultoResponsableSeleccionado) {
+      this.router.navigate(["./home"]);
+    }
     this.mobileQuery = media.matchMedia("(max-width: 1000px)");
     this._mobileQueryListener = () => changeDetectorRef.detectChanges();
     this.mobileQuery.addListener(this._mobileQueryListener);
   }
 
   ngOnInit(): void {
+    this.adultoResponsable = this.servicioAR.adultoResponsableSeleccionado;
     this.servicioUbicacion.getNacionalidades();
     this.servicioUbicacion
       .getNacionalidadesListener()
@@ -39,8 +46,6 @@ export class ModificarAdultoResponsableComponent implements OnInit {
           a.name > b.name ? 1 : b.name > a.name ? -1 : 0
         );
       });
-
-    this.adultoResponsable = this.servicioAR.adultoResponsableSeleccionado;
   }
 
   checkIfIsALetter(event) {
@@ -70,29 +75,35 @@ export class ModificarAdultoResponsableComponent implements OnInit {
   }
 
   onGuardar(form: NgForm) {
-    this.servicioAR
-      .modificarAdultoResponsable(this.adultoResponsable)
-      .subscribe(
-        (response) => {
-          if (response.exito) {
-            this.snackBar.open(response.message, "", {
-              panelClass: ["snack-bar-exito"],
-              duration: 4000,
-            });
-            form.resetForm();
-          } else {
-            this.snackBar.open(response.message, "", {
-              panelClass: ["snack-bar-fracaso"],
-              duration: 4000,
-            });
+    if (form.valid) {
+      this.servicioAR
+        .modificarAdultoResponsable(this.adultoResponsable)
+        .subscribe(
+          (response) => {
+            if (response.exito) {
+              this.snackBar.open(response.message, "", {
+                panelClass: ["snack-bar-exito"],
+                duration: 4000,
+              });
+            } else {
+              this.snackBar.open(response.message, "", {
+                panelClass: ["snack-bar-fracaso"],
+                duration: 4000,
+              });
+            }
+          },
+          (error) => {
+            console.log(
+              "Se presentaron problemas al querer modificar el adulto responsable: ",
+              error
+            );
           }
-        },
-        (error) => {
-          console.log(
-            "Se presentaron problemas al querer modificar el adulto responsable: ",
-            error
-          );
-        }
-      );
+        );
+    } else {
+      this.snackBar.open("Faltan campos por completar", "", {
+        panelClass: ["snack-bar-fracaso"],
+        duration: 4000,
+      });
+    }
   }
 }

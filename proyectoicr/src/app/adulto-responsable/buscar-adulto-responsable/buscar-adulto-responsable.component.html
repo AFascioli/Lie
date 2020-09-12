@@ -96,7 +96,7 @@
     </div>
   </form>
   <b class="parrafo" *ngIf="ARFiltrados.length == 0 && busqueda">
-    No se encontro un adulto responsable que coincida con los datos ingresados
+    No se encontró un adulto responsable que coincida con los datos ingresados
   </b>
   <div class="contenido" *ngIf="ARFiltrados.length != 0">
     <div>
@@ -149,19 +149,25 @@
           <th class="columnas-normales" mat-header-cell *matHeaderCellDef>
             Editar
           </th>
-          <td class="columnas-normales" mat-cell *matCellDef="let row; let i = index">
-            <button mat-icon-button matTooltip="Editar">
+          <td
+            class="columnas-normales"
+            mat-cell
+            *matCellDef="let row; let i = index"
+          >
+            <button
+              mat-icon-button
+              matTooltip="Editar"
+              (click)="onEditarAdultoResponsable(i)"
+              matTooltip="Editar"
+              [routerLink]="['/modificarAdultoResponsable']"
+            >
               <mat-icon>edit</mat-icon>
             </button>
           </td>
         </ng-container>
 
         <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-        <tr
-          mat-row
-          *matRowDef="let row; columns: displayedColumns"
-          (click)="seleccion.toggle(row)"
-        ></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
       </table>
     </div>
     <br />
