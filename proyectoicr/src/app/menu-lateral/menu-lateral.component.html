@@ -107,14 +107,15 @@
 
           <div *ngIf="!isLoading">
             <a
-            class="sinExpansion"
-            mat-list-item
-            routerLink="/accionesDirector"
-            (click)="cerrarMenuLateral(sideNav)"
-          >
-            <mat-icon class="iconSinExpansion">settings</mat-icon>
-            <p class="titulo-expansion">Acciones Director</p>
-          </a>
+              class="sinExpansion"
+              mat-list-item
+              routerLink="/accionesDirector"
+              (click)="cerrarMenuLateral(sideNav)"
+              *ngIf="rol == 'Director' || rol == 'Admin'"
+            >
+              <mat-icon class="iconSinExpansion">settings</mat-icon>
+              <p class="titulo-expansion">Acciones Director</p>
+            </a>
 
             <a
               mat-list-item
@@ -261,28 +262,28 @@
             </a>
 
             <a
-            mat-list-item
-            class="sinExpansion"
-            routerLink="/visualizarAgenda"
-            *ngIf="permisos.agendaCursos > 1"
-            (click)="cerrarMenuLateral(sideNav)"
-          >
-            <mat-icon class="iconSinExpansion">view_module</mat-icon>
-            <p class="titulo-expansion">Visualizar agenda de curso</p>
-          </a>
+              mat-list-item
+              class="sinExpansion"
+              routerLink="/visualizarAgenda"
+              *ngIf="permisos.agendaCursos > 1"
+              (click)="cerrarMenuLateral(sideNav)"
+            >
+              <mat-icon class="iconSinExpansion">view_module</mat-icon>
+              <p class="titulo-expansion">Visualizar agenda de curso</p>
+            </a>
 
-          <a
-          mat-list-item
-          class="sinExpansion"
-          routerLink="/calificacionesEstudiantes"
-          *ngIf="permisos.notas == 1"
-          (click)="cerrarMenuLateral(sideNav)"
-        >
-          <mat-icon class="iconSinExpansion" svgIcon="check"></mat-icon>
-          <p class="titulo-expansion">Visualizar calificaciones</p>
-        </a>
+            <a
+              mat-list-item
+              class="sinExpansion"
+              routerLink="/calificacionesEstudiantes"
+              *ngIf="permisos.notas == 1"
+              (click)="cerrarMenuLateral(sideNav)"
+            >
+              <mat-icon class="iconSinExpansion" svgIcon="check"></mat-icon>
+              <p class="titulo-expansion">Visualizar calificaciones</p>
+            </a>
 
-        <a
+            <a
               mat-list-item
               class="sinExpansion"
               routerLink="/calificacionesCicloLectivo"
@@ -296,8 +297,6 @@
                 Visualizar calificaciones ciclo lectivo
               </p>
             </a>
-
-
           </div>
         </mat-accordion>
       </mat-nav-list>
