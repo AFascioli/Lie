@@ -100,7 +100,7 @@ exports.crearCXM = async function (materiasDelCurso, estado) {
   var idsCalXMateria = [];
   for (const materia of materiasDelCurso) {
     var idCXM = await obtenerCXMParaInscripcion(
-      materia._id.idMateria[0],
+      materia._id,
       estado._id
     );
     idsCalXMateria.push(idCXM);

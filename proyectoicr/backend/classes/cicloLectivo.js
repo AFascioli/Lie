@@ -8,8 +8,7 @@ const ClaseInscripcion = require("../classes/inscripcion");
 
 //Retorna un array con los cursos que no tienen agenda
 exports.cursosTienenAgenda = () => {
-  // let añoActual = new Date().getFullYear();
-  let añoActual = 2069;
+  let añoActual = new Date().getFullYear();
   return new Promise((resolve, reject) => {
     Curso.aggregate([
       {
@@ -44,10 +43,7 @@ exports.cursosTienenAgenda = () => {
 // Se obtienen las inscripciones pendientes del ciclo actual, a estas se les cambia el estado a activa
 // se les copian las materias pendientes de la inscripcion del año anterior y se les asignan las CXM correspondientes.
 exports.pasarInscripcionesAActivas = () => {
-  // let añoActual = new Date().getFullYear();
-  let añoActual = 2069;
-
-  console.log("Pasando inscripciones a activas");
+  let añoActual = new Date().getFullYear();
   return new Promise(async (resolve, reject) => {
     let idPendiente = await ClaseEstado.obtenerIdEstado(
       "Inscripcion",
@@ -84,7 +80,6 @@ exports.pasarInscripcionesAActivas = () => {
       },
     ]).then(async (inscripcionesPendientes) => {
       for (const inscripcionJson of inscripcionesPendientes) {
-        console.log("Inscripcion pendiente ", inscripcionJson);
 
         let inscripcion = await Inscripcion.findById(inscripcionJson._id);
 
@@ -92,10 +87,9 @@ exports.pasarInscripcionesAActivas = () => {
           inscripcion.idCurso
         );
         let idsCXM = await ClaseCXM.crearCXM(
-          materiasDelCurso.idMateria,
+          materiasDelCurso,
           idCursandoCXM
         );
-        console.log("Miracomosalen las CXM, ", materiasDelCurso.idMateria);
 
         // Obtenemos la inscripcion del año anterior (filtrada por estudiante, estado que no sea inactiva y ciclo)
         let inscripcionAnterior = await Inscripcion.aggregate([
@@ -121,20 +115,18 @@ exports.pasarInscripcionesAActivas = () => {
             },
           },
         ]);
-        console.log("Encontramo inscripcion anterior", inscripcionAnterior);
         inscripcion.calificacionesXMateria = idsCXM;
-        inscripcion.materiasPendientes = inscripcionAnterior.materiasPendientes;
+        inscripcion.materiasPendientes = inscripcionAnterior.length!=0 ? inscripcionAnterior.materiasPendientes : [];
         inscripcion.estado = idActiva;
-        console.log("Inscripcion ya cambia ", inscripcion);
-        // inscripcion.save();
+        inscripcion.save();
+        resolve();
       }
     });
   });
 };
 
 exports.crearCursosParaCiclo = () => {
-  // let añoActual = new Date().getFullYear();
-  let añoActual = 2069;
+  let añoActual = new Date().getFullYear();
   console.log("Creando cursos para el ciclo");
   CicloLectivo.findOne({ año: añoActual })
     .then((cicloLectivo) => {

@@ -358,8 +358,7 @@ router.get("/inicioCursado", async (req, res) => {
     "CicloLectivo",
     "En primer trimestre"
   );
-  // let añoActual = new Date().getFullYear();
-  let añoActual = 2069;
+  let añoActual = new Date().getFullYear();
   // Validar que todas las agendas esten definidas
   let resultado = await ClaseCicloLectivo.cursosTienenAgenda();
 
