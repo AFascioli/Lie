@@ -130,6 +130,9 @@ export class InscripcionCursoComponent implements OnInit {
               return !estudiante.seleccionado;
             })
           );
+          this.estudiantes = this.estudiantes.filter((estudiante) => {
+            return !estudiante.seleccionado;
+          });
         } else {
           this.snackBar.open(
             "Ocurrió un error al inscribir los estudiantes seleccionados",
@@ -161,6 +164,9 @@ export class InscripcionCursoComponent implements OnInit {
               return !estudiante.seleccionado;
             })
           );
+          this.estudiantes = this.estudiantes.filter((estudiante) => {
+            return !estudiante.seleccionado;
+          });
         } else {
           this.snackBar.open(
             "Ocurrió un error al inscribir los estudiantes seleccionados",
