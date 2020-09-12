@@ -42,6 +42,7 @@ export class MenuLateralComponent implements OnInit, OnDestroy {
     inscribirEstudiante: 0,
     registrarEmpleado: 0,
     cuotas: 0,
+  
   };
   _mobileQueryListener: () => void;
   mobileQuery: MediaQueryList;

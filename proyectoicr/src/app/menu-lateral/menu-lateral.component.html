@@ -107,6 +107,16 @@
 
           <div *ngIf="!isLoading">
             <a
+            class="sinExpansion"
+            mat-list-item
+            routerLink="/accionesDirector"
+            (click)="cerrarMenuLateral(sideNav)"
+          >
+            <mat-icon class="iconSinExpansion">settings</mat-icon>
+            <p class="titulo-expansion">Acciones Director</p>
+          </a>
+
+            <a
               mat-list-item
               class="sinExpansion"
               routerLink="/buscar"
@@ -117,6 +127,20 @@
                 svgIcon="findStudent"
               ></mat-icon>
               <p class="titulo-expansion">Buscar estudiante</p>
+            </a>
+
+            <a
+              mat-list-item
+              class="sinExpansion"
+              routerLink="/buscarAdultoResponsable"
+              (click)="cerrarMenuLateral(sideNav)"
+              *ngIf="rol != 'Docente'"
+            >
+              <mat-icon
+                class="iconSinExpansion"
+                svgIcon="findStudent"
+              ></mat-icon>
+              <p class="titulo-expansion">Buscar adulto responsable</p>
             </a>
 
             <a
@@ -175,21 +199,6 @@
             <a
               mat-list-item
               class="sinExpansion"
-              routerLink="/calificacionesCicloLectivo"
-              (click)="cerrarMenuLateral(sideNav)"
-            >
-              <mat-icon
-                class="iconSinExpansion"
-                svgIcon="calificacion"
-              ></mat-icon>
-              <p class="titulo-expansion">
-                Visualizar calificaciones ciclo lectivo
-              </p>
-            </a>
-
-            <a
-              mat-list-item
-              class="sinExpansion"
               routerLink="/documentosEstudiante"
               *ngIf="permisos.inscribirEstudiante > 1"
               (click)="cerrarMenuLateral(sideNav)"
@@ -201,39 +210,6 @@
               <p class="titulo-expansion">
                 Registrar documentos de inscripción
               </p>
-            </a>
-
-            <a
-              mat-list-item
-              class="sinExpansion"
-              routerLink="/registrarCuotas"
-              *ngIf="permisos.cuotas > 1"
-              (click)="cerrarMenuLateral(sideNav)"
-            >
-              <mat-icon class="iconSinExpansion" svgIcon="pagoCuota"></mat-icon>
-              <p class="titulo-expansion">Registrar pago de cuotas</p>
-            </a>
-
-            <a
-              mat-list-item
-              class="sinExpansion"
-              routerLink="/visualizarAgenda"
-              *ngIf="permisos.agendaCursos > 1"
-              (click)="cerrarMenuLateral(sideNav)"
-            >
-              <mat-icon class="iconSinExpansion">view_module</mat-icon>
-              <p class="titulo-expansion">Visualizar agenda de curso</p>
-            </a>
-
-            <a
-              mat-list-item
-              class="sinExpansion"
-              routerLink="/calificacionesEstudiantes"
-              *ngIf="permisos.notas == 1"
-              (click)="cerrarMenuLateral(sideNav)"
-            >
-              <mat-icon class="iconSinExpansion" svgIcon="check"></mat-icon>
-              <p class="titulo-expansion">Visualizar calificaciones</p>
             </a>
 
             <a
@@ -265,15 +241,12 @@
             <a
               mat-list-item
               class="sinExpansion"
-              routerLink="/buscarAdultoResponsable"
+              routerLink="/registrarCuotas"
+              *ngIf="permisos.cuotas > 1"
               (click)="cerrarMenuLateral(sideNav)"
-              *ngIf="rol != 'Docente'"
             >
-              <mat-icon
-                class="iconSinExpansion"
-                svgIcon="findStudent"
-              ></mat-icon>
-              <p class="titulo-expansion">Buscar adulto responsable</p>
+              <mat-icon class="iconSinExpansion" svgIcon="pagoCuota"></mat-icon>
+              <p class="titulo-expansion">Registrar pago de cuotas</p>
             </a>
 
             <a
@@ -288,14 +261,43 @@
             </a>
 
             <a
-            class="sinExpansion"
             mat-list-item
-            routerLink="/accionesDirector"
+            class="sinExpansion"
+            routerLink="/visualizarAgenda"
+            *ngIf="permisos.agendaCursos > 1"
             (click)="cerrarMenuLateral(sideNav)"
           >
-            <mat-icon class="iconSinExpansion">settings</mat-icon>
-            <p class="titulo-expansion">Acciones Director</p>
+            <mat-icon class="iconSinExpansion">view_module</mat-icon>
+            <p class="titulo-expansion">Visualizar agenda de curso</p>
           </a>
+
+          <a
+          mat-list-item
+          class="sinExpansion"
+          routerLink="/calificacionesEstudiantes"
+          *ngIf="permisos.notas == 1"
+          (click)="cerrarMenuLateral(sideNav)"
+        >
+          <mat-icon class="iconSinExpansion" svgIcon="check"></mat-icon>
+          <p class="titulo-expansion">Visualizar calificaciones</p>
+        </a>
+
+        <a
+              mat-list-item
+              class="sinExpansion"
+              routerLink="/calificacionesCicloLectivo"
+              (click)="cerrarMenuLateral(sideNav)"
+            >
+              <mat-icon
+                class="iconSinExpansion"
+                svgIcon="calificacion"
+              ></mat-icon>
+              <p class="titulo-expansion">
+                Visualizar calificaciones ciclo lectivo
+              </p>
+            </a>
+
+
           </div>
         </mat-accordion>
       </mat-nav-list>
