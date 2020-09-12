@@ -353,12 +353,14 @@ router.use("/estado", (req, res) => {
 });
 
 router.get("/inicioCursado", async (req, res) => {
-  // Validar que todas las agendas esten definidas
   let idCreado = await ClaseEstado.obtenerIdEstado("CicloLectivo", "Creado");
   let idEnPrimerTrimestre = await ClaseEstado.obtenerIdEstado(
     "CicloLectivo",
     "En primer trimestre"
   );
+  // let añoActual = new Date().getFullYear();
+  let añoActual = 2069;
+  // Validar que todas las agendas esten definidas
   let resultado = await ClaseCicloLectivo.cursosTienenAgenda();
 
   if (resultado.length != 0) {
@@ -397,7 +399,8 @@ router.get("/inicioCursado", async (req, res) => {
 
   // Actualizar el estado del actual de Creado a En primer trimestre
   CicloLectivo.findOneAndUpdate(
-    { año: añoActual, estado: idCreado },
+    // { año: añoActual, estado: idCreado },
+    { año: 2069, estado: idCreado },
     { estado: idEnPrimerTrimestre }
   ).exec();
 
