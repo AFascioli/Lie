@@ -455,4 +455,52 @@ router.get("/registrarAgenda", checkAuthMiddleware, async (req, res) => {
     });
   }
 });
+
+router.get("/periodoCursado", checkAuthMiddleware, (req, res) => {
+  let fechaActual = new Date();
+  let añoActual = fechaActual.getFullYear();
+
+  try {
+    CicloLectivo.aggregate([
+      {
+        $match: {
+          año: añoActual,
+        },
+      },
+      {
+        $lookup: {
+          from: "estado",
+          localField: "estado",
+          foreignField: "_id",
+          as: "datosEstado",
+        },
+      },
+    ]).then((cicloLectivo) => {
+      let nombre = cicloLectivo[0].datosEstado[0].nombre;
+      console.log(nombre);
+      if (
+        nombre == "En primer trimestre" ||
+        nombre == "En segundo trimestre" ||
+        nombre == "En tercer trimestre"
+      ) {
+        return res.status(200).json({
+          permiso: true,
+          message: "Está dentro del periodo de cursado",
+        });
+      }
+
+      res.status(200).json({
+        permiso: false,
+        message: "No se encuentra dentro del periodo de cursado",
+      });
+    });
+  } catch (error) {
+    res.status(500).json({
+      error: error.message,
+      message:
+        "Ocurrió un error al querer determinar si está dentro del periodo de cursado",
+    });
+  }
+});
+
 module.exports = router;
