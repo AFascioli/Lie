@@ -153,7 +153,8 @@ export class RegistrarAsistenciaComponent implements OnInit, OnDestroy {
   }
 
   esSuspendido(estudiantesXDivision) {
-    if (estudiantesXDivision.estado == "5e9b47ca052c7e1e2c6701da") {
+    if (estudiantesXDivision.estado == "5eac84ac053ad30ad083aa0f") {
+      estudiantesXDivision.presente = false;
       return true;
     } else {
       return false;

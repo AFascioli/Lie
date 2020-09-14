@@ -21,44 +21,48 @@ async function validarLibreInasistencias(idEst, valorInasistencia) {
   Inscripcion.findOne({
     idEstudiante: idEst,
     estado: idEstadoActiva,
-  })
-    .then(async (inscripcion) => {
-      if (
-        inscripcion.contadorInasistenciasInjustificada % 14 == 0 &&
-        valorInasistencia == 1
-      ) {
-        Inscripcion.findOneAndUpdate(
-          {
-            idEstudiante: idEst,
-            estado: idEstadoSuspendido,
-          },
-          { estado: mongoose.Types.ObjectId(idEstadoSuspendido) }
-        ).exec();
-      } else if (inscripcion.contadorInasistenciasInjustificada % 12 == 0) {
-        //No fijamos si el estudiante tiene 12 inasistencias, para luego notificar a los AR
-        let idsUsuariosAR = await ClaseSuscripcion.obtenerIdsUsuarios(idEst);
-        let idsUsuarios = await ClaseSuscripcion.filtrarARPorPreferencias(
-          idsUsuariosAR,
-          "Falta 12"
-        );
-        //Si existen ARs que aceptan este tipo de notificacion, manda
-        idsUsuarios.length > 0 &&
-          Estudiante.findById(idEst).then((estudianteEncontrado) => {
-            ClaseSuscripcion.notificacionGrupal(
-              idsUsuarios,
-              "Atención",
-              `El estudiante ${estudianteEncontrado.nombre} ${estudianteEncontrado.apellido} tiene solo 3 inasistencias antes de que sea suspendido`
-            );
-          });
-      }
-    })
-    .catch((error) => {
-      res.status(500).json({
-        message:
-          "Ocurrió un problema al querer determinar si está libre por inasistencias el estudiante",
-        error: error.message,
-      });
-    });
+  }).then(async (inscripcion) => {
+    console.log(
+      inscripcion && inscripcion.contadorInasistenciasInjustificada == 15
+    );
+    if (inscripcion && inscripcion.contadorInasistenciasInjustificada == 15) {
+      Inscripcion.findOneAndUpdate(
+        {
+          idEstudiante: idEst,
+          estado: idEstadoActiva,
+        },
+        {
+          estado: idEstadoSuspendido,
+        }
+      ).exec();
+    } else if (
+      inscripcion &&
+      inscripcion.contadorInasistenciasInjustificada % 12 == 0
+    ) {
+      //No fijamos si el estudiante tiene 12 inasistencias, para luego notificar a los AR
+      let idsUsuariosAR = await ClaseSuscripcion.obtenerIdsUsuarios(idEst);
+      let idsUsuarios = await ClaseSuscripcion.filtrarARPorPreferencias(
+        idsUsuariosAR,
+        "Falta 12"
+      );
+      //Si existen ARs que aceptan este tipo de notificacion, manda
+      idsUsuarios.length > 0 &&
+        Estudiante.findById(idEst).then((estudianteEncontrado) => {
+          ClaseSuscripcion.notificacionGrupal(
+            idsUsuarios,
+            "Atención",
+            `El estudiante ${estudianteEncontrado.nombre} ${estudianteEncontrado.apellido} tiene solo 3 inasistencias antes de que sea suspendido`
+          );
+        });
+    }
+  });
+  // .catch((error) => {
+  //   res.status(500).json({
+  //     message:
+  //       "Ocurrió un problema al querer determinar si está libre por inasistencias el estudiante",
+  //     error: error.message,
+  //   });
+  // });
 }
 
 //Retorna vector con datos de los estudiantes y presente. Si ya se registro una asistencia para
@@ -327,83 +331,87 @@ router.post("", checkAuthMiddleware, async (req, res) => {
         idEstudiante: estudiante._id,
         estado: idEstadoActiva,
       }).then(async (inscripcion) => {
-        if (inscripcion.asistenciaDiaria.length > 0) {
-          var idAD =
-            inscripcion.asistenciaDiaria[
-              inscripcion.asistenciaDiaria.length - 1
-            ]._id;
-          AsistenciaDiaria.findById(idAD).then(async (asistencia) => {
-            if (!ClaseAsistencia.esFechaActual(asistencia.fecha)) {
-              // Condición si la ultima no asistencia corresponde al dia de hoy
-              var asistenciaEstudiante = new AsistenciaDiaria({
-                idInscripcion: inscripcion._id,
-                fecha: estudiante.fecha,
-                presente: estudiante.presente,
-                valorInasistencia: valorInasistencia,
-                justificado: false,
-                llegadaTarde: false,
-              });
-
-              await asistenciaEstudiante
-                .save()
-                .then(async (asistenciaDiaria) => {
-                  await inscripcion.asistenciaDiaria.push(asistenciaDiaria._id);
-                  inscripcion.contadorInasistenciasInjustificada =
-                    inscripcion.contadorInasistenciasInjustificada +
-                    valorInasistencia;
-                  inscripcion.save();
-                });
-            } else {
-              // Si la ultima asistencia si es de hoy
-              //Si estaba presente en la bd y se cambio a ausente incrementa contador inasistencia
-              if (asistencia.presente && !estudiante.presente) {
-                idsEstudiantes.push(estudiante._id);
-                AsistenciaDiaria.findByIdAndUpdate(asistencia._id, {
+        if (inscripcion) {
+          if (inscripcion.asistenciaDiaria.length > 0) {
+            var idAD =
+              inscripcion.asistenciaDiaria[
+                inscripcion.asistenciaDiaria.length - 1
+              ]._id;
+            AsistenciaDiaria.findById(idAD).then(async (asistencia) => {
+              if (!ClaseAsistencia.esFechaActual(asistencia.fecha)) {
+                // Condición si la ultima no asistencia corresponde al dia de hoy
+                var asistenciaEstudiante = new AsistenciaDiaria({
+                  idInscripcion: inscripcion._id,
+                  fecha: estudiante.fecha,
                   presente: estudiante.presente,
-                }).then(() => {
-                  Inscripcion.findOneAndUpdate(
-                    {
-                      idEstudiante: estudiante._id,
-                      estado: idEstadoActiva,
-                    },
-                    { $inc: { contadorInasistenciasInjustificada: 1 } }
-                  ).exec();
+                  valorInasistencia: valorInasistencia,
+                  justificado: false,
+                  llegadaTarde: false,
                 });
-                validarLibreInasistencias(estudiante._id, 1);
-              }
-              //Si estaba ausente y lo pasaron a presente decrementa contador inasistencia
-              else if (!asistencia.presente && estudiante.presente) {
-                AsistenciaDiaria.findByIdAndUpdate(asistencia._id, {
-                  presente: estudiante.presente,
-                }).then(() => {
-                  Inscripcion.findOneAndUpdate(
-                    {
-                      idEstudiante: estudiante._id,
-                      estado: idEstadoActiva,
-                    },
-                    { $inc: { contadorInasistenciasInjustificada: -1 } }
-                  ).exec();
-                });
-              }
-            }
-          });
-        } else {
-          var asistenciaEstudiante = new AsistenciaDiaria({
-            idInscripcion: inscripcion._id,
-            fecha: estudiante.fecha,
-            presente: estudiante.presente,
-            valorInasistencia: valorInasistencia,
-            justificado: false,
-            llegadaTarde: false,
-          });
 
-          await asistenciaEstudiante.save().then(async (asistenciaDiaria) => {
-            await inscripcion.asistenciaDiaria.push(asistenciaDiaria._id);
-            inscripcion.contadorInasistenciasInjustificada =
-              inscripcion.contadorInasistenciasInjustificada +
-              valorInasistencia;
-            inscripcion.save();
-          });
+                await asistenciaEstudiante
+                  .save()
+                  .then(async (asistenciaDiaria) => {
+                    await inscripcion.asistenciaDiaria.push(
+                      asistenciaDiaria._id
+                    );
+                    inscripcion.contadorInasistenciasInjustificada =
+                      inscripcion.contadorInasistenciasInjustificada +
+                      valorInasistencia;
+                    inscripcion.save();
+                  });
+              } else {
+                // Si la ultima asistencia si es de hoy
+                //Si estaba presente en la bd y se cambio a ausente incrementa contador inasistencia
+                if (asistencia.presente && !estudiante.presente) {
+                  idsEstudiantes.push(estudiante._id);
+                  AsistenciaDiaria.findByIdAndUpdate(asistencia._id, {
+                    presente: estudiante.presente,
+                  }).then(() => {
+                    Inscripcion.findOneAndUpdate(
+                      {
+                        idEstudiante: estudiante._id,
+                        estado: idEstadoActiva,
+                      },
+                      { $inc: { contadorInasistenciasInjustificada: 1 } }
+                    ).exec();
+                  });
+                  validarLibreInasistencias(estudiante._id, 1);
+                }
+                //Si estaba ausente y lo pasaron a presente decrementa contador inasistencia
+                else if (!asistencia.presente && estudiante.presente) {
+                  AsistenciaDiaria.findByIdAndUpdate(asistencia._id, {
+                    presente: estudiante.presente,
+                  }).then(() => {
+                    Inscripcion.findOneAndUpdate(
+                      {
+                        idEstudiante: estudiante._id,
+                        estado: idEstadoActiva,
+                      },
+                      { $inc: { contadorInasistenciasInjustificada: -1 } }
+                    ).exec();
+                  });
+                }
+              }
+            });
+          } else {
+            var asistenciaEstudiante = new AsistenciaDiaria({
+              idInscripcion: inscripcion._id,
+              fecha: estudiante.fecha,
+              presente: estudiante.presente,
+              valorInasistencia: valorInasistencia,
+              justificado: false,
+              llegadaTarde: false,
+            });
+
+            await asistenciaEstudiante.save().then(async (asistenciaDiaria) => {
+              await inscripcion.asistenciaDiaria.push(asistenciaDiaria._id);
+              inscripcion.contadorInasistenciasInjustificada =
+                inscripcion.contadorInasistenciasInjustificada +
+                valorInasistencia;
+              inscripcion.save();
+            });
+          }
         }
       });
       validarLibreInasistencias(estudiante._id, valorInasistencia);
@@ -448,9 +456,13 @@ router.get("/asistenciaEstudiante", checkAuthMiddleware, async (req, res) => {
     "Inscripcion",
     "Activa"
   );
+  let idEstadoSuspendido = await ClaseEstado.obtenerIdEstado(
+    "Inscripcion",
+    "Suspendido"
+  );
   Inscripcion.find({
     idEstudiante: req.query.idEstudiante,
-    estado: idEstadoActiva,
+    $or: [{ estado: idEstadoActiva }, { estado: idEstadoSuspendido }],
   })
     .then((inscripciones) => {
       let contadorInjustificadas = 0;

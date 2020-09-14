@@ -1,4 +1,6 @@
-<h1 class="componente-titulo">Inasistencias de {{ apellidoEstudiante }}, {{ nombreEstudiante }}</h1>
+<h1 class="componente-titulo">
+  Inasistencias de {{ apellidoEstudiante }}, {{ nombreEstudiante }}
+</h1>
 <mat-card class="card-body-componente">
   <div
     *ngIf="
@@ -6,7 +8,7 @@
         contadorInasistenciaInjustificada != 0) &&
       contadorInasistenciaInjustificada != undefined
     "
-    style="display: block;"
+    style="display: block"
   >
     <canvas
       baseChart
@@ -21,6 +23,12 @@
       <b
         >Le quedan {{ 15 - contadorInasistenciaInjustificada }} inasistencias
         injustificadas para la reincorporación
+      </b>
+    </p>
+    <p class="aviso" *ngIf="contadorInasistenciaInjustificada == 15">
+      <b
+        >El estudiante alcanzó el límite de inasistencias, necesita ser
+        reincorporado.
       </b>
     </p>
   </div>
