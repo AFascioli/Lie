@@ -6,6 +6,7 @@ import { MatDialogRef, MatDialog, MatSnackBar } from "@angular/material";
 import { Router } from "@angular/router";
 import { takeUntil } from "rxjs/operators";
 import { Subject } from "rxjs";
+import { CicloLectivoService } from "src/app/cicloLectivo.service";
 
 @Component({
   selector: "app-registrar-asistencia",
@@ -31,10 +32,11 @@ export class RegistrarAsistenciaComponent implements OnInit, OnDestroy {
     private servicioAsistencia: AsistenciaService,
     private autenticacionService: AutenticacionService,
     public popup: MatDialog,
-    public snackBar: MatSnackBar
+    public snackBar: MatSnackBar,
+    public servicioCicloLectivo: CicloLectivoService
   ) {}
 
-  ngOnInit() {
+  async ngOnInit() {
     this.cursoNotSelected = true;
     this.fechaActual = new Date();
     if (
@@ -52,7 +54,7 @@ export class RegistrarAsistenciaComponent implements OnInit, OnDestroy {
     }
 
     if (
-      this.fechaActualEnCicloLectivo() ||
+      (await this.fechaActualEnPeriodoCursado()) ||
       this.autenticacionService.getRol() == "Admin"
     ) {
       this.servicioEstudiante
@@ -75,19 +77,12 @@ export class RegistrarAsistenciaComponent implements OnInit, OnDestroy {
     }
   }
 
-  //Devuelve true si la fecha actual se encuentra dentro del ciclo lectivo, y false caso contrario.
-  fechaActualEnCicloLectivo() {
-    let fechaInicioPrimerTrimestre = new Date(
-      this.autenticacionService.getFechasCicloLectivo().fechaInicioPrimerTrimestre
-    );
-    let fechaFinTercerTrimestre = new Date(
-      this.autenticacionService.getFechasCicloLectivo().fechaFinTercerTrimestre
-    );
-
-    return (
-      this.fechaActual.getTime() > fechaInicioPrimerTrimestre.getTime() &&
-      this.fechaActual.getTime() < fechaFinTercerTrimestre.getTime()
-    );
+  async fechaActualEnPeriodoCursado() {
+    return new Promise((resolve, reject) => {
+      this.servicioCicloLectivo.validarEnCursado().subscribe((result) => {
+        resolve(result.permiso);
+      });
+    });
   }
 
   //Busca los estudiantes segun el curso que se selecciono en pantalla. Los orden alfabeticamente
@@ -96,25 +91,17 @@ export class RegistrarAsistenciaComponent implements OnInit, OnDestroy {
     this.servicioAsistencia
       .cargarAsistencia(curso.value)
       .pipe(takeUntil(this.unsubscribe))
-      .subscribe(
-        (respuesta) => {
-          this.asistenciaNueva = respuesta.asistenciaNueva;
-          if (respuesta.estudiantes.length != 0) {
-            this.estudiantesXDivision = respuesta.estudiantes.sort((a, b) =>
-              a.apellido > b.apellido ? 1 : b.apellido > a.apellido ? -1 : 0
-            );
-          } else {
-            this.estudiantesXDivision = [];
-          }
-          this.isLoadingStudents = false;
-        },
-        (error) => {
-          console.error(
-            "Ocurrió un error al querer obtener el estado de la asistencia para cada alumno. El error es: " +
-              error
+      .subscribe((respuesta) => {
+        this.asistenciaNueva = respuesta.asistenciaNueva;
+        if (respuesta.estudiantes.length != 0) {
+          this.estudiantesXDivision = respuesta.estudiantes.sort((a, b) =>
+            a.apellido > b.apellido ? 1 : b.apellido > a.apellido ? -1 : 0
           );
+        } else {
+          this.estudiantesXDivision = [];
         }
-      );
+        this.isLoadingStudents = false;
+      });
   }
 
   //Cambia el atributo presente del estudiante cuando se cambia de valor el toggle
@@ -131,20 +118,12 @@ export class RegistrarAsistenciaComponent implements OnInit, OnDestroy {
     this.servicioAsistencia
       .registrarAsistencia(this.estudiantesXDivision, this.asistenciaNueva)
       .pipe(takeUntil(this.unsubscribe))
-      .subscribe(
-        (response) => {
-          this.snackBar.open(response.message, "", {
-            panelClass: ["snack-bar-exito"],
-            duration: 4500,
-          });
-        },
-        (error) => {
-          console.error(
-            "Ocurrió un error al querer publicar el estado de la asistencia para un curso. El error es: " +
-              error
-          );
-        }
-      );
+      .subscribe((response) => {
+        this.snackBar.open(response.message, "", {
+          panelClass: ["snack-bar-exito"],
+          duration: 4500,
+        });
+      });
   }
 
   ngOnDestroy() {

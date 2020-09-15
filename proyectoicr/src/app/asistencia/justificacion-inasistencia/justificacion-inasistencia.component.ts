@@ -5,7 +5,6 @@ import { MatSnackBar } from "@angular/material";
 import { MatDialog } from "@angular/material";
 import { takeUntil } from "rxjs/operators";
 import { Subject } from "rxjs";
-import { NgForm } from "@angular/forms";
 import { CicloLectivoService } from "src/app/cicloLectivo.service";
 
 @Component({
@@ -34,7 +33,6 @@ export class JustificacionInasistenciaComponent implements OnInit, OnDestroy {
   ) {}
 
   async ngOnInit() {
-    console.log(await this.fechaActualEnPeriodoCursado());
     if (
       (await this.fechaActualEnPeriodoCursado()) ||
       this.autenticacionService.getRol() == "Admin"

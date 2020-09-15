@@ -1,4 +1,3 @@
-import { AsociarAdultoResponsableComponent } from "./../../adulto-responsable/asociar-adulto-responsable/asociar-adulto-responsable.component";
 import { AsistenciaService } from "src/app/asistencia/asistencia.service";
 import { UbicacionService } from "src/app/ubicacion/ubicacion.service";
 import { CalificacionesService } from "../../calificaciones/calificaciones.service";

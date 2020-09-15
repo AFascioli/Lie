@@ -1,3 +1,4 @@
+import { CicloLectivoService } from "./../../cicloLectivo.service";
 import { NgForm } from "@angular/forms";
 import { CalificacionesService } from "../calificaciones.service";
 import { MatSnackBar } from "@angular/material";
@@ -33,7 +34,8 @@ export class CalificacionesExamenesComponent implements OnInit, OnDestroy {
     public changeDetectorRef: ChangeDetectorRef,
     public media: MediaMatcher,
     public authService: AutenticacionService,
-    public snackBar: MatSnackBar
+    public snackBar: MatSnackBar,
+    public cicloLectivoService: CicloLectivoService
   ) {
     this.mobileQuery = media.matchMedia("(max-width: 800px)");
     this._mobileQueryListener = () => changeDetectorRef.detectChanges();
@@ -48,13 +50,15 @@ export class CalificacionesExamenesComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.fechaActual = new Date();
     if (
-      this.fechaActualEnRangoFechasExamenes() ||
+      this.fechaActualEnRangoFechasExamenes ||
       this.authService.getRol() == "Admin"
     ) {
       this.apellidoEstudiante = this.estudianteService.estudianteSeleccionado.apellido;
       this.nombreEstudiante = this.estudianteService.estudianteSeleccionado.nombre;
       this.servicioCalificaciones
-        .obtenerMateriasDesaprobadasEstudiante(this.estudianteService.estudianteSeleccionado._id)
+        .obtenerMateriasDesaprobadasEstudiante(
+          this.estudianteService.estudianteSeleccionado._id
+        )
         .pipe(takeUntil(this.unsubscribe))
         .subscribe((materias) => {
           if (materias.materiasDesaprobadas != null) {
@@ -106,17 +110,16 @@ export class CalificacionesExamenesComponent implements OnInit, OnDestroy {
   }
 
   fechaActualEnRangoFechasExamenes() {
-    let fechaInicioExamen = new Date(
-      this.authService.getFechasCicloLectivo().fechaInicioExamen
-    );
-    let fechaFinExamen = new Date(
-      this.authService.getFechasCicloLectivo().fechaFinExamen
-    );
-
-    return (
-      this.fechaActual.getTime() > fechaInicioExamen.getTime() &&
-      this.fechaActual.getTime() < fechaFinExamen.getTime()
-    );
+    this.cicloLectivoService
+      .obtenerEstadoCicloLectivo()
+      .pipe(takeUntil(this.unsubscribe))
+      .subscribe(async (response) => {
+        let estado = await response.estadoCiclo;
+        if (estado == "En examenes") {
+          return true;
+        }
+        return false;
+      });
   }
 
   guardar(form: NgForm) {
