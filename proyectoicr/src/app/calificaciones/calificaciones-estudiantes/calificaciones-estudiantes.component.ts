@@ -154,7 +154,7 @@ export class CalificacionesEstudiantesComponent implements OnInit, OnDestroy {
             this.trimestreActual = "2";
             break;
           case "En tercer trimestre":
-            this.trimestreActual = "2";
+            this.trimestreActual = "3";
             break;
           default:
             this.trimestreSeleccionado = "3";
