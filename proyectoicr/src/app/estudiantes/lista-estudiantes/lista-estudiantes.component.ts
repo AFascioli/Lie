@@ -215,6 +215,15 @@ export class ListaEstudiantesComponent implements OnInit, OnDestroy {
 
   onReincorporar(indice) {
     this.asignarEstudianteSeleccionado(indice);
+    // this.servicioAsistencia
+    //   .obtenerInasistenciasDeEstudiante()
+    //   .pipe(takeUntil(this.unsubscribe))
+    //   .subscribe((response) => {
+    //     if(response.contadorInasistenciasInjustificada==15)
+    //     {
+    //         this.servicioAsistencia.resetearInasistenciasPorReincorporación(this.servicio.estudianteSeleccionado._id);
+    //     }
+    //   });
     this.dialog
       .open(ReincorporarPopupComponent, {
         width: "250px",
