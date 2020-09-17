@@ -22,7 +22,11 @@ async function validarLibreInasistencias(idEst, valorInasistencia) {
     idEstudiante: idEst,
     estado: idEstadoActiva,
   }).then(async (inscripcion) => {
-    if (inscripcion && inscripcion.contadorInasistenciasInjustificada == 15) {
+    if (
+      inscripcion &&
+      inscripcion.contadorInasistenciasInjustificada == 15 &&
+      valorInasistencia == 1
+    ) {
       Inscripcion.findOneAndUpdate(
         {
           idEstudiante: idEst,
@@ -373,7 +377,9 @@ router.post("", checkAuthMiddleware, async (req, res) => {
                       { $inc: { contadorInasistenciasInjustificada: 1 } }
                     ).exec();
                   });
-                  await validarLibreInasistencias(estudiante._id, 1);
+                  setTimeout(function () {
+                    validarLibreInasistencias(estudiante._id, 1);
+                  }, 900);
                 }
                 //Si estaba ausente y lo pasaron a presente decrementa contador inasistencia
                 else if (!asistencia.presente && estudiante.presente) {
@@ -411,7 +417,9 @@ router.post("", checkAuthMiddleware, async (req, res) => {
           }
         }
       });
-      validarLibreInasistencias(estudiante._id, valorInasistencia);
+      setTimeout(function () {
+        validarLibreInasistencias(estudiante._id, 1);
+      }, 900);
     });
     if (idsEstudiantes.length > 0) {
       for (const idEstudiante of idsEstudiantes) {
@@ -886,29 +894,5 @@ router.post("/retiro", checkAuthMiddleware, async (req, res) => {
       });
     });
 });
-
-// router.post("/resetearAsistencias", checkAuthMiddleware, async (req, res) => {
-//   let idEstadoSuspendido = await ClaseEstado.obtenerIdEstado(
-//     "Inscripcion",
-//     "Suspendido"
-//   );
-//   Inscripcion.findOne({
-//     idEstudiante: req.body.idEstudiante,
-//     estado: idEstadoSuspendido,
-//   })
-//     .then((inscripcion) => {
-//       console.log(inscripcion);
-//       inscripcion.contadorInasistenciasInjustificada = 0;
-//       inscripcion.save();
-//       //en el atributo nuevo ponerlo como reincorporadoPorFaltas=true;
-//     })
-//     .catch((error) => {
-//       res.status(500).json({
-//         message:
-//           "Ocurrió un error al querer resetear las inaisistencias de un estudiante",
-//         error: error.message,
-//       });
-//     });
-// });
 
 module.exports = router;

@@ -712,19 +712,19 @@ router.get("/reincorporacion", checkAuthMiddleware, async (req, res) => {
     "Inscripcion",
     "Suspendido"
   );
-  Inscripcion.findOneAndUpdate(
-    {
-      idEstudiante: mongoose.Types.ObjectId(req.query.idEstudiante),
-      estado: idEstadoSuspendido,
-    },
-    {
-      estado: idEstadoActiva,
-    }
-  )
-    .then(() => {
-      res.status(200).json({
-        message: "El estudiante esta reincorporado",
-        exito: true,
+  Inscripcion.findOne({
+    idEstudiante: mongoose.Types.ObjectId(req.query.idEstudiante),
+    estado: idEstadoSuspendido,
+  })
+    .then((inscripcion) => {
+      if (inscripcion.contadorInasistenciasInjustificada == 15)
+        inscripcion.contadorInasistenciasInjustificada = 0;
+      inscripcion.estado = idEstadoActiva;
+      inscripcion.save().then(() => {
+        res.status(200).json({
+          message: "El estudiante esta reincorporado",
+          exito: true,
+        });
       });
     })
     .catch((error) => {

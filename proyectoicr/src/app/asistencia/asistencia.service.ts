@@ -112,11 +112,4 @@ export class AsistenciaService {
     );
   }
 
-  // public resetearInasistenciasPorReincorporación(idEstudiante: string) {
-  //   console.log(idEstudiante);
-  //   return this.http.post<{ message: string; exito: boolean }>(
-  //     environment.apiUrl + "/asistencia/resetearAsistencias",
-  //     {  idEstudiante: idEstudiante }
-  //   );
-  // }
 }
