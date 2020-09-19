@@ -1,4 +1,4 @@
-import { environment } from "src/environments/environment";
+import { environment } from "../environments/environment";
 import { HttpClient, HttpParams } from "@angular/common/http";
 import { Injectable, OnDestroy } from "@angular/core";
 import { Subject } from "rxjs";
@@ -31,5 +31,35 @@ export class CicloLectivoService implements OnDestroy {
       exito: boolean;
       message: string;
     }>(`${environment.apiUrl}/cicloLectivo/inicioCursado`);
+  }
+
+  obtenerParametrosCicloLectivo() {
+    return this.http.get<{
+      exito: boolean;
+      message: string;
+      cicloLectivo: any;
+    }>(`${environment.apiUrl}/cicloLectivo/parametros`);
+  }
+
+  guardarParametros(
+    cantidadFaltasSuspension,
+    cantidadMateriasInscripcionLibre,
+    horaLlegadaTardeAntes,
+    horaLlegadaTardeDespues,
+    horaRetiroAnticipadoAntes,
+    horaRetiroAnticipadoDespues
+  ) {
+    let cicloLectivo = {
+      cantidadFaltasSuspension: cantidadFaltasSuspension,
+      cantidadMateriasInscripcionLibre: cantidadMateriasInscripcionLibre,
+      horaLlegadaTardeAntes: horaLlegadaTardeAntes,
+      horaLlegadaTardeDespues: horaLlegadaTardeDespues,
+      horaRetiroAnticipadoAntes: horaRetiroAnticipadoAntes,
+      horaRetiroAnticipadoDespues: horaRetiroAnticipadoDespues,
+    };
+    return this.http.post<{ message: string; exito: boolean }>(
+      environment.apiUrl + "/cicloLectivo/parametros",
+      cicloLectivo
+    );
   }
 }
