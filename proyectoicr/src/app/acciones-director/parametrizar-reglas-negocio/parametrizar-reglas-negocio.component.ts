@@ -10,10 +10,8 @@ import { MatSnackBar } from "@angular/material";
   styleUrls: ["./parametrizar-reglas-negocio.component.css"],
 })
 export class ParametrizarReglasNegocioComponent implements OnInit {
-  horaLlegadaTardeAntes: string;
-  horaLlegadaTardeDespues: string;
-  horaRetiroAnticipadoAntes: string;
-  horaRetiroAnticipadoDespues: string;
+  horaLlegadaTarde: string;
+  horaRetiroAnticipado: string;
   cantidadFaltasSuspension: number;
   cantidadMateriasInscripcionLibre: number;
 
@@ -29,14 +27,10 @@ export class ParametrizarReglasNegocioComponent implements OnInit {
       .obtenerParametrosCicloLectivo()
       .pipe(takeUntil(this.unsubscribe))
       .subscribe((response) => {
-        this.horaLlegadaTardeAntes =
-          response.cicloLectivo.horarioLLegadaTardeAntes;
-        this.horaLlegadaTardeDespues =
-          response.cicloLectivo.horarioLLegadaTardeDespues;
-        this.horaRetiroAnticipadoAntes =
-          response.cicloLectivo.horarioRetiroAnticipadoAntes;
-        this.horaRetiroAnticipadoDespues =
-          response.cicloLectivo.horarioRetiroAnticipadoDespues;
+        this.horaLlegadaTarde =
+          response.cicloLectivo.horarioLLegadaTarde;
+        this.horaRetiroAnticipado =
+          response.cicloLectivo.horarioRetiroAnticipado;
         this.cantidadFaltasSuspension =
           response.cicloLectivo.cantidadFaltasSuspension;
         this.cantidadMateriasInscripcionLibre =
@@ -45,16 +39,12 @@ export class ParametrizarReglasNegocioComponent implements OnInit {
   }
 
   onGuardar() {
-    // console.log(this.horaLlegadaTardeAntes);
-    // console.log(this.horaRetiroAnticipadoDespues);
     this.servicioCicloLectivo
       .guardarParametros(
         this.cantidadFaltasSuspension,
         this.cantidadMateriasInscripcionLibre,
-        this.horaLlegadaTardeAntes,
-        this.horaLlegadaTardeDespues,
-        this.horaRetiroAnticipadoAntes,
-        this.horaRetiroAnticipadoDespues
+        this.horaLlegadaTarde,
+        this.horaRetiroAnticipado,
       )
       .pipe(takeUntil(this.unsubscribe))
       .subscribe(

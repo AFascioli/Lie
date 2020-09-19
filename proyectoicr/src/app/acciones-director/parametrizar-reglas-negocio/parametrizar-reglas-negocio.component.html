@@ -1,13 +1,13 @@
 <h1 class="componente-titulo">Parametrizar Reglas de Negocio</h1>
 <mat-card class="card-body-componente">
   <h3 class="margen2">Horario llegada tarde</h3>
-  <mat-grid-list class="margen" cols="2" rowHeight="55px">
+  <mat-grid-list class="margen" cols="1" rowHeight="55px">
     <mat-grid-tile>
-      Antes de las
+      Antes y después de las
       <mat-form-field class="mat-form1">
         <input
-          name="horaLlegadaTardeAntes"
-          [(ngModel)]="horaLlegadaTardeAntes"
+          name="horaLlegadaTarde"
+          [(ngModel)]="horaLlegadaTarde"
           matInput
           [ngxTimepicker]="picker1"
           [format]="24"
@@ -22,12 +22,16 @@
         ></ngx-material-timepicker>
       </mat-form-field>
     </mat-grid-tile>
-    <mat-grid-tile
-      >Después de las
-      <mat-form-field class="mat-form-hora2">
+  </mat-grid-list>
+  <mat-divider></mat-divider>
+  <h3 class="margen">Horario retiro anticipado</h3>
+  <mat-grid-list class="margen" cols="1" rowHeight="55px">
+    <mat-grid-tile>
+      Antes y después de las
+      <mat-form-field class="mat-form1">
         <input
-          name="nombreLlegadaTardeDespues"
-          [(ngModel)]="horaLlegadaTardeDespues"
+          name="nombreRetiroAnticipado"
+          [(ngModel)]="horaRetiroAnticipado"
           matInput
           [ngxTimepicker]="picker2"
           [format]="24"
@@ -39,50 +43,6 @@
         <ngx-material-timepicker
           [minutesGap]="5"
           #picker2
-        ></ngx-material-timepicker>
-      </mat-form-field>
-    </mat-grid-tile>
-  </mat-grid-list>
-  <mat-divider></mat-divider>
-  <h3 class="margen">Horario retiro anticipado</h3>
-  <mat-grid-list class="margen" cols="2" rowHeight="55px">
-    <mat-grid-tile>
-      Antes de las
-      <mat-form-field class="mat-form1">
-        <input
-          name="nombreRetiroAnticipadoAntes"
-          [(ngModel)]="horaRetiroAnticipadoAntes"
-          matInput
-          [ngxTimepicker]="picker3"
-          [format]="24"
-          placeholder="Ingrese hora"
-          min="07:00"
-          readonly
-          required
-        />
-        <ngx-material-timepicker
-          [minutesGap]="5"
-          #picker3
-        ></ngx-material-timepicker>
-      </mat-form-field>
-    </mat-grid-tile>
-    <mat-grid-tile
-      >Después de las
-      <mat-form-field class="mat-form-hora2">
-        <input
-          name="nombreRetiroAnticipadoDespues"
-          [(ngModel)]="horaRetiroAnticipadoDespues"
-          matInput
-          [ngxTimepicker]="picker4"
-          [format]="24"
-          placeholder="Ingrese hora"
-          min="07:00"
-          readonly
-          required
-        />
-        <ngx-material-timepicker
-          [minutesGap]="5"
-          #picker4
         ></ngx-material-timepicker>
       </mat-form-field>
     </mat-grid-tile>

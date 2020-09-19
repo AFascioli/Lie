@@ -8,6 +8,7 @@ const AsistenciaDiaria = require("../models/asistenciaDiaria");
 const ClaseSuscripcion = require("../classes/suscripcion");
 const ClaseAsistencia = require("../classes/asistencia");
 const ClaseEstado = require("../classes/estado");
+const ClaseCicloLectivo = require("../classes/cicloLectivo");
 
 async function validarLibreInasistencias(idEst, valorInasistencia) {
   const idEstadoSuspendido = await ClaseEstado.obtenerIdEstado(
@@ -24,7 +25,8 @@ async function validarLibreInasistencias(idEst, valorInasistencia) {
   }).then(async (inscripcion) => {
     if (
       inscripcion &&
-      inscripcion.contadorInasistenciasInjustificada == 15 &&
+      inscripcion.contadorInasistenciasInjustificada >=
+        (await ClaseCicloLectivo.obtenerCantidadFaltasSuspension()) &&
       valorInasistencia == 1
     ) {
       Inscripcion.findOneAndUpdate(

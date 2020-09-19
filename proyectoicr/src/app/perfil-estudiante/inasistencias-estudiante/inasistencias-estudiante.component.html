@@ -19,13 +19,26 @@
       [legend]="barChartLegend"
       [chartType]="barChartType"
     ></canvas>
-    <p class="aviso" *ngIf="contadorInasistenciaInjustificada < 15">
+    <p
+      class="aviso"
+      *ngIf="
+        contadorInasistenciaInjustificada < this.cantidadFaltasParaSuspension
+      "
+    >
       <b
-        >Le quedan {{ 15 - contadorInasistenciaInjustificada }} inasistencias
-        injustificadas para la reincorporación
+        >Le quedan
+        {{
+          this.cantidadFaltasParaSuspension - contadorInasistenciaInjustificada
+        }}
+        inasistencias injustificadas para la reincorporación
       </b>
     </p>
-    <p class="aviso" *ngIf="contadorInasistenciaInjustificada == 15">
+    <p
+      class="aviso"
+      *ngIf="
+        contadorInasistenciaInjustificada >= this.cantidadFaltasParaSuspension
+      "
+    >
       <b
         >El estudiante alcanzó el límite de inasistencias, necesita ser
         reincorporado.

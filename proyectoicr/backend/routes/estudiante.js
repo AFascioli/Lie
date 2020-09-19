@@ -4,6 +4,7 @@ const router = express.Router();
 const mongoose = require("mongoose");
 const ClaseEstudiante = require("../classes/estudiante");
 const ClaseEstado = require("../classes/estado");
+const ClaseCicloLectivo = require("../classes/cicloLectivo");
 const CicloLectivo = require("../models/cicloLectivo");
 const Estudiante = require("../models/estudiante");
 const Estado = require("../models/estado");
@@ -712,12 +713,14 @@ router.get("/reincorporacion", checkAuthMiddleware, async (req, res) => {
     "Inscripcion",
     "Suspendido"
   );
+
+  let cantidadFaltas = await ClaseCicloLectivo.obtenerCantidadFaltasSuspension();
   Inscripcion.findOne({
     idEstudiante: mongoose.Types.ObjectId(req.query.idEstudiante),
     estado: idEstadoSuspendido,
   })
     .then((inscripcion) => {
-      if (inscripcion.contadorInasistenciasInjustificada == 15)
+      if ( inscripcion.contadorInasistenciasInjustificada >= cantidadFaltas)
         inscripcion.contadorInasistenciasInjustificada = 0;
       inscripcion.estado = idEstadoActiva;
       inscripcion.save().then(() => {

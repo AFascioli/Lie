@@ -1,10 +1,8 @@
 const mongoose = require("mongoose");
 
 const cicloLectivoSchema = mongoose.Schema({
-  horarioLLegadaTardeAntes: String,
-  horarioLLegadaTardeDespues: String,
-  horarioRetiroAnticipadoAntes: String,
-  horarioRetiroAnticipadoDespues: String,
+  horarioLLegadaTarde: String,
+  horarioRetiroAnticipado: String,
   cantidadFaltasSuspension: Number,
   cantidadMateriasInscripcionLibre: Number,
   año: Number,

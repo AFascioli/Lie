@@ -41,21 +41,49 @@ export class CicloLectivoService implements OnDestroy {
     }>(`${environment.apiUrl}/cicloLectivo/parametros`);
   }
 
+  obtenerFaltasSuspensionCicloLectivo() {
+    return this.http.get<{
+      exito: boolean;
+      message: string;
+      faltas: any;
+    }>(`${environment.apiUrl}/cicloLectivo/cantidadFaltasSuspension`);
+  }
+
+  obtenerHoraLlegadaTarde() {
+    return this.http.get<{
+      exito: boolean;
+      message: string;
+      hora: any;
+    }>(`${environment.apiUrl}/cicloLectivo/horaLlegadaTarde`);
+  }
+
+  obtenerHoraRetiroAnticipado() {
+    return this.http.get<{
+      exito: boolean;
+      message: string;
+      hora: any;
+    }>(`${environment.apiUrl}/cicloLectivo/horaRetiroAnticipado`);
+  }
+
+  obtenerMateriasParaInscripcionLibre() {
+    return this.http.get<{
+      exito: boolean;
+      message: string;
+      materias: any;
+    }>(`${environment.apiUrl}/cicloLectivo/materiasParaLibre`);
+  }
+
   guardarParametros(
     cantidadFaltasSuspension,
     cantidadMateriasInscripcionLibre,
-    horaLlegadaTardeAntes,
-    horaLlegadaTardeDespues,
-    horaRetiroAnticipadoAntes,
-    horaRetiroAnticipadoDespues
+    horaLlegadaTarde,
+    horaRetiroAnticipado
   ) {
     let cicloLectivo = {
       cantidadFaltasSuspension: cantidadFaltasSuspension,
       cantidadMateriasInscripcionLibre: cantidadMateriasInscripcionLibre,
-      horaLlegadaTardeAntes: horaLlegadaTardeAntes,
-      horaLlegadaTardeDespues: horaLlegadaTardeDespues,
-      horaRetiroAnticipadoAntes: horaRetiroAnticipadoAntes,
-      horaRetiroAnticipadoDespues: horaRetiroAnticipadoDespues,
+      horaLlegadaTarde: horaLlegadaTarde,
+      horaRetiroAnticipado: horaRetiroAnticipado,
     };
     return this.http.post<{ message: string; exito: boolean }>(
       environment.apiUrl + "/cicloLectivo/parametros",

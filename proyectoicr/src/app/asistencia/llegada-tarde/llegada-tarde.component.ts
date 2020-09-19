@@ -1,3 +1,4 @@
+import { CicloLectivoService } from "src/app/cicloLectivo.service";
 import { AutenticacionService } from "./../../login/autenticacionService.service";
 import { Component, OnInit, OnDestroy, ChangeDetectorRef } from "@angular/core";
 import { EstudiantesService } from "src/app/estudiantes/estudiante.service";
@@ -22,10 +23,12 @@ export class LlegadaTardeComponent implements OnInit, OnDestroy {
   private unsubscribe: Subject<void> = new Subject();
   _mobileQueryListener: () => void;
   mobileQuery: MediaQueryList;
+  horaLlegadaTarde: string;
 
   constructor(
     public servicioEstudiante: EstudiantesService,
     public servicioAsistencia: AsistenciaService,
+    public servicioCicloLectivo: CicloLectivoService,
     public snackBar: MatSnackBar,
     public autenticacionService: AutenticacionService,
     public changeDetectorRef: ChangeDetectorRef,
@@ -37,6 +40,20 @@ export class LlegadaTardeComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.servicioCicloLectivo
+      .obtenerHoraLlegadaTarde()
+      .pipe(takeUntil(this.unsubscribe))
+      .subscribe(
+        (response) => {
+          this.horaLlegadaTarde = response.hora;
+        },
+        (error) => {
+          console.error(
+            "Ocurrió un error al querer devolver la hora llegada tarde. El error se puede describir de la siguiente manera: " +
+              error
+          );
+        }
+      );
     this.fechaActual = new Date();
     this.fechaActualFinDeSemana();
     if (

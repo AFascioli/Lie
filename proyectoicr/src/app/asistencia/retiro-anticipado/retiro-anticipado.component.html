@@ -113,7 +113,7 @@
         [checked]="antes10am"
         value="1"
         ><span class="label-radio-button"
-          >Antes de las 10:00 am</span
+          >Antes de las {{ horaRetiroAnticipado }} am</span
         ></mat-radio-button
       >
       <mat-radio-button
@@ -121,7 +121,7 @@
         [checked]="!antes10am"
         value="2"
         ><span class="label-radio-button"
-          >Después de las 10:00 am</span
+          >Después de las {{ horaRetiroAnticipado }} am</span
         ></mat-radio-button
       >
     </mat-radio-group>
