@@ -446,9 +446,8 @@ router.get("/cuotasEstudiante", checkAuthMiddleware, async (req, res) => {
 //Obtiene todas las sanciones de un estudiante pasado por parámetro
 //@params: id del estudiante
 router.get("/sancionesEstudiante", checkAuthMiddleware, async (req, res) => {
-  let objetoDate = new Date();
-  let añoActual = objetoDate.getFullYear();
-  CicloLectivo.findOne({ año: añoActual }).then((cicloLectivo) => {
+  let date = new Date();
+  CicloLectivo.findOne({ año: date.getFullYear() }).then((cicloLectivo) => {
     Estudiante.aggregate([
       {
         $match: {

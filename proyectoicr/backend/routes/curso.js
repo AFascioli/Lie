@@ -377,7 +377,6 @@ router.get("/cursosDeEstudiante", checkAuthMiddleware, async (req, res) => {
               });
             });
           } else {
-            console.log(idCicloLectivo);
             //El estudiante no está inscripto a ningun curso, devuelve todos los cursos almacenados
             Curso.find()
               .select({
