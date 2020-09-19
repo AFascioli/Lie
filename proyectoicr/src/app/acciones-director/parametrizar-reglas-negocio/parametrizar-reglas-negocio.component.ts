@@ -29,7 +29,6 @@ export class ParametrizarReglasNegocioComponent implements OnInit {
       .obtenerParametrosCicloLectivo()
       .pipe(takeUntil(this.unsubscribe))
       .subscribe((response) => {
-        console.log(response);
         this.horaLlegadaTardeAntes =
           response.cicloLectivo.horarioLLegadaTardeAntes;
         this.horaLlegadaTardeDespues =
@@ -37,7 +36,7 @@ export class ParametrizarReglasNegocioComponent implements OnInit {
         this.horaRetiroAnticipadoAntes =
           response.cicloLectivo.horarioRetiroAnticipadoAntes;
         this.horaRetiroAnticipadoDespues =
-          response.cicloLectivo.horarioRetiroAnticipadoAntes;
+          response.cicloLectivo.horarioRetiroAnticipadoDespues;
         this.cantidadFaltasSuspension =
           response.cicloLectivo.cantidadFaltasSuspension;
         this.cantidadMateriasInscripcionLibre =
@@ -46,7 +45,8 @@ export class ParametrizarReglasNegocioComponent implements OnInit {
   }
 
   onGuardar() {
-    console.log(this.horaLlegadaTardeAntes);
+    // console.log(this.horaLlegadaTardeAntes);
+    // console.log(this.horaRetiroAnticipadoDespues);
     this.servicioCicloLectivo
       .guardarParametros(
         this.cantidadFaltasSuspension,

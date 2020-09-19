@@ -442,12 +442,11 @@ router.get("/parametros", checkAuthMiddleware, (req, res) => {
 });
 
 router.post("/parametros", checkAuthMiddleware, (req, res) => {
-  console.log( req.body.horaLLegadaTardeAntes);
   let fechaActual = new Date();
   CicloLectivo.findOneAndUpdate(
     { año: fechaActual.getFullYear() },
     {
-      horarioLLegadaTardeAntes: req.body.horaLLegadaTardeAntes,
+      horarioLLegadaTardeAntes: req.body.horaLlegadaTardeAntes,
       horarioLLegadaTardeDespues: req.body.horaLlegadaTardeDespues,
       horarioRetiroAnticipadoAntes: req.body.horaRetiroAnticipadoAntes,
       horarioRetiroAnticipadoDespues: req.body.horaRetiroAnticipadoDespues,
