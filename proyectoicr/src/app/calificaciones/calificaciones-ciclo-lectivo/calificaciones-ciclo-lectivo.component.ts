@@ -8,9 +8,9 @@ import {
   OnDestroy,
   ChangeDetectorRef,
 } from "@angular/core";
-import { MatDialog, MatSnackBar } from "@angular/material";
+import { MatDialog } from "@angular/material";
 import { NgForm, NgModel } from "@angular/forms";
-import { MatPaginator, PageEvent } from "@angular/material/paginator";
+import { MatPaginator } from "@angular/material/paginator";
 import { MatTableDataSource } from "@angular/material/table";
 import { CalificacionesService } from "../calificaciones.service";
 import { MatPaginatorIntl } from "@angular/material";
@@ -74,7 +74,6 @@ export class CalificacionesCicloLectivoComponent implements OnInit, OnDestroy {
     public servicioEstudiante: EstudiantesService,
     public servicioCalificaciones: CalificacionesService,
     public popup: MatDialog,
-    private snackBar: MatSnackBar,
     public servicioEstudianteAutenticacion: AutenticacionService,
     public changeDetectorRef: ChangeDetectorRef,
     public media: MediaMatcher
@@ -139,14 +138,6 @@ export class CalificacionesCicloLectivoComponent implements OnInit, OnDestroy {
     }
   }
 
-  // applyFilter(filterValue: string) {
-  //   filterValue = filterValue.trim(); // Remove whitespace
-  //   filterValue = filterValue.toLowerCase(); // Datasource defaults to lowercase matches
-  //   //ACA CREO Q ESTA EL PROBLEMA
-  //   this.dataSource = new MatTableDataSource(this.servicioEstudiante.estudiantes);
-  //   this.dataSource.filter = filterValue;
-  // }
-
   onCursoSeleccionado(curso, materia: NgModel) {
     this.estudiantes = [];
     this.materias = [];
@@ -195,7 +186,6 @@ export class CalificacionesCicloLectivoComponent implements OnInit, OnDestroy {
     }
   }
 
-  //Recibe la palabra que escribe el usuario y filtra tabla de html
   aplicarFiltro(valorFiltro: string) {
     valorFiltro = valorFiltro.trim();
     valorFiltro = valorFiltro.toLowerCase();
@@ -262,7 +252,7 @@ export class CalificacionesCicloLectivoComponent implements OnInit, OnDestroy {
     }
   }
 
-  calcularPromedio(index, cantidad) {
+  calcularPromedio(index) {
     var notas: number = 0;
     var cont: number = 0;
     this.estudiantes[index].calificaciones[0][0].forEach((nota) => {

@@ -89,5 +89,19 @@ export class CicloLectivoService implements OnDestroy {
       environment.apiUrl + "/cicloLectivo/parametros",
       cicloLectivo
     );
+
+  validarRegistrarAgenda() {
+    return this.http.get<{
+      permiso: boolean;
+      message: string;
+    }>(`${environment.apiUrl}/cicloLectivo/registrarAgenda`);
+  }
+
+  validarEnCursado() {
+    return this.http.get<{
+      permiso: boolean;
+      message: string;
+    }>(`${environment.apiUrl}/cicloLectivo/periodoCursado`);
+
   }
 }

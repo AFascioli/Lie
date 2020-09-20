@@ -323,6 +323,10 @@ router.post("", checkAuthMiddleware, async (req, res) => {
       "Inscripcion",
       "Activa"
     );
+    const idEstadoSuspendido = await ClaseEstado.obtenerIdEstado(
+      "Inscripcion",
+      "Suspendido"
+    );
     let idsEstudiantes = [];
     req.body.forEach((estudiante) => {
       var valorInasistencia = 0;
@@ -332,7 +336,12 @@ router.post("", checkAuthMiddleware, async (req, res) => {
       }
       Inscripcion.findOne({
         idEstudiante: estudiante._id,
-        estado: idEstadoActiva,
+        estado: {
+          $in: [
+            mongoose.Types.ObjectId(idEstadoActiva),
+            mongoose.Types.ObjectId(idEstadoSuspendido),
+          ],
+        },
       }).then(async (inscripcion) => {
         if (inscripcion) {
           if (inscripcion.asistenciaDiaria.length > 0) {

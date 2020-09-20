@@ -7,7 +7,7 @@ import { Provincia } from "../../ubicacion/provincias.model";
 import { Localidad } from "../../ubicacion/localidades.model";
 import { Subscription, Subject } from "rxjs";
 import { MatSnackBar } from "@angular/material";
-import { MatDialog, MatDialogRef } from "@angular/material/dialog";
+import { MatDialog } from "@angular/material/dialog";
 import { MediaMatcher } from "@angular/cdk/layout";
 import { CancelPopupComponent } from "src/app/popup-genericos/cancel-popup.component";
 import { takeUntil } from "rxjs/operators";
@@ -44,7 +44,6 @@ export class AltaEstudiantesComponent implements OnInit, OnDestroy {
     public changeDetectorRef: ChangeDetectorRef,
     public media: MediaMatcher
   ) {
-    //    this.dateAdapter.setLocale("es");
     this.mobileQuery = media.matchMedia("(max-width: 1000px)");
     this._mobileQueryListener = () => changeDetectorRef.detectChanges();
     this.mobileQuery.addListener(this._mobileQueryListener);
@@ -68,7 +67,7 @@ export class AltaEstudiantesComponent implements OnInit, OnDestroy {
       .subscribe((localidadesActualizadas) => {
         this.localidades = localidadesActualizadas;
         this.nombreProvinciaSeleccionada = "Cordoba";
-        this.FiltrarLocalidades();
+        this.filtrarLocalidades();
         this.nombreLocalidadSeleccionada = "Morteros";
       });
     this.servicioUbicacion.getNacionalidades();
@@ -134,7 +133,7 @@ export class AltaEstudiantesComponent implements OnInit, OnDestroy {
     }
   }
 
-  FiltrarLocalidades() {
+  filtrarLocalidades() {
     const idProvinciaSeleccionada = this.provincias.find(
       (provincia) => provincia.nombre === this.nombreProvinciaSeleccionada
     ).id;

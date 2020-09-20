@@ -1,17 +1,11 @@
 import { environment } from "src/environments/environment";
-import { async } from "@angular/core/testing";
 import { EventosService } from "./../eventos/eventos.service";
 import { Component, OnInit, OnDestroy } from "@angular/core";
 import { SwPush } from "@angular/service-worker";
 import { AutenticacionService } from "../login/autenticacionService.service";
 import { Router } from "@angular/router";
 import { Evento } from "../eventos/evento.model";
-import {
-  MatSnackBar,
-  MatDialogRef,
-  MatDialog,
-  MatTooltip,
-} from "@angular/material";
+import { MatSnackBar, MatDialogRef, MatDialog } from "@angular/material";
 import { Subject } from "rxjs";
 import { takeUntil } from "rxjs/operators";
 

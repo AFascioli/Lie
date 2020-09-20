@@ -9,7 +9,7 @@ export let browserRefresh = false;
 @Component({
   selector: "app-root",
   templateUrl: "./app.component.html",
-  styleUrls: ["./app.component.css"]
+  styleUrls: ["./app.component.css"],
 })
 export class AppComponent implements OnInit {
   title = "Lie";
@@ -20,7 +20,7 @@ export class AppComponent implements OnInit {
     private swPush: SwPush,
     private servicio: AutenticacionService
   ) {
-    this.subscription = router.events.subscribe(event => {
+    this.subscription = router.events.subscribe((event) => {
       if (event instanceof NavigationStart) {
         browserRefresh = !router.navigated;
       }
@@ -29,6 +29,5 @@ export class AppComponent implements OnInit {
 
   ngOnInit(): void {
     this.servicio.autenticacionAutomatica();
-    this.servicio.asignarFechasAutomaticamente();
   }
 }

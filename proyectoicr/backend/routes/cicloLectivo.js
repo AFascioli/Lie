@@ -2,16 +2,199 @@ const express = require("express");
 const router = express.Router();
 const checkAuthMiddleware = require("../middleware/check-auth");
 const cron = require("node-schedule");
-const CalificacionesXMateria = require("../models/calificacionesXMateria");
-const Curso = require("../models/curso");
+//const CalificacionesXMateria = require("../models/calificacionesXMateria");
+//const Curso = require("../models/curso");
 const CicloLectivo = require("../models/cicloLectivo");
-const Inscripcion = require("../models/inscripcion");
-const Estudiante = require("../models/estudiante");
+//const Inscripcion = require("../models/inscripcion");
+//const Estudiante = require("../models/estudiante");
 const ClaseCXM = require("../classes/calificacionXMateria");
 const ClaseEstado = require("../classes/estado");
-const ClaseEstudiante = require("../classes/estudiante");
-const ClaseSuscripcion = require("../classes/suscripcion");
+//const ClaseEstudiante = require("../classes/estudiante");
+//const ClaseSuscripcion = require("../classes/suscripcion");
 const ClaseCicloLectivo = require("../classes/cicloLectivo");
+
+//Obtiene el estado del ciclo lectivo actual
+router.use("/estado", checkAuthMiddleware, (req, res) => {
+  let añoActual = new Date().getFullYear();
+  CicloLectivo.aggregate([
+    {
+      $match: {
+        año: añoActual,
+      },
+    },
+    {
+      $lookup: {
+        from: "estado",
+        localField: "estado",
+        foreignField: "_id",
+        as: "datosEstado",
+      },
+    },
+  ])
+    .then((cicloLectivo) => {
+      res.status(200).json({
+        exito: true,
+        message: "Estado encontrado exitosamente",
+        estadoCiclo: cicloLectivo[0].datosEstado[0].nombre,
+      });
+    })
+    .catch((error) => {
+      res.status(500).json({
+        error: error.message,
+        message: "Ocurrió un error al obtener el estado del ciclo lectivo: ",
+      });
+    });
+});
+
+router.get("/inicioCursado", checkAuthMiddleware, async (req, res) => {
+  try {
+    // Validar que todas las agendas esten definidas
+    let idCreado = await ClaseEstado.obtenerIdEstado("CicloLectivo", "Creado");
+    let idEnPrimerTrimestre = await ClaseEstado.obtenerIdEstado(
+      "CicloLectivo",
+      "En primer trimestre"
+    );
+    let resultado = await ClaseCicloLectivo.cursosTienenAgenda();
+
+    if (resultado.length != 0) {
+      let mensaje =
+        "Los siguientes cursos no tienen la agenda de cursado definida: ";
+
+      resultado.map((curso) => {
+        mensaje += curso.nombre + "; ";
+      });
+
+      mensaje = mensaje.slice(0, mensaje.length - 2);
+
+      return res.status(200).json({
+        cursosSinAgenda: resultado,
+        exito: false,
+        message: mensaje,
+      });
+    }
+
+    // Pasar las inscripciones pendientes a activas (con todo lo que implica)
+    let cambioInscripciones = await ClaseCicloLectivo.pasarInscripcionesAActivas();
+
+    // Crear el proximo ciclo lectivo
+    let cicloProximo = new CicloLectivo({
+      horarioLLegadaTarde: 8,
+      horarioRetiroAnticipado: 10,
+      cantidadFaltasSuspension: 15,
+      cantidadMateriasInscripcionLibre: 3,
+      año: añoActual + 1,
+      estado: idCreado,
+    });
+    await cicloProximo.save();
+
+    // Crear los cursos del año siguiente
+    ClaseCicloLectivo.crearCursosParaCiclo(cicloProximo._id);
+
+    // Actualizar el estado del actual de Creado a En primer trimestre
+    CicloLectivo.findOneAndUpdate(
+      { año: añoActual, estado: idCreado },
+      { estado: idEnPrimerTrimestre }
+    ).exec();
+
+    res.status(200).json({
+      exito: true,
+      message: "Inicio de cursado exitoso.",
+    });
+  } catch (error) {
+    res.status(500).json({
+      error: error.message,
+      message: "Ocurrió un error al querer iniciar el cursado",
+    });
+  }
+});
+
+//En el caso de que se pueda registrar la agenda devuelve true false caso contrario
+router.get("/registrarAgenda", checkAuthMiddleware, async (req, res) => {
+  let fechaActual = new Date();
+  let añoActual = fechaActual.getFullYear();
+  try {
+    CicloLectivo.aggregate([
+      {
+        $match: {
+          año: añoActual,
+        },
+      },
+      {
+        $lookup: {
+          from: "estado",
+          localField: "estado",
+          foreignField: "_id",
+          as: "datosEstado",
+        },
+      },
+    ]).then((cicloLectivo) => {
+      let nombre = cicloLectivo[0].datosEstado[0].nombre;
+      if (nombre === "Creado") {
+        return nres.status(200).json({
+          permiso: false,
+          message: "No esta habilitado el registro de la agenda",
+        });
+      }
+
+      res.status(200).json({
+        permiso: true,
+        message: "Está habilitado el registro de la agenda",
+      });
+    });
+  } catch (error) {
+    res.status(500).json({
+      error: error.message,
+      message: "Ocurrieron errores al querer validar los permisos",
+    });
+  }
+});
+
+router.get("/periodoCursado", checkAuthMiddleware, (req, res) => {
+  let fechaActual = new Date();
+  let añoActual = fechaActual.getFullYear();
+
+  try {
+    CicloLectivo.aggregate([
+      {
+        $match: {
+          año: añoActual,
+        },
+      },
+      {
+        $lookup: {
+          from: "estado",
+          localField: "estado",
+          foreignField: "_id",
+          as: "datosEstado",
+        },
+      },
+    ]).then((cicloLectivo) => {
+      let nombre = cicloLectivo[0].datosEstado[0].nombre;
+      console.log(nombre);
+      if (
+        nombre == "En primer trimestre" ||
+        nombre == "En segundo trimestre" ||
+        nombre == "En tercer trimestre"
+      ) {
+        return res.status(200).json({
+          permiso: true,
+          message: "Está dentro del periodo de cursado",
+        });
+      }
+
+      res.status(200).json({
+        permiso: false,
+        message: "No se encuentra dentro del periodo de cursado",
+      });
+    });
+  } catch (error) {
+    res.status(500).json({
+      error: error.message,
+      message:
+        "Ocurrió un error al querer determinar si está dentro del periodo de cursado",
+    });
+  }
+});
 
 router.get("/", checkAuthMiddleware, (req, res) => {
   let fechaActual = new Date();
@@ -43,6 +226,7 @@ router.get("/", checkAuthMiddleware, (req, res) => {
 /* Al finalizar el tercer trimestre: Se calculan los promedios de los trimestre y se asignan los estados de
 acuerdo a si la materia esta aprobada o desaprobada y el promedio final en
 caso de aprobada. Tambien se cambia el estado de la inscripcion (Promovido o Examenes pendientes)*/
+/*
 router.use(
   "/procesoAutomaticoTercerTrimestre",
   checkAuthMiddleware,
@@ -224,11 +408,12 @@ router.use(
     );
     next();
   }
-);
+);*/
 
 /* Al cumplirse la fecha de fin de examenes: El metodo siguiente se fija la cantidad de
 materias desaprobadas del año lectivo y la cantidad de materias pendientes y de acuerdo a
 eso le cambia el estado a la inscripcion */
+/*
 router.use("/procesoAutomaticoFinExamenes", checkAuthMiddleware, (req, res) => {
   // let fechaActual = new Date();
   let fechaFinExamenes;
@@ -321,7 +506,7 @@ router.use("/procesoAutomaticoFinExamenes", checkAuthMiddleware, (req, res) => {
 });
 
 //Obtiene el estado del ciclo lectivo actual
-router.use("/estado", checkAuthMiddleware, (req, res) => {
+router.use("/estado", (req, res) => {
   let añoActual = new Date().getFullYear();
   CicloLectivo.aggregate([
     {
@@ -346,73 +531,70 @@ router.use("/estado", checkAuthMiddleware, (req, res) => {
       });
     })
     .catch((error) => {
-      res.status(500).json({
-        error: error.message,
-        message: "Ocurrió un error al obtener el estado del ciclo lectivo: ",
+      res.status(400).json({
+        exito: false,
+        message:
+          "Ocurrió un error al obtener el estado del ciclo lectivo: " +
+          error.message,
       });
     });
 });
 
-router.get("/inicioCursado", checkAuthMiddleware, async (req, res) => {
-  try {
-    // Validar que todas las agendas esten definidas
-    let idCreado = await ClaseEstado.obtenerIdEstado("CicloLectivo", "Creado");
-    let idEnPrimerTrimestre = await ClaseEstado.obtenerIdEstado(
-      "CicloLectivo",
-      "En primer trimestre"
-    );
-    let resultado = await ClaseCicloLectivo.cursosTienenAgenda();
+router.get("/inicioCursado", async (req, res) => {
+  let idCreado = await ClaseEstado.obtenerIdEstado("CicloLectivo", "Creado");
+  let idEnPrimerTrimestre = await ClaseEstado.obtenerIdEstado(
+    "CicloLectivo",
+    "En primer trimestre"
+  );
+  let añoActual = new Date().getFullYear();
+  // Validar que todas las agendas esten definidas
+  let resultado = await ClaseCicloLectivo.cursosTienenAgenda();
 
-    if (resultado.length != 0) {
-      let mensaje =
-        "Los siguientes cursos no tienen la agenda de cursado definida: ";
+  if (resultado.length != 0) {
+    let mensaje =
+      "Los siguientes cursos no tienen la agenda de cursado definida: ";
 
-      resultado.map((curso) => {
-        mensaje += curso.nombre + "; ";
-      });
-
-      mensaje = mensaje.slice(0, mensaje.length - 2);
-
-      return res.status(200).json({
-        cursosSinAgenda: resultado,
-        exito: false,
-        message: mensaje,
-      });
-    }
-
-    // Pasar las inscripciones pendientes a activas (con todo lo que implica)
-    let cambioInscripciones = await ClaseCicloLectivo.pasarInscripcionesAActivas();
-
-    // Crear el proximo ciclo lectivo
-    let cicloProximo = new CicloLectivo({
-      horarioLLegadaTarde: 8,
-      horarioRetiroAnticipado: 10,
-      cantidadFaltasSuspension: 15,
-      cantidadMateriasInscripcionLibre: 3,
-      año: añoActual + 1,
-      estado: idCreado,
+    resultado.map((curso) => {
+      mensaje += curso.nombre + "; ";
     });
-    await cicloProximo.save();
 
-    // Crear los cursos del año siguiente
-    ClaseCicloLectivo.crearCursosParaCiclo(cicloProximo._id);
+    mensaje = mensaje.slice(0, mensaje.length - 2);
 
-    // Actualizar el estado del actual de Creado a En primer trimestre
-    CicloLectivo.findOneAndUpdate(
-      { año: añoActual, estado: idCreado },
-      { estado: idEnPrimerTrimestre }
-    ).exec();
-
-    res.status(200).json({
-      exito: true,
-      message: "Inicio de cursado exitoso.",
-    });
-  } catch (error) {
-    res.status(500).json({
-      error: error.message,
-      message: "Ocurrió un error al querer iniciar el cursado",
+    return res.status(200).json({
+      cursosSinAgenda: resultado,
+      exito: false,
+      message: mensaje,
     });
   }
+
+  // Pasar las inscripciones pendientes a activas (con todo lo que implica)
+  let cambioInscripciones = await ClaseCicloLectivo.pasarInscripcionesAActivas();
+
+  // Crear el proximo ciclo lectivo
+  let cicloProximo = new CicloLectivo({
+    horarioLLegadaTarde: 8,
+    horarioRetiroAnticipado: 10,
+    cantidadFaltasSuspension: 15,
+    cantidadMateriasInscripcionLibre: 3,
+    año: añoActual + 1,
+    estado: idCreado,
+  });
+  await cicloProximo.save();
+
+  // Crear los cursos del año siguiente
+  ClaseCicloLectivo.crearCursosParaCiclo(cicloProximo._id);
+
+  // Actualizar el estado del actual de Creado a En primer trimestre
+  CicloLectivo.findOneAndUpdate(
+    // { año: añoActual, estado: idCreado },
+    { año: 2069, estado: idCreado },
+    { estado: idEnPrimerTrimestre }
+  ).exec();
+
+  res.status(200).json({
+    exito: true,
+    message: "Inicio de cursado exitoso.",
+  });
 });
 
 router.get("/parametros", checkAuthMiddleware, (req, res) => {

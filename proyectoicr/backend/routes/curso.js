@@ -74,21 +74,13 @@ notificarSancion = async function (idEstudiante, sancion) {
         _id: 0,
       },
     },
-  ])
-    .then((respuesta) => {
-      let idsUsuario = [];
-      for (let index = 0; index < respuesta.length; index++) {
-        idsUsuario.push(respuesta[index].usuario._id);
-      }
-      Suscripcion.notificacionGrupal(idsUsuario, titulo, cuerpo);
-    })
-    .catch((error) => {
-      res.status(500).json({
-        message:
-          "Ocurrió un error al querer notificar la sanción a los interesados ",
-        error: error.message,
-      });
-    });
+  ]).then((respuesta) => {
+    let idsUsuario = [];
+    for (let index = 0; index < respuesta.length; index++) {
+      idsUsuario.push(respuesta[index].usuario._id);
+    }
+    Suscripcion.notificacionGrupal(idsUsuario, titulo, cuerpo);
+  });
 };
 
 //Registra una nueva sancion de un estudiante en particular si es que no hay una ya registrada
@@ -385,7 +377,6 @@ router.get("/cursosDeEstudiante", checkAuthMiddleware, async (req, res) => {
               });
             });
           } else {
-            console.log(idCicloLectivo);
             //El estudiante no está inscripto a ningun curso, devuelve todos los cursos almacenados
             Curso.find()
               .select({
