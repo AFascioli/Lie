@@ -162,3 +162,14 @@ exports.crearCursosParaCiclo = () => {
       );
     });
 };
+
+exports.obtenerCantidadFaltasSuspension = () => {
+  let fechaActual = new Date();
+  return new Promise((resolve, reject) => {
+    CicloLectivo.findOne({ año: fechaActual.getFullYear() })
+      .then((cicloLectivo) => {
+        resolve(cicloLectivo.cantidadFaltasSuspension);
+      })
+      .catch((err) => reject(err));
+  });
+};

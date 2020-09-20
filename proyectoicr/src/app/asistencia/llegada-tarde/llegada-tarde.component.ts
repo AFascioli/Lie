@@ -1,3 +1,4 @@
+
 import { CicloLectivoService } from "./../../cicloLectivo.service";
 import { AutenticacionService } from "./../../login/autenticacionService.service";
 import { Component, OnInit, OnDestroy, ChangeDetectorRef } from "@angular/core";
@@ -23,10 +24,12 @@ export class LlegadaTardeComponent implements OnInit, OnDestroy {
   private unsubscribe: Subject<void> = new Subject();
   _mobileQueryListener: () => void;
   mobileQuery: MediaQueryList;
+  horaLlegadaTarde: string;
 
   constructor(
     public servicioEstudiante: EstudiantesService,
     public servicioAsistencia: AsistenciaService,
+    public servicioCicloLectivo: CicloLectivoService,
     public snackBar: MatSnackBar,
     public autenticacionService: AutenticacionService,
     public changeDetectorRef: ChangeDetectorRef,
@@ -41,6 +44,14 @@ export class LlegadaTardeComponent implements OnInit, OnDestroy {
   async ngOnInit() {
     this.fechaActual = new Date();
     this.fechaActualFinDeSemana();
+    this.servicioCicloLectivo
+      .obtenerHoraLlegadaTarde()
+      .pipe(takeUntil(this.unsubscribe))
+      .subscribe(
+        (response) => {
+          this.horaLlegadaTarde = response.hora;
+        }
+      );
     if (
       (await this.fechaActualEnPeriodoCursado()) ||
       this.autenticacionService.getRol() == "Admin"

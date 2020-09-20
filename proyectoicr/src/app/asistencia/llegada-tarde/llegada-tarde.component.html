@@ -1,51 +1,65 @@
 <h1 class="componente-titulo">Registrar llegada tarde</h1>
 <mat-card class="card-body-componente">
-  <p class="aviso" *ngIf="fueraPeriodoCicloLectivo">Atención, no se puede registrar la llegada tarde debido a que estamos fuera del ciclo lectivo </p>
-  <div *ngIf="!fueraPeriodoCicloLectivo" >
-  <div class="ubicacion-fecha">
-    <b>Fecha: </b>
-    <mat-form-field class="mat-form-fecha">
-      <input
-        [disabled]="true"
-        ngModel
-        #diaFecha="ngModel"
-        matInput
-        name="diaFecha"
-        required
-        class="input-fecha"
-      />
-      {{ fechaActual | date: "EEEE" | titlecase }}
-      {{ fechaActual | date: "dd/MM/yyyy" }}&nbsp;
-    </mat-form-field>
-  </div>
-  <br />
-  <div class="contenido">
-    <mat-card class="datos-estudiante" [class.datos-estudiante-mobile]="mobileQuery.matches">
-      <p class="titulo-datos-est">Datos del estudiante</p>
-      <mat-card-subtitle>
-        <b>Apellido/s: </b> {{ apellidoEstudiante }}
-        <br />
-        <b>Nombre/s: </b> {{ nombreEstudiante }}
-      </mat-card-subtitle>
-    </mat-card>
-  </div>
-  <br />
-    <mat-radio-group aria-label="Selecciona una de las opciones" class="opciones" [class.opciones-mobile]="mobileQuery.matches">
-    <mat-radio-button
-      (change)="radioButtonChange()"
-      [checked]="antes8am"
-      value="1"
-      ><span class="label-radio-button"
-        >Antes de las 8 am</span
-      ></mat-radio-button>
-    <mat-radio-button (change)="radioButtonChange()" [checked]="despues8am" value="2"
-      ><span class="label-radio-button"
-        >Después de las 8 am</span
-      ></mat-radio-button
+  <p class="aviso" *ngIf="fueraPeriodoCicloLectivo">
+    Atención, no se puede registrar la llegada tarde debido a que estamos fuera
+    del ciclo lectivo
+  </p>
+  <div *ngIf="!fueraPeriodoCicloLectivo">
+    <div class="ubicacion-fecha">
+      <b>Fecha: </b>
+      <mat-form-field class="mat-form-fecha">
+        <input
+          [disabled]="true"
+          ngModel
+          #diaFecha="ngModel"
+          matInput
+          name="diaFecha"
+          required
+          class="input-fecha"
+        />
+        {{ fechaActual | date: "EEEE" | titlecase }}
+        {{ fechaActual | date: "dd/MM/yyyy" }}&nbsp;
+      </mat-form-field>
+    </div>
+    <br />
+    <div class="contenido">
+      <mat-card
+        class="datos-estudiante"
+        [class.datos-estudiante-mobile]="mobileQuery.matches"
+      >
+        <p class="titulo-datos-est">Datos del estudiante</p>
+        <mat-card-subtitle>
+          <b>Apellido/s: </b> {{ apellidoEstudiante }}
+          <br />
+          <b>Nombre/s: </b> {{ nombreEstudiante }}
+        </mat-card-subtitle>
+      </mat-card>
+    </div>
+    <br />
+    <mat-radio-group
+      aria-label="Selecciona una de las opciones"
+      class="opciones"
+      [class.opciones-mobile]="mobileQuery.matches"
     >
-  </mat-radio-group>
-  <br />
-</div>
+      <mat-radio-button
+        (change)="radioButtonChange()"
+        [checked]="antes8am"
+        value="1"
+        ><span class="label-radio-button"
+          >Antes de las {{ this.horaLlegadaTarde }} am</span
+        ></mat-radio-button
+      >
+      <mat-radio-button
+        (change)="radioButtonChange()"
+        [checked]="despues8am"
+        value="2"
+        ><span class="label-radio-button"
+          >Después de las {{ this.horaLlegadaTarde }} am</span
+        ></mat-radio-button
+      >
+    </mat-radio-group>
+    <br />
+  </div>
   <div class="div-button">
     <button
       class="button-primary"

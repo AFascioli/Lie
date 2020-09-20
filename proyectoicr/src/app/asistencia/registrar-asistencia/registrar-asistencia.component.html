@@ -102,10 +102,12 @@
           [ngClass]="{
             suspendido: esSuspendido(row)
           }"
+
         >
           <mat-slide-toggle
             [checked]="row.presente"
             (change)="onCambioPresentismo(row)"
+            [disabled]="this.esSuspendido(row)"
           >
             <p *ngIf="row.presente">Presente</p>
             <p *ngIf="!row.presente">Ausente</p></mat-slide-toggle

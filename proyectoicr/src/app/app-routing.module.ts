@@ -187,7 +187,7 @@ const routes: Routes = [
         path: "calificacionesExamenes",
         component: CalificacionesExamenesComponent,
         canActivate: [RoleGuard, RouteGuard],
-        data: { rolesValidos: ["Admin", "Docente"] },
+        data: { rolesValidos: ["Admin", "Docente","Director"] },
       },
       {
         path: "llegadaTarde",
@@ -418,7 +418,7 @@ const routes: Routes = [
         component: BuscarAdultoResponsableComponent,
         canActivate: [RoleGuard],
         data: {
-          rolesValidos: ["Admin", "Preceptor", "Director", "Docente"],
+          rolesValidos: ["Admin", "Preceptor", "Director"],
         },
       },
       {

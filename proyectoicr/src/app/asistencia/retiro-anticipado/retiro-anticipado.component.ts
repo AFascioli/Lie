@@ -1,4 +1,4 @@
-import { CicloLectivoService } from "./../../cicloLectivo.service";
+import { CicloLectivoService } from "src/app/cicloLectivo.service";
 import { AutenticacionService } from "./../../login/autenticacionService.service";
 import { Component, OnInit, ChangeDetectorRef } from "@angular/core";
 import { EstudiantesService } from "src/app/estudiantes/estudiante.service";
@@ -36,12 +36,14 @@ export class RetiroAnticipadoComponent implements OnInit {
   fueraPeriodoCicloLectivo = false;
   seleccion = new SelectionModel(true, []);
   isLoading = true;
+  horaRetiroAnticipado: string;
   private unsubscribe: Subject<void> = new Subject();
 
   constructor(
     public snackBar: MatSnackBar,
     public servicioEstudiante: EstudiantesService,
     public servicioAsistencia: AsistenciaService,
+    public servicioCicloLectivo: CicloLectivoService,
     public dialog: MatDialog,
     public changeDetectorRef: ChangeDetectorRef,
     public autenticacionService: AutenticacionService,
@@ -53,8 +55,16 @@ export class RetiroAnticipadoComponent implements OnInit {
     this.mobileQuery.addListener(this._mobileQueryListener);
   }
 
-  async ngOnInit() {
+ async ngOnInit() {
     this.fechaActual = new Date();
+     this.servicioCicloLectivo
+      .obtenerHoraRetiroAnticipado()
+      .pipe(takeUntil(this.unsubscribe))
+      .subscribe(
+        (response) => {
+          this.horaRetiroAnticipado = response.hora;
+        }
+      );
     if (
       this.fechaActual.toString().substring(0, 3) == "Sat" ||
       this.fechaActual.toString().substring(0, 3) == "Sun"

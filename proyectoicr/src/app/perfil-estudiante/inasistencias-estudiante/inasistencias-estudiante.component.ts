@@ -1,3 +1,4 @@
+import { CicloLectivoService } from "src/app/cicloLectivo.service";
 import { EstudiantesService } from "./../../estudiantes/estudiante.service";
 import { Component, OnInit, OnDestroy } from "@angular/core";
 import { AsistenciaService } from "src/app/asistencia/asistencia.service";
@@ -19,6 +20,8 @@ export class InasistenciasEstudianteComponent implements OnInit, OnDestroy {
   contadorInasistenciaJustificada: number;
   contadorInasistenciaInjustificada: number;
   barChartLabels: Label[] = [];
+  cantidadFaltasParaSuspension: number;
+
   private unsubscribe: Subject<void> = new Subject();
   public barChartOptions: ChartOptions = {
     responsive: true,
@@ -44,7 +47,8 @@ export class InasistenciasEstudianteComponent implements OnInit, OnDestroy {
 
   constructor(
     public servicioAsistencia: AsistenciaService,
-    public servicioEstudiante: EstudiantesService
+    public servicioEstudiante: EstudiantesService,
+    public servicioCicloLectivo: CicloLectivoService
   ) {}
 
   ngOnDestroy() {
@@ -53,6 +57,20 @@ export class InasistenciasEstudianteComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.servicioCicloLectivo
+      .obtenerFaltasSuspensionCicloLectivo()
+      .pipe(takeUntil(this.unsubscribe))
+      .subscribe(
+        (response) => {
+          this.cantidadFaltasParaSuspension = response.faltas;
+        },
+        (error) => {
+          console.error(
+            "Ocurrió un error al querer devolver la canidad de inasistencias para la reincorporación. El error se puede describir de la siguiente manera: " +
+              error
+          );
+        }
+      );
     this.apellidoEstudiante = this.servicioEstudiante.estudianteSeleccionado.apellido;
     this.nombreEstudiante = this.servicioEstudiante.estudianteSeleccionado.nombre;
     this.servicioAsistencia

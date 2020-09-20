@@ -597,4 +597,128 @@ router.get("/inicioCursado", async (req, res) => {
   });
 });
 
+router.get("/parametros", checkAuthMiddleware, (req, res) => {
+  let fechaActual = new Date();
+  CicloLectivo.findOne({ año: fechaActual.getFullYear() })
+    .then((cicloLectivo) => {
+      if (cicloLectivo) {
+        res.status(200).json({
+          cicloLectivo: cicloLectivo,
+          message:
+            "Se han obtenido los parametros correspondientes a este año exitosamente",
+          exito: true,
+        });
+      } else {
+        res.status(200).json({
+          message:
+            "No se han obtenido los parametros correspondientes a este año",
+          exito: false,
+        });
+      }
+    })
+    .catch(() => {
+      res.status(500).json({
+        message: "Mensaje de error especifico",
+      });
+    });
+});
+
+router.post("/parametros", checkAuthMiddleware, (req, res) => {
+  let fechaActual = new Date();
+  CicloLectivo.findOneAndUpdate(
+    { año: fechaActual.getFullYear() },
+    {
+      horarioLLegadaTarde: req.body.horaLlegadaTarde,
+      horarioRetiroAnticipado: req.body.horaRetiroAnticipado,
+      cantidadFaltasSuspension: req.body.cantidadFaltasSuspension,
+      cantidadMateriasInscripcionLibre:
+        req.body.cantidadMateriasInscripcionLibre,
+    }
+  )
+    .exec()
+    .then((cicloLectivo) => {
+      res.status(200).json({
+        cicloLectivo: cicloLectivo,
+        message:
+          "Se han guardado los parametros correspondientes a este año exitosamente",
+        exito: true,
+      });
+    })
+    .catch(() => {
+      res.status(500).json({
+        message: "Mensaje de error especifico",
+      });
+    });
+});
+
+router.get("/cantidadFaltasSuspension", checkAuthMiddleware, (req, res) => {
+  let fechaActual = new Date();
+  CicloLectivo.findOne({ año: fechaActual.getFullYear() })
+    .then((cicloLectivo) => {
+      res.status(200).json({
+        faltas: cicloLectivo.cantidadFaltasSuspension,
+        message:
+          "Se han obtenido la cantidad de faltas para la suspesion exitosamente",
+        exito: true,
+      });
+    })
+    .catch(() => {
+      res.status(500).json({
+        message: "Mensaje de error especifico",
+      });
+    });
+});
+
+router.get("/horaLlegadaTarde", checkAuthMiddleware, (req, res) => {
+  let fechaActual = new Date();
+  CicloLectivo.findOne({ año: fechaActual.getFullYear() })
+    .then((cicloLectivo) => {
+      res.status(200).json({
+        hora: cicloLectivo.horarioLLegadaTarde,
+        message: "Se han obtenido el horario de llegada tarde exitosamente",
+        exito: true,
+      });
+    })
+    .catch(() => {
+      res.status(500).json({
+        message: "Mensaje de error especifico",
+      });
+    });
+});
+
+router.get("/horaRetiroAnticipado", checkAuthMiddleware, (req, res) => {
+  let fechaActual = new Date();
+  CicloLectivo.findOne({ año: fechaActual.getFullYear() })
+    .then((cicloLectivo) => {
+      res.status(200).json({
+        hora: cicloLectivo.horarioRetiroAnticipado,
+        message: "Se han obtenido el horario de retiro anticipado exitosamente",
+        exito: true,
+      });
+    })
+    .catch(() => {
+      res.status(500).json({
+        message: "Mensaje de error especifico",
+      });
+    });
+});
+
+router.get("/materiasParaLibre", checkAuthMiddleware, (req, res) => {
+  let fechaActual = new Date();
+  CicloLectivo.findOne({ año: fechaActual.getFullYear() })
+    .then((cicloLectivo) => {
+      res.status(200).json({
+        materias: cicloLectivo.cantidadMateriasInscripcionLibre,
+        message:
+          "Se han obtenido la cantidad de materias para estado Libre exitosamente",
+        exito: true,
+      });
+    })
+    .catch(() => {
+      res.status(500).json({
+        message: "Mensaje de error especifico",
+      });
+    });
+});
+
 module.exports = router;

@@ -214,7 +214,7 @@ export class ListaEstudiantesComponent implements OnInit, OnDestroy {
 
   onReincorporar(indice) {
     this.asignarEstudianteSeleccionado(indice);
-    this.dialog
+     this.dialog
       .open(ReincorporarPopupComponent, {
         width: "250px",
       })
