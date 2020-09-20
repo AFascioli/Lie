@@ -1,4 +1,3 @@
-import { AsociarAdultoResponsableComponent } from "./../../adulto-responsable/asociar-adulto-responsable/asociar-adulto-responsable.component";
 import { AsistenciaService } from "src/app/asistencia/asistencia.service";
 import { UbicacionService } from "src/app/ubicacion/ubicacion.service";
 import { CalificacionesService } from "../../calificaciones/calificaciones.service";
@@ -65,54 +64,44 @@ export class ListaEstudiantesComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    if ((this.servicio.retornoDesdeAcciones = false)) {
-      this.isLoading = false;
-    } else {
-      this.servicio
-        .getEstudiantesListener()
-        .pipe(takeUntil(this.unsubscribe))
-        .subscribe((estudiantesBuscados) => {
-          this.estudiantes = estudiantesBuscados;
-          this.isLoading = false;
-          for (let i = 0; i < estudiantesBuscados.length; i++) {
-            this.servicio
-              .obtenerCursoDeEstudianteById(this.estudiantes[i]._id)
-              .pipe(takeUntil(this.unsubscribe))
-              .subscribe((response) => {
-                this.inscripto[i] = response.exito;
-                this.cursos[i] = response.curso;
-                if (this.inscripto[i]) {
-                  this.servicioCalificaciones
-                    .obtenerMateriasDesaprobadasEstudiante(
-                      this.estudiantes[i]._id
-                    )
-                    .subscribe((response) => {
-                      this.materiasPendientes.push(
-                        response.materiasDesaprobadas.length > 0
-                      );
-                    });
+    this.servicio
+      .getEstudiantesListener()
+      .pipe(takeUntil(this.unsubscribe))
+      .subscribe((estudiantesBuscados) => {
+        this.estudiantes = estudiantesBuscados;
+        this.isLoading = false;
+        for (let i = 0; i < estudiantesBuscados.length; i++) {
+          this.servicio
+            .obtenerCursoDeEstudianteById(this.estudiantes[i]._id)
+            .pipe(takeUntil(this.unsubscribe))
+            .subscribe((response) => {
+              this.inscripto[i] = response.exito;
+              this.cursos[i] = response.curso;
+              if (this.inscripto[i]) {
+                this.servicioCalificaciones
+                  .obtenerMateriasDesaprobadasEstudiante(
+                    this.estudiantes[i]._id
+                  )
+                  .subscribe((response) => {
+                    this.materiasPendientes.push(
+                      response.materiasDesaprobadas.length > 0
+                    );
+                  });
 
-                  // Validación por suspendido
-                  this.servicio
-                    .esEstudianteSuspendido(this.estudiantes[i]._id)
-                    .pipe(takeUntil(this.unsubscribe))
-                    .subscribe((response) => {
-                      this.suspendido[i] = response.exito;
-                    });
-                }
-              });
-          }
-        });
+                // Validación por suspendido
+                this.servicio
+                  .esEstudianteSuspendido(this.estudiantes[i]._id)
+                  .pipe(takeUntil(this.unsubscribe))
+                  .subscribe((response) => {
+                    this.suspendido[i] = response.exito;
+                  });
+              }
+            });
+        }
+      });
 
-      if (!this.servicio.retornoDesdeAcciones) {
-        this.servicio.retornoDesdeAcciones = false;
-      }
-      // this.authService
-      //   .obtenerPermisosDeRol()
-      //   .pipe(takeUntil(this.unsubscribe))
-      //   .subscribe((response) => {
-      //     this.permisos = response.permisos;
-      //   });
+    if (!this.servicio.retornoDesdeAcciones) {
+      this.servicio.retornoDesdeAcciones = false;
     }
 
     this.authService
@@ -135,6 +124,7 @@ export class ListaEstudiantesComponent implements OnInit, OnDestroy {
             });
         });
     }
+    this.isLoading = false;
   }
 
   //Retorna un booleano segun si se deberia mostrar la opcion Registrar examen

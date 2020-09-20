@@ -1,3 +1,4 @@
+import { CicloLectivoService } from "./../../cicloLectivo.service";
 import { AutenticacionService } from "./../../login/autenticacionService.service";
 import { Component, OnInit, OnDestroy } from "@angular/core";
 import { MatSnackBar, MatDialog } from "@angular/material";
@@ -18,7 +19,8 @@ export class RegistrarCuotasComponent implements OnInit, OnDestroy {
     public servicioEstudiante: EstudiantesService,
     public cuotasService: CuotasService,
     public popup: MatDialog,
-    public snackBar: MatSnackBar
+    public snackBar: MatSnackBar,
+    public cicloLectivoService: CicloLectivoService
   ) {}
 
   mesSeleccionado: any;
@@ -43,7 +45,7 @@ export class RegistrarCuotasComponent implements OnInit, OnDestroy {
   isLoading: Boolean = false;
   private unsubscribe: Subject<void> = new Subject();
 
-  ngOnInit() {
+  async ngOnInit() {
     this.fechaActual = new Date();
 
     if (
@@ -62,7 +64,7 @@ export class RegistrarCuotasComponent implements OnInit, OnDestroy {
 
     if (
       !(
-        this.fechaActualEnCicloLectivo() ||
+        (await this.fechaActualEnPeriodoCursado()) ||
         this.autenticacionService.getRol() == "Admin"
       )
     ) {
@@ -77,6 +79,7 @@ export class RegistrarCuotasComponent implements OnInit, OnDestroy {
 
   //Busca los estudiantes segun el curso que se selecciono en pantalla. Los orden alfabeticamente
   onCursoSeleccionado(curso, mes) {
+    this.isLoading = true;
     let nroMes: any = 0;
     for (let i = 0; i < this.meses.length; i++) {
       if (mes.value == this.meses[i]) {
@@ -95,6 +98,7 @@ export class RegistrarCuotasComponent implements OnInit, OnDestroy {
         } else {
           this.cuotasXEstudiante = [];
         }
+        this.isLoading = false;
         this.cursoNotSelected = false;
       });
   }
@@ -110,19 +114,12 @@ export class RegistrarCuotasComponent implements OnInit, OnDestroy {
     this.cuotasXEstudiante[indexEstudiante].changed = true;
   }
 
-  //Devuelve true si la fecha actual se encuentra dentro del ciclo lectivo, y false caso contrario.
-  fechaActualEnCicloLectivo() {
-    let fechaInicioPrimerTrimestre = new Date(
-      this.autenticacionService.getFechasCicloLectivo().fechaInicioPrimerTrimestre
-    );
-    let fechaFinTercerTrimestre = new Date(
-      this.autenticacionService.getFechasCicloLectivo().fechaFinTercerTrimestre
-    );
-
-    return (
-      this.fechaActual.getTime() > fechaInicioPrimerTrimestre.getTime() &&
-      this.fechaActual.getTime() < fechaFinTercerTrimestre.getTime()
-    );
+  async fechaActualEnPeriodoCursado() {
+    return new Promise((resolve, reject) => {
+      this.cicloLectivoService.validarEnCursado().subscribe((result) => {
+        resolve(result.permiso);
+      });
+    });
   }
 
   //Al seleccionar el mes obtiene todos los cursos y los ordena alfabeticamente

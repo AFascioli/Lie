@@ -1,9 +1,9 @@
-import { AutenticacionService } from 'src/app/login/autenticacionService.service';
+import { CicloLectivoService } from "src/app/cicloLectivo.service";
+import { AutenticacionService } from "src/app/login/autenticacionService.service";
 import { Component, OnInit, ChangeDetectorRef, OnDestroy } from "@angular/core";
 import { EstudiantesService } from "src/app/estudiantes/estudiante.service";
 import { SancionService } from "../sancion.service";
 import { MatSnackBar } from "@angular/material";
-import { format } from "url";
 import { NgForm } from "@angular/forms";
 import { takeUntil } from "rxjs/operators";
 import { Subject } from "rxjs";
@@ -12,7 +12,7 @@ import { MediaMatcher } from "@angular/cdk/layout";
 @Component({
   selector: "app-registrar-sanciones",
   templateUrl: "./registrar-sanciones.component.html",
-  styleUrls: ["./registrar-sanciones.component.css"]
+  styleUrls: ["./registrar-sanciones.component.css"],
 })
 export class RegistrarSancionesComponent implements OnInit, OnDestroy {
   fechaActual: Date;
@@ -23,11 +23,11 @@ export class RegistrarSancionesComponent implements OnInit, OnDestroy {
     "Llamado de atención",
     "Apercibimiento",
     "Amonestación",
-    "Suspensión"
+    "Suspensión",
   ];
   tipoSancionSelected: Boolean = false;
   suspensionSelected: Boolean = false;
-  fueraPeriodoCicloLectivo:Boolean = false;
+  fueraPeriodoCicloLectivo: Boolean = false;
   private unsubscribe: Subject<void> = new Subject();
   _mobileQueryListener: () => void;
   mobileQuery: MediaQueryList;
@@ -38,7 +38,8 @@ export class RegistrarSancionesComponent implements OnInit, OnDestroy {
     public autenticacionService: AutenticacionService,
     public snackBar: MatSnackBar,
     public changeDetectorRef: ChangeDetectorRef,
-    public media: MediaMatcher
+    public media: MediaMatcher,
+    public cicloLectivoService: CicloLectivoService
   ) {
     this.mobileQuery = media.matchMedia("(max-width: 800px)");
     this._mobileQueryListener = () => changeDetectorRef.detectChanges();
@@ -50,34 +51,27 @@ export class RegistrarSancionesComponent implements OnInit, OnDestroy {
     this.unsubscribe.complete();
   }
 
-  ngOnInit() {
+  async ngOnInit() {
     this.fechaActual = new Date();
     if (
-      this.fechaActualEnCicloLectivo() ||
+      (await this.fechaActualEnPeriodoCursado()) ||
       this.autenticacionService.getRol() == "Admin"
     ) {
       this.apellidoEstudiante = this.servicioEstudiante.estudianteSeleccionado.apellido;
       this.nombreEstudiante = this.servicioEstudiante.estudianteSeleccionado.nombre;
       this.idEstudiante = this.servicioEstudiante.estudianteSeleccionado._id;
-    }else{
+    } else {
       this.fueraPeriodoCicloLectivo = true;
     }
   }
 
-//Devuelve true si la fecha actual se encuentra dentro del ciclo lectivo, y false caso contrario.
-fechaActualEnCicloLectivo() {
-  let fechaInicioPrimerTrimestre = new Date(
-    this.autenticacionService.getFechasCicloLectivo().fechaInicioPrimerTrimestre
-  );
-  let fechaFinTercerTrimestre = new Date(
-    this.autenticacionService.getFechasCicloLectivo().fechaFinTercerTrimestre
-  );
-
-  return (
-    this.fechaActual.getTime() > fechaInicioPrimerTrimestre.getTime() &&
-    this.fechaActual.getTime() < fechaFinTercerTrimestre.getTime()
-  );
-}
+  async fechaActualEnPeriodoCursado() {
+    return new Promise((resolve, reject) => {
+      this.cicloLectivoService.validarEnCursado().subscribe((result) => {
+        resolve(result.permiso);
+      });
+    });
+  }
 
   onTipoSancionChange(tipoSancion) {
     this.tipoSancionSelected = true;
@@ -100,9 +94,9 @@ fechaActualEnCicloLectivo() {
   }
 
   guardar(form: NgForm) {
-    if(form.valid){
+    if (form.valid) {
       let sancion = "";
-      let cantidad=form.value.cantidadSancion;
+      let cantidad = form.value.cantidadSancion;
       switch (form.value.sancion) {
         case 0:
           sancion = "Llamado de atencion";
@@ -119,21 +113,26 @@ fechaActualEnCicloLectivo() {
           break;
       }
       this.servicioSancion
-        .registrarSancion(this.fechaActual, cantidad, sancion, this.idEstudiante)
+        .registrarSancion(
+          this.fechaActual,
+          cantidad,
+          sancion,
+          this.idEstudiante
+        )
         .pipe(takeUntil(this.unsubscribe))
-        .subscribe(rtdo => {
+        .subscribe((rtdo) => {
           if (rtdo.exito) {
             this.snackBar.open(rtdo.message, "", {
               panelClass: ["snack-bar-exito"],
-              duration: 4000
+              duration: 4000,
             });
             form.resetForm();
           }
         });
-    }else{
+    } else {
       this.snackBar.open("Faltan campos por completar", "", {
         panelClass: ["snack-bar-fracaso"],
-        duration: 4000
+        duration: 4000,
       });
     }
   }

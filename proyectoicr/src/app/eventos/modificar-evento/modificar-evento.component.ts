@@ -7,7 +7,7 @@ import {
   ChangeDetectorRef,
 } from "@angular/core";
 import { COMMA, ENTER } from "@angular/cdk/keycodes";
-import { FormControl, NgForm, NgModel } from "@angular/forms";
+import { FormControl, NgForm } from "@angular/forms";
 import {
   MatAutocompleteSelectedEvent,
   MatAutocomplete,

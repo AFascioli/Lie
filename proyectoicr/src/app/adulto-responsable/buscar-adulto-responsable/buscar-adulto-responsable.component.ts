@@ -23,6 +23,7 @@ export class BuscarAdultoResponsableComponent implements OnInit {
     "telefono",
   ];
   busqueda: boolean = false;
+  isLoading: boolean = false;
 
   constructor(
     public dialog: MatDialog,
@@ -44,32 +45,43 @@ export class BuscarAdultoResponsableComponent implements OnInit {
       "editar",
     ];
   }
-  // Si el formulario no es valido no hace nada, luego controla que tipo de busqueda es
+
+  buscarAdultoResponsableXNombre(form) {
+    this.servicio
+      .buscarAdultoResponsableXNombre(
+        form.value.nombre.trim(),
+        form.value.apellido.trim()
+      )
+      .pipe(takeUntil(this.unsubscribe))
+      .subscribe((response) => {
+        this.ARFiltrados = response.adultosResponsables;
+        this.setColumns();
+        this.isLoading = false;
+      });
+  }
+
+  buscarAdultoResponsableXDocumento(form) {
+    this.servicio
+      .buscarAdultoResponsableXDocumento(
+        form.value.tipoDocumento,
+        form.value.numeroDocumento
+      )
+      .pipe(takeUntil(this.unsubscribe))
+      .subscribe((response) => {
+        this.ARFiltrados = response.adultosResponsables;
+        this.setColumns();
+        this.isLoading = false;
+      });
+  }
+
   onBuscar(form: NgForm) {
+    this.isLoading = true;
     if (form.valid) {
       this.busqueda = true;
       if (this.buscarPorNomYAp) {
-        this.servicio
-          .buscarAdultoResponsableXNombre(
-            form.value.nombre.trim(),
-            form.value.apellido.trim()
-          )
-          .pipe(takeUntil(this.unsubscribe))
-          .subscribe((response) => {
-            this.ARFiltrados = response.adultosResponsables;
-            this.setColumns();
-          });
+        this.buscarAdultoResponsableXNombre(form);
       } else {
-        this.servicio
-          .buscarAdultoResponsableXDocumento(
-            form.value.tipoDocumento,
-            form.value.numeroDocumento
-          )
-          .pipe(takeUntil(this.unsubscribe))
-          .subscribe((response) => {
-            this.ARFiltrados = response.adultosResponsables;
-            this.setColumns();
-          });
+        this.buscarAdultoResponsableXDocumento(form);
       }
     } else {
       this.snackBar.open("Faltan campos por completar", "", {

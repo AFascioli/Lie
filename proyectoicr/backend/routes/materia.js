@@ -1,8 +1,9 @@
 const express = require("express");
 const router = express.Router();
+const checkAuthMiddleware = require("../middleware/check-auth");
 const Materia = require("../models/materia");
 
-router.get("", (req, res) => {
+router.get("", checkAuthMiddleware, (req, res) => {
   Materia.find()
     .sort({ nombre: "asc" })
     .then((materias) => {
@@ -12,7 +13,8 @@ router.get("", (req, res) => {
     })
     .catch((error) => {
       res.status(500).json({
-        message: "Ocurrio un error al querer obtener las materias: " + error,
+        message: "Ocurrio un error al querer obtener las materias: ",
+        error: error.message,
       });
     });
 });

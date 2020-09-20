@@ -3,7 +3,6 @@ import { AutenticacionService } from "./../../login/autenticacionService.service
 import {
   Component,
   OnInit,
-  Input,
   ChangeDetectorRef,
   OnDestroy,
   Inject,

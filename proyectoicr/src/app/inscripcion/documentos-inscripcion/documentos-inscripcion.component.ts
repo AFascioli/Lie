@@ -1,3 +1,4 @@
+import { CicloLectivoService } from "./../../cicloLectivo.service";
 import { CancelPopupComponent } from "src/app/popup-genericos/cancel-popup.component";
 import { InscripcionService } from "../inscripcion.service";
 import { AutenticacionService } from "src/app/login/autenticacionService.service";
@@ -41,7 +42,8 @@ export class DocumentosInscripcionComponent implements OnInit, OnDestroy {
     public popup: MatDialog,
     private snackBar: MatSnackBar,
     public changeDetectorRef: ChangeDetectorRef,
-    public media: MediaMatcher
+    public media: MediaMatcher,
+    public servicioCicloLectivo: CicloLectivoService
   ) {
     this.mobileQuery = media.matchMedia("(max-width: 880px)");
     this._mobileQueryListener = () => changeDetectorRef.detectChanges();
@@ -56,10 +58,10 @@ export class DocumentosInscripcionComponent implements OnInit, OnDestroy {
   //Sort ordena solo por año de curso, para ordenar bien, deberia dsp de el sort que esta ahora
   //tomar de a dos cursos y ordenarlos alfabeticamente, de esa forma quedan ordenados por año y
   //division
-  ngOnInit() {
+  async ngOnInit() {
     this.fechaActual = new Date();
     if (
-      this.fechaActualEnCicloLectivo() ||
+      (await this.fechaActualEnPeriodoCursado()) ||
       this.autenticacionService.getRol() == "Admin"
     ) {
       this.servicioEstudiante
@@ -81,18 +83,12 @@ export class DocumentosInscripcionComponent implements OnInit, OnDestroy {
     }
   }
 
-  fechaActualEnCicloLectivo() {
-    let fechaInicioInscripcion = new Date(
-      this.autenticacionService.getFechasCicloLectivo().fechaInicioInscripcion
-    );
-    let fechaFinTercerTrimestre = new Date(
-      this.autenticacionService.getFechasCicloLectivo().fechaFinTercerTrimestre
-    );
-
-    return (
-      this.fechaActual.getTime() > fechaInicioInscripcion.getTime() &&
-      this.fechaActual.getTime() < fechaFinTercerTrimestre.getTime()
-    );
+  async fechaActualEnPeriodoCursado() {
+    return new Promise((resolve, reject) => {
+      this.servicioCicloLectivo.validarEnCursado().subscribe((result) => {
+        resolve(result.permiso);
+      });
+    });
   }
 
   //Cuando el usuario selecciona una division, se obtienen los datos del estudiantes necesarios

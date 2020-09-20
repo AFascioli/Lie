@@ -1,4 +1,4 @@
-import { MatSnackBar, MatDialog, MatDialogRef } from "@angular/material";
+import { MatSnackBar, MatDialog } from "@angular/material";
 import { AutenticacionService } from "src/app/login/autenticacionService.service";
 import { Component, OnInit, OnDestroy } from "@angular/core";
 import { EventosService } from "../eventos.service";
@@ -50,7 +50,11 @@ export class VisualizarEventoComponent implements OnInit, OnDestroy {
         this.actualizarPermisos();
         this.isLoading = false;
       });
-    this.showSlide(1);
+    if (this.evento.filenames.length > 0) {
+      setTimeout(() => {
+        this.showSlide(1);
+      }, 100);
+    }
   }
 
   ngOnDestroy() {
@@ -155,12 +159,10 @@ export class VisualizarEventoComponent implements OnInit, OnDestroy {
     for (let i = 0; i < dots.length; i++) {
       dots[i].className = dots[i].className.replace(" active", "");
     }
-    this.setAttributesCurrentSlide(slides, dots);
-  }
-
-  setAttributesCurrentSlide(slides, dots) {
     slides[this.slideIndex - 1].setAttribute("style", "display:block;");
-    dots[this.slideIndex - 1].className += " active";
+    if (this.evento.filenames.length > 1) {
+      dots[this.slideIndex - 1].className += " active";
+    }
   }
 
   esSlideValido(n, slides) {
