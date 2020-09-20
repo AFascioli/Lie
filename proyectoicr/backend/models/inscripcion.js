@@ -30,7 +30,7 @@ const inscripcionSchema = mongoose.Schema({
   contadorInasistenciasJustificada: { type: Number },
   contadorLlegadasTarde: { type: Number },
   estado: { type: mongoose.Schema.Types.ObjectId, ref: "estado" },
-  cicloLectivo: [{ type: mongoose.Schema.Types.ObjectId, ref: "cicloLectivo" }],
+  cicloLectivo: { type: mongoose.Schema.Types.ObjectId, ref: "cicloLectivo" },
   materiasPendientes: [
     { type: mongoose.Schema.Types.ObjectId, ref: "calificacionesXMateria" },
   ],

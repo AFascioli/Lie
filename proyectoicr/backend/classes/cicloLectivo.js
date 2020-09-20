@@ -79,11 +79,17 @@ exports.pasarInscripcionesAActivas = () => {
         },
       },
     ]).then(async (inscripcionesPendientes) => {
-      for (const inscripcion of inscripcionesPendientes) {
+      for (const inscripcionJson of inscripcionesPendientes) {
+
+        let inscripcion = await Inscripcion.findById(inscripcionJson._id);
+
         let materiasDelCurso = await ClaseInscripcion.obtenerMateriasDeCurso(
           inscripcion.idCurso
         );
-        let idsCXM = await ClaseCXM.crearCXM(materiasDelCurso, idCursandoCXM);
+        let idsCXM = await ClaseCXM.crearCXM(
+          materiasDelCurso,
+          idCursandoCXM
+        );
 
         // Obtenemos la inscripcion del año anterior (filtrada por estudiante, estado que no sea inactiva y ciclo)
         let inscripcionAnterior = await Inscripcion.aggregate([
@@ -109,11 +115,11 @@ exports.pasarInscripcionesAActivas = () => {
             },
           },
         ]);
-
         inscripcion.calificacionesXMateria = idsCXM;
-        inscripcion.materiasPendientes = inscripcionAnterior.materiasPendientes;
+        inscripcion.materiasPendientes = inscripcionAnterior.length!=0 ? inscripcionAnterior.materiasPendientes : [];
         inscripcion.estado = idActiva;
-        Inscripcion.save();
+        inscripcion.save();
+        resolve();
       }
     });
   });
@@ -121,6 +127,7 @@ exports.pasarInscripcionesAActivas = () => {
 
 exports.crearCursosParaCiclo = () => {
   let añoActual = new Date().getFullYear();
+  console.log("Creando cursos para el ciclo");
   CicloLectivo.findOne({ año: añoActual })
     .then((cicloLectivo) => {
       let nombresCursos = [
