@@ -99,10 +99,11 @@
       </button>
     </div>
   </form>
-  <b class="parrafo" *ngIf="ARFiltrados.length == 0 && busqueda">
+  <mat-spinner *ngIf="isLoading" class="spinner" [diameter]="60"></mat-spinner>
+  <b class="parrafo" *ngIf="ARFiltrados.length == 0 && busqueda  && !isLoading">
     No se encontró un adulto responsable que coincida con los datos ingresados
   </b>
-  <div class="contenido" *ngIf="ARFiltrados.length != 0">
+  <div class="contenido" *ngIf="ARFiltrados.length != 0  && !isLoading">
     <h3 class="titulo-tutores">
       Adultos responsables filtrados
     </h3>
@@ -111,7 +112,7 @@
       <table
         mat-table
         [dataSource]="ARFiltrados"
-        *ngIf="ARFiltrados.length != 0"
+        *ngIf="ARFiltrados.length != 0  && !isLoading"
       >
         <ng-container matColumnDef="seleccion">
           <th mat-header-cell *matHeaderCellDef></th>

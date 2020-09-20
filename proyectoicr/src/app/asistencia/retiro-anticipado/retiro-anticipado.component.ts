@@ -1,3 +1,4 @@
+import { CicloLectivoService } from "src/app/cicloLectivo.service";
 import { AutenticacionService } from "./../../login/autenticacionService.service";
 import { Component, OnInit, Inject, ChangeDetectorRef } from "@angular/core";
 import { EstudiantesService } from "src/app/estudiantes/estudiante.service";
@@ -35,12 +36,14 @@ export class RetiroAnticipadoComponent implements OnInit {
   fueraPeriodoCicloLectivo = false;
   seleccion = new SelectionModel(true, []);
   isLoading = true;
+  horaRetiroAnticipado: string;
   private unsubscribe: Subject<void> = new Subject();
 
   constructor(
     public snackBar: MatSnackBar,
     public servicioEstudiante: EstudiantesService,
     public servicioAsistencia: AsistenciaService,
+    public servicioCicloLectivo: CicloLectivoService,
     public dialog: MatDialog,
     public changeDetectorRef: ChangeDetectorRef,
     public autenticacionService: AutenticacionService,
@@ -52,6 +55,20 @@ export class RetiroAnticipadoComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.servicioCicloLectivo
+      .obtenerHoraRetiroAnticipado()
+      .pipe(takeUntil(this.unsubscribe))
+      .subscribe(
+        (response) => {
+          this.horaRetiroAnticipado = response.hora;
+        },
+        (error) => {
+          console.error(
+            "Ocurrió un error al querer devolver la hora retiro anticipado. El error se puede describir de la siguiente manera: " +
+              error
+          );
+        }
+      );
     this.fechaActual = new Date();
     if (
       this.fechaActual.toString().substring(0, 3) == "Sat" ||

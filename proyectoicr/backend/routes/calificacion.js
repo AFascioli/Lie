@@ -1,66 +1,75 @@
 const express = require("express");
-const Inscripcion = require("../models/inscripcion");
 const router = express.Router();
 const mongoose = require("mongoose");
 const ClaseCXM = require("../classes/calificacionXMateria");
+const checkAuthMiddleware = require("../middleware/check-auth");
 const ClaseEstado = require("../classes/estado");
 const CalificacionesXMateria = require("../models/calificacionesXMateria");
+const Inscripcion = require("../models/inscripcion");
 
 //Dado un id de estudiante obtiene todas las materias desaprobadas del año actual
 //Retorna vector con id materia y nombre materia
 //@param: idEstudiante
-router.get("/materiasDesaprobadas", async (req, res) => {
-  let idEstadoActiva = await ClaseEstado.obtenerIdEstado(
-    "Inscripcion",
-    "Activa"
-  );
-  let idEstadoSuspendido = await ClaseEstado.obtenerIdEstado(
-    "Inscripcion",
-    "Suspendido"
-  );
-
-  Inscripcion.findOne({
-    idEstudiante: req.query.idEstudiante,
-    estado: {
-      $in: [
-        mongoose.Types.ObjectId(idEstadoActiva),
-        mongoose.Types.ObjectId(idEstadoSuspendido),
-      ],
-    },
-  }).then(async (inscripcion) => {
-    let idEstado = await ClaseEstado.obtenerIdEstado(
-      "CalificacionesXMateria",
-      "Desaprobada"
+router.get("/materiasDesaprobadas", checkAuthMiddleware, async (req, res) => {
+  try {
+    let idEstadoActiva = await ClaseEstado.obtenerIdEstado(
+      "Inscripcion",
+      "Activa"
+    );
+    let idEstadoSuspendido = await ClaseEstado.obtenerIdEstado(
+      "Inscripcion",
+      "Suspendido"
     );
 
-    let idsCXMDesaprobadas = await ClaseCXM.obtenerMateriasDesaprobadasv2(
-      inscripcion.materiasPendientes,
-      inscripcion.calificacionesXMateria,
-      idEstado
-    );
-
-    if (idsCXMDesaprobadas.length != 0) {
-      let materiasDesaprobadas = await ClaseCXM.obtenerNombresMaterias(
-        idsCXMDesaprobadas
+    Inscripcion.findOne({
+      idEstudiante: req.query.idEstudiante,
+      estado: {
+        $in: [
+          mongoose.Types.ObjectId(idEstadoActiva),
+          mongoose.Types.ObjectId(idEstadoSuspendido),
+        ],
+      },
+    }).then(async (inscripcion) => {
+      let idEstado = await ClaseEstado.obtenerIdEstado(
+        "CalificacionesXMateria",
+        "Desaprobada"
       );
 
-      return res.status(200).json({
-        message: "Materias desaprobadas obtenidas correctamente",
-        exito: true,
-        materiasDesaprobadas: materiasDesaprobadas,
-      });
-    } else {
-      return res.status(200).json({
-        message: "El alumno seleccionado no tiene materias desaprobadas",
-        exito: true,
-        materiasDesaprobadas: [],
-      });
-    }
-  });
+      let idsCXMDesaprobadas = await ClaseCXM.obtenerMateriasDesaprobadasv2(
+        inscripcion.materiasPendientes,
+        inscripcion.calificacionesXMateria,
+        idEstado
+      );
+
+      if (idsCXMDesaprobadas.length != 0) {
+        let materiasDesaprobadas = await ClaseCXM.obtenerNombresMaterias(
+          idsCXMDesaprobadas
+        );
+
+        return res.status(200).json({
+          message: "Materias desaprobadas obtenidas correctamente",
+          exito: true,
+          materiasDesaprobadas: materiasDesaprobadas,
+        });
+      } else {
+        return res.status(200).json({
+          message: "El alumno seleccionado no tiene materias desaprobadas",
+          exito: true,
+          materiasDesaprobadas: [],
+        });
+      }
+    });
+  } catch (error) {
+    res.status(500).json({
+      message:
+        "Ocurrió un error al querer obtener las materias desaprobadas de un estudiante",
+      error: error.message,
+    });
+  }
 });
 
 //Dado una id de estudiante y un trimestre obtiene todas las materias con sus respectivas calificaciones
-router.get("/materia/calificaciones", async (req, res) => {
+router.get("/materia/calificaciones", checkAuthMiddleware, async (req, res) => {
   let idEstadoActiva = await ClaseEstado.obtenerIdEstado(
     "Inscripcion",
     "Activa"
@@ -132,9 +141,11 @@ router.get("/materia/calificaciones", async (req, res) => {
         vectorCalXMat: vectorRespuesta,
       });
     })
-    .catch(() => {
+    .catch((error) => {
       res.status(500).json({
-        message: "Mensaje de error especifico",
+        message:
+          "Ocurrió un error al querer obtener las calificaciones para una materia y un trimestre",
+        error: error.message,
       });
     });
 });
@@ -143,148 +154,155 @@ router.get("/materia/calificaciones", async (req, res) => {
 //@params: idEstudiante
 //@params: idMateria
 //@params: Calificacion
-router.post("/examen", async (req, res) => {
-  let estadoAprobada = await ClaseEstado.obtenerIdEstado(
-    "CalificacionesXMateria",
-    "AprobadaConExamen"
-  );
+router.post("/examen", checkAuthMiddleware, async (req, res) => {
+  try {
+    let estadoAprobada = await ClaseEstado.obtenerIdEstado(
+      "CalificacionesXMateria",
+      "AprobadaConExamen"
+    );
 
-  let obtenerIdCXM = (idEstudiante, idMateria) => {
-    return new Promise(async (resolve, reject) => {
+    let obtenerIdCXM = (idEstudiante, idMateria) => {
+      return new Promise(async (resolve, reject) => {
+        let idEstadoActiva = await ClaseEstado.obtenerIdEstado(
+          "Inscripcion",
+          "Activa"
+        );
+        Inscripcion.aggregate([
+          {
+            $match: {
+              idEstudiante: mongoose.Types.ObjectId(idEstudiante),
+              estado: mongoose.Types.ObjectId(idEstadoActiva),
+            },
+          },
+          {
+            $lookup: {
+              from: "calificacionesXMateria",
+              localField: "calificacionesXMateria",
+              foreignField: "_id",
+              as: "CXM",
+            },
+          },
+          {
+            $unwind: {
+              path: "$CXM",
+            },
+          },
+          {
+            $match: {
+              "CXM.idMateria": mongoose.Types.ObjectId(idMateria),
+            },
+          },
+          {
+            $project: {
+              CXM: 1,
+            },
+          },
+        ]).then((cxmEncontrada) => {
+          if (cxmEncontrada.length != 0) {
+            resolve(cxmEncontrada[0].CXM._id);
+          } else {
+            resolve(null);
+          }
+        });
+      });
+    };
+
+    let obtenerIdCXMPendiente = (idEstudiante, idMateria) => {
+      return new Promise(async (resolve, reject) => {
+        let idEstadoActiva = await ClaseEstado.obtenerIdEstado(
+          "Inscripcion",
+          "Activa"
+        );
+        Inscripcion.aggregate([
+          {
+            $match: {
+              idEstudiante: mongoose.Types.ObjectId(idEstudiante),
+              estado: mongoose.Types.ObjectId(idEstadoActiva),
+            },
+          },
+          {
+            $lookup: {
+              from: "calificacionesXMateria",
+              localField: "materiasPendientes",
+              foreignField: "_id",
+              as: "datosMateriasPendientes",
+            },
+          },
+          {
+            $unwind: {
+              path: "$datosMateriasPendientes",
+            },
+          },
+          {
+            $match: {
+              "datosMateriasPendientes.idMateria": mongoose.Types.ObjectId(
+                idMateria
+              ),
+            },
+          },
+          {
+            $project: {
+              datosMateriasPendientes: 1,
+            },
+          },
+        ]).then((cxmEncontrada) => {
+          if (cxmEncontrada.length != 0) {
+            resolve(cxmEncontrada[0].datosMateriasPendientes._id);
+          } else {
+            resolve(null);
+          }
+        });
+      });
+    };
+
+    let actualizarCXM = (estadoNuevo, promedioNuevo) => {
+      return new Promise((resolve, reject) => {
+        CalificacionesXMateria.findOneAndUpdate(
+          { _id: idCXMAEditar },
+          { estado: estadoNuevo, promedio: promedioNuevo }
+        ).then(() => {
+          resolve();
+        });
+      });
+    };
+
+    //Se busca si la materia rendida es una materia que no pendiente
+    let idCXM = await obtenerIdCXM(req.body.idEstudiante, req.body.idMateria);
+    let idCXMAEditar = "";
+
+    if (idCXM != null) {
+      idCXMAEditar = idCXM;
+    } else {
+      //Si la materia rendida es una materia pendiente se obtiene su id
+      let idCXMPendiente = await obtenerIdCXMPendiente(
+        req.body.idEstudiante,
+        req.body.idMateria
+      );
       let idEstadoActiva = await ClaseEstado.obtenerIdEstado(
         "Inscripcion",
         "Activa"
       );
-      Inscripcion.aggregate([
-        {
-          $match: {
-            idEstudiante: mongoose.Types.ObjectId(idEstudiante),
-            estado: mongoose.Types.ObjectId(idEstadoActiva),
-          },
-        },
-        {
-          $lookup: {
-            from: "calificacionesXMateria",
-            localField: "calificacionesXMateria",
-            foreignField: "_id",
-            as: "CXM",
-          },
-        },
-        {
-          $unwind: {
-            path: "$CXM",
-          },
-        },
-        {
-          $match: {
-            "CXM.idMateria": mongoose.Types.ObjectId(idMateria),
-          },
-        },
-        {
-          $project: {
-            CXM: 1,
-          },
-        },
-      ]).then((cxmEncontrada) => {
-        if (cxmEncontrada.length != 0) {
-          resolve(cxmEncontrada[0].CXM._id);
-        } else {
-          resolve(null);
-        }
-      });
+      idCXMAEditar = idCXMPendiente;
+      //Se elimina la cxm del vector de materias pendientes
+      Inscripcion.findOneAndUpdate(
+        { idEstudiante: req.body.idEstudiante, estado: idEstadoActiva },
+        { $pull: { materiasPendientes: idCXMAEditar } }
+      ).exec();
+    }
+
+    //Actualizamos la CXM para que tenga estado aprobada y le ponemos la calificacion correspondiente
+    await actualizarCXM(estadoAprobada, req.body.calificacion);
+
+    res.status(200).json({
+      message: "Se asignó la calificación del examen exitosamente",
+      exito: true,
     });
-  };
-
-  let obtenerIdCXMPendiente = (idEstudiante, idMateria) => {
-    return new Promise(async (resolve, reject) => {
-      let idEstadoActiva = await ClaseEstado.obtenerIdEstado(
-        "Inscripcion",
-        "Activa"
-      );
-      Inscripcion.aggregate([
-        {
-          $match: {
-            idEstudiante: mongoose.Types.ObjectId(idEstudiante),
-            estado: mongoose.Types.ObjectId(idEstadoActiva),
-          },
-        },
-        {
-          $lookup: {
-            from: "calificacionesXMateria",
-            localField: "materiasPendientes",
-            foreignField: "_id",
-            as: "datosMateriasPendientes",
-          },
-        },
-        {
-          $unwind: {
-            path: "$datosMateriasPendientes",
-          },
-        },
-        {
-          $match: {
-            "datosMateriasPendientes.idMateria": mongoose.Types.ObjectId(
-              idMateria
-            ),
-          },
-        },
-        {
-          $project: {
-            datosMateriasPendientes: 1,
-          },
-        },
-      ]).then((cxmEncontrada) => {
-        if (cxmEncontrada.length != 0) {
-          resolve(cxmEncontrada[0].datosMateriasPendientes._id);
-        } else {
-          resolve(null);
-        }
-      });
+  } catch (error) {
+    res.status(500).json({
+      message: "Ocurrió un error al querer registrar la nota del examen",
+      error: error.message,
     });
-  };
-
-  let actualizarCXM = (estadoNuevo, promedioNuevo) => {
-    return new Promise((resolve, reject) => {
-      CalificacionesXMateria.findOneAndUpdate(
-        { _id: idCXMAEditar },
-        { estado: estadoNuevo, promedio: promedioNuevo }
-      ).then(() => {
-        resolve();
-      });
-    });
-  };
-
-  //Se busca si la materia rendida es una materia que no pendiente
-  let idCXM = await obtenerIdCXM(req.body.idEstudiante, req.body.idMateria);
-  let idCXMAEditar = "";
-
-  if (idCXM != null) {
-    idCXMAEditar = idCXM;
-  } else {
-    //Si la materia rendida es una materia pendiente se obtiene su id
-    let idCXMPendiente = await obtenerIdCXMPendiente(
-      req.body.idEstudiante,
-      req.body.idMateria
-    );
-    let idEstadoActiva = await ClaseEstado.obtenerIdEstado(
-      "Inscripcion",
-      "Activa"
-    );
-    idCXMAEditar = idCXMPendiente;
-    //Se elimina la cxm del vector de materias pendientes
-    Inscripcion.findOneAndUpdate(
-      { idEstudiante: req.body.idEstudiante, estado: idEstadoActiva },
-      { $pull: { materiasPendientes: idCXMAEditar } }
-    ).exec();
   }
-
-  //Actualizamos la CXM para que tenga estado aprobada y le ponemos la calificacion correspondiente
-  await actualizarCXM(estadoAprobada, req.body.calificacion);
-
-  res.status(200).json({
-    message: "Se asignó la calificación del examen exitosamente",
-    exito: true,
-  });
 });
 
 module.exports = router;

@@ -40,9 +40,7 @@
           (click)="onRegistrarExamenes(i)"
           *ngIf="
             permisos.notas > 1 &&
-            inscripto[i] &&
-            correspondeRegistrarExamen(i) &&
-            materiasPendientes[i]
+            inscripto[i]
           "
           ><b>Registrar calificaciones de examen</b></mat-card
         >

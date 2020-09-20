@@ -1,14 +1,14 @@
+const checkAuthMiddleware = require("../middleware/check-auth");
 const express = require("express");
+const router = express.Router();
+const mongoose = require("mongoose");
+const ClaseEstudiante = require("../classes/estudiante");
+const ClaseEstado = require("../classes/estado");
+const ClaseCicloLectivo = require("../classes/cicloLectivo");
+const CicloLectivo = require("../models/cicloLectivo");
 const Estudiante = require("../models/estudiante");
 const Estado = require("../models/estado");
 const Inscripcion = require("../models/inscripcion");
-const router = express.Router();
-const mongoose = require("mongoose");
-const checkAuthMiddleware = require("../middleware/check-auth");
-const ClaseEstudiante = require("../classes/estudiante");
-const ClaseEstado = require("../classes/estado");
-const CicloLectivo = require("../models/cicloLectivo");
-const { error } = require("protractor");
 
 //Registra un nuevo estudiante y pone su estado a registrado
 router.post("", checkAuthMiddleware, (req, res, next) => {
@@ -181,7 +181,7 @@ router.delete("/borrar", checkAuthMiddleware, async (req, res, next) => {
     })
     .catch((error) => {
       res.status(500).json({
-        message: "Ocurrió un borrar un estudiante",
+        message: "Ocurrió un error al querer borrar un estudiante",
         error: error.message,
       });
     });
@@ -255,7 +255,7 @@ router.post("/documentos", checkAuthMiddleware, async (req, res) => {
     res
       .status(201)
       .json({ message: "Documentos guardados correctamente", exito: true });
-  } catch {
+  } catch (error) {
     res.status(500).json({
       message: "Ocurrió un error al guardar los documentos del estudiante",
       error: error.message,
@@ -323,7 +323,7 @@ router.get("/nombreyapellido", checkAuthMiddleware, (req, res, next) => {
 });
 
 //Obtiene los tutores de un estudiante
-router.get("/tutores", (req, res) => {
+router.get("/tutores", checkAuthMiddleware, (req, res) => {
   Estudiante.aggregate([
     {
       $match: {
@@ -385,7 +385,7 @@ router.get("/tutores", (req, res) => {
 
 //Obtiene todas las cuotas de un estudiante pasado por parámetro
 //@params: id del estudiante
-router.get("/cuotasEstudiante", async (req, res) => {
+router.get("/cuotasEstudiante", checkAuthMiddleware, async (req, res) => {
   let idEstadoActiva = await ClaseEstado.obtenerIdEstado(
     "Inscripcion",
     "Activa"
@@ -446,7 +446,7 @@ router.get("/cuotasEstudiante", async (req, res) => {
 
 //Obtiene todas las sanciones de un estudiante pasado por parámetro
 //@params: id del estudiante
-router.get("/sancionesEstudiante", async (req, res) => {
+router.get("/sancionesEstudiante", checkAuthMiddleware, async (req, res) => {
   let objetoDate = new Date();
   let añoActual = objetoDate.getFullYear();
   CicloLectivo.findOne({ año: añoActual }).then((cicloLectivo) => {
@@ -647,7 +647,7 @@ router.get("/agenda", checkAuthMiddleware, async (req, res) => {
     });
 });
 
-router.get("/suspendido", async (req, res) => {
+router.get("/suspendido", checkAuthMiddleware, async (req, res) => {
   let idEstadoSuspendido = await ClaseEstado.obtenerIdEstado(
     "Inscripcion",
     "Suspendido"
@@ -678,7 +678,7 @@ router.get("/suspendido", async (req, res) => {
     });
 });
 
-router.get("/estado/suspendido", (req, res) => {
+router.get("/estado/suspendido", checkAuthMiddleware, (req, res) => {
   Estado.findOne({
     nombre: "Suspendido",
     ambito: "Inscripcion",
@@ -698,14 +698,13 @@ router.get("/estado/suspendido", (req, res) => {
     })
     .catch((error) => {
       res.status(500).json({
-        message:
-          "Ah ocurrido un error al validar si el estudiante esta suspendido",
+        message: "Ocurrió un error al validar si el estado es suspendido",
         error: error.message,
       });
     });
 });
 
-router.get("/reincorporacion", async (req, res) => {
+router.get("/reincorporacion", checkAuthMiddleware, async (req, res) => {
   let idEstadoActiva = await ClaseEstado.obtenerIdEstado(
     "Inscripcion",
     "Activa"
@@ -714,19 +713,21 @@ router.get("/reincorporacion", async (req, res) => {
     "Inscripcion",
     "Suspendido"
   );
-  Inscripcion.findOneAndUpdate(
-    {
-      idEstudiante: mongoose.Types.ObjectId(req.query.idEstudiante),
-      estado: idEstadoSuspendido,
-    },
-    {
-      estado: idEstadoActiva,
-    }
-  )
-    .then(() => {
-      res.status(200).json({
-        message: "El estudiante esta reincorporado",
-        exito: true,
+
+  let cantidadFaltas = await ClaseCicloLectivo.obtenerCantidadFaltasSuspension();
+  Inscripcion.findOne({
+    idEstudiante: mongoose.Types.ObjectId(req.query.idEstudiante),
+    estado: idEstadoSuspendido,
+  })
+    .then((inscripcion) => {
+      if ( inscripcion.contadorInasistenciasInjustificada >= cantidadFaltas)
+        inscripcion.contadorInasistenciasInjustificada = 0;
+      inscripcion.estado = idEstadoActiva;
+      inscripcion.save().then(() => {
+        res.status(200).json({
+          message: "El estudiante esta reincorporado",
+          exito: true,
+        });
       });
     })
     .catch((error) => {
