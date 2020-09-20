@@ -17,7 +17,6 @@ import { Observable, Subject } from "rxjs";
 import { map, startWith, takeUntil } from "rxjs/operators";
 import { EventosService } from "../eventos.service";
 import { MatSnackBar, MatDialog } from "@angular/material";
-import Rolldate from "../../../assets/rolldate.min.js";
 import { CancelPopupComponent } from "src/app/popup-genericos/cancel-popup.component";
 import { Router } from "@angular/router";
 import { ImageResult, ResizeOptions } from "ng2-imageupload";

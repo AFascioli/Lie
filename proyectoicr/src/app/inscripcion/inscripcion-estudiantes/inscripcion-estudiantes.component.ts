@@ -1,17 +1,10 @@
 import { InscripcionService } from "../inscripcion.service";
 import { EstudiantesService } from "../../estudiantes/estudiante.service";
-import {
-  OnInit,
-  Component,
-  Inject,
-  ChangeDetectorRef,
-  OnDestroy,
-} from "@angular/core";
+import { OnInit, Component, ChangeDetectorRef, OnDestroy } from "@angular/core";
 import {
   MatDialogRef,
   MatDialog,
   MatDialogConfig,
-  MAT_DIALOG_DATA,
   MatSnackBar,
 } from "@angular/material";
 import { NgForm } from "@angular/forms";
@@ -72,12 +65,6 @@ export class InscripcionEstudianteComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.fechaActual = new Date();
-    if (
-      this.fechaActualEnRangoFechasInscripcion() ||
-      this.authService.getRol() == "Admin"
-    ) {
-      this.fechaDentroDeRangoInscripcion = true;
-    }
     this.apellidoEstudiante = this.servicioEstudiante.estudianteSeleccionado.apellido;
     this.nombreEstudiante = this.servicioEstudiante.estudianteSeleccionado.nombre;
     this._idEstudiante = this.servicioEstudiante.estudianteSeleccionado._id;
@@ -102,21 +89,6 @@ export class InscripcionEstudianteComponent implements OnInit, OnDestroy {
         this.tieneInscripcionPendiente = response.inscripcionPendiente;
       });
     this.isLoading = false;
-  }
-
-  //#resolve hay que hacer una validacion nueva considerando el estado del ciclo lectivo
-  fechaActualEnRangoFechasInscripcion() {
-    let fechaInicioInscripcion = new Date(
-      this.authService.getFechasCicloLectivo().fechaInicioInscripcion
-    );
-    let fechaFinInscripcion = new Date(
-      this.authService.getFechasCicloLectivo().fechaFinInscripcion
-    );
-
-    return (
-      this.fechaActual.getTime() > fechaInicioInscripcion.getTime() &&
-      this.fechaActual.getTime() < fechaFinInscripcion.getTime()
-    );
   }
 
   //Obtiene la capacidad del curso seleccionado
@@ -272,10 +244,7 @@ export class InscripcionEstudianteComponent implements OnInit, OnDestroy {
 export class InscripcionPopupComponent implements OnDestroy {
   private unsubscribe: Subject<void> = new Subject();
 
-  constructor(
-    public dialogRef: MatDialogRef<InscripcionPopupComponent>,
-    @Inject(MAT_DIALOG_DATA) data
-  ) {}
+  constructor(public dialogRef: MatDialogRef<InscripcionPopupComponent>) {}
 
   ngOnDestroy() {
     this.unsubscribe.next();

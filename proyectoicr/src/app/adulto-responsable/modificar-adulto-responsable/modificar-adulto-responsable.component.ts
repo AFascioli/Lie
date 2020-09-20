@@ -6,6 +6,8 @@ import { UbicacionService } from "src/app/ubicacion/ubicacion.service";
 import { NgForm } from "@angular/forms";
 import { MatSnackBar } from "@angular/material";
 import { Router } from "@angular/router";
+import { Subject } from "rxjs";
+import { takeUntil } from "rxjs/operators";
 
 @Component({
   selector: "app-modificar-adulto-responsable",
@@ -18,6 +20,7 @@ export class ModificarAdultoResponsableComponent implements OnInit {
   _mobileQueryListener: () => void;
   mobileQuery: MediaQueryList;
   maxDate = new Date();
+  private unsubscribe: Subject<void> = new Subject();
 
   constructor(
     public servicioAR: AdultoResponsableService,
@@ -27,9 +30,8 @@ export class ModificarAdultoResponsableComponent implements OnInit {
     public snackBar: MatSnackBar,
     public router: Router
   ) {
-    if (!this.servicioAR.adultoResponsableSeleccionado) {
+    if (!this.servicioAR.adultoResponsableSeleccionado)
       this.router.navigate(["./home"]);
-    }
     this.mobileQuery = media.matchMedia("(max-width: 1000px)");
     this._mobileQueryListener = () => changeDetectorRef.detectChanges();
     this.mobileQuery.addListener(this._mobileQueryListener);
@@ -37,6 +39,10 @@ export class ModificarAdultoResponsableComponent implements OnInit {
 
   ngOnInit(): void {
     this.adultoResponsable = this.servicioAR.adultoResponsableSeleccionado;
+    this.obtenerNacionalidades();
+  }
+
+  obtenerNacionalidades() {
     this.servicioUbicacion.getNacionalidades();
     this.servicioUbicacion
       .getNacionalidadesListener()
@@ -74,10 +80,16 @@ export class ModificarAdultoResponsableComponent implements OnInit {
     }
   }
 
+  ngOnDestroy() {
+    this.unsubscribe.next();
+    this.unsubscribe.complete();
+  }
+
   onGuardar(form: NgForm) {
     if (form.valid) {
       this.servicioAR
         .modificarAdultoResponsable(this.adultoResponsable)
+        .pipe(takeUntil(this.unsubscribe))
         .subscribe(
           (response) => {
             if (response.exito) {

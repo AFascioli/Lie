@@ -4,7 +4,7 @@ import { Subject } from "rxjs";
 import { takeUntil } from "rxjs/operators";
 import { AdultoResponsableService } from "../adulto-responsable/adultoResponsable.service";
 import { AutenticacionService } from "../login/autenticacionService.service";
-import { NgModel, NgForm } from "@angular/forms";
+import { NgForm } from "@angular/forms";
 
 @Component({
   selector: "app-solicitud-reunion-adulto-responsable",

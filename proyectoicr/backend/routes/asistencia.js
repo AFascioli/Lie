@@ -21,44 +21,40 @@ async function validarLibreInasistencias(idEst, valorInasistencia) {
   Inscripcion.findOne({
     idEstudiante: idEst,
     estado: idEstadoActiva,
-  })
-    .then(async (inscripcion) => {
-      if (
-        inscripcion.contadorInasistenciasInjustificada % 14 == 0 &&
-        valorInasistencia == 1
-      ) {
-        Inscripcion.findOneAndUpdate(
-          {
-            idEstudiante: idEst,
-            estado: idEstadoSuspendido,
-          },
-          { estado: mongoose.Types.ObjectId(idEstadoSuspendido) }
-        ).exec();
-      } else if (inscripcion.contadorInasistenciasInjustificada % 12 == 0) {
-        //No fijamos si el estudiante tiene 12 inasistencias, para luego notificar a los AR
-        let idsUsuariosAR = await ClaseSuscripcion.obtenerIdsUsuarios(idEst);
-        let idsUsuarios = await ClaseSuscripcion.filtrarARPorPreferencias(
-          idsUsuariosAR,
-          "Falta 12"
-        );
-        //Si existen ARs que aceptan este tipo de notificacion, manda
-        idsUsuarios.length > 0 &&
-          Estudiante.findById(idEst).then((estudianteEncontrado) => {
-            ClaseSuscripcion.notificacionGrupal(
-              idsUsuarios,
-              "Atención",
-              `El estudiante ${estudianteEncontrado.nombre} ${estudianteEncontrado.apellido} tiene solo 3 inasistencias antes de que sea suspendido`
-            );
-          });
-      }
-    })
-    .catch((error) => {
-      res.status(500).json({
-        message:
-          "Ocurrió un problema al querer determinar si está libre por inasistencias el estudiante",
-        error: error.message,
-      });
-    });
+  }).then(async (inscripcion) => {
+    if (
+      inscripcion &&
+      inscripcion.contadorInasistenciasInjustificada % 14 == 0 &&
+      valorInasistencia == 1
+    ) {
+      Inscripcion.findOneAndUpdate(
+        {
+          idEstudiante: idEst,
+          estado: idEstadoSuspendido,
+        },
+        { estado: mongoose.Types.ObjectId(idEstadoSuspendido) }
+      ).exec();
+    } else if (
+      inscripcion &&
+      inscripcion.contadorInasistenciasInjustificada % 12 == 0
+    ) {
+      //No fijamos si el estudiante tiene 12 inasistencias, para luego notificar a los AR
+      let idsUsuariosAR = await ClaseSuscripcion.obtenerIdsUsuarios(idEst);
+      let idsUsuarios = await ClaseSuscripcion.filtrarARPorPreferencias(
+        idsUsuariosAR,
+        "Falta 12"
+      );
+      //Si existen ARs que aceptan este tipo de notificacion, manda
+      idsUsuarios.length > 0 &&
+        Estudiante.findById(idEst).then((estudianteEncontrado) => {
+          ClaseSuscripcion.notificacionGrupal(
+            idsUsuarios,
+            "Atención",
+            `El estudiante ${estudianteEncontrado.nombre} ${estudianteEncontrado.apellido} tiene solo 3 inasistencias antes de que sea suspendido`
+          );
+        });
+    }
+  });
 }
 
 //Retorna vector con datos de los estudiantes y presente. Si ya se registro una asistencia para
@@ -316,6 +312,10 @@ router.post("", checkAuthMiddleware, async (req, res) => {
       "Inscripcion",
       "Activa"
     );
+    const idEstadoSuspendido = await ClaseEstado.obtenerIdEstado(
+      "Inscripcion",
+      "Suspendido"
+    );
     let idsEstudiantes = [];
     req.body.forEach((estudiante) => {
       var valorInasistencia = 0;
@@ -325,7 +325,12 @@ router.post("", checkAuthMiddleware, async (req, res) => {
       }
       Inscripcion.findOne({
         idEstudiante: estudiante._id,
-        estado: idEstadoActiva,
+        estado: {
+          $in: [
+            mongoose.Types.ObjectId(idEstadoActiva),
+            mongoose.Types.ObjectId(idEstadoSuspendido),
+          ],
+        },
       }).then(async (inscripcion) => {
         if (inscripcion.asistenciaDiaria.length > 0) {
           var idAD =
