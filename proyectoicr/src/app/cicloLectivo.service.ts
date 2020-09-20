@@ -1,5 +1,5 @@
 import { environment } from "../environments/environment";
-import { HttpClient, HttpParams } from "@angular/common/http";
+import { HttpClient } from "@angular/common/http";
 import { Injectable, OnDestroy } from "@angular/core";
 import { Subject } from "rxjs";
 @Injectable({
@@ -89,6 +89,7 @@ export class CicloLectivoService implements OnDestroy {
       environment.apiUrl + "/cicloLectivo/parametros",
       cicloLectivo
     );
+  }
 
   validarRegistrarAgenda() {
     return this.http.get<{
@@ -102,6 +103,5 @@ export class CicloLectivoService implements OnDestroy {
       permiso: boolean;
       message: string;
     }>(`${environment.apiUrl}/cicloLectivo/periodoCursado`);
-
   }
 }

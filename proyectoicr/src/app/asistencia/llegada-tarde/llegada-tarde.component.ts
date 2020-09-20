@@ -1,4 +1,3 @@
-
 import { CicloLectivoService } from "./../../cicloLectivo.service";
 import { AutenticacionService } from "./../../login/autenticacionService.service";
 import { Component, OnInit, OnDestroy, ChangeDetectorRef } from "@angular/core";
@@ -33,8 +32,7 @@ export class LlegadaTardeComponent implements OnInit, OnDestroy {
     public snackBar: MatSnackBar,
     public autenticacionService: AutenticacionService,
     public changeDetectorRef: ChangeDetectorRef,
-    public media: MediaMatcher,
-    public servicioCicloLectivo: CicloLectivoService
+    public media: MediaMatcher
   ) {
     this.mobileQuery = media.matchMedia("(max-width: 800px)");
     this._mobileQueryListener = () => changeDetectorRef.detectChanges();
@@ -47,11 +45,9 @@ export class LlegadaTardeComponent implements OnInit, OnDestroy {
     this.servicioCicloLectivo
       .obtenerHoraLlegadaTarde()
       .pipe(takeUntil(this.unsubscribe))
-      .subscribe(
-        (response) => {
-          this.horaLlegadaTarde = response.hora;
-        }
-      );
+      .subscribe((response) => {
+        this.horaLlegadaTarde = response.hora;
+      });
     if (
       (await this.fechaActualEnPeriodoCursado()) ||
       this.autenticacionService.getRol() == "Admin"

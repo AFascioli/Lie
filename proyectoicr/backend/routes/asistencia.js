@@ -59,13 +59,6 @@ async function validarLibreInasistencias(idEst, valorInasistencia) {
         });
     }
   });
-  // .catch((error) => {
-  //   res.status(500).json({
-  //     message:
-  //       "Ocurrió un problema al querer determinar si está libre por inasistencias el estudiante",
-  //     error: error.message,
-  //   });
-  // });
 }
 
 //Retorna vector con datos de los estudiantes y presente. Si ya se registro una asistencia para
