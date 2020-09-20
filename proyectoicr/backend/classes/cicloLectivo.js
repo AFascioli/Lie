@@ -80,16 +80,12 @@ exports.pasarInscripcionesAActivas = () => {
       },
     ]).then(async (inscripcionesPendientes) => {
       for (const inscripcionJson of inscripcionesPendientes) {
-
         let inscripcion = await Inscripcion.findById(inscripcionJson._id);
 
         let materiasDelCurso = await ClaseInscripcion.obtenerMateriasDeCurso(
           inscripcion.idCurso
         );
-        let idsCXM = await ClaseCXM.crearCXM(
-          materiasDelCurso,
-          idCursandoCXM
-        );
+        let idsCXM = await ClaseCXM.crearCXM(materiasDelCurso, idCursandoCXM);
 
         // Obtenemos la inscripcion del año anterior (filtrada por estudiante, estado que no sea inactiva y ciclo)
         let inscripcionAnterior = await Inscripcion.aggregate([
@@ -116,7 +112,10 @@ exports.pasarInscripcionesAActivas = () => {
           },
         ]);
         inscripcion.calificacionesXMateria = idsCXM;
-        inscripcion.materiasPendientes = inscripcionAnterior.length!=0 ? inscripcionAnterior.materiasPendientes : [];
+        inscripcion.materiasPendientes =
+          inscripcionAnterior.length != 0
+            ? inscripcionAnterior.materiasPendientes
+            : [];
         inscripcion.estado = idActiva;
         inscripcion.save();
         resolve();
@@ -169,6 +168,19 @@ exports.obtenerCantidadFaltasSuspension = () => {
     CicloLectivo.findOne({ año: fechaActual.getFullYear() })
       .then((cicloLectivo) => {
         resolve(cicloLectivo.cantidadFaltasSuspension);
+      })
+      .catch((err) => reject(err));
+  });
+};
+
+//Retorna la id del ciclo lectivo segun si se quiere el actual (false) o el siguiente (true)
+exports.obtenerIdCicloLectivo = (proximo) => {
+  let fechaActual = new Date();
+  let año = proximo ? fechaActual.getFullYear() + 1 : fechaActual.getFullYear();
+  return new Promise((resolve, reject) => {
+    CicloLectivo.findOne({ año: año })
+      .then((cicloLectivo) => {
+        resolve(cicloLectivo._id);
       })
       .catch((err) => reject(err));
   });

@@ -4,6 +4,7 @@ const Inscripcion = require("../models/inscripcion");
 const Estudiante = require("../models/estudiante");
 const CicloLectivo = require("../models/cicloLectivo");
 const ClaseEstado = require("../classes/estado");
+const ClaseCicloLectivo = require("../classes/cicloLectivo");
 const ClaseCalifXMateria = require("../classes/calificacionXMateria");
 
 exports.obtenerAñoHabilitado = function (inscripcion, añoLectivo) {
@@ -182,7 +183,7 @@ exports.inscribirEstudiante = async function (
       }
       await inscripcion.save();
 
-      var idCicloLectivo = await ClaseEstado.obtenerIdCicloLectivo(false);
+      var idCicloLectivo = await ClaseCicloLectivo.obtenerIdCicloLectivo(false);
 
       esCambioDeCurso(inscripcion.idCurso, idCicloLectivo);
     }
