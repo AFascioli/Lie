@@ -2,15 +2,15 @@ const express = require("express");
 const router = express.Router();
 const checkAuthMiddleware = require("../middleware/check-auth");
 const cron = require("node-schedule");
-const CalificacionesXMateria = require("../models/calificacionesXMateria");
-const Curso = require("../models/curso");
+//const CalificacionesXMateria = require("../models/calificacionesXMateria");
+//const Curso = require("../models/curso");
 const CicloLectivo = require("../models/cicloLectivo");
-const Inscripcion = require("../models/inscripcion");
-const Estudiante = require("../models/estudiante");
+//const Inscripcion = require("../models/inscripcion");
+//const Estudiante = require("../models/estudiante");
 const ClaseCXM = require("../classes/calificacionXMateria");
 const ClaseEstado = require("../classes/estado");
-const ClaseEstudiante = require("../classes/estudiante");
-const ClaseSuscripcion = require("../classes/suscripcion");
+//const ClaseEstudiante = require("../classes/estudiante");
+//const ClaseSuscripcion = require("../classes/suscripcion");
 const ClaseCicloLectivo = require("../classes/cicloLectivo");
 
 //Obtiene el estado del ciclo lectivo actual
@@ -196,7 +196,7 @@ router.get("/periodoCursado", checkAuthMiddleware, (req, res) => {
   }
 });
 
-/*router.get("/", checkAuthMiddleware, (req, res) => {
+router.get("/", checkAuthMiddleware, (req, res) => {
   let fechaActual = new Date();
   CicloLectivo.findOne({ año: fechaActual.getFullYear() })
     .then((cicloLectivo) => {
@@ -220,7 +220,6 @@ router.get("/periodoCursado", checkAuthMiddleware, (req, res) => {
       });
     });
 });
-*/
 
 //#resolve Estos metodos se deberian llamar una vez que se definan las fechas del ciclo lectivo
 //en ese endpoint. (fijarse si hace falta mover estos metodos a otro lado, ej, clase CicloLectivo)

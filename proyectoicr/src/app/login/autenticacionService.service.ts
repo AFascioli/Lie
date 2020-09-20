@@ -32,15 +32,6 @@ export class AutenticacionService implements OnDestroy {
     this.unsubscribe.complete();
   }
 
-  public asignarFechasAutomaticamente() {
-    const infoFechasCicloLectivo = this.obtenerFechasCicloLectivo();
-    if (!infoFechasCicloLectivo) {
-      return;
-    } else {
-      this.fechasCicloLectivo = infoFechasCicloLectivo;
-    }
-  }
-
   //Obtine la info guardada en el local storage y si no se vencio en token lo autentica al usuario
   public autenticacionAutomatica() {
     const infoAutenticacion = this.obtenerDatosAutenticacion();
@@ -90,15 +81,6 @@ export class AutenticacionService implements OnDestroy {
     return this.authStatusListener.asObservable();
   }
 
-  //Me devuelve un objeto de ciclo lectivo con todas las fechas importantes para limitar los procesos
-  public getCicloLectivo() {
-    return this.http.get<{
-      cicloLectivo: any;
-      message: string;
-      exito: boolean;
-    }>(environment.apiUrl + "/cicloLectivo");
-  }
-
   public getFechasCicloLectivo() {
     return this.fechasCicloLectivo;
   }
@@ -138,65 +120,12 @@ export class AutenticacionService implements OnDestroy {
     localStorage.setItem("id", id);
   }
 
-  public guardarFechasCicloLectivo(cicloLectivo) {
-    localStorage.setItem(
-      "fechaInicioInscripcion",
-      cicloLectivo.fechaInicioInscripcion
-    );
-    localStorage.setItem(
-      "fechaFinInscripcion",
-      cicloLectivo.fechaFinInscripcion
-    );
-    localStorage.setItem(
-      "fechaInicioPrimerTrimestre",
-      cicloLectivo.fechaInicioPrimerTrimestre
-    );
-    localStorage.setItem(
-      "fechaFinPrimerTrimestre",
-      cicloLectivo.fechaFinPrimerTrimestre
-    );
-    localStorage.setItem(
-      "fechaInicioSegundoTrimestre",
-      cicloLectivo.fechaInicioSegundoTrimestre
-    );
-    localStorage.setItem(
-      "fechaFinSegundoTrimestre",
-      cicloLectivo.fechaFinSegundoTrimestre
-    );
-    localStorage.setItem(
-      "fechaInicioTercerTrimestre",
-      cicloLectivo.fechaInicioTercerTrimestre
-    );
-    localStorage.setItem(
-      "fechaFinTercerTrimestre",
-      cicloLectivo.fechaFinTercerTrimestre
-    );
-    localStorage.setItem(
-      "fechaInicioExamenes",
-      cicloLectivo.fechaInicioExamenes
-    );
-    localStorage.setItem("fechaFinExamenes", cicloLectivo.fechaFinExamenes);
-  }
-
   private limpiarDatosAutenticacion() {
     localStorage.removeItem("token");
     localStorage.removeItem("vencimiento");
     localStorage.removeItem("usuario");
     localStorage.removeItem("rol");
     localStorage.removeItem("id");
-  }
-
-  private limpiarFechasCicloLectivo() {
-    localStorage.removeItem("fechaInicioInscripcion");
-    localStorage.removeItem("fechaFinInscripcion");
-    localStorage.removeItem("fechaInicioPrimerTrimestre");
-    localStorage.removeItem("fechaFinPrimerTrimestre");
-    localStorage.removeItem("fechaInicioSegundoTrimestre");
-    localStorage.removeItem("fechaFinSegundoTrimestre");
-    localStorage.removeItem("fechaInicioTercerTrimestre");
-    localStorage.removeItem("fechaFinTercerTrimestre");
-    localStorage.removeItem("fechaInicioExamenes");
-    localStorage.removeItem("fechaFinExamenes");
   }
 
   //Manda al backend email y contraseña y si devuelve un token autentica al usuario y guarda
@@ -239,15 +168,6 @@ export class AutenticacionService implements OnDestroy {
             this.rol,
             this.id
           );
-          if (response.rol != "Adulto Responsable") {
-            this.getCicloLectivo()
-              .pipe(takeUntil(this.unsubscribe))
-              .subscribe((response) => {
-                this.limpiarFechasCicloLectivo();
-                this.guardarFechasCicloLectivo(response.cicloLectivo);
-                this.fechasCicloLectivo = response.cicloLectivo;
-              });
-          }
           this.router.navigate(["/"]);
         }
         subject.next(respuesta);
@@ -266,7 +186,6 @@ export class AutenticacionService implements OnDestroy {
     this.authStatusListener.next(false);
     clearTimeout(this.tokenTimer);
     this.limpiarDatosAutenticacion();
-    this.limpiarFechasCicloLectivo();
     this.router.navigate(["/login"]);
   }
 
@@ -302,46 +221,6 @@ export class AutenticacionService implements OnDestroy {
     }>(environment.apiUrl + "/usuario/permisosDeRol", {
       params: params,
     });
-  }
-
-  private obtenerFechasCicloLectivo() {
-    const fechaInicioInscripcion = localStorage.getItem(
-      "fechaInicioInscripcion"
-    );
-    const fechaFinInscripcion = localStorage.getItem("fechaFinInscripcion");
-    const fechaInicioPrimerTrimestre = localStorage.getItem(
-      "fechaInicioPrimerTrimestre"
-    );
-    const fechaFinPrimerTrimestre = localStorage.getItem(
-      "fechaFinPrimerTrimestre"
-    );
-    const fechaInicioSegundoTrimestre = localStorage.getItem(
-      "fechaInicioSegundoTrimestre"
-    );
-    const fechaFinSegundoTrimestre = localStorage.getItem(
-      "fechaFinSegundoTrimestre"
-    );
-    const fechaInicioTercerTrimestre = localStorage.getItem(
-      "fechaInicioTercerTrimestre"
-    );
-    const fechaFinTercerTrimestre = localStorage.getItem(
-      "fechaFinTercerTrimestre"
-    );
-    const fechaInicioExamenes = localStorage.getItem("fechaInicioExamenes");
-    const fechaFinExamenes = localStorage.getItem("fechaFinExamenes");
-
-    return {
-      fechaInicioInscripcion: fechaInicioInscripcion,
-      fechaFinInscripcion: fechaFinInscripcion,
-      fechaInicioPrimerTrimestre: fechaInicioPrimerTrimestre,
-      fechaFinPrimerTrimestre: fechaFinPrimerTrimestre,
-      fechaInicioSegundoTrimestre: fechaInicioSegundoTrimestre,
-      fechaFinSegundoTrimestre: fechaFinSegundoTrimestre,
-      fechaInicioTercerTrimestre: fechaInicioTercerTrimestre,
-      fechaFinTercerTrimestre: fechaFinTercerTrimestre,
-      fechaInicioExamenes: fechaInicioExamenes,
-      fechaFinExamenes: fechaFinExamenes,
-    };
   }
 
   //Envía una notificación de prueba a un email que se envia por parametro
