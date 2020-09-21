@@ -31,7 +31,7 @@ router.get("/cierre", async (req, res) => {
     const sePuedeCerrar = await ClaseMateria.sePuedeCerrarMateria(
       req.query.idMateria,
       req.query.idCurso,
-      req.query.trimestre
+      parseInt(req.query.trimestre, 10)
     );
     res.status(200).json({
       exito: sePuedeCerrar,
@@ -52,7 +52,7 @@ router.get("/cierre", async (req, res) => {
 router.post("/cierre", checkAuthMiddleware, async (req, res) => {
   try {
     let nombreEstadoMXC = "";
-    switch (req.body.trimestre) {
+    switch (parseInt(req.query.trimestre, 10)) {
       case 1:
         nombreEstadoMXC = "En segundo trimestre";
         break;
@@ -100,7 +100,7 @@ router.post("/cierre", checkAuthMiddleware, async (req, res) => {
         }
       }
     ]);
-    
+
     await MateriasXCurso.findByIdAndUpdate(idMateriaXCurso.datosMXC._id, {
       estado: idEstadoNuevo,
     }).exec();
