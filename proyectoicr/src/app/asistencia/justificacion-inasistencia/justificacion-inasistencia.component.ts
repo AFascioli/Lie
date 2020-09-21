@@ -5,7 +5,7 @@ import { MatSnackBar } from "@angular/material";
 import { MatDialog } from "@angular/material";
 import { takeUntil } from "rxjs/operators";
 import { Subject } from "rxjs";
-import { NgForm } from "@angular/forms";
+import { CicloLectivoService } from "src/app/cicloLectivo.service";
 
 @Component({
   selector: "app-justificacion-inasistencia",
@@ -28,30 +28,22 @@ export class JustificacionInasistenciaComponent implements OnInit, OnDestroy {
     private servicioAsistencia: AsistenciaService,
     public snackBar: MatSnackBar,
     public dialog: MatDialog,
-    public autenticacionService: AutenticacionService
+    public autenticacionService: AutenticacionService,
+    public servicioCicloLectivo: CicloLectivoService
   ) {}
 
-  ngOnInit() {
+  async ngOnInit() {
     if (
-      this.fechaActualEnPeriodoCursado ||
+      (await this.fechaActualEnPeriodoCursado()) ||
       this.autenticacionService.getRol() == "Admin"
     ) {
       this.servicioAsistencia
         .obtenerUltimasInasistencias()
         .pipe(takeUntil(this.unsubscribe))
-        .subscribe(
-          (response) => {
-            this.ultimasInasistencias = response.inasistencias;
-            this.isLoading = false;
-          },
-          (error) => {
-            console.error(
-              "Ocurrió un error al querer publicar el estado de las inasistencias (justificada / injustificada). " +
-                "El error se puede describir de la siguiente manera: " +
-                error
-            );
-          }
-        );
+        .subscribe((response) => {
+          this.ultimasInasistencias = response.inasistencias;
+          this.isLoading = false;
+        });
     } else {
       this.fueraDeCursado = true;
       this.isLoading = false;
@@ -71,26 +63,17 @@ export class JustificacionInasistenciaComponent implements OnInit, OnDestroy {
       this.servicioAsistencia
         .justificarInasistencia(this.ultimasInasistencias)
         .pipe(takeUntil(this.unsubscribe))
-        .subscribe(
-          (response) => {
-            let tipoSnackBar = "snack-bar-fracaso";
-            if (response.exito) {
-              tipoSnackBar = "snack-bar-exito";
-            }
-            this.snackBar.open(response.message, "", {
-              panelClass: [tipoSnackBar],
-              duration: 4500,
-            });
-            this.ngOnInit();
-          },
-          (error) => {
-            console.error(
-              "Ocurrió un error al querer publicar el estado de las inasistencias (justificada / injustificada). " +
-                "El error se puede describir de la siguiente manera: " +
-                error
-            );
+        .subscribe((response) => {
+          let tipoSnackBar = "snack-bar-fracaso";
+          if (response.exito) {
+            tipoSnackBar = "snack-bar-exito";
           }
-        );
+          this.snackBar.open(response.message, "", {
+            panelClass: [tipoSnackBar],
+            duration: 4500,
+          });
+          this.ngOnInit();
+        });
     } else {
       this.snackBar.open(
         "No se seleccionó ninguna inasistencia para justificar",
@@ -103,18 +86,12 @@ export class JustificacionInasistenciaComponent implements OnInit, OnDestroy {
     }
   }
 
-  fechaActualEnPeriodoCursado() {
-    let fechaInicioPrimerTrimestre = new Date(
-      this.autenticacionService.getFechasCicloLectivo().fechaInicioPrimerTrimestre
-    );
-    let fechaFinTercerTrimestre = new Date(
-      this.autenticacionService.getFechasCicloLectivo().fechaFinTercerTrimestre
-    );
-
-    return (
-      this.fechaActual.getTime() > fechaInicioPrimerTrimestre.getTime() &&
-      this.fechaActual.getTime() < fechaFinTercerTrimestre.getTime()
-    );
+  async fechaActualEnPeriodoCursado() {
+    return new Promise((resolve, reject) => {
+      this.servicioCicloLectivo.validarEnCursado().subscribe((result) => {
+        resolve(result.permiso);
+      });
+    });
   }
 
   //Con el indice, cambia el valor del campo justificado de la inasistencia

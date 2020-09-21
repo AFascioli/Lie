@@ -1,4 +1,4 @@
-import { MatSnackBar, MatDialog, MatDialogRef } from "@angular/material";
+import { MatSnackBar, MatDialog } from "@angular/material";
 import { AutenticacionService } from "src/app/login/autenticacionService.service";
 import { Component, OnInit, OnDestroy } from "@angular/core";
 import { EventosService } from "../eventos.service";
@@ -9,7 +9,6 @@ import { EstudiantesService } from "src/app/estudiantes/estudiante.service";
 import { Subject } from "rxjs";
 import { takeUntil } from "rxjs/operators";
 import { environment } from "src/environments/environment";
-import { ClassMethod } from "@angular/compiler";
 
 @Component({
   selector: "app-visualizar-evento",

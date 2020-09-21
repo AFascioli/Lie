@@ -91,6 +91,7 @@ export class DefinirAgendaComponent implements OnInit, OnDestroy {
   @ViewChild(MatSort, { static: true }) sort: MatSort;
 
   ngOnInit() {
+    this.fechaActual = new Date();
     if (!this.inicioCursado() || this.servicioAuth.getRol() == "Admin") {
       this.obtenerCursos();
       this.servicioAgenda
@@ -109,25 +110,13 @@ export class DefinirAgendaComponent implements OnInit, OnDestroy {
     this.dataSource.sort = this.sort;
   }
 
-  //Devuelve true si la fecha actual se encuentra dentro del ciclo lectivo, y false caso contrario.
-  fechaActualEnCicloLectivo() {
-    let fechaInicioPrimerTrimestre = new Date(
-      this.servicioAuth.getFechasCicloLectivo().fechaInicioPrimerTrimestre
-    );
-
-    return this.fechaActual.getTime() < fechaInicioPrimerTrimestre.getTime();
-  }
-
   //Devuelve un booleano segun si se inicio o no el cursado
   async inicioCursado() {
     await this.servicioCicloLectivo
-      .obtenerEstadoCicloLectivo()
+      .validarRegistrarAgenda()
+      .pipe(takeUntil(this.unsubscribe))
       .subscribe((response) => {
-        if (response.exito) {
-          return response.estadoCiclo != "Creado";
-        } else {
-          return false;
-        }
+        return response.permiso;
       });
   }
 

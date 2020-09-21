@@ -1,3 +1,4 @@
+import { CicloLectivoService } from "src/app/cicloLectivo.service";
 import { CalificacionesService } from "../../calificaciones/calificaciones.service";
 //import { Estudiante } from "src/app/estudiantes/estudiante.model";
 import { EstudiantesService } from "src/app/estudiantes/estudiante.service";
@@ -41,7 +42,7 @@ export class CalificacionesPerfilEstudianteComponent
     public servicioEstudiante: EstudiantesService,
     public servicioCalificaciones: CalificacionesService,
     public router: Router,
-    public servicioEstudianteAutenticacion: AutenticacionService,
+    public cicloLectivoService: CicloLectivoService,
     public changeDetectorRef: ChangeDetectorRef,
     public media: MediaMatcher
   ) {
@@ -101,32 +102,27 @@ export class CalificacionesPerfilEstudianteComponent
     return this.promedio;
   }
 
-  //Segun la fecha actual selecciona por defecto el trimestre
   obtenerTrimestrePorDefecto() {
-    let fechas = this.servicioEstudianteAutenticacion.getFechasCicloLectivo();
-    let fechaInicioPrimerTrimestre = new Date(
-      fechas.fechaInicioPrimerTrimestre
-    );
-    let fechaFinPrimerTrimestre = new Date(fechas.fechaFinPrimerTrimestre);
-    let fechaInicioSegundoTrimestre = new Date(
-      fechas.fechaInicioSegundoTrimestre
-    );
-    let fechaFinSegundoTrimestre = new Date(fechas.fechaFinSegundoTrimestre);
-
-    if (
-      this.fechaActual.getTime() >= fechaInicioPrimerTrimestre.getTime() &&
-      this.fechaActual.getTime() <= fechaFinPrimerTrimestre.getTime()
-    ) {
-      this.trimestreActual = "1";
-    } else if (
-      this.fechaActual.getTime() >= fechaInicioSegundoTrimestre.getTime() &&
-      this.fechaActual.getTime() <= fechaFinSegundoTrimestre.getTime()
-    ) {
-      this.trimestreActual = "2";
-    } else {
-      this.trimestreActual = "3";
-      return;
-    }
+    this.cicloLectivoService
+      .obtenerEstadoCicloLectivo()
+      .pipe(takeUntil(this.unsubscribe))
+      .subscribe(async (response) => {
+        let estado = await response.estadoCiclo;
+        switch (estado) {
+          case "En primer trimestre":
+            this.trimestreActual = "1";
+            break;
+          case "En segundo trimestre":
+            this.trimestreActual = "2";
+            break;
+          case "En tercer trimestre":
+            this.trimestreActual = "3";
+            break;
+          default:
+            this.trimestreActual = "3";
+            break;
+        }
+      });
   }
 
   //Dado el indice de la tabla que representa una materia, retorna cuantas

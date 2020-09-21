@@ -1,3 +1,4 @@
+import { CicloLectivoService } from "./../../cicloLectivo.service";
 import { CancelPopupComponent } from "src/app/popup-genericos/cancel-popup.component";
 import { AutenticacionService } from "../../login/autenticacionService.service";
 import { EstudiantesService } from "src/app/estudiantes/estudiante.service";
@@ -10,7 +11,7 @@ import {
 } from "@angular/core";
 import { MatDialog, MatSnackBar, MatDialogRef } from "@angular/material";
 import { NgForm, NgModel } from "@angular/forms";
-import { MatPaginator, PageEvent } from "@angular/material/paginator";
+import { MatPaginator } from "@angular/material/paginator";
 import { MatTableDataSource } from "@angular/material/table";
 import { CalificacionesService } from "../calificaciones.service";
 import { MatPaginatorIntl } from "@angular/material";
@@ -68,7 +69,8 @@ export class CalificacionesEstudiantesComponent implements OnInit, OnDestroy {
     private snackBar: MatSnackBar,
     public servicioAutenticacion: AutenticacionService,
     public changeDetectorRef: ChangeDetectorRef,
-    public media: MediaMatcher
+    public media: MediaMatcher,
+    public cicloLectivoService: CicloLectivoService
   ) {
     this.mobileQuery = media.matchMedia("(max-width: 880px)");
     this._mobileQueryListener = () => changeDetectorRef.detectChanges();
@@ -138,42 +140,29 @@ export class CalificacionesEstudiantesComponent implements OnInit, OnDestroy {
   }
 
   obtenerTrimestreActual() {
-    let fechas = this.servicioAutenticacion.getFechasCicloLectivo();
-    let fechaInicioPrimerTrimestre = new Date(
-      fechas.fechaInicioPrimerTrimestre
-    );
-    let fechaFinPrimerTrimestre = new Date(fechas.fechaFinPrimerTrimestre);
-    let fechaInicioSegundoTrimestre = new Date(
-      fechas.fechaInicioSegundoTrimestre
-    );
-    let fechaFinSegundoTrimestre = new Date(fechas.fechaFinSegundoTrimestre);
-    let fechaInicioTercerTrimestre = new Date(
-      fechas.fechaInicioTercerTrimestre
-    );
-    let fechaFinTercerTrimestre = new Date(fechas.fechaFinTercerTrimestre);
-
-    if (
-      this.fechaActual.getTime() >= fechaInicioPrimerTrimestre.getTime() &&
-      this.fechaActual.getTime() <= fechaFinPrimerTrimestre.getTime()
-    ) {
-      this.trimestreActual = "1";
-    } else if (
-      this.fechaActual.getTime() >= fechaInicioSegundoTrimestre.getTime() &&
-      this.fechaActual.getTime() <= fechaFinSegundoTrimestre.getTime()
-    ) {
-      this.trimestreActual = "2";
-    } else if (
-      this.fechaActual.getTime() >= fechaInicioTercerTrimestre.getTime() &&
-      this.fechaActual.getTime() <= fechaFinTercerTrimestre.getTime()
-    ) {
-      this.trimestreActual = "3";
-    } else {
-      this.trimestreSeleccionado = "3";
-      this.puedeEditarCalificaciones = false;
-      return;
-    }
-    this.trimestreSeleccionado = this.trimestreActual;
-    this.puedeEditarCalificaciones = true;
+    this.cicloLectivoService
+      .obtenerEstadoCicloLectivo()
+      .pipe(takeUntil(this.unsubscribe))
+      .subscribe(async (response) => {
+        let estado = await response.estadoCiclo;
+        this.puedeEditarCalificaciones = true;
+        switch (estado) {
+          case "En primer trimestre":
+            this.trimestreActual = "1";
+            break;
+          case "En segundo trimestre":
+            this.trimestreActual = "2";
+            break;
+          case "En tercer trimestre":
+            this.trimestreActual = "3";
+            break;
+          default:
+            this.trimestreSeleccionado = "3";
+            this.puedeEditarCalificaciones = false;
+            break;
+        }
+        this.trimestreSeleccionado = this.trimestreActual;
+      });
   }
 
   onTrimestreChange(form: NgForm) {

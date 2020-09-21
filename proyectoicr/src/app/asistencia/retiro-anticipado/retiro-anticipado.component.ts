@@ -1,6 +1,6 @@
 import { CicloLectivoService } from "src/app/cicloLectivo.service";
 import { AutenticacionService } from "./../../login/autenticacionService.service";
-import { Component, OnInit, Inject, ChangeDetectorRef } from "@angular/core";
+import { Component, OnInit, ChangeDetectorRef } from "@angular/core";
 import { EstudiantesService } from "src/app/estudiantes/estudiante.service";
 import { AsistenciaService } from "src/app/asistencia/asistencia.service";
 import { MatDialog, MatDialogConfig, MatSnackBar } from "@angular/material";
@@ -47,29 +47,24 @@ export class RetiroAnticipadoComponent implements OnInit {
     public dialog: MatDialog,
     public changeDetectorRef: ChangeDetectorRef,
     public autenticacionService: AutenticacionService,
-    public media: MediaMatcher
+    public media: MediaMatcher,
+    public cicloLectivoService: CicloLectivoService
   ) {
     this.mobileQuery = media.matchMedia("(max-width: 800px)");
     this._mobileQueryListener = () => changeDetectorRef.detectChanges();
     this.mobileQuery.addListener(this._mobileQueryListener);
   }
 
-  ngOnInit() {
-    this.servicioCicloLectivo
+ async ngOnInit() {
+    this.fechaActual = new Date();
+     this.servicioCicloLectivo
       .obtenerHoraRetiroAnticipado()
       .pipe(takeUntil(this.unsubscribe))
       .subscribe(
         (response) => {
           this.horaRetiroAnticipado = response.hora;
-        },
-        (error) => {
-          console.error(
-            "Ocurrió un error al querer devolver la hora retiro anticipado. El error se puede describir de la siguiente manera: " +
-              error
-          );
         }
       );
-    this.fechaActual = new Date();
     if (
       this.fechaActual.toString().substring(0, 3) == "Sat" ||
       this.fechaActual.toString().substring(0, 3) == "Sun"
@@ -84,7 +79,7 @@ export class RetiroAnticipadoComponent implements OnInit {
       );
     }
     if (
-      this.fechaActualEnCicloLectivo() ||
+      (await this.fechaActualEnPeriodoCursado()) ||
       this.autenticacionService.getRol() == "Admin"
     ) {
       this.apellidoEstudiante = this.servicioEstudiante.estudianteSeleccionado.apellido;
@@ -109,18 +104,12 @@ export class RetiroAnticipadoComponent implements OnInit {
     this.unsubscribe.complete();
   }
 
-  fechaActualEnCicloLectivo() {
-    let fechaInicioPrimerTrimestre = new Date(
-      this.autenticacionService.getFechasCicloLectivo().fechaInicioPrimerTrimestre
-    );
-    let fechaFinTercerTrimestre = new Date(
-      this.autenticacionService.getFechasCicloLectivo().fechaFinTercerTrimestre
-    );
-
-    return (
-      this.fechaActual.getTime() > fechaInicioPrimerTrimestre.getTime() &&
-      this.fechaActual.getTime() < fechaFinTercerTrimestre.getTime()
-    );
+  async fechaActualEnPeriodoCursado() {
+    return new Promise((resolve, reject) => {
+      this.cicloLectivoService.validarEnCursado().subscribe((result) => {
+        resolve(result.permiso);
+      });
+    });
   }
 
   //Segun que hora sea, cambia el valor de antes10am y cambia que radio button esta seleccionado

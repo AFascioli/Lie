@@ -1,4 +1,4 @@
-import { CicloLectivoService } from "src/app/cicloLectivo.service";
+import { CicloLectivoService } from "./../../cicloLectivo.service";
 import { AutenticacionService } from "./../../login/autenticacionService.service";
 import { Component, OnInit, OnDestroy, ChangeDetectorRef } from "@angular/core";
 import { EstudiantesService } from "src/app/estudiantes/estudiante.service";
@@ -39,25 +39,17 @@ export class LlegadaTardeComponent implements OnInit, OnDestroy {
     this.mobileQuery.addListener(this._mobileQueryListener);
   }
 
-  ngOnInit() {
+  async ngOnInit() {
+    this.fechaActual = new Date();
+    this.fechaActualFinDeSemana();
     this.servicioCicloLectivo
       .obtenerHoraLlegadaTarde()
       .pipe(takeUntil(this.unsubscribe))
-      .subscribe(
-        (response) => {
-          this.horaLlegadaTarde = response.hora;
-        },
-        (error) => {
-          console.error(
-            "Ocurrió un error al querer devolver la hora llegada tarde. El error se puede describir de la siguiente manera: " +
-              error
-          );
-        }
-      );
-    this.fechaActual = new Date();
-    this.fechaActualFinDeSemana();
+      .subscribe((response) => {
+        this.horaLlegadaTarde = response.hora;
+      });
     if (
-      this.fechaActualEnCicloLectivo ||
+      (await this.fechaActualEnPeriodoCursado()) ||
       this.autenticacionService.getRol() == "Admin"
     ) {
       if (this.fechaActual.getHours() < 8) {
@@ -88,18 +80,12 @@ export class LlegadaTardeComponent implements OnInit, OnDestroy {
     }
   }
 
-  fechaActualEnCicloLectivo() {
-    let fechaInicioPrimerTrimestre = new Date(
-      this.autenticacionService.getFechasCicloLectivo().fechaInicioPrimerTrimestre
-    );
-    let fechaFinTercerTrimestre = new Date(
-      this.autenticacionService.getFechasCicloLectivo().fechaFinTercerTrimestre
-    );
-
-    return (
-      this.fechaActual.getTime() > fechaInicioPrimerTrimestre.getTime() &&
-      this.fechaActual.getTime() < fechaFinTercerTrimestre.getTime()
-    );
+  async fechaActualEnPeriodoCursado() {
+    return new Promise((resolve, reject) => {
+      this.servicioCicloLectivo.validarEnCursado().subscribe((result) => {
+        resolve(result.permiso);
+      });
+    });
   }
 
   radioButtonChange() {
@@ -111,28 +97,19 @@ export class LlegadaTardeComponent implements OnInit, OnDestroy {
     this.servicioAsistencia
       .registrarLlegadaTarde(this.antes8am)
       .pipe(takeUntil(this.unsubscribe))
-      .subscribe(
-        (result) => {
-          if (result.exito) {
-            this.snackBar.open(result.message, "", {
-              panelClass: ["snack-bar-exito"],
-              duration: 4500,
-            });
-          } else {
-            this.snackBar.open(result.message, "", {
-              panelClass: ["snack-bar-fracaso"],
-              duration: 4500,
-            });
-          }
-        },
-        (error) => {
-          console.error(
-            "Ocurrió un error al querer publicar la llegada tarde de un estudiante" +
-              "El error se puede describir de la siguiente manera: " +
-              error
-          );
+      .subscribe((result) => {
+        if (result.exito) {
+          this.snackBar.open(result.message, "", {
+            panelClass: ["snack-bar-exito"],
+            duration: 4500,
+          });
+        } else {
+          this.snackBar.open(result.message, "", {
+            panelClass: ["snack-bar-fracaso"],
+            duration: 4500,
+          });
         }
-      );
+      });
   }
 
   ngOnDestroy() {

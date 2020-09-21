@@ -47,15 +47,17 @@ function obtenerMateriasDeCurso(idCurso) {
         },
       },
       {
-        $group: {
-          _id: {
-            idMateria: "$materiasDelCurso.idMateria",
-          },
+        $project: {
+          "materiasDelCurso.idMateria":1
         },
       },
     ])
       .then((materiasDelCurso) => {
-        resolve(materiasDelCurso);
+        let idsMateriasDelCurso=[];
+        materiasDelCurso.forEach(objMateria => {
+          idsMateriasDelCurso.push(objMateria.materiasDelCurso[0].idMateria);
+        });
+        resolve(idsMateriasDelCurso);
       })
       .catch((err) => reject(err));
   });
