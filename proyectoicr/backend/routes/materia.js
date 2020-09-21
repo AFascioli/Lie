@@ -37,6 +37,9 @@ router.get("/cierre", checkAuthMiddleware, async (req, res) => {
   } catch (error) {
     res.status(400).json({
       exito: false,
+      message:
+        "Ocurrió un error al querer determinar si se puede cerrar un trimestre",
+      error: error.message,
     });
   }
 });
@@ -75,12 +78,13 @@ router.post("/cierre", checkAuthMiddleware, async (req, res) => {
 
     res.status(200).json({
       exito: true,
-      message: "Materia cerrada correctamente"
+      message: "Materia cerrada correctamente",
     });
   } catch (error) {
     res.status(400).json({
       exito: false,
-      message: "Ocurrio un error al cerrar la materia: "+error.message
+      message: "Ocurrio un error al cerrar la materia ",
+      error: error.message,
     });
   }
 });
