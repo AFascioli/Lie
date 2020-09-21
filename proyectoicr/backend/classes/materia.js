@@ -1,12 +1,12 @@
-const mongoose = requiere("mongoose");
+const mongoose = require("mongoose");
 const Inscripcion = require("../models/inscripcion");
 const ClaseCicloLectivo= require("../classes/cicloLectivo");
 const ClaseEstado= require("../classes/estado");
 
 //Retorna un booleano segun se pueda cerrar la materia. Se puede cerrar si todos los estudiantes
 //tienen al menos 3 notas registradas
-exports.sePuedeCerrarMateria = async (idMateria, idCurso, trimestre)=>{
-    return new Promise((resolve, reject)=>{
+exports.sePuedeCerrarMateria = (idMateria, idCurso, trimestre)=>{
+    return new Promise(async(resolve, reject)=>{
         const idCicloActual= await ClaseCicloLectivo.obtenerIdCicloLectivo(false);
         const idEstadoSuspendido = await ClaseEstado.obtenerIdEstado(
             "Inscripcion",

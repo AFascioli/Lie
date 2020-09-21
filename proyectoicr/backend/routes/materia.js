@@ -24,7 +24,7 @@ router.get("", checkAuthMiddleware, (req, res) => {
 });
 
 //Responde con un booleano si se puede cerrar o no un trimestre en particular
-router.get("/cierre", checkAuthMiddleware, async (req, res) => {
+router.get("/cierre", async (req, res) => {
   try {
     const sePuedeCerrar = await ClaseMateria.sePuedeCerrarMateria(
       req.query.idMateria,
@@ -69,12 +69,12 @@ router.post("/cierre", checkAuthMiddleware, async (req, res) => {
     }
     const idEstadoNuevo = await ClaseEstado.obtenerIdEstado(
       "MateriasXCurso",
-      nombreEstado
+      nombreEstadoMXC
     );
 
-    MateriasXCurso.findByIdAndUpdate(req.body.idMateriaXCurso, {
+    await MateriasXCurso.findByIdAndUpdate(req.body.idMateriaXCurso, {
       estado: idEstadoNuevo,
-    });
+    }).exec();
 
     res.status(200).json({
       exito: true,

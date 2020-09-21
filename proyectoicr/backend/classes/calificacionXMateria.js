@@ -2,6 +2,7 @@ const CalificacionesXTrimestre = require("../models/calificacionesXTrimestre");
 const CalificacionesXMateria = require("../models/calificacionesXMateria");
 const Inscripcion = require("../models/inscripcion");
 const ClaseEstado = require("../classes/estado");
+const ClaseCicloLectivo = require("../classes/cicloLectivo");
 const mongoose = require("mongoose");
 
 exports.obtenerPromedioDeTrimestre = function (calificaciones) {
@@ -227,6 +228,8 @@ exports.cerrarMateriaTercerTrimestre = (idCurso, idMateria) => {
       "Inscripcion",
       "Activa"
     );
+    const idCicloActual = await ClaseCicloLectivo.obtenerIdCicloLectivo(false);
+    
     const inscripcionesFiltradas = await Inscripcion.aggregate([
       {
         $match: {
