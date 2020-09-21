@@ -1,7 +1,9 @@
 const express = require("express");
 const router = express.Router();
+const mongoose= require("mongoose");
 const checkAuthMiddleware = require("../middleware/check-auth");
 const Materia = require("../models/materia");
+const Curso = require("../models/curso");
 const MateriasXCurso = require("../models/materiasXCurso");
 const ClaseMateria = require("../classes/materia");
 const ClaseEstado = require("../classes/estado");
@@ -71,8 +73,35 @@ router.post("/cierre", checkAuthMiddleware, async (req, res) => {
       "MateriasXCurso",
       nombreEstadoMXC
     );
-
-    await MateriasXCurso.findByIdAndUpdate(req.body.idMateriaXCurso, {
+    
+    const idMateriaXCurso= await Curso.aggregate([
+      {
+        '$match': {
+          '_id': mongoose.Types.ObjectId(req.body.idCurso)
+        }
+      }, {
+        '$lookup': {
+          'from': 'materiasXCurso', 
+          'localField': 'materias', 
+          'foreignField': '_id', 
+          'as': 'datosMXC'
+        }
+      }, {
+        '$unwind': {
+          'path': '$datosMXC'
+        }
+      }, {
+        '$match': {
+          'datosMXC.idMateria': mongoose.Types.ObjectId(req.body.idMateria)
+        }
+      }, {
+        '$project': {
+          'datosMXC._id': 1
+        }
+      }
+    ]);
+    
+    await MateriasXCurso.findByIdAndUpdate(idMateriaXCurso.datosMXC._id, {
       estado: idEstadoNuevo,
     }).exec();
 
