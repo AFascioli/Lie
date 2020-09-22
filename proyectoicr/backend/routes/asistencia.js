@@ -706,7 +706,7 @@ router.post("/llegadaTarde", checkAuthMiddleware, async (req, res) => {
             }
           }
 
-          if (req.body.antes8am && inscripcion.contadorLlegadasTarde < 4) {
+          if (req.body.antes8am && inscripcion.contadorLlegadasTarde < 3) {
             inscripcion.contadorLlegadasTarde =
               inscripcion.contadorLlegadasTarde + 1;
             if (ADcreada != null) {
@@ -722,9 +722,9 @@ router.post("/llegadaTarde", checkAuthMiddleware, async (req, res) => {
               });
             });
           } else {
-            if (req.body.antes8am && inscripcion.contadorLlegadasTarde == 4) {
+            if (req.body.antes8am && inscripcion.contadorLlegadasTarde >= 3) {
               inscripcion.contadorLlegadasTarde = 0;
-              inscripcion.inscripcion.contadorInasistenciasInjustificada =
+              inscripcion.contadorInasistenciasInjustificada =
                 inscripcion.contadorInasistenciasInjustificada + 1;
               if (ADcreada != null) {
                 inscripcion.asistenciaDiaria.push(ADcreada._id);
