@@ -43,7 +43,7 @@
     >
       <mat-radio-button
         (change)="radioButtonChange()"
-        [checked]="antes8am"
+        [checked]="antesHorario"
         value="1"
         ><span class="label-radio-button"
           >Antes de las {{ this.horaLlegadaTarde }} am</span
@@ -51,7 +51,7 @@
       >
       <mat-radio-button
         (change)="radioButtonChange()"
-        [checked]="despues8am"
+        [checked]="!antesHorario"
         value="2"
         ><span class="label-radio-button"
           >Después de las {{ this.horaLlegadaTarde }} am</span
