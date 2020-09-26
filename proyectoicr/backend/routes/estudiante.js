@@ -719,8 +719,11 @@ router.get("/reincorporacion", checkAuthMiddleware, async (req, res) => {
     estado: idEstadoSuspendido,
   })
     .then((inscripcion) => {
-      if ( inscripcion.contadorInasistenciasInjustificada >= cantidadFaltas)
+      if (inscripcion.contadorInasistenciasInjustificada >= cantidadFaltas) {
         inscripcion.contadorInasistenciasInjustificada = 0;
+        inscripcion.contadorInasistenciasJustificada = 0;
+        inscripcion.contadorLlegadasTarde = 0;
+      }
       inscripcion.estado = idEstadoActiva;
       inscripcion.save().then(() => {
         res.status(200).json({

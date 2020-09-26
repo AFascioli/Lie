@@ -10,7 +10,7 @@ const ClaseAsistencia = require("../classes/asistencia");
 const ClaseEstado = require("../classes/estado");
 const ClaseCicloLectivo = require("../classes/cicloLectivo");
 
-async function validarLibreInasistencias(idEst, valorInasistencia) {
+async function validarLibreInasistencias(idEst) {
   const idEstadoSuspendido = await ClaseEstado.obtenerIdEstado(
     "Inscripcion",
     "Suspendido"
@@ -26,8 +26,7 @@ async function validarLibreInasistencias(idEst, valorInasistencia) {
     if (
       inscripcion &&
       inscripcion.contadorInasistenciasInjustificada >=
-        (await ClaseCicloLectivo.obtenerCantidadFaltasSuspension()) &&
-      valorInasistencia == 1
+        (await ClaseCicloLectivo.obtenerCantidadFaltasSuspension())
     ) {
       Inscripcion.findOneAndUpdate(
         {
@@ -382,7 +381,7 @@ router.post("", checkAuthMiddleware, async (req, res) => {
                     ).exec();
                   });
                   setTimeout(function () {
-                    validarLibreInasistencias(estudiante._id, 1);
+                    validarLibreInasistencias(estudiante._id);
                   }, 900);
                 }
                 //Si estaba ausente y lo pasaron a presente decrementa contador inasistencia
@@ -422,7 +421,7 @@ router.post("", checkAuthMiddleware, async (req, res) => {
         }
       });
       setTimeout(function () {
-        validarLibreInasistencias(estudiante._id, 1);
+        validarLibreInasistencias(estudiante._id);
       }, 900);
     });
     if (idsEstudiantes.length > 0) {
@@ -714,10 +713,12 @@ router.post("/llegadaTarde", checkAuthMiddleware, async (req, res) => {
             }
             inscripcion.save();
             ultimaAD.llegadaTarde = true;
+            setTimeout(function () {
+              validarLibreInasistencias(inscripcion.idEstudiante);
+            }, 900);
             ultimaAD.save().then(() => {
               return res.status(200).json({
-                message:
-                  "Llegada tarde antes de las 8 am registrada exitosamente",
+                message: "Llegada tarde registrada exitosamente",
                 exito: true,
               });
             });
@@ -732,10 +733,12 @@ router.post("/llegadaTarde", checkAuthMiddleware, async (req, res) => {
               inscripcion.save();
               ultimaAD.valorInasistencia = ultimaAD.valorInasistencia + 1;
               ultimaAD.llegadaTarde = true;
+              setTimeout(function () {
+                validarLibreInasistencias(inscripcion.idEstudiante);
+              }, 900);
               ultimaAD.save().then(() => {
                 return res.status(200).json({
-                  message:
-                    "Llegada tarde antes de las 8 am registrada exitosamente",
+                  message: "Llegada tarde registrada exitosamente",
                   exito: true,
                 });
               });
@@ -751,10 +754,12 @@ router.post("/llegadaTarde", checkAuthMiddleware, async (req, res) => {
               inscripcion.save();
               ultimaAD.valorInasistencia = 0.5;
               ultimaAD.llegadaTarde = true;
+              setTimeout(function () {
+                validarLibreInasistencias(inscripcion.idEstudiante);
+              }, 900);
               ultimaAD.save().then(() => {
                 return res.status(200).json({
-                  message:
-                    "Llegada tarde después de las 8 am registrada exitosamente",
+                  message: "Llegada tarde registrada exitosamente",
                   exito: true,
                 });
               });
@@ -879,6 +884,9 @@ router.post("/retiro", checkAuthMiddleware, async (req, res) => {
                       });
                     });
                   });
+                  setTimeout(function () {
+                    validarLibreInasistencias(inscripcion.idEstudiante);
+                  }, 900);
                 }
               }
             } else {
