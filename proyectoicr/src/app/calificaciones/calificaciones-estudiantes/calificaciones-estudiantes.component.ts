@@ -362,7 +362,7 @@ export class PaginatorOverviewExample {}
 export function getDutchPaginatorIntl() {
   const paginatorIntl = new MatPaginatorIntl();
 
-  paginatorIntl.itemsPerPageLabel = "Items por página";
+  paginatorIntl.itemsPerPageLabel = "Estudiantes por página";
   paginatorIntl.nextPageLabel = "Página siguiente";
   paginatorIntl.previousPageLabel = "Página anterior";
   return paginatorIntl;
