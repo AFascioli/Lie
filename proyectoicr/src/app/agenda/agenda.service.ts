@@ -3,7 +3,7 @@ import { HttpClient, HttpParams } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 
 @Injectable({
-  providedIn: "root"
+  providedIn: "root",
 })
 export class AgendaService {
   constructor(public http: HttpClient) {}
@@ -17,7 +17,7 @@ export class AgendaService {
       exito: boolean;
       agenda: any[];
     }>(environment.apiUrl + "/curso/agenda", {
-      params: params
+      params: params,
     });
   }
 
@@ -30,7 +30,7 @@ export class AgendaService {
       exito: boolean;
       agenda: any[];
     }>(environment.apiUrl + "/estudiante/agenda", {
-      params: params
+      params: params,
     });
   }
 
@@ -51,7 +51,7 @@ export class AgendaService {
     );
   }
 
-  public eliminarHorario(agenda: any, curso: string){
+  public eliminarHorario(agenda: any, curso: string) {
     return this.http.post<{ exito: boolean; message: string }>(
       environment.apiUrl + "/curso/eliminarHorario",
       { agenda: agenda, idCurso: curso }
@@ -60,5 +60,12 @@ export class AgendaService {
   //Retorna todas las materias de la institucion
   public obtenerMaterias() {
     return this.http.get<{ materias: any[] }>(environment.apiUrl + "/materia");
+  }
+
+  public clonarAgenda(idCurso: string) {
+    return this.http.post<{ exito: boolean; message: string }>(
+      environment.apiUrl + "/curso/clonar",
+      { idCurso: idCurso }
+    );
   }
 }

@@ -1,5 +1,4 @@
 import { AutenticacionService } from "src/app/login/autenticacionService.service";
-import { NgForm } from "@angular/forms";
 import {
   Component,
   OnInit,
@@ -40,6 +39,9 @@ export class DefinirAgendaComponent implements OnInit, OnDestroy {
   indice = -1;
   cursoSelected: Boolean = false;
   mensajeError: string;
+  cursoSeleccionado: string;
+  yearSelected: any = false;
+  nextYearSelect: boolean;
   agendaValida: Boolean = true;
   horariosReservados: any[] = [];
   dias: any[] = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes"];
@@ -93,7 +95,6 @@ export class DefinirAgendaComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.fechaActual = new Date();
     if (!this.inicioCursado() || this.servicioAuth.getRol() == "Admin") {
-      this.obtenerCursos();
       this.servicioAgenda
         .obtenerMaterias()
         .pipe(takeUntil(this.unsubscribe))
@@ -162,10 +163,12 @@ export class DefinirAgendaComponent implements OnInit, OnDestroy {
     }
   }
 
+  onClonar() {}
+
   obtenerCursos() {
     this.isLoading = true;
     this.servicioEstudiante
-      .obtenerCursos(this.fechaActual.getFullYear())
+      .obtenerCursos(this.yearSelected)
       .pipe(takeUntil(this.unsubscribe))
       .subscribe((response) => {
         this.isLoading = false;
@@ -360,6 +363,19 @@ export class DefinirAgendaComponent implements OnInit, OnDestroy {
       panelClass: [exito],
       duration: 4500,
     });
+  }
+
+  onYearSelected(yearSelected) {
+    this.cursoSelected = false;
+    if (yearSelected.value == "actual") {
+      this.yearSelected = this.fechaActual.getFullYear();
+      this.nextYearSelect = false;
+    } else {
+      this.yearSelected = this.fechaActual.getFullYear() + 1;
+      this.nextYearSelect = true;
+    }
+    this.dataSource.data = [];
+    this.obtenerCursos();
   }
 }
 
