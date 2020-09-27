@@ -1,3 +1,4 @@
+import { CicloLectivoService } from "src/app/cicloLectivo.service";
 import { CancelPopupComponent } from "src/app/popup-genericos/cancel-popup.component";
 import { AutenticacionService } from "../../login/autenticacionService.service";
 import { EstudiantesService } from "src/app/estudiantes/estudiante.service";
@@ -24,6 +25,7 @@ import { MediaMatcher } from "@angular/cdk/layout";
   styleUrls: ["./calificaciones-ciclo-lectivo.component.css"],
 })
 export class CalificacionesCicloLectivoComponent implements OnInit, OnDestroy {
+  year: any[] = [];
   cursos: any[] = [];
   materias: any[] = [];
   estudiantes: any[] = [];
@@ -55,6 +57,7 @@ export class CalificacionesCicloLectivoComponent implements OnInit, OnDestroy {
   ];
   rolConPermisosEdicion = false;
   isLoading = true;
+  isLoading2 = false;
   fechaActual: Date;
   calificacionesChange = false;
   puedeEditarCalificaciones = false;
@@ -67,12 +70,15 @@ export class CalificacionesCicloLectivoComponent implements OnInit, OnDestroy {
   private unsubscribe: Subject<void> = new Subject();
   _mobileQueryListener: () => void;
   mobileQuery: MediaQueryList;
+  materiaSelec: boolean = false;
+  docente: string;
 
   @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
 
   constructor(
     public servicioEstudiante: EstudiantesService,
     public servicioCalificaciones: CalificacionesService,
+    public servicioCicloLectivo: CicloLectivoService,
     public popup: MatDialog,
     public servicioEstudianteAutenticacion: AutenticacionService,
     public changeDetectorRef: ChangeDetectorRef,
@@ -86,7 +92,15 @@ export class CalificacionesCicloLectivoComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.fechaActual = new Date();
     this.validarPermisos();
-    this.obtenerCursos();
+    this.servicioCicloLectivo
+      .obtenerAniosCicloLectivo()
+      .pipe(takeUntil(this.unsubscribe))
+      .subscribe((response) => {
+        this.year = response.respuesta;
+        this.year.sort((a, b) =>
+          a.anio > b.anio ? 1 : b.anio > a.anio ? -1 : 0
+        );
+      });
   }
 
   ngOnDestroy() {
@@ -106,24 +120,29 @@ export class CalificacionesCicloLectivoComponent implements OnInit, OnDestroy {
       });
   }
 
-  obtenerCursos() {
+  obtenerCursos(yearS) {
     if (this.servicioEstudianteAutenticacion.getRol() == "Docente") {
-      this.servicioEstudiante
-        .obtenerCursosDeDocente(this.servicioEstudianteAutenticacion.getId())
-        .pipe(takeUntil(this.unsubscribe))
+      this.servicioEstudianteAutenticacion
+        .obtenerIdEmpleado(this.servicioEstudianteAutenticacion.getId())
         .subscribe((response) => {
-          this.cursos = response.cursos;
-          this.cursos.sort((a, b) =>
-            a.nombre.charAt(0) > b.nombre.charAt(0)
-              ? 1
-              : b.nombre.charAt(0) > a.nombre.charAt(0)
-              ? -1
-              : 0
-          );
+          this.docente = response.id;
+          this.servicioEstudiante
+            .obtenerCursosDeDocentePorCiclo(this.docente, yearS)
+            .pipe(takeUntil(this.unsubscribe))
+            .subscribe((response) => {
+              this.cursos = response.cursos;
+              this.cursos.sort((a, b) =>
+                a.nombre.charAt(0) > b.nombre.charAt(0)
+                  ? 1
+                  : b.nombre.charAt(0) > a.nombre.charAt(0)
+                  ? -1
+                  : 0
+              );
+            });
         });
     } else {
       this.servicioEstudiante
-        .obtenerCursos(this.fechaActual.getFullYear())
+        .obtenerCursos(yearS)
         .pipe(takeUntil(this.unsubscribe))
         .subscribe((response) => {
           this.cursos = response.cursos;
@@ -137,8 +156,15 @@ export class CalificacionesCicloLectivoComponent implements OnInit, OnDestroy {
         });
     }
   }
+  onYearSelected(yearSelected) {
+    this.materiaSelec = false;
+    this.estudiantes = [];
+    this.materias = [];
+    this.obtenerCursos(yearSelected.value);
+  }
 
   onCursoSeleccionado(curso, materia: NgModel) {
+    this.materiaSelec = false;
     this.estudiantes = [];
     this.materias = [];
     materia.reset();
@@ -147,10 +173,7 @@ export class CalificacionesCicloLectivoComponent implements OnInit, OnDestroy {
       this.servicioEstudianteAutenticacion.getRol() != "Admin"
     ) {
       this.servicioEstudiante
-        .obtenerMateriasXCursoXDocente(
-          curso.value,
-          this.servicioEstudianteAutenticacion.getId()
-        )
+        .obtenerMateriasXCursoXDocente(curso.value, this.docente)
         .pipe(takeUntil(this.unsubscribe))
         .subscribe((respuesta) => {
           this.materias = respuesta.materias;
@@ -166,6 +189,7 @@ export class CalificacionesCicloLectivoComponent implements OnInit, OnDestroy {
   }
 
   obtenerNotas(form: NgForm) {
+    this.isLoading2 = true;
     if (form.value.curso != "" || form.value.materia != "") {
       this.servicioCalificaciones
         .obtenerCalificacionesEstudiantesXCursoXMateriaCicloLectivo(
@@ -182,8 +206,10 @@ export class CalificacionesCicloLectivoComponent implements OnInit, OnDestroy {
           this.dataSource = new MatTableDataSource(this.estudiantes);
           this.dataSource.paginator = this.paginator;
           this.dataSource.paginator.firstPage();
+          this.isLoading2 = false;
         });
     }
+    this.materiaSelec = true;
   }
 
   aplicarFiltro(valorFiltro: string) {

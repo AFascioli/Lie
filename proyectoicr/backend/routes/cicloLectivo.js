@@ -731,4 +731,37 @@ router.get("/inicioCursado", async (req, res) => {
 
 
 */
+
+router.get("/anios", checkAuthMiddleware, (req, res) => {
+  CicloLectivo.aggregate([
+    {
+      $project: {
+        _id: 1,
+        anio: "$año",
+      },
+    },
+  ])
+    .then((anio) => {
+      var respuesta = [];
+      anio.forEach((anio) => {
+        var anios = {
+          id: anio._id,
+          anio: anio.anio.toString(),
+        };
+        respuesta.push(anios);
+      });
+      res.status(200).json({
+        respuesta: respuesta,
+        message: "Se han obtenido los años de ciclo lectivo",
+        exito: true,
+      });
+    })
+    .catch((error) => {
+      res.status(500).json({
+        message: "Ocurrió un error al querer obtener los años de ciclo lectivo",
+        error: error.message,
+      });
+    });
+});
+
 module.exports = router;

@@ -104,4 +104,13 @@ export class CicloLectivoService implements OnDestroy {
       message: string;
     }>(`${environment.apiUrl}/cicloLectivo/periodoCursado`);
   }
+
+  obtenerAniosCicloLectivo()
+  {
+    return this.http.get<{
+      exito: boolean;
+      message: string;
+      respuesta: any;
+    }>(`${environment.apiUrl}/cicloLectivo/anios`);
+  }
 }

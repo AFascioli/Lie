@@ -8,6 +8,21 @@
 <mat-card class="card-body-componente" *ngIf="!isLoading">
   <form #form="ngForm">
     <div class="div-selects">
+      <mat-form-field class="selectYear">
+        <mat-select
+          placeholder="Seleccione año"
+          name="anio"
+          ngModel
+          #anio="ngModel"
+          matNativeControl
+          required
+          (selectionChange)="onYearSelected(anio)"
+        >
+          <mat-option *ngFor="let y of year" [value]="y.anio">
+            {{ y.anio }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
       <mat-form-field>
         <mat-select
           placeholder="Seleccione curso"
@@ -42,6 +57,18 @@
         </mat-select>
       </mat-form-field>
     </div>
+    <p
+      class="centrar"
+      *ngIf="estudiantes.length == 0 && !isLoading2 && materiaSelec"
+    >
+      No se encuentran calificaciones registradas para los valores
+      seleccionados.
+    </p>
+    <mat-spinner
+      *ngIf="isLoading2"
+      class="spinner"
+      [diameter]="60"
+    ></mat-spinner>
     <mat-form-field class="filtro" *ngIf="estudiantes.length != 0">
       <mat-label>Filtrar estudiante</mat-label>
       <input
