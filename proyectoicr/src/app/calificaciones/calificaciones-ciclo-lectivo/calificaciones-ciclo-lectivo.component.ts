@@ -170,7 +170,8 @@ export class CalificacionesCicloLectivoComponent implements OnInit, OnDestroy {
     materia.reset();
     if (
       this.rolConPermisosEdicion &&
-      this.servicioEstudianteAutenticacion.getRol() != "Admin"
+      this.servicioEstudianteAutenticacion.getRol() != "Admin" &&
+      this.servicioEstudianteAutenticacion.getRol() != "Director"
     ) {
       this.servicioEstudiante
         .obtenerMateriasXCursoXDocente(curso.value, this.docente)
