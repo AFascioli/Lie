@@ -374,6 +374,14 @@ export class EstudiantesService implements OnDestroy {
     });
   }
 
+  public obtenerIdSuspendido() {
+    return this.http.get<{
+      respuesta: string;
+      message: string;
+      exito: boolean;
+    }>(environment.apiUrl + "/estudiante/idSuspendido");
+  }
+
   public reincorporarEstudianteSeleccionado() {
     let params = new HttpParams().set(
       "idEstudiante",

@@ -742,4 +742,29 @@ router.get("/reincorporacion", checkAuthMiddleware, async (req, res) => {
     });
 });
 
+router.get("/idSuspendido", checkAuthMiddleware, async (req, res) => {
+  Estado.findOne({ ambito: "Inscripcion", nombre: "Suspendido" })
+    .then((estado) => {
+      if (estado) {
+        res.status(200).json({
+          respuesta: estado._id,
+          message: "Se ha obtenido correctamente el estado",
+          exito: true,
+        });
+      } else {
+        res.status(200).json({
+          message: "No existe el estado para Inscripción, Suspendida",
+          exito: false,
+        });
+      }
+    })
+    .catch((error) => {
+      res.status(500).json({
+        message:
+          "Ocurrió un error al validar si el estudiante esta suspendido ",
+        error: error.message,
+      });
+    });
+});
+
 module.exports = router;

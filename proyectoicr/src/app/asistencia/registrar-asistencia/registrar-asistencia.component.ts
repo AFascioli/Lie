@@ -26,6 +26,7 @@ export class RegistrarAsistenciaComponent implements OnInit, OnDestroy {
   isLoading = true;
   private unsubscribe: Subject<void> = new Subject();
   isLoadingStudents: boolean = true;
+  idSuspendido: string;
 
   constructor(
     private servicioEstudiante: EstudiantesService,
@@ -37,6 +38,7 @@ export class RegistrarAsistenciaComponent implements OnInit, OnDestroy {
   ) {}
 
   async ngOnInit() {
+    this.obtenerIdInscripcionSuspendida();
     this.cursoNotSelected = true;
     this.fechaActual = new Date();
     if (
@@ -132,12 +134,21 @@ export class RegistrarAsistenciaComponent implements OnInit, OnDestroy {
   }
 
   esSuspendido(estudiantesXDivision) {
-    if (estudiantesXDivision.estado == "5eac84ac053ad30ad083aa0f") {
+    if (estudiantesXDivision.estado == this.idSuspendido) {
       estudiantesXDivision.presente = false;
       return true;
     } else {
       return false;
     }
+  }
+
+  obtenerIdInscripcionSuspendida() {
+    this.servicioEstudiante
+      .obtenerIdSuspendido()
+      .pipe(takeUntil(this.unsubscribe))
+      .subscribe((response) => {
+        this.idSuspendido = response.respuesta;
+      });
   }
 
   onCancelar() {
