@@ -10,7 +10,9 @@
           <b class="titulo-expansion-panel">
             {{ estudiante.apellido }}, {{ estudiante.nombre }} -
             {{ estudiante.tipoDocumento }}: {{ estudiante.numeroDocumento }}</b
-          ><b class="titulo-expansion-panel" *ngIf="inscripto[i]">&nbsp;- Curso: {{ this.cursos[i] }} </b>
+          ><b class="titulo-expansion-panel" *ngIf="inscripto[i]"
+            >&nbsp;- Curso: {{ this.cursos[i] }}
+          </b>
         </mat-panel-title>
       </mat-expansion-panel-header>
       <div
@@ -29,16 +31,23 @@
           [class.opcion-mobile]="mobileQuery.matches"
           (click)="onJustificar(i)"
           *ngIf="permisos.asistencia > 1 && inscripto[i]"
+          [ngClass]="{
+            isDisabled:
+              suspendido[i] || (
+              this.estadoCiclo == 'Inactivo' ||
+              this.estadoCiclo == 'Creado' ||
+              this.estadoCiclo == 'En examenes')
+          }"
           ><b>Justificar inasistencia</b></mat-card
         >
         <mat-card
           class="opcion"
           [class.opcion-mobile]="mobileQuery.matches"
           (click)="onRegistrarExamenes(i)"
-          *ngIf="
-            permisos.notas > 1 &&
-            inscripto[i]
-          "
+          *ngIf="permisos.notas > 1 && inscripto[i]"
+          [ngClass]="{
+            isDisabled: this.estadoCiclo != 'En examenes'
+          }"
           ><b>Registrar calificaciones de examen</b></mat-card
         >
         <mat-card
@@ -46,6 +55,13 @@
           [class.opcion-mobile]="mobileQuery.matches"
           (click)="onLlegadaTarde(i)"
           *ngIf="permisos.asistencia > 1 && inscripto[i]"
+          [ngClass]="{
+            isDisabled:
+              suspendido[i] ||
+              (this.estadoCiclo == 'Inactivo' ||
+              this.estadoCiclo == 'Creado' ||
+              this.estadoCiclo == 'En examenes')
+          }"
           ><b>Registrar llegada tarde</b></mat-card
         >
         <mat-card
@@ -53,6 +69,13 @@
           [class.opcion-mobile]="mobileQuery.matches"
           (click)="onRetiro(i)"
           *ngIf="permisos.asistencia > 1 && inscripto[i]"
+          [ngClass]="{
+            isDisabled:
+              suspendido[i] ||
+              (this.estadoCiclo == 'Inactivo' ||
+              this.estadoCiclo == 'Creado' ||
+              this.estadoCiclo == 'En examenes')
+          }"
           ><b>Registrar retiro anticipado</b></mat-card
         >
         <mat-card
@@ -60,6 +83,13 @@
           [class.opcion-mobile]="mobileQuery.matches"
           (click)="onSancion(i)"
           *ngIf="permisos.sanciones >= 1 && inscripto[i]"
+          [ngClass]="{
+            isDisabled:
+              suspendido[i] ||
+              (this.estadoCiclo == 'Inactivo' ||
+              this.estadoCiclo == 'Creado' ||
+              this.estadoCiclo == 'En examenes')
+          }"
           ><b>Registrar sanción</b></mat-card
         >
         <mat-card
@@ -81,12 +111,21 @@
           [class.opcion-mobile]="mobileQuery.matches"
           (click)="onReincorporar(i)"
           *ngIf="permisos.inscribirEstudiante >= 1 && suspendido[i]"
+          [ngClass]="{
+            isDisabled:
+              this.estadoCiclo == 'Inactivo' ||
+              this.estadoCiclo == 'Creado' ||
+              this.estadoCiclo == 'En examenes'
+          }"
           ><b>Reincorporar estudiante</b></mat-card
         >
         <mat-card
           class="opcion"
           [class.opcion-mobile]="mobileQuery.matches"
           (click)="onNotificarReunion(i)"
+          [ngClass]="{
+            isDisabled: this.estadoCiclo == 'Inactivo'
+          }"
           ><b>Enviar notificación de reunión</b></mat-card
         >
         <mat-card

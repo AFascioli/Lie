@@ -175,6 +175,10 @@
               routerLink="/asistencia"
               *ngIf="permisos.asistencia > 1"
               (click)="cerrarMenuLateral(sideNav)"
+              [ngClass]="{
+                isDisabled:
+                  this.estadoCiclo == 'Inactivo' || this.estadoCiclo == 'Creado'
+              }"
             >
               <mat-icon
                 class="iconSinExpansion"
@@ -189,6 +193,10 @@
               routerLink="/calificacionesEstudiantes"
               *ngIf="permisos.notas > 1"
               (click)="cerrarMenuLateral(sideNav)"
+              [ngClass]="{
+                isDisabled:
+                  this.estadoCiclo == 'Inactivo' || this.estadoCiclo == 'Creado'
+              }"
             >
               <mat-icon
                 class="iconSinExpansion"
@@ -203,6 +211,7 @@
               routerLink="/documentosEstudiante"
               *ngIf="permisos.inscribirEstudiante > 1"
               (click)="cerrarMenuLateral(sideNav)"
+              [ngClass]="{ isDisabled: this.estadoCiclo == 'Inactivo' }"
             >
               <mat-icon
                 class="iconSinExpansion"
@@ -245,6 +254,7 @@
               routerLink="/registrarCuotas"
               *ngIf="permisos.cuotas > 1"
               (click)="cerrarMenuLateral(sideNav)"
+              [ngClass]="{ isDisabled: this.estadoCiclo == 'Inactivo' }"
             >
               <mat-icon class="iconSinExpansion" svgIcon="pagoCuota"></mat-icon>
               <p class="titulo-expansion">Registrar pago de cuotas</p>

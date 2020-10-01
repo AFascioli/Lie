@@ -1,3 +1,4 @@
+import { CicloLectivoService } from "./../../cicloLectivo.service";
 import { AutenticacionService } from "./../../login/autenticacionService.service";
 import { Component, OnInit, OnDestroy } from "@angular/core";
 import { EstudiantesService } from "src/app/estudiantes/estudiante.service";
@@ -6,7 +7,6 @@ import { MatDialogRef, MatDialog, MatSnackBar } from "@angular/material";
 import { Router } from "@angular/router";
 import { takeUntil } from "rxjs/operators";
 import { Subject } from "rxjs";
-import { CicloLectivoService } from "src/app/cicloLectivo.service";
 
 @Component({
   selector: "app-registrar-asistencia",
@@ -27,17 +27,20 @@ export class RegistrarAsistenciaComponent implements OnInit, OnDestroy {
   private unsubscribe: Subject<void> = new Subject();
   isLoadingStudents: boolean = true;
   idSuspendido: string;
+  estadoCiclo: string;
 
   constructor(
     private servicioEstudiante: EstudiantesService,
     private servicioAsistencia: AsistenciaService,
     private autenticacionService: AutenticacionService,
+    private CicloLectivoService: CicloLectivoService,
     public popup: MatDialog,
     public snackBar: MatSnackBar,
     public servicioCicloLectivo: CicloLectivoService
   ) {}
 
   async ngOnInit() {
+    this.obtenerEstadoCicloLectivo();
     this.obtenerIdInscripcionSuspendida();
     this.cursoNotSelected = true;
     this.fechaActual = new Date();
@@ -148,6 +151,14 @@ export class RegistrarAsistenciaComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.unsubscribe))
       .subscribe((response) => {
         this.idSuspendido = response.respuesta;
+      });
+  }
+
+  obtenerEstadoCicloLectivo() {
+    this.CicloLectivoService.obtenerEstadoCicloLectivo()
+      .pipe(takeUntil(this.unsubscribe))
+      .subscribe((response) => {
+        this.estadoCiclo = response.estadoCiclo;
       });
   }
 

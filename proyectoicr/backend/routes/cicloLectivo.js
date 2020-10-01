@@ -306,7 +306,6 @@ router.get("/periodoCursado", checkAuthMiddleware, (req, res) => {
       },
     ]).then((cicloLectivo) => {
       let nombre = cicloLectivo[0].datosEstado[0].nombre;
-      console.log(nombre);
       if (
         nombre == "En primer trimestre" ||
         nombre == "En segundo trimestre" ||
