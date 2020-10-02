@@ -58,21 +58,23 @@ export class CalificacionesPerfilEstudianteComponent
 
   ngOnInit() {
     this.fechaActual = new Date();
+    this.obtenerTrimestrePorDefecto();
     this.servicioEstudiante.obtenerCursoDeEstudiante().subscribe((response) => {
       this.curso = response.curso;
     });
     this.apellidoEstudiante = this.servicioEstudiante.estudianteSeleccionado.apellido;
     this.nombreEstudiante = this.servicioEstudiante.estudianteSeleccionado.nombre;
-    this.obtenerTrimestrePorDefecto();
-    this.servicioCalificaciones
-      .obtenerCalificacionesXMateriaXEstudiante(this.trimestreActual)
-      .pipe(takeUntil(this.unsubscribe))
-      .subscribe((res) => {
-        this.calificacionesXMateria = res.vectorCalXMat;
-        this.calificacionesXMateria.sort((a, b) =>
-          a.materia > b.materia ? 1 : b.materia > a.materia ? -1 : 0
-        );
-      });
+    setTimeout(() => {
+      this.servicioCalificaciones
+        .obtenerCalificacionesXMateriaXEstudiante(this.trimestreActual)
+        .pipe(takeUntil(this.unsubscribe))
+        .subscribe((res) => {
+          this.calificacionesXMateria = res.vectorCalXMat;
+          this.calificacionesXMateria.sort((a, b) =>
+            a.materia > b.materia ? 1 : b.materia > a.materia ? -1 : 0
+          );
+        });
+    }, 20);
     this.servicioCalificaciones
       .obtenerMateriasDesaprobadasEstudiante(
         this.servicioEstudiante.estudianteSeleccionado._id
