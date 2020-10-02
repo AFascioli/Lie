@@ -57,6 +57,7 @@ export class CalificacionesEstudiantesComponent implements OnInit, OnDestroy {
   private unsubscribe: Subject<void> = new Subject();
   _mobileQueryListener: () => void;
   mobileQuery: MediaQueryList;
+  estadoCiclo: string;
 
   @ViewChild("comboCurso", { static: false }) comboCurso: any;
   @ViewChild("comboTrimestre", { static: false }) comboTrimestre: any;
@@ -78,6 +79,7 @@ export class CalificacionesEstudiantesComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.obtenerEstadoCicloLectivo();
     this.fechaActual = new Date();
     this.obtenerTrimestreActual();
     this.validarPermisos();
@@ -137,6 +139,14 @@ export class CalificacionesEstudiantesComponent implements OnInit, OnDestroy {
           );
         });
     }
+  }
+
+  obtenerEstadoCicloLectivo() {
+    this.cicloLectivoService.obtenerEstadoCicloLectivo()
+      .pipe(takeUntil(this.unsubscribe))
+      .subscribe((response) => {
+        this.estadoCiclo = response.estadoCiclo;
+      });
   }
 
   obtenerTrimestreActual() {

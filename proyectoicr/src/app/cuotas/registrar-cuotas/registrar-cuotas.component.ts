@@ -43,9 +43,11 @@ export class RegistrarCuotasComponent implements OnInit, OnDestroy {
   cuotasXEstudiante: any[] = [];
   displayedColumns: string[] = ["apellido", "nombre", "accion"];
   isLoading: Boolean = false;
+  estadoCiclo: string;
   private unsubscribe: Subject<void> = new Subject();
 
   async ngOnInit() {
+    this.obtenerEstadoCicloLectivo();
     this.fechaActual = new Date();
 
     if (
@@ -140,6 +142,14 @@ export class RegistrarCuotasComponent implements OnInit, OnDestroy {
         );
       });
     this.cursoEstudiante = "";
+  }
+
+  obtenerEstadoCicloLectivo() {
+    this.cicloLectivoService.obtenerEstadoCicloLectivo()
+      .pipe(takeUntil(this.unsubscribe))
+      .subscribe((response) => {
+        this.estadoCiclo = response.estadoCiclo;
+      });
   }
 
   onGuardar() {

@@ -9,8 +9,8 @@
 <p class="parrafo" *ngIf="this.estadoCiclo == 'Inactivo' || this.estadoCiclo == 'Creado'">
   Esta funcionalidad se encuentra deshabilitada.
 </p>
-<mat-card>
-<mat-card class="card-body-componente" *ngIf="!isLoading && this.estadoCiclo == 'En primer trimestre'">
+</mat-card>
+<mat-card class="card-body-componente" *ngIf="!isLoading && (this.estadoCiclo != 'Inactivo' && this.estadoCiclo != 'Creado')">
   <div class="div-curso-fecha">
     <mat-form-field class="curso">
       <mat-select
