@@ -293,8 +293,8 @@
     <button
       mat-raised-button
       class="button-clonar"
-      (click)="onClonar()"
-      *ngIf="dataSource.data.length == 0 && cursoSelected"
+      (click)="onClonar(yearSelected)"
+      *ngIf="cursoSelected"
     >
       <mat-icon>content_copy</mat-icon>
       Copiar agenda año anterior

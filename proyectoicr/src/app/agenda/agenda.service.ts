@@ -62,10 +62,10 @@ export class AgendaService {
     return this.http.get<{ materias: any[] }>(environment.apiUrl + "/materia");
   }
 
-  public clonarAgenda(idCurso: string) {
+  public clonarAgenda(idCurso: string, yearSelected: any) {
     return this.http.post<{ exito: boolean; message: string }>(
-      environment.apiUrl + "/curso/clonar",
-      { idCurso: idCurso }
+      environment.apiUrl + "/curso/agenda/horariosAnioAnterior",
+      { idCurso: idCurso, yearSelected: yearSelected }
     );
   }
 }

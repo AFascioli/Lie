@@ -163,7 +163,32 @@ export class DefinirAgendaComponent implements OnInit, OnDestroy {
     }
   }
 
-  onClonar() {}
+  onClonar() {
+    this.dialog
+      .open(AgendaPopupComponent, {
+        width: "250px",
+      })
+      .afterClosed()
+      .pipe(takeUntil(this.unsubscribe))
+      .subscribe((confirmacion) => {
+        if (confirmacion) {
+          this.servicioAgenda
+            .clonarAgenda(this.idCursoSeleccionado, this.yearSelected)
+            .pipe(takeUntil(this.unsubscribe))
+            .subscribe((rtdo) => {
+              if (rtdo.exito) {
+                this.openSnackBar(rtdo.message, "snack-bar-exito");
+              }
+              this.servicioAgenda
+                .obtenerAgendaDeCurso(this.idCursoSeleccionado)
+                .pipe(takeUntil(this.unsubscribe))
+                .subscribe((rtdo) => {
+                  this.dataSource.data = rtdo.agenda;
+                });
+            });
+        }
+      });
+  }
 
   obtenerCursos() {
     this.isLoading = true;
@@ -386,6 +411,25 @@ export class DefinirAgendaComponent implements OnInit, OnDestroy {
 })
 export class AgendaPopupComponent {
   constructor(public dialogRef: MatDialogRef<AgendaPopupComponent>) {}
+  onYesClick(): void {
+    this.dialogRef.close(true);
+  }
+  onNoClick(): void {
+    this.dialogRef.close(false);
+  }
+}
+
+@Component({
+  selector: "app-clonar-popup",
+  templateUrl: "./confirmacion-clonar-popup.component.html",
+  styleUrls: ["./definir-agenda.component.css"],
+})
+export class ConfirmacionClonarPopupComponent {
+  constructor(
+    public dialogRef: MatDialogRef<ConfirmacionClonarPopupComponent>,
+    public router: Router
+  ) {}
+
   onYesClick(): void {
     this.dialogRef.close(true);
   }
