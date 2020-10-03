@@ -176,11 +176,6 @@ export class DefinirAgendaComponent implements OnInit, OnDestroy {
             .clonarAgenda(this.idCursoSeleccionado, this.yearSelected)
             .pipe(takeUntil(this.unsubscribe))
             .subscribe((rtdo) => {
-              if (rtdo.exito) {
-                this.openSnackBar(rtdo.message, "snack-bar-exito");
-              } else {
-                this.openSnackBar(rtdo.message, "snack-bar-fracaso");
-              }
               this.servicioAgenda
                 .obtenerAgendaDeCurso(this.idCursoSeleccionado)
                 .pipe(takeUntil(this.unsubscribe))
@@ -188,6 +183,11 @@ export class DefinirAgendaComponent implements OnInit, OnDestroy {
                   this.dataSource.data = rtdo.agenda;
                   this.dataSource._updateChangeSubscription();
                 });
+              if (rtdo.exito) {
+                this.openSnackBar(rtdo.message, "snack-bar-exito");
+              } else {
+                this.openSnackBar(rtdo.message, "snack-bar-fracaso");
+              }
             });
         }
       });

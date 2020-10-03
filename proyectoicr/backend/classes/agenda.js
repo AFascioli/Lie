@@ -15,7 +15,6 @@ exports.clonarAgenda = async function (idCurso, yearSelected) {
   }).exec();
 
   if (cicloLectivoAnterior == null) {
-    console.log("entro");
     return false;
   }
 
@@ -71,7 +70,6 @@ exports.clonarAgenda = async function (idCurso, yearSelected) {
 
   idMateriasXCursoAñoAnterior = await obtenerMateriasCursoAnterior();
   cursoActual.materias = await crearMXCNuevas(idMateriasXCursoAñoAnterior);
-  console.log(cursoActual);
   guardarCursoActual();
 
   return true;
