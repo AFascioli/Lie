@@ -36,7 +36,7 @@ export class RegistrarAsistenciaComponent implements OnInit, OnDestroy {
     private CicloLectivoService: CicloLectivoService,
     public popup: MatDialog,
     public snackBar: MatSnackBar,
-    public servicioCicloLectivo: CicloLectivoService
+
   ) {}
 
   async ngOnInit() {
@@ -84,7 +84,7 @@ export class RegistrarAsistenciaComponent implements OnInit, OnDestroy {
 
   async fechaActualEnPeriodoCursado() {
     return new Promise((resolve, reject) => {
-      this.servicioCicloLectivo.validarEnCursado().subscribe((result) => {
+      this.CicloLectivoService.validarEnCursado().subscribe((result) => {
         resolve(result.permiso);
       });
     });

@@ -13,6 +13,7 @@
           [format]="24"
           placeholder="Ingrese hora"
           min="07:00"
+          [disabled]="this.estadoCiclo != 'Creado'"
           readonly
           required
         />
@@ -37,6 +38,7 @@
           [format]="24"
           placeholder="Ingrese hora"
           min="07:00"
+          [disabled]="this.estadoCiclo != 'Creado'"
           readonly
           required
         />
@@ -61,6 +63,7 @@
           matInput
           placeholder="Ingrese cantidad de faltas"
           type="number"
+          [disabled]="this.estadoCiclo != 'Creado'"
           required
         />
       </mat-form-field>
@@ -80,6 +83,7 @@
           matInput
           placeholder="Ingrese cantidad de materias"
           type="number"
+          [disabled]="this.estadoCiclo != 'Creado'"
           required
         />
       </mat-form-field>

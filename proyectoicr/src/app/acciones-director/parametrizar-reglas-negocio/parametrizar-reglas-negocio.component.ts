@@ -14,12 +14,14 @@ export class ParametrizarReglasNegocioComponent implements OnInit {
   horaRetiroAnticipado: string;
   cantidadFaltasSuspension: number;
   cantidadMateriasInscripcionLibre: number;
+  estadoCiclo: string;
 
   private unsubscribe: Subject<void> = new Subject();
 
   constructor(
     private servicioCicloLectivo: CicloLectivoService,
-    public snackBar: MatSnackBar
+    public snackBar: MatSnackBar,
+
   ) {}
 
   ngOnInit(): void {
@@ -36,6 +38,7 @@ export class ParametrizarReglasNegocioComponent implements OnInit {
         this.cantidadMateriasInscripcionLibre =
           response.cicloLectivo.cantidadMateriasInscripcionLibre;
       });
+      this.obtenerEstadoCicloLectivo();
   }
 
   onGuardar() {
@@ -61,5 +64,13 @@ export class ParametrizarReglasNegocioComponent implements OnInit {
           );
         }
       );
+  }
+
+obtenerEstadoCicloLectivo() {
+  this.servicioCicloLectivo.obtenerEstadoCicloLectivo()
+    .pipe(takeUntil(this.unsubscribe))
+    .subscribe((response) => {
+    this.estadoCiclo = response.estadoCiclo;
+      });
   }
 }
