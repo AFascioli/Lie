@@ -243,3 +243,11 @@ a:hover {
 .iconSinExpansion {
   margin-left: 7px;
 }
+
+.isDisabled {
+  color: currentColor;
+  cursor: not-allowed;
+  opacity: 0.5;
+  text-decoration: none;
+  pointer-events: none;
+}

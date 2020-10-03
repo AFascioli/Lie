@@ -120,3 +120,7 @@ td.mat-cell:last-of-type {
   max-width: 1000px;
   min-width: 500px;
 }
+
+.centrar{
+  text-align: center;
+}

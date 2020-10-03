@@ -1,8 +1,18 @@
 <h1 class="componente-titulo">
   Registrar pago de cuotas ciclo lectivo {{ fechaActual.getFullYear() }}
 </h1>
-
-<mat-card class="card-body-componente">
+<mat-card
+  class="card-body-componente"
+  *ngIf="this.estadoCiclo == 'Inactivo'"
+>
+  <p
+    class="parrafo"
+    *ngIf="this.estadoCiclo == 'Inactivo'"
+  >
+    Esta funcionalidad se encuentra deshabilitada.
+  </p>
+</mat-card>
+<mat-card class="card-body-componente" *ngIf="this.estadoCiclo != 'Inactivo'">
   <div class="div-mes-curso-fecha">
     <div>
       <mat-form-field class="mes">

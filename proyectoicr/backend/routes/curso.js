@@ -455,6 +455,54 @@ router.get("/docente", checkAuthMiddleware, (req, res) => {
     });
 });
 
+//Obtiene todos los cursos asignados a un docente en un ciclo lectivo determinado
+//@params: id de la docente, año del ciclo lectivo
+router.get("/docentePorCiclo", checkAuthMiddleware, async (req, res) => {
+  let idCicloLectivo = await ClaseEstado.getIdCicloLectivo(req.query.anio);
+  Curso.aggregate([
+    {
+      $match: {
+        cicloLectivo: mongoose.Types.ObjectId(idCicloLectivo),
+      },
+    },
+    {
+      $lookup: {
+        from: "materiasXCurso",
+        localField: "materias",
+        foreignField: "_id",
+        as: "mxc",
+      },
+    },
+    {
+      $match: {
+        "mxc.idDocente": mongoose.Types.ObjectId(req.query.idDocente),
+      },
+    },
+  ])
+    .then((cursos) => {
+      var respuesta = [];
+      cursos.forEach((curso) => {
+        var cursoConId = {
+          id: curso._id,
+          nombre: curso.nombre,
+        };
+        respuesta.push(cursoConId);
+      });
+
+      res.status(200).json({
+        cursos: respuesta,
+        message: "Se devolvio los cursos que dicta la docente correctamente",
+        exito: true,
+      });
+    })
+    .catch((error) => {
+      res.status(500).json({
+        message: "Ocurrió un error al obtener los cursos del docente",
+        error: error.message,
+      });
+    });
+});
+
 //Obtiene los documentos con su estado de entrega (true en el caso de que fue entregado) de los estudiantes de un curso dado
 //@params: id del curso
 router.get("/documentos", checkAuthMiddleware, async (req, res) => {
