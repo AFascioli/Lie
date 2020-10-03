@@ -4,10 +4,9 @@ const MateriaXCurso = require("../models/materiasXCurso");
 const ClaseEstado = require("../classes/estado");
 
 exports.clonarAgenda = async function (idCurso, yearSelected) {
+  let idMateriasXCursoAñoAnterior = [];
   let idMateriasXCurso = [];
-  let nombreCurso;
 
-  //obtener el id del estado creada para mat.XCurso
   let idCreada = await ClaseEstado.obtenerIdEstado("MateriasXCurso", "Creada");
 
   //obtener el ciclo lectivo para el año anterior
@@ -15,22 +14,65 @@ exports.clonarAgenda = async function (idCurso, yearSelected) {
     año: yearSelected - 1,
   }).exec();
 
+  if (cicloLectivoAnterior == null) {
+    console.log("entro");
+    return false;
+  }
+
   //obtener el curso actual xq necesitamos el nombre
   let cursoActual = await Curso.findById(idCurso).exec();
+  cursoActual.materias = [];
 
-  //obtener las materias de curso anterior
-  Curso.findOne({
-    cicloLectivo: cicloLectivoAnterior,
-    nombre: cursoActual.nombre,
-  }).then(async (curso) => {
-    idMateriasXCurso = await curso.materias;
-    //pegar materias al curso pasado por parametro
-    cursoActual.materias = idMateriasXCurso;
-    cursoActual.save().exec();
-  });
+  //obtenemos las materias del año anterior
+  let obtenerMateriasCursoAnterior = () => {
+    return new Promise(async (resolve, reject) => {
+      Curso.findOne({
+        cicloLectivo: cicloLectivoAnterior,
+        nombre: cursoActual.nombre,
+      })
+        .then(async (curso) => {
+          resolve(curso.materias);
+        })
+        .catch((error) => resolve(error));
+    });
+  };
 
-  //setear ese estado en todas las materias
-  for (let idMXC in idMateriasXCurso) {
-    MateriaXCurso.findByIdAndUpdate(idMXC, { estado: idCreada }).exec();
-  }
+  //Creamos las nuevas CXM
+  let crearMXCNuevas = (idMateriasXCursoAñoAnterior) => {
+    return new Promise(async (resolve, reject) => {
+      for (let idMXC in idMateriasXCursoAñoAnterior) {
+        MXCVieja = await MateriaXCurso.findById(
+          idMateriasXCursoAñoAnterior[idMXC]
+        ).exec();
+        let MXCNueva = new MateriaXCurso({
+          horarios: MXCVieja.horarios,
+          idMateria: MXCVieja.idMateria,
+          idDocente: MXCVieja.idDocente,
+          estado: idCreada,
+        });
+        MXCNueva.save().then((MXC) => idMateriasXCurso.push(MXC._id));
+      }
+      resolve(idMateriasXCurso);
+    });
+  };
+
+  let guardarCursoActual = () => {
+    return new Promise(async (resolve, reject) => {
+      cursoActual
+        .save()
+        .then((curso) => {
+          resolve(curso);
+        })
+        .catch((error) => {
+          reject(error);
+        });
+    });
+  };
+
+  idMateriasXCursoAñoAnterior = await obtenerMateriasCursoAnterior();
+  cursoActual.materias = await crearMXCNuevas(idMateriasXCursoAñoAnterior);
+  console.log(cursoActual);
+  guardarCursoActual();
+
+  return true;
 };

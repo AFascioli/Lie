@@ -1136,7 +1136,6 @@ router.post(
 //Obtiene la agenda de un curso (materias, horario y día dictadas)
 //@params: idCurso
 router.get("/agenda", checkAuthMiddleware, (req, res) => {
-  console.log(req.query.idCurso);
   try {
     Curso.findById(req.query.idCurso).then((curso) => {
       if (curso.materias.length != 0) {
@@ -1200,7 +1199,6 @@ router.get("/agenda", checkAuthMiddleware, (req, res) => {
             },
           },
         ]).then((agendaCompleta) => {
-          console.log(agendaCompleta);
           if (agendaCompleta[0].horarios[0] == null) {
             return res.json({
               exito: false,
@@ -1231,7 +1229,6 @@ router.get("/agenda", checkAuthMiddleware, (req, res) => {
           }
         });
       } else {
-        console.log("entro aca");
         res.status(200).json({
           exito: true,
           message: "Se ha obtenido la agenda correctamente",
@@ -1797,19 +1794,32 @@ router.post(
   }
 );
 
-router.post("/agenda/horariosAnioAnterior", checkAuthMiddleware, (req, res) => {
-  try {
-    ClaseAgenda.clonarAgenda(req.body.idCurso, req.body.yearSelected);
-    res.status(200).json({
-      exito: true,
-      message: "Se clonó la agenda correctamente",
-    });
-  } catch (error) {
-    res.status(500).json({
-      error: error.message,
-      message: "Ocurrió un error al querer clonar la agenda",
-    });
+router.post(
+  "/agenda/horariosAnioAnterior",
+  checkAuthMiddleware,
+  async (req, res) => {
+    try {
+      let rtdo = await ClaseAgenda.clonarAgenda(
+        req.body.idCurso,
+        req.body.yearSelected
+      );
+      if (rtdo) {
+        return res.status(200).json({
+          exito: true,
+          message: "Se clonó la agenda correctamente",
+        });
+      }
+      res.status(200).json({
+        exito: false,
+        message: "No existe una agenda definida para el año anterior",
+      });
+    } catch (error) {
+      res.status(500).json({
+        error: error.message,
+        message: "Ocurrió un error al querer clonar la agenda",
+      });
+    }
   }
-});
+);
 
 module.exports = router;

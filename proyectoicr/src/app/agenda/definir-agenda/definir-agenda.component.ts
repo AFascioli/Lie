@@ -165,7 +165,7 @@ export class DefinirAgendaComponent implements OnInit, OnDestroy {
 
   onClonar() {
     this.dialog
-      .open(AgendaPopupComponent, {
+      .open(ConfirmacionClonarPopupComponent, {
         width: "250px",
       })
       .afterClosed()
@@ -178,12 +178,15 @@ export class DefinirAgendaComponent implements OnInit, OnDestroy {
             .subscribe((rtdo) => {
               if (rtdo.exito) {
                 this.openSnackBar(rtdo.message, "snack-bar-exito");
+              } else {
+                this.openSnackBar(rtdo.message, "snack-bar-fracaso");
               }
               this.servicioAgenda
                 .obtenerAgendaDeCurso(this.idCursoSeleccionado)
                 .pipe(takeUntil(this.unsubscribe))
                 .subscribe((rtdo) => {
                   this.dataSource.data = rtdo.agenda;
+                  this.dataSource._updateChangeSubscription();
                 });
             });
         }
