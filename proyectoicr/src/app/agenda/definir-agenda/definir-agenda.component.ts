@@ -182,12 +182,12 @@ export class DefinirAgendaComponent implements OnInit, OnDestroy {
                 .subscribe((rtdo) => {
                   this.dataSource.data = rtdo.agenda;
                   this.dataSource._updateChangeSubscription();
+                  if (rtdo.exito) {
+                    this.openSnackBar(rtdo.message, "snack-bar-exito");
+                  } else {
+                    this.openSnackBar(rtdo.message, "snack-bar-fracaso");
+                  }
                 });
-              if (rtdo.exito) {
-                this.openSnackBar(rtdo.message, "snack-bar-exito");
-              } else {
-                this.openSnackBar(rtdo.message, "snack-bar-fracaso");
-              }
             });
         }
       });
