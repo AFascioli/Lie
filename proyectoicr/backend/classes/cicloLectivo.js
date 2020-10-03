@@ -24,19 +24,15 @@ exports.cursosTienenAgenda = () => {
           "datosCicloLectivo.año": añoActual,
         },
       },
-    ])
-      .then((cursosActuales) => {
-        let cursosSinAgenda = [];
-        cursosActuales.map((curso) => {
-          if (curso.materias.length == 0) {
-            cursosSinAgenda.push({ _id: curso._id, nombre: curso.nombre });
-          }
-        });
-        resolve(cursosSinAgenda);
-      })
-      .catch((error) => {
-        reject(null);
+    ]).then((cursosActuales) => {
+      let cursosSinAgenda = [];
+      cursosActuales.map((curso) => {
+        if (curso.materias.length == 0) {
+          cursosSinAgenda.push({ _id: curso._id, nombre: curso.nombre });
+        }
       });
+      resolve(cursosSinAgenda);
+    });
   });
 };
 
@@ -80,16 +76,12 @@ exports.pasarInscripcionesAActivas = () => {
       },
     ]).then(async (inscripcionesPendientes) => {
       for (const inscripcionJson of inscripcionesPendientes) {
-
         let inscripcion = await Inscripcion.findById(inscripcionJson._id);
 
         let materiasDelCurso = await ClaseInscripcion.obtenerMateriasDeCurso(
           inscripcion.idCurso
         );
-        let idsCXM = await ClaseCXM.crearCXM(
-          materiasDelCurso,
-          idCursandoCXM
-        );
+        let idsCXM = await ClaseCXM.crearCXM(materiasDelCurso, idCursandoCXM);
 
         // Obtenemos la inscripcion del año anterior (filtrada por estudiante, estado que no sea inactiva y ciclo)
         let inscripcionAnterior = await Inscripcion.aggregate([
@@ -116,7 +108,10 @@ exports.pasarInscripcionesAActivas = () => {
           },
         ]);
         inscripcion.calificacionesXMateria = idsCXM;
-        inscripcion.materiasPendientes = inscripcionAnterior.length!=0 ? inscripcionAnterior.materiasPendientes : [];
+        inscripcion.materiasPendientes =
+          inscripcionAnterior.length != 0
+            ? inscripcionAnterior.materiasPendientes
+            : [];
         inscripcion.estado = idActiva;
         inscripcion.save();
         resolve();
@@ -127,40 +122,32 @@ exports.pasarInscripcionesAActivas = () => {
 
 exports.crearCursosParaCiclo = () => {
   let añoActual = new Date().getFullYear();
-  console.log("Creando cursos para el ciclo");
-  CicloLectivo.findOne({ año: añoActual })
-    .then((cicloLectivo) => {
-      let nombresCursos = [
-        "1A",
-        "2A",
-        "3A",
-        "4A",
-        "5A",
-        "6A",
-        "1B",
-        "2B",
-        "3B",
-        "4B",
-        "5B",
-        "6B",
-      ];
+  CicloLectivo.findOne({ año: añoActual }).then((cicloLectivo) => {
+    let nombresCursos = [
+      "1A",
+      "2A",
+      "3A",
+      "4A",
+      "5A",
+      "6A",
+      "1B",
+      "2B",
+      "3B",
+      "4B",
+      "5B",
+      "6B",
+    ];
 
-      nombresCursos.forEach((nombreCurso) => {
-        let nuevoCurso = new Curso({
-          nombre: nombreCurso,
-          materias: [],
-          capacidad: 30,
-          cicloLectivo: cicloLectivo._id,
-        });
-        nuevoCurso.save();
+    nombresCursos.forEach((nombreCurso) => {
+      let nuevoCurso = new Curso({
+        nombre: nombreCurso,
+        materias: [],
+        capacidad: 30,
+        cicloLectivo: cicloLectivo._id,
       });
-    })
-    .catch((error) => {
-      console.log(
-        "Ocurrio un error creando los cursos para el nuevo ciclo lectivo " +
-          error.message
-      );
+      nuevoCurso.save();
     });
+  });
 };
 
 exports.obtenerCantidadFaltasSuspension = () => {

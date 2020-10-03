@@ -48,13 +48,13 @@ function obtenerMateriasDeCurso(idCurso) {
       },
       {
         $project: {
-          "materiasDelCurso.idMateria":1
+          "materiasDelCurso.idMateria": 1,
         },
       },
     ])
       .then((materiasDelCurso) => {
-        let idsMateriasDelCurso=[];
-        materiasDelCurso.forEach(objMateria => {
+        let idsMateriasDelCurso = [];
+        materiasDelCurso.forEach((objMateria) => {
           idsMateriasDelCurso.push(objMateria.materiasDelCurso[0].idMateria);
         });
         resolve(idsMateriasDelCurso);
@@ -137,8 +137,8 @@ exports.inscribirEstudiante = async function (
         .then(async () => {
           resolve();
         })
-        .catch(() => {
-          reject();
+        .catch((error) => {
+          reject(error);
         });
     });
   };

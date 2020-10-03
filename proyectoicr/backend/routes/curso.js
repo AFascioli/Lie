@@ -14,6 +14,7 @@ const ClaseInscripcion = require("../classes/inscripcion");
 const ClaseEstado = require("../classes/estado");
 const Suscripcion = require("../classes/suscripcion");
 const ClaseAsistencia = require("../classes/asistencia");
+const ClaseAgenda = require("../classes/agenda");
 
 // Obtiene todos los cursos que están almacenados en la base de datos
 router.get("/", checkAuthMiddleware, (req, res) => {
@@ -1788,6 +1789,34 @@ router.post(
       res.status(500).json({
         error: error.message,
         message: "Ocurrió un error al querer escribir a los estudiantes",
+      });
+    }
+  }
+);
+
+router.post(
+  "/agenda/horariosAnioAnterior",
+  checkAuthMiddleware,
+  async (req, res) => {
+    try {
+      let rtdo = await ClaseAgenda.clonarAgenda(
+        req.body.idCurso,
+        req.body.yearSelected
+      );
+      if (rtdo) {
+        return res.status(200).json({
+          exito: true,
+          message: "Se clonó la agenda correctamente",
+        });
+      }
+      res.status(200).json({
+        exito: false,
+        message: "No existe una agenda definida para el año anterior",
+      });
+    } catch (error) {
+      res.status(500).json({
+        error: error.message,
+        message: "Ocurrió un error al querer clonar la agenda",
       });
     }
   }

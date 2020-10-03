@@ -332,6 +332,7 @@ router.get("/periodoCursado", checkAuthMiddleware, (req, res) => {
   }
 });
 
+/*
 router.get("/", checkAuthMiddleware, (req, res) => {
   let fechaActual = new Date();
   CicloLectivo.findOne({ año: fechaActual.getFullYear() })
@@ -355,7 +356,7 @@ router.get("/", checkAuthMiddleware, (req, res) => {
         message: "Mensaje de error especifico",
       });
     });
-});
+});*/
 
 //#resolve Estos metodos se deberian llamar una vez que se definan las fechas del ciclo lectivo
 //en ese endpoint. (fijarse si hace falta mover estos metodos a otro lado, ej, clase CicloLectivo)
