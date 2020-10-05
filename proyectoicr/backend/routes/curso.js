@@ -1248,7 +1248,7 @@ router.get("/agenda", checkAuthMiddleware, (req, res) => {
           },
         ]).then((agendaCompleta) => {
           if (agendaCompleta[0].horarios[0] == null) {
-            return res.json({
+            return res.status(200).json({
               exito: false,
               message: "No existen horarios registrados para este curso",
               agenda: [],
@@ -1302,7 +1302,9 @@ router.post("/eliminarHorario", checkAuthMiddleware, (req, res) => {
         Curso.findByIdAndUpdate(req.body.idCurso, {
           $pull: { materias: { $in: req.body.agenda.idMXC } },
         }).then(() => {
-          res.json({ exito: true, message: "Horario borrado exitosamente" });
+          res
+            .status(200)
+            .json({ exito: true, message: "Horario borrado exitosamente" });
         });
       });
     })
@@ -1409,10 +1411,14 @@ router.post("/agenda", checkAuthMiddleware, async (req, res) => {
       Curso.findByIdAndUpdate(req.body.idCurso, {
         $push: { materias: { $each: vectorIdsMXC } },
       }).then(() => {
-        res.json({ exito: true, message: "Materias agregadas correctamente" });
+        res
+          .status(200)
+          .json({ exito: true, message: "Materias agregadas correctamente" });
       });
     } else {
-      res.json({ exito: true, message: "Horarios modificados correctamente" });
+      res
+        .status(200)
+        .json({ exito: true, message: "Horarios modificados correctamente" });
     }
   } catch (error) {
     res.status(500).json({

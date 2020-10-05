@@ -73,13 +73,13 @@ router.get("/id", checkAuthMiddleware, (req, res) => {
   Estudiante.findById(req.query.idEstudiante)
     .then((estudiante) => {
       if (estudiante) {
-        res.json({
+        return res.status(200).json({
           estudiante: estudiante,
           exito: true,
           message: "Estudiante encontrado exitosamente",
         });
       } else {
-        res.json({
+        res.status(200).json({
           estudiante: null,
           exito: false,
           message: "Estudiante no registrado",
@@ -612,7 +612,7 @@ router.get("/agenda", checkAuthMiddleware, async (req, res) => {
   ])
     .then((agendaCompleta) => {
       if (agendaCompleta[0].horarios[0] == null) {
-        return res.json({
+        return res.status(200).json({
           exito: false,
           message: "No existen horarios registrados para este curso",
           agenda: [],
@@ -631,7 +631,7 @@ router.get("/agenda", checkAuthMiddleware, async (req, res) => {
           };
           agenda.push(valor);
         }
-        return res.json({
+        return res.status(200).json({
           exito: true,
           message: "Se ha obtenido la agenda correctamente",
           agenda: agenda,

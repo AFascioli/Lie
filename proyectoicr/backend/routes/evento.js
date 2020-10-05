@@ -524,9 +524,9 @@ router.get("/id", checkAuthMiddleware, (req, res) => {
   Evento.findById(req.query.idEvento)
     .then((evento) => {
       if (evento) {
-        res.json({ evento: evento, exito: true, message: "exito" });
+        res.status(200).json({ evento: evento, exito: true, message: "exito" });
       } else {
-        res.json({ evento: null, exito: true, message: "exito" });
+        res.status(200).json({ evento: null, exito: true, message: "exito" });
       }
     })
     .catch((error) => {
