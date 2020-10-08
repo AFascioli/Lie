@@ -1,0 +1,24 @@
+<h1 class="componente-titulo">Reportes</h1>
+
+<div class="grid-container">
+  <mat-card class="opcion" (click)="onListadoDocsAdeudados()"
+    ><mat-icon [inline]="true">library_books</mat-icon><br /><b
+      >Listado de documentos adeudados</b
+    ></mat-card
+  >
+  <mat-card class="opcion" (click)="onListadoDocsAdeudados()"
+    ><mat-icon [inline]="true">attach_money</mat-icon><br /><b
+      >Listado de estudiantes morosos</b
+    ></mat-card
+  >
+  <mat-card class="opcion" (click)="onListadoDocsAdeudados()"
+    ><mat-icon [inline]="true">receipt</mat-icon><br /><b
+      >Resumen academico</b
+    ></mat-card
+  >
+</div>
+<div class="div-button">
+  <button mat-raised-button [routerLink]="['/home']" class="button-warn">
+    Volver
+  </button>
+</div>

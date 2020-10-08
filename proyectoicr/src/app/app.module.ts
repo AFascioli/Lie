@@ -144,6 +144,8 @@ import {
   PopUpCerrarEtapa,
 } from "./acciones-director/ciclo-lectivo/ciclo-lectivo/ciclo-lectivo.component";
 import { EstadoCursosComponent } from "./acciones-director/estado-cursos/estado-cursos.component";
+import { DocAdeudadosComponent } from './reportes/doc-adeudados/doc-adeudados.component';
+import { ReportesComponent } from './reportes/reportes.component';
 
 @NgModule({
   declarations: [
@@ -215,6 +217,8 @@ import { EstadoCursosComponent } from "./acciones-director/estado-cursos/estado-
     ParametrizarReglasNegocioComponent,
     CicloLectivoComponent,
     EstadoCursosComponent,
+    DocAdeudadosComponent,
+    ReportesComponent,
   ],
   //entryComponents declara los componentes que se generan dinamicamente dentro de otros.
   entryComponents: [

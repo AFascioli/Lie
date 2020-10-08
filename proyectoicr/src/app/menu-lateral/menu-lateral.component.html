@@ -270,7 +270,15 @@
               <mat-icon class="iconSinExpansion">person_add</mat-icon>
               <p class="titulo-expansion">Registrar personal</p>
             </a>
-
+            <a
+              class="sinExpansion"
+              mat-list-item
+              routerLink="/reportes"
+              (click)="cerrarMenuLateral(sideNav)"
+            >
+              <mat-icon class="iconSinExpansion">toc</mat-icon>
+              <p class="titulo-expansion">Reportes</p>
+            </a>
             <a
               mat-list-item
               class="sinExpansion"
