@@ -273,3 +273,23 @@ exports.inscribirEstudianteProximoAnio = async function (
     return false;
   }
 };
+
+exports.actualizarEstadoInscripcion = (inscripcion)=>{
+  return new Promise(async (resolve, reject) =>{
+    let idEstadoPromovido= await ClaseEstado.obtenerIdEstado("Inscripcion", "Promovido");
+    let idEstadoExPendientes= await ClaseEstado.obtenerIdEstado("Inscripcion", "Examenes Pendientes");
+    let promovido=true;
+    for(const cxm of inscripcion.datosCXM){
+      if(cxm.promedio<6){
+        promovido=false;
+        break;
+      }
+    }
+    if(promovido){
+      await Inscripcion.findByIdAndUpdate(inscripcion._id, {estado: idEstadoPromovido}).exec();
+    }else{
+      await Inscripcion.findByIdAndUpdate(inscripcion._id, {estado: idEstadoExPendientes}).exec();
+    }
+    resolve();
+  });
+}

@@ -185,3 +185,138 @@ exports.obtenerIdCicloLectivo = (proximo) => {
       .catch((err) => reject(err));
   });
 };
+
+exports.obtenerIdsCursos = async () => {
+  let idCicloActual = await this.obtenerIdCicloLectivo(false);
+  let idsCursosActuales = [];
+  let cursos = await Curso.find({ cicloLectivo: idCicloActual });
+  cursos.forEach((curso) => {
+    idsCursosActuales.push(curso._id);
+  });
+  return idsCursosActuales;
+};
+//Retorna un array con las materias y su curso correspondiente que aun no estan cerradas. Si estan todas cerradas,
+//se retorna un array vacio.
+exports.materiasSinCerrar = () => {
+  return new Promise(async (resolve, reject) => {
+    let idCicloActual = await this.obtenerIdCicloLectivo(false);
+    let idEstadoActiva = await ClaseEstado.obtenerIdEstado(
+      "Inscripcion",
+      "Activa"
+    );
+    let idEstadoSuspendido = await ClaseEstado.obtenerIdEstado(
+      "Inscripcion",
+      "Suspendido"
+    );
+    let idsCursosActuales = await obtenerIdsCursos();
+    let inscripciones = [];
+    let materiasNoCerrada = [];
+
+    for (const idCurso of idsCursosActuales) {
+      let inscripcion = await Inscripcion.findOne({
+        idCurso: idCurso,
+        cicloLectivo: idCicloActual,
+        $in: [
+          mongoose.Types.ObjectId(idEstadoActiva),
+          mongoose.Types.ObjectId(idEstadoSuspendido),
+        ],
+      });
+      inscripciones.push(inscripcion._id);
+    }
+
+    let inscripsConCXMCursando = await Inscripcion.aggregate([
+      {
+        $match: {
+          _id: { $in: inscripciones },
+        },
+      },
+      {
+        $unwind: {
+          path: "$calificacionesXMateria",
+        },
+      },
+      {
+        $lookup: {
+          from: "calificacionesXMateria",
+          localField: "calificacionesXMateria",
+          foreignField: "_id",
+          as: "datosCXM",
+        },
+      },
+      {
+        $lookup: {
+          from: "estado",
+          localField: "datosCXM.estado",
+          foreignField: "_id",
+          as: "datosEstadoCXM",
+        },
+      },
+      {
+        $match: {
+          "datosEstadoCXM.nombre": "Cursando",
+        },
+      },
+      {
+        $lookup: {
+          from: "curso",
+          localField: "idCurso",
+          foreignField: "_id",
+          as: "datosCurso",
+        },
+      },
+      {
+        $lookup: {
+          from: "materia",
+          localField: "datosCXM.idMateria",
+          foreignField: "_id",
+          as: "datosMateria",
+        },
+      },
+    ]);
+
+    if (inscripsConCXMCursando.length == 0) {
+      resolve([]);
+    } else {
+      for (const inscripcion of inscripsConCXMCursando) {
+        materiasNoCerrada.push({
+          curso: inscripcion.datosCurso[0].nombre,
+          materia: inscripcion.datosMateria[0].nombre,
+        });
+      }
+      resolve(materiasNoCerrada);
+    }
+  });
+};
+
+//Actualiza el estado de las inscripciones del ciclo actual segun sean promovidas o con examenes pendientes
+exports.actualizarEstadoInscripciones = () => {
+  return new Promise(async (resolve, reject) => {
+    let idCicloActual = await this.obtenerIdCicloLectivo(false);
+    let todasInscripciones = await Inscripcion.aggregate([
+      {
+        $match: {
+          cicloLectivo: mongoose.Types.ObjectId(idCicloActual),
+          estado: {
+            $in: [
+              mongoose.Types.ObjectId(idEstadoActiva),
+              mongoose.Types.ObjectId(idEstadoSuspendido),
+            ],
+          },
+        },
+      },
+      {
+        $lookup: {
+          from: "calificacionesXMateria",
+          localField: "calificacionesXMateria",
+          foreignField: "_id",
+          as: "datosCXM",
+        },
+      },
+    ]);
+
+    for (const inscripcion of todasInscripciones) {
+     await ClaseInscripcion.actualizarEstadoInscripcion(inscripcion);
+    }
+    resolve();
+  });
+};
