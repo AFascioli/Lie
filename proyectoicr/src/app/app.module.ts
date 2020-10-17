@@ -23,7 +23,6 @@ import {
   MatInputModule,
   MatPaginatorIntl,
 } from "@angular/material";
-import { MatTableExporterModule } from "mat-table-exporter";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { MatPaginatorModule } from "@angular/material/paginator";
@@ -144,8 +143,8 @@ import {
   PopUpCerrarEtapa,
 } from "./acciones-director/ciclo-lectivo/ciclo-lectivo/ciclo-lectivo.component";
 import { EstadoCursosComponent } from "./acciones-director/estado-cursos/estado-cursos.component";
-import { DocAdeudadosComponent } from './reportes/doc-adeudados/doc-adeudados.component';
-import { ReportesComponent } from './reportes/reportes.component';
+import { DocAdeudadosComponent } from "./reportes/doc-adeudados/doc-adeudados.component";
+import { ReportesComponent } from "./reportes/reportes.component";
 
 @NgModule({
   declarations: [
@@ -279,7 +278,6 @@ import { ReportesComponent } from './reportes/reportes.component';
     NgxMaterialTimepickerModule,
     ImageUploadModule,
     MatTooltipModule,
-    MatTableExporterModule,
     MatCarouselModule.forRoot(),
     ServiceWorkerModule.register("ngsw-worker.js", {
       enabled: environment.production,
