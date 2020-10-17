@@ -137,7 +137,7 @@ import { ModificarAdultoResponsableComponent } from './adulto-responsable/modifi
 import { BuscarAdultoResponsableComponent } from "./adulto-responsable/buscar-adulto-responsable/buscar-adulto-responsable.component";
 import { AccionesDirectorComponent } from './acciones-director/acciones-director.component';
 import { ParametrizarReglasNegocioComponent } from './acciones-director/parametrizar-reglas-negocio/parametrizar-reglas-negocio.component';
-import { CicloLectivoComponent, PopUpCerrarEtapa } from './acciones-director/ciclo-lectivo/ciclo-lectivo/ciclo-lectivo.component';
+import { CicloLectivoComponent, PopUpCerrarEtapa, PopUpMateriasSinCerrar } from './acciones-director/ciclo-lectivo/ciclo-lectivo/ciclo-lectivo.component';
 import { EstadoCursosComponent } from './acciones-director/estado-cursos/estado-cursos.component';
 
 
@@ -209,7 +209,8 @@ import { EstadoCursosComponent } from './acciones-director/estado-cursos/estado-
     AccionesDirectorComponent,
     ParametrizarReglasNegocioComponent,
     CicloLectivoComponent,
-    EstadoCursosComponent
+    EstadoCursosComponent,
+    PopUpMateriasSinCerrar
   ],
   //entryComponents declara los componentes que se generan dinamicamente dentro de otros.
   entryComponents: [
@@ -232,7 +233,8 @@ import { EstadoCursosComponent } from './acciones-director/estado-cursos/estado-
     ReincorporarPopupComponent,
     ReadMoreComponent,
     ErrorComponent,
-    PopUpCerrarEtapa
+    PopUpCerrarEtapa,
+    PopUpMateriasSinCerrar
   ],
   imports: [
     MatChipsModule,

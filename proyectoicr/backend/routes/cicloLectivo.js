@@ -4,6 +4,7 @@ const checkAuthMiddleware = require("../middleware/check-auth");
 const CicloLectivo = require("../models/cicloLectivo");
 const ClaseEstado = require("../classes/estado");
 const ClaseCicloLectivo = require("../classes/cicloLectivo");
+const ClaseInscripcion = require("../classes/inscripcion");
 
 router.get("/parametros", checkAuthMiddleware, (req, res) => {
   let fechaActual = new Date();
@@ -348,25 +349,62 @@ router.get("/", checkAuthMiddleware, (req, res) => {
     });
 });
 
-//Endpoint que usa el director para cerrar el cursado del ciclo actual. Se cambia estado de las inscripciones.
-router.post("/cierreCursado", checkAuthMiddleware, async (req, res) => {
-  let materiasSinCerrar = await ClaseCicloLectivo.materiasSinCerrar();
+//Endpoint que usa el director para cerrar un trimestre. Primero se fija si hay algun curso que no tenga cerrada
+//alguna materia. Si esta todo legal realiza la logica correspondiente.
+router.post("/cierreTrimestre", checkAuthMiddleware, async (req, res) => {
+  let materiasSinCerrar = await ClaseCicloLectivo.materiasSinCerrar(req.query.trimestre);
+  let trimestre=parseInt(req.body.trimestre, 10);
   if (materiasSinCerrar.length != 0) {
     res
       .status(200)
       .json({
         exito: false,
-        message: "Las siguientes materias aún no estan cerradas: ",
+        message: "No se pudo cerrar el trimestre porque las siguientes materias aún no estan cerradas: ",
         materiasSinCerrar: materiasSinCerrar,
       });
   }else{
-    await ClaseCicloLectivo.actualizarEstadoInscripciones();
+    let mensajeResponse="Trimestre cerrado correctamente";
+    if(trimestre ==3){
+      await ClaseCicloLectivo.actualizarEstadoInscripciones();
+      mensajeResponse="Cierre de cursado realizado correctamente";
+    }else{
+      const idCicloActual= await ClaseCicloLectivo.obtenerIdCicloLectivo(false);
+      let idEstadoCiclo;
+      if(trimestre==1){
+        idEstadoCiclo= await ClaseEstado.obtenerIdEstado("CicloLectivo", "En segundo trimestre");
+      }else{
+        idEstadoCiclo= await ClaseEstado.obtenerIdEstado("CicloLectivo", "En tercer trimestre");
+      }
+      await CicloLectivo.findByIdAndUpdate(idCicloActual,{estado: idEstadoCiclo});
+    }
     res
       .status(200)
       .json({
         exito: true,
-        message: "Cierre de cursado realizado correctamente",
+        message: mensajeResponse,
       });
   }
 });
+
+//Cierra la etapa de examenes. Se realizan 2 operaciones: Cambiar inscripciones con examenes pendientes a
+// su estado correspondiente (tambien se cambia el estado de las CXM pendientes), Cambia estado ciclo actual
+router.get("/cierreExamenes", checkAuthMiddleware, async (req, res)=>{
+  try {
+    let idCicloActual = await ClaseCicloLectivo.obtenerIdCicloLectivo(false);  
+    const idEstadoInactivo = await ClaseEstado.obtenerIdEstado("CicloLectivo", "Inactivo");
+    await ClaseInscripcion.cambiarEstadoExamPendientes(idCicloActual);
+    await CicloLectivo.findByIdAndUpdate(idCicloActual, {estado: idEstadoInactivo});
+    
+    res.status(200).json({
+      exito: true,
+      message: "Etapa de exámenes cerrado exitosamente.",
+    });
+  } catch (error) {
+    res.status(500).json({
+      exito: false,
+      message: "Ocurrió un error al intertar cerrar la etapa de exámenes.",
+    });
+  }
+});
+
 module.exports = router;

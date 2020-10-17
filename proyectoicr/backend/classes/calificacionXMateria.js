@@ -165,14 +165,14 @@ exports.obtenerEstadoYPromedioCXM = async (
     "CalificacionesXMateria",
     "Aprobada"
   );
-  const idEstadoDesaprobada = await ClaseEstado.obtenerIdEstado(
+  const idEstadoPendienteExam = await ClaseEstado.obtenerIdEstado(
     "CalificacionesXMateria",
-    "Desaprobada"
+    "Pendiente examen"
   );
 
   if (promedioTrimestre3 < 6 || promedioGeneral < 6) {
     await CalificacionesXMateria.findByIdAndUpdate(idCXM, {
-      estado: idEstadoDesaprobada,
+      estado: idEstadoPendienteExam,
       promedio: promedioGeneral,
     });
   } else {
@@ -229,7 +229,7 @@ exports.cerrarMateriaTercerTrimestre = (idCurso, idMateria) => {
       "Activa"
     );
     const idCicloActual = await ClaseCicloLectivo.obtenerIdCicloLectivo(false);
-    
+
     const inscripcionesFiltradas = await Inscripcion.aggregate([
       {
         $match: {

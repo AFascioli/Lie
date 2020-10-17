@@ -196,10 +196,11 @@ exports.obtenerIdsCursos = async () => {
   return idsCursosActuales;
 };
 //Retorna un array con las materias y su curso correspondiente que aun no estan cerradas. Si estan todas cerradas,
-//se retorna un array vacio.
-exports.materiasSinCerrar = () => {
+//se retorna un array vacio. Discrimina segun trimestre.
+exports.materiasSinCerrar = (trimestre) => {
   return new Promise(async (resolve, reject) => {
     let idCicloActual = await this.obtenerIdCicloLectivo(false);
+    let idsCursosActuales = await obtenerIdsCursos();
     let idEstadoActiva = await ClaseEstado.obtenerIdEstado(
       "Inscripcion",
       "Activa"
@@ -208,9 +209,7 @@ exports.materiasSinCerrar = () => {
       "Inscripcion",
       "Suspendido"
     );
-    let idsCursosActuales = await obtenerIdsCursos();
     let inscripciones = [];
-    let materiasNoCerrada = [];
 
     for (const idCurso of idsCursosActuales) {
       let inscripcion = await Inscripcion.findOne({
@@ -223,61 +222,119 @@ exports.materiasSinCerrar = () => {
       });
       inscripciones.push(inscripcion._id);
     }
+    let materiasNoCerrada = [];
+    let inscripcionesFiltradas=[];
+    if (trimestre == 3) {
+      inscripcionesFiltradas = await Inscripcion.aggregate([
+        {
+          $match: {
+            _id: { $in: inscripciones },
+          },
+        },
+        {
+          $unwind: {
+            path: "$calificacionesXMateria",
+          },
+        },
+        {
+          $lookup: {
+            from: "calificacionesXMateria",
+            localField: "calificacionesXMateria",
+            foreignField: "_id",
+            as: "datosCXM",
+          },
+        },
+        {
+          $lookup: {
+            from: "estado",
+            localField: "datosCXM.estado",
+            foreignField: "_id",
+            as: "datosEstadoCXM",
+          },
+        },
+        {
+          $match: {
+            "datosEstadoCXM.nombre": "Cursando",
+          },
+        },
+        {
+          $lookup: {
+            from: "curso",
+            localField: "idCurso",
+            foreignField: "_id",
+            as: "datosCurso",
+          },
+        },
+        {
+          $lookup: {
+            from: "materia",
+            localField: "datosCXM.idMateria",
+            foreignField: "_id",
+            as: "datosMateria",
+          },
+        },
+      ]);
+    } else {
+      let idEstadoEnTrimestre;
+      if(trimestre==1){
+        idEstadoEnTrimestre= await ClaseEstado.obtenerIdEstado("MateriasXCurso","En primer trimestre");
+      }else{
+        idEstadoEnTrimestre= await ClaseEstado.obtenerIdEstado("MateriasXCurso","En segundo trimestre");
+      }
+      inscripcionesFiltradas=await Inscripcion.aggregate([
+        {
+          $match: {
+            _id: {
+              $in: [inscripciones],
+            },
+          },
+        },
+        {
+          $lookup: {
+            from: "curso",
+            localField: "idCurso",
+            foreignField: "_id",
+            as: "datosCurso",
+          },
+        },
+        {
+          $unwind: {
+            path: "$datosCurso",
+          },
+        },
+        {
+          $unwind: {
+            path: "$datosCurso.materias",
+          },
+        },
+        {
+          $lookup: {
+            from: "materiasXCurso",
+            localField: "datosCurso.materias",
+            foreignField: "_id",
+            as: "datosMXC",
+          },
+        },
+        {
+          $match: {
+            "datosMXC.estado": mongoose.Types.ObjectId(idEstadoEnTrimestre)
+          },
+        },
+        {
+          $lookup: {
+            from: "materia",
+            localField: "datosMXC.idMateria",
+            foreignField: "_id",
+            as: "datosMateria",
+          },
+        },
+      ]);
+    }
 
-    let inscripsConCXMCursando = await Inscripcion.aggregate([
-      {
-        $match: {
-          _id: { $in: inscripciones },
-        },
-      },
-      {
-        $unwind: {
-          path: "$calificacionesXMateria",
-        },
-      },
-      {
-        $lookup: {
-          from: "calificacionesXMateria",
-          localField: "calificacionesXMateria",
-          foreignField: "_id",
-          as: "datosCXM",
-        },
-      },
-      {
-        $lookup: {
-          from: "estado",
-          localField: "datosCXM.estado",
-          foreignField: "_id",
-          as: "datosEstadoCXM",
-        },
-      },
-      {
-        $match: {
-          "datosEstadoCXM.nombre": "Cursando",
-        },
-      },
-      {
-        $lookup: {
-          from: "curso",
-          localField: "idCurso",
-          foreignField: "_id",
-          as: "datosCurso",
-        },
-      },
-      {
-        $lookup: {
-          from: "materia",
-          localField: "datosCXM.idMateria",
-          foreignField: "_id",
-          as: "datosMateria",
-        },
-      },
-    ]);
-
-    if (inscripsConCXMCursando.length == 0) {
+    if (inscripcionesFiltradas.length == 0) {
       resolve([]);
     } else {
-      for (const inscripcion of inscripsConCXMCursando) {
+      for (const inscripcion of inscripcionesFiltradas) {
         materiasNoCerrada.push({
           curso: inscripcion.datosCurso[0].nombre,
           materia: inscripcion.datosMateria[0].nombre,
@@ -315,7 +372,7 @@ exports.actualizarEstadoInscripciones = () => {
     ]);
 
     for (const inscripcion of todasInscripciones) {
-     await ClaseInscripcion.actualizarEstadoInscripcion(inscripcion);
+      await ClaseInscripcion.actualizarEstadoInscripcion(inscripcion);
     }
     resolve();
   });
