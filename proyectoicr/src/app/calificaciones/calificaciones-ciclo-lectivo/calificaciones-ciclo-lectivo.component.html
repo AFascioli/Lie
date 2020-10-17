@@ -78,7 +78,7 @@
       />
     </mat-form-field>
     <div *ngIf="estudiantes.length != 0">
-      <table
+      <table id="content" #content
         mat-table
         [dataSource]="dataSource"
         [class.table-mobile]="mobileQuery.matches"
@@ -540,5 +540,6 @@
         Cancelar
       </button>
     </div>
+    <button (click)="descargarPDF()">EXPORT</button>
   </form>
 </mat-card>

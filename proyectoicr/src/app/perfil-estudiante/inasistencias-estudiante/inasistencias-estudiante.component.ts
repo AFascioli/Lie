@@ -7,6 +7,8 @@ import { ChartOptions, ChartType } from "chart.js";
 import * as pluginDataLabels from "chartjs-plugin-datalabels";
 import { takeUntil } from "rxjs/operators";
 import { Subject } from "rxjs";
+import { jsPDF } from "jspdf";
+import html2canvas from "html2canvas";
 
 @Component({
   selector: "app-inasistencias-estudiante",
@@ -88,5 +90,18 @@ export class InasistenciasEstudianteComponent implements OnInit, OnDestroy {
           "Inasistencias justificadas",
         ];
       });
+  }
+  public descargarPDF() {
+    var element = document.getElementById("content");
+
+    html2canvas(element).then((canvas) => {
+      console.log(canvas);
+      var imgData = canvas.toDataURL("image/png");
+      var doc = new jsPDF();
+      var imgH = (canvas.height * 208) / canvas.width;
+      doc.text("Inasistencias ", 7, 15);
+      doc.addImage(imgData, 0, 30, 208, imgH);
+      doc.save("test.pdf");
+    });
   }
 }

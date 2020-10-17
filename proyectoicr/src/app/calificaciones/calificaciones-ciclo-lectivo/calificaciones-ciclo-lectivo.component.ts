@@ -18,6 +18,8 @@ import { MatPaginatorIntl } from "@angular/material";
 import { Subject } from "rxjs";
 import { takeUntil } from "rxjs/operators";
 import { MediaMatcher } from "@angular/cdk/layout";
+import { jsPDF } from "jspdf";
+import html2canvas from "html2canvas";
 
 @Component({
   selector: "app-calificaciones-ciclo-lectivo",
@@ -330,6 +332,20 @@ export class CalificacionesCicloLectivoComponent implements OnInit, OnDestroy {
 
   onCancelar() {
     this.popup.open(CancelPopupComponent);
+  }
+
+  public descargarPDF() {
+    var element = document.getElementById("content");
+
+    html2canvas(element).then((canvas) => {
+      console.log(canvas);
+      var imgData = canvas.toDataURL("image/png");
+      var doc = new jsPDF();
+      var imgH = (canvas.height * 208) / canvas.width;
+      doc.text("Calificaciones Ciclo Lectivo", 7, 15);
+      doc.addImage(imgData, 0, 30, 208, imgH);
+      doc.save("test.pdf");
+    });
   }
 }
 

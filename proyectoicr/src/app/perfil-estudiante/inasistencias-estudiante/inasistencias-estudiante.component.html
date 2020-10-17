@@ -1,8 +1,8 @@
-<h1 class="componente-titulo">
+<h1 class="componente-titulo" >
   Inasistencias de {{ apellidoEstudiante }}, {{ nombreEstudiante }}
 </h1>
 <mat-card class="card-body-componente">
-  <div
+  <div id="content" #content
     *ngIf="
       (contadorInasistenciaJustificada != 0 ||
         contadorInasistenciaInjustificada != 0) &&
@@ -63,4 +63,5 @@
       Volver
     </button>
   </div>
+  <button (click)="descargarPDF()">EXPORT</button>
 </mat-card>
