@@ -1,0 +1,38 @@
+<h1 class="componente-titulo">Informe de cuotas adeudadas</h1>
+<mat-card class="card-body-componente">
+  <mat-form-field>
+    <mat-select
+      placeholder="Seleccione curso"
+      name="curso"
+      ngModel
+      #curso="ngModel"
+      matNativeControl
+      required
+      class="curso"
+      (selectionChange)="obtenerCuotasAdeudadas(curso)"
+    >
+      <mat-option *ngFor="let curso of cursos" [value]="curso.id">
+        {{ curso.nombre }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+  <mat-accordion class="example-headers-align">
+    <mat-expansion-panel hideToggle>
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          <b></b>
+        </mat-panel-title>
+        <mat-panel-description>
+          <mat-icon>menu_book</mat-icon>
+        </mat-panel-description>
+      </mat-expansion-panel-header>
+      <p>
+        <b> </b>
+      </p>
+      <mat-divider [inset]="true"></mat-divider>
+    </mat-expansion-panel>
+  </mat-accordion>
+  <div class="div-button">
+    <button mat-raised-button class="button-warn">Volver</button>
+  </div>
+</mat-card>

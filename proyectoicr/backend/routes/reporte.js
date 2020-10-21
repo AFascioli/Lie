@@ -6,18 +6,16 @@ const Inscripcion = require("../models/inscripcion");
 const ClaseEstado = require("../classes/estado");
 
 router.get("/documentos", checkAuthMiddleware, async (req, res) => {
-  console.log(req.query.idCurso);
   let idEstadoActiva = await ClaseEstado.obtenerIdEstado(
     "Inscripcion",
     "Activa"
   );
-
   Inscripcion.aggregate([
     [
       {
         $match: {
-          idCurso: mongoose.types.ObjectId(req.query.idCurso),
-          estado: mongoose.types.ObjectId(idEstadoActiva),
+          idCurso: mongoose.Types.ObjectId(req.query.idCurso),
+          estado: mongoose.Types.ObjectId(idEstadoActiva),
         },
       },
       {
@@ -83,6 +81,86 @@ router.get("/documentos", checkAuthMiddleware, async (req, res) => {
     .catch((error) => {
       res.status(500).json({
         message: "Ocurrió un error al obtener los documentos adeudados",
+        error: error.message,
+      });
+    });
+});
+
+router.get("/cuotas", checkAuthMiddleware, async (req, res) => {
+  let idEstadoActiva = await ClaseEstado.obtenerIdEstado(
+    "Inscripcion",
+    "Activa"
+  );
+
+  Inscripcion.aggregate([
+    {
+      $match: {
+        idCurso: mongoose.Types.ObjectId(req.query.idCurso),
+        estado: mongoose.Types.ObjectId(idEstadoActiva),
+      },
+    },
+    {
+      $unwind: {
+        path: "$cuotas",
+      },
+    },
+    {
+      $match: {
+        "cuotas.pagado": false,
+      },
+    },
+    {
+      $lookup: {
+        from: "estudiante",
+        localField: "idEstudiante",
+        foreignField: "_id",
+        as: "estudiante",
+      },
+    },
+    {
+      $unwind: {
+        path: "$estudiante",
+      },
+    },
+    {
+      $addFields: {
+        estudiante: {
+          $concat: ["$estudiante.apellido", ", ", "$estudiante.nombre"],
+        },
+        documento: "$documentosEntregados.nombre",
+      },
+    },
+    {
+      $group: {
+        _id: "$idEstudiante",
+        mesCuotas: {
+          $push: "$cuotas.mes",
+        },
+        estudiantes: {
+          $first: "$estudiante",
+        },
+      },
+    },
+  ])
+    .then((estudiantesXCuotas) => {
+      if (!estudiantesXCuotas) {
+        return res.status(200).json({
+          exito: true,
+          message:
+            "No existe ningún estudiante que adeude cuotas en este curso",
+          estudiantesXCuotas: [],
+        });
+      }
+      res.status(200).json({
+        exito: true,
+        message:
+          "Se obtuvieron correctamente las cuotas adeudadas por este curso",
+        estudiantesXCuotas: estudiantesXCuotas,
+      });
+    })
+    .catch((error) => {
+      res.status(500).json({
+        message: "Ocurrió un error al obtener las cuotas adeudados",
         error: error.message,
       });
     });

@@ -10,9 +10,28 @@ export class ReportesService {
 
   public obtenerDocsAdeudados(idCurso) {
     let params = new HttpParams().set("idCurso", idCurso);
-    return this.http.get<{ eventos: any[]; exito: boolean; message: string }>(
-      environment.apiUrl + "/reporte/documentos",
-      { params: params }
-    );
+    return this.http.get<{
+      exito: boolean;
+      message: string;
+      estudiantesXDocs: any[];
+    }>(environment.apiUrl + "/reporte/documentos", { params: params });
+  }
+
+  public obtenerCuotasAdeudadas(idCurso) {
+    let params = new HttpParams().set("idCurso", idCurso);
+    return this.http.get<{
+      exito: boolean;
+      message: string;
+      estudiantesXCuotas: any[];
+    }>(environment.apiUrl + "/reporte/cuotas", { params: params });
+  }
+
+  public obtenerEstudiantesDelCurso(idCurso) {
+    let params = new HttpParams().set("idCurso", idCurso);
+    return this.http.get<{
+      exito: boolean;
+      message: string;
+      estudiantes: any[];
+    }>(environment.apiUrl + "/curso/estudiantes", { params: params });
   }
 }

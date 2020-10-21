@@ -14,4 +14,12 @@ export class ReportesComponent implements OnInit {
   onListadoDocsAdeudados() {
     this.router.navigate(["./documentosAdeudados"]);
   }
+
+  onListadoCuotasAdeudadas() {
+    this.router.navigate(["./cuotasAdeudadas"]);
+  }
+
+  onResumenAcademico() {
+    this.router.navigate(["./resumenAcademico"]);
+  }
 }

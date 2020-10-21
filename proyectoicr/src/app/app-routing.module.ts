@@ -1,3 +1,5 @@
+import { ResumenAcademicoComponent } from "./reportes/resumen-academico/resumen-academico.component";
+import { CuotasAdeudadasComponent } from "./reportes/cuotas-adeudadas/cuotas-adeudadas.component";
 import { DocAdeudadosComponent } from "./reportes/doc-adeudados/doc-adeudados.component";
 import { BuscarAdultoResponsableComponent } from "./adulto-responsable/buscar-adulto-responsable/buscar-adulto-responsable.component";
 import { AsociarAdultoResponsableComponent } from "./adulto-responsable/asociar-adulto-responsable/asociar-adulto-responsable.component";
@@ -426,6 +428,14 @@ const routes: Routes = [
       {
         path: "reportes",
         component: ReportesComponent,
+      },
+      {
+        path: "cuotasAdeudadas",
+        component: CuotasAdeudadasComponent,
+      },
+      {
+        path: "resumenAcademico",
+        component: ResumenAcademicoComponent,
       },
     ],
   },
