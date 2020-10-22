@@ -12,6 +12,7 @@ import { ReportesService } from "../reportes.service";
 export class CuotasAdeudadasComponent implements OnInit {
   cursos;
   fechaActual: Date;
+  estudiantesXCuotas;
   private unsubscribe: Subject<void> = new Subject();
 
   constructor(
@@ -29,9 +30,35 @@ export class CuotasAdeudadasComponent implements OnInit {
       .obtenerCuotasAdeudadas(curso.value)
       .pipe(takeUntil(this.unsubscribe))
       .subscribe((response) => {
+        this.estudiantesXCuotas = response.estudiantesXCuotas;
         console.log(response);
         //mes cuotas: mes que adeuda, si dice 4 significa que debe abril y así..
       });
+  }
+
+  getMes(nroMes) {
+    switch (nroMes) {
+      case 3:
+        return "Marzo";
+      case 4:
+        return "Abril";
+      case 5:
+        return "Mayo";
+      case 6:
+        return "Junio";
+      case 7:
+        return "Julio";
+      case 8:
+        return "Agosto";
+      case 9:
+        return "Septiembre";
+      case 10:
+        return "Octubre";
+      case 11:
+        return "Noviembre";
+      case 12:
+        return "Diciembre";
+    }
   }
 
   obtenerCursos() {
