@@ -405,4 +405,14 @@ export class EstudiantesService implements OnDestroy {
       message: string;
     }>(environment.apiUrl + "/estudiante/id", { params: params });
   }
+
+  public obtenerEstudiantesDeCurso(curso: string) {
+    let params = new HttpParams().set("curso", curso);
+    return this.http.get<{
+      estudiante: Estudiante;
+      exito: boolean;
+      message: string;
+    }>(environment.apiUrl + "/curso/estudiantes", { params: params });
+  }
+
 }

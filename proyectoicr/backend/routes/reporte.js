@@ -166,4 +166,189 @@ router.get("/cuotas", checkAuthMiddleware, async (req, res) => {
     });
 });
 
+router.get("/resumenAcademico", checkAuthMiddleware, async (req, res) => {
+  Inscripcion.aggregate([
+    {
+      $match: {
+        idEstudiante: mongoose.Types.ObjectId(req.query.idEstudiante),
+      },
+    },
+    {
+      $unwind: {
+        path: "$calificacionesXMateria",
+      },
+    },
+    {
+      $lookup: {
+        from: "calificacionesXMateria",
+        localField: "calificacionesXMateria",
+        foreignField: "_id",
+        as: "calificacionesXMateriaDif",
+      },
+    },
+    {
+      $group: {
+        _id: "$calificacionesXMateriaDif._id",
+        idInscipcion: {
+          $first: "$_id",
+        },
+        idEstudiante: {
+          $first: "$idEstudiante",
+        },
+        calificacionesXTrimestre: {
+          $push: {
+            $arrayElemAt: [
+              "$calificacionesXMateriaDif.calificacionesXTrimestre",
+              0,
+            ],
+          },
+        },
+        materia: {
+          $first: "$calificacionesXMateriaDif.idMateria",
+        },
+        sanciones: {
+          $first: "$sanciones",
+        },
+        contadorInasistenciasInjustificada: {
+          $first: "$contadorInasistenciasInjustificada",
+        },
+        contadorInasistenciasJustificada: {
+          $first: "$contadorInasistenciasJustificada",
+        },
+      },
+    },
+    {
+      $unwind: {
+        path: "$calificacionesXTrimestre",
+      },
+    },
+    {
+      $unwind: {
+        path: "$calificacionesXTrimestre",
+      },
+    },
+    {
+      $lookup: {
+        from: "calificacionesXTrimestre",
+        localField: "calificacionesXTrimestre",
+        foreignField: "_id",
+        as: "calificacionesTrim",
+      },
+    },
+    {
+      $group: {
+        _id: "$calificacionesTrim._id",
+        idMateriaXCalif: {
+          $first: "$_id",
+        },
+        idEstudiante: {
+          $first: "$idEstudiante",
+        },
+        calificaciones: {
+          $first: "$calificacionesTrim.calificaciones",
+        },
+        trim: {
+          $first: "$calificacionesTrim.trimestre",
+        },
+        materia: {
+          $first: "$materia",
+        },
+        sanciones: {
+          $first: "$sanciones",
+        },
+        contadorInasistenciasInjustificada: {
+          $first: "$contadorInasistenciasInjustificada",
+        },
+        contadorInasistenciasJustificada: {
+          $first: "$contadorInasistenciasJustificada",
+        },
+      },
+    },
+    {
+      $group: {
+        _id: "$idMateriaXCalif",
+        idEstudiante: {
+          $first: "$idEstudiante",
+        },
+        calificaciones: {
+          $push: "$calificaciones",
+        },
+        trimestre: {
+          $push: "$trim",
+        },
+        materia: {
+          $first: "$materia",
+        },
+        sanciones: {
+          $first: "$sanciones",
+        },
+        contadorInasistenciasInjustificada: {
+          $first: "$contadorInasistenciasInjustificada",
+        },
+        contadorInasistenciasJustificada: {
+          $first: "$contadorInasistenciasJustificada",
+        },
+      },
+    },
+    {
+      $lookup: {
+        from: "estudiante",
+        localField: "idEstudiante",
+        foreignField: "_id",
+        as: "Estudiante",
+      },
+    },
+    {
+      $lookup: {
+        from: "materia",
+        localField: "materia",
+        foreignField: "_id",
+        as: "materia",
+      },
+    },
+    {
+      $project: {
+        idEstudiante: 1,
+        calificaciones: 1,
+        trimestre: 1,
+        nombre: {
+          $arrayElemAt: ["$Estudiante.nombre", 0],
+        },
+        apellido: {
+          $arrayElemAt: ["$Estudiante.apellido", 0],
+        },
+        Materia: {
+          $arrayElemAt: ["$materia.nombre", 0],
+        },
+        sanciones: 1,
+        contadorInasistenciasInjustificada: 1,
+        contadorInasistenciasJustificada: 1,
+      },
+    },
+  ])
+    .then((resumen) => {
+      if (!resumen) {
+        return res.status(200).json({
+          exito: true,
+          message:
+            "No se obtuvieron resultados",
+          resumen: [],
+        });
+      }
+      res.status(200).json({
+        exito: true,
+        message:
+          "Se obtuvo correctamente el resumen académico del estudiante",
+        resumen: resumen,
+      });
+    })
+    .catch((error) => {
+      res.status(500).json({
+        message: "Ocurrió un error al obtener el resumen académico del estudiante",
+        error: error.message,
+      });
+    });
+});
+
+
 module.exports = router;

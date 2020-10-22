@@ -6,6 +6,7 @@ import { environment } from "src/environments/environment";
   providedIn: "root",
 })
 export class ReportesService {
+  public idEstudianteSeleccionado: string;
   constructor(public http: HttpClient) {}
 
   public obtenerDocsAdeudados(idCurso) {
@@ -34,4 +35,14 @@ export class ReportesService {
       estudiantes: any[];
     }>(environment.apiUrl + "/curso/estudiantes", { params: params });
   }
+
+  public obtenerResumenAcademico(idEstudiante) {
+    let params = new HttpParams().set("idEstudiante", idEstudiante);
+    return this.http.get<{
+      exito: boolean;
+      message: string;
+      resumen: any[];
+    }>(environment.apiUrl + "/reporte/resumenAcademico", { params: params });
+  }
+
 }

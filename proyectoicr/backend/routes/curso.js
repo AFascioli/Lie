@@ -1876,7 +1876,7 @@ router.post(
   }
 );
 
-router.get("/estudiantes", checkAuthMiddleware, async (req, res) => {
+/*router.get("/estudiantes", checkAuthMiddleware, async (req, res) => {
   let idEstadoActiva = await ClaseEstado.obtenerIdEstado(
     "Inscripcion",
     "Activa"
@@ -1944,6 +1944,77 @@ router.get("/estudiantes", checkAuthMiddleware, async (req, res) => {
       res.status(500).json({
         message:
           "Ocurrió un error al querer obtener los estudiantes de un curso",
+        error: error.message,
+      });
+    });
+});
+*/
+
+router.get("/estudiantes", checkAuthMiddleware, async (req, res) => {
+  let idEstadoActiva = await ClaseEstado.obtenerIdEstado(
+    "Inscripcion",
+    "Activa"
+  );
+  let idEstadoSuspendido = await ClaseEstado.obtenerIdEstado(
+    "Inscripcion",
+    "Suspendido"
+  );
+  Inscripcion.aggregate([
+    {
+      $lookup: {
+        from: "curso",
+        localField: "idCurso",
+        foreignField: "_id",
+        as: "curso",
+      },
+    },
+    {
+      $match: {
+        idCurso: mongoose.Types.ObjectId(req.query.curso),
+        estado: {
+          $in: [
+            mongoose.Types.ObjectId(idEstadoActiva),
+            mongoose.Types.ObjectId(idEstadoSuspendido),
+          ],
+        },
+      },
+    },
+    {
+      $lookup: {
+        from: "estudiante",
+        localField: "idEstudiante",
+        foreignField: "_id",
+        as: "DatosEstudiantes",
+      },
+    },
+    {
+      $project: {
+        "DatosEstudiantes._id": 1,
+        "DatosEstudiantes.nombre": 1,
+        "DatosEstudiantes.apellido": 1,
+      },
+    },
+  ])
+    .then((estudiantes) => {
+      var est = [];
+      estudiantes.forEach((estudiante) => {
+        let datos = {
+          _id: estudiante.DatosEstudiantes[0]._id,
+          nombre: estudiante.DatosEstudiantes[0].nombre,
+          apellido: estudiante.DatosEstudiantes[0].apellido,
+        };
+        est.push(datos);
+      });
+
+      return res.status(200).json({
+        exito: true,
+        message: "Se obtuvieron correctamente los estudiantes del curso",
+        estudiante: est,
+      });
+    })
+    .catch((error) => {
+      res.status(500).json({
+        message: "Ocurrió un error al querer obtener los estudiantes del curso",
         error: error.message,
       });
     });

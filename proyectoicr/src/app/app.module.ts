@@ -146,7 +146,7 @@ import { EstadoCursosComponent } from "./acciones-director/estado-cursos/estado-
 import { DocAdeudadosComponent } from "./reportes/doc-adeudados/doc-adeudados.component";
 import { ReportesComponent } from "./reportes/reportes.component";
 import { CuotasAdeudadasComponent } from './reportes/cuotas-adeudadas/cuotas-adeudadas.component';
-import { ResumenAcademicoComponent } from './reportes/resumen-academico/resumen-academico.component';
+import { ReporteResumenAcademicoComponent,ResumenAcademicoComponent } from './reportes/resumen-academico/resumen-academico.component';
 
 @NgModule({
   declarations: [
@@ -222,6 +222,8 @@ import { ResumenAcademicoComponent } from './reportes/resumen-academico/resumen-
     ReportesComponent,
     CuotasAdeudadasComponent,
     ResumenAcademicoComponent,
+    ReporteResumenAcademicoComponent
+
   ],
   //entryComponents declara los componentes que se generan dinamicamente dentro de otros.
   entryComponents: [

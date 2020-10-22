@@ -1,4 +1,3 @@
-import { ResumenAcademicoComponent } from "./reportes/resumen-academico/resumen-academico.component";
 import { CuotasAdeudadasComponent } from "./reportes/cuotas-adeudadas/cuotas-adeudadas.component";
 import { DocAdeudadosComponent } from "./reportes/doc-adeudados/doc-adeudados.component";
 import { BuscarAdultoResponsableComponent } from "./adulto-responsable/buscar-adulto-responsable/buscar-adulto-responsable.component";
@@ -54,6 +53,7 @@ import { ParametrizarReglasNegocioComponent } from "./acciones-director/parametr
 import { EstadoCursosComponent } from "./acciones-director/estado-cursos/estado-cursos.component";
 import { CicloLectivoComponent } from "./acciones-director/ciclo-lectivo/ciclo-lectivo/ciclo-lectivo.component";
 import { ReportesComponent } from "./reportes/reportes.component";
+import { ResumenAcademicoComponent, ReporteResumenAcademicoComponent } from './reportes/resumen-academico/resumen-academico.component';
 
 const routes: Routes = [
   { path: "login", component: LoginComponent },
@@ -437,6 +437,11 @@ const routes: Routes = [
         path: "resumenAcademico",
         component: ResumenAcademicoComponent,
       },
+      {
+        path: "reporteResumenAcademico",
+        component: ReporteResumenAcademicoComponent,
+      },
+
     ],
   },
 ];

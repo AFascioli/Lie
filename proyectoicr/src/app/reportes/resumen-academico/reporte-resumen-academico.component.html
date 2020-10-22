@@ -1,0 +1,514 @@
+<mat-card class="card-spinner" *ngIf="isLoading">
+  <mat-spinner class="spinner" [diameter]="60"></mat-spinner>
+</mat-card>
+
+<h1 class="componente-titulo">Reporte</h1>
+<mat-card id="content" #content class="card-body-componente">
+  <form #form="ngForm">
+    <div *ngIf="!isLoading">
+      <table mat-table [dataSource]="resumen">
+        <ng-container matColumnDef="materia">
+          <th class="columnas-normales" mat-header-cell *matHeaderCellDef>
+            Nombre
+          </th>
+          <td
+            class="columnas-normales"
+            mat-cell
+            *matCellDef="let resumen; let i = index"
+            [ngClass]="{
+              bajoPromedio:
+                calcularPromedio(i, contadorNotasValidas(i)) < 6 ||
+                (this.promedioT3 != 0 && this.promedioT3 < 6)
+            }"
+          >
+            {{ resumen.Materia }}
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="cal1">
+          <th class="columnas-chicas" mat-header-cell *matHeaderCellDef>1°</th>
+          <td
+            class="columnas-chicas"
+            mat-cell
+            *matCellDef="let resumen; let i = index"
+            [ngClass]="{
+              bajoPromedio:
+                this.promedio < 6 ||
+                (this.promedioT3 != 0 && this.promedioT3 < 6)
+            }"
+          >
+            <p>
+              {{ resumen.calificaciones[0][0][0] }}
+            </p>
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="cal2">
+          <th class="columnas-chicas" mat-header-cell *matHeaderCellDef>2°</th>
+          <td
+            class="columnas-chicas"
+            mat-cell
+            *matCellDef="let resumen; let i = index"
+            [ngClass]="{
+              bajoPromedio:
+                this.promedio < 6 ||
+                (this.promedioT3 != 0 && this.promedioT3 < 6)
+            }"
+          >
+            <p>
+              {{ resumen.calificaciones[0][0][1] }}
+            </p>
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="cal3">
+          <th class="columnas-chicas" mat-header-cell *matHeaderCellDef>3°</th>
+          <td
+            class="columnas-chicas"
+            mat-cell
+            *matCellDef="let resumen; let i = index"
+            [ngClass]="{
+              bajoPromedio:
+                this.promedio < 6 ||
+                (this.promedioT3 != 0 && this.promedioT3 < 6)
+            }"
+          >
+            <p>
+              {{ resumen.calificaciones[0][0][2] }}
+            </p>
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="cal4">
+          <th class="columnas-chicas" mat-header-cell *matHeaderCellDef>4°</th>
+          <td
+            class="columnas-chicas"
+            mat-cell
+            *matCellDef="let resumen; let i = index"
+            [ngClass]="{
+              bajoPromedio:
+                this.promedio < 6 ||
+                (this.promedioT3 != 0 && this.promedioT3 < 6)
+            }"
+          >
+            <p>
+              {{ resumen.calificaciones[0][0][3] }}
+            </p>
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="cal5">
+          <th class="columnas-chicas" mat-header-cell *matHeaderCellDef>5°</th>
+          <td
+            class="columnas-chicas"
+            mat-cell
+            *matCellDef="let resumen; let i = index"
+            [ngClass]="{
+              bajoPromedio:
+                this.promedio < 6 ||
+                (this.promedioT3 != 0 && this.promedioT3 < 6)
+            }"
+          >
+            <p>
+              {{ resumen.calificaciones[0][0][4] }}
+            </p>
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="cal6">
+          <th class="columnas-chicas" mat-header-cell *matHeaderCellDef>6°</th>
+          <td
+            class="columnas-chicas"
+            mat-cell
+            *matCellDef="let resumen; let i = index"
+            [ngClass]="{
+              bajoPromedio:
+                this.promedio < 6 ||
+                (this.promedioT3 != 0 && this.promedioT3 < 6)
+            }"
+          >
+            <p>
+              {{ resumen.calificaciones[0][0][5] }}
+            </p>
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="prom1">
+          <th class="columnas-promedios" mat-header-cell *matHeaderCellDef>
+            P1
+          </th>
+          <td
+            class="columnas-promedios"
+            mat-cell
+            *matCellDef="let resumen; let i = index"
+            [ngClass]="{
+              bajoPromedio:
+                this.promedio < 6 ||
+                (this.promedioT3 != 0 && this.promedioT3 < 6)
+            }"
+          >
+            <b>
+              {{ this.promedioT1.toFixed(2) }}
+            </b>
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="cal7">
+          <th class="columnas-chicas" mat-header-cell *matHeaderCellDef>1°</th>
+          <td
+            class="columnas-chicas"
+            mat-cell
+            *matCellDef="let resumen; let i = index"
+            [ngClass]="{
+              bajoPromedio:
+                this.promedio < 6 ||
+                (this.promedioT3 != 0 && this.promedioT3 < 6)
+            }"
+          >
+            <p>
+              {{ resumen.calificaciones[1][0][0] }}
+            </p>
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="cal8">
+          <th class="columnas-chicas" mat-header-cell *matHeaderCellDef>2°</th>
+          <td
+            class="columnas-chicas"
+            mat-cell
+            *matCellDef="let resumen; let i = index"
+            [ngClass]="{
+              bajoPromedio:
+                this.promedio < 6 ||
+                (this.promedioT3 != 0 && this.promedioT3 < 6)
+            }"
+          >
+            <p>
+              {{ resumen.calificaciones[1][0][1] }}
+            </p>
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="cal9">
+          <th class="columnas-chicas" mat-header-cell *matHeaderCellDef>3°</th>
+          <td
+            class="columnas-chicas"
+            mat-cell
+            *matCellDef="let resumen; let i = index"
+            [ngClass]="{
+              bajoPromedio:
+                this.promedio < 6 ||
+                (this.promedioT3 != 0 && this.promedioT3 < 6)
+            }"
+          >
+            <p>
+              {{ resumen.calificaciones[1][0][2] }}
+            </p>
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="cal10">
+          <th class="columnas-chicas" mat-header-cell *matHeaderCellDef>4°</th>
+          <td
+            class="columnas-chicas"
+            mat-cell
+            *matCellDef="let resumen; let i = index"
+            [ngClass]="{
+              bajoPromedio:
+                this.promedio < 6 ||
+                (this.promedioT3 != 0 && this.promedioT3 < 6)
+            }"
+          >
+            <p>
+              {{ resumen.calificaciones[1][0][3] }}
+            </p>
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="cal11">
+          <th class="columnas-chicas" mat-header-cell *matHeaderCellDef>5°</th>
+          <td
+            class="columnas-chicas"
+            mat-cell
+            *matCellDef="let resumen; let i = index"
+            [ngClass]="{
+              bajoPromedio:
+                this.promedio < 6 ||
+                (this.promedioT3 != 0 && this.promedioT3 < 6)
+            }"
+          >
+            <p>
+              {{ resumen.calificaciones[1][0][4] }}
+            </p>
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="cal12">
+          <th class="columnas-chicas" mat-header-cell *matHeaderCellDef>6°</th>
+          <td
+            class="columnas-chicas"
+            mat-cell
+            *matCellDef="let resumen; let i = index"
+            [ngClass]="{
+              bajoPromedio:
+                this.promedio < 6 ||
+                (this.promedioT3 != 0 && this.promedioT3 < 6)
+            }"
+          >
+            <p>
+              {{ resumen.calificaciones[1][0][5] }}
+            </p>
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="prom2">
+          <th class="columnas-promedios" mat-header-cell *matHeaderCellDef>
+            P2
+          </th>
+          <td
+            class="columnas-promedios"
+            mat-cell
+            *matCellDef="let resumen; let i = index"
+            [ngClass]="{
+              bajoPromedio:
+                this.promedio < 6 ||
+                (this.promedioT3 != 0 && this.promedioT3 < 6)
+            }"
+          >
+            <b>
+              {{ this.promedioT2.toFixed(2) }}
+            </b>
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="cal13">
+          <th class="columnas-chicas" mat-header-cell *matHeaderCellDef>1°</th>
+          <td
+            class="columnas-chicas"
+            mat-cell
+            *matCellDef="let resumen; let i = index"
+            [ngClass]="{
+              bajoPromedio:
+                this.promedio < 6 ||
+                (this.promedioT3 != 0 && this.promedioT3 < 6)
+            }"
+          >
+            <p>
+              {{ resumen.calificaciones[2][0][0] }}
+            </p>
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="cal14">
+          <th class="columnas-chicas" mat-header-cell *matHeaderCellDef>2°</th>
+          <td
+            class="columnas-chicas"
+            mat-cell
+            *matCellDef="let resumen; let i = index"
+            [ngClass]="{
+              bajoPromedio:
+                this.promedio < 6 ||
+                (this.promedioT3 != 0 && this.promedioT3 < 6)
+            }"
+          >
+            <p>
+              {{ resumen.calificaciones[2][0][1] }}
+            </p>
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="cal15">
+          <th class="columnas-chicas" mat-header-cell *matHeaderCellDef>3°</th>
+          <td
+            class="columnas-chicas"
+            mat-cell
+            *matCellDef="let resumen; let i = index"
+            [ngClass]="{
+              bajoPromedio:
+                this.promedio < 6 ||
+                (this.promedioT3 != 0 && this.promedioT3 < 6)
+            }"
+          >
+            <p>
+              {{ resumen.calificaciones[2][0][2] }}
+            </p>
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="cal16">
+          <th class="columnas-chicas" mat-header-cell *matHeaderCellDef>4°</th>
+          <td
+            class="columnas-chicas"
+            mat-cell
+            *matCellDef="let resumen; let i = index"
+            [ngClass]="{
+              bajoPromedio:
+                this.promedio < 6 ||
+                (this.promedioT3 != 0 && this.promedioT3 < 6)
+            }"
+          >
+            <p>
+              {{ resumen.calificaciones[2][0][3] }}
+            </p>
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="cal17">
+          <th class="columnas-chicas" mat-header-cell *matHeaderCellDef>5°</th>
+          <td
+            class="columnas-chicas"
+            mat-cell
+            *matCellDef="let resumen; let i = index"
+            [ngClass]="{
+              bajoPromedio:
+                this.promedio < 6 ||
+                (this.promedioT3 != 0 && this.promedioT3 < 6)
+            }"
+          >
+            <p>
+              {{ resumen.calificaciones[2][0][4] }}
+            </p>
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="cal18">
+          <th class="columnas-chicas" mat-header-cell *matHeaderCellDef>6°</th>
+          <td
+            class="columnas-chicas"
+            mat-cell
+            *matCellDef="let resumen; let i = index"
+            [ngClass]="{
+              bajoPromedio:
+                this.promedio < 6 ||
+                (this.promedioT3 != 0 && this.promedioT3 < 6)
+            }"
+          >
+            <p>
+              {{ resumen.calificaciones[2][0][5] }}
+            </p>
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="prom3">
+          <th class="columnas-promedios" mat-header-cell *matHeaderCellDef>
+            P3
+          </th>
+          <td
+            class="columnas-promedios"
+            mat-cell
+            *matCellDef="let resumen; let i = index"
+            [ngClass]="{
+              bajoPromedio:
+                this.promedio < 6 ||
+                (this.promedioT3 != 0 && this.promedioT3 < 6)
+            }"
+          >
+            <b>
+              {{ this.promedioT3.toFixed(2) }}
+            </b>
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="prom">
+          <th
+            class="columnas-promedios promedio"
+            mat-header-cell
+            *matHeaderCellDef
+          >
+            Final
+          </th>
+          <td
+            class="columnas-promedios promedio"
+            mat-cell
+            *matCellDef="let resumen; let i = index"
+            [ngClass]="{
+              bajoPromedio:
+                this.promedio < 6 ||
+                (this.promedioT3 != 0 && this.promedioT3 < 6)
+            }"
+          >
+            <b *ngIf="!(contadorNotasValidas(i) == 0); else sinNotas">
+              {{ this.promedio.toFixed(2) }}
+            </b>
+            <ng-template #sinNotas>0</ng-template>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="estudiante" class="header">
+          <th
+            class="header"
+            mat-header-cell
+            *matHeaderCellDef
+            [attr.colspan]="1"
+          >
+            Materia
+          </th>
+        </ng-container>
+        <ng-container matColumnDef="primerTrimestre" class="header">
+          <th
+            class="header"
+            mat-header-cell
+            *matHeaderCellDef
+            [attr.colspan]="7"
+          >
+            Primer Trimestre
+          </th>
+        </ng-container>
+        <ng-container matColumnDef="segundoTrimestre" class="header">
+          <th
+            class="header"
+            mat-header-cell
+            *matHeaderCellDef
+            [attr.colspan]="7"
+          >
+            Segundo Trimestre
+          </th>
+        </ng-container>
+        <ng-container matColumnDef="tercerTrimestre" class="header">
+          <th
+            class="header"
+            mat-header-cell
+            *matHeaderCellDef
+            [attr.colspan]="7"
+          >
+            Tercer Trimestre
+          </th>
+        </ng-container>
+        <ng-container matColumnDef="promedio" class="header">
+          <th
+            class="header"
+            mat-header-cell
+            *matHeaderCellDef
+            [attr.colspan]="1"
+          >
+            Promedio
+          </th>
+        </ng-container>
+        <tr
+          mat-header-row
+          *matHeaderRowDef="[
+            'estudiante',
+            'primerTrimestre',
+            'segundoTrimestre',
+            'tercerTrimestre',
+            'promedio'
+          ]"
+        ></tr>
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+      </table>
+    </div>
+  </form>
+
+  <div class="grid-container">
+    <mat-card class="opcion"
+      ><b>Inasistencias</b> <br />
+      <p>
+        Injustificadas: {{ this.inasistenciasInjustificadas }}
+        <br />
+        Justificadas:
+        {{ this.inasistenciasJustificadas }}
+      </p>
+    </mat-card>
+    <mat-card class="opcion" *ngIf="!isLoading"
+      ><b>Sanciones</b>
+      <br />
+      <p>
+        Llamados de atención:{{ sumatoriaSanciones[0] }}
+        <br />Apercibimientos:{{ sumatoriaSanciones[1] }}
+        <br />Amonestaciones:{{ sumatoriaSanciones[2] }}
+        <br />Suspenciones:{{
+          sumatoriaSanciones[3]
+        }}
+      </p>
+      <br />
+    </mat-card>
+    <mat-card class="opcion"
+      ><b>Promedio general</b> <br />
+      <p>
+        {{ this.promedioGeneral.toFixed(2) }}
+      </p>
+    </mat-card>
+  </div>
+</mat-card>
+<div class="div-button">
+<button (click)="descargarPDF()">EXPORT</button>
+</div>

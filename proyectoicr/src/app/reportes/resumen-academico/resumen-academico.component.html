@@ -1,4 +1,4 @@
-<h1 class="componente-titulo">Resumen academico estudiantes</h1>
+<h1 class="componente-titulo">Resumen académico</h1>
 <mat-card class="card-body-componente">
   <mat-form-field>
     <mat-select
@@ -9,29 +9,45 @@
       matNativeControl
       required
       class="curso"
-      (selectionChange)="obtenerEstudiantesDelCurso(curso)"
+      (selectionChange)="obtenerEstudiantes(curso)"
     >
       <mat-option *ngFor="let curso of cursos" [value]="curso.id">
         {{ curso.nombre }}
       </mat-option>
     </mat-select>
   </mat-form-field>
-  <mat-accordion class="example-headers-align">
-    <mat-expansion-panel hideToggle>
-      <mat-expansion-panel-header>
-        <mat-panel-title>
-          <b></b>
-        </mat-panel-title>
-        <mat-panel-description>
-          <mat-icon>menu_book</mat-icon>
-        </mat-panel-description>
-      </mat-expansion-panel-header>
-      <p>
-        <b> </b>
-      </p>
-      <mat-divider [inset]="true"></mat-divider>
-    </mat-expansion-panel>
-  </mat-accordion>
+  <div class="contenedor-tabla" *ngIf="!cursoNotSelected && !isLoading">
+    <table mat-table [dataSource]="estudiantes" *ngIf="estudiantes.length != 0">
+      <ng-container matColumnDef="apellido">
+        <th class="nombre-apellido" mat-header-cell *matHeaderCellDef>
+          Apellido/s
+        </th>
+        <td class="nombre-apellido" mat-cell *matCellDef="let estudiantes">
+          {{ estudiantes.apellido }}
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="nombre">
+        <th class="nombre-apellido" mat-header-cell *matHeaderCellDef>
+          Nombre/s
+        </th>
+        <td class="nombre-apellido" mat-cell *matCellDef="let estudiantes">
+          {{ estudiantes.nombre }}
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="accion">
+        <th class="columnas-normales" mat-header-cell *matHeaderCellDef>
+          Acción
+        </th>
+        <td class="columnas-normales" mat-cell *matCellDef="let estudiantes">
+          <button mat-icon-button (click)="verResumenAcademico(estudiantes)">
+            <mat-icon>description</mat-icon>
+          </button>
+        </td>
+      </ng-container>
+      <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+    </table>
+  </div>
   <div class="div-button">
     <button mat-raised-button class="button-warn">Volver</button>
   </div>
