@@ -2,8 +2,11 @@
   <mat-spinner class="spinner" [diameter]="60"></mat-spinner>
 </mat-card>
 
-<h1 class="componente-titulo">Reporte</h1>
-<mat-card id="content" #content class="card-body-componente">
+<mat-card id="content" #content class="card-body-componente-big">
+  <h1 class="componente-titulo">
+    Resumen académico {{ fechaActual }}: {{ estudiante }}
+  </h1>
+  <br />
   <form #form="ngForm">
     <div *ngIf="!isLoading">
       <table mat-table [dataSource]="resumen">
@@ -30,11 +33,6 @@
             class="columnas-chicas"
             mat-cell
             *matCellDef="let resumen; let i = index"
-            [ngClass]="{
-              bajoPromedio:
-                this.promedio < 6 ||
-                (this.promedioT3 != 0 && this.promedioT3 < 6)
-            }"
           >
             <p>
               {{ resumen.calificaciones[0][0][0] }}
@@ -47,11 +45,6 @@
             class="columnas-chicas"
             mat-cell
             *matCellDef="let resumen; let i = index"
-            [ngClass]="{
-              bajoPromedio:
-                this.promedio < 6 ||
-                (this.promedioT3 != 0 && this.promedioT3 < 6)
-            }"
           >
             <p>
               {{ resumen.calificaciones[0][0][1] }}
@@ -64,11 +57,6 @@
             class="columnas-chicas"
             mat-cell
             *matCellDef="let resumen; let i = index"
-            [ngClass]="{
-              bajoPromedio:
-                this.promedio < 6 ||
-                (this.promedioT3 != 0 && this.promedioT3 < 6)
-            }"
           >
             <p>
               {{ resumen.calificaciones[0][0][2] }}
@@ -81,11 +69,6 @@
             class="columnas-chicas"
             mat-cell
             *matCellDef="let resumen; let i = index"
-            [ngClass]="{
-              bajoPromedio:
-                this.promedio < 6 ||
-                (this.promedioT3 != 0 && this.promedioT3 < 6)
-            }"
           >
             <p>
               {{ resumen.calificaciones[0][0][3] }}
@@ -98,11 +81,6 @@
             class="columnas-chicas"
             mat-cell
             *matCellDef="let resumen; let i = index"
-            [ngClass]="{
-              bajoPromedio:
-                this.promedio < 6 ||
-                (this.promedioT3 != 0 && this.promedioT3 < 6)
-            }"
           >
             <p>
               {{ resumen.calificaciones[0][0][4] }}
@@ -115,11 +93,6 @@
             class="columnas-chicas"
             mat-cell
             *matCellDef="let resumen; let i = index"
-            [ngClass]="{
-              bajoPromedio:
-                this.promedio < 6 ||
-                (this.promedioT3 != 0 && this.promedioT3 < 6)
-            }"
           >
             <p>
               {{ resumen.calificaciones[0][0][5] }}
@@ -134,11 +107,6 @@
             class="columnas-promedios"
             mat-cell
             *matCellDef="let resumen; let i = index"
-            [ngClass]="{
-              bajoPromedio:
-                this.promedio < 6 ||
-                (this.promedioT3 != 0 && this.promedioT3 < 6)
-            }"
           >
             <b>
               {{ this.promedioT1.toFixed(2) }}
@@ -151,11 +119,6 @@
             class="columnas-chicas"
             mat-cell
             *matCellDef="let resumen; let i = index"
-            [ngClass]="{
-              bajoPromedio:
-                this.promedio < 6 ||
-                (this.promedioT3 != 0 && this.promedioT3 < 6)
-            }"
           >
             <p>
               {{ resumen.calificaciones[1][0][0] }}
@@ -168,11 +131,6 @@
             class="columnas-chicas"
             mat-cell
             *matCellDef="let resumen; let i = index"
-            [ngClass]="{
-              bajoPromedio:
-                this.promedio < 6 ||
-                (this.promedioT3 != 0 && this.promedioT3 < 6)
-            }"
           >
             <p>
               {{ resumen.calificaciones[1][0][1] }}
@@ -185,11 +143,6 @@
             class="columnas-chicas"
             mat-cell
             *matCellDef="let resumen; let i = index"
-            [ngClass]="{
-              bajoPromedio:
-                this.promedio < 6 ||
-                (this.promedioT3 != 0 && this.promedioT3 < 6)
-            }"
           >
             <p>
               {{ resumen.calificaciones[1][0][2] }}
@@ -202,11 +155,6 @@
             class="columnas-chicas"
             mat-cell
             *matCellDef="let resumen; let i = index"
-            [ngClass]="{
-              bajoPromedio:
-                this.promedio < 6 ||
-                (this.promedioT3 != 0 && this.promedioT3 < 6)
-            }"
           >
             <p>
               {{ resumen.calificaciones[1][0][3] }}
@@ -219,11 +167,6 @@
             class="columnas-chicas"
             mat-cell
             *matCellDef="let resumen; let i = index"
-            [ngClass]="{
-              bajoPromedio:
-                this.promedio < 6 ||
-                (this.promedioT3 != 0 && this.promedioT3 < 6)
-            }"
           >
             <p>
               {{ resumen.calificaciones[1][0][4] }}
@@ -236,11 +179,6 @@
             class="columnas-chicas"
             mat-cell
             *matCellDef="let resumen; let i = index"
-            [ngClass]="{
-              bajoPromedio:
-                this.promedio < 6 ||
-                (this.promedioT3 != 0 && this.promedioT3 < 6)
-            }"
           >
             <p>
               {{ resumen.calificaciones[1][0][5] }}
@@ -255,11 +193,6 @@
             class="columnas-promedios"
             mat-cell
             *matCellDef="let resumen; let i = index"
-            [ngClass]="{
-              bajoPromedio:
-                this.promedio < 6 ||
-                (this.promedioT3 != 0 && this.promedioT3 < 6)
-            }"
           >
             <b>
               {{ this.promedioT2.toFixed(2) }}
@@ -272,11 +205,6 @@
             class="columnas-chicas"
             mat-cell
             *matCellDef="let resumen; let i = index"
-            [ngClass]="{
-              bajoPromedio:
-                this.promedio < 6 ||
-                (this.promedioT3 != 0 && this.promedioT3 < 6)
-            }"
           >
             <p>
               {{ resumen.calificaciones[2][0][0] }}
@@ -289,11 +217,6 @@
             class="columnas-chicas"
             mat-cell
             *matCellDef="let resumen; let i = index"
-            [ngClass]="{
-              bajoPromedio:
-                this.promedio < 6 ||
-                (this.promedioT3 != 0 && this.promedioT3 < 6)
-            }"
           >
             <p>
               {{ resumen.calificaciones[2][0][1] }}
@@ -306,11 +229,6 @@
             class="columnas-chicas"
             mat-cell
             *matCellDef="let resumen; let i = index"
-            [ngClass]="{
-              bajoPromedio:
-                this.promedio < 6 ||
-                (this.promedioT3 != 0 && this.promedioT3 < 6)
-            }"
           >
             <p>
               {{ resumen.calificaciones[2][0][2] }}
@@ -323,11 +241,6 @@
             class="columnas-chicas"
             mat-cell
             *matCellDef="let resumen; let i = index"
-            [ngClass]="{
-              bajoPromedio:
-                this.promedio < 6 ||
-                (this.promedioT3 != 0 && this.promedioT3 < 6)
-            }"
           >
             <p>
               {{ resumen.calificaciones[2][0][3] }}
@@ -340,11 +253,6 @@
             class="columnas-chicas"
             mat-cell
             *matCellDef="let resumen; let i = index"
-            [ngClass]="{
-              bajoPromedio:
-                this.promedio < 6 ||
-                (this.promedioT3 != 0 && this.promedioT3 < 6)
-            }"
           >
             <p>
               {{ resumen.calificaciones[2][0][4] }}
@@ -357,11 +265,6 @@
             class="columnas-chicas"
             mat-cell
             *matCellDef="let resumen; let i = index"
-            [ngClass]="{
-              bajoPromedio:
-                this.promedio < 6 ||
-                (this.promedioT3 != 0 && this.promedioT3 < 6)
-            }"
           >
             <p>
               {{ resumen.calificaciones[2][0][5] }}
@@ -376,11 +279,6 @@
             class="columnas-promedios"
             mat-cell
             *matCellDef="let resumen; let i = index"
-            [ngClass]="{
-              bajoPromedio:
-                this.promedio < 6 ||
-                (this.promedioT3 != 0 && this.promedioT3 < 6)
-            }"
           >
             <b>
               {{ this.promedioT3.toFixed(2) }}
@@ -399,11 +297,6 @@
             class="columnas-promedios promedio"
             mat-cell
             *matCellDef="let resumen; let i = index"
-            [ngClass]="{
-              bajoPromedio:
-                this.promedio < 6 ||
-                (this.promedioT3 != 0 && this.promedioT3 < 6)
-            }"
           >
             <b *ngIf="!(contadorNotasValidas(i) == 0); else sinNotas">
               {{ this.promedio.toFixed(2) }}
@@ -478,7 +371,7 @@
     </div>
   </form>
 
-  <div class="grid-container">
+  <div class="grid-container" *ngIf="!isLoading">
     <mat-card class="opcion"
       ><b>Inasistencias</b> <br />
       <p>
@@ -488,14 +381,13 @@
         {{ this.inasistenciasJustificadas }}
       </p>
     </mat-card>
-    <mat-card class="opcion" *ngIf="!isLoading"
+    <mat-card class="opcion"
       ><b>Sanciones</b>
       <br />
       <p>
         Llamados de atención:{{ sumatoriaSanciones[0] }}
         <br />Apercibimientos:{{ sumatoriaSanciones[1] }}
-        <br />Amonestaciones:{{ sumatoriaSanciones[2] }}
-        <br />Suspenciones:{{
+        <br />Amonestaciones:{{ sumatoriaSanciones[2] }} <br />Suspenciones:{{
           sumatoriaSanciones[3]
         }}
       </p>
@@ -510,5 +402,10 @@
   </div>
 </mat-card>
 <div class="div-button">
-<button (click)="descargarPDF()">EXPORT</button>
+  <button mat-raised-button class="button-warn" [routerLink]="['/reportes']">
+    Volver
+  </button>
+  <button mat-raised-button class="button-primary" (click)="descargarPDF()">
+    Exportar
+  </button>
 </div>

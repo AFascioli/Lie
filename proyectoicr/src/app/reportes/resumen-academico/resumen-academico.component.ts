@@ -84,6 +84,7 @@ export class ResumenAcademicoComponent implements OnInit {
 export class ReporteResumenAcademicoComponent implements OnInit {
   private unsubscribe: Subject<void> = new Subject();
   public idEstudiante = this.reportService.idEstudianteSeleccionado;
+  fechaActual: any;
   promedio;
   promedioT1;
   promedioT2;
@@ -91,6 +92,7 @@ export class ReporteResumenAcademicoComponent implements OnInit {
   promedioF = [];
   promedioGeneral = 0;
   resumen: any;
+  estudiante: any;
   isLoading = false;
   sanciones;
   inasistenciasInjustificadas;
@@ -127,6 +129,7 @@ export class ReporteResumenAcademicoComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.fechaActual = new Date().getFullYear();
     this.isLoading = true;
     this.reportService
       .obtenerResumenAcademico(this.idEstudiante)
@@ -136,6 +139,7 @@ export class ReporteResumenAcademicoComponent implements OnInit {
           a.Materia > b.Materia ? 1 : b.Materia > a.Materia ? -1 : 0
         );
         this.sanciones = this.resumen[0].sanciones;
+        this.estudiante = this.resumen[0].apellido + " "+ this.resumen[0].nombre;
         this.inasistenciasInjustificadas = this.resumen[0].contadorInasistenciasInjustificada;
         this.inasistenciasJustificadas = this.resumen[0].contadorInasistenciasJustificada;
         this.reordenarCalificaciones();
@@ -147,7 +151,7 @@ export class ReporteResumenAcademicoComponent implements OnInit {
   calcularSumatoriaSanciones() {
     this.sanciones.forEach((sancion) => {
       switch (sancion.tipo) {
-        case "Llamado de atencion":
+        case "Llamado de atencón":
           this.sumatoriaSanciones[0] += sancion.cantidad;
           break;
         case "Apercibimiento":
@@ -288,7 +292,7 @@ export class ReporteResumenAcademicoComponent implements OnInit {
       var imgData = canvas.toDataURL("image/png");
       var doc = new jsPDF();
       var imgH = (canvas.height * 208) / canvas.width;
-      doc.text("Calificaciones Ciclo Lectivo", 7, 15);
+      // doc.text("Calificaciones Ciclo Lectivo", 7, 15);
       doc.addImage(imgData, 0, 30, 208, imgH);
       doc.save("ResumenAcadémico.pdf");
     });
