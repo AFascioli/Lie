@@ -13,6 +13,7 @@ import html2canvas from "html2canvas";
   styleUrls: ["./resumen-academico.component.css"],
 })
 export class ResumenAcademicoComponent implements OnInit {
+  // cursoS;
   cursos;
   fechaActual: Date;
   estudiantes: any;
@@ -29,10 +30,17 @@ export class ResumenAcademicoComponent implements OnInit {
 
   ngOnInit(): void {
     this.fechaActual = new Date();
+    // this.cursoS=null;
+    if (!this.reportService.retornoDeResumenAcademico)
     this.obtenerCursos();
+    else {
+      // this.cursoS=this.reportService.cursoSeleccionado;
+      this.obtenerEstudiantes(this.reportService.cursoSeleccionado);
+    }
   }
 
   obtenerEstudiantes(curso) {
+    this.reportService.cursoSeleccionado = curso;
     this.isLoading = true;
     this.cursoNotSelected = false;
     this.servicioEstudiante
@@ -139,12 +147,14 @@ export class ReporteResumenAcademicoComponent implements OnInit {
           a.Materia > b.Materia ? 1 : b.Materia > a.Materia ? -1 : 0
         );
         this.sanciones = this.resumen[0].sanciones;
-        this.estudiante = this.resumen[0].apellido + " "+ this.resumen[0].nombre;
+        this.estudiante =
+          this.resumen[0].apellido + " " + this.resumen[0].nombre;
         this.inasistenciasInjustificadas = this.resumen[0].contadorInasistenciasInjustificada;
         this.inasistenciasJustificadas = this.resumen[0].contadorInasistenciasJustificada;
         this.reordenarCalificaciones();
         this.calcularSumatoriaSanciones();
         this.isLoading = false;
+        this.reportService.retornoDeResumenAcademico = true;
       });
   }
 
@@ -279,10 +289,8 @@ export class ReporteResumenAcademicoComponent implements OnInit {
         cont++;
       }
     }
-    if(cont!=0)
-    this.promedioGeneral = sum / cont;
-    else
-    this.promedioGeneral=0;
+    if (cont != 0) this.promedioGeneral = sum / cont;
+    else this.promedioGeneral = 0;
   }
 
   public descargarPDF() {
@@ -293,7 +301,7 @@ export class ReporteResumenAcademicoComponent implements OnInit {
       var doc = new jsPDF();
       var imgH = (canvas.height * 208) / canvas.width;
       // doc.text("Calificaciones Ciclo Lectivo", 7, 15);
-      doc.addImage(imgData, 0, 30, 208, imgH);
+      doc.addImage(imgData, 0, 7, 208, imgH);
       doc.save("ResumenAcadémico.pdf");
     });
   }

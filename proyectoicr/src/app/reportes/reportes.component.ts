@@ -1,3 +1,4 @@
+import { ReportesService } from './reportes.service';
 import { Component, OnInit } from "@angular/core";
 import { Router } from "@angular/router";
 
@@ -7,7 +8,7 @@ import { Router } from "@angular/router";
   styleUrls: ["./reportes.component.css"],
 })
 export class ReportesComponent implements OnInit {
-  constructor(public router: Router) {}
+  constructor(public router: Router, public servicioReporte: ReportesService) {}
 
   ngOnInit(): void {}
 
@@ -20,6 +21,8 @@ export class ReportesComponent implements OnInit {
   }
 
   onResumenAcademico() {
+    this.servicioReporte.cursoSeleccionado=null;
+    this.servicioReporte.retornoDeResumenAcademico=false;
     this.router.navigate(["./resumenAcademico"]);
   }
 }

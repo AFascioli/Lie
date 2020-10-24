@@ -7,7 +7,12 @@ import { environment } from "src/environments/environment";
 })
 export class ReportesService {
   public idEstudianteSeleccionado: string;
-  constructor(public http: HttpClient) {}
+  public retornoDeResumenAcademico: boolean;
+  public cursoSeleccionado:string;
+
+  constructor(public http: HttpClient) {
+    this.retornoDeResumenAcademico = false;
+  }
 
   public obtenerDocsAdeudados(idCurso) {
     let params = new HttpParams().set("idCurso", idCurso);
