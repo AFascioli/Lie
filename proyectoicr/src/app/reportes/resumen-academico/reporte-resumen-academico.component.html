@@ -3,7 +3,7 @@
 </mat-card>
 
 <mat-card id="content" #content class="card-body-componente-big">
-  <h1 class="componente-titulo">
+  <h1 class="componente-titulo" *ngIf="!isLoading">
     Resumen académico {{ fechaActual }}: {{ estudiante }}
   </h1>
   <br />
@@ -385,11 +385,10 @@
       ><b>Sanciones</b>
       <br />
       <p>
-        Llamados de atención:{{ sumatoriaSanciones[0] }}
-        <br />Apercibimientos:{{ sumatoriaSanciones[1] }}
-        <br />Amonestaciones:{{ sumatoriaSanciones[2] }} <br />Suspenciones:{{
-          sumatoriaSanciones[3]
-        }}
+        Llamados de atención: {{ sumatoriaSanciones[0] }}
+        <br />Apercibimientos: {{ sumatoriaSanciones[1] }}
+        <br />Amonestaciones: {{ sumatoriaSanciones[2] }}
+        <br />Suspenciones: {{sumatoriaSanciones[3] }}
       </p>
       <br />
     </mat-card>
