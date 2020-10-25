@@ -25,4 +25,8 @@ export class ReportesComponent implements OnInit {
     this.servicioReporte.retornoDeResumenAcademico=false;
     this.router.navigate(["./resumenAcademico"]);
   }
+
+  onRendimientoCurso() {
+    this.router.navigate(["./rendimientoCurso"]);
+  }
 }

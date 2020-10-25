@@ -1,0 +1,113 @@
+table {
+  width: 95%;
+  margin: 0 auto;
+}
+
+.table-mobile {
+  width: 100%;
+  margin: 0;
+}
+
+.columnas-normales {
+  color: black;
+  width: 10% !important;
+}
+
+.columnas-promedios {
+  color: black;
+  width: 4.25% !important;
+}
+
+.columnas-chicas {
+  color: black;
+  width: 3%;
+}
+
+.apellido-tabla,
+.nombre-tabla {
+  word-break: break-all;
+}
+
+th {
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.header {
+  text-align: center;
+}
+
+p,
+b {
+  font-size: 14px !important;
+  margin-top: 16px;
+}
+
+.div-button {
+  text-align: right;
+}
+
+.div-selects {
+  text-align: center;
+}
+
+.mat-form-field {
+  margin-left: 0.5rem;
+  margin-right: 0.5rem;
+}
+
+/* Nuevo */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input {
+  border: none;
+  width: 90%;
+}
+
+input:focus {
+  outline: none;
+}
+
+.promedio {
+  text-align: center !important;
+}
+
+.mat-cell {
+  font-size: 14px !important;
+}
+
+.card-spinner {
+  margin: auto;
+  margin-top: 1rem;
+  margin-bottom: 1.5rem;
+  max-width: 800px;
+  box-shadow: 0px 0px 8px 0px rgba(0, 0, 0, 0.71) !important;
+}
+
+
+.th.mat-header-cell:first-of-type,
+th.mat-header-cell:first-of-type,
+.td.mat-cell:first-of-type,
+td.mat-cell:first-of-type {
+  padding-left: 0;
+}
+
+.th.mat-header-cell:last-of-type,
+th.mat-header-cell:last-of-type,
+.td.mat-cell:last-of-type,
+td.mat-cell:last-of-type {
+  padding-right: 0;
+}
+
+.card-body-componente {
+  max-width: 1000px;
+  min-width: 500px;
+}
+
+.centrar{
+  text-align: center;
+}

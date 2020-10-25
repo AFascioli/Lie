@@ -1,3 +1,4 @@
+import { RendimientoCursoComponent } from './reportes/rendimiento-curso/rendimiento-curso.component';
 import { CuotasAdeudadasComponent } from "./reportes/cuotas-adeudadas/cuotas-adeudadas.component";
 import { DocAdeudadosComponent } from "./reportes/doc-adeudados/doc-adeudados.component";
 import { BuscarAdultoResponsableComponent } from "./adulto-responsable/buscar-adulto-responsable/buscar-adulto-responsable.component";
@@ -441,7 +442,10 @@ const routes: Routes = [
         path: "reporteResumenAcademico",
         component: ReporteResumenAcademicoComponent,
       },
-
+      {
+        path: "rendimientoCurso",
+        component: RendimientoCursoComponent,
+      },
     ],
   },
 ];

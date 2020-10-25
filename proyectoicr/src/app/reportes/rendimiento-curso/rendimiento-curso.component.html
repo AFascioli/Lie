@@ -1,0 +1,70 @@
+<h1 class="componente-titulo">Rendimiento del curso</h1>
+<mat-card class="card-body-componente">
+  <form #form="ngForm">
+    <div class="div-selects">
+      <mat-form-field class="selectYear">
+        <mat-select
+          placeholder="Seleccione año"
+          name="anio"
+          ngModel
+          #anio="ngModel"
+          matNativeControl
+          required
+          (selectionChange)="onYearSelected(anio)"
+        >
+          <mat-option *ngFor="let y of year" [value]="y.anio">
+            {{ y.anio }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field>
+        <mat-select
+          placeholder="Seleccione curso"
+          name="curso"
+          ngModel
+          #curso="ngModel"
+          matNativeControl
+          required
+          (selectionChange)="onCursoSeleccionado(curso, materia)"
+        >
+          <mat-option *ngFor="let objCurso of cursos" [value]="objCurso.id">
+            {{ objCurso.nombre }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field>
+        <mat-select
+          placeholder="Seleccione materia"
+          name="materia"
+          ngModel
+          #materia="ngModel"
+          matNativeControl
+          required
+          (selectionChange)="obtenerNotas(form)"
+        >
+          <mat-option
+            *ngFor="let objMateria of materias"
+            [value]="objMateria.id"
+          >
+            {{ objMateria.nombre }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+      <b>Trimestre 1</b>
+      <canvas *ngIf="!isLoading3"
+      baseChart
+      [datasets]="barDataSet"
+      [labels]="barChartLabels"
+      [options]="barChartOptions"
+      [plugins]="barChartPlugins"
+      [legend]="barChartLegend"
+      [chartType]="barChartType"
+    ></canvas>
+    </div>
+  </form>
+  <div class="div-button">
+    <button mat-raised-button class="button-warn" [routerLink]="['/reportes']">
+      Volver
+    </button>
+  </div>
+</mat-card>
