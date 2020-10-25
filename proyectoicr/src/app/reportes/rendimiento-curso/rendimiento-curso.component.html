@@ -2,6 +2,28 @@
 <mat-card class="card-body-componente">
   <form #form="ngForm">
     <div class="div-selects">
+      <mat-form-field>
+        <mat-select
+          placeholder="Seleccione tipo de grafico"
+          name="grafico"
+          ngModel
+          [(ngModel)]="tipoGrafico"
+          #grafico="ngModel"
+          matNativeControl
+          required
+          (selectionChange)="onTipoGraficoChange(grafico)"
+        >
+          <!-- //= "pie"; //"line" | "bar" | "horizontalBar" | "radar" | "doughnut" | "polarArea" | "bubble" | "pie" | "scatter" -->
+          <mat-option value="pie">Torta</mat-option>
+          <mat-option value="line">Línea</mat-option>
+          <mat-option value="bar">Barras</mat-option>
+          <mat-option value="horizontalBar">Barras horizontales</mat-option>
+          <mat-option value="doughnut">Dona</mat-option>
+          <mat-option value="polarArea">polarArea</mat-option>
+          <mat-option value="bubble">Burbuja</mat-option>
+          <mat-option value="scatter">scatter</mat-option>
+        </mat-select>
+      </mat-form-field>
       <mat-form-field class="selectYear">
         <mat-select
           placeholder="Seleccione año"
@@ -50,8 +72,10 @@
           </mat-option>
         </mat-select>
       </mat-form-field>
-      <b>Trimestre 1</b>
-      <canvas *ngIf="!isLoading3"
+    </div>
+    <b *ngIf="!isLoading3">Trimestre 1 </b>
+    <canvas
+      *ngIf="!isLoading3"
       baseChart
       [datasets]="barDataSet"
       [labels]="barChartLabels"
@@ -60,7 +84,6 @@
       [legend]="barChartLegend"
       [chartType]="barChartType"
     ></canvas>
-    </div>
   </form>
   <div class="div-button">
     <button mat-raised-button class="button-warn" [routerLink]="['/reportes']">

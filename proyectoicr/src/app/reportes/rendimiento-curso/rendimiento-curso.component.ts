@@ -18,6 +18,8 @@ import * as pluginDataLabels from "chartjs-plugin-datalabels";
   styleUrls: ["./rendimiento-curso.component.css"],
 })
 export class RendimientoCursoComponent implements OnInit {
+  cursoS;
+  materiaS;
   year: any[] = [];
   cursos;
   fechaActual: Date;
@@ -48,6 +50,7 @@ export class RendimientoCursoComponent implements OnInit {
   t3_iE3Y6 = 0;
   t3_iE6y8 = 0;
   t3_iM8 = 0;
+  tipoGrafico;
   //
   private unsubscribe: Subject<void> = new Subject();
   barChartLabels: Label[] = [];
@@ -69,7 +72,7 @@ export class RendimientoCursoComponent implements OnInit {
   };
   barDataSet = [];
 
-  public barChartType: ChartType = "pie";
+  public barChartType: ChartType; //= "pie"; //"line" | "bar" | "horizontalBar" | "radar" | "doughnut" | "polarArea" | "bubble" | "pie" | "scatter"
   public barChartPlugins = [pluginDataLabels];
   public barChartLegend;
 
@@ -83,15 +86,6 @@ export class RendimientoCursoComponent implements OnInit {
 
   ngOnInit(): void {
     this.fechaActual = new Date();
-    this.servicioCicloLectivo
-      .obtenerAniosCicloLectivo()
-      .pipe(takeUntil(this.unsubscribe))
-      .subscribe((response) => {
-        this.year = response.respuesta;
-        this.year.sort((a, b) =>
-          a.anio > b.anio ? 1 : b.anio > a.anio ? -1 : 0
-        );
-      });
   }
 
   onYearSelected(yearSelected) {
@@ -139,6 +133,8 @@ export class RendimientoCursoComponent implements OnInit {
   }
 
   onCursoSeleccionado(curso, materia: NgModel) {
+    this.cursoS = curso;
+    this.materiaS = materia;
     this.materiaSelec = false;
     this.estudiantes = [];
     this.materias = [];
@@ -355,10 +351,13 @@ export class RendimientoCursoComponent implements OnInit {
           break;
       }
     }
+    this.barChartType = this.tipoGrafico;
     this.isLoading3 = false;
     this.barDataSet = [
       {
-        backgroundColor: ["#f67575", "#ffa34d", "#d4f8e8", "1eb2a6"],
+        backgroundColor: ["#6a8caf", "#75b79e", "#a7e9af", "#eef9bf"],
+        // backgroundColor: ["#dddddd", "#d9adad", "#84a9ac", "#89c9b8"],
+        // backgroundColor: ["#ea907a", "#fbc687", "#f4f7c5", "#aacdbe"],
         data: [this.t1_iMI3, this.t1_iE3Y6, this.t1_iE6y8, this.t1_iM8],
       },
     ];
@@ -369,6 +368,22 @@ export class RendimientoCursoComponent implements OnInit {
       "Entre 6 y 8 inc",
       "Mayor a 8",
     ];
+  }
+
+  onTipoGraficoChange(grafico) {
+    this.isLoading3 = true;
+    this.barChartType = grafico;
+    if (this.cursoS) this.onCursoSeleccionado(this.cursoS, this.materiaS);
+    else
+      this.servicioCicloLectivo
+        .obtenerAniosCicloLectivo()
+        .pipe(takeUntil(this.unsubscribe))
+        .subscribe((response) => {
+          this.year = response.respuesta;
+          this.year.sort((a, b) =>
+            a.anio > b.anio ? 1 : b.anio > a.anio ? -1 : 0
+          );
+        });
   }
 
   resetearContadoresIntervalo() {
