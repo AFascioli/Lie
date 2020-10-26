@@ -13,7 +13,6 @@
           required
           (selectionChange)="onTipoGraficoChange(grafico)"
         >
-          <!-- //= "pie"; //"line" | "bar" | "horizontalBar" | "radar" | "doughnut" | "polarArea" | "bubble" | "pie" | "scatter" -->
           <mat-option value="pie">Torta</mat-option>
           <mat-option value="line">Línea</mat-option>
           <mat-option value="bar">Barras</mat-option>
@@ -73,13 +72,48 @@
         </mat-select>
       </mat-form-field>
     </div>
-    <b *ngIf="!isLoading3">Trimestre 1 </b>
+    <div class="div-canvas">
+      <canvas
+        class="cv"
+        *ngIf="!isLoading3"
+        baseChart
+        [datasets]="barDataSet"
+        [labels]="barChartLabels"
+        [options]="barChartOptions"
+        [plugins]="barChartPlugins"
+        [legend]="barChartLegend"
+        [chartType]="barChartType"
+      ></canvas>
+      <canvas
+        class="cv"
+        *ngIf="!isLoading3"
+        baseChart
+        [datasets]="barDataSet1"
+        [labels]="barChartLabels"
+        [options]="barChartOptions"
+        [plugins]="barChartPlugins"
+        [legend]="barChartLegend"
+        [chartType]="barChartType"
+      ></canvas>
+      <canvas
+        class="cv"
+        *ngIf="!isLoading3"
+        baseChart
+        [datasets]="barDataSet2"
+        [labels]="barChartLabels"
+        [options]="barChartOptions"
+        [plugins]="barChartPlugins"
+        [legend]="barChartLegend"
+        [chartType]="barChartType"
+      ></canvas>
+    </div>
+    <br />
     <canvas
       *ngIf="!isLoading3"
       baseChart
-      [datasets]="barDataSet"
+      [datasets]="barDataSet3"
       [labels]="barChartLabels"
-      [options]="barChartOptions"
+      [options]="barChartOptions3"
       [plugins]="barChartPlugins"
       [legend]="barChartLegend"
       [chartType]="barChartType"

@@ -50,27 +50,22 @@ export class RendimientoCursoComponent implements OnInit {
   t3_iE3Y6 = 0;
   t3_iE6y8 = 0;
   t3_iM8 = 0;
+  f_iMI3 = 0;
+  f_iE3Y6 = 0;
+  f_iE6y8 = 0;
+  f_iM8 = 0;
   tipoGrafico;
+  titulo = "";
   //
   private unsubscribe: Subject<void> = new Subject();
   barChartLabels: Label[] = [];
-  public barChartOptions: ChartOptions = {
-    responsive: true,
-    legend: {
-      labels: {
-        fontSize: 18,
-      },
-    },
-    plugins: {
-      datalabels: {
-        font: {
-          size: 20,
-          weight: "bold",
-        },
-      },
-    },
-  };
+  legend: boolean = false;
+  public barChartOptions: ChartOptions;
+  public barChartOptions3: ChartOptions;
   barDataSet = [];
+  barDataSet1 = [];
+  barDataSet2 = [];
+  barDataSet3 = [];
 
   public barChartType: ChartType; //= "pie"; //"line" | "bar" | "horizontalBar" | "radar" | "doughnut" | "polarArea" | "bubble" | "pie" | "scatter"
   public barChartPlugins = [pluginDataLabels];
@@ -351,28 +346,35 @@ export class RendimientoCursoComponent implements OnInit {
           break;
       }
     }
-    this.barChartType = this.tipoGrafico;
-    this.isLoading3 = false;
-    this.barDataSet = [
-      {
-        backgroundColor: ["#6a8caf", "#75b79e", "#a7e9af", "#eef9bf"],
-        // backgroundColor: ["#dddddd", "#d9adad", "#84a9ac", "#89c9b8"],
-        // backgroundColor: ["#ea907a", "#fbc687", "#f4f7c5", "#aacdbe"],
-        data: [this.t1_iMI3, this.t1_iE3Y6, this.t1_iE6y8, this.t1_iM8],
-      },
-    ];
-
-    this.barChartLabels = [
-      "Menor igual a 3",
-      "Entre 3 y 6",
-      "Entre 6 y 8 inc",
-      "Mayor a 8",
-    ];
+    for (let index = 0; index < this.promedio.length; index++) {
+      switch (true) {
+        case this.promedio[index] <= 3:
+          this.f_iMI3++;
+          break;
+        case this.promedio[index] > 3 && this.promedio[index] < 6:
+          this.f_iE3Y6++;
+          break;
+        case this.promedio[index] >= 6 && this.promedio[index] <= 8:
+          this.f_iE6y8++;
+          break;
+        case this.promedio[index] > 8:
+          this.f_iM8++;
+          break;
+        default:
+          break;
+      }
+    }
+    this.configuracionGraficos();
   }
 
   onTipoGraficoChange(grafico) {
     this.isLoading3 = true;
     this.barChartType = grafico;
+    console.log(this.barChartType);
+    if (grafico.value == "pie" || grafico.value == "doughnut")
+      this.legend = true;
+    else this.legend = false;
+
     if (this.cursoS) this.onCursoSeleccionado(this.cursoS, this.materiaS);
     else
       this.servicioCicloLectivo
@@ -399,5 +401,93 @@ export class RendimientoCursoComponent implements OnInit {
     this.t3_iE3Y6 = 0;
     this.t3_iE6y8 = 0;
     this.t3_iM8 = 0;
+    this.f_iMI3 = 0;
+    this.f_iE3Y6 = 0;
+    this.f_iE6y8 = 0;
+    this.f_iM8 = 0;
+  }
+
+  configuracionGraficos() {
+    this.barChartType = this.tipoGrafico;
+    this.isLoading3 = false;
+    this.barDataSet = [
+      {
+        backgroundColor: ["#6a8caf", "#75b79e", "#a7e9af", "#eef9bf"],
+        // backgroundColor: ["#dddddd", "#d9adad", "#84a9ac", "#89c9b8"],
+        // backgroundColor: ["#ea907a", "#fbc687", "#f4f7c5", "#aacdbe"],
+        data: [this.t1_iMI3, this.t1_iE3Y6, this.t1_iE6y8, this.t1_iM8],
+      },
+    ];
+    this.barDataSet1 = [
+      {
+        backgroundColor: ["#6a8caf", "#75b79e", "#a7e9af", "#eef9bf"],
+        data: [this.t2_iMI3, this.t2_iE3Y6, this.t2_iE6y8, this.t2_iM8],
+      },
+    ];
+    this.barDataSet2 = [
+      {
+        backgroundColor: ["#6a8caf", "#75b79e", "#a7e9af", "#eef9bf"],
+        data: [this.t3_iMI3, this.t3_iE3Y6, this.t3_iE6y8, this.t3_iM8],
+      },
+    ];
+    this.barDataSet3 = [
+      {
+        backgroundColor: ["#6a8caf", "#75b79e", "#a7e9af", "#eef9bf"],
+        data: [this.f_iMI3, this.f_iE3Y6, this.f_iE6y8, this.f_iM8],
+      },
+    ];
+
+    this.barChartLabels = [
+      "Menor igual a 3",
+      "Entre 3 y 6",
+      "Entre 6 y 8 inc",
+      "Mayor a 8",
+    ];
+    this.barChartOptions = {
+      responsive: true,
+      legend: {
+        display: this.legend,
+        labels: {
+          fontSize: 14,
+        },
+        position: "right",
+      },
+      plugins: {
+        datalabels: {
+          font: {
+            size: 14,
+            weight: "bold",
+          },
+        },
+      },
+      title: {
+        display: true,
+        text: "Trimestre " + this.titulo,
+        fontSize: 16,
+      },
+    };
+    this.barChartOptions3 = {
+      responsive: true,
+      legend: {
+        display: this.legend,
+        labels: {
+          fontSize: 14,
+        },
+        position: "bottom",
+      },
+      plugins: {
+        datalabels: {
+          font: {
+            size: 14,
+            weight: "bold",
+          },
+        },
+      },
+      title: {
+        display: true,
+        text: "General",
+        fontSize: 16,
+      },
+    };
   }
 }
