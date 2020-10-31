@@ -58,6 +58,7 @@ export class CalificacionesEstudiantesComponent implements OnInit, OnDestroy {
   _mobileQueryListener: () => void;
   mobileQuery: MediaQueryList;
   sePuedeCerrar= false;
+  estadoCiclo: string;
 
   @ViewChild("comboCurso", { static: false }) comboCurso: any;
   @ViewChild("comboTrimestre", { static: false }) comboTrimestre: any;
@@ -79,6 +80,7 @@ export class CalificacionesEstudiantesComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.obtenerEstadoCicloLectivo();
     this.fechaActual = new Date();
     this.obtenerTrimestreActual();
     this.validarPermisos();
@@ -138,6 +140,14 @@ export class CalificacionesEstudiantesComponent implements OnInit, OnDestroy {
           );
         });
     }
+  }
+
+  obtenerEstadoCicloLectivo() {
+    this.cicloLectivoService.obtenerEstadoCicloLectivo()
+      .pipe(takeUntil(this.unsubscribe))
+      .subscribe((response) => {
+        this.estadoCiclo = response.estadoCiclo;
+      });
   }
 
   obtenerTrimestreActual() {
@@ -408,7 +418,7 @@ export class PaginatorOverviewExample {}
 export function getDutchPaginatorIntl() {
   const paginatorIntl = new MatPaginatorIntl();
 
-  paginatorIntl.itemsPerPageLabel = "Items por página";
+  paginatorIntl.itemsPerPageLabel = "Estudiantes por página";
   paginatorIntl.nextPageLabel = "Página siguiente";
   paginatorIntl.previousPageLabel = "Página anterior";
   return paginatorIntl;

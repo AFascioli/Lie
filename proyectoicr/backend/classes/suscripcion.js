@@ -54,46 +54,34 @@ function notificar(allSubscriptions, titulo, cuerpo) {
 // #resolve Considerar en el futuro pasar las acciones que se quieren y la url a donde redirigir.
 function notificacionIndividual(idusuario, titulo, cuerpo) {
   // Busco las suscripciones del usuario
-  Usuario.findOne({ _id: idusuario })
-    .then((usuario) => {
-      const allSubscriptions = usuario.suscripciones;
-      console.log("suscripciones", allSubscriptions);
-      notificar(allSubscriptions, titulo, cuerpo);
-    })
-    .catch((e) => {
-      console.log(e);
-    });
+  Usuario.findOne({ _id: idusuario }).then((usuario) => {
+    const allSubscriptions = usuario.suscripciones;
+    console.log("suscripciones", allSubscriptions);
+    notificar(allSubscriptions, titulo, cuerpo);
+  });
 }
 
 //@params: idusuarios vector de ids
 function notificacionGrupal(idusuarios, titulo, cuerpo) {
   // Busco las suscripciones del grupo de usuarios
-  Usuario.find({ _id: { $in: idusuarios } })
-    .then((usuarios) => {
-      var allSubscriptions = [];
-      usuarios.forEach((usuario) => {
-        allSubscriptions = allSubscriptions.concat(usuario.suscripciones);
-      });
-      notificar(allSubscriptions, titulo, cuerpo);
-    })
-    .catch((e) => {
-      console.log(e);
+  Usuario.find({ _id: { $in: idusuarios } }).then((usuarios) => {
+    var allSubscriptions = [];
+    usuarios.forEach((usuario) => {
+      allSubscriptions = allSubscriptions.concat(usuario.suscripciones);
     });
+    notificar(allSubscriptions, titulo, cuerpo);
+  });
 }
 
 // Notifica a todos los usuarios suscriptos
 function notificacionMasiva(titulo, cuerpo) {
-  Usuario.find({})
-    .then((usuarios) => {
-      var allSubscriptions = [];
-      usuarios.forEach((usuario) => {
-        allSubscriptions = allSubscriptions.concat(usuario.suscripciones);
-      });
-      notificar(allSubscriptions, titulo, cuerpo);
-    })
-    .catch((e) => {
-      console.log(e);
+  Usuario.find({}).then((usuarios) => {
+    var allSubscriptions = [];
+    usuarios.forEach((usuario) => {
+      allSubscriptions = allSubscriptions.concat(usuario.suscripciones);
     });
+    notificar(allSubscriptions, titulo, cuerpo);
+  });
 }
 
 //Obtener id de usuario de los AR de un estudiante dado
@@ -116,13 +104,18 @@ async function obtenerIdsUsuarios(idEstudiante) {
 }
 
 //Filtra los AR y devuelve su idUsuario si este acepta recepcion del tipo de notificacion dado
-async function filtrarARPorPreferencias(idsUsuariosAR,tipoNotificacion){
-  let idsUsuariosAceptan=[];
+async function filtrarARPorPreferencias(idsUsuariosAR, tipoNotificacion) {
+  let idsUsuariosAceptan = [];
   for (const idUsuarioAR of idsUsuariosAR) {
-    await AdultoResponsable.findOne({idUsuario: idUsuarioAR}).then(adultoEncontrado =>{
-      let aceptaNotificacion=adultoEncontrado.preferenciasPush.some(preferencia => (preferencia.nombre==tipoNotificacion && preferencia.acepta));
-      aceptaNotificacion && idsUsuariosAceptan.push(idUsuarioAR);
-    })
+    await AdultoResponsable.findOne({ idUsuario: idUsuarioAR }).then(
+      (adultoEncontrado) => {
+        let aceptaNotificacion = adultoEncontrado.preferenciasPush.some(
+          (preferencia) =>
+            preferencia.nombre == tipoNotificacion && preferencia.acepta
+        );
+        aceptaNotificacion && idsUsuariosAceptan.push(idUsuarioAR);
+      }
+    );
   }
   return idsUsuariosAceptan;
 }

@@ -1,30 +1,48 @@
-<h1 *ngIf="!isLoading" class="componente-titulo">
-  Definir agenda de curso ciclo lectivo {{ fechaActual.getFullYear() }}
-</h1>
+<h1 *ngIf="!isLoading" class="componente-titulo">Definir agenda de curso</h1>
 <mat-card class="card-body-componente">
   <form #form="ngForm" *ngIf="!fueraPeriodoDefinirAgenda">
-    <mat-form-field>
-      <mat-select
-        placeholder="Seleccione curso"
-        name="curso"
-        ngModel
-        #curso="ngModel"
-        matNativeControl
-        required
-        class="curso"
-        (selectionChange)="obtenerAgenda(curso)"
-      >
-        <mat-option *ngFor="let curso of cursos" [value]="curso.id">
-          {{ curso.nombre }}
-        </mat-option>
-      </mat-select>
-    </mat-form-field>
+    <div class="div-select">
+      <mat-form-field class="selectYear">
+        <mat-select
+          placeholder="Seleccione año"
+          name="year"
+          ngModel
+          #yearSelected="ngModel"
+          matNativeControl
+          required
+          (selectionChange)="onYearSelected(yearSelected)"
+        >
+          <mat-option value="actual">
+            {{ fechaActual.getFullYear() }}</mat-option
+          >
+          <mat-option value="proximo">
+            {{ fechaActual.getFullYear() + 1 }}</mat-option
+          >
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field>
+        <mat-select
+          placeholder="Seleccione curso"
+          name="curso"
+          ngModel
+          #curso="ngModel"
+          matNativeControl
+          required
+          class="curso"
+          (selectionChange)="obtenerAgenda(curso)"
+        >
+          <mat-option *ngFor="let curso of cursos" [value]="curso.id">
+            {{ curso.nombre }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
 
-    <mat-card class="card-spinner" *ngIf="isLoading && curso != null">
+    <mat-card class="card-spinner" *ngIf="isLoading">
       <mat-spinner class="spinner" [diameter]="60"></mat-spinner>
     </mat-card>
 
-    <div class="contenedor-tabla" *ngIf="!isLoading">
+    <div class="contenedor-tabla" *ngIf="!isLoading || cursoSelected">
       <table
         #tabla
         mat-table
@@ -230,7 +248,7 @@
               </button>
               <button
                 id="reservar{{ i }}"
-                style="display: none;"
+                style="display: none"
                 [disabled]="indice != i"
                 mat-icon-button
                 (click)="reservarAgenda(i, row)"
@@ -265,17 +283,28 @@
       mat-raised-button
       class="button-agregar"
       (click)="onAgregar()"
-      *ngIf="cursoSelected"
+      [disabled]="!cursoSelected"
+      *ngIf="yearSelected"
     >
       <mat-icon>add_circle_outline</mat-icon>
       Agregar horario
+    </button>
+    <br />
+    <button
+      mat-raised-button
+      class="button-clonar"
+      (click)="onClonar(yearSelected)"
+      *ngIf="cursoSelected"
+    >
+      <mat-icon>content_copy</mat-icon>
+      Copiar agenda año anterior
     </button>
   </div>
   <p class="aviso" *ngIf="fueraPeriodoDefinirAgenda">
     Atención, estamos fuera del periodo correspondiente para definir las agendas
     de los cursos
   </p>
-<br>
+  <br />
   <div class="div-guardar">
     <button
       mat-raised-button

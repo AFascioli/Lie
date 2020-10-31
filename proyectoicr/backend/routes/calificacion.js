@@ -74,11 +74,15 @@ router.get("/materia/calificaciones", checkAuthMiddleware, async (req, res) => {
     "Inscripcion",
     "Activa"
   );
+  let idEstadoSuspendido = await ClaseEstado.obtenerIdEstado(
+    "Inscripcion",
+    "Suspendido"
+  );
   Inscripcion.aggregate([
     {
       $match: {
         idEstudiante: mongoose.Types.ObjectId(req.query.idEstudiante),
-        estado: mongoose.Types.ObjectId(idEstadoActiva),
+        $or: [{ estado: idEstadoActiva }, { estado: idEstadoSuspendido }],
       },
     },
     {

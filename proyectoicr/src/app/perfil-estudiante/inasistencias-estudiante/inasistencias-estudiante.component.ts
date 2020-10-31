@@ -60,49 +60,33 @@ export class InasistenciasEstudianteComponent implements OnInit, OnDestroy {
     this.servicioCicloLectivo
       .obtenerFaltasSuspensionCicloLectivo()
       .pipe(takeUntil(this.unsubscribe))
-      .subscribe(
-        (response) => {
-          this.cantidadFaltasParaSuspension = response.faltas;
-        },
-        (error) => {
-          console.error(
-            "Ocurrió un error al querer devolver la canidad de inasistencias para la reincorporación. El error se puede describir de la siguiente manera: " +
-              error
-          );
-        }
-      );
+      .subscribe((response) => {
+        this.cantidadFaltasParaSuspension = response.faltas;
+      });
     this.apellidoEstudiante = this.servicioEstudiante.estudianteSeleccionado.apellido;
     this.nombreEstudiante = this.servicioEstudiante.estudianteSeleccionado.nombre;
     this.servicioAsistencia
       .obtenerInasistenciasDeEstudiante()
       .pipe(takeUntil(this.unsubscribe))
-      .subscribe(
-        (response) => {
-          this.contadorInasistenciaInjustificada =
-            response.contadorInasistenciasInjustificada;
-          this.contadorInasistenciaJustificada =
-            response.contadorInasistenciasJustificada;
-          this.barDataSet = [
-            {
-              backgroundColor: ["#38AECC", "#E9FE00"],
-              data: [
-                response.contadorInasistenciasInjustificada,
-                response.contadorInasistenciasJustificada,
-              ],
-            },
-          ];
+      .subscribe((response) => {
+        this.contadorInasistenciaInjustificada =
+          response.contadorInasistenciasInjustificada;
+        this.contadorInasistenciaJustificada =
+          response.contadorInasistenciasJustificada;
+        this.barDataSet = [
+          {
+            backgroundColor: ["#38AECC", "#E9FE00"],
+            data: [
+              response.contadorInasistenciasInjustificada,
+              response.contadorInasistenciasJustificada,
+            ],
+          },
+        ];
 
-          this.barChartLabels = [
-            "Inasistencias injustificadas",
-            "Inasistencias justificadas",
-          ];
-        },
-        (error) => {
-          console.error(
-            "Ocurrió un error al querer devolver los contadores de inasistencias. El error se puede describir de la siguiente manera: " +
-              error
-          );
-        }
-      );
+        this.barChartLabels = [
+          "Inasistencias injustificadas",
+          "Inasistencias justificadas",
+        ];
+      });
   }
 }

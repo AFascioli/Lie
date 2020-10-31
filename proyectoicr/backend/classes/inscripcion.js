@@ -139,8 +139,8 @@ exports.inscribirEstudiante = async function (
         .then(async () => {
           resolve();
         })
-        .catch(() => {
-          reject();
+        .catch((error) => {
+          reject(error);
         });
     });
   };

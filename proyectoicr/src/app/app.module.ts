@@ -23,6 +23,7 @@ import {
   MatInputModule,
   MatPaginatorIntl,
 } from "@angular/material";
+import { MatTableExporterModule } from "mat-table-exporter";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { MatPaginatorModule } from "@angular/material/paginator";
@@ -119,6 +120,7 @@ import { RegistrarCuotasComponent } from "./cuotas/registrar-cuotas/registrar-cu
 import {
   DefinirAgendaComponent,
   AgendaPopupComponent,
+  ConfirmacionClonarPopupComponent,
 } from "./agenda/definir-agenda/definir-agenda.component";
 import { RegistrarSancionesComponent } from "./sanciones/registrar-sanciones/registrar-sanciones.component";
 import { SancionesEstudianteComponent } from "./perfil-estudiante/sanciones-estudiante/sanciones-estudiante.component";
@@ -133,13 +135,12 @@ import {
 import { SolicitudReunionComponent } from "./solicitud-reunion/solicitud-reunion.component";
 import { SolicitudReunionAdultoResponsableComponent } from "./solicitud-reunion-adulto-responsable/solicitud-reunion-adulto-responsable.component";
 import { AsociarAdultoResponsableComponent } from "./adulto-responsable/asociar-adulto-responsable/asociar-adulto-responsable.component";
-import { ModificarAdultoResponsableComponent } from './adulto-responsable/modificar-adulto-responsable/modificar-adulto-responsable.component';
+import { ModificarAdultoResponsableComponent } from "./adulto-responsable/modificar-adulto-responsable/modificar-adulto-responsable.component";
 import { BuscarAdultoResponsableComponent } from "./adulto-responsable/buscar-adulto-responsable/buscar-adulto-responsable.component";
 import { AccionesDirectorComponent } from './acciones-director/acciones-director.component';
 import { ParametrizarReglasNegocioComponent } from './acciones-director/parametrizar-reglas-negocio/parametrizar-reglas-negocio.component';
 import { CicloLectivoComponent, PopUpCerrarEtapa, PopUpMateriasSinCerrar } from './acciones-director/ciclo-lectivo/ciclo-lectivo/ciclo-lectivo.component';
 import { EstadoCursosComponent } from './acciones-director/estado-cursos/estado-cursos.component';
-
 
 @NgModule({
   declarations: [
@@ -191,6 +192,7 @@ import { EstadoCursosComponent } from './acciones-director/estado-cursos/estado-
     ModificarEventoComponent,
     VisualizarEventoComponent,
     AgendaPopupComponent,
+    ConfirmacionClonarPopupComponent,
     ReadMoreComponent,
     VisualizarAgendaComponent,
     RegistrarCuotasComponent,
@@ -216,6 +218,7 @@ import { EstadoCursosComponent } from './acciones-director/estado-cursos/estado-
   entryComponents: [
     CancelPopupComponent,
     AsociarAdultoResponsablePopupComponent,
+    ConfirmacionClonarPopupComponent,
     MostrarPopupComponent,
     BorrarPopupComponent,
     AsistenciaPopupComponent,

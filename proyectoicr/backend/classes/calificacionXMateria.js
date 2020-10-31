@@ -44,25 +44,6 @@ exports.crearCalifXTrimestre = async function (califXMateriaNueva) {
   }
 };
 
-// Deprecado
-exports.crearDocsCalif = async function (materiasDelCurso, estado) {
-  let idsCalXMateria = [];
-  materiasDelCurso.forEach((elemento) => {
-    let califXMateriaNueva = new CalificacionesXMateria({
-      idMateria: elemento.materiasDelCurso[0].materia,
-      estado: estado._id,
-      calificacionesXTrimestre: idsCalXMateria,
-    });
-
-    //Creamos las califXMateria
-    this.crearCalifXTrimestre(califXMateriaNueva).then(
-      async (idsCalificacionMat) => {
-        return await idsCalificacionMat;
-      }
-    );
-  });
-};
-
 //Crear todas las CalificacionXMateria necesarias con sus respectivas CalificacionesXTrimestre
 //@param: Array con ids de las materias de un curso
 //@param: Id del estado Cursando de CalificacionXMateria
@@ -122,13 +103,13 @@ exports.obtenerMateriasDesaprobadasv2 = async function (
       idsCXMDesaprobadas.push(arrayPendientes);
     }
     for (const cxm of idsCalificacionesXMateria) {
-      await CalificacionesXMateria.findOne({ _id: cxm, estado: idEstado })
-        .then((cxmEncontrada) => {
+      await CalificacionesXMateria.findOne({ _id: cxm, estado: idEstado }).then(
+        (cxmEncontrada) => {
           if (cxmEncontrada != null) {
             idsCXMDesaprobadas.push(cxm);
           }
-        })
-        .catch(() => reject("Error"));
+        }
+      );
     }
     resolve(idsCXMDesaprobadas);
   });

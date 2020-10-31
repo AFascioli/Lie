@@ -96,6 +96,7 @@ export class ModificarEventoComponent implements OnInit, OnDestroy {
     this.evento = this.eventoService.evento;
     this.horaInicioEvento = this.evento.horaInicio;
     this.horaFinEvento = this.evento.horaFin;
+    console.log(this.horaInicioEvento);
     this.fechaActual = new Date();
     if (this.evento.filenames.length != 0) {
       for (let index = 0; index < this.evento.filenames.length; index++) {

@@ -287,6 +287,16 @@ export class EstudiantesService implements OnDestroy {
     );
   }
 
+  //Obtiene todos los cursos que son dictados por una docente en un ciclo lectivo
+  //@params: id de la docente, año
+  public obtenerCursosDeDocentePorCiclo(idDocente: string, anio: string) {
+    let params = new HttpParams().set("idDocente", idDocente).set("anio", anio);
+    return this.http.get<{ cursos: any[]; message: string; exito: boolean }>(
+      environment.apiUrl + "/curso/docentePorCiclo",
+      { params: params }
+    );
+  }
+
   //Obtiene todas las materias que son dictadas por una docente en un curso determinado
   //@params: id de la docente
   //@params: id del curso
@@ -362,6 +372,14 @@ export class EstudiantesService implements OnDestroy {
     }>(environment.apiUrl + "/estudiante/suspendido", {
       params: params,
     });
+  }
+
+  public obtenerIdSuspendido() {
+    return this.http.get<{
+      respuesta: string;
+      message: string;
+      exito: boolean;
+    }>(environment.apiUrl + "/estudiante/idSuspendido");
   }
 
   public reincorporarEstudianteSeleccionado() {

@@ -6,7 +6,18 @@
   Registrar documentos de inscripción ciclo lectivo
   {{ fechaActual.getFullYear() }}
 </h1>
-<mat-card class="card-body-componente" *ngIf="!isLoading">
+<mat-card
+  class="card-body-componente"
+  *ngIf="this.estadoCiclo == 'Inactivo'"
+>
+  <p
+    class="parrafo"
+    *ngIf="this.estadoCiclo == 'Inactivo'"
+  >
+    Esta funcionalidad se encuentra deshabilitada.
+  </p>
+</mat-card>
+<mat-card class="card-body-componente" *ngIf="!isLoading  && this.estadoCiclo != 'Inactivo'">
   <div class="div-selects">
     <mat-form-field>
       <mat-select
