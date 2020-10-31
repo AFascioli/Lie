@@ -29,6 +29,28 @@ export class CalificacionesService {
     });
   }
 
+  //Retorna un booleano segun se puede cerrar la materia de un curso y trimestre en particular
+  //@params: idCurso, idMateria, trimestre
+  public sePuedeCerrarTrimestre(idMateria: string, idCurso: string, trimestre: string) {
+    let params = new HttpParams()
+      .set("idMateria", idMateria)
+      .set("idCurso", idCurso)
+      .set("trimestre", trimestre);
+    return this.http.get<{
+      exito: boolean;
+    }>(environment.apiUrl + "/materia/cierre", {
+      params: params
+    });
+  }
+
+  //Cierra una amteria (cambia estado de MXC, y si es tercer trimestre se cambia estado de las CXM y se calcula promedio)
+  public cerrarTrimestreMateria(idMateria: string, idCurso: string, trimestre: string) {
+    return this.http.post<{ message: string; exito: boolean }>(
+      environment.apiUrl + "/materia/cierre",
+      { idCurso: idCurso, idMateria: idMateria, trimestre: trimestre }
+    );
+  }
+
   //Obtiene todas las calificaciones de los estudiantes de un curso determinado
   //para un trimestre dado
   //@params: id del curso

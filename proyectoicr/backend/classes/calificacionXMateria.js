@@ -1,5 +1,8 @@
 const CalificacionesXTrimestre = require("../models/calificacionesXTrimestre");
 const CalificacionesXMateria = require("../models/calificacionesXMateria");
+const Inscripcion = require("../models/inscripcion");
+const ClaseEstado = require("../classes/estado");
+const ClaseCicloLectivo = require("../classes/cicloLectivo");
 const mongoose = require("mongoose");
 
 exports.obtenerPromedioDeTrimestre = function (calificaciones) {
@@ -123,10 +126,15 @@ exports.obtenerPromedioTotal = (trimestre1, trimestre2, trimestre3) => {
   );
 };
 
-//Dados los 3 vectores de calificaciones retorna un objeto que indica el estado y el promedio
+//Dados los 3 vectores de calificaciones modifica estado y promedio de la CXM segun correspondaf
 //que tendra la CXM correspondiente
-//@param: vector de calificaciones 1, 2 y 3 trimestre
-exports.obtenerEstadoYPromedioCXM = (trimestre1, trimestre2, trimestre3) => {
+//@param: vector de calificaciones 1, 2 y 3 trimestre, y idCXM a cambiar
+exports.obtenerEstadoYPromedioCXM = async (
+  trimestre1,
+  trimestre2,
+  trimestre3,
+  idCXM
+) => {
   let promedioTrimestre3 = this.obtenerPromedioDeTrimestre(trimestre3);
   let promedioGeneral = this.obtenerPromedioTotal(
     trimestre1,
@@ -134,14 +142,25 @@ exports.obtenerEstadoYPromedioCXM = (trimestre1, trimestre2, trimestre3) => {
     trimestre3
   );
 
-  if (promedioTrimestre3 < 6) {
-    return { aprobado: false, promedio: promedioGeneral };
+  const idEstadoAprobada = await ClaseEstado.obtenerIdEstado(
+    "CalificacionesXMateria",
+    "Aprobada"
+  );
+  const idEstadoPendienteExam = await ClaseEstado.obtenerIdEstado(
+    "CalificacionesXMateria",
+    "Pendiente examen"
+  );
+
+  if (promedioTrimestre3 < 6 || promedioGeneral < 6) {
+    await CalificacionesXMateria.findByIdAndUpdate(idCXM, {
+      estado: idEstadoPendienteExam,
+      promedio: promedioGeneral,
+    });
   } else {
-    if (promedioGeneral < 6) {
-      return { aprobado: false, promedio: promedioGeneral };
-    } else {
-      return { aprobado: true, promedio: promedioGeneral };
-    }
+    await CalificacionesXMateria.findByIdAndUpdate(idCXM, {
+      estado: idEstadoAprobada,
+      promedio: promedioGeneral,
+    });
   }
 };
 
@@ -175,5 +194,78 @@ exports.obtenerNombresMaterias = async (arrayIdCXM) => {
       });
     }
     resolve(nombresMaterias);
+  });
+};
+
+//Filtra inscripciones segun curso, luego filtrar CXM segun idMateria, calcula promedio y cambia estado de CXM
+//@params: idCurso e idMateria
+exports.cerrarMateriaTercerTrimestre = (idCurso, idMateria) => {
+  return new Promise(async (resolve, reject) => {
+    const idEstadoSuspendido = await ClaseEstado.obtenerIdEstado(
+      "Inscripcion",
+      "Suspendido"
+    );
+    const idEstadoActiva = await ClaseEstado.obtenerIdEstado(
+      "Inscripcion",
+      "Activa"
+    );
+    const idCicloActual = await ClaseCicloLectivo.obtenerIdCicloLectivo(false);
+
+    const inscripcionesFiltradas = await Inscripcion.aggregate([
+      {
+        $match: {
+          idCurso: mongoose.Types.ObjectId(idCurso),
+          cicloLectivo: mongoose.Types.ObjectId(idCicloActual),
+          estado: {
+            $in: [
+              mongoose.Types.ObjectId(idEstadoActiva),
+              mongoose.Types.ObjectId(idEstadoSuspendido),
+            ],
+          },
+        },
+      },
+      {
+        $lookup: {
+          from: "calificacionesXMateria",
+          localField: "calificacionesXMateria",
+          foreignField: "_id",
+          as: "datosCXM",
+        },
+      },
+      {
+        $unwind: {
+          path: "$datosCXM",
+        },
+      },
+      {
+        $match: {
+          "datosCXM.idMateria": mongoose.Types.ObjectId(idMateria),
+        },
+      },
+      {
+        $lookup: {
+          from: "calificacionesXTrimestre",
+          localField: "datosCXM.calificacionesXTrimestre",
+          foreignField: "_id",
+          as: "datosCXT",
+        },
+      },
+      {
+        $project: {
+          "datosCXT.calificaciones": 1,
+          "datosCXM._id": 1,
+        },
+      },
+    ]);
+
+    for (const inscripcion of inscripcionesFiltradas) {
+      await this.obtenerEstadoYPromedioCXM(
+        inscripcion.datosCXT[0].calificaciones,
+        inscripcion.datosCXT[1].calificaciones,
+        inscripcion.datosCXT[2].calificaciones,
+        inscripcion.datosCXM._id
+      );
+    }
+    resolve();
   });
 };

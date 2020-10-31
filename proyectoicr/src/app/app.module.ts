@@ -137,13 +137,10 @@ import { SolicitudReunionAdultoResponsableComponent } from "./solicitud-reunion-
 import { AsociarAdultoResponsableComponent } from "./adulto-responsable/asociar-adulto-responsable/asociar-adulto-responsable.component";
 import { ModificarAdultoResponsableComponent } from "./adulto-responsable/modificar-adulto-responsable/modificar-adulto-responsable.component";
 import { BuscarAdultoResponsableComponent } from "./adulto-responsable/buscar-adulto-responsable/buscar-adulto-responsable.component";
-import { AccionesDirectorComponent } from "./acciones-director/acciones-director.component";
-import { ParametrizarReglasNegocioComponent } from "./acciones-director/parametrizar-reglas-negocio/parametrizar-reglas-negocio.component";
-import {
-  CicloLectivoComponent,
-  PopUpCerrarEtapa,
-} from "./acciones-director/ciclo-lectivo/ciclo-lectivo/ciclo-lectivo.component";
-import { EstadoCursosComponent } from "./acciones-director/estado-cursos/estado-cursos.component";
+import { AccionesDirectorComponent } from './acciones-director/acciones-director.component';
+import { ParametrizarReglasNegocioComponent } from './acciones-director/parametrizar-reglas-negocio/parametrizar-reglas-negocio.component';
+import { CicloLectivoComponent, PopUpCerrarEtapa, PopUpMateriasSinCerrar } from './acciones-director/ciclo-lectivo/ciclo-lectivo/ciclo-lectivo.component';
+import { EstadoCursosComponent } from './acciones-director/estado-cursos/estado-cursos.component';
 
 @NgModule({
   declarations: [
@@ -215,6 +212,7 @@ import { EstadoCursosComponent } from "./acciones-director/estado-cursos/estado-
     ParametrizarReglasNegocioComponent,
     CicloLectivoComponent,
     EstadoCursosComponent,
+    PopUpMateriasSinCerrar
   ],
   //entryComponents declara los componentes que se generan dinamicamente dentro de otros.
   entryComponents: [
@@ -239,6 +237,7 @@ import { EstadoCursosComponent } from "./acciones-director/estado-cursos/estado-
     ReadMoreComponent,
     ErrorComponent,
     PopUpCerrarEtapa,
+    PopUpMateriasSinCerrar
   ],
   imports: [
     MatChipsModule,
@@ -275,7 +274,6 @@ import { EstadoCursosComponent } from "./acciones-director/estado-cursos/estado-
     NgxMaterialTimepickerModule,
     ImageUploadModule,
     MatTooltipModule,
-    MatTableExporterModule,
     MatCarouselModule.forRoot(),
     ServiceWorkerModule.register("ngsw-worker.js", {
       enabled: environment.production,
