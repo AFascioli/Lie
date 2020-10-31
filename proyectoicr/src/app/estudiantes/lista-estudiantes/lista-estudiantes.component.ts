@@ -1,3 +1,4 @@
+import { CicloLectivoService } from "./../../cicloLectivo.service";
 import { AsistenciaService } from "src/app/asistencia/asistencia.service";
 import { UbicacionService } from "src/app/ubicacion/ubicacion.service";
 import { CalificacionesService } from "../../calificaciones/calificaciones.service";
@@ -39,12 +40,14 @@ export class ListaEstudiantesComponent implements OnInit, OnDestroy {
   materiasPendientes: boolean[] = [];
   _mobileQueryListener: () => void;
   mobileQuery: MediaQueryList;
+  estadoCiclo: string;
 
   constructor(
     public servicio: EstudiantesService,
     public servicioCalificaciones: CalificacionesService,
     public servicioAsistencia: AsistenciaService,
     public servicioInscripcion: InscripcionService,
+    public CicloLectivoService: CicloLectivoService,
     public servicioUbicacion: UbicacionService,
     public router: Router,
     public authService: AutenticacionService,
@@ -64,6 +67,7 @@ export class ListaEstudiantesComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.obtenerEstadoCicloLectivo();
     this.servicio
       .getEstudiantesListener()
       .pipe(takeUntil(this.unsubscribe))
@@ -212,9 +216,17 @@ export class ListaEstudiantesComponent implements OnInit, OnDestroy {
     this.router.navigate(["./solicitudReunion"]);
   }
 
+  obtenerEstadoCicloLectivo() {
+    this.CicloLectivoService.obtenerEstadoCicloLectivo()
+      .pipe(takeUntil(this.unsubscribe))
+      .subscribe((response) => {
+        this.estadoCiclo = response.estadoCiclo;
+      });
+  }
+
   onReincorporar(indice) {
     this.asignarEstudianteSeleccionado(indice);
-     this.dialog
+    this.dialog
       .open(ReincorporarPopupComponent, {
         width: "250px",
       })

@@ -4,6 +4,7 @@ const mongoose = require("mongoose");
 const Empleado = require("../models/empleado");
 const Inscripcion = require("../models/inscripcion");
 const checkAuthMiddleware = require("../middleware/check-auth");
+const ClaseEstado = require("../classes/estado");
 
 //Registra un nuevo empleado en la base de datos
 //@params: datos del empleado para ser creado

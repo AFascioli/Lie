@@ -7,7 +7,23 @@
 <mat-card class="card-spinner" *ngIf="isLoading">
   <mat-spinner class="spinner" [diameter]="60"></mat-spinner>
 </mat-card>
-<mat-card class="card-body-componente" *ngIf="!isLoading">
+<mat-card
+  class="card-body-componente"
+  *ngIf="this.estadoCiclo == 'Inactivo' || this.estadoCiclo == 'Creado'"
+>
+  <p
+    class="parrafo"
+    *ngIf="this.estadoCiclo == 'Inactivo' || this.estadoCiclo == 'Creado'"
+  >
+    Esta funcionalidad se encuentra deshabilitada.
+  </p>
+</mat-card>
+<mat-card
+  class="card-body-componente"
+  *ngIf="
+    !isLoading && this.estadoCiclo != 'Inactivo' && this.estadoCiclo != 'Creado'
+  "
+>
   <form #form="ngForm">
     <div class="div-selects">
       <mat-form-field>
@@ -313,6 +329,9 @@
       No se encuentran estudiantes registrados en este curso
     </p>
     <div class="div-button">
+      <button mat-raised-button class="button-primary" [disabled]="!sePuedeCerrar" (click)="onCerrarMateria()">
+        Cerrar Materia
+      </button>
       <button
         [disabled]="
           !(estudiantes.length != 0) ||

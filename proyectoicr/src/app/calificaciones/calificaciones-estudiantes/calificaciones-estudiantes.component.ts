@@ -57,6 +57,8 @@ export class CalificacionesEstudiantesComponent implements OnInit, OnDestroy {
   private unsubscribe: Subject<void> = new Subject();
   _mobileQueryListener: () => void;
   mobileQuery: MediaQueryList;
+  sePuedeCerrar= false;
+  estadoCiclo: string;
 
   @ViewChild("comboCurso", { static: false }) comboCurso: any;
   @ViewChild("comboTrimestre", { static: false }) comboTrimestre: any;
@@ -78,6 +80,7 @@ export class CalificacionesEstudiantesComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.obtenerEstadoCicloLectivo();
     this.fechaActual = new Date();
     this.obtenerTrimestreActual();
     this.validarPermisos();
@@ -139,6 +142,14 @@ export class CalificacionesEstudiantesComponent implements OnInit, OnDestroy {
     }
   }
 
+  obtenerEstadoCicloLectivo() {
+    this.cicloLectivoService.obtenerEstadoCicloLectivo()
+      .pipe(takeUntil(this.unsubscribe))
+      .subscribe((response) => {
+        this.estadoCiclo = response.estadoCiclo;
+      });
+  }
+
   obtenerTrimestreActual() {
     this.cicloLectivoService
       .obtenerEstadoCicloLectivo()
@@ -175,6 +186,51 @@ export class CalificacionesEstudiantesComponent implements OnInit, OnDestroy {
     } else {
       this.puedeEditarCalificaciones = false;
     }
+  }
+
+  //Se fija si se puede cerrar la materia para este trimestre en particular
+  sePuedeCerrarTrimestre(form: NgForm) {
+    this.servicioCalificaciones
+      .sePuedeCerrarTrimestre(
+        form.value.materia,
+        form.value.curso,
+        this.trimestreActual
+      )
+      .subscribe((response) => {
+        response.exito;
+      });
+  }
+
+  //Cierra una amteria (cambia estado de MXC, y si es tercer trimestre 
+  // se cambia estado de las CXM y se calcula promedio)
+  onCerrarMateria(form: NgForm){
+    this.servicioCalificaciones
+      .cerrarTrimestreMateria(
+        form.value.materia,
+        form.value.curso,
+        this.trimestreActual
+      )
+      .subscribe((response) => {
+        if(response.exito){
+          this.snackBar.open(
+            response.message,
+            "",
+            {
+              panelClass: ["snack-bar-exito"],
+              duration: 3000,
+            }
+          );
+        }else{
+          this.snackBar.open(
+            response.message,
+            "",
+            {
+              panelClass: ["snack-bar-fracaso"],
+              duration: 3000,
+            }
+          );
+        }
+      });
   }
 
   //Se obtienen las materias del curso seleccionado segun el docente logueado o todas si el rol logueado es Admin
@@ -362,7 +418,7 @@ export class PaginatorOverviewExample {}
 export function getDutchPaginatorIntl() {
   const paginatorIntl = new MatPaginatorIntl();
 
-  paginatorIntl.itemsPerPageLabel = "Items por página";
+  paginatorIntl.itemsPerPageLabel = "Estudiantes por página";
   paginatorIntl.nextPageLabel = "Página siguiente";
   paginatorIntl.previousPageLabel = "Página anterior";
   return paginatorIntl;

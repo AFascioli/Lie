@@ -55,16 +55,14 @@ export class RetiroAnticipadoComponent implements OnInit {
     this.mobileQuery.addListener(this._mobileQueryListener);
   }
 
- async ngOnInit() {
+  async ngOnInit() {
     this.fechaActual = new Date();
-     this.servicioCicloLectivo
+    this.servicioCicloLectivo
       .obtenerHoraRetiroAnticipado()
       .pipe(takeUntil(this.unsubscribe))
-      .subscribe(
-        (response) => {
-          this.horaRetiroAnticipado = response.hora;
-        }
-      );
+      .subscribe((response) => {
+        this.horaRetiroAnticipado = response.hora.substring(0, 2);
+      });
     if (
       this.fechaActual.toString().substring(0, 3) == "Sat" ||
       this.fechaActual.toString().substring(0, 3) == "Sun"

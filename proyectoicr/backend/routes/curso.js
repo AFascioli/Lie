@@ -14,6 +14,7 @@ const ClaseInscripcion = require("../classes/inscripcion");
 const ClaseEstado = require("../classes/estado");
 const Suscripcion = require("../classes/suscripcion");
 const ClaseAsistencia = require("../classes/asistencia");
+const ClaseAgenda = require("../classes/agenda");
 
 // Obtiene todos los cursos que están almacenados en la base de datos
 router.get("/", checkAuthMiddleware, (req, res) => {
@@ -416,6 +417,54 @@ router.get("/cursosDeEstudiante", checkAuthMiddleware, async (req, res) => {
 //@params: id de la docente
 router.get("/docente", checkAuthMiddleware, (req, res) => {
   Curso.aggregate([
+    {
+      $lookup: {
+        from: "materiasXCurso",
+        localField: "materias",
+        foreignField: "_id",
+        as: "mxc",
+      },
+    },
+    {
+      $match: {
+        "mxc.idDocente": mongoose.Types.ObjectId(req.query.idDocente),
+      },
+    },
+  ])
+    .then((cursos) => {
+      var respuesta = [];
+      cursos.forEach((curso) => {
+        var cursoConId = {
+          id: curso._id,
+          nombre: curso.nombre,
+        };
+        respuesta.push(cursoConId);
+      });
+
+      res.status(200).json({
+        cursos: respuesta,
+        message: "Se devolvio los cursos que dicta la docente correctamente",
+        exito: true,
+      });
+    })
+    .catch((error) => {
+      res.status(500).json({
+        message: "Ocurrió un error al obtener los cursos del docente",
+        error: error.message,
+      });
+    });
+});
+
+//Obtiene todos los cursos asignados a un docente en un ciclo lectivo determinado
+//@params: id de la docente, año del ciclo lectivo
+router.get("/docentePorCiclo", checkAuthMiddleware, async (req, res) => {
+  let idCicloLectivo = await ClaseEstado.getIdCicloLectivo(req.query.anio);
+  Curso.aggregate([
+    {
+      $match: {
+        cicloLectivo: mongoose.Types.ObjectId(idCicloLectivo),
+      },
+    },
     {
       $lookup: {
         from: "materiasXCurso",
@@ -1788,6 +1837,34 @@ router.post(
       res.status(500).json({
         error: error.message,
         message: "Ocurrió un error al querer escribir a los estudiantes",
+      });
+    }
+  }
+);
+
+router.post(
+  "/agenda/horariosAnioAnterior",
+  checkAuthMiddleware,
+  async (req, res) => {
+    try {
+      let rtdo = await ClaseAgenda.clonarAgenda(
+        req.body.idCurso,
+        req.body.yearSelected
+      );
+      if (rtdo) {
+        return res.status(200).json({
+          exito: true,
+          message: "Se clonó la agenda correctamente",
+        });
+      }
+      res.status(200).json({
+        exito: false,
+        message: "No existe una agenda definida para el año anterior",
+      });
+    } catch (error) {
+      res.status(500).json({
+        error: error.message,
+        message: "Ocurrió un error al querer clonar la agenda",
       });
     }
   }

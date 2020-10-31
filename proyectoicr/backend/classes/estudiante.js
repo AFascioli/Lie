@@ -1,8 +1,6 @@
 const Estudiante = require("../models/estudiante");
-const Inscripcion = require("../models/inscripcion");
-const Curso = require("../models/curso");
 
-exports.CrearEstudiante = async function(
+exports.CrearEstudiante = async function (
   apellido,
   nombre,
   tipoDocumento,
@@ -44,13 +42,16 @@ exports.CrearEstudiante = async function(
     telefonoFijo: telefonoFijo,
     adultoResponsable: adultoResponsable,
     activo: activo,
-    estado: estado._id
+    estado: estado._id,
   });
   return estudiante;
 };
 
-exports.obtenerNombreYApellido= function(idEstudiante){
-  Estudiante.findById(idEstudiante).then(estudianteEncontrado => {
-    return {nombre: estudianteEncontrado.nombre, apellido: estudianteEncontrado.apellido};
+exports.obtenerNombreYApellido = function (idEstudiante) {
+  Estudiante.findById(idEstudiante).then((estudianteEncontrado) => {
+    return {
+      nombre: estudianteEncontrado.nombre,
+      apellido: estudianteEncontrado.apellido,
+    };
   });
 };

@@ -3,7 +3,9 @@ const Curso = require("../models/curso");
 const Inscripcion = require("../models/inscripcion");
 const Estudiante = require("../models/estudiante");
 const CicloLectivo = require("../models/cicloLectivo");
+const CalificacionesXMateria = require("../models/calificacionesXMateria");
 const ClaseEstado = require("../classes/estado");
+const ClaseCicloLectivo = require("../classes/cicloLectivo");
 const ClaseCalifXMateria = require("../classes/calificacionXMateria");
 
 exports.obtenerAñoHabilitado = function (inscripcion, añoLectivo) {
@@ -48,13 +50,13 @@ function obtenerMateriasDeCurso(idCurso) {
       },
       {
         $project: {
-          "materiasDelCurso.idMateria":1
+          "materiasDelCurso.idMateria": 1,
         },
       },
     ])
       .then((materiasDelCurso) => {
-        let idsMateriasDelCurso=[];
-        materiasDelCurso.forEach(objMateria => {
+        let idsMateriasDelCurso = [];
+        materiasDelCurso.forEach((objMateria) => {
           idsMateriasDelCurso.push(objMateria.materiasDelCurso[0].idMateria);
         });
         resolve(idsMateriasDelCurso);
@@ -137,8 +139,8 @@ exports.inscribirEstudiante = async function (
         .then(async () => {
           resolve();
         })
-        .catch(() => {
-          reject();
+        .catch((error) => {
+          reject(error);
         });
     });
   };
@@ -182,7 +184,7 @@ exports.inscribirEstudiante = async function (
       }
       await inscripcion.save();
 
-      var idCicloLectivo = await ClaseEstado.obtenerIdCicloLectivo(false);
+      var idCicloLectivo = await ClaseCicloLectivo.obtenerIdCicloLectivo(false);
 
       esCambioDeCurso(inscripcion.idCurso, idCicloLectivo);
     }
@@ -271,4 +273,116 @@ exports.inscribirEstudianteProximoAnio = async function (
   } catch (error) {
     return false;
   }
+};
+
+exports.actualizarEstadoInscripcion = (inscripcion) => {
+  return new Promise(async (resolve, reject) => {
+    let idEstadoPromovido = await ClaseEstado.obtenerIdEstado(
+      "Inscripcion",
+      "Promovido"
+    );
+    let idEstadoExPendientes = await ClaseEstado.obtenerIdEstado(
+      "Inscripcion",
+      "Examenes Pendientes"
+    );
+    let promovido = true;
+
+    for (const cxm of inscripcion.datosCXM) {
+      if (cxm.promedio < 6) {
+        promovido = false;
+        break;
+      }
+    }
+
+    if (promovido) {
+      await Inscripcion.findByIdAndUpdate(inscripcion._id, {
+        estado: idEstadoPromovido,
+      }).exec();
+    } else {
+      await Inscripcion.findByIdAndUpdate(inscripcion._id, {
+        estado: idEstadoExPendientes,
+      }).exec();
+    }
+
+    resolve();
+  });
+};
+
+exports.cambiarEstadoExamPendientes = (idCicloActual) => {
+  return new Promise(async (resolve, reject) => {
+    const idEstadoExamPendientes = await ClaseEstado.obtenerIdEstado(
+      "Inscripcion",
+      "Examenes pendientes"
+    );
+    const idEstadoPromovido = await ClaseEstado.obtenerIdEstado(
+      "Inscripcion",
+      "Promovido"
+    );
+    const idEstadoPromovidoExamPendientes = await ClaseEstado.obtenerIdEstado(
+      "Inscripcion",
+      "Promovido con examenes pendientes"
+    );
+    const idEstadoLibre = await ClaseEstado.obtenerIdEstado(
+      "Inscripcion",
+      "Libre"
+    );
+    const idEstadoCXMPendiente = await ClaseEstado.obtenerIdEstado(
+      "CalificacionesXMateria",
+      "Pendiente examen"
+    );
+    const idEstadoCXMDesaprobada = await ClaseEstado.obtenerIdEstado(
+      "CalificacionesXMateria",
+      "Desaprobada"
+    );
+
+    let inscripcionesPendientes = await Inscripcion.aggregate([
+      {
+        $match: {
+          cicloLectivo: mongoose.Types.ObjectId(idCicloActual),
+          estado: mongoose.Types.ObjectId(idEstadoExamPendientes),
+        },
+      },
+      {
+        $lookup: {
+          from: "calificacionesXMateria",
+          localField: "calificacionesXMateria",
+          foreignField: "_id",
+          as: "datosCXM",
+        },
+      },
+    ]);
+
+    for (const inscripcion of inscripcionesPendientes) {
+      let idsCXMPendientes = [];
+      for (const cxm of inscripcion.datosCXM) {
+        if (cxm.estado == idEstadoCXMPendiente) {
+          idsCXMPendientes.push(cxm._id);
+        }
+      }
+      if (idsCXMPendientes.length == 0) {
+        await Inscripcion.findByIdAndUpdate(inscripcion._id, {
+          estado: idEstadoPromovido,
+        });
+      } else if (idsCXMPendientes.length < 4) {
+        for (const idCxm of idsCXMPendientes) {
+          await CalificacionesXMateria.findByIdAndUpdate(idCxm, {
+            estado: idEstadoCXMDesaprobada,
+          });
+        }
+        await Inscripcion.findByIdAndUpdate(inscripcion._id, {
+          estado: idEstadoPromovidoExamPendientes,
+        });
+      } else {
+        for (const idCxm of idsCXMPendientes) {
+          await CalificacionesXMateria.findByIdAndUpdate(idCxm, {
+            estado: idEstadoCXMDesaprobada,
+          });
+        }
+        await Inscripcion.findByIdAndUpdate(inscripcion._id, {
+          estado: idEstadoLibre,
+        });
+      }
+    }
+    resolve();
+  });
 };

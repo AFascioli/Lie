@@ -1,3 +1,4 @@
+import { CicloLectivoService } from './../cicloLectivo.service';
 import { CambiarPassword } from "./../login/cambiar-password.component";
 import { DomSanitizer } from "@angular/platform-browser";
 import {
@@ -31,6 +32,7 @@ export class MenuLateralComponent implements OnInit, OnDestroy {
   rol: string;
   usuario: string;
   apellidoNombre: string;
+  estadoCiclo:string;
   private unsubscribe: Subject<void> = new Subject();
   //Lo inicializo porque sino salta error en la consola del browser
   permisos = {
@@ -42,7 +44,7 @@ export class MenuLateralComponent implements OnInit, OnDestroy {
     inscribirEstudiante: 0,
     registrarEmpleado: 0,
     cuotas: 0,
-  
+
   };
   _mobileQueryListener: () => void;
   mobileQuery: MediaQueryList;
@@ -52,6 +54,7 @@ export class MenuLateralComponent implements OnInit, OnDestroy {
   constructor(
     public router: Router,
     public authService: AutenticacionService,
+    public CicloLectivoService: CicloLectivoService,
     public dialog: MatDialog,
     public estudianteService: EstudiantesService,
     public changeDetectorRef: ChangeDetectorRef,
@@ -114,6 +117,7 @@ export class MenuLateralComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.obtenerEstadoCicloLectivo();
     this.authService
       .obtenerPermisosDeRol()
       .pipe(takeUntil(this.unsubscribe))
@@ -143,6 +147,16 @@ export class MenuLateralComponent implements OnInit, OnDestroy {
         this.authService.logout();
         this.router.navigate(["./login"]);
       }
+    });
+  }
+
+  obtenerEstadoCicloLectivo()
+  {
+    this.CicloLectivoService
+    .obtenerEstadoCicloLectivo()
+    .pipe(takeUntil(this.unsubscribe))
+    .subscribe((response) => {
+      this.estadoCiclo = response.estadoCiclo;
     });
   }
 

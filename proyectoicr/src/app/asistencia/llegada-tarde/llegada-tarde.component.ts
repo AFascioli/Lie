@@ -17,13 +17,12 @@ export class LlegadaTardeComponent implements OnInit, OnDestroy {
   fechaActual: Date;
   apellidoEstudiante: string;
   nombreEstudiante: string;
-  antes8am = false;
-  despues8am = false;
+  antesHorario = false;
   fueraPeriodoCicloLectivo = false;
   private unsubscribe: Subject<void> = new Subject();
   _mobileQueryListener: () => void;
   mobileQuery: MediaQueryList;
-  horaLlegadaTarde: string;
+  horaLlegadaTarde;
 
   constructor(
     public servicioEstudiante: EstudiantesService,
@@ -46,16 +45,14 @@ export class LlegadaTardeComponent implements OnInit, OnDestroy {
       .obtenerHoraLlegadaTarde()
       .pipe(takeUntil(this.unsubscribe))
       .subscribe((response) => {
-        this.horaLlegadaTarde = response.hora;
+        this.horaLlegadaTarde = response.hora.substring(0, 2);
       });
     if (
       (await this.fechaActualEnPeriodoCursado()) ||
       this.autenticacionService.getRol() == "Admin"
     ) {
-      if (this.fechaActual.getHours() < 8) {
-        this.antes8am = true;
-      } else {
-        this.despues8am = true;
+      if (this.fechaActual.getHours() < this.horaLlegadaTarde) {
+        this.antesHorario = true;
       }
       this.apellidoEstudiante = this.servicioEstudiante.estudianteSeleccionado.apellido;
       this.nombreEstudiante = this.servicioEstudiante.estudianteSeleccionado.nombre;
@@ -89,13 +86,12 @@ export class LlegadaTardeComponent implements OnInit, OnDestroy {
   }
 
   radioButtonChange() {
-    this.antes8am = !this.antes8am;
-    this.despues8am = !this.despues8am;
+    this.antesHorario = !this.antesHorario;
   }
 
   onGuardar() {
     this.servicioAsistencia
-      .registrarLlegadaTarde(this.antes8am)
+      .registrarLlegadaTarde(this.antesHorario)
       .pipe(takeUntil(this.unsubscribe))
       .subscribe((result) => {
         if (result.exito) {

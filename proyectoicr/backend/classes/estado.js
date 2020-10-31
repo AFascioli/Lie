@@ -1,4 +1,5 @@
 const Estado = require("../models/estado");
+const CicloLectivo = require("../models/cicloLectivo");
 
 //Obtiene la id del estado dado el ambito y el nombre
 exports.obtenerIdEstado = (ambito, nombre) => {
@@ -19,6 +20,17 @@ exports.obtenerIdCicloLectivo = (proximo) => {
   return new Promise((resolve, reject) => {
     CicloLectivo.findOne({ año: año })
       .then((cicloLectivo) => {
+        resolve(cicloLectivo._id);
+      })
+      .catch((err) => reject(err));
+  });
+};
+
+exports.getIdCicloLectivo = (año) => {
+  return new Promise((resolve, reject) => {
+    CicloLectivo.findOne({ año: año })
+      .then((cicloLectivo) => {
+        console.log(cicloLectivo);
         resolve(cicloLectivo._id);
       })
       .catch((err) => reject(err));
