@@ -14,13 +14,13 @@ router.get("/parametros", checkAuthMiddleware, (req, res) => {
         res.status(200).json({
           cicloLectivo: cicloLectivo,
           message:
-            "Se han obtenido los parametros correspondientes a este año exitosamente",
+            "Se han obtenido los parámetros correspondientes a este año exitosamente",
           exito: true,
         });
       } else {
         res.status(200).json({
           message:
-            "No se han obtenido los parametros correspondientes a este año",
+            "No se han obtenido los parámetros correspondientes a este año",
           exito: false,
         });
       }
@@ -28,7 +28,7 @@ router.get("/parametros", checkAuthMiddleware, (req, res) => {
     .catch((error) => {
       res.status(500).json({
         message:
-          "Ocurrió un error al querer obtener los parametros correspondientes",
+          "Ocurrió un error al querer obtener los parámetros correspondientes",
         error: error.message,
       });
     });
@@ -51,13 +51,13 @@ router.post("/parametros", checkAuthMiddleware, (req, res) => {
       res.status(200).json({
         cicloLectivo: cicloLectivo,
         message:
-          "Se han guardado los parametros correspondientes a este año exitosamente",
+          "Se han guardado los parámetros correspondientes a este año exitosamente",
         exito: true,
       });
     })
     .catch((error) => {
       res.status(500).json({
-        message: "Ocurrió un problema al guardar los parametros",
+        message: "Ocurrió un problema al guardar los parámetros",
         error: error.message,
       });
     });
