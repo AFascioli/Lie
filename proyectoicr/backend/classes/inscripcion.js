@@ -286,12 +286,14 @@ exports.actualizarEstadoInscripcion = (inscripcion) => {
       "Examenes Pendientes"
     );
     let promovido = true;
+
     for (const cxm of inscripcion.datosCXM) {
       if (cxm.promedio < 6) {
         promovido = false;
         break;
       }
     }
+
     if (promovido) {
       await Inscripcion.findByIdAndUpdate(inscripcion._id, {
         estado: idEstadoPromovido,
@@ -301,6 +303,7 @@ exports.actualizarEstadoInscripcion = (inscripcion) => {
         estado: idEstadoExPendientes,
       }).exec();
     }
+
     resolve();
   });
 };
@@ -362,14 +365,18 @@ exports.cambiarEstadoExamPendientes = (idCicloActual) => {
         });
       } else if (idsCXMPendientes.length < 4) {
         for (const idCxm of idsCXMPendientes) {
-          await CalificacionesXMateria.findByIdAndUpdate(idCxm,{estado: idEstadoCXMDesaprobada});
+          await CalificacionesXMateria.findByIdAndUpdate(idCxm, {
+            estado: idEstadoCXMDesaprobada,
+          });
         }
         await Inscripcion.findByIdAndUpdate(inscripcion._id, {
           estado: idEstadoPromovidoExamPendientes,
         });
       } else {
         for (const idCxm of idsCXMPendientes) {
-          await CalificacionesXMateria.findByIdAndUpdate(idCxm,{estado: idEstadoCXMDesaprobada});
+          await CalificacionesXMateria.findByIdAndUpdate(idCxm, {
+            estado: idEstadoCXMDesaprobada,
+          });
         }
         await Inscripcion.findByIdAndUpdate(inscripcion._id, {
           estado: idEstadoLibre,

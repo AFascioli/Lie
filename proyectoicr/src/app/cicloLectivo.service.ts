@@ -117,6 +117,6 @@ export class CicloLectivoService implements OnDestroy {
       exito: boolean;
       message: string;
       materiasSinCerrar: [any];
-    }>(`${environment.apiUrl}/cicloLectivo/cierreTrimestre`,{trimestre: trimestre});
+    }>(`${environment.apiUrl}/cicloLectivo/cierreTrimestre`, {trimestre: trimestre});
   }
 }

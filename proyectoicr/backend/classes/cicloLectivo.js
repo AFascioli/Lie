@@ -195,6 +195,7 @@ exports.obtenerIdsCursos = async () => {
   });
   return idsCursosActuales;
 };
+
 //Retorna un array con las materias y su curso correspondiente que aun no estan cerradas. Si estan todas cerradas,
 //se retorna un array vacio. Discrimina segun trimestre.
 exports.materiasSinCerrar = (trimestre) => {
@@ -223,7 +224,7 @@ exports.materiasSinCerrar = (trimestre) => {
       inscripciones.push(inscripcion._id);
     }
     let materiasNoCerrada = [];
-    let inscripcionesFiltradas=[];
+    let inscripcionesFiltradas = [];
     if (trimestre == 3) {
       inscripcionesFiltradas = await Inscripcion.aggregate([
         {
@@ -276,12 +277,18 @@ exports.materiasSinCerrar = (trimestre) => {
       ]);
     } else {
       let idEstadoEnTrimestre;
-      if(trimestre==1){
-        idEstadoEnTrimestre= await ClaseEstado.obtenerIdEstado("MateriasXCurso","En primer trimestre");
-      }else{
-        idEstadoEnTrimestre= await ClaseEstado.obtenerIdEstado("MateriasXCurso","En segundo trimestre");
+      if (trimestre == 1) {
+        idEstadoEnTrimestre = await ClaseEstado.obtenerIdEstado(
+          "MateriasXCurso",
+          "En primer trimestre"
+        );
+      } else {
+        idEstadoEnTrimestre = await ClaseEstado.obtenerIdEstado(
+          "MateriasXCurso",
+          "En segundo trimestre"
+        );
       }
-      inscripcionesFiltradas=await Inscripcion.aggregate([
+      inscripcionesFiltradas = await Inscripcion.aggregate([
         {
           $match: {
             _id: {
@@ -317,7 +324,7 @@ exports.materiasSinCerrar = (trimestre) => {
         },
         {
           $match: {
-            "datosMXC.estado": mongoose.Types.ObjectId(idEstadoEnTrimestre)
+            "datosMXC.estado": mongoose.Types.ObjectId(idEstadoEnTrimestre),
           },
         },
         {
