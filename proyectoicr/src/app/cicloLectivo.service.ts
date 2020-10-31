@@ -118,7 +118,7 @@ export class CicloLectivoService implements OnDestroy {
       message: string;
       materiasSinCerrar: [any];
     }>(`${environment.apiUrl}/cicloLectivo/cierreTrimestre`, {trimestre: trimestre});
-
+  }
   obtenerAniosCicloLectivo()
   {
     return this.http.get<{
@@ -128,4 +128,4 @@ export class CicloLectivoService implements OnDestroy {
     }>(`${environment.apiUrl}/cicloLectivo/anios`);
 
   }
-}
+  }
