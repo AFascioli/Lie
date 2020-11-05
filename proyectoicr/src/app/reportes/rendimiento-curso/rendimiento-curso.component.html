@@ -1,4 +1,4 @@
-<h1 class="componente-titulo">Rendimiento del curso</h1>
+<h1 class="componente-titulo" *ngIf="!materiaSelec">Rendimiento del curso</h1>
 <mat-card class="card-body-componente">
   <form #form="ngForm">
     <div class="div-selects">
@@ -14,13 +14,13 @@
           (selectionChange)="onTipoGraficoChange(grafico)"
         >
           <mat-option value="pie">Torta</mat-option>
-          <mat-option value="line">Línea</mat-option>
+          <!-- <mat-option value="line">Línea</mat-option> -->
           <mat-option value="bar">Barras</mat-option>
           <mat-option value="horizontalBar">Barras horizontales</mat-option>
           <mat-option value="doughnut">Dona</mat-option>
-          <mat-option value="polarArea">polarArea</mat-option>
-          <mat-option value="bubble">Burbuja</mat-option>
-          <mat-option value="scatter">scatter</mat-option>
+          <!-- <mat-option value="polarArea">polarArea</mat-option> -->
+          <!-- <mat-option value="bubble">Burbuja</mat-option> -->
+          <!-- <mat-option value="scatter">scatter</mat-option> -->
         </mat-select>
       </mat-form-field>
       <mat-form-field class="selectYear">
@@ -72,56 +72,63 @@
         </mat-select>
       </mat-form-field>
     </div>
-    <div class="div-canvas">
+    <div id="content" #content>
+      <h1 class="componente-titulo" *ngIf="materiaSelec">Rendimiento del curso harcodeado {{cursos[1].nombre}}: {{materias[1].nombre}} {{fechaActual}} </h1>
+      <br/>
+      <div class="div-canvas">
+        <canvas
+          class="cv"
+          *ngIf="!isLoading3"
+          baseChart
+          [datasets]="barDataSet"
+          [labels]="barChartLabels"
+          [options]="barChartOptions"
+          [plugins]="barChartPlugins"
+          [legend]="barChartLegend"
+          [chartType]="barChartType"
+        ></canvas>
+        <canvas
+          class="cv"
+          *ngIf="!isLoading3"
+          baseChart
+          [datasets]="barDataSet1"
+          [labels]="barChartLabels"
+          [options]="barChartOptions"
+          [plugins]="barChartPlugins"
+          [legend]="barChartLegend"
+          [chartType]="barChartType"
+        ></canvas>
+        <canvas
+          class="cv"
+          *ngIf="!isLoading3"
+          baseChart
+          [datasets]="barDataSet2"
+          [labels]="barChartLabels"
+          [options]="barChartOptions"
+          [plugins]="barChartPlugins"
+          [legend]="barChartLegend"
+          [chartType]="barChartType"
+        ></canvas>
+      </div>
+      <br />
       <canvas
-        class="cv"
         *ngIf="!isLoading3"
         baseChart
-        [datasets]="barDataSet"
+        [datasets]="barDataSet3"
         [labels]="barChartLabels"
-        [options]="barChartOptions"
-        [plugins]="barChartPlugins"
-        [legend]="barChartLegend"
-        [chartType]="barChartType"
-      ></canvas>
-      <canvas
-        class="cv"
-        *ngIf="!isLoading3"
-        baseChart
-        [datasets]="barDataSet1"
-        [labels]="barChartLabels"
-        [options]="barChartOptions"
-        [plugins]="barChartPlugins"
-        [legend]="barChartLegend"
-        [chartType]="barChartType"
-      ></canvas>
-      <canvas
-        class="cv"
-        *ngIf="!isLoading3"
-        baseChart
-        [datasets]="barDataSet2"
-        [labels]="barChartLabels"
-        [options]="barChartOptions"
+        [options]="barChartOptions3"
         [plugins]="barChartPlugins"
         [legend]="barChartLegend"
         [chartType]="barChartType"
       ></canvas>
     </div>
-    <br />
-    <canvas
-      *ngIf="!isLoading3"
-      baseChart
-      [datasets]="barDataSet3"
-      [labels]="barChartLabels"
-      [options]="barChartOptions3"
-      [plugins]="barChartPlugins"
-      [legend]="barChartLegend"
-      [chartType]="barChartType"
-    ></canvas>
   </form>
   <div class="div-button">
     <button mat-raised-button class="button-warn" [routerLink]="['/reportes']">
       Volver
+    </button>
+    <button mat-raised-button class="button-primary" (click)="descargarPDF()">
+      Exportar
     </button>
   </div>
 </mat-card>

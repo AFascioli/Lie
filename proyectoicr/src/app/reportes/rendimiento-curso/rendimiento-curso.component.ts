@@ -12,17 +12,22 @@ import { Label } from "ng2-charts";
 import { ChartOptions, ChartType } from "chart.js";
 import * as pluginDataLabels from "chartjs-plugin-datalabels";
 
+import { jsPDF } from "jspdf";
+import html2canvas from "html2canvas";
+
+
 @Component({
   selector: "app-rendimiento-curso",
   templateUrl: "./rendimiento-curso.component.html",
   styleUrls: ["./rendimiento-curso.component.css"],
 })
 export class RendimientoCursoComponent implements OnInit {
+  onExport=false;
   cursoS;
   materiaS;
   year: any[] = [];
   cursos;
-  fechaActual: Date;
+  fechaActual: any;
   rolConPermisosEdicion = false;
   cursoNotSelected = true;
   isLoading = false;
@@ -80,7 +85,7 @@ export class RendimientoCursoComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.fechaActual = new Date();
+    this.fechaActual = new Date().getFullYear();
   }
 
   onYearSelected(yearSelected) {
@@ -370,7 +375,6 @@ export class RendimientoCursoComponent implements OnInit {
   onTipoGraficoChange(grafico) {
     this.isLoading3 = true;
     this.barChartType = grafico;
-    console.log(this.barChartType);
     if (grafico.value == "pie" || grafico.value == "doughnut")
       this.legend = true;
     else this.legend = false;
@@ -489,5 +493,20 @@ export class RendimientoCursoComponent implements OnInit {
         fontSize: 16,
       },
     };
+  }
+
+  public descargarPDF() {
+    this.onExport=true;
+    var element = document.getElementById("content");
+
+    html2canvas(element).then((canvas) => {
+      console.log(canvas);
+      var imgData = canvas.toDataURL("image/png");
+      var doc = new jsPDF();
+      var imgH = (canvas.height * 208) / canvas.width;
+      // doc.text("Rendimiento del curso " + this.fechaActual.getFullYear, 7, 15);
+      doc.addImage(imgData, 0, 30, 208, imgH);
+      doc.save("RendimientoCurso.pdf");
+    });
   }
 }
