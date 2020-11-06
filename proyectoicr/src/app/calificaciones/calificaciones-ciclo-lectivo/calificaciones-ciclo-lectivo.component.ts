@@ -180,8 +180,8 @@ export class CalificacionesCicloLectivoComponent implements OnInit, OnDestroy {
         .pipe(takeUntil(this.unsubscribe))
         .subscribe((respuesta) => {
           this.materias = respuesta.materias.sort((a, b) =>
-          a.nombre > b.nombre ? 1 : b.nombre > a.nombre ? -1 : 0
-        );
+            a.nombre > b.nombre ? 1 : b.nombre > a.nombre ? -1 : 0
+          );
         });
     } else {
       this.servicioEstudiante
@@ -189,8 +189,8 @@ export class CalificacionesCicloLectivoComponent implements OnInit, OnDestroy {
         .pipe(takeUntil(this.unsubscribe))
         .subscribe((respuesta) => {
           this.materias = respuesta.materias.sort((a, b) =>
-          a.nombre > b.nombre ? 1 : b.nombre > a.nombre ? -1 : 0
-        );
+            a.nombre > b.nombre ? 1 : b.nombre > a.nombre ? -1 : 0
+          );
         });
     }
   }
@@ -336,20 +336,6 @@ export class CalificacionesCicloLectivoComponent implements OnInit, OnDestroy {
 
   onCancelar() {
     this.popup.open(CancelPopupComponent);
-  }
-
-  public descargarPDF() {
-    var element = document.getElementById("content");
-
-    html2canvas(element).then((canvas) => {
-      console.log(canvas);
-      var imgData = canvas.toDataURL("image/png");
-      var doc = new jsPDF();
-      var imgH = (canvas.height * 208) / canvas.width;
-      doc.text("Calificaciones Ciclo Lectivo", 7, 15);
-      doc.addImage(imgData, 0, 30, 208, imgH);
-      doc.save("test.pdf");
-    });
   }
 }
 
