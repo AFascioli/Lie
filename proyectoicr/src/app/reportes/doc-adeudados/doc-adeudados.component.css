@@ -12,7 +12,7 @@ mat-icon {
 }
 
 mat-expansion-panel {
-  margin-bottom: 20px;
+  margin-bottom: 20px !important;
   margin-top: 10px;
 }
 
