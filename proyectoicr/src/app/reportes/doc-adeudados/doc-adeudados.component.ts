@@ -12,7 +12,8 @@ import { EstudiantesService } from "src/app/estudiantes/estudiante.service";
 export class DocAdeudadosComponent implements OnInit {
   cursos;
   fechaActual: Date;
-  estudiantesXDocs;
+  estudiantesXDocs = [];
+  cursoSelected = false;
   private unsubscribe: Subject<void> = new Subject();
 
   constructor(
@@ -30,8 +31,8 @@ export class DocAdeudadosComponent implements OnInit {
       .obtenerDocsAdeudados(curso.value)
       .pipe(takeUntil(this.unsubscribe))
       .subscribe((response) => {
-        console.log(response);
         this.estudiantesXDocs = response.estudiantesXDocs;
+        this.cursoSelected = true;
       });
   }
 

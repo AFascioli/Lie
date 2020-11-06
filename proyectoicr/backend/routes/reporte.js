@@ -52,10 +52,10 @@ router.get("/documentos", checkAuthMiddleware, async (req, res) => {
       {
         $group: {
           _id: "$idEstudiante",
-          estudiantes: {
+          nombres: {
             $first: "$estudiante",
           },
-          docuemntos: {
+          documentos: {
             $push: "$documento",
           },
         },
@@ -330,25 +330,23 @@ router.get("/resumenAcademico", checkAuthMiddleware, async (req, res) => {
       if (!resumen) {
         return res.status(200).json({
           exito: true,
-          message:
-            "No se obtuvieron resultados",
+          message: "No se obtuvieron resultados",
           resumen: [],
         });
       }
       res.status(200).json({
         exito: true,
-        message:
-          "Se obtuvo correctamente el resumen académico del estudiante",
+        message: "Se obtuvo correctamente el resumen académico del estudiante",
         resumen: resumen,
       });
     })
     .catch((error) => {
       res.status(500).json({
-        message: "Ocurrió un error al obtener el resumen académico del estudiante",
+        message:
+          "Ocurrió un error al obtener el resumen académico del estudiante",
         error: error.message,
       });
     });
 });
-
 
 module.exports = router;

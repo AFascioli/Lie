@@ -16,6 +16,9 @@
       </mat-option>
     </mat-select>
   </mat-form-field>
+  <p class="aviso" *ngIf="estudiantesXDocs.length == 0 && cursoSelected">
+    Los estudiantes no tienen documentos adeudados
+  </p>
   <mat-accordion
     class="example-headers-align"
     *ngFor="let estudiante of estudiantesXDocs"
@@ -23,7 +26,7 @@
     <mat-expansion-panel hideToggle>
       <mat-expansion-panel-header>
         <mat-panel-title>
-          <b>{{ estudiante.estudiantes }}</b>
+          <b>{{ estudiante.nombres }}</b>
         </mat-panel-title>
         <mat-panel-description>
           <mat-icon>face</mat-icon>
@@ -32,7 +35,7 @@
       <br />
       <b> Documentos adeudados: </b>
       <br />
-      <ol *ngFor="let documento of estudiante.docuemntos">
+      <ol *ngFor="let documento of estudiante.documentos">
         <li>{{ documento }}</li>
       </ol>
 

@@ -25,3 +25,10 @@ li {
   margin-left: 10px;
   list-style-type: circle;
 }
+
+.aviso {
+  text-align: center;
+  margin-top: 1% !important;
+  margin-bottom: 0% !important;
+  font-size: x-large;
+}

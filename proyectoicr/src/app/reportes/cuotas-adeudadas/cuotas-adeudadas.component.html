@@ -16,6 +16,9 @@
       </mat-option>
     </mat-select>
   </mat-form-field>
+  <p class="aviso" *ngIf="estudiantesXCuotas.length == 0 && cursoSelected">
+    Los estudiantes no tienen cuotas adeudados
+  </p>
   <mat-accordion
     class="example-headers-align"
     *ngFor="let estudiante of estudiantesXCuotas"
