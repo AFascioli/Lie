@@ -1,4 +1,4 @@
-<h1 class="componente-titulo">Informe de documentos adeudados</h1>
+<h1 class="componente-titulo">Listado de docuemntos adeudados</h1>
 <mat-card class="card-body-componente">
   <mat-form-field>
     <mat-select
@@ -16,23 +16,36 @@
       </mat-option>
     </mat-select>
   </mat-form-field>
-  <mat-accordion class="example-headers-align">
+  <mat-accordion
+    class="example-headers-align"
+    *ngFor="let estudiante of estudiantesXDocs"
+  >
     <mat-expansion-panel hideToggle>
       <mat-expansion-panel-header>
         <mat-panel-title>
-          <b></b>
+          <b>{{ estudiante.estudiantes }}</b>
         </mat-panel-title>
         <mat-panel-description>
-          <mat-icon>menu_book</mat-icon>
+          <mat-icon>face</mat-icon>
         </mat-panel-description>
       </mat-expansion-panel-header>
-      <p>
-        <b> </b>
-      </p>
+      <br />
+      <b> Documentos adeudados: </b>
+      <br />
+      <ol *ngFor="let documento of estudiante.docuemntos">
+        <li>{{ documento }}</li>
+      </ol>
+
       <mat-divider [inset]="true"></mat-divider>
     </mat-expansion-panel>
   </mat-accordion>
   <div class="div-button">
-    <button mat-raised-button class="button-warn">Volver</button>
+    <button
+      mat-raised-button
+      [routerLink]="['/reportes']"
+      class="button-primary"
+    >
+      Volver
+    </button>
   </div>
 </mat-card>

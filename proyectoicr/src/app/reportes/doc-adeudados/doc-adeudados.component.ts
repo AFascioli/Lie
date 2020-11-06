@@ -12,6 +12,7 @@ import { EstudiantesService } from "src/app/estudiantes/estudiante.service";
 export class DocAdeudadosComponent implements OnInit {
   cursos;
   fechaActual: Date;
+  estudiantesXDocs;
   private unsubscribe: Subject<void> = new Subject();
 
   constructor(
@@ -30,6 +31,7 @@ export class DocAdeudadosComponent implements OnInit {
       .pipe(takeUntil(this.unsubscribe))
       .subscribe((response) => {
         console.log(response);
+        this.estudiantesXDocs = response.estudiantesXDocs;
       });
   }
 
