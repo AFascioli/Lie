@@ -126,16 +126,16 @@ exports.crearCursosParaCiclo = () => {
     let nombresCursos = [
       "1A",
       "2A",
-      "3A",
-      "4A",
-      "5A",
-      "6A",
-      "1B",
-      "2B",
-      "3B",
-      "4B",
-      "5B",
-      "6B",
+      // "3A",
+      // "4A",
+      // "5A",
+      // "6A",
+      // "1B",
+      // "2B",
+      // "3B",
+      // "4B",
+      // "5B",
+      // "6B",
     ];
 
     nombresCursos.forEach((nombreCurso) => {
