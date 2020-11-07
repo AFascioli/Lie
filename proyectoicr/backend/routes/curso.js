@@ -1078,7 +1078,7 @@ router.post(
         )
       ) {
         res.status(201).json({
-          message: "Estudiante inscriptoprueba exitoso exitosamente",
+          message: "Estudiante inscripto exitosamente",
           exito: true,
         });
       }
@@ -1622,6 +1622,8 @@ router.get(
         { nombre: 1, apellido: 1 }
       );
 
+      //Recorrer obtenerEstudiantesSinInscripcion y fijarse y filtrar los que tengan inscripciones para el ciclo lectivo siguiente
+
       let estudiantesRespuesta = [];
 
       obtenerEstudiantesSinInscripcion.forEach((estudiante) => {
@@ -1711,7 +1713,7 @@ router.get(
     } catch (error) {
       res.status(500).json({
         message:
-          "Ocurrió un error al querer btener los estudiantes para la inscripcion pendiente a un curso",
+          "Ocurrió un error al querer obtener los estudiantes para la inscripcion pendiente a un curso",
         error: error.message,
       });
     }

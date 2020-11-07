@@ -258,7 +258,7 @@ router.get("/registrarAgenda", checkAuthMiddleware, async (req, res) => {
     ]).then((cicloLectivo) => {
       let nombre = cicloLectivo[0].datosEstado[0].nombre;
       if (nombre === "Creado") {
-        return nres.status(200).json({
+        return res.status(200).json({
           permiso: false,
           message: "No esta habilitado el registro de la agenda",
         });

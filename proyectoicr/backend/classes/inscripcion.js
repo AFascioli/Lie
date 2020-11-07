@@ -235,11 +235,9 @@ exports.inscribirEstudianteProximoAnio = async function (
   idCurso,
   idEstudiante
 ) {
-  let fechaActual = new Date();
-
-  let obtenerCurso = (añoActual) => {
+  let obtenerCurso = (idCicloLectivo) => {
     return new Promise((resolve, reject) => {
-      Curso.findOne({ _id: idCurso, añoLectivo: añoActual })
+      Curso.findOne({ _id: idCurso, cicloLectivo: idCicloLectivo })
         .then((curso) => {
           resolve(curso);
         })
@@ -253,7 +251,9 @@ exports.inscribirEstudianteProximoAnio = async function (
       "Pendiente"
     );
 
-    var cursoSeleccionado = await obtenerCurso(fechaActual.getFullYear() + 1);
+    let idCicloProximo = await ClaseCicloLectivo.obtenerIdCicloLectivo(true);
+
+    var cursoSeleccionado = await obtenerCurso(idCicloProximo);
 
     const nuevaInscripcion = new Inscripcion({
       idEstudiante: idEstudiante,
@@ -262,7 +262,7 @@ exports.inscribirEstudianteProximoAnio = async function (
       contadorInasistenciasInjustificada: 0,
       contadorInasistenciasJustificada: 0,
       contadorLlegadasTarde: 0,
-      año: fechaActual.getFullYear() + 1,
+      cicloLectivo: idCicloProximo,
     });
 
     await nuevaInscripcion.save();
