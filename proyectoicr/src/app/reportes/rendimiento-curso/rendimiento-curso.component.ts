@@ -66,6 +66,8 @@ export class RendimientoCursoComponent implements OnInit {
   barChartLabels: Label[] = [];
   legend: boolean = false;
   public barChartOptions: ChartOptions;
+  public barChartOptions1: ChartOptions;
+  public barChartOptions2: ChartOptions;
   public barChartOptions3: ChartOptions;
   barDataSet = [];
   barDataSet1 = [];
@@ -453,6 +455,8 @@ export class RendimientoCursoComponent implements OnInit {
         display: this.legend,
         labels: {
           fontSize: 14,
+          fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif',
+          fontColor:'#181a21',
         },
         position: "right",
       },
@@ -461,13 +465,72 @@ export class RendimientoCursoComponent implements OnInit {
           font: {
             size: 14,
             weight: "bold",
+            family: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif',
           },
         },
       },
       title: {
         display: true,
-        text: "Trimestre " + this.titulo,
+        text: "Trimestre 1" ,
         fontSize: 16,
+        fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif',
+        fontColor:'#181a21',
+      },
+    };
+    this.barChartOptions1 = {
+      responsive: true,
+      legend: {
+        display: this.legend,
+        labels: {
+          fontSize: 14,
+          fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif',
+          fontColor:'#181a21',
+        },
+        position: "right",
+      },
+      plugins: {
+        datalabels: {
+          font: {
+            size: 14,
+            weight: "bold",
+            family: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif',
+          },
+        },
+      },
+      title: {
+        display: true,
+        text: "Trimestre 2" ,
+        fontSize: 16,
+        fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif',
+        fontColor:'#181a21',
+      },
+    };
+    this.barChartOptions2 = {
+      responsive: true,
+      legend: {
+        display: this.legend,
+        labels: {
+          fontSize: 14,
+          fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif',
+          fontColor:'#181a21',
+        },
+        position: "right",
+      },
+      plugins: {
+        datalabels: {
+          font: {
+            size: 14,
+            weight: "bold",
+            family: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif',
+          },
+        },
+      },
+      title: {
+        display: true,
+        text: "Trimestre 3" ,
+        fontSize: 16,
+        fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif',
+        fontColor:'#181a21',
       },
     };
     this.barChartOptions3 = {
@@ -476,6 +539,8 @@ export class RendimientoCursoComponent implements OnInit {
         display: this.legend,
         labels: {
           fontSize: 14,
+          fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif',
+          fontColor:'#181a21',
         },
         position: "bottom",
       },
@@ -484,6 +549,7 @@ export class RendimientoCursoComponent implements OnInit {
           font: {
             size: 14,
             weight: "bold",
+            family: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif',
           },
         },
       },
@@ -491,6 +557,8 @@ export class RendimientoCursoComponent implements OnInit {
         display: true,
         text: "General",
         fontSize: 16,
+        fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif',
+        fontColor:'#181a21',
       },
     };
   }
