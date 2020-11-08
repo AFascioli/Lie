@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const checkAuthMiddleware = require("../middleware/check-auth");
-const cron = require("node-schedule");
+//const cron = require("node-schedule");
 //const CalificacionesXMateria = require("../models/calificacionesXMateria");
 //const Curso = require("../models/curso");
 const CicloLectivo = require("../models/cicloLectivo");
@@ -12,7 +12,6 @@ const ClaseEstado = require("../classes/estado");
 //const ClaseEstudiante = require("../classes/estudiante");
 //const ClaseSuscripcion = require("../classes/suscripcion");
 const ClaseCicloLectivo = require("../classes/cicloLectivo");
-const { error } = require("protractor");
 
 router.get("/parametros", checkAuthMiddleware, (req, res) => {
   let fechaActual = new Date();
