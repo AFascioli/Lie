@@ -1,5 +1,5 @@
 <h1 class="componente-titulo">Listado de estudiantes morosos</h1>
-<mat-card class="card-body-componente">
+<mat-card class="card-body-componente" id="content" #content>
   <mat-form-field>
     <mat-select
       placeholder="Seleccione curso"
@@ -17,7 +17,7 @@
     </mat-select>
   </mat-form-field>
   <p class="aviso" *ngIf="estudiantesXCuotas.length == 0 && cursoSelected">
-    Los estudiantes no tienen cuotas adeudados
+    Los estudiantes no tienen cuotas adeudadas
   </p>
   <mat-accordion
     class="example-headers-align"
@@ -26,7 +26,7 @@
     <mat-expansion-panel hideToggle>
       <mat-expansion-panel-header>
         <mat-panel-title>
-          <b>{{ estudiante.estudiantes }}</b>
+          <b>{{ estudiante.nombres }}</b>
         </mat-panel-title>
         <mat-panel-description>
           <mat-icon>face</mat-icon>
@@ -43,12 +43,11 @@
     </mat-expansion-panel>
   </mat-accordion>
   <div class="div-button">
-    <button
-      mat-raised-button
-      [routerLink]="['/reportes']"
-      class="button-primary"
-    >
+    <button mat-raised-button [routerLink]="['/reportes']" class="button-warn">
       Volver
+    </button>
+    <button mat-raised-button (click)="descargarPDF()" class="button-primary">
+      Export
     </button>
   </div>
 </mat-card>

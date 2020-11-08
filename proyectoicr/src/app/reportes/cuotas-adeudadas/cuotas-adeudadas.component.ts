@@ -3,18 +3,22 @@ import { Subject } from "rxjs";
 import { takeUntil } from "rxjs/operators";
 import { EstudiantesService } from "src/app/estudiantes/estudiante.service";
 import { ReportesService } from "../reportes.service";
+import { jsPDF } from "jspdf";
+import html2canvas from "html2canvas";
 
 @Component({
   selector: "app-cuotas-adeudadas",
-  templateUrl: "./cuotas-adeudadas.component.html",
+  templateUrl: "./reporte-cuotas-adeudadas.component.html",
   styleUrls: ["./cuotas-adeudadas.component.css"],
 })
 export class CuotasAdeudadasComponent implements OnInit {
   cursos;
+  valueCursoSelected;
   fechaActual: Date;
   estudiantesXCuotas = [];
   cursoSelected = false;
   private unsubscribe: Subject<void> = new Subject();
+  displayedColumns: string[] = ["estudiante", "cuotas"];
 
   constructor(
     public servicioEstudiante: EstudiantesService,
@@ -27,6 +31,7 @@ export class CuotasAdeudadasComponent implements OnInit {
   }
 
   obtenerCuotasAdeudadas(curso) {
+    this.valueCursoSelected = this.obtenerNombreCurso(curso.value);
     this.reportService
       .obtenerCuotasAdeudadas(curso.value)
       .pipe(takeUntil(this.unsubscribe))
@@ -34,6 +39,14 @@ export class CuotasAdeudadasComponent implements OnInit {
         this.estudiantesXCuotas = response.estudiantesXCuotas;
         this.cursoSelected = true;
       });
+  }
+
+  obtenerNombreCurso(idCurso) {
+    for (let index = 0; index < this.cursos.length; index++) {
+      if (this.cursos[index].id == idCurso) {
+        return this.cursos[index].nombre;
+      }
+    }
   }
 
   getMes(nroMes) {
@@ -61,6 +74,15 @@ export class CuotasAdeudadasComponent implements OnInit {
     }
   }
 
+  getCuotas(i) {
+    let estudiante = this.estudiantesXCuotas[i];
+    let cuotas = " ";
+    estudiante.mesCuotas.forEach((cuota) => {
+      cuotas += this.getMes(cuota) + ", ";
+    });
+    return cuotas.substring(0, cuotas.length - 2);
+  }
+
   obtenerCursos() {
     this.servicioEstudiante
       .obtenerCursos(this.fechaActual.getFullYear())
@@ -75,6 +97,18 @@ export class CuotasAdeudadasComponent implements OnInit {
             : 0
         );
       });
+  }
+
+  public descargarPDF() {
+    var element = document.getElementById("content");
+
+    html2canvas(element).then((canvas) => {
+      var imgData = canvas.toDataURL("image/png");
+      var doc = new jsPDF();
+      var imgH = (canvas.height * 145) / canvas.width;
+      doc.addImage(imgData, 30, 10, 145, imgH);
+      doc.save("CuotasAdeudadas-" + this.valueCursoSelected + ".pdf");
+    });
   }
 
   ngOnDestroy() {

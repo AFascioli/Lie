@@ -32,3 +32,13 @@ li {
   margin-bottom: 0% !important;
   font-size: x-large;
 }
+
+.columnas-normales {
+  width: 22% !important;
+  text-align: center;
+}
+
+.columnas-chicas {
+  width: 8% !important;
+  text-align: center;
+}

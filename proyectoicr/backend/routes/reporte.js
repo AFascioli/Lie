@@ -136,7 +136,7 @@ router.get("/cuotas", checkAuthMiddleware, async (req, res) => {
         mesCuotas: {
           $push: "$cuotas.mes",
         },
-        estudiantes: {
+        nombres: {
           $first: "$estudiante",
         },
       },
