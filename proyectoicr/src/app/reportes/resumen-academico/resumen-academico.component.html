@@ -6,10 +6,11 @@
       name="curso"
       ngModel
       #curso="ngModel"
+      [(ngModel)]="cursoSeleccionado"
       matNativeControl
       required
       class="curso"
-      (selectionChange)="obtenerEstudiantes(curso)"
+      (selectionChange)="obtenerEstudiantes(curso.value)"
     >
       <mat-option *ngFor="let curso of cursos" [value]="curso.id">
         {{ curso.nombre }}

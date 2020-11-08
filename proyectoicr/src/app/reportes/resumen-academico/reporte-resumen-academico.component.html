@@ -385,23 +385,29 @@
       ><b>Sanciones</b>
       <br />
       <p>
-        Llamados de atención: {{ sumatoriaSanciones[0] }}
-        <br />Apercibimientos: {{ sumatoriaSanciones[1] }}
-        <br />Amonestaciones: {{ sumatoriaSanciones[2] }}
-        <br />Suspenciones: {{sumatoriaSanciones[3] }}
+        Llamados de atención: {{ sumatoriaSanciones[0] }} <br />Apercibimientos:
+        {{ sumatoriaSanciones[1] }} <br />Amonestaciones:
+        {{ sumatoriaSanciones[2] }} <br />Suspenciones:
+        {{ sumatoriaSanciones[3] }}
       </p>
       <br />
     </mat-card>
     <mat-card class="opcion"
       ><b>Promedio general</b> <br />
-      <p>
+      <br />
+      <h3 class="promedio-centrado">
         {{ this.promedioGeneral.toFixed(2) }}
-      </p>
+      </h3>
     </mat-card>
   </div>
 </mat-card>
 <div class="div-button">
-  <button mat-raised-button class="button-warn" [routerLink]="['/resumenAcademico']">
+  <button
+    mat-raised-button
+    class="button-warn"
+    [routerLink]="['/resumenAcademico']"
+
+  >
     Volver
   </button>
   <button mat-raised-button class="button-primary" (click)="descargarPDF()">

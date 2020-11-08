@@ -139,3 +139,11 @@ td.mat-cell:last-of-type {
   margin-top: 0;
 }
 
+.promedio-centrado {
+  text-align: center;
+  font-weight: 500;
+  color: #3f4044;
+  margin: 0 0.5rem;
+  /* text-shadow: 1px 1px 2px #c7c7c7; */
+  font-size: 33px;
+}

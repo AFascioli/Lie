@@ -21,6 +21,7 @@ export class ResumenAcademicoComponent implements OnInit {
   cursoNotSelected = true;
   isLoading = false;
   private unsubscribe: Subject<void> = new Subject();
+  cursoSeleccionado;
 
   constructor(
     public router: Router,
@@ -30,11 +31,11 @@ export class ResumenAcademicoComponent implements OnInit {
 
   ngOnInit(): void {
     this.fechaActual = new Date();
-    // this.cursoS=null;
     if (!this.reportService.retornoDeResumenAcademico)
     this.obtenerCursos();
     else {
-      // this.cursoS=this.reportService.cursoSeleccionado;
+      this.obtenerCursos();
+      this.cursoSeleccionado=this.reportService.cursoSeleccionado;
       this.obtenerEstudiantes(this.reportService.cursoSeleccionado);
     }
   }
@@ -43,8 +44,9 @@ export class ResumenAcademicoComponent implements OnInit {
     this.reportService.cursoSeleccionado = curso;
     this.isLoading = true;
     this.cursoNotSelected = false;
+    this.cursoSeleccionado=curso;
     this.servicioEstudiante
-      .obtenerEstudiantesDeCurso(curso.value)
+      .obtenerEstudiantesDeCurso(curso)
       .pipe(takeUntil(this.unsubscribe))
       .subscribe((response) => {
         this.estudiantes = response.estudiante;
@@ -300,7 +302,6 @@ export class ReporteResumenAcademicoComponent implements OnInit {
       var imgData = canvas.toDataURL("image/png");
       var doc = new jsPDF();
       var imgH = (canvas.height * 208) / canvas.width;
-      // doc.text("Calificaciones Ciclo Lectivo", 7, 15);
       doc.addImage(imgData, 0, 7, 208, imgH);
       doc.save("ResumenAcadémico.pdf");
     });
