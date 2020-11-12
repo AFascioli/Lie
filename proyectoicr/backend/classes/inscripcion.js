@@ -381,6 +381,7 @@ exports.cambiarEstadoExamPendientes = (idCicloActual) => {
         await Inscripcion.findByIdAndUpdate(inscripcion._id, {
           estado: idEstadoLibre,
         });
+        //aca se tiene q borrar inscripciones pendiente
       }
     }
     resolve();
