@@ -73,8 +73,11 @@
       </mat-form-field>
     </div>
     <div id="content" #content>
-      <h1 class="componente-titulo" *ngIf="materiaSelec">Rendimiento del curso harcodeado {{cursos[1].nombre}}: {{materias[1].nombre}} {{fechaActual}} </h1>
-      <br/>
+      <h1 class="componente-titulo" *ngIf="materiaSelec">
+        Rendimiento del curso {{ cursoSNombre }}: {{ materiaSNombre }}
+        {{ fechaActual }}
+      </h1>
+      <br />
       <div class="div-canvas">
         <canvas
           class="cv"
@@ -127,7 +130,12 @@
     <button mat-raised-button class="button-warn" [routerLink]="['/reportes']">
       Volver
     </button>
-    <button mat-raised-button class="button-primary" (click)="descargarPDF()">
+    <button
+      mat-raised-button
+      class="button-primary"
+      (click)="descargarPDF()"
+      [disabled]="!materiaSelec"
+    >
       Exportar
     </button>
   </div>

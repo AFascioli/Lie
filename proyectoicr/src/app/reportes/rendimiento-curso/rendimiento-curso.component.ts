@@ -22,9 +22,10 @@ import html2canvas from "html2canvas";
   styleUrls: ["./rendimiento-curso.component.css"],
 })
 export class RendimientoCursoComponent implements OnInit {
-  onExport=false;
   cursoS;
+  cursoSNombre;
   materiaS;
+  materiaSNombre;
   year: any[] = [];
   cursos;
   fechaActual: any;
@@ -136,6 +137,7 @@ export class RendimientoCursoComponent implements OnInit {
 
   onCursoSeleccionado(curso, materia: NgModel) {
     this.cursoS = curso;
+    this.cursoSNombre= this.obtenerNombreCurso(curso.value);
     this.materiaS = materia;
     this.materiaSelec = false;
     this.estudiantes = [];
@@ -167,6 +169,7 @@ export class RendimientoCursoComponent implements OnInit {
   }
 
   obtenerNotas(form: NgForm) {
+    this.materiaSNombre= this.obtenerNombreMateria(form.value.materia);
     this.isLoading2 = true;
     if (form.value.curso != "" || form.value.materia != "") {
       this.servicioCalificaciones
@@ -374,6 +377,22 @@ export class RendimientoCursoComponent implements OnInit {
     this.configuracionGraficos();
   }
 
+  obtenerNombreCurso(idCurso) {
+    for (let index = 0; index < this.cursos.length; index++) {
+      if (this.cursos[index].id == idCurso) {
+        return this.cursos[index].nombre;
+      }
+    }
+  }
+
+  obtenerNombreMateria(idMateria) {
+    for (let index = 0; index < this.materias.length; index++) {
+      if (this.materias[index].id == idMateria) {
+        return this.materias[index].nombre;
+      }
+    }
+  }
+
   onTipoGraficoChange(grafico) {
     this.isLoading3 = true;
     this.barChartType = grafico;
@@ -564,15 +583,12 @@ export class RendimientoCursoComponent implements OnInit {
   }
 
   public descargarPDF() {
-    this.onExport=true;
     var element = document.getElementById("content");
-
     html2canvas(element).then((canvas) => {
       console.log(canvas);
       var imgData = canvas.toDataURL("image/png");
       var doc = new jsPDF();
       var imgH = (canvas.height * 208) / canvas.width;
-      // doc.text("Rendimiento del curso " + this.fechaActual.getFullYear, 7, 15);
       doc.addImage(imgData, 0, 30, 208, imgH);
       doc.save("RendimientoCurso.pdf");
     });
