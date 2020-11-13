@@ -585,10 +585,17 @@ export class RendimientoCursoComponent implements OnInit {
   public descargarPDF() {
     var element = document.getElementById("content");
     html2canvas(element).then((canvas) => {
-      console.log(canvas);
       var imgData = canvas.toDataURL("image/png");
       var doc = new jsPDF();
       var imgH = (canvas.height * 208) / canvas.width;
+      var imgICR = new Image();
+      imgICR.src = 'assets/reports/logoICR.png'
+      var imgLIE = new Image();
+      imgLIE.src = 'assets/reports/logoLIE.png'
+      doc.addImage(imgICR,5,-3,15,15);
+      doc.addImage(imgLIE,190,2,10,10);
+      doc.text("Instituto Cristo Rey", 83, 7);
+      doc.line(5, 17, 200, 17);
       doc.addImage(imgData, 0, 30, 208, imgH);
       doc.save("RendimientoCurso.pdf");
     });
