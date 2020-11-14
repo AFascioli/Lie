@@ -140,7 +140,8 @@ import { AccionesDirectorComponent } from "./acciones-director/acciones-director
 import { ParametrizarReglasNegocioComponent } from "./acciones-director/parametrizar-reglas-negocio/parametrizar-reglas-negocio.component";
 import {
   CicloLectivoComponent,
-  PopUpCerrarEtapa,
+  PopUpCerrarEtapa, 
+  PopUpMateriasSinCerrar
 } from "./acciones-director/ciclo-lectivo/ciclo-lectivo/ciclo-lectivo.component";
 import { EstadoCursosComponent } from "./acciones-director/estado-cursos/estado-cursos.component";
 import { DocAdeudadosComponent } from "./reportes/doc-adeudados/doc-adeudados.component";
@@ -148,6 +149,7 @@ import { ReportesComponent } from "./reportes/reportes.component";
 import { CuotasAdeudadasComponent } from './reportes/cuotas-adeudadas/cuotas-adeudadas.component';
 import { ReporteResumenAcademicoComponent,ResumenAcademicoComponent } from './reportes/resumen-academico/resumen-academico.component';
 import { RendimientoCursoComponent } from './reportes/rendimiento-curso/rendimiento-curso.component';
+
 
 @NgModule({
   declarations: [
@@ -225,7 +227,7 @@ import { RendimientoCursoComponent } from './reportes/rendimiento-curso/rendimie
     ResumenAcademicoComponent,
     ReporteResumenAcademicoComponent,
     RendimientoCursoComponent
-
+    PopUpMateriasSinCerrar
   ],
   //entryComponents declara los componentes que se generan dinamicamente dentro de otros.
   entryComponents: [
@@ -250,6 +252,7 @@ import { RendimientoCursoComponent } from './reportes/rendimiento-curso/rendimie
     ReadMoreComponent,
     ErrorComponent,
     PopUpCerrarEtapa,
+    PopUpMateriasSinCerrar
   ],
   imports: [
     MatChipsModule,
