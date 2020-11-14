@@ -12,6 +12,7 @@ const asistenciaRoutes = require("./routes/asistencia");
 const calificacionesRoutes = require("./routes/calificacion");
 const eventoRoutes = require("./routes/evento");
 const materiasRoutes = require("./routes/materia");
+const reporteRoutes = require("./routes/reporte");
 const Ambiente = require("./assets/ambiente");
 var Grid = require("gridfs-stream");
 
@@ -99,6 +100,8 @@ app.use("/calificacion", calificacionesRoutes);
 app.use("/materia", materiasRoutes);
 
 app.use("/evento", eventoRoutes);
+
+app.use("/reporte", reporteRoutes);
 
 app.get("/status", (req, res, next) => {
   res.status(200).json({

@@ -10,6 +10,7 @@ const Rol = require("../models/rol");
 const Empleado = require("../models/empleado");
 const Estudiante = require("../models/estudiante");
 const AdultoResponsable = require("../models/adultoResponsable");
+const Administrador = require("../models/administrador");
 const Suscripcion = require("../classes/suscripcion");
 
 //Compara la contraseña ingresada por el usuario con la contraseña pasada por parametro
@@ -302,14 +303,25 @@ router.post("/signup/admin", checkAuthMiddleware, async (req, res) => {
 });
 
 // Solicitud para planificar una reunión con adultos responsables del estudiante
-router.post("/reunion/adultoResponsable", checkAuthMiddleware, (req, res) => {
-  let idUsuarios = [];
-  req.body.adultosResponsables.forEach((adulto) => {
-    adulto.seleccionado && idUsuarios.push(adulto.idUsuario);
-  });
+router.post(
+  "/reunion/adultoResponsable",
+  checkAuthMiddleware,
+  async (req, res) => {
+    try {
+      let idUsuarios = [];
+      req.body.adultosResponsables.forEach((adulto) => {
+        adulto.seleccionado && idUsuarios.push(adulto.idUsuario);
+      });
 
-  Empleado.findOne({ idUsuario: req.body.idUsuarioEmpleado })
-    .then((empleado) => {
+      let empleado = await Empleado.findOne({
+        idUsuario: req.body.idUsuarioEmpleado,
+      });
+      if (!empleado) {
+        empleado = await Administrador.findOne({
+          idUsuario: req.body.idUsuarioEmpleado,
+        });
+      }
+
       Suscripcion.notificacionGrupal(
         idUsuarios,
         `Solicitud de reunión de ${empleado.apellido} ${empleado.nombre}`,
@@ -319,15 +331,15 @@ router.post("/reunion/adultoResponsable", checkAuthMiddleware, (req, res) => {
         message: "Se envió la notificación a los adultos responsables",
         exito: true,
       });
-    })
-    .catch((error) => {
-      res.status(400).json({
+    } catch (error) {
+      res.status(500).json({
         message:
           "Ocurrió un error al querer notificar a los adultos responsables",
         error: error.message,
       });
-    });
-});
+    }
+  }
+);
 
 // Solicitud para planificar una reunión con un docente.
 router.post("/reunion/docente", checkAuthMiddleware, (req, res) => {

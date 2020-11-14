@@ -14,6 +14,7 @@ const AdultoResponsable = require("../models/adultoResponsable");
 const Empleado = require("../models/empleado");
 const Usuario = require("../models/usuario");
 const Inscripcion = require("../models/inscripcion");
+const Administrador = require("../models/administrador");
 const Suscripcion = require("../classes/suscripcion");
 
 const storage = new GridFsStorage({
@@ -293,11 +294,14 @@ router.post(
             });
           });
         } else if (rol == "Admin") {
-          Usuario.findOne({ email: emailUsuario }).then((usuario) => {
+          Administrador.findOne({ email: emailUsuario }).then((usuario) => {
+            apellido = usuario.apellido;
+            nombre = usuario.nombre;
+            idUsuario = usuario.idUsuario;
             resolve({
-              apellido: "Nistrador", //Para evitar tener una tabla en bd con nombre y apellido de admin, se hardcodea aca
-              nombre: "Admi",
-              idUsuario: usuario._id,
+              apellido: apellido,
+              nombre: nombre,
+              idUsuario: idUsuario,
             });
           });
         } else {
@@ -524,9 +528,9 @@ router.get("/id", checkAuthMiddleware, (req, res) => {
   Evento.findById(req.query.idEvento)
     .then((evento) => {
       if (evento) {
-        res.json({ evento: evento, exito: true, message: "exito" });
+        res.status(200).json({ evento: evento, exito: true, message: "exito" });
       } else {
-        res.json({ evento: null, exito: true, message: "exito" });
+        res.status(200).json({ evento: null, exito: true, message: "exito" });
       }
     })
     .catch((error) => {

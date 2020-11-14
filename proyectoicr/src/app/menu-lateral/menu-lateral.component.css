@@ -224,12 +224,7 @@ a:hover {
 }
 
 .imagen-background {
-  /* background-image: url("https://conceptodefinicion.de/wp-content/uploads/2017/03/Abstracto.jpg"); */
-  /* background-image: url("https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcSgASpiPnEAyktT3ldWZPC1vFkZoUln8iw7-mcIU3a4MzUmVSYP&usqp=CAU"); */
-  /* background-image: url("https://img3.stockfresh.com/files/c/cienpies/m/29/9336281_stock-vector-education-school-icon-quote-in-spanish-language.jpg"); */
-  /* background-image: url("https://cdn.dribbble.com/users/1298822/screenshots/6964804/ccf_2x.jpg"); */
-  /* background-image: url("https://cdn.clipart.email/3269947bf7e0d6927334e4205659bd93_education-background-stock-vectors-royalty-free-education-_1024-1024.jpeg"); */
-  background-image: url("https://cdn.clipart.email/3269947bf7e0d6927334e4205659bd93_education-background-stock-vectors-royalty-free-education-_1024-1024.jpeg");
+  background-image: url("../../img/backgroundhands.jpeg");
   background-repeat: no-repeat;
   background-size: cover;
   display: flow-root;

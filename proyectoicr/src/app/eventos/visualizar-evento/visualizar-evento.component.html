@@ -17,7 +17,7 @@
     <div class="slideshow-container">
       <div *ngFor="let filename of evento.filenames">
         <div class="my-slides fade">
-          <img [src]="getImage(filename)" style="width: 100%;" />
+          <img [src]="getImage(filename)" style="width: 100%" />
         </div>
       </div>
       <a
@@ -34,7 +34,7 @@
       >
     </div>
     <br />
-    <div *ngIf="evento.filenames.length > 1" style="text-align: center;">
+    <div *ngIf="evento.filenames.length > 1" style="text-align: center">
       <span class="dot" *ngFor="let filename of evento.filenames"> </span>
     </div>
   </div>
@@ -51,11 +51,9 @@
   <div class="prueba">
     <mat-card-content *ngIf="evento.descripcion">
       <p class="descripcion">
-        <b>
-          Descripción:
-        </b>
+        <b> Descripción: </b>
       </p>
-      <p style="margin-left: 5px;">
+      <p style="margin-left: 5px">
         <app-read-more
           [text]="evento.descripcion"
           [maxHeight]="45"
@@ -97,9 +95,9 @@
     <br />
     <mat-divider class="divisor"></mat-divider>
     <p class="titulo-comentarios">
-      <b style="font-size: 28px;">Comentarios</b>
+      <b style="font-size: 28px">Comentarios</b>
     </p>
-    <mat-accordion class="example-headers-align">
+    <mat-accordion>
       <mat-expansion-panel hideToggle>
         <mat-expansion-panel-header>
           <mat-panel-title>
@@ -110,7 +108,6 @@
           </mat-panel-description>
         </mat-expansion-panel-header>
         <div
-          class="test"
           *ngFor="let comentario of eventoService.comentarios; let i = index"
         >
           <div class="datos-comentario">
@@ -134,7 +131,7 @@
                 Eliminar comentario
               </button>
 
-              <button mat-menu-item>
+              <button mat-menu-item (click)="onReportar(comentario._id)">
                 Reportar como inapropiado
               </button>
             </mat-menu>

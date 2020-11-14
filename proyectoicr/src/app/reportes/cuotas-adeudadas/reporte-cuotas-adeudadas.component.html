@@ -1,0 +1,75 @@
+<mat-card class="card-body-componente">
+  <mat-form-field>
+    <mat-select
+      placeholder="Seleccione curso"
+      name="curso"
+      ngModel
+      #curso="ngModel"
+      matNativeControl
+      required
+      class="curso"
+      (selectionChange)="obtenerCuotasAdeudadas(curso)"
+    >
+      <mat-option *ngFor="let curso of cursos" [value]="curso.id">
+        {{ curso.nombre }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+  <br />
+  <div id="content" #content>
+    <h1 class="componente-titulo">
+      Listado de estudiantes morosos del curso {{ valueCursoSelected }}
+    </h1>
+    <br />
+    <p class="aviso" *ngIf="estudiantesXCuotas.length == 0 && cursoSelected">
+      Los estudiantes no tienen cuotas adeudadas
+    </p>
+    <table
+      mat-table
+      [dataSource]="estudiantesXCuotas"
+      *ngIf="estudiantesXCuotas.length > 0"
+    >
+      <ng-container matColumnDef="estudiante">
+        <th class="columnas-chicas" mat-header-cell *matHeaderCellDef>
+          <b>Estudiante</b>
+        </th>
+        <td
+          class="columnas-chicas"
+          mat-cell
+          *matCellDef="let estudiantesXCuotas; let i = index"
+        >
+          <p>{{ estudiantesXCuotas.nombres }}</p>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="cuotas">
+        <th class="columnas-normales" mat-header-cell *matHeaderCellDef>
+          <b>Cuotas</b>
+        </th>
+        <td
+          class="columnas-normales"
+          mat-cell
+          *matCellDef="let estudiantesXCuotas; let i = index"
+        >
+          <p>{{ getCuotas(i) }}</p>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+    </table>
+  </div>
+  <div class="div-button">
+    <button mat-raised-button [routerLink]="['/reportes']" class="button-warn">
+      Volver
+    </button>
+    <button
+      mat-raised-button
+      (click)="descargarPDF()"
+      [disabled]="!cursoSelected"
+      class="button-primary"
+    >
+      Exportar pdf
+    </button>
+  </div>
+</mat-card>

@@ -37,9 +37,10 @@ export class CuotasPerfilEstudianteComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.unsubscribe))
       .subscribe((respuesta) => {
         this.estadoCuotasXMes = respuesta.cuotas;
+        console.log(this.estadoCuotasXMes);
       });
-      this.apellidoEstudiante = this.servicio.estudianteSeleccionado.apellido;
-      this.nombreEstudiante = this.servicio.estudianteSeleccionado.nombre;
+    this.apellidoEstudiante = this.servicio.estudianteSeleccionado.apellido;
+    this.nombreEstudiante = this.servicio.estudianteSeleccionado.nombre;
   }
 
   ngOnDestroy() {
