@@ -34,7 +34,7 @@ export class InscripcionService {
   public obtenerEstudiantesInscripcionCursoProximoAnio(idCurso) {
     let params = new HttpParams().set("idCurso", idCurso);
     return this.http.get<{ estudiantes: any[]; exito: boolean }>(
-      environment.apiUrl + "/curso/estudiantes/inscripcionPendiente",
+      environment.apiUrl + "/curso/estudiantes/inscripcionProximoAnio",
       { params: params }
     );
   }
