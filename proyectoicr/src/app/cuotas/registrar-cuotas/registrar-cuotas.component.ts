@@ -38,6 +38,7 @@ export class RegistrarCuotasComponent implements OnInit, OnDestroy {
     "Septiembre",
     "Octubre",
     "Noviembre",
+    "Diciembre"
   ];
   cursoNotSelected: Boolean = true;
   cuotasXEstudiante: any[] = [];
