@@ -37,6 +37,13 @@ export class CuotasAdeudadasComponent implements OnInit {
       .pipe(takeUntil(this.unsubscribe))
       .subscribe((response) => {
         this.estudiantesXCuotas = response.estudiantesXCuotas;
+        this.estudiantesXCuotas.sort((a, b) =>
+        a.nombres.charAt(0) > b.nombres.charAt(0)
+          ? 1
+          : b.nombres.charAt(0) > a.nombres.charAt(0)
+          ? -1
+          : 0
+      );
         this.cursoSelected = true;
       });
   }
@@ -105,7 +112,7 @@ export class CuotasAdeudadasComponent implements OnInit {
     html2canvas(element).then((canvas) => {
       var imgData = canvas.toDataURL("image/png");
       var doc = new jsPDF();
-      var imgH = (canvas.height * 145) / canvas.width;
+      var imgH = (canvas.height * 138) / canvas.width;
       // doc.addImage(imgData, 30, 10, 145, imgH);
       var imgICR = new Image();
       imgICR.src = 'assets/reports/logoICR.png'
