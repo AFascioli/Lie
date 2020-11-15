@@ -15,6 +15,7 @@ const ClaseEstado = require("../classes/estado");
 const Suscripcion = require("../classes/suscripcion");
 const ClaseAsistencia = require("../classes/asistencia");
 const ClaseAgenda = require("../classes/agenda");
+const ClaseCicloLectivo = require("../classes/cicloLectivo");
 
 // Obtiene todos los cursos que están almacenados en la base de datos
 router.get("/", checkAuthMiddleware, (req, res) => {
@@ -1600,13 +1601,14 @@ router.get(
 //Obtener los estudiantes para la inscripcion pendiente a un curso (usada para la inscripcion por curso)
 //@params: id estudiante que se quiere verificar
 router.get(
-  "/estudiantes/inscripcionPendiente",
+  "/estudiantes/inscripcionProximoAnio",
   checkAuthMiddleware,
   async (req, res) => {
     try {
-      let cursoAnterior;
-      let añoAnterior;
-      let dateActual = new Date();
+      let cursoAnterior; //Este es 4A
+      let añoAnterior; //Si elegimos 5A este es 4
+      let estudiantesRespuesta = [];
+
       let idEstadoRegistrado = await ClaseEstado.obtenerIdEstado(
         "Estudiante",
         "Registrado"
@@ -1617,14 +1619,32 @@ router.get(
         "Activa"
       );
 
+      let idEstadoInsPromovida = await ClaseEstado.obtenerIdEstado(
+        "Inscripcion",
+        "Promovido"
+      );
+      let idEstadoInsPromovidaConExamPendientes = await ClaseEstado.obtenerIdEstado(
+        "Inscripcion",
+        "Promovido con examenes pendientes"
+      );
+
+      let idEstadoPendienteInscripcion = await ClaseEstado.obtenerIdEstado(
+        "Inscripcion",
+        "Pendiente"
+      );
+
+      //1. Buscar los estudiantes en estado registrado
       let obtenerEstudiantesSinInscripcion = await Estudiante.find(
         { estado: idEstadoRegistrado },
         { nombre: 1, apellido: 1 }
       );
 
+<<<<<<< HEAD
       //Recorrer obtenerEstudiantesSinInscripcion y fijarse y filtrar los que tengan inscripciones para el ciclo lectivo siguiente
       let estudiantesRespuesta = [];
 
+=======
+>>>>>>> 50e4d0014c32ebffbdbb9a2d867da95f953fdc5d
       obtenerEstudiantesSinInscripcion.forEach((estudiante) => {
         const estudianteRefinado = {
           idEstudiante: estudiante._id,
@@ -1637,12 +1657,14 @@ router.get(
         estudiantesRespuesta.push(estudianteRefinado);
       });
 
+      //Nos devuelve el curso anterior (año+division), si elegimos 5A nos devuelve 4A
       await Curso.findById(req.query.idCurso).then((curso) => {
         añoAnterior = parseInt(curso.nombre, 10) - 1;
         let division = curso.nombre.substring(1, 2);
         cursoAnterior = `${añoAnterior}${division}`;
       });
 
+      //Si es primer año solo va a tener los sin inscripcion??
       if (añoAnterior == 0) {
         return res.status(200).json({
           estudiantes: estudiantesRespuesta,
@@ -1650,20 +1672,24 @@ router.get(
         });
       }
 
-      let cicloLectivo = await CicloLectivo.findOne({
-        año: dateActual.getFullYear(),
-      }).exec();
+      /* 2. Buscar los estudiantes del curso anterior que sean activo,
+      promovido o promovido con ex pendientes (con todos los datos)*/
 
       let curso = await Curso.findOne({
         nombre: cursoAnterior,
-        cicloLectivo: cicloLectivo._id,
+        cicloLectivo: await ClaseCicloLectivo.obtenerIdCicloLectivo(false),
       }).exec();
 
-      let obtenerEstudiantesInscripcionActiva = await Inscripcion.aggregate([
+      let obtenerEstudiantesEnCondicionesInsc = await Inscripcion.aggregate([
         {
           $match: {
-            estado: mongoose.Types.ObjectId(idEstadoInscripcionActiva),
-            cicloLectivo: cicloLectivo._id,
+            estado: {
+              $in: [
+                mongoose.Types.ObjectId(idEstadoInscripcionActiva),
+                mongoose.Types.ObjectId(idEstadoInsPromovida),
+                mongoose.Types.ObjectId(idEstadoInsPromovidaConExamPendientes),
+              ],
+            },
             idCurso: mongoose.Types.ObjectId(curso._id),
           },
         },
@@ -1693,7 +1719,7 @@ router.get(
         },
       ]);
 
-      obtenerEstudiantesInscripcionActiva.forEach((inscripcion) => {
+      obtenerEstudiantesEnCondicionesInsc.forEach((inscripcion) => {
         const estudianteRefinado = {
           idEstudiante: inscripcion.datosEstudiante[0]._id,
           nombre: inscripcion.datosEstudiante[0].nombre,
@@ -1703,6 +1729,25 @@ router.get(
           seleccionado: false,
         };
         estudiantesRespuesta.push(estudianteRefinado);
+      });
+
+      /*3. Buscar todas las inscripciones pendientes del curso selec (6A 2021)
+       (solo obtenemos id estudiante)
+       */
+      /*4. Filtras estudiantes paso 1 con los estudiantes obtenidos paso 2
+       (si coinciden los sacamos y no se envia al front).  */
+
+      Inscripcion.find({
+        estado: idEstadoPendienteInscripcion,
+        curso: req.query.idCurso,
+      }).then((inscripcionesPendientes) => {
+        for (let index = 0; index < inscripcionesPendientes.length; index++) {
+          estudiantesRespuesta = estudiantesRespuesta.filter(
+            (estudiante) =>
+              estudiante.idEstudiante !==
+              inscripcionesPendientes[index].idEstudiante
+          );
+        }
       });
 
       res.status(200).json({

@@ -55,68 +55,51 @@ exports.pasarInscripcionesAActivas = () => {
       "Cursando"
     );
 
-    Inscripcion.aggregate([
-      {
-        $match: {
-          estado: mongoose.Types.ObjectId(idPendiente),
-        },
-      },
-      {
-        $lookup: {
-          from: "cicloLectivo",
-          localField: "cicloLectivo",
-          foreignField: "_id",
-          as: "datosCiclo",
-        },
-      },
-      {
-        $match: {
-          "datosCiclo.año": añoActual,
-        },
-      },
-    ]).then(async (inscripcionesPendientes) => {
-      for (const inscripcionJson of inscripcionesPendientes) {
-        let inscripcion = await Inscripcion.findById(inscripcionJson._id);
+    let idCicloActual = await this.obtenerIdCicloLectivo(false);
 
-        let materiasDelCurso = await ClaseInscripcion.obtenerMateriasDeCurso(
-          inscripcion.idCurso
-        );
-        let idsCXM = await ClaseCXM.crearCXM(materiasDelCurso, idCursandoCXM);
+    Inscripcion.find({ estado: idPendiente, cicloLectivo: idCicloActual }).then(
+      async (inscripcionesPendientes) => {
+        for (const inscripcion of inscripcionesPendientes) {
+          let materiasDelCurso = await ClaseInscripcion.obtenerMateriasDeCurso(
+            inscripcion.idCurso
+          );
+          let idsCXM = await ClaseCXM.crearCXM(materiasDelCurso, idCursandoCXM);
 
-        // Obtenemos la inscripcion del año anterior (filtrada por estudiante, estado que no sea inactiva y ciclo)
-        let inscripcionAnterior = await Inscripcion.aggregate([
-          {
-            $match: {
-              idEstudiante: mongoose.Types.ObjectId(inscripcion.idEstudiante),
-              estado: {
-                $ne: mongoose.Types.ObjectId(idInactiva),
+          // Obtenemos la inscripcion del año anterior (filtrada por estudiante, estado que no sea inactiva y ciclo)
+          let inscripcionAnterior = await Inscripcion.aggregate([
+            {
+              $match: {
+                idEstudiante: mongoose.Types.ObjectId(inscripcion.idEstudiante),
+                estado: {
+                  $ne: mongoose.Types.ObjectId(idInactiva),
+                },
               },
             },
-          },
-          {
-            $lookup: {
-              from: "cicloLectivo",
-              localField: "cicloLectivo",
-              foreignField: "_id",
-              as: "datosCiclo",
+            {
+              $lookup: {
+                from: "cicloLectivo",
+                localField: "cicloLectivo",
+                foreignField: "_id",
+                as: "datosCiclo",
+              },
             },
-          },
-          {
-            $match: {
-              "datosCiclo.año": añoActual - 1,
+            {
+              $match: {
+                "datosCiclo.año": añoActual - 1,
+              },
             },
-          },
-        ]);
-        inscripcion.calificacionesXMateria = idsCXM;
-        inscripcion.materiasPendientes =
-          inscripcionAnterior.length != 0
-            ? inscripcionAnterior.materiasPendientes
-            : [];
-        inscripcion.estado = idActiva;
-        inscripcion.save();
-        resolve();
+          ]);
+          inscripcion.calificacionesXMateria = idsCXM;
+          inscripcion.materiasPendientes =
+            inscripcionAnterior.length != 0
+              ? inscripcionAnterior.materiasPendientes
+              : [];
+          inscripcion.estado = idActiva;
+          inscripcion.save();
+          resolve();
+        }
       }
-    });
+    );
   });
 };
 
@@ -126,16 +109,16 @@ exports.crearCursosParaCiclo = () => {
     let nombresCursos = [
       "1A",
       "2A",
-      // "3A",
-      // "4A",
-      // "5A",
-      // "6A",
-      // "1B",
-      // "2B",
-      // "3B",
-      // "4B",
-      // "5B",
-      // "6B",
+      "3A",
+      "4A",
+      "5A",
+      "6A",
+      "1B",
+      "2B",
+      "3B",
+      "4B",
+      "5B",
+      "6B",
     ];
 
     nombresCursos.forEach((nombreCurso) => {

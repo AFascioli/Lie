@@ -334,6 +334,10 @@ exports.cambiarEstadoExamPendientes = (idCicloActual) => {
       "CalificacionesXMateria",
       "Desaprobada"
     );
+    const idEstadoPendiente = await ClaseEstado.obtenerIdEstado(
+      "Inscripcion",
+      "Pendiente"
+    );
 
     let inscripcionesPendientes = await Inscripcion.aggregate([
       {
@@ -381,6 +385,10 @@ exports.cambiarEstadoExamPendientes = (idCicloActual) => {
         await Inscripcion.findByIdAndUpdate(inscripcion._id, {
           estado: idEstadoLibre,
         });
+        await Inscripcion.findOneAndDelete({
+          idEstudiante: inscripcion.idEstudiante,
+          estado: idEstadoPendiente,
+        }).exec();
       }
     }
     resolve();
