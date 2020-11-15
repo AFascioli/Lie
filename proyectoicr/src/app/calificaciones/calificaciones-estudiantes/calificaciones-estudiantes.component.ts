@@ -204,7 +204,6 @@ export class CalificacionesEstudiantesComponent implements OnInit, OnDestroy {
   //Cierra una materia (cambia estado de MXC, y si es tercer trimestre 
   // se cambia estado de las CXM y se calcula promedio)
   onCerrarMateria(form: NgForm){
-    console.log("Hey scm", form.value);
     this.servicioCalificaciones
       .cerrarTrimestreMateria(
         form.value.materia,

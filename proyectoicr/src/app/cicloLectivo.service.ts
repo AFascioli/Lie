@@ -30,6 +30,7 @@ export class CicloLectivoService implements OnDestroy {
     return this.http.get<{
       exito: boolean;
       message: string;
+      cursosSinAgenda: any[];
     }>(`${environment.apiUrl}/cicloLectivo/inicioCursado`);
   }
 

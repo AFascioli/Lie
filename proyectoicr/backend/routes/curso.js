@@ -1639,12 +1639,8 @@ router.get(
         { nombre: 1, apellido: 1 }
       );
 
-<<<<<<< HEAD
       //Recorrer obtenerEstudiantesSinInscripcion y fijarse y filtrar los que tengan inscripciones para el ciclo lectivo siguiente
-      let estudiantesRespuesta = [];
 
-=======
->>>>>>> 50e4d0014c32ebffbdbb9a2d867da95f953fdc5d
       obtenerEstudiantesSinInscripcion.forEach((estudiante) => {
         const estudianteRefinado = {
           idEstudiante: estudiante._id,

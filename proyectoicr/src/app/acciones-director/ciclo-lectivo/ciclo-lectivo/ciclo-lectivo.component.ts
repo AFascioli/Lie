@@ -18,11 +18,11 @@ export interface DialogData {
   styleUrls: ["./ciclo-lectivo.component.css"],
 })
 export class CicloLectivoComponent implements OnInit {
-  iniciarCursado: Boolean;
-  primerTrimestre: Boolean = true;
-  segundoTrimestre: Boolean;
-  tercerTrimestre: Boolean;
-  fechasExamen: Boolean;
+  iniciarCursado: Boolean=true;
+  primerTrimestre: Boolean=true;
+  segundoTrimestre: Boolean=true;
+  tercerTrimestre: Boolean=true;
+  fechasExamen: Boolean=true;
   name: string;
   id;
 
@@ -43,6 +43,7 @@ export class CicloLectivoComponent implements OnInit {
         case 1:
           this.primerTrimestre = true;
           this.iniciarCursado = false;
+          this.onIniciarCursado();
           break;
         case 2:
           this.segundoTrimestre = true;
@@ -110,16 +111,31 @@ export class CicloLectivoComponent implements OnInit {
     });
   }
 
+  onIniciarCursado(){
+    this.servicioCicloLectivo.inicioCursado().subscribe((response) => {
+      console.log("response",response)
+      if (response.exito) {
+        this.showSnackbar(response.message, "snack-bar-exito");
+      }else{
+        this.dialog.open(PopUpMateriasSinCerrar, {
+          width: "250px",
+          data: { mensaje: response.message },
+        });
+      }
+    });
+  }
+
   cerrarTrimestre(trimestre) {
     this.servicioCicloLectivo.cierreTrimestre(trimestre).subscribe((response) => {
       if (response.exito) {
         this.showSnackbar(response.message, "snack-bar-exito");
       }else{
-        let cursosYMaterias;
+        let cursosYMaterias="";
         for (const cursoYMateria of response.materiasSinCerrar) {
           cursosYMaterias+=`${cursoYMateria.materia} de ${cursoYMateria.curso}, `
         }
         let mensaje= response.message+cursosYMaterias.slice(0, cursosYMaterias.length-2);
+
         this.dialog.open(PopUpMateriasSinCerrar, {
           width: "250px",
           data: { mensaje: mensaje },

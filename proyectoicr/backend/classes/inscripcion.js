@@ -283,12 +283,17 @@ exports.actualizarEstadoInscripcion = (inscripcion) => {
     );
     let idEstadoExPendientes = await ClaseEstado.obtenerIdEstado(
       "Inscripcion",
-      "Examenes Pendientes"
+      "Examenes pendientes"
+    );
+    let idEstadoPendienteExamen = await ClaseEstado.obtenerIdEstado(
+      "CalificacionesXMateria",
+      "Pendiente examen"
     );
     let promovido = true;
 
     for (const cxm of inscripcion.datosCXM) {
-      if (cxm.promedio < 6) {
+      //#resolve
+      if (cxm.estado ==idEstadoPendienteExamen) {
         promovido = false;
         break;
       }
@@ -359,23 +364,26 @@ exports.cambiarEstadoExamPendientes = (idCicloActual) => {
     for (const inscripcion of inscripcionesPendientes) {
       let idsCXMPendientes = [];
       for (const cxm of inscripcion.datosCXM) {
-        if (cxm.estado == idEstadoCXMPendiente) {
+
+        if ((cxm.estado.toString().localeCompare(idEstadoCXMPendiente.toString()))==0) {
           idsCXMPendientes.push(cxm._id);
         }
       }
+      
       if (idsCXMPendientes.length == 0) {
         await Inscripcion.findByIdAndUpdate(inscripcion._id, {
           estado: idEstadoPromovido,
-        });
+        }).exec();
       } else if (idsCXMPendientes.length < 4) {
         for (const idCxm of idsCXMPendientes) {
           await CalificacionesXMateria.findByIdAndUpdate(idCxm, {
             estado: idEstadoCXMDesaprobada,
-          });
+          }).exec();
         }
         await Inscripcion.findByIdAndUpdate(inscripcion._id, {
           estado: idEstadoPromovidoExamPendientes,
-        });
+          materiasPendientes: idsCXMPendientes
+        }).exec();
       } else {
         for (const idCxm of idsCXMPendientes) {
           await CalificacionesXMateria.findByIdAndUpdate(idCxm, {
@@ -384,7 +392,7 @@ exports.cambiarEstadoExamPendientes = (idCicloActual) => {
         }
         await Inscripcion.findByIdAndUpdate(inscripcion._id, {
           estado: idEstadoLibre,
-        });
+        }).exec();
         await Inscripcion.findOneAndDelete({
           idEstudiante: inscripcion.idEstudiante,
           estado: idEstadoPendiente,

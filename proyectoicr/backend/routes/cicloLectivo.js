@@ -176,6 +176,8 @@ router.use("/estado", checkAuthMiddleware, (req, res) => {
 
 router.get("/inicioCursado", checkAuthMiddleware, async (req, res) => {
   try {
+    let fechaActual = new Date();
+    let añoActual = fechaActual.getFullYear();
     // Validar que todas las agendas esten definidas
     let idCreado = await ClaseEstado.obtenerIdEstado("CicloLectivo", "Creado");
     let idEnPrimerTrimestre = await ClaseEstado.obtenerIdEstado(
@@ -216,10 +218,10 @@ router.get("/inicioCursado", checkAuthMiddleware, async (req, res) => {
     await cicloProximo.save();
 
     // Crear los cursos del año siguiente
-    ClaseCicloLectivo.crearCursosParaCiclo(cicloProximo._id);
+    await ClaseCicloLectivo.crearCursosParaCiclo(cicloProximo._id);
 
     // Actualizar el estado del actual de Creado a En primer trimestre
-    CicloLectivo.findOneAndUpdate(
+    await CicloLectivo.findOneAndUpdate(
       { año: añoActual, estado: idCreado },
       { estado: idEnPrimerTrimestre }
     ).exec();
@@ -352,11 +354,12 @@ router.get("/", checkAuthMiddleware, (req, res) => {
 // Endpoint que usa el director para cerrar un trimestre. Primero se fija si hay algun curso que no tenga cerrada
 // alguna materia. Si esta todo legal realiza la logica correspondiente.
 router.post("/cierreTrimestre", checkAuthMiddleware, async (req, res) => {
+  let trimestre = parseInt(req.body.trimestre, 10);
+
   let materiasSinCerrar = await ClaseCicloLectivo.materiasSinCerrar(
-    req.query.trimestre
+    trimestre
   );
 
-  let trimestre = parseInt(req.body.trimestre, 10);
 
   if (materiasSinCerrar.length != 0) {
     res.status(200).json({
@@ -419,7 +422,7 @@ router.get("/cierreExamenes", checkAuthMiddleware, async (req, res) => {
 
     res.status(200).json({
       exito: true,
-      message: "Etapa de exámenes cerrado exitosamente.",
+      message: "Etapa de exámenes cerrada exitosamente.",
     });
   } catch (error) {
     res.status(500).json({

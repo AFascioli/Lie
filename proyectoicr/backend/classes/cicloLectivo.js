@@ -39,7 +39,7 @@ exports.cursosTienenAgenda = () => {
 // Se obtienen las inscripciones pendientes del ciclo actual, a estas se les cambia el estado a activa
 // se les copian las materias pendientes de la inscripcion del año anterior y se les asignan las CXM correspondientes.
 exports.pasarInscripcionesAActivas = () => {
-  let añoActual = new Date().getFullYear();
+  let añoActual = new Date();
   return new Promise(async (resolve, reject) => {
     let idPendiente = await ClaseEstado.obtenerIdEstado(
       "Inscripcion",
@@ -85,14 +85,15 @@ exports.pasarInscripcionesAActivas = () => {
             },
             {
               $match: {
-                "datosCiclo.año": añoActual - 1,
+                "datosCiclo.año": añoActual.getFullYear() - 1,
               },
             },
           ]);
+
           inscripcion.calificacionesXMateria = idsCXM;
           inscripcion.materiasPendientes =
-            inscripcionAnterior.length != 0
-              ? inscripcionAnterior.materiasPendientes
+            inscripcionAnterior
+              ? inscripcionAnterior[0].materiasPendientes
               : [];
           inscripcion.estado = idActiva;
           inscripcion.save();
@@ -104,8 +105,8 @@ exports.pasarInscripcionesAActivas = () => {
 };
 
 exports.crearCursosParaCiclo = () => {
-  let añoActual = new Date().getFullYear();
-  CicloLectivo.findOne({ año: añoActual }).then((cicloLectivo) => {
+  let añoActual = new Date();
+  CicloLectivo.findOne({ año: añoActual.getFullYear() }).then((cicloLectivo) => {
     let nombresCursos = [
       "1A",
       "2A",
@@ -329,6 +330,9 @@ exports.materiasSinCerrar = (trimestre) => {
 exports.actualizarEstadoInscripciones = () => {
   return new Promise(async (resolve, reject) => {
     let idCicloActual = await this.obtenerIdCicloLectivo(false);
+    let idEstadoActiva= await ClaseEstado.obtenerIdEstado("Inscripcion","Activa");
+    let idEstadoSuspendido= await ClaseEstado.obtenerIdEstado("Inscripcion","Suspendido");
+    
     let todasInscripciones = await Inscripcion.aggregate([
       {
         $match: {
