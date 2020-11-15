@@ -62,6 +62,7 @@ export class RendimientoCursoComponent implements OnInit {
   f_iM8 = 0;
   tipoGrafico;
   titulo = "";
+  idDocente;
   //
   private unsubscribe: Subject<void> = new Subject();
   barChartLabels: Label[] = [];
@@ -84,7 +85,7 @@ export class RendimientoCursoComponent implements OnInit {
     public reportService: ReportesService,
     public servicioCalificaciones: CalificacionesService,
     public servicioCicloLectivo: CicloLectivoService,
-    public servicioEstudianteAutenticacion: AutenticacionService
+    public servicioAutenticacion: AutenticacionService
   ) {}
 
   ngOnInit(): void {
@@ -99,13 +100,13 @@ export class RendimientoCursoComponent implements OnInit {
   }
 
   obtenerCursos(yearS) {
-    if (this.servicioEstudianteAutenticacion.getRol() == "Docente") {
-      this.servicioEstudianteAutenticacion
-        .obtenerIdEmpleado(this.servicioEstudianteAutenticacion.getId())
+    if (this.servicioAutenticacion.getRol() == "Docente") {
+      this.servicioAutenticacion
+        .obtenerIdEmpleado(this.servicioAutenticacion.getId())
         .subscribe((response) => {
-          this.docente = response.id;
+          this.idDocente = response.id;
           this.servicioEstudiante
-            .obtenerCursosDeDocentePorCiclo(this.docente, yearS)
+            .obtenerCursosDeDocente(this.idDocente)
             .pipe(takeUntil(this.unsubscribe))
             .subscribe((response) => {
               this.cursos = response.cursos;
@@ -144,24 +145,24 @@ export class RendimientoCursoComponent implements OnInit {
     this.materias = [];
     materia.reset();
     if (
-      this.rolConPermisosEdicion &&
-      this.servicioEstudianteAutenticacion.getRol() != "Admin" &&
-      this.servicioEstudianteAutenticacion.getRol() != "Director"
+      this.servicioAutenticacion.getRol() != "Docente"
     ) {
       this.servicioEstudiante
-        .obtenerMateriasXCursoXDocente(curso.value, this.docente)
-        .pipe(takeUntil(this.unsubscribe))
-        .subscribe((respuesta) => {
-          this.materias = respuesta.materias.sort((a, b) =>
-            a.nombre > b.nombre ? 1 : b.nombre > a.nombre ? -1 : 0
-          );
-        });
+      .obtenerMateriasDeCurso(curso.value)
+      .pipe(takeUntil(this.unsubscribe))
+      .subscribe((respuesta) => {
+        this.materias = respuesta.materias;
+        this.materias.sort((a, b) =>
+          a.nombre > b.nombre ? 1 : b.nombre > a.nombre ? -1 : 0
+        );
+      });
     } else {
       this.servicioEstudiante
-        .obtenerMateriasDeCurso(curso.value)
+        .obtenerMateriasXCursoXDocente(curso.value, this.idDocente)
         .pipe(takeUntil(this.unsubscribe))
         .subscribe((respuesta) => {
-          this.materias = respuesta.materias.sort((a, b) =>
+          this.materias = respuesta.materias;
+          this.materias.sort((a, b) =>
             a.nombre > b.nombre ? 1 : b.nombre > a.nombre ? -1 : 0
           );
         });

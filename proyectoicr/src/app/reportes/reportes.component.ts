@@ -1,6 +1,7 @@
-import { ReportesService } from './reportes.service';
+import { ReportesService } from "./reportes.service";
 import { Component, OnInit } from "@angular/core";
 import { Router } from "@angular/router";
+import { AutenticacionService } from '../login/autenticacionService.service';
 
 @Component({
   selector: "app-reportes",
@@ -8,9 +9,17 @@ import { Router } from "@angular/router";
   styleUrls: ["./reportes.component.css"],
 })
 export class ReportesComponent implements OnInit {
-  constructor(public router: Router, public servicioReporte: ReportesService) {}
+  esDocente:boolean=false;
+  constructor(
+    public router: Router,
+    public servicioReporte: ReportesService,
+    public servicioAutenticacion: AutenticacionService
+  ) {}
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    if(this.servicioAutenticacion.getRol()=='Docente')
+    this.esDocente = true;
+  }
 
   onListadoDocsAdeudados() {
     this.router.navigate(["./documentosAdeudados"]);
@@ -21,8 +30,8 @@ export class ReportesComponent implements OnInit {
   }
 
   onResumenAcademico() {
-    this.servicioReporte.cursoSeleccionado=null;
-    this.servicioReporte.retornoDeResumenAcademico=false;
+    this.servicioReporte.cursoSeleccionado = null;
+    this.servicioReporte.retornoDeResumenAcademico = false;
     this.router.navigate(["./resumenAcademico"]);
   }
 
