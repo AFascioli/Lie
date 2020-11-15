@@ -60,7 +60,13 @@ export class ResumenAcademicoComponent implements OnInit {
         this.isLoading = false;
       });
   }
-
+  obtenerNombreCurso(idCurso) {
+    for (let index = 0; index < this.cursos.length; index++) {
+      if (this.cursos[index].id == idCurso) {
+        return this.cursos[index].nombre;
+      }
+    }
+  }
   obtenerCursos() {
     this.servicioEstudiante
       .obtenerCursos(this.fechaActual.getFullYear())
@@ -77,6 +83,7 @@ export class ResumenAcademicoComponent implements OnInit {
       });
   }
   verResumenAcademico(i) {
+    this.reportService.nombreCurso= this.obtenerNombreCurso(this.reportService.cursoSeleccionado);
     this.reportService.idEstudianteSeleccionado = i._id;
     this.router.navigate(["reporteResumenAcademico"]);
   }
@@ -295,6 +302,7 @@ export class ReporteResumenAcademicoComponent implements OnInit {
     else this.promedioGeneral = 0;
   }
 
+
   public descargarPDF() {
     var element = document.getElementById("content");
 
@@ -317,7 +325,7 @@ export class ReporteResumenAcademicoComponent implements OnInit {
       doc.setDrawColor(184, 184, 184);
       doc.line(10, 17, 200, 17);
       doc.addImage(imgData, 0, 30, 208, imgH);
-      doc.save("ResumenAcadémico.pdf");
+      doc.save("ResumenAcadémico-"+this.reportService.nombreCurso+"-"+this.estudiante+".pdf");
     });
   }
 }

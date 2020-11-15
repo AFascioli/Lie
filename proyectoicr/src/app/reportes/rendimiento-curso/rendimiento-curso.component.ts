@@ -602,7 +602,7 @@ export class RendimientoCursoComponent implements OnInit {
       doc.setDrawColor(184, 184, 184);
       doc.line(10, 17, 200, 17);
       doc.addImage(imgData, 0, 30, 208, imgH);
-      doc.save("RendimientoCurso.pdf");
+      doc.save("RendimientoCurso-"+ this.cursoSNombre+"-"+this.materiaSNombre +".pdf");
     });
   }
 }
