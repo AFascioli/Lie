@@ -189,7 +189,7 @@ exports.obtenerIdsCursos = async () => {
 exports.materiasSinCerrar = (trimestre) => {
   return new Promise(async (resolve, reject) => {
     let idCicloActual = await this.obtenerIdCicloLectivo(false);
-    let idsCursosActuales = await obtenerIdsCursos();
+    let idsCursosActuales = await this.obtenerIdsCursos();
     let idEstadoActiva = await ClaseEstado.obtenerIdEstado(
       "Inscripcion",
       "Activa"
@@ -204,10 +204,12 @@ exports.materiasSinCerrar = (trimestre) => {
       let inscripcion = await Inscripcion.findOne({
         idCurso: idCurso,
         cicloLectivo: idCicloActual,
-        $in: [
-          mongoose.Types.ObjectId(idEstadoActiva),
-          mongoose.Types.ObjectId(idEstadoSuspendido),
-        ],
+        estado: {
+          $in: [
+            mongoose.Types.ObjectId(idEstadoActiva),
+            mongoose.Types.ObjectId(idEstadoSuspendido),
+          ],
+        },
       });
       inscripciones.push(inscripcion._id);
     }

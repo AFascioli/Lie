@@ -329,8 +329,13 @@
       No se encuentran estudiantes registrados en este curso
     </p>
     <div class="div-button">
-      <button mat-raised-button class="button-primary" [disabled]="!sePuedeCerrar" (click)="onCerrarMateria()">
-        Cerrar Materia
+      <button
+        mat-raised-button
+        class="button-primary"
+        [disabled]="!sePuedeCerrar"
+        (click)="onCerrarMateria(form)"
+      >
+        Cerrar Trimestre
       </button>
       <button
         [disabled]="

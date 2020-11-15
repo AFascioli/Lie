@@ -197,13 +197,14 @@ export class CalificacionesEstudiantesComponent implements OnInit, OnDestroy {
         this.trimestreActual
       )
       .subscribe((response) => {
-        response.exito;
+        this.sePuedeCerrar = response.exito;
       });
   }
 
-  //Cierra una amteria (cambia estado de MXC, y si es tercer trimestre 
+  //Cierra una materia (cambia estado de MXC, y si es tercer trimestre 
   // se cambia estado de las CXM y se calcula promedio)
   onCerrarMateria(form: NgForm){
+    console.log("Hey scm", form.value);
     this.servicioCalificaciones
       .cerrarTrimestreMateria(
         form.value.materia,
@@ -304,6 +305,7 @@ export class CalificacionesEstudiantesComponent implements OnInit, OnDestroy {
           this.dataSource.filter = this.filtroEstudiante;
           this.dataSource.paginator = this.paginator;
           this.dataSource.paginator.firstPage();
+          this.sePuedeCerrarTrimestre(form);
           this.isLoading2 = false;
         });
     }
@@ -365,7 +367,9 @@ export class CalificacionesEstudiantesComponent implements OnInit, OnDestroy {
               panelClass: ["snack-bar-exito"],
               duration: 3000,
             });
+            this.sePuedeCerrarTrimestre(form);
           }
+          
         });
       this.servicioCalificaciones.auxCambios = false;
     }

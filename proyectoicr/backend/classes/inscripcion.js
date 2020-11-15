@@ -211,7 +211,7 @@ exports.inscribirEstudiante = async function (
       contadorLlegadasTarde: contadorLlegadasTarde,
       calificacionesXMateria: idsCXMNuevas,
       materiasPendientes: materiasPendientesNuevas,
-      CicloLectivo: idCicloLectivo,
+      cicloLectivo: idCicloLectivo,
       cuotas: cuotas,
       sanciones: [],
     });

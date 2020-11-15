@@ -18,8 +18,8 @@ export interface DialogData {
   styleUrls: ["./ciclo-lectivo.component.css"],
 })
 export class CicloLectivoComponent implements OnInit {
-  iniciarCursado: Boolean = true;
-  primerTrimestre: Boolean;
+  iniciarCursado: Boolean;
+  primerTrimestre: Boolean = true;
   segundoTrimestre: Boolean;
   tercerTrimestre: Boolean;
   fechasExamen: Boolean;
