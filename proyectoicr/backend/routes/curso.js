@@ -1605,8 +1605,8 @@ router.get(
   checkAuthMiddleware,
   async (req, res) => {
     try {
-      let cursoAnterior; //Este es 4A
-      let añoAnterior; //Si elegimos 5A este es 4
+      let cursoAnterior;
+      let añoAnterior;
       let estudiantesRespuesta = [];
 
       let idEstadoRegistrado = await ClaseEstado.obtenerIdEstado(
@@ -1639,8 +1639,6 @@ router.get(
         { nombre: 1, apellido: 1 }
       );
 
-      //Recorrer obtenerEstudiantesSinInscripcion y fijarse y filtrar los que tengan inscripciones para el ciclo lectivo siguiente
-
       obtenerEstudiantesSinInscripcion.forEach((estudiante) => {
         const estudianteRefinado = {
           idEstudiante: estudiante._id,
@@ -1660,95 +1658,89 @@ router.get(
         cursoAnterior = `${añoAnterior}${division}`;
       });
 
-      //Si es primer año solo va a tener los sin inscripcion??
-      if (añoAnterior == 0) {
-        return res.status(200).json({
-          estudiantes: estudiantesRespuesta,
-          exito: true,
-        });
-      }
-
       /* 2. Buscar los estudiantes del curso anterior que sean activo,
       promovido o promovido con ex pendientes (con todos los datos)*/
+      if (añoAnterior != 0) {
+        let curso = await Curso.findOne({
+          nombre: cursoAnterior,
+          cicloLectivo: await ClaseCicloLectivo.obtenerIdCicloLectivo(false),
+        }).exec();
 
-      let curso = await Curso.findOne({
-        nombre: cursoAnterior,
-        cicloLectivo: await ClaseCicloLectivo.obtenerIdCicloLectivo(false),
-      }).exec();
-
-      let obtenerEstudiantesEnCondicionesInsc = await Inscripcion.aggregate([
-        {
-          $match: {
-            estado: {
-              $in: [
-                mongoose.Types.ObjectId(idEstadoInscripcionActiva),
-                mongoose.Types.ObjectId(idEstadoInsPromovida),
-                mongoose.Types.ObjectId(idEstadoInsPromovidaConExamPendientes),
-              ],
+        let obtenerEstudiantesEnCondicionesInsc = await Inscripcion.aggregate([
+          {
+            $match: {
+              estado: {
+                $in: [
+                  mongoose.Types.ObjectId(idEstadoInscripcionActiva),
+                  mongoose.Types.ObjectId(idEstadoInsPromovida),
+                  mongoose.Types.ObjectId(
+                    idEstadoInsPromovidaConExamPendientes
+                  ),
+                ],
+              },
+              idCurso: mongoose.Types.ObjectId(curso._id),
             },
-            idCurso: mongoose.Types.ObjectId(curso._id),
           },
-        },
-        {
-          $lookup: {
-            from: "estudiante",
-            localField: "idEstudiante",
-            foreignField: "_id",
-            as: "datosEstudiante",
+          {
+            $lookup: {
+              from: "estudiante",
+              localField: "idEstudiante",
+              foreignField: "_id",
+              as: "datosEstudiante",
+            },
           },
-        },
-        {
-          $lookup: {
-            from: "curso",
-            localField: "idCurso",
-            foreignField: "_id",
-            as: "datosCurso",
+          {
+            $lookup: {
+              from: "curso",
+              localField: "idCurso",
+              foreignField: "_id",
+              as: "datosCurso",
+            },
           },
-        },
-        {
-          $project: {
-            "datosEstudiante._id": 1,
-            "datosEstudiante.nombre": 1,
-            "datosEstudiante.apellido": 1,
-            "datosCurso.nombre": 1,
+          {
+            $project: {
+              "datosEstudiante._id": 1,
+              "datosEstudiante.nombre": 1,
+              "datosEstudiante.apellido": 1,
+              "datosCurso.nombre": 1,
+            },
           },
-        },
-      ]);
+        ]);
 
-      obtenerEstudiantesEnCondicionesInsc.forEach((inscripcion) => {
-        const estudianteRefinado = {
-          idEstudiante: inscripcion.datosEstudiante[0]._id,
-          nombre: inscripcion.datosEstudiante[0].nombre,
-          apellido: inscripcion.datosEstudiante[0].apellido,
-          cursoAnterior: inscripcion.datosCurso[0].nombre,
-          idInscripcion: inscripcion._id,
-          seleccionado: false,
-        };
-        estudiantesRespuesta.push(estudianteRefinado);
-      });
-
-      /*3. Buscar todas las inscripciones pendientes del curso selec (6A 2021)
-       (solo obtenemos id estudiante)
+        obtenerEstudiantesEnCondicionesInsc.forEach((inscripcion) => {
+          const estudianteRefinado = {
+            idEstudiante: inscripcion.datosEstudiante[0]._id,
+            nombre: inscripcion.datosEstudiante[0].nombre,
+            apellido: inscripcion.datosEstudiante[0].apellido,
+            cursoAnterior: inscripcion.datosCurso[0].nombre,
+            idInscripcion: inscripcion._id,
+            seleccionado: false,
+          };
+          estudiantesRespuesta.push(estudianteRefinado);
+        });
+      }
+      /*3. Buscar todas las inscripciones pendientes del curso selecccionado
        */
-      /*4. Filtras estudiantes paso 1 con los estudiantes obtenidos paso 2
-       (si coinciden los sacamos y no se envia al front).  */
+      /*4. Filtras estudiantes paso 1 con los estudiantes obtenidos paso 2 */
 
       Inscripcion.find({
         estado: idEstadoPendienteInscripcion,
-        curso: req.query.idCurso,
+        idCurso: req.query.idCurso,
       }).then((inscripcionesPendientes) => {
         for (let index = 0; index < inscripcionesPendientes.length; index++) {
           estudiantesRespuesta = estudiantesRespuesta.filter(
             (estudiante) =>
-              estudiante.idEstudiante !==
-              inscripcionesPendientes[index].idEstudiante
+              estudiante.idEstudiante
+                .toString()
+                .localeCompare(
+                  inscripcionesPendientes[index].idEstudiante.toString()
+                ) != 0
           );
         }
-      });
-
-      res.status(200).json({
-        estudiantes: estudiantesRespuesta,
-        exito: true,
+        res.status(200).json({
+          estudiantes: estudiantesRespuesta,
+          exito: true,
+        });
       });
     } catch (error) {
       res.status(500).json({
