@@ -1429,20 +1429,30 @@ router.get(
   checkAuthMiddleware,
   async (req, res) => {
     try {
-      let numeroCursoPasado;
+      let cursoAnterior;
+      let nombreCursoAnterior;
+      let estudiantesRespuesta = [];
       let dateActual = new Date();
-      let añoPasado = dateActual.getFullYear() - 1;
-      await Curso.findById(req.query.idCurso).then((curso) => {
-        numeroCursoPasado = parseInt(curso.nombre, 10) - 1;
-      });
-      let cursosABuscar = [`${numeroCursoPasado}A`, `${numeroCursoPasado}B`];
 
-      let idsCursos = await Curso.find(
-        { nombre: { $in: cursosABuscar } },
-        { _id: 1 }
-      );
-      idsCursos = idsCursos.map((curso) => {
-        return curso._id;
+      let cicloLectivoAnterior = CicloLectivo.findOne({
+        año: dateActual.getFullYear() - 1,
+      }).exec();
+
+      Curso.findById(req.query.idCurso).then((curso) => {
+        nombreCursoAnterior = curso.nombre;
+        let numeroCursoPasado = parseInt(curso.nombre, 10) - 1;
+        let division = curso.nombre.substring(1, 2);
+        cursoAnterior = `${numeroCursoPasado}${division}`;
+      });
+
+      let cursoAñoAnterior = await Curso.findOne({
+        nombre: cursoAnterior,
+        idCicloLectivo: cicloLectivoAnterior._id,
+      });
+
+      let cursoEstudiantesLibres = await Curso.findOne({
+        nombre: nombreCursoAnterior,
+        idCicloLectivo: cicloLectivoAnterior._id,
       });
 
       let idEstadoPromovido = await ClaseEstado.obtenerIdEstado(
@@ -1461,21 +1471,40 @@ router.get(
         "Estudiante",
         "Registrado"
       );
+      let idEstadoActiva = await ClaseEstado.obtenerIdEstado(
+        "Inscripcion",
+        "Activa"
+      );
 
+      /*  1. Buscar estudiantes en estado registrado*/
+
+      let obtenerEstudiantesSinInscripcion = await Estudiante.find(
+        { estado: idEstadoRegistrado },
+        { nombre: 1, apellido: 1 }
+      );
+
+      obtenerEstudiantesSinInscripcion.forEach((estudiante) => {
+        const estudianteRefinado = {
+          idEstudiante: estudiante._id,
+          nombre: estudiante.nombre,
+          apellido: estudiante.apellido,
+          cursoAnterior: "-",
+          idInscripcion: null,
+          seleccionado: false, //Agregado para facilitar saber quien se debe inscribir
+        };
+        estudiantesRespuesta.push(estudianteRefinado);
+      });
+
+      /* 2. Aggregate de Promovidos o Promovidos con exam. 4A '19. */
       let estadosInscripcionesABuscar = [
         mongoose.Types.ObjectId(idEstadoPromovido),
         mongoose.Types.ObjectId(idEstadoPromovidoConExam),
       ];
 
-      //Buscamos a todas las inscripciones que tengan estado Promovido o Promovido con exam pendientes, y que sean del
-      //año pasado. Filtrando tambien por los cursos que deben ser.
       let obtenerEstudiantesConInscripcion = await Inscripcion.aggregate([
         {
           $match: {
-            idCurso: {
-              $in: idsCursos,
-            },
-            año: añoPasado,
+            idCurso: cursoAñoAnterior._id,
             estado: {
               $in: estadosInscripcionesABuscar,
             },
@@ -1507,11 +1536,24 @@ router.get(
         },
       ]);
 
+      obtenerEstudiantesConInscripcion.forEach((inscripcion) => {
+        const estudianteRefinado = {
+          idEstudiante: inscripcion.datosEstudiantes[0]._id,
+          nombre: inscripcion.datosEstudiantes[0].nombre,
+          apellido: inscripcion.datosEstudiantes[0].apellido,
+          cursoAnterior: inscripcion.datosCurso[0].nombre,
+          idInscripcion: inscripcion._id,
+          seleccionado: false,
+        };
+        estudiantesRespuesta.push(estudianteRefinado);
+      });
+
+      /* 3. Aggregate de Libres 5A '19.  */
+
       let obtenerEstudiantesLibres = await Inscripcion.aggregate([
         {
           $match: {
-            idCurso: mongoose.Types.ObjectId(req.query.idCurso),
-            año: añoPasado,
+            idCurso: mongoose.Types.ObjectId(cursoEstudiantesLibres._id),
             estado: mongoose.Types.ObjectId(idEstadoLibre),
           },
         },
@@ -1541,25 +1583,6 @@ router.get(
         },
       ]);
 
-      let obtenerEstudiantesSinInscripcion = await Estudiante.find(
-        { estado: idEstadoRegistrado },
-        { nombre: 1, apellido: 1 }
-      );
-
-      let estudiantesRespuesta = [];
-
-      obtenerEstudiantesConInscripcion.forEach((inscripcion) => {
-        const estudianteRefinado = {
-          idEstudiante: inscripcion.datosEstudiantes[0]._id,
-          nombre: inscripcion.datosEstudiantes[0].nombre,
-          apellido: inscripcion.datosEstudiantes[0].apellido,
-          cursoAnterior: inscripcion.datosCurso[0].nombre,
-          idInscripcion: inscripcion._id,
-          seleccionado: false,
-        };
-        estudiantesRespuesta.push(estudianteRefinado);
-      });
-
       obtenerEstudiantesLibres.forEach((inscripcion) => {
         const estudianteRefinado = {
           idEstudiante: inscripcion.datosEstudiantes[0]._id,
@@ -1572,21 +1595,25 @@ router.get(
         estudiantesRespuesta.push(estudianteRefinado);
       });
 
-      obtenerEstudiantesSinInscripcion.forEach((estudiante) => {
-        const estudianteRefinado = {
-          idEstudiante: estudiante._id,
-          nombre: estudiante.nombre,
-          apellido: estudiante.apellido,
-          cursoAnterior: "-",
-          idInscripcion: null,
-          seleccionado: false, //Agregado para facilitar saber quien se debe inscribir
-        };
-        estudiantesRespuesta.push(estudianteRefinado);
-      });
+      /* 4. Buscar todas las inscripciones activas del curso selec (2020 5A). */
+      /* 5. Filtramos que los de 4 no esten incluidos en 1, 2 y 3*/
 
-      res.status(200).json({
-        estudiantes: estudiantesRespuesta,
-        exito: true,
+      Inscripcion.find({
+        idCurso: req.query.idCurso,
+        estado: idEstadoActiva,
+      }).then((inscripcionesActivas) => {
+        inscripcionesActivas.forEach((inscripcionActiva) => {
+          estudiantesRespuesta = estudiantesRespuesta.filter(
+            (estudiante) =>
+              estudiante.idEstudiante
+                .toString()
+                .localeCompare(inscripcionActiva.idEstudiante.toString()) != 0
+          );
+        });
+        res.status(200).json({
+          estudiantes: estudiantesRespuesta,
+          exito: true,
+        });
       });
     } catch (error) {
       res.status(500).json({
