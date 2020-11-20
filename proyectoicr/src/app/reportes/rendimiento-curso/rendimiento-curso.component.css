@@ -130,3 +130,8 @@ td.mat-cell:last-of-type {
   font-size: 33px;
   margin-bottom: 0.5rem;
 }
+
+.mat-tab-group{
+  max-width: 1000px;
+  margin: auto;
+}
