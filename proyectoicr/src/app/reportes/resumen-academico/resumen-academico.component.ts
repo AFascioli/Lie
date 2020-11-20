@@ -168,9 +168,10 @@ export class ReporteResumenAcademicoComponent implements OnInit {
   }
 
   calcularSumatoriaSanciones() {
+    console.log(this.sanciones);
     this.sanciones.forEach((sancion) => {
       switch (sancion.tipo) {
-        case "Llamado de atencón":
+        case "Llamado de atencion":
           this.sumatoriaSanciones[0] += sancion.cantidad;
           break;
         case "Apercibimiento":
