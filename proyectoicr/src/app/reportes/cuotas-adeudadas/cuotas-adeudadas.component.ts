@@ -38,9 +38,9 @@ export class CuotasAdeudadasComponent implements OnInit {
       .subscribe((response) => {
         this.estudiantesXCuotas = response.estudiantesXCuotas;
         this.estudiantesXCuotas.sort((a, b) =>
-        a.nombres.charAt(0) > b.nombres.charAt(0)
+        a.nombres.toLowerCase().charAt(0) > b.nombres.toLowerCase().charAt(0)
           ? 1
-          : b.nombres.charAt(0) > a.nombres.charAt(0)
+          : b.nombres.toLowerCase().charAt(0) > a.nombres.toLowerCase().charAt(0)
           ? -1
           : 0
       );

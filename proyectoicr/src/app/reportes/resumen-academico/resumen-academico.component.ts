@@ -51,9 +51,9 @@ export class ResumenAcademicoComponent implements OnInit {
       .subscribe((response) => {
         this.estudiantes = response.estudiante;
         this.estudiantes.sort((a, b) =>
-          a.apellido.charAt(0) > b.apellido.charAt(0)
+          a.apellido.toLowerCase().charAt(0) > b.apellido.toLowerCase().charAt(0)
             ? 1
-            : b.apellido.charAt(0) > a.apellido.charAt(0)
+            : b.apellido.toLowerCase().charAt(0) > a.apellido.toLowerCase().charAt(0)
             ? -1
             : 0
         );

@@ -207,7 +207,7 @@ export class CalificacionesCicloLectivoComponent implements OnInit, OnDestroy {
         .subscribe((respuesta) => {
           this.estudiantes = [...respuesta.estudiantes];
           this.estudiantes = this.estudiantes.sort((a, b) =>
-            a.apellido > b.apellido ? 1 : b.apellido > a.apellido ? -1 : 0
+            a.apellido.toLowerCase() > b.apellido.toLowerCase() ? 1 : b.apellido.toLowerCase() > a.apellido.toLowerCase() ? -1 : 0
           );
           this.reordenarCalificaciones();
           this.dataSource = new MatTableDataSource(this.estudiantes);
