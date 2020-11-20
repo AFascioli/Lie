@@ -121,3 +121,12 @@ td.mat-cell:last-of-type {
   width: 100% !important;
   height: 100% !important;
 }
+
+.componente-titulo {
+  text-align: center;
+  font-weight: 600;
+  color: #181a21;
+  margin: 0 0.5rem;
+  font-size: 33px;
+  margin-bottom: 0.5rem;
+}

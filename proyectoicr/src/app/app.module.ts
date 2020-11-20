@@ -3,6 +3,7 @@ import { AuthInterceptor } from "./login/auth-interceptor";
 import { BrowserModule } from "@angular/platform-browser";
 import { NgModule } from "@angular/core";
 import {
+  MatTabsModule,
   MatSelectModule,
   MatButtonModule,
   MatCardModule,
@@ -267,6 +268,7 @@ import { RendimientoCursoComponent } from "./reportes/rendimiento-curso/rendimie
     MatButtonModule,
     FormsModule,
     MatCardModule,
+    MatTabsModule,
     MatFormFieldModule,
     MatTableModule,
     HttpClientModule,
