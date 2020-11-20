@@ -63,7 +63,7 @@
         </mat-select>
       </mat-form-field>
     </div>
-    <div id="content" #content>
+    <div id="content" #content *ngIf="materiaSelec">
       <h1 class="componente-titulo" *ngIf="materiaSelec">
         Rendimiento del curso {{ cursoSNombre }}: {{ materiaSNombre }}
       </h1>

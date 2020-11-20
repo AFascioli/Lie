@@ -119,13 +119,13 @@ export class CicloLectivoService implements OnDestroy {
       materiasSinCerrar: [any];
     }>(`${environment.apiUrl}/cicloLectivo/cierreTrimestre`, {trimestre: trimestre});
   }
-  obtenerAniosCicloLectivo()
+  obtenerAniosCicloLectivoActualYPrevios()
   {
     return this.http.get<{
       exito: boolean;
       message: string;
       respuesta: any;
-    }>(`${environment.apiUrl}/cicloLectivo/anios`);
+    }>(`${environment.apiUrl}/cicloLectivo/aniosActualYPrevios`);
 
   }
   }

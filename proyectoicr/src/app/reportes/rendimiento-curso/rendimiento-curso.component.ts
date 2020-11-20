@@ -425,7 +425,7 @@ export class RendimientoCursoComponent implements OnInit {
     if (this.cursoS) this.onCursoSeleccionado(this.cursoS, this.materiaS);
     else
       this.servicioCicloLectivo
-        .obtenerAniosCicloLectivo()
+        .obtenerAniosCicloLectivoActualYPrevios()
         .pipe(takeUntil(this.unsubscribe))
         .subscribe((response) => {
           this.year = response.respuesta;
