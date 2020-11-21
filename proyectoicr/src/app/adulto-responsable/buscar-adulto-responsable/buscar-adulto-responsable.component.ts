@@ -5,6 +5,8 @@ import { takeUntil } from "rxjs/operators";
 import { NgForm } from "@angular/forms";
 import { Subject } from "rxjs";
 import { MatDialog, MatSnackBar } from "@angular/material";
+import { browserRefresh } from "src/app/app.component";
+import { Router } from "@angular/router";
 
 @Component({
   selector: "app-buscar-adulto-responsable",
@@ -24,16 +26,60 @@ export class BuscarAdultoResponsableComponent implements OnInit {
   ];
   busqueda: boolean = false;
   isLoading: boolean = false;
+  nombreAR;
+  apellidoAR;
+  nroDocAR;
+  tipoDocAR;
 
   constructor(
     public dialog: MatDialog,
     public servicio: AdultoResponsableService,
     public estudiantesService: EstudiantesService,
+    private router: Router,
     private snackBar: MatSnackBar,
     public popup: MatDialog
   ) {}
 
-  ngOnInit() {}
+  ngOnInit() {
+    if (browserRefresh) {
+      this.router.navigate(["/buscarAdultoResponsable"]);
+      this.servicio.adultoResponsableSeleccionado = null;
+      this.servicio.retornoDesdeAcciones = false;
+    }
+    if (!this.servicio.retornoDesdeAcciones) {
+      this.nombreAR = "";
+      this.apellidoAR = "";
+    } else if (this.servicio.busquedaARXNombre) {
+      this.servicio
+        .buscarAdultoResponsableXNombre(
+          this.servicio.adultoResponsableSeleccionado.nombre,
+          this.servicio.adultoResponsableSeleccionado.apellido
+        )
+        .pipe(takeUntil(this.unsubscribe))
+        .subscribe((response) => {
+          this.ARFiltrados = response.adultosResponsables;
+          this.setColumns();
+          this.isLoading = false;
+        });
+      this.nombreAR = this.servicio.adultoResponsableSeleccionado.nombre;
+      this.apellidoAR = this.servicio.adultoResponsableSeleccionado.apellido;
+    } else {
+      this.servicio
+        .buscarAdultoResponsableXDocumento(
+          this.servicio.adultoResponsableSeleccionado.tipoDocumento,
+          this.servicio.adultoResponsableSeleccionado.numeroDocumento
+        )
+        .pipe(takeUntil(this.unsubscribe))
+        .subscribe((response) => {
+          this.ARFiltrados = response.adultosResponsables;
+          this.setColumns();
+          this.isLoading = false;
+        });
+      this.nroDocAR = this.servicio.adultoResponsableSeleccionado.numeroDocumento;
+      this.tipoDocAR = this.servicio.adultoResponsableSeleccionado.tipoDocumento;
+      this.buscarPorNomYAp = false;
+    }
+  }
 
   setColumns() {
     this.displayedColumns = [
@@ -47,6 +93,7 @@ export class BuscarAdultoResponsableComponent implements OnInit {
   }
 
   buscarAdultoResponsableXNombre(form) {
+    this.servicio.busquedaARXNombre = true;
     this.servicio
       .buscarAdultoResponsableXNombre(
         form.value.nombre.trim(),
@@ -61,6 +108,7 @@ export class BuscarAdultoResponsableComponent implements OnInit {
   }
 
   buscarAdultoResponsableXDocumento(form) {
+    this.servicio.busquedaARXNombre = false;
     this.servicio
       .buscarAdultoResponsableXDocumento(
         form.value.tipoDocumento,
@@ -129,5 +177,12 @@ export class BuscarAdultoResponsableComponent implements OnInit {
   ngOnDestroy() {
     this.unsubscribe.next();
     this.unsubscribe.complete();
+  }
+
+  onVolver() {
+    this.servicio.busquedaARXNombre = true;
+    this.servicio.retornoDesdeAcciones = false;
+    this.servicio.adultoResponsableSeleccionado = null;
+    this.router.navigate(["./home"]);
   }
 }
