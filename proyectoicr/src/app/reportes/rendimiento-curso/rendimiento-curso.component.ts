@@ -71,6 +71,7 @@ export class RendimientoCursoComponent implements OnInit {
   tipoGrafico;
 
   barChartLabels: Label[] = [];
+  barChartLabelsH: Label[] = [];
   barDataSet = [];
   barDataSet1 = [];
   barDataSet2 = [];
@@ -484,18 +485,25 @@ export class RendimientoCursoComponent implements OnInit {
       },
     ];
 
-    this.barChartLabels = [
-      "Menor igual a 3",
-      "Entre 3 y 6",
-      "Entre 6 y 8 inc",
-      "Mayor a 8",
+    // this.barChartLabels = [
+    //   "Promedio menor o igual a 3",
+    //   "Promedio entre 3 y 6 inclusive",
+    //   "Promedio entre 6 y 8 inclusive",
+    //   "Promedio mayor a 8",
+    // ];
+    this.barChartLabelsH = [
+      "Promedio <= 3",
+      "3 < Promedio <= 6",
+      "6 < Promedio <= 8",
+      "Promedio > 8",
     ];
+
     this.barChartOptions = {
       responsive: true,
       legend: {
         display: this.legend,
         labels: {
-          fontSize: 14,
+          fontSize: 12,
           fontFamily:
             '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif',
           fontColor: "#181a21",
@@ -526,7 +534,7 @@ export class RendimientoCursoComponent implements OnInit {
       legend: {
         display: this.legend,
         labels: {
-          fontSize: 14,
+          fontSize: 12,
           fontFamily:
             '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif',
           fontColor: "#181a21",
@@ -557,7 +565,7 @@ export class RendimientoCursoComponent implements OnInit {
       legend: {
         display: this.legend,
         labels: {
-          fontSize: 14,
+          fontSize: 12,
           fontFamily:
             '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif',
           fontColor: "#181a21",
@@ -641,7 +649,11 @@ export class RendimientoCursoComponent implements OnInit {
       doc.setDrawColor(184, 184, 184);
       doc.line(10, 17, 200, 17);
       doc.addImage(imgData, 0, 30, 208, imgH);
-      doc.text("Fecha: " + m_date.day + '/' + m_date.month + '/' + m_date.year, 10, 295 - 5);
+      doc.text(
+        "Fecha: " + m_date.day + "/" + m_date.month + "/" + m_date.year,
+        10,
+        295 - 5
+      );
       doc.text("Página: 1", 180, 295 - 5);
       doc.save(
         "RendimientoCurso-" +
