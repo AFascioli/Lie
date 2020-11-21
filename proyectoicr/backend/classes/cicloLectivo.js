@@ -91,10 +91,9 @@ exports.pasarInscripcionesAActivas = () => {
           ]);
 
           inscripcion.calificacionesXMateria = idsCXM;
-          inscripcion.materiasPendientes =
-            inscripcionAnterior
-              ? inscripcionAnterior[0].materiasPendientes
-              : [];
+          inscripcion.materiasPendientes = inscripcionAnterior
+            ? inscripcionAnterior[0].materiasPendientes
+            : [];
           inscripcion.estado = idActiva;
           inscripcion.save();
           resolve();
@@ -106,32 +105,34 @@ exports.pasarInscripcionesAActivas = () => {
 
 exports.crearCursosParaCiclo = () => {
   let añoActual = new Date();
-  CicloLectivo.findOne({ año: añoActual.getFullYear() }).then((cicloLectivo) => {
-    let nombresCursos = [
-      "1A",
-      "2A",
-      "3A",
-      "4A",
-      "5A",
-      "6A",
-      "1B",
-      "2B",
-      "3B",
-      "4B",
-      "5B",
-      "6B",
-    ];
+  CicloLectivo.findOne({ año: añoActual.getFullYear() }).then(
+    (cicloLectivo) => {
+      let nombresCursos = [
+        "1A",
+        "2A",
+        "3A",
+        "4A",
+        "5A",
+        "6A",
+        "1B",
+        "2B",
+        "3B",
+        "4B",
+        "5B",
+        "6B",
+      ];
 
-    nombresCursos.forEach((nombreCurso) => {
-      let nuevoCurso = new Curso({
-        nombre: nombreCurso,
-        materias: [],
-        capacidad: 30,
-        cicloLectivo: cicloLectivo._id,
+      nombresCursos.forEach((nombreCurso) => {
+        let nuevoCurso = new Curso({
+          nombre: nombreCurso,
+          materias: [],
+          capacidad: 30,
+          cicloLectivo: cicloLectivo._id,
+        });
+        nuevoCurso.save();
       });
-      nuevoCurso.save();
-    });
-  });
+    }
+  );
 };
 
 exports.obtenerCantidadFaltasSuspension = () => {
@@ -330,9 +331,15 @@ exports.materiasSinCerrar = (trimestre) => {
 exports.actualizarEstadoInscripciones = () => {
   return new Promise(async (resolve, reject) => {
     let idCicloActual = await this.obtenerIdCicloLectivo(false);
-    let idEstadoActiva= await ClaseEstado.obtenerIdEstado("Inscripcion","Activa");
-    let idEstadoSuspendido= await ClaseEstado.obtenerIdEstado("Inscripcion","Suspendido");
-    
+    let idEstadoActiva = await ClaseEstado.obtenerIdEstado(
+      "Inscripcion",
+      "Activa"
+    );
+    let idEstadoSuspendido = await ClaseEstado.obtenerIdEstado(
+      "Inscripcion",
+      "Suspendido"
+    );
+
     let todasInscripciones = await Inscripcion.aggregate([
       {
         $match: {
@@ -359,5 +366,53 @@ exports.actualizarEstadoInscripciones = () => {
       await ClaseInscripcion.actualizarEstadoInscripcion(inscripcion);
     }
     resolve();
+  });
+};
+
+exports.obtenerIdCicloProximo = () => {
+  return new Promise(async (resolve, reject) => {
+    let idCicloCreado = await ClaseEstado.obtenerIdEstado(
+      "CicloLectivo",
+      "Creado"
+    );
+    let cicloLectivo = await CicloLectivo.findOne({ estado: idCicloCreado });
+    resolve(cicloLectivo._id);
+  });
+};
+
+exports.obtenerIdCicloActual = () => {
+  return new Promise(async (resolve, reject) => {
+    let idCicloCreado = await ClaseEstado.obtenerIdEstado(
+      "CicloLectivo",
+      "Creado"
+    );
+    let idCicloInactivo = await ClaseEstado.obtenerIdEstado(
+      "CicloLectivo",
+      "Inactivo"
+    );
+    let cicloLectivo = await CicloLectivo.findOne({
+      estado: { $ne: [idCicloCreado, idCicloInactivo] },
+    });
+    resolve(cicloLectivo._id);
+  });
+};
+
+exports.obtenerIdCicloAnterior = () => {
+  return new Promise(async (resolve, reject) => {
+    let idCicloCreado = await ClaseEstado.obtenerIdEstado(
+      "CicloLectivo",
+      "Creado"
+    );
+    let idCicloInactivo = await ClaseEstado.obtenerIdEstado(
+      "CicloLectivo",
+      "Inactivo"
+    );
+    let cicloLectivoActual = await CicloLectivo.findOne({
+      estado: { $ne: [idCicloCreado, idCicloInactivo] },
+    });
+    let cicloAnterior = await CicloLectivo.findOne({
+      año: cicloLectivoActual.año - 1,
+    });
+    resolve(cicloAnterior ? cicloAnterior._id : null);
   });
 };
