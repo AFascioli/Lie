@@ -307,6 +307,10 @@ export class ReporteResumenAcademicoComponent implements OnInit {
   public descargarPDF() {
     var element = document.getElementById("content");
 
+    const o_date = new Intl.DateTimeFormat();
+    const f_date = (m_ca, m_it) => Object({ ...m_ca, [m_it.type]: m_it.value });
+    const m_date = o_date.formatToParts().reduce(f_date, {});
+
     html2canvas(element).then((canvas) => {
       var imgData = canvas.toDataURL("image/png");
       var doc = new jsPDF();
@@ -326,6 +330,8 @@ export class ReporteResumenAcademicoComponent implements OnInit {
       doc.setDrawColor(184, 184, 184);
       doc.line(10, 17, 200, 17);
       doc.addImage(imgData, 0, 30, 208, imgH);
+      doc.text("Fecha: " + m_date.day + '/' + m_date.month + '/' + m_date.year, 10, 295 - 5);
+      doc.text("Página: 1", 180, 295 - 5);
       doc.save("ResumenAcadémico-"+this.reportService.nombreCurso+"-"+this.estudiante+".pdf");
     });
   }
