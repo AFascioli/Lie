@@ -2,6 +2,7 @@ const Curso = require("../models/curso");
 const CicloLectivo = require("../models/cicloLectivo");
 const MateriaXCurso = require("../models/materiasXCurso");
 const ClaseEstado = require("../classes/estado");
+const ClaseCicloLectivo = require("../classes/cicloLectivo");
 
 exports.clonarAgenda = async function (idCurso, yearSelected) {
   let idMateriasXCursoAñoAnterior = [];
@@ -10,11 +11,10 @@ exports.clonarAgenda = async function (idCurso, yearSelected) {
   let idCreada = await ClaseEstado.obtenerIdEstado("MateriasXCurso", "Creada");
 
   //obtener el ciclo lectivo para el año anterior
-  let cicloLectivoAnterior = await CicloLectivo.findOne({
-    año: yearSelected - 1,
-  }).exec();
 
-  if (cicloLectivoAnterior == null) {
+  let idCicloAnterior = await ClaseCicloLectivo.obtenerIdCicloAnterior();
+
+  if (idCicloAnterior == null) {
     return false;
   }
 
@@ -26,7 +26,7 @@ exports.clonarAgenda = async function (idCurso, yearSelected) {
   let obtenerMateriasCursoAnterior = () => {
     return new Promise(async (resolve, reject) => {
       Curso.findOne({
-        cicloLectivo: cicloLectivoAnterior,
+        cicloLectivo: idCicloAnterior,
         nombre: cursoActual.nombre,
       })
         .then(async (curso) => {

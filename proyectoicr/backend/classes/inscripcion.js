@@ -184,7 +184,7 @@ exports.inscribirEstudiante = async function (
       }
       await inscripcion.save();
 
-      var idCicloLectivo = await ClaseCicloLectivo.obtenerIdCicloLectivo(false);
+      var idCicloLectivo = await ClaseCicloLectivo.obtenerIdCicloActual();
 
       esCambioDeCurso(inscripcion.idCurso, idCicloLectivo);
     }
@@ -251,7 +251,7 @@ exports.inscribirEstudianteProximoAnio = async function (
       "Pendiente"
     );
 
-    let idCicloProximo = await ClaseCicloLectivo.obtenerIdCicloLectivo(true);
+    let idCicloProximo = await ClaseCicloLectivo.obtenerIdCicloProximo();
 
     var cursoSeleccionado = await obtenerCurso(idCicloProximo);
 
@@ -293,7 +293,7 @@ exports.actualizarEstadoInscripcion = (inscripcion) => {
 
     for (const cxm of inscripcion.datosCXM) {
       //#resolve
-      if (cxm.estado ==idEstadoPendienteExamen) {
+      if (cxm.estado == idEstadoPendienteExamen) {
         promovido = false;
         break;
       }
@@ -364,12 +364,15 @@ exports.cambiarEstadoExamPendientes = (idCicloActual) => {
     for (const inscripcion of inscripcionesPendientes) {
       let idsCXMPendientes = [];
       for (const cxm of inscripcion.datosCXM) {
-
-        if ((cxm.estado.toString().localeCompare(idEstadoCXMPendiente.toString()))==0) {
+        if (
+          cxm.estado
+            .toString()
+            .localeCompare(idEstadoCXMPendiente.toString()) == 0
+        ) {
           idsCXMPendientes.push(cxm._id);
         }
       }
-      
+
       if (idsCXMPendientes.length == 0) {
         await Inscripcion.findByIdAndUpdate(inscripcion._id, {
           estado: idEstadoPromovido,
@@ -382,7 +385,7 @@ exports.cambiarEstadoExamPendientes = (idCicloActual) => {
         }
         await Inscripcion.findByIdAndUpdate(inscripcion._id, {
           estado: idEstadoPromovidoExamPendientes,
-          materiasPendientes: idsCXMPendientes
+          materiasPendientes: idsCXMPendientes,
         }).exec();
       } else {
         for (const idCxm of idsCXMPendientes) {

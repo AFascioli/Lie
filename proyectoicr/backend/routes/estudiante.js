@@ -447,84 +447,49 @@ router.get("/cuotasEstudiante", checkAuthMiddleware, async (req, res) => {
 //Obtiene todas las sanciones de un estudiante pasado por parámetro
 //@params: id del estudiante
 router.get("/sancionesEstudiante", checkAuthMiddleware, async (req, res) => {
-  let date = new Date();
-  CicloLectivo.findOne({ año: date.getFullYear() }).then((cicloLectivo) => {
-    Estudiante.aggregate([
-      {
-        $match: {
-          _id: mongoose.Types.ObjectId(req.query.idEstudiante),
-          activo: true,
-        },
-      },
-      {
-        $lookup: {
-          from: "inscripcion",
-          localField: "_id",
-          foreignField: "idEstudiante",
-          as: "InscripcionEstudiante",
-        },
-      },
-      {
-        $unwind: {
-          path: "$InscripcionEstudiante",
-        },
-      },
-      {
-        $match: {
-          "InscripcionEstudiante.cicloLectivo": cicloLectivo._id,
-        },
-      },
-      {
-        $project: {
-          _id: 1,
-          InscripcionEstudiante: 1,
-        },
-      },
-      {
-        $unwind: {
-          path: "$InscripcionEstudiante",
-        },
-      },
-      {
-        $project: {
-          _id: 0,
-          "InscripcionEstudiante.sanciones": 1,
-        },
-      },
-    ])
-      .then((inscripciones) => {
-        let sanciones = [];
-        if (inscripciones.length > 1) {
-          inscripciones.forEach((inscripcion) => {
-            sanciones = sanciones.concat(
-              inscripcion.InscripcionEstudiante.sanciones
-            );
-          });
-        } else {
-          sanciones = inscripciones[0].InscripcionEstudiante.sanciones;
-        }
+  let idCicloActual = await ClaseCicloLectivo.obtenerIdCicloActual();
+  let idEstadoActiva = await ClaseEstado.obtenerIdEstado(
+    "Inscripcion",
+    "Activa"
+  );
 
-        if (sanciones.length == 0) {
-          return res.status(200).json({
-            message: "El estudiante no tiene sanciones",
-            exito: false,
-            sanciones: [],
-          });
-        } else {
-          return res.status(200).json({
-            message: "Se obtuvieron las sanciones exitosamente",
-            exito: true,
-            sanciones: sanciones,
-          });
-        }
-      })
-      .catch((error) => {
-        res.status(500).json({
-          message: "Ocurrió un error al querer obtener las sanciones",
-          error: error.message,
+  Inscripcion.findOne({
+    idEstudiante: req.query.idEstudiante,
+    cicloLectivo: idCicloActual,
+    estado: idEstadoActiva,
+  })
+    .then((inscripcion) => {
+      let sanciones = [];
+      if (inscripcion.length > 1) {
+        inscripcion.forEach((inscripcion) => {
+          sanciones = sanciones.concat(
+            inscripcion.InscripcionEstudiante.sanciones
+          );
         });
+      } else {
+        sanciones = inscripcion[0].InscripcionEstudiante.sanciones;
+      }
+
+      if (sanciones.length == 0) {
+        return res.status(200).json({
+          message: "El estudiante no tiene sanciones",
+          exito: false,
+          sanciones: [],
+        });
+      } else {
+        return res.status(200).json({
+          message: "Se obtuvieron las sanciones exitosamente",
+          exito: true,
+          sanciones: sanciones,
+        });
+      }
+    })
+    .catch((error) => {
+      res.status(500).json({
+        message: "Ocurrió un error al querer obtener las sanciones",
+        error: error.message,
       });
-  });
+    });
 });
 
 //Obtiene la agenda de un curso (materias, horario y día dictadas)

@@ -209,7 +209,7 @@ exports.cerrarMateriaTercerTrimestre = (idCurso, idMateria) => {
       "Inscripcion",
       "Activa"
     );
-    const idCicloActual = await ClaseCicloLectivo.obtenerIdCicloLectivo(false);
+    const idCicloActual = await ClaseCicloLectivo.obtenerIdCicloActual();
 
     const inscripcionesFiltradas = await Inscripcion.aggregate([
       {

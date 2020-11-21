@@ -349,7 +349,6 @@ router.get("/cursosDeEstudiante", checkAuthMiddleware, async (req, res) => {
     },
   ])
     .then((inscripcion) => {
-      let idCicloLectivo;
       CicloLectivo.findOne({ año: parseInt(req.query.añoLectivo, 10) }).then(
         async (cicloLectivo) => {
           if (inscripcion.length != 0) {
@@ -363,7 +362,7 @@ router.get("/cursosDeEstudiante", checkAuthMiddleware, async (req, res) => {
             //Buscamos los cursos que corresponden al que se puede inscribir el estudiante
             Curso.find({
               nombre: { $regex: siguiente },
-              cicloLectivo: await cicloLectivo._id,
+              cicloLectivo: cicloLectivo._id,
             }).then((cursos) => {
               //Se agregan todos los cursos disponibles para inscribirse excepto el curso actual
               cursos.forEach((curso) => {
@@ -384,7 +383,7 @@ router.get("/cursosDeEstudiante", checkAuthMiddleware, async (req, res) => {
               .select({
                 nombre: 1,
                 _id: 1,
-                cicloLectivo: await cicloLectivo._id,
+                cicloLectivo: cicloLectivo._id,
               })
               .then((cursos) => {
                 var respuesta = [];
@@ -1434,9 +1433,7 @@ router.get(
       let estudiantesRespuesta = [];
       let dateActual = new Date();
 
-      let cicloLectivoAnterior = CicloLectivo.findOne({
-        año: dateActual.getFullYear() - 1,
-      }).exec();
+      let idCicloAnterior = await ClaseCicloLectivo.obtenerIdCicloAnterior();
 
       Curso.findById(req.query.idCurso).then((curso) => {
         nombreCursoAnterior = curso.nombre;
@@ -1447,12 +1444,12 @@ router.get(
 
       let cursoAñoAnterior = await Curso.findOne({
         nombre: cursoAnterior,
-        idCicloLectivo: cicloLectivoAnterior._id,
+        idCicloLectivo: idCicloAnterior,
       });
 
       let cursoEstudiantesLibres = await Curso.findOne({
         nombre: nombreCursoAnterior,
-        idCicloLectivo: cicloLectivoAnterior._id,
+        idCicloLectivo: idCicloAnterior,
       });
 
       let idEstadoPromovido = await ClaseEstado.obtenerIdEstado(
@@ -1690,7 +1687,7 @@ router.get(
       if (añoAnterior != 0) {
         let curso = await Curso.findOne({
           nombre: cursoAnterior,
-          cicloLectivo: await ClaseCicloLectivo.obtenerIdCicloLectivo(false),
+          cicloLectivo: await ClaseCicloLectivo.obtenerIdCicloActual(),
         }).exec();
 
         let obtenerEstudiantesEnCondicionesInsc = await Inscripcion.aggregate([

@@ -5,26 +5,13 @@ const ClaseEstado = require("../classes/estado");
 const CicloLectivo = require("../models/cicloLectivo");
 const ClaseCXM = require("../classes/calificacionXMateria");
 const ClaseInscripcion = require("../classes/inscripcion");
+const ClaseCicloLectivo = require("../classes/cicloLectivo");
 
 //Retorna un array con los cursos que no tienen agenda
-exports.cursosTienenAgenda = () => {
-  let añoActual = new Date().getFullYear();
+exports.cursosTienenAgenda = async () => {
+  let idCicloActual = await ClaseCicloLectivo.obtenerIdCicloActual();
   return new Promise((resolve, reject) => {
-    Curso.aggregate([
-      {
-        $lookup: {
-          from: "cicloLectivo",
-          localField: "cicloLectivo",
-          foreignField: "_id",
-          as: "datosCicloLectivo",
-        },
-      },
-      {
-        $match: {
-          "datosCicloLectivo.año": añoActual,
-        },
-      },
-    ]).then((cursosActuales) => {
+    Curso.find({ cicloLectivo: idCicloActual }).then((cursosActuales) => {
       let cursosSinAgenda = [];
       cursosActuales.map((curso) => {
         if (curso.materias.length == 0) {
@@ -55,7 +42,8 @@ exports.pasarInscripcionesAActivas = () => {
       "Cursando"
     );
 
-    let idCicloActual = await this.obtenerIdCicloLectivo(false);
+    let idCicloActual = await this.obtenerIdCicloActual();
+    let idCicloAnterior = await this.obtenerIdCicloAnterior();
 
     Inscripcion.find({ estado: idPendiente, cicloLectivo: idCicloActual }).then(
       async (inscripcionesPendientes) => {
@@ -66,29 +54,13 @@ exports.pasarInscripcionesAActivas = () => {
           let idsCXM = await ClaseCXM.crearCXM(materiasDelCurso, idCursandoCXM);
 
           // Obtenemos la inscripcion del año anterior (filtrada por estudiante, estado que no sea inactiva y ciclo)
-          let inscripcionAnterior = await Inscripcion.aggregate([
-            {
-              $match: {
-                idEstudiante: mongoose.Types.ObjectId(inscripcion.idEstudiante),
-                estado: {
-                  $ne: mongoose.Types.ObjectId(idInactiva),
-                },
-              },
+          let inscripcionAnterior = await Inscripcion.findOne({
+            idEstudiante: inscripcion.idEstudiante,
+            estado: {
+              $ne: mongoose.Types.ObjectId(idInactiva),
             },
-            {
-              $lookup: {
-                from: "cicloLectivo",
-                localField: "cicloLectivo",
-                foreignField: "_id",
-                as: "datosCiclo",
-              },
-            },
-            {
-              $match: {
-                "datosCiclo.año": añoActual.getFullYear() - 1,
-              },
-            },
-          ]);
+            cicloLectivo: idCicloAnterior,
+          });
 
           inscripcion.calificacionesXMateria = idsCXM;
           inscripcion.materiasPendientes = inscripcionAnterior
@@ -103,42 +75,39 @@ exports.pasarInscripcionesAActivas = () => {
   });
 };
 
-exports.crearCursosParaCiclo = () => {
-  let añoActual = new Date();
-  CicloLectivo.findOne({ año: añoActual.getFullYear() }).then(
-    (cicloLectivo) => {
-      let nombresCursos = [
-        "1A",
-        "2A",
-        "3A",
-        "4A",
-        "5A",
-        "6A",
-        "1B",
-        "2B",
-        "3B",
-        "4B",
-        "5B",
-        "6B",
-      ];
+exports.crearCursosParaCiclo = (idCicloProximo) => {
+  CicloLectivo.findById(idCicloProximo).then((cicloLectivo) => {
+    let nombresCursos = [
+      "1A",
+      "2A",
+      "3A",
+      "4A",
+      "5A",
+      "6A",
+      "1B",
+      "2B",
+      "3B",
+      "4B",
+      "5B",
+      "6B",
+    ];
 
-      nombresCursos.forEach((nombreCurso) => {
-        let nuevoCurso = new Curso({
-          nombre: nombreCurso,
-          materias: [],
-          capacidad: 30,
-          cicloLectivo: cicloLectivo._id,
-        });
-        nuevoCurso.save();
+    nombresCursos.forEach((nombreCurso) => {
+      let nuevoCurso = new Curso({
+        nombre: nombreCurso,
+        materias: [],
+        capacidad: 30,
+        cicloLectivo: cicloLectivo._id,
       });
-    }
-  );
+      nuevoCurso.save();
+    });
+  });
 };
 
-exports.obtenerCantidadFaltasSuspension = () => {
-  let fechaActual = new Date();
+exports.obtenerCantidadFaltasSuspension = async () => {
+  let idCicloActual = await ClaseCicloLectivo.obtenerIdCicloActual();
   return new Promise((resolve, reject) => {
-    CicloLectivo.findOne({ año: fechaActual.getFullYear() })
+    CicloLectivo.findById(idCicloActual)
       .then((cicloLectivo) => {
         resolve(cicloLectivo.cantidadFaltasSuspension);
       })
@@ -146,21 +115,21 @@ exports.obtenerCantidadFaltasSuspension = () => {
   });
 };
 
-//Retorna la id del ciclo lectivo segun si se quiere el actual (false) o el siguiente (true)
-exports.obtenerIdCicloLectivo = (proximo) => {
-  let fechaActual = new Date();
-  let año = proximo ? fechaActual.getFullYear() + 1 : fechaActual.getFullYear();
-  return new Promise((resolve, reject) => {
-    CicloLectivo.findOne({ año: año })
-      .then((cicloLectivo) => {
-        resolve(cicloLectivo._id);
-      })
-      .catch((err) => reject(err));
-  });
-};
+// #deprecado
+// exports.obtenerIdCicloLectivo = (proximo) => {
+//   let fechaActual = new Date();
+//   let año = proximo ? fechaActual.getFullYear() + 1 : fechaActual.getFullYear();
+//   return new Promise((resolve, reject) => {
+//     CicloLectivo.findOne({ año: año })
+//       .then((cicloLectivo) => {
+//         resolve(cicloLectivo._id);
+//       })
+//       .catch((err) => reject(err));
+//   });
+// };
 
 exports.obtenerIdsCursos = async () => {
-  let idCicloActual = await this.obtenerIdCicloLectivo(false);
+  let idCicloActual = await this.obtenerIdCicloActual();
   let idsCursosActuales = [];
   let cursos = await Curso.find({ cicloLectivo: idCicloActual });
   cursos.forEach((curso) => {
@@ -173,7 +142,7 @@ exports.obtenerIdsCursos = async () => {
 //se retorna un array vacio. Discrimina segun trimestre.
 exports.materiasSinCerrar = (trimestre) => {
   return new Promise(async (resolve, reject) => {
-    let idCicloActual = await this.obtenerIdCicloLectivo(false);
+    let idCicloActual = await this.obtenerIdCicloActual();
     let idsCursosActuales = await this.obtenerIdsCursos();
     let idEstadoActiva = await ClaseEstado.obtenerIdEstado(
       "Inscripcion",
@@ -330,7 +299,7 @@ exports.materiasSinCerrar = (trimestre) => {
 //Actualiza el estado de las inscripciones del ciclo actual segun sean promovidas o con examenes pendientes
 exports.actualizarEstadoInscripciones = () => {
   return new Promise(async (resolve, reject) => {
-    let idCicloActual = await this.obtenerIdCicloLectivo(false);
+    let idCicloActual = await this.obtenerIdCicloActual();
     let idEstadoActiva = await ClaseEstado.obtenerIdEstado(
       "Inscripcion",
       "Activa"

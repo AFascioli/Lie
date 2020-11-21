@@ -86,7 +86,6 @@ router.get(
 );
 
 router.get("/horaLlegadaTarde", checkAuthMiddleware, async (req, res) => {
-  let fechaActual = new Date();
   CicloLectivo.findById(await ClaseCicloLectivo.obtenerIdCicloActual())
     .then((cicloLectivo) => {
       res.status(200).json({
@@ -215,7 +214,7 @@ router.get("/inicioCursado", checkAuthMiddleware, async (req, res) => {
     );
 
     await CicloLectivo.findByIdAndUpdate(
-      await ClaseCicloLectivo.obtenerIdCicloLectivo(false),
+      await ClaseCicloLectivo.obtenerIdCicloActual(),
       {
         estado: idEstadoInactivo,
       }
@@ -255,13 +254,12 @@ router.get("/inicioCursado", checkAuthMiddleware, async (req, res) => {
 
 //En el caso de que se pueda registrar la agenda devuelve true false caso contrario
 router.get("/registrarAgenda", checkAuthMiddleware, async (req, res) => {
-  let fechaActual = new Date();
-  let añoActual = fechaActual.getFullYear();
+  let idCicloActual = await ClaseCicloLectivo.obtenerIdCicloActual();
   try {
     CicloLectivo.aggregate([
       {
         $match: {
-          año: añoActual,
+          _id: mongoose.Types.ObjectId(idCicloActual),
         },
       },
       {
@@ -294,15 +292,14 @@ router.get("/registrarAgenda", checkAuthMiddleware, async (req, res) => {
   }
 });
 
-router.get("/periodoCursado", checkAuthMiddleware, (req, res) => {
-  let fechaActual = new Date();
-  let añoActual = fechaActual.getFullYear();
+router.get("/periodoCursado", checkAuthMiddleware, async (req, res) => {
+  let idCicloActual = await ClaseCicloLectivo.obtenerIdCicloActual();
 
   try {
     CicloLectivo.aggregate([
       {
         $match: {
-          año: añoActual,
+          _id: mongoose.Types.ObjectId(idCicloActual),
         },
       },
       {
@@ -340,32 +337,6 @@ router.get("/periodoCursado", checkAuthMiddleware, (req, res) => {
   }
 });
 
-/*
-router.get("/", checkAuthMiddleware, (req, res) => {
-  let fechaActual = new Date();
-  CicloLectivo.findOne({ año: fechaActual.getFullYear() })
-    .then((cicloLectivo) => {
-      if (cicloLectivo) {
-        res.status(200).json({
-          cicloLectivo: cicloLectivo,
-          message:
-            "Se han obtenido las fechas correspondientes a este año exitosamente",
-          exito: true,
-        });
-      } else {
-        res.status(200).json({
-          message: "No se han obtenido las fechas correspondientes a este año",
-          exito: false,
-        });
-      }
-    })
-    .catch(() => {
-      res.status(500).json({
-        message: "Mensaje de error especifico",
-      });
-    });
-});*/
-
 // Endpoint que usa el director para cerrar un trimestre. Primero se fija si hay algun curso que no tenga cerrada
 // alguna materia. Si esta todo legal realiza la logica correspondiente.
 router.post("/cierreTrimestre", checkAuthMiddleware, async (req, res) => {
@@ -383,7 +354,7 @@ router.post("/cierreTrimestre", checkAuthMiddleware, async (req, res) => {
   } else {
     let mensajeResponse = "Trimestre cerrado correctamente";
 
-    const idCicloActual = await ClaseCicloLectivo.obtenerIdCicloLectivo(false);
+    let idCicloActual = await ClaseCicloLectivo.obtenerIdCicloActual();
     let idEstadoCiclo;
 
     if (trimestre == 3) {
@@ -422,7 +393,7 @@ router.post("/cierreTrimestre", checkAuthMiddleware, async (req, res) => {
 // su estado correspondiente (tambien se cambia el estado de las CXM pendientes), Cambia estado ciclo actual
 router.get("/cierreExamenes", checkAuthMiddleware, async (req, res) => {
   try {
-    let idCicloActual = await ClaseCicloLectivo.obtenerIdCicloLectivo(false);
+    let idCicloActual = await ClaseCicloLectivo.obtenerIdCicloActual();
 
     await ClaseInscripcion.cambiarEstadoExamPendientes(idCicloActual);
 
@@ -447,20 +418,13 @@ router.get("/cierreExamenes", checkAuthMiddleware, async (req, res) => {
 });
 
 router.get("/anios", checkAuthMiddleware, (req, res) => {
-  CicloLectivo.aggregate([
-    {
-      $project: {
-        _id: 1,
-        anio: "$año",
-      },
-    },
-  ])
-    .then((anio) => {
+  CicloLectivo.find()
+    .then((ciclosLectivos) => {
       var respuesta = [];
-      anio.forEach((anio) => {
+      ciclosLectivos.forEach((ciclo) => {
         var anios = {
-          id: anio._id,
-          anio: anio.anio.toString(),
+          id: ciclo._id,
+          anio: ciclo.año.toString(),
         };
         respuesta.push(anios);
       });
