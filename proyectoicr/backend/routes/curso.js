@@ -379,28 +379,22 @@ router.get("/cursosDeEstudiante", checkAuthMiddleware, async (req, res) => {
             });
           } else {
             //El estudiante no está inscripto a ningun curso, devuelve todos los cursos almacenados
-            Curso.find()
-              .select({
-                nombre: 1,
-                _id: 1,
-                cicloLectivo: cicloLectivo._id,
-              })
-              .then((cursos) => {
-                var respuesta = [];
-                cursos.forEach((curso) => {
-                  var cursoConId = {
-                    _id: curso._id,
-                    nombre: curso.nombre,
-                  };
-                  respuesta.push(cursoConId);
-                });
-                return res.status(200).json({
-                  message: "Devolvio los cursos correctamente",
-                  exito: true,
-                  cursos: respuesta,
-                  cursoActual: "",
-                });
+            Curso.find({ cicloLectivo: cicloLectivo._id }).then((cursos) => {
+              var respuesta = [];
+              cursos.forEach((curso) => {
+                var cursoConId = {
+                  _id: curso._id,
+                  nombre: curso.nombre,
+                };
+                respuesta.push(cursoConId);
               });
+              return res.status(200).json({
+                message: "Devolvio los cursos correctamente",
+                exito: true,
+                cursos: respuesta,
+                cursoActual: "",
+              });
+            });
           }
         }
       );

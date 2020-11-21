@@ -188,31 +188,37 @@ router.delete("/borrar", checkAuthMiddleware, async (req, res, next) => {
 });
 
 //Dada una id de estudiante, se fija si esta inscripto en un curso
-router.get("/curso", checkAuthMiddleware, (req, res) => {
-  Estudiante.findOne({ _id: req.query.idEstudiante, activo: true })
-    .then((estudiante) => {
-      Estado.findById(estudiante.estado).then((estado) => {
-        if (estado.nombre == "Inscripto") {
-          res.status(200).json({
-            message:
-              "El estudiante seleccionado ya se encuentra inscripto en un curso",
-            exito: true,
-          });
-        } else {
-          res.status(200).json({
-            message: "El estudiante seleccionado no esta inscripto en un curso",
-            exito: false,
-          });
-        }
-      });
-    })
-    .catch((error) => {
-      res.status(500).json({
-        message:
-          "Ocurrió un error al validar si el estudiante esta inscripto en un curso",
-        error: error.message,
-      });
+router.get("/curso", checkAuthMiddleware, async (req, res) => {
+  try {
+    let idEstadoActiva = await ClaseEstado.obtenerIdEstado(
+      "Inscripcion",
+      "Activa"
+    );
+
+    let inscripcion = await Inscripcion.findOne({
+      idEstudiante: req.query.idEstudiante,
+      estado: idEstadoActiva,
     });
+
+    if (inscripcion) {
+      return res.status(200).json({
+        message:
+          "El estudiante seleccionado ya se encuentra inscripto en un curso",
+        exito: true,
+      });
+    }
+
+    res.status(200).json({
+      message: "El estudiante seleccionado no esta inscripto en un curso",
+      exito: false,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message:
+        "Ocurrió un error al validar si el estudiante esta inscripto en un curso",
+      error: error.message,
+    });
+  }
 });
 
 //Obtiene un estudiante dado un numero y tipo de documento
@@ -452,25 +458,13 @@ router.get("/sancionesEstudiante", checkAuthMiddleware, async (req, res) => {
     "Inscripcion",
     "Activa"
   );
-
   Inscripcion.findOne({
     idEstudiante: req.query.idEstudiante,
     cicloLectivo: idCicloActual,
     estado: idEstadoActiva,
   })
     .then((inscripcion) => {
-      let sanciones = [];
-      if (inscripcion.length > 1) {
-        inscripcion.forEach((inscripcion) => {
-          sanciones = sanciones.concat(
-            inscripcion.InscripcionEstudiante.sanciones
-          );
-        });
-      } else {
-        sanciones = inscripcion[0].InscripcionEstudiante.sanciones;
-      }
-
-      if (sanciones.length == 0) {
+      if (inscripcion.sanciones.length == 0) {
         return res.status(200).json({
           message: "El estudiante no tiene sanciones",
           exito: false,
@@ -480,7 +474,7 @@ router.get("/sancionesEstudiante", checkAuthMiddleware, async (req, res) => {
         return res.status(200).json({
           message: "Se obtuvieron las sanciones exitosamente",
           exito: true,
-          sanciones: sanciones,
+          sanciones: inscripcion.sanciones,
         });
       }
     })

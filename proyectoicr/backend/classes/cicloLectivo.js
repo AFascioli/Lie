@@ -26,7 +26,6 @@ exports.cursosTienenAgenda = async () => {
 // Se obtienen las inscripciones pendientes del ciclo actual, a estas se les cambia el estado a activa
 // se les copian las materias pendientes de la inscripcion del año anterior y se les asignan las CXM correspondientes.
 exports.pasarInscripcionesAActivas = () => {
-  let añoActual = new Date();
   return new Promise(async (resolve, reject) => {
     let idPendiente = await ClaseEstado.obtenerIdEstado(
       "Inscripcion",
@@ -351,16 +350,31 @@ exports.obtenerIdCicloProximo = () => {
 
 exports.obtenerIdCicloActual = () => {
   return new Promise(async (resolve, reject) => {
-    let idCicloCreado = await ClaseEstado.obtenerIdEstado(
+    let idPrimerTrimestre = await ClaseEstado.obtenerIdEstado(
       "CicloLectivo",
-      "Creado"
+      "En primer trimestre"
     );
-    let idCicloInactivo = await ClaseEstado.obtenerIdEstado(
+    let idSegundoTrimestre = await ClaseEstado.obtenerIdEstado(
       "CicloLectivo",
-      "Inactivo"
+      "En segundo trimestre"
+    );
+    let idTercerTrimestre = await ClaseEstado.obtenerIdEstado(
+      "CicloLectivo",
+      "En tercer trimestre"
+    );
+    let idEnExamenes = await ClaseEstado.obtenerIdEstado(
+      "CicloLectivo",
+      "En examenes"
     );
     let cicloLectivo = await CicloLectivo.findOne({
-      estado: { $ne: [idCicloCreado, idCicloInactivo] },
+      estado: {
+        $in: [
+          idPrimerTrimestre,
+          idSegundoTrimestre,
+          idTercerTrimestre,
+          idEnExamenes,
+        ],
+      },
     });
     resolve(cicloLectivo._id);
   });
@@ -368,17 +382,9 @@ exports.obtenerIdCicloActual = () => {
 
 exports.obtenerIdCicloAnterior = () => {
   return new Promise(async (resolve, reject) => {
-    let idCicloCreado = await ClaseEstado.obtenerIdEstado(
-      "CicloLectivo",
-      "Creado"
+    let cicloLectivoActual = await CicloLectivo.findById(
+      await this.obtenerIdCicloActual()
     );
-    let idCicloInactivo = await ClaseEstado.obtenerIdEstado(
-      "CicloLectivo",
-      "Inactivo"
-    );
-    let cicloLectivoActual = await CicloLectivo.findOne({
-      estado: { $ne: [idCicloCreado, idCicloInactivo] },
-    });
     let cicloAnterior = await CicloLectivo.findOne({
       año: cicloLectivoActual.año - 1,
     });
