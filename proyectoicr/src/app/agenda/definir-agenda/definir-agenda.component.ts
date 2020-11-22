@@ -383,7 +383,6 @@ export class DefinirAgendaComponent implements OnInit, OnDestroy {
           this.dataSource.data.splice(index, 1)[0]
         );
         this.dataSource._updateChangeSubscription();
-        this.huboCambios = true;
       });
   }
 
