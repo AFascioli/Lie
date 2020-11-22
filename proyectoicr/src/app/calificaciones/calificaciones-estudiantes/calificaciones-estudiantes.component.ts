@@ -57,7 +57,7 @@ export class CalificacionesEstudiantesComponent implements OnInit, OnDestroy {
   private unsubscribe: Subject<void> = new Subject();
   _mobileQueryListener: () => void;
   mobileQuery: MediaQueryList;
-  sePuedeCerrar= false;
+  sePuedeCerrar = false;
   estadoCiclo: string;
 
   @ViewChild("comboCurso", { static: false }) comboCurso: any;
@@ -143,7 +143,8 @@ export class CalificacionesEstudiantesComponent implements OnInit, OnDestroy {
   }
 
   obtenerEstadoCicloLectivo() {
-    this.cicloLectivoService.obtenerEstadoCicloLectivo()
+    this.cicloLectivoService
+      .obtenerEstadoCicloLectivo()
       .pipe(takeUntil(this.unsubscribe))
       .subscribe((response) => {
         this.estadoCiclo = response.estadoCiclo;
@@ -194,41 +195,34 @@ export class CalificacionesEstudiantesComponent implements OnInit, OnDestroy {
       .sePuedeCerrarTrimestre(
         form.value.materia,
         form.value.curso,
-        this.trimestreActual
+        this.trimestreSeleccionado
       )
       .subscribe((response) => {
         this.sePuedeCerrar = response.exito;
       });
   }
 
-  //Cierra una materia (cambia estado de MXC, y si es tercer trimestre 
+  //Cierra una materia (cambia estado de MXC, y si es tercer trimestre
   // se cambia estado de las CXM y se calcula promedio)
-  onCerrarMateria(form: NgForm){
+  onCerrarMateria(form: NgForm) {
     this.servicioCalificaciones
       .cerrarTrimestreMateria(
         form.value.materia,
         form.value.curso,
-        this.trimestreActual
+        this.trimestreSeleccionado
       )
       .subscribe((response) => {
-        if(response.exito){
-          this.snackBar.open(
-            response.message,
-            "",
-            {
-              panelClass: ["snack-bar-exito"],
-              duration: 3000,
-            }
-          );
-        }else{
-          this.snackBar.open(
-            response.message,
-            "",
-            {
-              panelClass: ["snack-bar-fracaso"],
-              duration: 3000,
-            }
-          );
+        if (response.exito) {
+          this.snackBar.open(response.message, "", {
+            panelClass: ["snack-bar-exito"],
+            duration: 3000,
+          });
+          this.sePuedeCerrar = false;
+        } else {
+          this.snackBar.open(response.message, "", {
+            panelClass: ["snack-bar-fracaso"],
+            duration: 3000,
+          });
         }
       });
   }
@@ -368,7 +362,6 @@ export class CalificacionesEstudiantesComponent implements OnInit, OnDestroy {
             });
             this.sePuedeCerrarTrimestre(form);
           }
-          
         });
       this.servicioCalificaciones.auxCambios = false;
     }

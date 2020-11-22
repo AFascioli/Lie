@@ -33,8 +33,20 @@ router.get("/cierre", async (req, res) => {
       req.query.idCurso,
       parseInt(req.query.trimestre, 10)
     );
+
+    const seCerro = await ClaseMateria.seCerroMateria(
+      req.query.idMateria,
+      req.query.idCurso,
+      parseInt(req.query.trimestre, 10)
+    );
+
+    if (sePuedeCerrar && !seCerro) {
+      return res.status(200).json({
+        exito: true,
+      });
+    }
     res.status(200).json({
-      exito: sePuedeCerrar,
+      exito: false,
     });
   } catch (error) {
     res.status(400).json({
