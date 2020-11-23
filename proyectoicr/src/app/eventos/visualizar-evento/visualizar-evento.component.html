@@ -1,4 +1,4 @@
-<h1 class="componente-titulo">Detalle evento:</h1>
+<h1 class="componente-titulo">Detalle del evento:</h1>
 <mat-card class="card-spinner" *ngIf="isLoading">
   <mat-spinner class="spinner" [diameter]="60"></mat-spinner>
 </mat-card>
@@ -56,7 +56,7 @@
       <p style="margin-left: 5px">
         <app-read-more
           [text]="evento.descripcion"
-          [maxHeight]="45"
+          [maxHeight]="55"
           [readAll]="false"
         ></app-read-more>
       </p>
