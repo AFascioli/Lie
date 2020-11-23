@@ -366,6 +366,10 @@ exports.obtenerIdCicloActual = () => {
       "CicloLectivo",
       "En examenes"
     );
+    let idFinExamenes = await ClaseEstado.obtenerIdEstado(
+      "CicloLectivo",
+      "Fin examenes"
+    );
     let cicloLectivo = await CicloLectivo.findOne({
       estado: {
         $in: [
@@ -373,6 +377,7 @@ exports.obtenerIdCicloActual = () => {
           idSegundoTrimestre,
           idTercerTrimestre,
           idEnExamenes,
+          idFinExamenes,
         ],
       },
     });

@@ -3,6 +3,7 @@ const router = express.Router();
 const mongoose = require("mongoose");
 const checkAuthMiddleware = require("../middleware/check-auth");
 const CicloLectivo = require("../models/cicloLectivo");
+const Curso = require("../models/curso");
 const ClaseEstado = require("../classes/estado");
 const ClaseCicloLectivo = require("../classes/cicloLectivo");
 const ClaseInscripcion = require("../classes/inscripcion");
@@ -222,7 +223,7 @@ router.get("/inicioCursado", checkAuthMiddleware, async (req, res) => {
 
     // Actualizar el estado del actual de Creado a En primer trimestre
     await CicloLectivo.findOneAndUpdate(
-      { año: añoActual, estado: idCreado },
+      { estado: idCreado },
       { estado: idEnPrimerTrimestre }
     ).exec();
 
@@ -397,13 +398,13 @@ router.get("/cierreExamenes", checkAuthMiddleware, async (req, res) => {
 
     await ClaseInscripcion.cambiarEstadoExamPendientes(idCicloActual);
 
-    /* const idEstadoInactivo = await ClaseEstado.obtenerIdEstado(
+    const idFinExamenes = await ClaseEstado.obtenerIdEstado(
       "CicloLectivo",
-      "Inactivo"
-    );*/
-    /*await CicloLectivo.findByIdAndUpdate(idCicloActual, {
-      estado: idEstadoInactivo,
-    });*/
+      "Fin examenes"
+    );
+    await CicloLectivo.findByIdAndUpdate(idCicloActual, {
+      estado: idFinExamenes,
+    });
 
     res.status(200).json({
       exito: true,
@@ -440,6 +441,96 @@ router.get("/anios", checkAuthMiddleware, (req, res) => {
         error: error.message,
       });
     });
+});
+
+/*Devuelve todos los cursos del ciclo lectivo actual, cada uno de ello con las materias y los estados de
+esas materias */
+router.get("/curso/materia/estado", checkAuthMiddleware, async (req, res) => {
+  try {
+    let idCicloActual = await ClaseCicloLectivo.obtenerIdCicloActual();
+    let cursosConMXCYEstados = await Curso.aggregate([
+      {
+        $match: {
+          cicloLectivo: mongoose.Types.ObjectId(idCicloActual),
+        },
+      },
+      {
+        $unwind: {
+          path: "$materias",
+        },
+      },
+      {
+        $lookup: {
+          from: "materiasXCurso",
+          localField: "materias",
+          foreignField: "_id",
+          as: "MXC",
+        },
+      },
+      {
+        $lookup: {
+          from: "estado",
+          localField: "MXC.estado",
+          foreignField: "_id",
+          as: "estadoMXC",
+        },
+      },
+      {
+        $lookup: {
+          from: "materia",
+          localField: "MXC.idMateria",
+          foreignField: "_id",
+          as: "nombreMateria",
+        },
+      },
+      {
+        $project: {
+          estadoMXC: 1,
+          nombre: 1,
+          nombreMateria: 1,
+        },
+      },
+      {
+        $group: {
+          _id: "$nombre",
+          nombreMateria: {
+            $push: "$nombreMateria.nombre",
+          },
+          estado: {
+            $push: "$estadoMXC.nombre",
+          },
+        },
+      },
+    ]);
+
+    console.log(cursosConMXCYEstados);
+
+    let responseCursos = [];
+    cursosConMXCYEstados.forEach((curso) => {
+      let datosCurso = { nombre: curso._id, materiasConEstado: [] };
+      curso.estado.forEach((estado, index) => {
+        let materiaConEstado = {
+          materia: curso.nombreMateria[index][0],
+          estado: estado[0],
+        };
+        datosCurso.materiasConEstado.push(materiaConEstado);
+      });
+      responseCursos.push(datosCurso);
+    });
+
+    res.status(200).json({
+      cursosEstados: responseCursos,
+      message:
+        "Se han obtenido los estados de las materias de los cursos exitosamente",
+      exito: true,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message:
+        "Ocurrió un error al querer obtener los estados de las materias de los cursos",
+      error: error.message,
+    });
+  }
 });
 
 module.exports = router;

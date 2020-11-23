@@ -26,6 +26,14 @@ export class CicloLectivoService implements OnDestroy {
     }>(`${environment.apiUrl}/cicloLectivo/estado`);
   }
 
+  obtenerEstadoMateriasCursos() {
+    return this.http.get<{
+      exito: boolean;
+      message: string;
+      cursosEstados: any[];
+    }>(`${environment.apiUrl}/cicloLectivo/curso/materia/estado`);
+  }
+
   inicioCursado() {
     return this.http.get<{
       exito: boolean;
@@ -118,15 +126,15 @@ export class CicloLectivoService implements OnDestroy {
       exito: boolean;
       message: string;
       materiasSinCerrar: [any];
-    }>(`${environment.apiUrl}/cicloLectivo/cierreTrimestre`, {trimestre: trimestre});
+    }>(`${environment.apiUrl}/cicloLectivo/cierreTrimestre`, {
+      trimestre: trimestre,
+    });
   }
-  obtenerAniosCicloLectivo()
-  {
+  obtenerAniosCicloLectivo() {
     return this.http.get<{
       exito: boolean;
       message: string;
       respuesta: any;
     }>(`${environment.apiUrl}/cicloLectivo/anios`);
-
   }
-  }
+}

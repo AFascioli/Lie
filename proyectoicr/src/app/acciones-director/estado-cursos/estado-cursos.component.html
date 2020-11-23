@@ -3,25 +3,25 @@
   <mat-spinner class="spinner" [diameter]="60"></mat-spinner>
 </mat-card>
 <mat-accordion class="example-headers-align" multi *ngIf="!isLoading">
-  <mat-expansion-panel *ngFor="let curso of cursos; let c = index">
+  <mat-expansion-panel *ngFor="let curso of cursosEstados">
     <mat-expansion-panel-header>
       <mat-panel-title> Curso: {{ curso.nombre }} </mat-panel-title>
     </mat-expansion-panel-header>
     <table
       mat-table
-      [dataSource]="materiasXCurso[c]"
-      *ngIf="materiasXCurso.length != 0"
+      [dataSource]="curso.materiasConEstado"
+      *ngIf="curso.materiasConEstado.length != 0"
     >
       <ng-container matColumnDef="materia">
         <th class="centrar" mat-header-cell *matHeaderCellDef>Materia</th>
-        <td mat-cell *matCellDef="let materiasXCurso; let i = index">
-          {{ materiasXCurso.nombre }}
+        <td mat-cell *matCellDef="let materiaConEstado">
+          {{ materiaConEstado.materia }}
         </td>
       </ng-container>
       <ng-container matColumnDef="estado">
         <th class="centrar" mat-header-cell *matHeaderCellDef>Estado</th>
-        <td mat-cell *matCellDef="let materiasXCurso; let i = index">
-          EN PRIMER TRIMESTRE
+        <td mat-cell *matCellDef="let materiaConEstado">
+          {{ materiaConEstado.estado }}
         </td>
       </ng-container>
 
