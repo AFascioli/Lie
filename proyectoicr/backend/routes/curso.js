@@ -1820,7 +1820,7 @@ router.post(
           entregado: false,
         },
         {
-          nombre: "Ficha medica",
+          nombre: "Ficha médica",
           entregado: false,
         },
         {

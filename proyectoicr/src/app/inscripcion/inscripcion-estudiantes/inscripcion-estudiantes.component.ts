@@ -31,7 +31,7 @@ export class InscripcionEstudianteComponent implements OnInit, OnDestroy {
   estudianteEstaInscripto: boolean;
   documentosEntregados = [
     { nombre: "Fotocopia documento", entregado: false },
-    { nombre: "Ficha medica", entregado: false },
+    { nombre: "Ficha médica", entregado: false },
     { nombre: "Informe año anterior", entregado: false },
   ];
   _mobileQueryListener: () => void;
