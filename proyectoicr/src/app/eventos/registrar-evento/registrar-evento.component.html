@@ -41,7 +41,8 @@
         placeholder="Seleccione fecha de evento"
         (click)="picker.open()"
         [(ngModel)]="fechaSeleccionada"
-        (focusout)="setearHoraMinima()"
+        (dateInput)="setearHoraMinima()"
+        (dateChange)="setearHoraMinima()"
         required
         readonly
       />

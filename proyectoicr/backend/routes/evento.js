@@ -16,6 +16,7 @@ const Usuario = require("../models/usuario");
 const Inscripcion = require("../models/inscripcion");
 const Administrador = require("../models/administrador");
 const Suscripcion = require("../classes/suscripcion");
+const ClaseEstado = require("../classes/estado");
 
 const storage = new GridFsStorage({
   url: Ambiente.stringDeConexion,
@@ -147,14 +148,16 @@ router.post(
           filenamesEvento = req.body.filenames;
         }
         // Se sacan los filenames borrados
-        filenamesEvento = filenamesEvento.filter((filename) => {
-          if (!req.body.filenamesBorrados.includes(filename)) {
-            return true;
-          } else {
-            return false;
-          }
-        });
-
+        if (filenamesEvento.length > 0 && req.body.filenamesBorrados != "null");
+        {
+          filenamesEvento = filenamesEvento.filter((filename) => {
+            if (!req.body.filenamesBorrados.includes(filename)) {
+              return true;
+            } else {
+              return false;
+            }
+          });
+        }
         // Se agregan los filenames nuevos
         for (let index = 0; index < req.files.length; index++) {
           filenamesEvento.push(req.files[index].filename);

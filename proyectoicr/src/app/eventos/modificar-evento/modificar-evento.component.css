@@ -111,6 +111,7 @@ mat-form-field {
   margin-top: -22px;
   padding: 16px;
   color: white;
+  background-color: black;
   font-weight: bold;
   font-size: 18px;
   transition: 0.6s ease;
