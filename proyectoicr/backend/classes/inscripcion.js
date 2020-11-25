@@ -23,7 +23,7 @@ exports.obtenerAñoHabilitado = function (inscripcion, idCicloSeleccionado) {
      siguiente = añoActual;
    }
  
-   return siguiente;
+   resolve(siguiente);
  });
 };
 
