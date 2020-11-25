@@ -348,56 +348,55 @@ router.get("/cursosDeEstudiante", checkAuthMiddleware, async (req, res) => {
       },
     },
   ])
-    .then((inscripcion) => {
-      CicloLectivo.findOne({ año: parseInt(req.query.añoLectivo, 10) }).then(
-        async (cicloLectivo) => {
-          if (inscripcion.length != 0) {
-            //El estudiante está inscripto a un curso y por ende se fija al curso al que se puede inscribir
-            let siguiente;
-            siguiente = ClaseInscripcion.obtenerAñoHabilitado(
-              inscripcion,
-              parseInt(req.query.añoLectivo, 10)
-            );
-            let cursosDisponibles = [];
-            //Buscamos los cursos que corresponden al que se puede inscribir el estudiante
-            Curso.find({
-              nombre: { $regex: siguiente },
-              cicloLectivo: cicloLectivo._id,
-            }).then((cursos) => {
-              //Se agregan todos los cursos disponibles para inscribirse excepto el curso actual
-              cursos.forEach((curso) => {
-                if (!(curso.nombre == inscripcion[0].cursoActual[0].nombre)) {
-                  cursosDisponibles.push(curso);
-                }
-              });
-              return res.status(200).json({
-                message: "Devolvio los cursos correctamente",
-                exito: true,
-                cursos: cursosDisponibles,
-                cursoActual: inscripcion[0].cursoActual[0],
-              });
-            });
-          } else {
-            //El estudiante no está inscripto a ningun curso, devuelve todos los cursos almacenados
-            Curso.find({ cicloLectivo: cicloLectivo._id }).then((cursos) => {
-              var respuesta = [];
-              cursos.forEach((curso) => {
-                var cursoConId = {
-                  _id: curso._id,
-                  nombre: curso.nombre,
-                };
-                respuesta.push(cursoConId);
-              });
-              return res.status(200).json({
-                message: "Devolvio los cursos correctamente",
-                exito: true,
-                cursos: respuesta,
-                cursoActual: "",
-              });
-            });
-          }
-        }
+    .then(async (inscripcion) => {
+      let idCicloLectivo = await ClaseCicloLectivo.obtenerIdCicloSegunAño(
+        parseInt(req.query.añoLectivo)
       );
+      if (inscripcion.length != 0) {
+        //El estudiante está inscripto a un curso y por ende se fija al curso al que se puede inscribir
+        let siguiente= await ClaseInscripcion.obtenerAñoHabilitado(
+          inscripcion,
+          idCicloLectivo
+        );
+        let cursosDisponibles = [];
+        //Buscamos los cursos que corresponden al que se puede inscribir el estudiante
+        Curso.find({
+          nombre: { $regex: siguiente },
+          cicloLectivo: idCicloLectivo,
+        }).then((cursos) => {
+          //Se agregan todos los cursos disponibles para inscribirse excepto el curso actual
+          cursos.forEach((curso) => {
+            if (!(curso.nombre == inscripcion[0].cursoActual[0].nombre)) {
+              cursosDisponibles.push(curso);
+            }
+          });
+          return res.status(200).json({
+            message: "Devolvio los cursos correctamente",
+            exito: true,
+            cursos: cursosDisponibles,
+            cursoActual: inscripcion[0].cursoActual[0],
+          });
+        });
+      } else {
+        //!TODO Si selecciono el ciclo actual, buscar si tiene inscripcion pendiente para ver que curso le corresponde
+        //El estudiante no está inscripto a ningun curso, devuelve todos los cursos almacenados
+        Curso.findById(idCicloLectivo).then((cursos) => {
+          var respuesta = [];
+          cursos.forEach((curso) => {
+            var cursoConId = {
+              _id: curso._id,
+              nombre: curso.nombre,
+            };
+            respuesta.push(cursoConId);
+          });
+          return res.status(200).json({
+            message: "Devolvio los cursos correctamente",
+            exito: true,
+            cursos: respuesta,
+            cursoActual: "",
+          });
+        });
+      }
     })
     .catch((error) => {
       res.status(500).json({
@@ -1379,6 +1378,10 @@ router.post("/agenda", checkAuthMiddleware, async (req, res) => {
       }
     }
     if (mxcNuevas.length != 0) {
+      let idCreada = await ClaseEstado.obtenerIdEstado(
+        "MateriasXCurso",
+        "Creada"
+      );
       //Hay mxc nuevas para guarda en la bd
       for (const mxcNueva of mxcNuevas) {
         let vectorIdsHorarios = [];
@@ -1395,6 +1398,7 @@ router.post("/agenda", checkAuthMiddleware, async (req, res) => {
           idMateria: mxcNueva.idMateria,
           idDocente: mxcNueva.idDocente,
           horarios: vectorIdsHorarios,
+          estado: idCreada,
         });
 
         let idMXC = await crearMateriaXCurso(nuevaMateriaXCurso);

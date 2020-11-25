@@ -100,16 +100,14 @@ exports.obtenerMateriasDesaprobadasv2 = async function (
   return new Promise(async (resolve, reject) => {
     var idsCXMDesaprobadas = [];
     if (arrayPendientes.length != 0) {
-      idsCXMDesaprobadas.push(arrayPendientes);
+      idsCXMDesaprobadas.push(...arrayPendientes);
     }
     for (const cxm of idsCalificacionesXMateria) {
-      await CalificacionesXMateria.findOne({ _id: cxm, estado: idEstado }).then(
-        (cxmEncontrada) => {
-          if (cxmEncontrada != null) {
-            idsCXMDesaprobadas.push(cxm);
-          }
-        }
-      );
+      let cxmEncontrada = await CalificacionesXMateria.findOne({ _id: cxm, estado: idEstado });
+
+      if (cxmEncontrada != null) {
+        idsCXMDesaprobadas.push(cxm);
+      }
     }
     resolve(idsCXMDesaprobadas);
   });

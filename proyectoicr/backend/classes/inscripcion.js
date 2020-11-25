@@ -7,25 +7,26 @@ const CalificacionesXMateria = require("../models/calificacionesXMateria");
 const ClaseEstado = require("../classes/estado");
 const ClaseCicloLectivo = require("../classes/cicloLectivo");
 const ClaseCalifXMateria = require("../classes/calificacionXMateria");
+const { resolve } = require("path");
+const { reject } = require("core-js/fn/promise");
 
-exports.obtenerAñoHabilitado = function (inscripcion, añoLectivo) {
-  let añoActual;
-  let fechaActual = new Date();
-  let siguiente;
-  añoActual = parseInt(inscripcion[0].cursoActual[0].nombre, 10);
-
-  if (
-    inscripcion[0].estadoInscripcion[0].nombre == "Promovido" ||
-    inscripcion[0].estadoInscripcion[0].nombre ==
-      "Promovido con examenes pendientes" ||
-    añoLectivo > fechaActual.getFullYear()
-  ) {
-    siguiente = añoActual + 1;
-  } else {
-    siguiente = añoActual;
-  }
-
-  return siguiente;
+//Retorna numero de curso al que se puede inscribir el estudiante segun el ciclo seleccionado
+exports.obtenerAñoHabilitado = async function (inscripcion, idCicloSeleccionado) {
+ return new Promise((resolve, reject)=>{
+   let siguiente;
+   let añoActual = parseInt(inscripcion[0].cursoActual[0].nombre, 10);
+   let idCicloActual= await ClaseCicloLectivo.obtenerIdCicloActual();
+ 
+   if (
+     idCicloSeleccionado!=idCicloActual
+   ) {
+     siguiente = añoActual + 1;
+   } else {
+     siguiente = añoActual;
+   }
+ 
+   return siguiente;
+ });
 };
 
 //Dada una id de curso, obtiene las ids de las materias que se dan en ese curso
@@ -157,36 +158,21 @@ exports.inscribirEstudiante = async function (
     let contadorInasistenciasInjustificada = 0;
     let contadorInasistenciasJustificada = 0;
     let contadorLlegadasTarde = 0;
-
-    //Si el estudiante tiene una inscripcion anteriormente, se obtienen las CXM que esten desaprobadas,
-    //ya sea las que estan en materiasPendientes y las CXM con estado "Desaprobada"
     var materiasPendientesNuevas = [];
+
+    //Si es cambio de curso se deben copiar los siguientes datos de la inscripcion "vieja"
     if (inscripcion != null) {
+      let idInscripcionInactiva= await ClaseEstado.obtenerIdEstado("Inscripcion", "Inactiva");
       contadorInasistenciasInjustificada =
         inscripcion.contadorInasistenciasInjustificada;
       contadorInasistenciasJustificada =
         inscripcion.contadorInasistenciasJustificada;
       contadorLlegadasTarde = inscripcion.contadorLlegadasTarde;
+      materiasPendientesNuevas.push(...idsCXMDesaprobadas);
+      cuotasAnteriores= inscripcion.cuotas;
 
-      inscripcion.activa = false;
-
-      var idEstadoDesaprobadaMateria = await ClaseEstado.obtenerIdEstado(
-        "CalificacionesXMateria",
-        "Desaprobada"
-      );
-      var idsCXMDesaprobadas = await ClaseCalifXMateria.obtenerMateriasDesaprobadasv2(
-        inscripcion.materiasPendientes,
-        inscripcion.calificacionesXMateria,
-        idEstadoDesaprobadaMateria
-      );
-      if (idsCXMDesaprobadas.length != 0) {
-        materiasPendientesNuevas.push(...idsCXMDesaprobadas);
-      }
+      inscripcion.estado = idInscripcionInactiva; 
       await inscripcion.save();
-
-      var idCicloLectivo = await ClaseCicloLectivo.obtenerIdCicloActual();
-
-      esCambioDeCurso(inscripcion.idCurso, idCicloLectivo);
     }
 
     var cuotas = [];

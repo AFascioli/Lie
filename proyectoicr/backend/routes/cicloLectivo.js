@@ -143,12 +143,11 @@ router.get("/materiasParaLibre", checkAuthMiddleware, async (req, res) => {
 
 //Obtiene el estado del ciclo lectivo actual
 router.use("/estado", checkAuthMiddleware, async (req, res) => {
+  let idCicloActual = await ClaseCicloLectivo.obtenerIdCicloActual();
   CicloLectivo.aggregate([
     {
       $match: {
-        _id: mongoose.Types.ObjectId(
-          await ClaseCicloLectivo.obtenerIdCicloActual()
-        ),
+        _id: mongoose.Types.ObjectId(idCicloActual),
       },
     },
     {
@@ -502,8 +501,6 @@ router.get("/curso/materia/estado", checkAuthMiddleware, async (req, res) => {
         },
       },
     ]);
-
-    console.log(cursosConMXCYEstados);
 
     let responseCursos = [];
     cursosConMXCYEstados.forEach((curso) => {
