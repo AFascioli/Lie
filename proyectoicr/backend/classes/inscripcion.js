@@ -7,12 +7,10 @@ const CalificacionesXMateria = require("../models/calificacionesXMateria");
 const ClaseEstado = require("../classes/estado");
 const ClaseCicloLectivo = require("../classes/cicloLectivo");
 const ClaseCalifXMateria = require("../classes/calificacionXMateria");
-const { resolve } = require("path");
-const { reject } = require("core-js/fn/promise");
 
 //Retorna numero de curso al que se puede inscribir el estudiante segun el ciclo seleccionado
-exports.obtenerAñoHabilitado = async function (inscripcion, idCicloSeleccionado) {
- return new Promise((resolve, reject)=>{
+exports.obtenerAñoHabilitado = function (inscripcion, idCicloSeleccionado) {
+ return new Promise(async (resolve, reject)=>{
    let siguiente;
    let añoActual = parseInt(inscripcion[0].cursoActual[0].nombre, 10);
    let idCicloActual= await ClaseCicloLectivo.obtenerIdCicloActual();
