@@ -8,24 +8,23 @@ const ClaseEstado = require("../classes/estado");
 const ClaseCicloLectivo = require("../classes/cicloLectivo");
 const ClaseCalifXMateria = require("../classes/calificacionXMateria");
 
-exports.obtenerAñoHabilitado = function (inscripcion, añoLectivo) {
-  let añoActual;
-  let fechaActual = new Date();
-  let siguiente;
-  añoActual = parseInt(inscripcion[0].cursoActual[0].nombre, 10);
-
-  if (
-    inscripcion[0].estadoInscripcion[0].nombre == "Promovido" ||
-    inscripcion[0].estadoInscripcion[0].nombre ==
-      "Promovido con examenes pendientes" ||
-    añoLectivo > fechaActual.getFullYear()
-  ) {
-    siguiente = añoActual + 1;
-  } else {
-    siguiente = añoActual;
-  }
-
-  return siguiente;
+//Retorna numero de curso al que se puede inscribir el estudiante segun el ciclo seleccionado
+exports.obtenerAñoHabilitado = function (inscripcion, idCicloSeleccionado) {
+ return new Promise(async (resolve, reject)=>{
+   let siguiente;
+   let añoActual = parseInt(inscripcion[0].cursoActual[0].nombre, 10);
+   let idCicloActual= await ClaseCicloLectivo.obtenerIdCicloActual();
+ 
+   if (
+     idCicloSeleccionado!=idCicloActual
+   ) {
+     siguiente = añoActual + 1;
+   } else {
+     siguiente = añoActual;
+   }
+ 
+   resolve(siguiente);
+ });
 };
 
 //Dada una id de curso, obtiene las ids de las materias que se dan en ese curso
@@ -157,36 +156,21 @@ exports.inscribirEstudiante = async function (
     let contadorInasistenciasInjustificada = 0;
     let contadorInasistenciasJustificada = 0;
     let contadorLlegadasTarde = 0;
-
-    //Si el estudiante tiene una inscripcion anteriormente, se obtienen las CXM que esten desaprobadas,
-    //ya sea las que estan en materiasPendientes y las CXM con estado "Desaprobada"
     var materiasPendientesNuevas = [];
+
+    //Si es cambio de curso se deben copiar los siguientes datos de la inscripcion "vieja"
     if (inscripcion != null) {
+      let idInscripcionInactiva= await ClaseEstado.obtenerIdEstado("Inscripcion", "Inactiva");
       contadorInasistenciasInjustificada =
         inscripcion.contadorInasistenciasInjustificada;
       contadorInasistenciasJustificada =
         inscripcion.contadorInasistenciasJustificada;
       contadorLlegadasTarde = inscripcion.contadorLlegadasTarde;
+      materiasPendientesNuevas.push(...idsCXMDesaprobadas);
+      cuotasAnteriores= inscripcion.cuotas;
 
-      inscripcion.activa = false;
-
-      var idEstadoDesaprobadaMateria = await ClaseEstado.obtenerIdEstado(
-        "CalificacionesXMateria",
-        "Desaprobada"
-      );
-      var idsCXMDesaprobadas = await ClaseCalifXMateria.obtenerMateriasDesaprobadasv2(
-        inscripcion.materiasPendientes,
-        inscripcion.calificacionesXMateria,
-        idEstadoDesaprobadaMateria
-      );
-      if (idsCXMDesaprobadas.length != 0) {
-        materiasPendientesNuevas.push(...idsCXMDesaprobadas);
-      }
+      inscripcion.estado = idInscripcionInactiva; 
       await inscripcion.save();
-
-      var idCicloLectivo = await ClaseCicloLectivo.obtenerIdCicloLectivo(false);
-
-      esCambioDeCurso(inscripcion.idCurso, idCicloLectivo);
     }
 
     var cuotas = [];
@@ -211,7 +195,7 @@ exports.inscribirEstudiante = async function (
       contadorLlegadasTarde: contadorLlegadasTarde,
       calificacionesXMateria: idsCXMNuevas,
       materiasPendientes: materiasPendientesNuevas,
-      CicloLectivo: idCicloLectivo,
+      cicloLectivo: idCicloLectivo,
       cuotas: cuotas,
       sanciones: [],
     });
@@ -235,11 +219,9 @@ exports.inscribirEstudianteProximoAnio = async function (
   idCurso,
   idEstudiante
 ) {
-  let fechaActual = new Date();
-
-  let obtenerCurso = (añoActual) => {
+  let obtenerCurso = (idCicloLectivo) => {
     return new Promise((resolve, reject) => {
-      Curso.findOne({ _id: idCurso, añoLectivo: añoActual })
+      Curso.findOne({ _id: idCurso, cicloLectivo: idCicloLectivo })
         .then((curso) => {
           resolve(curso);
         })
@@ -253,7 +235,9 @@ exports.inscribirEstudianteProximoAnio = async function (
       "Pendiente"
     );
 
-    var cursoSeleccionado = await obtenerCurso(fechaActual.getFullYear() + 1);
+    let idCicloProximo = await ClaseCicloLectivo.obtenerIdCicloProximo();
+
+    var cursoSeleccionado = await obtenerCurso(idCicloProximo);
 
     const nuevaInscripcion = new Inscripcion({
       idEstudiante: idEstudiante,
@@ -262,7 +246,7 @@ exports.inscribirEstudianteProximoAnio = async function (
       contadorInasistenciasInjustificada: 0,
       contadorInasistenciasJustificada: 0,
       contadorLlegadasTarde: 0,
-      año: fechaActual.getFullYear() + 1,
+      cicloLectivo: idCicloProximo,
     });
 
     await nuevaInscripcion.save();
@@ -283,12 +267,17 @@ exports.actualizarEstadoInscripcion = (inscripcion) => {
     );
     let idEstadoExPendientes = await ClaseEstado.obtenerIdEstado(
       "Inscripcion",
-      "Examenes Pendientes"
+      "Examenes pendientes"
+    );
+    let idEstadoPendienteExamen = await ClaseEstado.obtenerIdEstado(
+      "CalificacionesXMateria",
+      "Pendiente examen"
     );
     let promovido = true;
 
     for (const cxm of inscripcion.datosCXM) {
-      if (cxm.promedio < 6) {
+      //#resolve
+      if (cxm.estado == idEstadoPendienteExamen) {
         promovido = false;
         break;
       }
@@ -334,6 +323,10 @@ exports.cambiarEstadoExamPendientes = (idCicloActual) => {
       "CalificacionesXMateria",
       "Desaprobada"
     );
+    const idEstadoPendiente = await ClaseEstado.obtenerIdEstado(
+      "Inscripcion",
+      "Pendiente"
+    );
 
     let inscripcionesPendientes = await Inscripcion.aggregate([
       {
@@ -355,23 +348,29 @@ exports.cambiarEstadoExamPendientes = (idCicloActual) => {
     for (const inscripcion of inscripcionesPendientes) {
       let idsCXMPendientes = [];
       for (const cxm of inscripcion.datosCXM) {
-        if (cxm.estado == idEstadoCXMPendiente) {
+        if (
+          cxm.estado
+            .toString()
+            .localeCompare(idEstadoCXMPendiente.toString()) == 0
+        ) {
           idsCXMPendientes.push(cxm._id);
         }
       }
+
       if (idsCXMPendientes.length == 0) {
         await Inscripcion.findByIdAndUpdate(inscripcion._id, {
           estado: idEstadoPromovido,
-        });
+        }).exec();
       } else if (idsCXMPendientes.length < 4) {
         for (const idCxm of idsCXMPendientes) {
           await CalificacionesXMateria.findByIdAndUpdate(idCxm, {
             estado: idEstadoCXMDesaprobada,
-          });
+          }).exec();
         }
         await Inscripcion.findByIdAndUpdate(inscripcion._id, {
           estado: idEstadoPromovidoExamPendientes,
-        });
+          materiasPendientes: idsCXMPendientes,
+        }).exec();
       } else {
         for (const idCxm of idsCXMPendientes) {
           await CalificacionesXMateria.findByIdAndUpdate(idCxm, {
@@ -380,7 +379,11 @@ exports.cambiarEstadoExamPendientes = (idCicloActual) => {
         }
         await Inscripcion.findByIdAndUpdate(inscripcion._id, {
           estado: idEstadoLibre,
-        });
+        }).exec();
+        await Inscripcion.findOneAndDelete({
+          idEstudiante: inscripcion.idEstudiante,
+          estado: idEstadoPendiente,
+        }).exec();
       }
     }
     resolve();

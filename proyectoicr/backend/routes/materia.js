@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const mongoose= require("mongoose");
+const mongoose = require("mongoose");
 const checkAuthMiddleware = require("../middleware/check-auth");
 const Materia = require("../models/materia");
 const Curso = require("../models/curso");
@@ -33,8 +33,20 @@ router.get("/cierre", async (req, res) => {
       req.query.idCurso,
       parseInt(req.query.trimestre, 10)
     );
+
+    const seCerro = await ClaseMateria.seCerroMateria(
+      req.query.idMateria,
+      req.query.idCurso,
+      parseInt(req.query.trimestre, 10)
+    );
+
+    if (sePuedeCerrar && !seCerro) {
+      return res.status(200).json({
+        exito: true,
+      });
+    }
     res.status(200).json({
-      exito: sePuedeCerrar,
+      exito: false,
     });
   } catch (error) {
     res.status(400).json({
@@ -52,7 +64,7 @@ router.get("/cierre", async (req, res) => {
 router.post("/cierre", checkAuthMiddleware, async (req, res) => {
   try {
     let nombreEstadoMXC = "";
-    switch (parseInt(req.query.trimestre, 10)) {
+    switch (parseInt(req.body.trimestre, 10)) {
       case 1:
         nombreEstadoMXC = "En segundo trimestre";
         break;
@@ -73,35 +85,39 @@ router.post("/cierre", checkAuthMiddleware, async (req, res) => {
       "MateriasXCurso",
       nombreEstadoMXC
     );
-    
-    const idMateriaXCurso= await Curso.aggregate([
+
+    const idMateriaXCurso = await Curso.aggregate([
       {
-        '$match': {
-          '_id': mongoose.Types.ObjectId(req.body.idCurso)
-        }
-      }, {
-        '$lookup': {
-          'from': 'materiasXCurso', 
-          'localField': 'materias', 
-          'foreignField': '_id', 
-          'as': 'datosMXC'
-        }
-      }, {
-        '$unwind': {
-          'path': '$datosMXC'
-        }
-      }, {
-        '$match': {
-          'datosMXC.idMateria': mongoose.Types.ObjectId(req.body.idMateria)
-        }
-      }, {
-        '$project': {
-          'datosMXC._id': 1
-        }
-      }
+        $match: {
+          _id: mongoose.Types.ObjectId(req.body.idCurso),
+        },
+      },
+      {
+        $lookup: {
+          from: "materiasXCurso",
+          localField: "materias",
+          foreignField: "_id",
+          as: "datosMXC",
+        },
+      },
+      {
+        $unwind: {
+          path: "$datosMXC",
+        },
+      },
+      {
+        $match: {
+          "datosMXC.idMateria": mongoose.Types.ObjectId(req.body.idMateria),
+        },
+      },
+      {
+        $project: {
+          "datosMXC._id": 1,
+        },
+      },
     ]);
 
-    await MateriasXCurso.findByIdAndUpdate(idMateriaXCurso.datosMXC._id, {
+    await MateriasXCurso.findByIdAndUpdate(idMateriaXCurso[0].datosMXC._id, {
       estado: idEstadoNuevo,
     }).exec();
 

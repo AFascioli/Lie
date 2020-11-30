@@ -1,14 +1,15 @@
 const express = require("express");
 const router = express.Router();
+const mongoose = require("mongoose");
 const checkAuthMiddleware = require("../middleware/check-auth");
 const CicloLectivo = require("../models/cicloLectivo");
+const Curso = require("../models/curso");
 const ClaseEstado = require("../classes/estado");
 const ClaseCicloLectivo = require("../classes/cicloLectivo");
 const ClaseInscripcion = require("../classes/inscripcion");
 
-router.get("/parametros", checkAuthMiddleware, (req, res) => {
-  let fechaActual = new Date();
-  CicloLectivo.findOne({ año: fechaActual.getFullYear() })
+router.get("/parametros", checkAuthMiddleware, async (req, res) => {
+  CicloLectivo.findById(await ClaseCicloLectivo.obtenerIdCicloActual())
     .then((cicloLectivo) => {
       if (cicloLectivo) {
         res.status(200).json({
@@ -34,10 +35,9 @@ router.get("/parametros", checkAuthMiddleware, (req, res) => {
     });
 });
 
-router.post("/parametros", checkAuthMiddleware, (req, res) => {
-  let fechaActual = new Date();
-  CicloLectivo.findOneAndUpdate(
-    { año: fechaActual.getFullYear() },
+router.post("/parametros", checkAuthMiddleware, async (req, res) => {
+  CicloLectivo.findByIdAndUpdate(
+    await ClaseCicloLectivo.obtenerIdCicloActual(),
     {
       horarioLLegadaTarde: req.body.horaLlegadaTarde,
       horarioRetiroAnticipado: req.body.horaRetiroAnticipado,
@@ -63,29 +63,31 @@ router.post("/parametros", checkAuthMiddleware, (req, res) => {
     });
 });
 
-router.get("/cantidadFaltasSuspension", checkAuthMiddleware, (req, res) => {
-  let fechaActual = new Date();
-  CicloLectivo.findOne({ año: fechaActual.getFullYear() })
-    .then((cicloLectivo) => {
-      res.status(200).json({
-        faltas: cicloLectivo.cantidadFaltasSuspension,
-        message:
-          "Se han obtenido la cantidad de faltas para la suspesión exitosamente",
-        exito: true,
+router.get(
+  "/cantidadFaltasSuspension",
+  checkAuthMiddleware,
+  async (req, res) => {
+    CicloLectivo.findById(await ClaseCicloLectivo.obtenerIdCicloActual())
+      .then((cicloLectivo) => {
+        res.status(200).json({
+          faltas: cicloLectivo.cantidadFaltasSuspension,
+          message:
+            "Se han obtenido la cantidad de faltas para la suspesión exitosamente",
+          exito: true,
+        });
+      })
+      .catch((error) => {
+        res.status(500).json({
+          message:
+            "Ocurrió un error al querer obtenido la cantidad de faltas para la suspesión",
+          error: error.message,
+        });
       });
-    })
-    .catch((error) => {
-      res.status(500).json({
-        message:
-          "Ocurrió un error al querer obtenido la cantidad de faltas para la suspesión",
-        error: error.message,
-      });
-    });
-});
+  }
+);
 
-router.get("/horaLlegadaTarde", checkAuthMiddleware, (req, res) => {
-  let fechaActual = new Date();
-  CicloLectivo.findOne({ año: fechaActual.getFullYear() })
+router.get("/horaLlegadaTarde", checkAuthMiddleware, async (req, res) => {
+  CicloLectivo.findById(await ClaseCicloLectivo.obtenerIdCicloActual())
     .then((cicloLectivo) => {
       res.status(200).json({
         hora: cicloLectivo.horarioLLegadaTarde,
@@ -102,9 +104,8 @@ router.get("/horaLlegadaTarde", checkAuthMiddleware, (req, res) => {
     });
 });
 
-router.get("/horaRetiroAnticipado", checkAuthMiddleware, (req, res) => {
-  let fechaActual = new Date();
-  CicloLectivo.findOne({ año: fechaActual.getFullYear() })
+router.get("/horaRetiroAnticipado", checkAuthMiddleware, async (req, res) => {
+  CicloLectivo.findById(await ClaseCicloLectivo.obtenerIdCicloActual())
     .then((cicloLectivo) => {
       res.status(200).json({
         hora: cicloLectivo.horarioRetiroAnticipado,
@@ -121,9 +122,8 @@ router.get("/horaRetiroAnticipado", checkAuthMiddleware, (req, res) => {
     });
 });
 
-router.get("/materiasParaLibre", checkAuthMiddleware, (req, res) => {
-  let fechaActual = new Date();
-  CicloLectivo.findOne({ año: fechaActual.getFullYear() })
+router.get("/materiasParaLibre", checkAuthMiddleware, async (req, res) => {
+  CicloLectivo.findById(await ClaseCicloLectivo.obtenerIdCicloActual())
     .then((cicloLectivo) => {
       res.status(200).json({
         materias: cicloLectivo.cantidadMateriasInscripcionLibre,
@@ -142,12 +142,12 @@ router.get("/materiasParaLibre", checkAuthMiddleware, (req, res) => {
 });
 
 //Obtiene el estado del ciclo lectivo actual
-router.use("/estado", checkAuthMiddleware, (req, res) => {
-  let añoActual = new Date().getFullYear();
+router.use("/estado", checkAuthMiddleware, async (req, res) => {
+  let idCicloActual = await ClaseCicloLectivo.obtenerIdCicloActual();
   CicloLectivo.aggregate([
     {
       $match: {
-        año: añoActual,
+        _id: mongoose.Types.ObjectId(idCicloActual),
       },
     },
     {
@@ -176,6 +176,9 @@ router.use("/estado", checkAuthMiddleware, (req, res) => {
 
 router.get("/inicioCursado", checkAuthMiddleware, async (req, res) => {
   try {
+    let fechaActual = new Date();
+    let añoActual = fechaActual.getFullYear();
+
     // Validar que todas las agendas esten definidas
     let idCreado = await ClaseEstado.obtenerIdEstado("CicloLectivo", "Creado");
     let idEnPrimerTrimestre = await ClaseEstado.obtenerIdEstado(
@@ -204,6 +207,25 @@ router.get("/inicioCursado", checkAuthMiddleware, async (req, res) => {
     // Pasar las inscripciones pendientes a activas (con todo lo que implica)
     await ClaseCicloLectivo.pasarInscripcionesAActivas();
 
+    //Inactivamos el ciclo anterior
+    const idEstadoInactivo = await ClaseEstado.obtenerIdEstado(
+      "CicloLectivo",
+      "Inactivo"
+    );
+
+    await CicloLectivo.findByIdAndUpdate(
+      await ClaseCicloLectivo.obtenerIdCicloActual(),
+      {
+        estado: idEstadoInactivo,
+      }
+    );
+
+    // Actualizar el estado del actual de Creado a En primer trimestre
+    await CicloLectivo.findOneAndUpdate(
+      { estado: idCreado },
+      { estado: idEnPrimerTrimestre }
+    ).exec();
+
     // Crear el proximo ciclo lectivo
     let cicloProximo = new CicloLectivo({
       horarioLLegadaTarde: 8,
@@ -216,17 +238,11 @@ router.get("/inicioCursado", checkAuthMiddleware, async (req, res) => {
     await cicloProximo.save();
 
     // Crear los cursos del año siguiente
-    ClaseCicloLectivo.crearCursosParaCiclo(cicloProximo._id);
-
-    // Actualizar el estado del actual de Creado a En primer trimestre
-    CicloLectivo.findOneAndUpdate(
-      { año: añoActual, estado: idCreado },
-      { estado: idEnPrimerTrimestre }
-    ).exec();
+    await ClaseCicloLectivo.crearCursosParaCiclo(cicloProximo._id);
 
     res.status(200).json({
       exito: true,
-      message: "Inicio de cursado exitoso.",
+      message: "Inicio de cursado exitoso",
     });
   } catch (error) {
     res.status(500).json({
@@ -238,13 +254,12 @@ router.get("/inicioCursado", checkAuthMiddleware, async (req, res) => {
 
 //En el caso de que se pueda registrar la agenda devuelve true false caso contrario
 router.get("/registrarAgenda", checkAuthMiddleware, async (req, res) => {
-  let fechaActual = new Date();
-  let añoActual = fechaActual.getFullYear();
+  let idCicloActual = await ClaseCicloLectivo.obtenerIdCicloActual();
   try {
     CicloLectivo.aggregate([
       {
         $match: {
-          año: añoActual,
+          _id: mongoose.Types.ObjectId(idCicloActual),
         },
       },
       {
@@ -258,7 +273,7 @@ router.get("/registrarAgenda", checkAuthMiddleware, async (req, res) => {
     ]).then((cicloLectivo) => {
       let nombre = cicloLectivo[0].datosEstado[0].nombre;
       if (nombre === "Creado") {
-        return nres.status(200).json({
+        return res.status(200).json({
           permiso: false,
           message: "No esta habilitado el registro de la agenda",
         });
@@ -277,15 +292,14 @@ router.get("/registrarAgenda", checkAuthMiddleware, async (req, res) => {
   }
 });
 
-router.get("/periodoCursado", checkAuthMiddleware, (req, res) => {
-  let fechaActual = new Date();
-  let añoActual = fechaActual.getFullYear();
+router.get("/periodoCursado", checkAuthMiddleware, async (req, res) => {
+  let idCicloActual = await ClaseCicloLectivo.obtenerIdCicloActual();
 
   try {
     CicloLectivo.aggregate([
       {
         $match: {
-          año: añoActual,
+          _id: mongoose.Types.ObjectId(idCicloActual),
         },
       },
       {
@@ -323,40 +337,12 @@ router.get("/periodoCursado", checkAuthMiddleware, (req, res) => {
   }
 });
 
-/*
-router.get("/", checkAuthMiddleware, (req, res) => {
-  let fechaActual = new Date();
-  CicloLectivo.findOne({ año: fechaActual.getFullYear() })
-    .then((cicloLectivo) => {
-      if (cicloLectivo) {
-        res.status(200).json({
-          cicloLectivo: cicloLectivo,
-          message:
-            "Se han obtenido las fechas correspondientes a este año exitosamente",
-          exito: true,
-        });
-      } else {
-        res.status(200).json({
-          message: "No se han obtenido las fechas correspondientes a este año",
-          exito: false,
-        });
-      }
-    })
-    .catch(() => {
-      res.status(500).json({
-        message: "Mensaje de error especifico",
-      });
-    });
-});*/
-
 // Endpoint que usa el director para cerrar un trimestre. Primero se fija si hay algun curso que no tenga cerrada
 // alguna materia. Si esta todo legal realiza la logica correspondiente.
 router.post("/cierreTrimestre", checkAuthMiddleware, async (req, res) => {
-  let materiasSinCerrar = await ClaseCicloLectivo.materiasSinCerrar(
-    req.query.trimestre
-  );
-
   let trimestre = parseInt(req.body.trimestre, 10);
+
+  let materiasSinCerrar = await ClaseCicloLectivo.materiasSinCerrar(trimestre);
 
   if (materiasSinCerrar.length != 0) {
     res.status(200).json({
@@ -368,7 +354,7 @@ router.post("/cierreTrimestre", checkAuthMiddleware, async (req, res) => {
   } else {
     let mensajeResponse = "Trimestre cerrado correctamente";
 
-    const idCicloActual = await ClaseCicloLectivo.obtenerIdCicloLectivo(false);
+    let idCicloActual = await ClaseCicloLectivo.obtenerIdCicloActual();
     let idEstadoCiclo;
 
     if (trimestre == 3) {
@@ -407,46 +393,38 @@ router.post("/cierreTrimestre", checkAuthMiddleware, async (req, res) => {
 // su estado correspondiente (tambien se cambia el estado de las CXM pendientes), Cambia estado ciclo actual
 router.get("/cierreExamenes", checkAuthMiddleware, async (req, res) => {
   try {
-    let idCicloActual = await ClaseCicloLectivo.obtenerIdCicloLectivo(false);
-    const idEstadoInactivo = await ClaseEstado.obtenerIdEstado(
-      "CicloLectivo",
-      "Inactivo"
-    );
+    let idCicloActual = await ClaseCicloLectivo.obtenerIdCicloActual();
+
     await ClaseInscripcion.cambiarEstadoExamPendientes(idCicloActual);
+
+    const idFinExamenes = await ClaseEstado.obtenerIdEstado(
+      "CicloLectivo",
+      "Fin examenes"
+    );
     await CicloLectivo.findByIdAndUpdate(idCicloActual, {
-      estado: idEstadoInactivo,
+      estado: idFinExamenes,
     });
 
     res.status(200).json({
       exito: true,
-      message: "Etapa de exámenes cerrado exitosamente.",
+      message: "Etapa de exámenes cerrada exitosamente.",
     });
   } catch (error) {
     res.status(500).json({
       exito: false,
-      message: "Ocurrió un error al intertar cerrar la etapa de exámenes.",
+      message: "Ocurrió un error al intentar cerrar la etapa de exámenes",
     });
   }
 });
 
-router.get("/aniosActualYPrevios", checkAuthMiddleware, (req, res) => {
-   CicloLectivo.aggregate([
-    {
-      $project: {
-        _id: 1,
-        anio: "$año",
-      },
-    },
-  ])
-    .then((anio) => {
-      let fechaActual = new Date().getFullYear();
-
+router.get("/anios", checkAuthMiddleware, (req, res) => {
+  CicloLectivo.find()
+    .then((ciclosLectivos) => {
       var respuesta = [];
-      anio.forEach((anio) => {
-        if(anio.anio.toString()<=fechaActual){
+      ciclosLectivos.forEach((ciclo) => {
         var anios = {
-          id: anio._id,
-          anio: anio.anio.toString(),
+          id: ciclo._id,
+          anio: ciclo.año.toString(),
         };
         respuesta.push(anios);
       }
@@ -463,6 +441,94 @@ router.get("/aniosActualYPrevios", checkAuthMiddleware, (req, res) => {
         error: error.message,
       });
     });
+});
+
+/*Devuelve todos los cursos del ciclo lectivo actual, cada uno de ello con las materias y los estados de
+esas materias */
+router.get("/curso/materia/estado", checkAuthMiddleware, async (req, res) => {
+  try {
+    let idCicloActual = await ClaseCicloLectivo.obtenerIdCicloActual();
+    let cursosConMXCYEstados = await Curso.aggregate([
+      {
+        $match: {
+          cicloLectivo: mongoose.Types.ObjectId(idCicloActual),
+        },
+      },
+      {
+        $unwind: {
+          path: "$materias",
+        },
+      },
+      {
+        $lookup: {
+          from: "materiasXCurso",
+          localField: "materias",
+          foreignField: "_id",
+          as: "MXC",
+        },
+      },
+      {
+        $lookup: {
+          from: "estado",
+          localField: "MXC.estado",
+          foreignField: "_id",
+          as: "estadoMXC",
+        },
+      },
+      {
+        $lookup: {
+          from: "materia",
+          localField: "MXC.idMateria",
+          foreignField: "_id",
+          as: "nombreMateria",
+        },
+      },
+      {
+        $project: {
+          estadoMXC: 1,
+          nombre: 1,
+          nombreMateria: 1,
+        },
+      },
+      {
+        $group: {
+          _id: "$nombre",
+          nombreMateria: {
+            $push: "$nombreMateria.nombre",
+          },
+          estado: {
+            $push: "$estadoMXC.nombre",
+          },
+        },
+      },
+    ]);
+
+    let responseCursos = [];
+    cursosConMXCYEstados.forEach((curso) => {
+      let datosCurso = { nombre: curso._id, materiasConEstado: [] };
+      curso.estado.forEach((estado, index) => {
+        let materiaConEstado = {
+          materia: curso.nombreMateria[index][0],
+          estado: estado[0],
+        };
+        datosCurso.materiasConEstado.push(materiaConEstado);
+      });
+      responseCursos.push(datosCurso);
+    });
+
+    res.status(200).json({
+      cursosEstados: responseCursos,
+      message:
+        "Se han obtenido los estados de las materias de los cursos exitosamente",
+      exito: true,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message:
+        "Ocurrió un error al querer obtener los estados de las materias de los cursos",
+      error: error.message,
+    });
+  }
 });
 
 module.exports = router;

@@ -1,3 +1,4 @@
+import { CicloLectivoService } from "src/app/cicloLectivo.service";
 import { Component, OnInit, ViewChild } from "@angular/core";
 import { MatAccordion } from "@angular/material/expansion";
 import { EstudiantesService } from "src/app/estudiantes/estudiante.service";
@@ -12,52 +13,26 @@ import { Subject } from "rxjs/internal/Subject";
 export class EstadoCursosComponent implements OnInit {
   @ViewChild(MatAccordion, { static: true }) accordion: MatAccordion;
 
-  materiasXCurso: any[] = [];
+  cursosEstados: any[] = [];
   displayedColumns: string[] = ["materia", "estado"];
   cursos: any[] = [];
-  fechaActual;
   isLoading = true;
   private unsubscribe: Subject<void> = new Subject();
 
-  constructor(private servicioEstudiante: EstudiantesService) {}
+  constructor(public servicioCicloLectivo: CicloLectivoService) {}
 
   ngOnInit(): void {
-    this.fechaActual = new Date();
-    this.obtenerCursos();
-  }
-
-  async obtenerCursos() {
-    this.servicioEstudiante
-      .obtenerCursos(this.fechaActual.getFullYear())
+    this.servicioCicloLectivo
+      .obtenerEstadoMateriasCursos()
       .pipe(takeUntil(this.unsubscribe))
       .subscribe((response) => {
-        this.cursos = response.cursos;
-        this.cursos.sort((a, b) =>
-          a.nombre.charAt(0) > b.nombre.charAt(0)
-            ? 1
-            : b.nombre.charAt(0) > a.nombre.charAt(0)
-            ? -1
-            : 0
-        );
-      });
-    setTimeout(() => {
-      this.obtenerMaterias();
-    }, 500);
-  }
-  obtenerMaterias() {
-    for (let i = 0; i < this.cursos.length; i++) {
-      this.servicioEstudiante
-        .obtenerMateriasDeCurso(this.cursos[i].id)
-        .pipe(takeUntil(this.unsubscribe))
-        .subscribe((respuesta) => {
-          this.materiasXCurso[i] = respuesta.materias;
-          this.materiasXCurso[i].sort((a, b) =>
-            a.nombre > b.nombre ? 1 : b.nombre > a.nombre ? -1 : 0
-          );
-        });
-      if (i == this.cursos.length - 1) {
+        this.cursosEstados = response.cursosEstados;
         this.isLoading = false;
-      }
-    }
+      });
+  }
+
+  ngOnDestroy() {
+    this.unsubscribe.next();
+    this.unsubscribe.complete();
   }
 }

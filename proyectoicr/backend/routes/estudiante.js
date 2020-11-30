@@ -188,31 +188,37 @@ router.delete("/borrar", checkAuthMiddleware, async (req, res, next) => {
 });
 
 //Dada una id de estudiante, se fija si esta inscripto en un curso
-router.get("/curso", checkAuthMiddleware, (req, res) => {
-  Estudiante.findOne({ _id: req.query.idEstudiante, activo: true })
-    .then((estudiante) => {
-      Estado.findById(estudiante.estado).then((estado) => {
-        if (estado.nombre == "Inscripto") {
-          res.status(200).json({
-            message:
-              "El estudiante seleccionado ya se encuentra inscripto en un curso",
-            exito: true,
-          });
-        } else {
-          res.status(200).json({
-            message: "El estudiante seleccionado no esta inscripto en un curso",
-            exito: false,
-          });
-        }
-      });
-    })
-    .catch((error) => {
-      res.status(500).json({
-        message:
-          "Ocurrió un error al validar si el estudiante esta inscripto en un curso",
-        error: error.message,
-      });
+router.get("/curso", checkAuthMiddleware, async (req, res) => {
+  try {
+    let idEstadoActiva = await ClaseEstado.obtenerIdEstado(
+      "Inscripcion",
+      "Activa"
+    );
+
+    let inscripcion = await Inscripcion.findOne({
+      idEstudiante: req.query.idEstudiante,
+      estado: idEstadoActiva,
     });
+
+    if (inscripcion) {
+      return res.status(200).json({
+        message:
+          "El estudiante seleccionado ya se encuentra inscripto en un curso",
+        exito: true,
+      });
+    }
+
+    res.status(200).json({
+      message: "El estudiante seleccionado no esta inscripto en un curso",
+      exito: false,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message:
+        "Ocurrió un error al validar si el estudiante esta inscripto en un curso",
+      error: error.message,
+    });
+  }
 });
 
 //Obtiene un estudiante dado un numero y tipo de documento
@@ -447,84 +453,37 @@ router.get("/cuotasEstudiante", checkAuthMiddleware, async (req, res) => {
 //Obtiene todas las sanciones de un estudiante pasado por parámetro
 //@params: id del estudiante
 router.get("/sancionesEstudiante", checkAuthMiddleware, async (req, res) => {
-  let date = new Date();
-  CicloLectivo.findOne({ año: date.getFullYear() }).then((cicloLectivo) => {
-    Estudiante.aggregate([
-      {
-        $match: {
-          _id: mongoose.Types.ObjectId(req.query.idEstudiante),
-          activo: true,
-        },
-      },
-      {
-        $lookup: {
-          from: "inscripcion",
-          localField: "_id",
-          foreignField: "idEstudiante",
-          as: "InscripcionEstudiante",
-        },
-      },
-      {
-        $unwind: {
-          path: "$InscripcionEstudiante",
-        },
-      },
-      {
-        $match: {
-          "InscripcionEstudiante.cicloLectivo": cicloLectivo._id,
-        },
-      },
-      {
-        $project: {
-          _id: 1,
-          InscripcionEstudiante: 1,
-        },
-      },
-      {
-        $unwind: {
-          path: "$InscripcionEstudiante",
-        },
-      },
-      {
-        $project: {
-          _id: 0,
-          "InscripcionEstudiante.sanciones": 1,
-        },
-      },
-    ])
-      .then((inscripciones) => {
-        let sanciones = [];
-        if (inscripciones.length > 1) {
-          inscripciones.forEach((inscripcion) => {
-            sanciones = sanciones.concat(
-              inscripcion.InscripcionEstudiante.sanciones
-            );
-          });
-        } else {
-          sanciones = inscripciones[0].InscripcionEstudiante.sanciones;
-        }
-
-        if (sanciones.length == 0) {
-          return res.status(200).json({
-            message: "El estudiante no tiene sanciones",
-            exito: false,
-            sanciones: [],
-          });
-        } else {
-          return res.status(200).json({
-            message: "Se obtuvieron las sanciones exitosamente",
-            exito: true,
-            sanciones: sanciones,
-          });
-        }
-      })
-      .catch((error) => {
-        res.status(500).json({
-          message: "Ocurrió un error al querer obtener las sanciones",
-          error: error.message,
+  let idCicloActual = await ClaseCicloLectivo.obtenerIdCicloActual();
+  let idEstadoActiva = await ClaseEstado.obtenerIdEstado(
+    "Inscripcion",
+    "Activa"
+  );
+  Inscripcion.findOne({
+    idEstudiante: req.query.idEstudiante,
+    cicloLectivo: idCicloActual,
+    estado: idEstadoActiva,
+  })
+    .then((inscripcion) => {
+      if (inscripcion.sanciones.length == 0) {
+        return res.status(200).json({
+          message: "El estudiante no tiene sanciones",
+          exito: false,
+          sanciones: [],
         });
+      } else {
+        return res.status(200).json({
+          message: "Se obtuvieron las sanciones exitosamente",
+          exito: true,
+          sanciones: inscripcion.sanciones,
+        });
+      }
+    })
+    .catch((error) => {
+      res.status(500).json({
+        message: "Ocurrió un error al querer obtener las sanciones",
+        error: error.message,
       });
-  });
+    });
 });
 
 //Obtiene la agenda de un curso (materias, horario y día dictadas)

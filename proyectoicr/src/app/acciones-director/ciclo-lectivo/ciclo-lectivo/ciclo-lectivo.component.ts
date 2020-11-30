@@ -39,36 +39,77 @@ export class CicloLectivoComponent implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe((result) => {
-      switch (this.id) {
-        case 1:
-          this.primerTrimestre = true;
-          this.iniciarCursado = false;
-          break;
-        case 2:
-          this.segundoTrimestre = true;
-          this.primerTrimestre = false;
-          this.cerrarTrimestre(1);
-          break;
-        case 3:
-          this.tercerTrimestre = true;
-          this.segundoTrimestre = false;
-          this.cerrarTrimestre(2);
-          break;
-        case 4:
-          this.fechasExamen = true;
-          this.tercerTrimestre = false;
-          this.cerrarTrimestre(3);
-          break;
-        case 5:
-          this.iniciarCursado = true;
-          this.fechasExamen = false;
-          this.cerrarEtapaExamenes();
-          break;
+      if (result) {
+        switch (this.id) {
+          case 1:
+            this.onIniciarCursado();
+            break;
+          case 2:
+            this.cerrarTrimestre(1);
+            break;
+          case 3:
+            this.cerrarTrimestre(2);
+            break;
+          case 4:
+            this.cerrarTrimestre(3);
+            break;
+          case 5:
+            this.cerrarEtapaExamenes();
+            break;
+        }
       }
     });
   }
 
-  ngOnInit(): void {}
+  ngOnInit() {
+    this.servicioCicloLectivo
+      .obtenerEstadoCicloLectivo()
+      .subscribe((response) => {
+        switch (response.estadoCiclo) {
+          case "En primer trimestre":
+            this.onVariableChange(1);
+            break;
+          case "En segundo trimestre":
+            this.onVariableChange(2);
+            break;
+          case "En tercer trimestre":
+            this.onVariableChange(3);
+            break;
+          case "En examenes":
+            this.onVariableChange(4);
+            break;
+          case "Fin examenes":
+            this.onVariableChange(5);
+            break;
+        }
+      });
+  }
+
+  onVariableChange(nroEstado) {
+    this.primerTrimestre = false;
+    this.segundoTrimestre = false;
+    this.tercerTrimestre = false;
+    this.iniciarCursado = false;
+    this.fechasExamen = false;
+
+    switch (nroEstado) {
+      case 1:
+        this.primerTrimestre = true;
+        break;
+      case 2:
+        this.segundoTrimestre = true;
+        break;
+      case 3:
+        this.tercerTrimestre = true;
+        break;
+      case 4:
+        this.fechasExamen = true;
+        break;
+      case 5:
+        this.iniciarCursado = true;
+        break;
+    }
+  }
 
   onCierreInicioCursado() {
     this.id = 1;
@@ -104,39 +145,56 @@ export class CicloLectivoComponent implements OnInit {
     this.servicioCicloLectivo.cierreEtapaExamenes().subscribe((response) => {
       if (response.exito) {
         this.showSnackbar(response.message, "snack-bar-exito");
-      }else{
+        this.onVariableChange(5);
+      } else {
         this.showSnackbar(response.message, "snack-bar-fracaso");
       }
     });
   }
 
-  cerrarTrimestre(trimestre) {
-    this.servicioCicloLectivo.cierreTrimestre(trimestre).subscribe((response) => {
+  onIniciarCursado() {
+    this.servicioCicloLectivo.inicioCursado().subscribe((response) => {
       if (response.exito) {
         this.showSnackbar(response.message, "snack-bar-exito");
-      }else{
-        let cursosYMaterias;
-        for (const cursoYMateria of response.materiasSinCerrar) {
-          cursosYMaterias+=`${cursoYMateria.materia} de ${cursoYMateria.curso}, `
-        }
-        let mensaje= response.message+cursosYMaterias.slice(0, cursosYMaterias.length-2);
+        this.onVariableChange(1);
+      } else {
         this.dialog.open(PopUpMateriasSinCerrar, {
           width: "250px",
-          data: { mensaje: mensaje },
+          data: { mensaje: response.message },
         });
       }
     });
   }
 
+  cerrarTrimestre(trimestre) {
+    this.servicioCicloLectivo
+      .cierreTrimestre(trimestre)
+      .subscribe((response) => {
+        if (response.exito) {
+          this.onVariableChange(trimestre + 1);
+          this.showSnackbar(response.message, "snack-bar-exito");
+        } else {
+          let cursosYMaterias = "";
+          for (const cursoYMateria of response.materiasSinCerrar) {
+            cursosYMaterias += `${cursoYMateria.materia} de ${cursoYMateria.curso}, `;
+          }
+          let mensaje =
+            response.message +
+            cursosYMaterias.slice(0, cursosYMaterias.length - 2);
+
+          this.dialog.open(PopUpMateriasSinCerrar, {
+            width: "250px",
+            data: { mensaje: mensaje },
+          });
+        }
+      });
+  }
+
   showSnackbar(mensaje, tipo) {
-    this.snackBar.open(
-      mensaje,
-      "",
-      {
-        panelClass: [tipo],
-        duration: 4000,
-      }
-    );
+    this.snackBar.open(mensaje, "", {
+      panelClass: [tipo],
+      duration: 4000,
+    });
   }
 }
 
@@ -152,12 +210,10 @@ export class PopUpCerrarEtapa {
   ) {}
 
   onNoClick(): void {
-    this.data.resultYes = false;
-    this.dialogRef.close();
+    this.dialogRef.close(false);
   }
   onYesClick() {
-    this.data.resultYes = true;
-    this.dialogRef.close();
+    this.dialogRef.close(true);
   }
 }
 
