@@ -310,8 +310,8 @@
       mat-raised-button
       class="button-primary"
       (click)="onGuardar()"
-      *ngIf="cursoSelected && dataSource.data.length != 0 && huboCambios"
-      [disabled]="fueraPeriodoDefinirAgenda"
+      *ngIf="cursoSelected && dataSource.data.length != 0 "
+      [disabled]="fueraPeriodoDefinirAgenda || !huboCambios"
     >
       Guardar
     </button>

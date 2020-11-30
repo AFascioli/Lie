@@ -15,34 +15,41 @@ import * as pluginDataLabels from "chartjs-plugin-datalabels";
 import { jsPDF } from "jspdf";
 import html2canvas from "html2canvas";
 
-
 @Component({
   selector: "app-rendimiento-curso",
   templateUrl: "./rendimiento-curso.component.html",
   styleUrls: ["./rendimiento-curso.component.css"],
 })
 export class RendimientoCursoComponent implements OnInit {
+  cursos;
   cursoS;
   cursoSNombre;
+  cursoNotSelected = true;
+
   materiaS;
   materiaSNombre;
-  year: any[] = [];
-  cursos;
-  fechaActual: any;
-  rolConPermisosEdicion = false;
-  cursoNotSelected = true;
-  isLoading = false;
   materias: any[] = [];
   materiaSelec: boolean;
-  estudiantes: any = [];
-  docente: any;
-  dataSource: MatTableDataSource<any>;
+
+  idDocente;
+
+  year: any[] = [];
+  fechaActual: any;
+
+  rolConPermisosEdicion = false;
+
   isLoading2 = false;
+  isLoading3 = true;
+
+  estudiantes: any = [];
+
+  dataSource: MatTableDataSource<any>;
+
   promedioT1: any = [];
   promedioT2: any = [];
   promedioT3: any = [];
   promedio: any = [];
-  isLoading3 = true;
+
   //Intervalos
   t1_iMI3 = 0;
   t1_iE3Y6 = 0;
@@ -60,35 +67,37 @@ export class RendimientoCursoComponent implements OnInit {
   f_iE3Y6 = 0;
   f_iE6y8 = 0;
   f_iM8 = 0;
+
   tipoGrafico;
-  titulo = "";
-  //
-  private unsubscribe: Subject<void> = new Subject();
+
   barChartLabels: Label[] = [];
+  barChartLabelsH: Label[] = [];
+  barDataSet = [];
+  barDataSet1 = [];
+  barDataSet2 = [];
+  barDataSet3 = [];
   legend: boolean = false;
   public barChartOptions: ChartOptions;
   public barChartOptions1: ChartOptions;
   public barChartOptions2: ChartOptions;
   public barChartOptions3: ChartOptions;
-  barDataSet = [];
-  barDataSet1 = [];
-  barDataSet2 = [];
-  barDataSet3 = [];
-
-  public barChartType: ChartType; //= "pie"; //"line" | "bar" | "horizontalBar" | "radar" | "doughnut" | "polarArea" | "bubble" | "pie" | "scatter"
+  public barChartType: ChartType;
   public barChartPlugins = [pluginDataLabels];
   public barChartLegend;
+
+  private unsubscribe: Subject<void> = new Subject();
 
   constructor(
     public servicioEstudiante: EstudiantesService,
     public reportService: ReportesService,
     public servicioCalificaciones: CalificacionesService,
     public servicioCicloLectivo: CicloLectivoService,
-    public servicioEstudianteAutenticacion: AutenticacionService
+    public servicioAutenticacion: AutenticacionService
   ) {}
 
   ngOnInit(): void {
     this.fechaActual = new Date().getFullYear();
+    this.onTipoGraficoChange(0);
   }
 
   onYearSelected(yearSelected) {
@@ -99,13 +108,13 @@ export class RendimientoCursoComponent implements OnInit {
   }
 
   obtenerCursos(yearS) {
-    if (this.servicioEstudianteAutenticacion.getRol() == "Docente") {
-      this.servicioEstudianteAutenticacion
-        .obtenerIdEmpleado(this.servicioEstudianteAutenticacion.getId())
+    if (this.servicioAutenticacion.getRol() == "Docente") {
+      this.servicioAutenticacion
+        .obtenerIdEmpleado(this.servicioAutenticacion.getId())
         .subscribe((response) => {
-          this.docente = response.id;
+          this.idDocente = response.id;
           this.servicioEstudiante
-            .obtenerCursosDeDocentePorCiclo(this.docente, yearS)
+            .obtenerCursosDeDocente(this.idDocente)
             .pipe(takeUntil(this.unsubscribe))
             .subscribe((response) => {
               this.cursos = response.cursos;
@@ -137,31 +146,29 @@ export class RendimientoCursoComponent implements OnInit {
 
   onCursoSeleccionado(curso, materia: NgModel) {
     this.cursoS = curso;
-    this.cursoSNombre= this.obtenerNombreCurso(curso.value);
+    this.cursoSNombre = this.obtenerNombreCurso(curso.value);
     this.materiaS = materia;
     this.materiaSelec = false;
     this.estudiantes = [];
     this.materias = [];
     materia.reset();
-    if (
-      this.rolConPermisosEdicion &&
-      this.servicioEstudianteAutenticacion.getRol() != "Admin" &&
-      this.servicioEstudianteAutenticacion.getRol() != "Director"
-    ) {
+    if (this.servicioAutenticacion.getRol() != "Docente") {
       this.servicioEstudiante
-        .obtenerMateriasXCursoXDocente(curso.value, this.docente)
+        .obtenerMateriasDeCurso(curso.value)
         .pipe(takeUntil(this.unsubscribe))
         .subscribe((respuesta) => {
-          this.materias = respuesta.materias.sort((a, b) =>
+          this.materias = respuesta.materias;
+          this.materias.sort((a, b) =>
             a.nombre > b.nombre ? 1 : b.nombre > a.nombre ? -1 : 0
           );
         });
     } else {
       this.servicioEstudiante
-        .obtenerMateriasDeCurso(curso.value)
+        .obtenerMateriasXCursoXDocente(curso.value, this.idDocente)
         .pipe(takeUntil(this.unsubscribe))
         .subscribe((respuesta) => {
-          this.materias = respuesta.materias.sort((a, b) =>
+          this.materias = respuesta.materias;
+          this.materias.sort((a, b) =>
             a.nombre > b.nombre ? 1 : b.nombre > a.nombre ? -1 : 0
           );
         });
@@ -169,7 +176,7 @@ export class RendimientoCursoComponent implements OnInit {
   }
 
   obtenerNotas(form: NgForm) {
-    this.materiaSNombre= this.obtenerNombreMateria(form.value.materia);
+    this.materiaSNombre = this.obtenerNombreMateria(form.value.materia);
     this.isLoading2 = true;
     if (form.value.curso != "" || form.value.materia != "") {
       this.servicioCalificaciones
@@ -395,15 +402,31 @@ export class RendimientoCursoComponent implements OnInit {
 
   onTipoGraficoChange(grafico) {
     this.isLoading3 = true;
+    switch (grafico) {
+      case 0:
+        grafico = "pie";
+        break;
+      case 1:
+        grafico = "doughnut";
+        break;
+      case 2:
+        grafico = "bar";
+        break;
+      case 3:
+        grafico = "horizontalBar";
+        break;
+      default:
+        break;
+    }
     this.barChartType = grafico;
-    if (grafico.value == "pie" || grafico.value == "doughnut")
-      this.legend = true;
+    this.tipoGrafico = grafico;
+    if (grafico == "pie" || grafico == "doughnut") this.legend = true;
     else this.legend = false;
 
     if (this.cursoS) this.onCursoSeleccionado(this.cursoS, this.materiaS);
     else
       this.servicioCicloLectivo
-        .obtenerAniosCicloLectivo()
+        .obtenerAniosCicloLectivoActualYPrevios()
         .pipe(takeUntil(this.unsubscribe))
         .subscribe((response) => {
           this.year = response.respuesta;
@@ -462,20 +485,28 @@ export class RendimientoCursoComponent implements OnInit {
       },
     ];
 
-    this.barChartLabels = [
-      "Menor igual a 3",
-      "Entre 3 y 6",
-      "Entre 6 y 8 inc",
-      "Mayor a 8",
+    // this.barChartLabels = [
+    //   "Promedio menor o igual a 3",
+    //   "Promedio entre 3 y 6 inclusive",
+    //   "Promedio entre 6 y 8 inclusive",
+    //   "Promedio mayor a 8",
+    // ];
+    this.barChartLabelsH = [
+      "Promedio <= 3",
+      "3 < Promedio <= 6",
+      "6 < Promedio <= 8",
+      "Promedio > 8",
     ];
+
     this.barChartOptions = {
       responsive: true,
       legend: {
         display: this.legend,
         labels: {
-          fontSize: 14,
-          fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif',
-          fontColor:'#181a21',
+          fontSize: 12,
+          fontFamily:
+            '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif',
+          fontColor: "#181a21",
         },
         position: "right",
       },
@@ -484,16 +515,18 @@ export class RendimientoCursoComponent implements OnInit {
           font: {
             size: 14,
             weight: "bold",
-            family: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif',
+            family:
+              '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif',
           },
         },
       },
       title: {
         display: true,
-        text: "Trimestre 1" ,
+        text: "Trimestre 1",
         fontSize: 16,
-        fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif',
-        fontColor:'#181a21',
+        fontFamily:
+          '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif',
+        fontColor: "#181a21",
       },
     };
     this.barChartOptions1 = {
@@ -501,9 +534,10 @@ export class RendimientoCursoComponent implements OnInit {
       legend: {
         display: this.legend,
         labels: {
-          fontSize: 14,
-          fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif',
-          fontColor:'#181a21',
+          fontSize: 12,
+          fontFamily:
+            '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif',
+          fontColor: "#181a21",
         },
         position: "right",
       },
@@ -512,16 +546,18 @@ export class RendimientoCursoComponent implements OnInit {
           font: {
             size: 14,
             weight: "bold",
-            family: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif',
+            family:
+              '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif',
           },
         },
       },
       title: {
         display: true,
-        text: "Trimestre 2" ,
+        text: "Trimestre 2",
         fontSize: 16,
-        fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif',
-        fontColor:'#181a21',
+        fontFamily:
+          '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif',
+        fontColor: "#181a21",
       },
     };
     this.barChartOptions2 = {
@@ -529,9 +565,10 @@ export class RendimientoCursoComponent implements OnInit {
       legend: {
         display: this.legend,
         labels: {
-          fontSize: 14,
-          fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif',
-          fontColor:'#181a21',
+          fontSize: 12,
+          fontFamily:
+            '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif',
+          fontColor: "#181a21",
         },
         position: "right",
       },
@@ -540,16 +577,18 @@ export class RendimientoCursoComponent implements OnInit {
           font: {
             size: 14,
             weight: "bold",
-            family: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif',
+            family:
+              '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif',
           },
         },
       },
       title: {
         display: true,
-        text: "Trimestre 3" ,
+        text: "Trimestre 3",
         fontSize: 16,
-        fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif',
-        fontColor:'#181a21',
+        fontFamily:
+          '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif',
+        fontColor: "#181a21",
       },
     };
     this.barChartOptions3 = {
@@ -558,8 +597,9 @@ export class RendimientoCursoComponent implements OnInit {
         display: this.legend,
         labels: {
           fontSize: 14,
-          fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif',
-          fontColor:'#181a21',
+          fontFamily:
+            '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif',
+          fontColor: "#181a21",
         },
         position: "bottom",
       },
@@ -568,7 +608,8 @@ export class RendimientoCursoComponent implements OnInit {
           font: {
             size: 14,
             weight: "bold",
-            family: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif',
+            family:
+              '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif',
           },
         },
       },
@@ -576,25 +617,31 @@ export class RendimientoCursoComponent implements OnInit {
         display: true,
         text: "General",
         fontSize: 16,
-        fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif',
-        fontColor:'#181a21',
+        fontFamily:
+          '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif',
+        fontColor: "#181a21",
       },
     };
   }
 
   public descargarPDF() {
     var element = document.getElementById("content");
+
+    const o_date = new Intl.DateTimeFormat();
+    const f_date = (m_ca, m_it) => Object({ ...m_ca, [m_it.type]: m_it.value });
+    const m_date = o_date.formatToParts().reduce(f_date, {});
+
     html2canvas(element).then((canvas) => {
       var imgData = canvas.toDataURL("image/png");
       var doc = new jsPDF();
       var imgH = (canvas.height * 208) / canvas.width;
       var imgICR = new Image();
-      imgICR.src = 'assets/reports/logoICR.png'
+      imgICR.src = "assets/reports/logoICR.png";
       var imgLIE = new Image();
-      imgLIE.src = 'assets/reports/logoLIE.png'
-      doc.addImage(imgICR,10,2,15,15);
-      doc.addImage(imgLIE,190,4,10,10);
-      doc.setTextColor(156,156,156);
+      imgLIE.src = "assets/reports/logoLIE.png";
+      doc.addImage(imgICR, 10, 2, 15, 15);
+      doc.addImage(imgLIE, 190, 4, 10, 10);
+      doc.setTextColor(156, 156, 156);
       doc.setFontSize(10);
       doc.setFont("Segoe UI");
       doc.text("Instituto Cristo Rey", 94, 7);
@@ -602,7 +649,19 @@ export class RendimientoCursoComponent implements OnInit {
       doc.setDrawColor(184, 184, 184);
       doc.line(10, 17, 200, 17);
       doc.addImage(imgData, 0, 30, 208, imgH);
-      doc.save("RendimientoCurso.pdf");
+      doc.text(
+        "Fecha: " + m_date.day + "/" + m_date.month + "/" + m_date.year,
+        10,
+        295 - 5
+      );
+      doc.text("Página: 1", 180, 295 - 5);
+      doc.save(
+        "RendimientoCurso-" +
+          this.cursoSNombre +
+          "-" +
+          this.materiaSNombre +
+          ".pdf"
+      );
     });
   }
 }

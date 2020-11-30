@@ -429,8 +429,8 @@ router.get("/cierreExamenes", checkAuthMiddleware, async (req, res) => {
   }
 });
 
-router.get("/anios", checkAuthMiddleware, (req, res) => {
-  CicloLectivo.aggregate([
+router.get("/aniosActualYPrevios", checkAuthMiddleware, (req, res) => {
+   CicloLectivo.aggregate([
     {
       $project: {
         _id: 1,
@@ -439,13 +439,17 @@ router.get("/anios", checkAuthMiddleware, (req, res) => {
     },
   ])
     .then((anio) => {
+      let fechaActual = new Date().getFullYear();
+
       var respuesta = [];
       anio.forEach((anio) => {
+        if(anio.anio.toString()<=fechaActual){
         var anios = {
           id: anio._id,
           anio: anio.anio.toString(),
         };
         respuesta.push(anios);
+      }
       });
       res.status(200).json({
         respuesta: respuesta,

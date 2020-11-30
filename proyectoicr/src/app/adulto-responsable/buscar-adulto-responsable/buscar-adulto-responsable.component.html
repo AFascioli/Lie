@@ -26,6 +26,7 @@
         [disabled]="!buscarPorNomYAp"
         ngModel
         #apellido="ngModel"
+        [(ngModel)]="apellidoAR"
         matInput
         name="apellido"
         placeholder="Ingrese apellido"
@@ -41,6 +42,7 @@
         [disabled]="!buscarPorNomYAp"
         ngModel
         #nombre="ngModel"
+        [(ngModel)]="nombreAR"
         matInput
         name="nombre"
         placeholder="Ingrese nombre"
@@ -60,6 +62,7 @@
         #tipoDocumento="ngModel"
         matNativeControl
         required
+        [(ngModel)]="tipoDocAR"
       >
         <mat-option value="DNI">DNI</mat-option>
         <mat-option value="Cedula de Identidad">Cédula de Identidad</mat-option>
@@ -76,6 +79,7 @@
         [disabled]="buscarPorNomYAp"
         matInput
         name="numeroDocumento"
+        [(ngModel)]="nroDocAR"
         ngModel
         #numeroDocumento="ngModel"
         maxlength="8"
@@ -90,7 +94,7 @@
       <button class="button-primary" (click)="onBuscar(form)" mat-raised-button>
         Buscar
       </button>
-      <button mat-raised-button [routerLink]="['/home']" class="button-primary">
+      <button mat-raised-button (click)="onVolver() "class="button-primary">
         Volver
       </button>
     </div>

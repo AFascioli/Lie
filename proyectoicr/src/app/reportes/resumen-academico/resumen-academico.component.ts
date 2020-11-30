@@ -51,16 +51,22 @@ export class ResumenAcademicoComponent implements OnInit {
       .subscribe((response) => {
         this.estudiantes = response.estudiante;
         this.estudiantes.sort((a, b) =>
-          a.apellido.charAt(0) > b.apellido.charAt(0)
+          a.apellido.toLowerCase().charAt(0) > b.apellido.toLowerCase().charAt(0)
             ? 1
-            : b.apellido.charAt(0) > a.apellido.charAt(0)
+            : b.apellido.toLowerCase().charAt(0) > a.apellido.toLowerCase().charAt(0)
             ? -1
             : 0
         );
         this.isLoading = false;
       });
   }
-
+  obtenerNombreCurso(idCurso) {
+    for (let index = 0; index < this.cursos.length; index++) {
+      if (this.cursos[index].id == idCurso) {
+        return this.cursos[index].nombre;
+      }
+    }
+  }
   obtenerCursos() {
     this.servicioEstudiante
       .obtenerCursos(this.fechaActual.getFullYear())
@@ -77,6 +83,7 @@ export class ResumenAcademicoComponent implements OnInit {
       });
   }
   verResumenAcademico(i) {
+    this.reportService.nombreCurso= this.obtenerNombreCurso(this.reportService.cursoSeleccionado);
     this.reportService.idEstudianteSeleccionado = i._id;
     this.router.navigate(["reporteResumenAcademico"]);
   }
@@ -161,9 +168,10 @@ export class ReporteResumenAcademicoComponent implements OnInit {
   }
 
   calcularSumatoriaSanciones() {
+    console.log(this.sanciones);
     this.sanciones.forEach((sancion) => {
       switch (sancion.tipo) {
-        case "Llamado de atencón":
+        case "Llamado de atencion":
           this.sumatoriaSanciones[0] += sancion.cantidad;
           break;
         case "Apercibimiento":
@@ -295,8 +303,13 @@ export class ReporteResumenAcademicoComponent implements OnInit {
     else this.promedioGeneral = 0;
   }
 
+
   public descargarPDF() {
     var element = document.getElementById("content");
+
+    const o_date = new Intl.DateTimeFormat();
+    const f_date = (m_ca, m_it) => Object({ ...m_ca, [m_it.type]: m_it.value });
+    const m_date = o_date.formatToParts().reduce(f_date, {});
 
     html2canvas(element).then((canvas) => {
       var imgData = canvas.toDataURL("image/png");
@@ -317,7 +330,9 @@ export class ReporteResumenAcademicoComponent implements OnInit {
       doc.setDrawColor(184, 184, 184);
       doc.line(10, 17, 200, 17);
       doc.addImage(imgData, 0, 30, 208, imgH);
-      doc.save("ResumenAcadémico.pdf");
+      doc.text("Fecha: " + m_date.day + '/' + m_date.month + '/' + m_date.year, 10, 295 - 5);
+      doc.text("Página: 1", 180, 295 - 5);
+      doc.save("ResumenAcadémico-"+this.reportService.nombreCurso+"-"+this.estudiante+".pdf");
     });
   }
 }

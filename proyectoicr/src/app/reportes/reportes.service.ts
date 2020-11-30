@@ -9,6 +9,7 @@ export class ReportesService {
   public idEstudianteSeleccionado: string;
   public retornoDeResumenAcademico: boolean;
   public cursoSeleccionado:string;
+  public nombreCurso:string;
 
   constructor(public http: HttpClient) {
     this.retornoDeResumenAcademico = false;

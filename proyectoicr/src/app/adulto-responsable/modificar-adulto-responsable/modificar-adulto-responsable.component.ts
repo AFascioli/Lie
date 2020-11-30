@@ -118,4 +118,9 @@ export class ModificarAdultoResponsableComponent implements OnInit {
       });
     }
   }
+
+  onVolver(form: NgForm){
+    this.router.navigate(["./buscarAdultoResponsable"]);
+    this.servicioAR.retornoDesdeAcciones=true;
+  }
 }
