@@ -211,6 +211,7 @@ export class EstudiantesService implements OnDestroy {
   }
 
   public notificarReunionAR(adultosResponsables, cuerpo, idUsuarioEmpleado) {
+    console.log(idUsuarioEmpleado);
     return this.http.post<{
       message: string;
       exito: boolean;
@@ -404,5 +405,14 @@ export class EstudiantesService implements OnDestroy {
       exito: boolean;
       message: string;
     }>(environment.apiUrl + "/estudiante/id", { params: params });
+  }
+
+  public obtenerEstudiantesDeCurso(curso: string) {
+    let params = new HttpParams().set("curso", curso);
+    return this.http.get<{
+      estudiante: Estudiante;
+      exito: boolean;
+      message: string;
+    }>(environment.apiUrl + "/curso/estudiantes", { params: params });
   }
 }

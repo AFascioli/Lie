@@ -1,0 +1,37 @@
+::ng-deep
+  .mat-button-wrapper
+  > mat-icon.notranslate.material-icons.mat-icon-no-color.ng-star-inserted {
+  background: white !important;
+  border-radius: 50% !important;
+  color: black !important;
+}
+
+mat-icon {
+  display: flex;
+  margin-left: auto;
+}
+
+mat-expansion-panel {
+  margin-bottom: 20px !important;
+  margin-top: 10px;
+}
+
+.div-button {
+  text-align: right;
+  margin-bottom: 2%;
+}
+
+li {
+  margin-left: 10px;
+  list-style-type: circle;
+}
+
+.columnas-normales {
+  width: 22% !important;
+  text-align: center;
+}
+
+.columnas-chicas {
+  width: 8% !important;
+  text-align: center;
+}

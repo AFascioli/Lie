@@ -427,6 +427,7 @@ router.get("/anios", checkAuthMiddleware, (req, res) => {
           anio: ciclo.año.toString(),
         };
         respuesta.push(anios);
+      }
       });
       res.status(200).json({
         respuesta: respuesta,

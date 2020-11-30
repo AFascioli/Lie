@@ -130,6 +130,7 @@ export class CicloLectivoService implements OnDestroy {
       trimestre: trimestre,
     });
   }
+  
   obtenerAniosCicloLectivo() {
     return this.http.get<{
       exito: boolean;

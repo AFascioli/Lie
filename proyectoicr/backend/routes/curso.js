@@ -1241,7 +1241,7 @@ router.get("/agenda", checkAuthMiddleware, (req, res) => {
           },
         ]).then((agendaCompleta) => {
           if (agendaCompleta[0].horarios[0] == null) {
-            return res.json({
+            return res.status(200).json({
               exito: false,
               message: "No existen horarios registrados para este curso",
               agenda: [],
@@ -1295,7 +1295,9 @@ router.post("/eliminarHorario", checkAuthMiddleware, (req, res) => {
         Curso.findByIdAndUpdate(req.body.idCurso, {
           $pull: { materias: { $in: req.body.agenda.idMXC } },
         }).then(() => {
-          res.json({ exito: true, message: "Horario borrado exitosamente" });
+          res
+            .status(200)
+            .json({ exito: true, message: "Horario borrado exitosamente" });
         });
       });
     })
@@ -1407,10 +1409,14 @@ router.post("/agenda", checkAuthMiddleware, async (req, res) => {
       Curso.findByIdAndUpdate(req.body.idCurso, {
         $push: { materias: { $each: vectorIdsMXC } },
       }).then(() => {
-        res.json({ exito: true, message: "Materias agregadas correctamente" });
+        res
+          .status(200)
+          .json({ exito: true, message: "Materias agregadas correctamente" });
       });
     } else {
-      res.json({ exito: true, message: "Horarios modificados correctamente" });
+      res
+        .status(200)
+        .json({ exito: true, message: "Horarios modificados correctamente" });
     }
   } catch (error) {
     res.status(500).json({
@@ -1925,5 +1931,149 @@ router.post(
     }
   }
 );
+
+/*router.get("/estudiantes", checkAuthMiddleware, async (req, res) => {
+  let idEstadoActiva = await ClaseEstado.obtenerIdEstado(
+    "Inscripcion",
+    "Activa"
+  );
+  Inscripcion.aggregate([
+    {
+      $lookup: {
+        from: "estudiante",
+        localField: "idEstudiante",
+        foreignField: "_id",
+        as: "datosEstudiante",
+      },
+    },
+    {
+      $project: {
+        "datosEstudiante._id": 1,
+        "datosEstudiante.nombre": 1,
+        "datosEstudiante.apellido": 1,
+        idCurso: 1,
+        calificacionesXMateria: 1,
+        estado: 1,
+      },
+    },
+    {
+      $lookup: {
+        from: "curso",
+        localField: "idCurso",
+        foreignField: "_id",
+        as: "curso",
+      },
+    },
+    {
+      $match: {
+        "curso._id": mongoose.Types.ObjectId(req.query.idCurso),
+        estado: mongoose.Types.ObjectId(idEstadoActiva),
+      },
+    },
+    {
+      $project: {
+        "datosEstudiante._id": 1,
+        "datosEstudiante.nombre": 1,
+        "datosEstudiante.apellido": 1,
+        "curso.nombre": 1,
+      },
+    },
+    {
+      $unwind: {
+        path: "$datosEstudiante",
+      },
+    },
+    {
+      $unwind: {
+        path: "$curso",
+      },
+    },
+  ])
+    .then((estudiantes) => {
+      res.status(200).json({
+        estudiantes: estudiantes,
+        message: "Se obtuvieron los estudiantes de un curso correctamente",
+        exito: true,
+      });
+    })
+    .catch((error) => {
+      res.status(500).json({
+        message:
+          "Ocurrió un error al querer obtener los estudiantes de un curso",
+        error: error.message,
+      });
+    });
+});
+*/
+
+router.get("/estudiantes", checkAuthMiddleware, async (req, res) => {
+  let idEstadoActiva = await ClaseEstado.obtenerIdEstado(
+    "Inscripcion",
+    "Activa"
+  );
+  let idEstadoSuspendido = await ClaseEstado.obtenerIdEstado(
+    "Inscripcion",
+    "Suspendido"
+  );
+  Inscripcion.aggregate([
+    {
+      $lookup: {
+        from: "curso",
+        localField: "idCurso",
+        foreignField: "_id",
+        as: "curso",
+      },
+    },
+    {
+      $match: {
+        idCurso: mongoose.Types.ObjectId(req.query.curso),
+        estado: {
+          $in: [
+            mongoose.Types.ObjectId(idEstadoActiva),
+            mongoose.Types.ObjectId(idEstadoSuspendido),
+          ],
+        },
+      },
+    },
+    {
+      $lookup: {
+        from: "estudiante",
+        localField: "idEstudiante",
+        foreignField: "_id",
+        as: "DatosEstudiantes",
+      },
+    },
+    {
+      $project: {
+        "DatosEstudiantes._id": 1,
+        "DatosEstudiantes.nombre": 1,
+        "DatosEstudiantes.apellido": 1,
+      },
+    },
+  ])
+    .then((estudiantes) => {
+      var est = [];
+      estudiantes.forEach((estudiante) => {
+        let datos = {
+          _id: estudiante.DatosEstudiantes[0]._id,
+          nombre: estudiante.DatosEstudiantes[0].nombre,
+          apellido: estudiante.DatosEstudiantes[0].apellido,
+        };
+        est.push(datos);
+      });
+
+      return res.status(200).json({
+        exito: true,
+        message: "Se obtuvieron correctamente los estudiantes del curso",
+        estudiante: est,
+      });
+    })
+    .catch((error) => {
+      res.status(500).json({
+        message: "Ocurrió un error al querer obtener los estudiantes del curso",
+        error: error.message,
+      });
+    });
+});
 
 module.exports = router;

@@ -18,6 +18,8 @@ import { MatPaginatorIntl } from "@angular/material";
 import { Subject } from "rxjs";
 import { takeUntil } from "rxjs/operators";
 import { MediaMatcher } from "@angular/cdk/layout";
+import { jsPDF } from "jspdf";
+import html2canvas from "html2canvas";
 
 @Component({
   selector: "app-calificaciones-ciclo-lectivo",
@@ -93,7 +95,7 @@ export class CalificacionesCicloLectivoComponent implements OnInit, OnDestroy {
     this.fechaActual = new Date();
     this.validarPermisos();
     this.servicioCicloLectivo
-      .obtenerAniosCicloLectivo()
+      .obtenerAniosCicloLectivoActualYPrevios()
       .pipe(takeUntil(this.unsubscribe))
       .subscribe((response) => {
         this.year = response.respuesta;
@@ -177,14 +179,18 @@ export class CalificacionesCicloLectivoComponent implements OnInit, OnDestroy {
         .obtenerMateriasXCursoXDocente(curso.value, this.docente)
         .pipe(takeUntil(this.unsubscribe))
         .subscribe((respuesta) => {
-          this.materias = respuesta.materias;
+          this.materias = respuesta.materias.sort((a, b) =>
+            a.nombre > b.nombre ? 1 : b.nombre > a.nombre ? -1 : 0
+          );
         });
     } else {
       this.servicioEstudiante
         .obtenerMateriasDeCurso(curso.value)
         .pipe(takeUntil(this.unsubscribe))
         .subscribe((respuesta) => {
-          this.materias = respuesta.materias;
+          this.materias = respuesta.materias.sort((a, b) =>
+            a.nombre > b.nombre ? 1 : b.nombre > a.nombre ? -1 : 0
+          );
         });
     }
   }
@@ -201,7 +207,7 @@ export class CalificacionesCicloLectivoComponent implements OnInit, OnDestroy {
         .subscribe((respuesta) => {
           this.estudiantes = [...respuesta.estudiantes];
           this.estudiantes = this.estudiantes.sort((a, b) =>
-            a.apellido > b.apellido ? 1 : b.apellido > a.apellido ? -1 : 0
+            a.apellido.toLowerCase() > b.apellido.toLowerCase() ? 1 : b.apellido.toLowerCase() > a.apellido.toLowerCase() ? -1 : 0
           );
           this.reordenarCalificaciones();
           this.dataSource = new MatTableDataSource(this.estudiantes);

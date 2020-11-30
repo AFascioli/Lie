@@ -3,6 +3,7 @@ import { AuthInterceptor } from "./login/auth-interceptor";
 import { BrowserModule } from "@angular/platform-browser";
 import { NgModule } from "@angular/core";
 import {
+  MatTabsModule,
   MatSelectModule,
   MatButtonModule,
   MatCardModule,
@@ -23,7 +24,6 @@ import {
   MatInputModule,
   MatPaginatorIntl,
 } from "@angular/material";
-// import { MatTableExporterModule } from 'mat-table-exporter';
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { MatPaginatorModule } from "@angular/material/paginator";
@@ -137,10 +137,22 @@ import { SolicitudReunionAdultoResponsableComponent } from "./solicitud-reunion-
 import { AsociarAdultoResponsableComponent } from "./adulto-responsable/asociar-adulto-responsable/asociar-adulto-responsable.component";
 import { ModificarAdultoResponsableComponent } from "./adulto-responsable/modificar-adulto-responsable/modificar-adulto-responsable.component";
 import { BuscarAdultoResponsableComponent } from "./adulto-responsable/buscar-adulto-responsable/buscar-adulto-responsable.component";
-import { AccionesDirectorComponent } from './acciones-director/acciones-director.component';
-import { ParametrizarReglasNegocioComponent } from './acciones-director/parametrizar-reglas-negocio/parametrizar-reglas-negocio.component';
-import { CicloLectivoComponent, PopUpCerrarEtapa, PopUpMateriasSinCerrar } from './acciones-director/ciclo-lectivo/ciclo-lectivo/ciclo-lectivo.component';
-import { EstadoCursosComponent } from './acciones-director/estado-cursos/estado-cursos.component';
+import { AccionesDirectorComponent } from "./acciones-director/acciones-director.component";
+import { ParametrizarReglasNegocioComponent } from "./acciones-director/parametrizar-reglas-negocio/parametrizar-reglas-negocio.component";
+import {
+  CicloLectivoComponent,
+  PopUpCerrarEtapa,
+  PopUpMateriasSinCerrar,
+} from "./acciones-director/ciclo-lectivo/ciclo-lectivo/ciclo-lectivo.component";
+import { EstadoCursosComponent } from "./acciones-director/estado-cursos/estado-cursos.component";
+import { DocAdeudadosComponent } from "./reportes/doc-adeudados/doc-adeudados.component";
+import { ReportesComponent } from "./reportes/reportes.component";
+import { CuotasAdeudadasComponent } from "./reportes/cuotas-adeudadas/cuotas-adeudadas.component";
+import {
+  ReporteResumenAcademicoComponent,
+  ResumenAcademicoComponent,
+} from "./reportes/resumen-academico/resumen-academico.component";
+import { RendimientoCursoComponent } from "./reportes/rendimiento-curso/rendimiento-curso.component";
 
 @NgModule({
   declarations: [
@@ -212,7 +224,13 @@ import { EstadoCursosComponent } from './acciones-director/estado-cursos/estado-
     ParametrizarReglasNegocioComponent,
     CicloLectivoComponent,
     EstadoCursosComponent,
-    PopUpMateriasSinCerrar
+    DocAdeudadosComponent,
+    ReportesComponent,
+    CuotasAdeudadasComponent,
+    ResumenAcademicoComponent,
+    ReporteResumenAcademicoComponent,
+    RendimientoCursoComponent,
+    PopUpMateriasSinCerrar,
   ],
   //entryComponents declara los componentes que se generan dinamicamente dentro de otros.
   entryComponents: [
@@ -237,7 +255,7 @@ import { EstadoCursosComponent } from './acciones-director/estado-cursos/estado-
     ReadMoreComponent,
     ErrorComponent,
     PopUpCerrarEtapa,
-    PopUpMateriasSinCerrar
+    PopUpMateriasSinCerrar,
   ],
   imports: [
     MatChipsModule,
@@ -250,6 +268,7 @@ import { EstadoCursosComponent } from './acciones-director/estado-cursos/estado-
     MatButtonModule,
     FormsModule,
     MatCardModule,
+    MatTabsModule,
     MatFormFieldModule,
     MatTableModule,
     HttpClientModule,

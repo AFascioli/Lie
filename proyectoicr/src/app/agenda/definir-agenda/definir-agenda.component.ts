@@ -221,22 +221,23 @@ export class DefinirAgendaComponent implements OnInit, OnDestroy {
       if (this.agendaValida) {
         this.indice = -1;
         this.isEditing = false;
+        this.huboCambios = true;
         document.getElementById("editar" + indice).style.display = "block";
         document.getElementById("reservar" + indice).style.display = "none";
-        this.huboCambios = true;
       }
     }
   }
 
   onGuardar() {
     if (this.agendaValida) {
-      this.servicioAgenda
-        .registrarAgenda(this.dataSource.data, this.idCursoSeleccionado)
-        .subscribe((response) => {
-          this.isEditing = false;
-          this.openSnackBar(response.message, "snack-bar-exito");
-        });
-    } else {
+        this.servicioAgenda
+          .registrarAgenda(this.dataSource.data, this.idCursoSeleccionado)
+          .subscribe((response) => {
+            this.isEditing = false;
+            this.huboCambios = false;
+            this.openSnackBar(response.message, "snack-bar-exito");
+          });
+        } else {
       this.openSnackBar(this.mensajeError, "snack-bar-fracaso");
     }
   }
@@ -382,7 +383,6 @@ export class DefinirAgendaComponent implements OnInit, OnDestroy {
           this.dataSource.data.splice(index, 1)[0]
         );
         this.dataSource._updateChangeSubscription();
-        this.huboCambios = true;
       });
   }
 

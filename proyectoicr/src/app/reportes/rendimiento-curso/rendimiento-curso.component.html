@@ -1,0 +1,134 @@
+<h1 class="componente-titulo" *ngIf="!materiaSelec">Rendimiento del curso</h1>
+<!-- <br *ngIf="materiaSelec" /> -->
+<mat-tab-group
+  mat-align-tabs="center"
+  (selectedTabChange)="onTipoGraficoChange($event.index)"
+  animationDuration="2000ms"
+>
+  <mat-tab label="Torta"> </mat-tab>
+  <mat-tab label="Dona"> </mat-tab>
+  <mat-tab label="Barra V."> </mat-tab>
+  <mat-tab label="Barra H."> </mat-tab>
+</mat-tab-group>
+
+<mat-card class="card-body-componente">
+  <form #form="ngForm">
+    <div class="div-selects">
+      <mat-form-field class="selectYear">
+        <mat-select
+          placeholder="Seleccione año"
+          name="anio"
+          ngModel
+          #anio="ngModel"
+          matNativeControl
+          required
+          (selectionChange)="onYearSelected(anio)"
+        >
+          <mat-option *ngFor="let y of year" [value]="y.anio">
+            {{ y.anio }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field>
+        <mat-select
+          placeholder="Seleccione curso"
+          name="curso"
+          ngModel
+          #curso="ngModel"
+          matNativeControl
+          required
+          (selectionChange)="onCursoSeleccionado(curso, materia)"
+        >
+          <mat-option *ngFor="let objCurso of cursos" [value]="objCurso.id">
+            {{ objCurso.nombre }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field>
+        <mat-select
+          placeholder="Seleccione materia"
+          name="materia"
+          ngModel
+          #materia="ngModel"
+          matNativeControl
+          required
+          (selectionChange)="obtenerNotas(form)"
+        >
+          <mat-option
+            *ngFor="let objMateria of materias"
+            [value]="objMateria.id"
+          >
+            {{ objMateria.nombre }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+    <div id="content" #content *ngIf="materiaSelec">
+      <h1 class="componente-titulo" *ngIf="materiaSelec">
+        Rendimiento del curso {{ cursoSNombre }}: {{ materiaSNombre }}
+      </h1>
+      <br *ngIf="materiaSelec" />
+      <br *ngIf="materiaSelec" />
+      <div class="div-canvas">
+        <canvas
+          class="cv"
+          *ngIf="!isLoading3"
+          baseChart
+          [datasets]="barDataSet"
+          [labels]="barChartLabelsH"
+          [options]="barChartOptions"
+          [plugins]="barChartPlugins"
+          [legend]="barChartLegend"
+          [chartType]="barChartType"
+        ></canvas>
+        <canvas
+          class="cv"
+          *ngIf="!isLoading3"
+          baseChart
+          [datasets]="barDataSet1"
+          [labels]="barChartLabelsH"
+          [options]="barChartOptions1"
+          [plugins]="barChartPlugins"
+          [legend]="barChartLegend"
+          [chartType]="barChartType"
+        ></canvas>
+        <canvas
+          class="cv"
+          *ngIf="!isLoading3"
+          baseChart
+          [datasets]="barDataSet2"
+          [labels]="barChartLabelsH"
+          [options]="barChartOptions2"
+          [plugins]="barChartPlugins"
+          [legend]="barChartLegend"
+          [chartType]="barChartType"
+        ></canvas>
+      </div>
+      <br />
+      <br />
+      <canvas
+        *ngIf="!isLoading3"
+        baseChart
+        [datasets]="barDataSet3"
+        [labels]="barChartLabelsH"
+        [options]="barChartOptions3"
+        [plugins]="barChartPlugins"
+        [legend]="barChartLegend"
+        [chartType]="barChartType"
+      ></canvas>
+    </div>
+  </form>
+  <div class="div-button">
+    <button mat-raised-button class="button-warn" [routerLink]="['/reportes']">
+      Volver
+    </button>
+    <button
+      mat-raised-button
+      class="button-primary"
+      (click)="descargarPDF()"
+      [disabled]="!materiaSelec"
+    >
+      Exportar pdf
+    </button>
+  </div>
+</mat-card>

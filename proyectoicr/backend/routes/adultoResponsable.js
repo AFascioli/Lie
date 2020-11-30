@@ -222,9 +222,13 @@ router.get("/estudiantes", checkAuthMiddleware, async (req, res) => {
       estudiantes.push(datosEstudiante);
     }
     if (estudiantes.length != 0) {
-      res.json({ estudiantes: estudiantes, exito: true, message: "exito" });
+      res
+        .status(200)
+        .json({ estudiantes: estudiantes, exito: true, message: "exito" });
     } else {
-      res.json({ estudiantes: estudiantes, exito: false, message: "error" });
+      res
+        .status(200)
+        .json({ estudiantes: estudiantes, exito: false, message: "error" });
     }
   } catch (error) {
     res.status(500).json({
