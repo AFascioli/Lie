@@ -176,7 +176,7 @@ exports.inscribirEstudiante = async function (
 
       // Sumar capacidad al curso de donde salio el estudiante
       await Curso.findByIdAndUpdate(idCursoASubir, {
-        $inc: { "inscripcion.capacidad": 1 },
+        $inc: { capacidad: 1 },
       }).exec();
     }
 
