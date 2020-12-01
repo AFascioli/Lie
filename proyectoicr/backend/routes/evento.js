@@ -414,7 +414,7 @@ router.delete("/eliminarComentario", checkAuthMiddleware, (req, res, next) => {
 notificarPorEvento = async function (tags, titulo, cuerpo) {
   //Notificar a los adultos que correspondan a los cursos de los tags/chips
   if (tags.includes("Todos los cursos")) {
-    Suscripcion.notificacionMasiva(evento.titulo, this.cuerpo);
+    Suscripcion.notificacionMasiva(titulo, this.cuerpo);
   } else {
     let idEstadoActiva = await ClaseEstado.obtenerIdEstado(
       "Inscripcion",
