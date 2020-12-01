@@ -63,14 +63,28 @@ export class HomeComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    let auxEventoPasado = [];
+    let auxEventoProximo = [];
     this.fechaActual = new Date();
     this.servicioEvento
       .obtenerEvento()
       .pipe(takeUntil(this.unsubscribe))
       .subscribe((rtdo) => {
         this.eventos = rtdo.eventos;
-        this.eventos.sort((a, b) => this.compareFechaEventos(a, b));
-        this.isLoading = false;
+        for (let index = 0; index < rtdo.eventos.length; index++) {
+          if (this.eventoYaOcurrio(index))
+            auxEventoPasado.push(rtdo.eventos[index]);
+          else auxEventoProximo.push(rtdo.eventos[index]);
+        }
+        setTimeout(() => {
+          auxEventoPasado.sort((a, b) => this.compareFechaEventos(a, b));
+          auxEventoProximo.sort((a, b) => this.compareFechaEventos(a, b));
+        }, 100);
+
+        setTimeout(() => {
+          this.eventos = auxEventoProximo.concat(auxEventoPasado);
+          this.isLoading = false;
+        }, 250);
       });
     if ("serviceWorker" in navigator) {
       navigator.serviceWorker.register("ngsw-worker.js").then((swreg) => {
