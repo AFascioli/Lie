@@ -43,7 +43,7 @@
   >
   <mat-card
     class="opcion"
-    *ngIf="esAdultoResponsable"
+    *ngIf="esAdultoResponsable()"
     (click)="onClickSolicitudReunion()"
     ><mat-icon [inline]="true">message</mat-icon><br /><b
       >Solicitud de reunión</b
