@@ -1,5 +1,5 @@
 <h1 class="componente-titulo">
-  Registrar eventos
+  Registrar evento
 </h1>
 
 <mat-card class="card-body-componente">
@@ -41,7 +41,8 @@
         placeholder="Seleccione fecha de evento"
         (click)="picker.open()"
         [(ngModel)]="fechaSeleccionada"
-        (focusout)="setearHoraMinima()"
+        (dateInput)="setearHoraMinima()"
+        (dateChange)="setearHoraMinima()"
         required
         readonly
       />

@@ -1,0 +1,50 @@
+<h1 class="componente-titulo">Listado de documentos adeudados</h1>
+<mat-card class="card-body-componente">
+  <mat-form-field>
+    <mat-select
+      placeholder="Seleccione curso"
+      name="curso"
+      ngModel
+      #curso="ngModel"
+      matNativeControl
+      required
+      class="curso"
+      (selectionChange)="obtenerDocsAdeudados(curso)"
+    >
+      <mat-option *ngFor="let curso of cursos" [value]="curso.id">
+        {{ curso.nombre }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+  <p class="aviso" *ngIf="estudiantesXDocs.length == 0 && cursoSelected">
+    Los estudiantes no tienen documentos adeudados
+  </p>
+  <mat-accordion
+    class="example-headers-align"
+    *ngFor="let estudiante of estudiantesXDocs"
+  >
+    <mat-expansion-panel hideToggle>
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          <b>{{ estudiante.nombres }}</b>
+        </mat-panel-title>
+        <mat-panel-description>
+          <mat-icon>face</mat-icon>
+        </mat-panel-description>
+      </mat-expansion-panel-header>
+      <br />
+      <b> Documentos adeudados: </b>
+      <br />
+      <ol *ngFor="let documento of estudiante.documentos">
+        <li>{{ documento }}</li>
+      </ol>
+
+      <mat-divider [inset]="true"></mat-divider>
+    </mat-expansion-panel>
+  </mat-accordion>
+  <div class="div-button">
+    <button mat-raised-button [routerLink]="['/reportes']" class="button-warn">
+      Volver
+    </button>
+  </div>
+</mat-card>

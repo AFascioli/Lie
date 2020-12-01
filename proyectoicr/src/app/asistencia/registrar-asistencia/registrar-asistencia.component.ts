@@ -1,3 +1,4 @@
+import { CicloLectivoService } from "./../../cicloLectivo.service";
 import { AutenticacionService } from "./../../login/autenticacionService.service";
 import { Component, OnInit, OnDestroy } from "@angular/core";
 import { EstudiantesService } from "src/app/estudiantes/estudiante.service";
@@ -6,7 +7,6 @@ import { MatDialogRef, MatDialog, MatSnackBar } from "@angular/material";
 import { Router } from "@angular/router";
 import { takeUntil } from "rxjs/operators";
 import { Subject } from "rxjs";
-import { CicloLectivoService } from "src/app/cicloLectivo.service";
 
 @Component({
   selector: "app-registrar-asistencia",
@@ -26,17 +26,22 @@ export class RegistrarAsistenciaComponent implements OnInit, OnDestroy {
   isLoading = true;
   private unsubscribe: Subject<void> = new Subject();
   isLoadingStudents: boolean = true;
+  idSuspendido: string;
+  estadoCiclo: string;
 
   constructor(
     private servicioEstudiante: EstudiantesService,
     private servicioAsistencia: AsistenciaService,
     private autenticacionService: AutenticacionService,
+    private CicloLectivoService: CicloLectivoService,
     public popup: MatDialog,
     public snackBar: MatSnackBar,
-    public servicioCicloLectivo: CicloLectivoService
+
   ) {}
 
   async ngOnInit() {
+    this.obtenerEstadoCicloLectivo();
+    this.obtenerIdInscripcionSuspendida();
     this.cursoNotSelected = true;
     this.fechaActual = new Date();
     if (
@@ -79,7 +84,7 @@ export class RegistrarAsistenciaComponent implements OnInit, OnDestroy {
 
   async fechaActualEnPeriodoCursado() {
     return new Promise((resolve, reject) => {
-      this.servicioCicloLectivo.validarEnCursado().subscribe((result) => {
+      this.CicloLectivoService.validarEnCursado().subscribe((result) => {
         resolve(result.permiso);
       });
     });
@@ -95,7 +100,7 @@ export class RegistrarAsistenciaComponent implements OnInit, OnDestroy {
         this.asistenciaNueva = respuesta.asistenciaNueva;
         if (respuesta.estudiantes.length != 0) {
           this.estudiantesXDivision = respuesta.estudiantes.sort((a, b) =>
-            a.apellido > b.apellido ? 1 : b.apellido > a.apellido ? -1 : 0
+            a.apellido.toLowerCase() > b.apellido.toLowerCase() ? 1 : b.apellido.toLowerCase() > a.apellido.toLowerCase() ? -1 : 0
           );
         } else {
           this.estudiantesXDivision = [];
@@ -132,12 +137,29 @@ export class RegistrarAsistenciaComponent implements OnInit, OnDestroy {
   }
 
   esSuspendido(estudiantesXDivision) {
-    if (estudiantesXDivision.estado == "5eac84ac053ad30ad083aa0f") {
+    if (estudiantesXDivision.estado == this.idSuspendido) {
       estudiantesXDivision.presente = false;
       return true;
     } else {
       return false;
     }
+  }
+
+  obtenerIdInscripcionSuspendida() {
+    this.servicioEstudiante
+      .obtenerIdSuspendido()
+      .pipe(takeUntil(this.unsubscribe))
+      .subscribe((response) => {
+        this.idSuspendido = response.respuesta;
+      });
+  }
+
+  obtenerEstadoCicloLectivo() {
+    this.CicloLectivoService.obtenerEstadoCicloLectivo()
+      .pipe(takeUntil(this.unsubscribe))
+      .subscribe((response) => {
+        this.estadoCiclo = response.estadoCiclo;
+      });
   }
 
   onCancelar() {

@@ -30,9 +30,8 @@ import { MediaMatcher } from "@angular/cdk/layout";
   styleUrls: ["./modificar-evento.component.css"],
 })
 export class ModificarEventoComponent implements OnInit, OnDestroy {
-  @ViewChild("chipsInput", { static: false }) chipsInput: ElementRef<
-    HTMLInputElement
-  >;
+  @ViewChild("chipsInput", { static: false })
+  chipsInput: ElementRef<HTMLInputElement>;
   @ViewChild("auto", { static: false }) matAutocomplete: MatAutocomplete;
   fechaActual: Date;
   imagesFile: any = [];
@@ -172,7 +171,9 @@ export class ModificarEventoComponent implements OnInit, OnDestroy {
       (imagenCargada.resized && imagenCargada.resized.dataURL) ||
         imagenCargada.dataURL
     );
-    this.showSlide(1);
+    setTimeout(() => {
+      this.showSlide(1);
+    }, 500);
   }
 
   moveFromCurrentSlide(n) {
@@ -212,8 +213,10 @@ export class ModificarEventoComponent implements OnInit, OnDestroy {
   }
 
   setAttributesCurrentSlide(slides, dots) {
-    slides[this.slideIndex - 1].setAttribute("style", "display:block;");
-    dots[this.slideIndex - 1].className += " active";
+    if (slides[this.slideIndex - 1])
+      slides[this.slideIndex - 1].setAttribute("style", "display:block;");
+    if (dots[this.slideIndex - 1])
+      dots[this.slideIndex - 1].className += " active";
   }
 
   esSlideValido(n, slides) {

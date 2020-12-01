@@ -3,6 +3,8 @@
 </h1>
 <mat-card class="card-body-componente">
   <div
+    id="content"
+    #content
     *ngIf="
       (contadorInasistenciaJustificada != 0 ||
         contadorInasistenciaInjustificada != 0) &&

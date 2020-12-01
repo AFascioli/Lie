@@ -27,6 +27,7 @@
           rows="3"
           placeholder="Ingrese descripción"
           type="text"
+          [maxLength]="250"
           [(ngModel)]="evento.descripcion"
         >
         </textarea>
@@ -43,7 +44,8 @@
           [matDatepicker]="picker"
           placeholder="Seleccione fecha de evento"
           (click)="picker.open()"
-          (focusout)="setearHoraMinima()"
+          (dateInput)="setearHoraMinima()"
+          (dateChange)="setearHoraMinima()"
           required
           readonly
         />
@@ -166,7 +168,7 @@
             >
               <mat-icon
                 (click)="onEliminarImagen(i)"
-                style="color: white; font-size: 26px;"
+                style="color: rgb(174, 7, 7); font-size: 26px;"
                 >cancel</mat-icon
               >
             </button>

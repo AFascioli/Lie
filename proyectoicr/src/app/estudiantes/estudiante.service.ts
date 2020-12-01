@@ -211,6 +211,7 @@ export class EstudiantesService implements OnDestroy {
   }
 
   public notificarReunionAR(adultosResponsables, cuerpo, idUsuarioEmpleado) {
+    console.log(idUsuarioEmpleado);
     return this.http.post<{
       message: string;
       exito: boolean;
@@ -283,6 +284,16 @@ export class EstudiantesService implements OnDestroy {
     let params = new HttpParams().set("idDocente", idDocente);
     return this.http.get<{ cursos: any[]; message: string; exito: boolean }>(
       environment.apiUrl + "/curso/docente",
+      { params: params }
+    );
+  }
+
+  //Obtiene todos los cursos que son dictados por una docente en un ciclo lectivo
+  //@params: id de la docente, año
+  public obtenerCursosDeDocentePorCiclo(idDocente: string, anio: string) {
+    let params = new HttpParams().set("idDocente", idDocente).set("anio", anio);
+    return this.http.get<{ cursos: any[]; message: string; exito: boolean }>(
+      environment.apiUrl + "/curso/docentePorCiclo",
       { params: params }
     );
   }
@@ -364,6 +375,14 @@ export class EstudiantesService implements OnDestroy {
     });
   }
 
+  public obtenerIdSuspendido() {
+    return this.http.get<{
+      respuesta: string;
+      message: string;
+      exito: boolean;
+    }>(environment.apiUrl + "/estudiante/idSuspendido");
+  }
+
   public reincorporarEstudianteSeleccionado() {
     let params = new HttpParams().set(
       "idEstudiante",
@@ -386,5 +405,14 @@ export class EstudiantesService implements OnDestroy {
       exito: boolean;
       message: string;
     }>(environment.apiUrl + "/estudiante/id", { params: params });
+  }
+
+  public obtenerEstudiantesDeCurso(curso: string) {
+    let params = new HttpParams().set("curso", curso);
+    return this.http.get<{
+      estudiante: Estudiante;
+      exito: boolean;
+      message: string;
+    }>(environment.apiUrl + "/curso/estudiantes", { params: params });
   }
 }

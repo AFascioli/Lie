@@ -1,0 +1,150 @@
+table {
+  width: 97%;
+  margin: 0 auto;
+  margin-left: 1.7% !important;
+}
+
+.div-button {
+  text-align: right;
+}
+
+th {
+  font-weight: bold;
+  font-size: 15px;
+}
+
+.parrafo {
+  text-align: center;
+}
+
+.table-mobile {
+  width: 100%;
+  margin: 0;
+}
+
+.columnas-normales {
+  color: black;
+  width: 10% !important;
+}
+
+.columnas-promedios {
+  color: black;
+  width: 4.25% !important;
+}
+
+.columnas-chicas {
+  color: black;
+  width: 3%;
+}
+
+.header {
+  text-align: center;
+}
+
+p,
+b {
+  font-size: 14px !important;
+  margin-top: 16px;
+}
+
+.mat-form-field {
+  margin-left: 0.5rem;
+  margin-right: 0.5rem;
+}
+.promedio {
+  text-align: center !important;
+}
+
+.mat-cell {
+  font-size: 14px !important;
+}
+
+.card-spinner {
+  margin: auto;
+  margin-top: 1rem;
+  margin-bottom: 1.5rem;
+  max-width: 800px;
+  box-shadow: 0px 0px 8px 0px rgba(0, 0, 0, 0.71) !important;
+}
+
+/* .bajoPromedio {
+  background-color: #fc7978;
+} */
+
+.th.mat-header-cell:first-of-type,
+th.mat-header-cell:first-of-type,
+.td.mat-cell:first-of-type,
+td.mat-cell:first-of-type {
+  padding-left: 0;
+}
+
+.th.mat-header-cell:last-of-type,
+th.mat-header-cell:last-of-type,
+.td.mat-cell:last-of-type,
+td.mat-cell:last-of-type {
+  padding-right: 0;
+}
+
+.card-body-componente-big {
+  white-space: normal;
+  overflow-x: auto;
+  margin: auto;
+  margin-top: 1rem;
+  margin-bottom: 1.5rem;
+  box-shadow: 0px 0px 8px 0px rgba(0, 0, 0, 0.71) !important;
+  max-width: 1000px;
+  min-width: 500px;
+}
+
+.centrar{
+  text-align: center;
+}
+.grid-container {
+  width: 95%;
+  margin-left: auto;
+  margin-right: auto;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: 170px;
+  grid-gap: 8px;
+  padding: 10px;
+  border-radius: 4px;
+}
+
+.grid-container > .mat-card {
+  display: inline-block;
+  align-items: stretch;
+  grid-column-gap: 30px;
+  border-radius: 4px;
+  width: 80%;
+  text-align: center;
+  justify-content: center;
+  align-items: center;
+}
+
+.opcion {
+  margin: auto;
+  margin-top: 1rem;
+  margin-bottom: 0.7rem;
+  max-width: 800px;
+  box-shadow: 0px 0px 8px 0px rgba(0, 0, 0, 0.71) !important;
+}
+
+.grid-container-mobile {
+  grid-template-columns: repeat(1, 1fr);
+  grid-template-rows: auto;
+}
+
+.grid-container-mobile > .mat-card {
+  margin-bottom: 0.2rem;
+  margin-top: 0;
+}
+
+.promedio-centrado {
+  text-align: center;
+  font-weight: 500;
+  color: #3f4044;
+  margin: 0 0.5rem;
+  /* text-shadow: 1px 1px 2px #c7c7c7; */
+  font-size: 33px;
+}

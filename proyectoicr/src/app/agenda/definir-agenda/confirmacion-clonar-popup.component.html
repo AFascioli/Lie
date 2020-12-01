@@ -1,0 +1,20 @@
+<h3 mat-dialog-title class="titulo-popup">Clonar</h3>
+<div mat-dialog-content>
+  <p class="parrafo">
+    ¿Está seguro que desea clonar la agenda?
+    Se reemplazará la agenda actual
+  </p>
+</div>
+<div mat-dialog-actions class="button-popup">
+  <button
+    mat-raised-button
+    class="button-primary"
+    (click)="onYesClick()"
+    cdkFocusInitial
+  >
+    Sí
+  </button>
+  <button mat-raised-button class="button-warn" (click)="onNoClick()">
+    No
+  </button>
+</div>

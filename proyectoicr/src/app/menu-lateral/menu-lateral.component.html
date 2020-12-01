@@ -114,7 +114,7 @@
               *ngIf="rol == 'Director' || rol == 'Admin'"
             >
               <mat-icon class="iconSinExpansion">settings</mat-icon>
-              <p class="titulo-expansion">Acciones Director</p>
+              <p class="titulo-expansion">Acciones director</p>
             </a>
 
             <a
@@ -175,6 +175,10 @@
               routerLink="/asistencia"
               *ngIf="permisos.asistencia > 1"
               (click)="cerrarMenuLateral(sideNav)"
+              [ngClass]="{
+                isDisabled:
+                  this.estadoCiclo == 'Inactivo' || this.estadoCiclo == 'Creado'
+              }"
             >
               <mat-icon
                 class="iconSinExpansion"
@@ -189,6 +193,10 @@
               routerLink="/calificacionesEstudiantes"
               *ngIf="permisos.notas > 1"
               (click)="cerrarMenuLateral(sideNav)"
+              [ngClass]="{
+                isDisabled:
+                  this.estadoCiclo == 'Inactivo' || this.estadoCiclo == 'Creado'
+              }"
             >
               <mat-icon
                 class="iconSinExpansion"
@@ -203,6 +211,7 @@
               routerLink="/documentosEstudiante"
               *ngIf="permisos.inscribirEstudiante > 1"
               (click)="cerrarMenuLateral(sideNav)"
+              [ngClass]="{ isDisabled: this.estadoCiclo == 'Inactivo' }"
             >
               <mat-icon
                 class="iconSinExpansion"
@@ -245,6 +254,7 @@
               routerLink="/registrarCuotas"
               *ngIf="permisos.cuotas > 1"
               (click)="cerrarMenuLateral(sideNav)"
+              [ngClass]="{ isDisabled: this.estadoCiclo == 'Inactivo' }"
             >
               <mat-icon class="iconSinExpansion" svgIcon="pagoCuota"></mat-icon>
               <p class="titulo-expansion">Registrar pago de cuotas</p>
@@ -260,7 +270,15 @@
               <mat-icon class="iconSinExpansion">person_add</mat-icon>
               <p class="titulo-expansion">Registrar personal</p>
             </a>
-
+            <a
+              class="sinExpansion"
+              mat-list-item
+              routerLink="/reportes"
+              (click)="cerrarMenuLateral(sideNav)"
+            >
+              <mat-icon class="iconSinExpansion">toc</mat-icon>
+              <p class="titulo-expansion">Reportes</p>
+            </a>
             <a
               mat-list-item
               class="sinExpansion"
@@ -294,7 +312,7 @@
                 svgIcon="calificacion"
               ></mat-icon>
               <p class="titulo-expansion">
-                Visualizar calificaciones ciclo lectivo
+                Visualizar calificaciones del ciclo lectivo
               </p>
             </a>
           </div>

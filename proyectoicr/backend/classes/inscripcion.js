@@ -3,27 +3,28 @@ const Curso = require("../models/curso");
 const Inscripcion = require("../models/inscripcion");
 const Estudiante = require("../models/estudiante");
 const CicloLectivo = require("../models/cicloLectivo");
+const CalificacionesXMateria = require("../models/calificacionesXMateria");
 const ClaseEstado = require("../classes/estado");
+const ClaseCicloLectivo = require("../classes/cicloLectivo");
 const ClaseCalifXMateria = require("../classes/calificacionXMateria");
 
-exports.obtenerAñoHabilitado = function (inscripcion, añoLectivo) {
-  let añoActual;
-  let fechaActual = new Date();
-  let siguiente;
-  añoActual = parseInt(inscripcion[0].cursoActual[0].nombre, 10);
-
-  if (
-    inscripcion[0].estadoInscripcion[0].nombre == "Promovido" ||
-    inscripcion[0].estadoInscripcion[0].nombre ==
-      "Promovido con examenes pendientes" ||
-    añoLectivo > fechaActual.getFullYear()
-  ) {
-    siguiente = añoActual + 1;
-  } else {
-    siguiente = añoActual;
-  }
-
-  return siguiente;
+//Retorna numero de curso al que se puede inscribir el estudiante segun el ciclo seleccionado
+exports.obtenerAñoHabilitado = function (inscripcion, idCicloSeleccionado) {
+ return new Promise(async (resolve, reject)=>{
+   let siguiente;
+   let añoActual = parseInt(inscripcion[0].cursoActual[0].nombre, 10);
+   let idCicloActual= await ClaseCicloLectivo.obtenerIdCicloActual();
+ 
+   if (
+     idCicloSeleccionado!=idCicloActual
+   ) {
+     siguiente = añoActual + 1;
+   } else {
+     siguiente = añoActual;
+   }
+ 
+   resolve(siguiente);
+ });
 };
 
 //Dada una id de curso, obtiene las ids de las materias que se dan en ese curso
@@ -48,13 +49,13 @@ function obtenerMateriasDeCurso(idCurso) {
       },
       {
         $project: {
-          "materiasDelCurso.idMateria":1
+          "materiasDelCurso.idMateria": 1,
         },
       },
     ])
       .then((materiasDelCurso) => {
-        let idsMateriasDelCurso=[];
-        materiasDelCurso.forEach(objMateria => {
+        let idsMateriasDelCurso = [];
+        materiasDelCurso.forEach((objMateria) => {
           idsMateriasDelCurso.push(objMateria.materiasDelCurso[0].idMateria);
         });
         resolve(idsMateriasDelCurso);
@@ -137,8 +138,8 @@ exports.inscribirEstudiante = async function (
         .then(async () => {
           resolve();
         })
-        .catch(() => {
-          reject();
+        .catch((error) => {
+          reject(error);
         });
     });
   };
@@ -155,36 +156,21 @@ exports.inscribirEstudiante = async function (
     let contadorInasistenciasInjustificada = 0;
     let contadorInasistenciasJustificada = 0;
     let contadorLlegadasTarde = 0;
-
-    //Si el estudiante tiene una inscripcion anteriormente, se obtienen las CXM que esten desaprobadas,
-    //ya sea las que estan en materiasPendientes y las CXM con estado "Desaprobada"
     var materiasPendientesNuevas = [];
+
+    //Si es cambio de curso se deben copiar los siguientes datos de la inscripcion "vieja"
     if (inscripcion != null) {
+      let idInscripcionInactiva= await ClaseEstado.obtenerIdEstado("Inscripcion", "Inactiva");
       contadorInasistenciasInjustificada =
         inscripcion.contadorInasistenciasInjustificada;
       contadorInasistenciasJustificada =
         inscripcion.contadorInasistenciasJustificada;
       contadorLlegadasTarde = inscripcion.contadorLlegadasTarde;
+      materiasPendientesNuevas.push(...idsCXMDesaprobadas);
+      cuotasAnteriores= inscripcion.cuotas;
 
-      inscripcion.activa = false;
-
-      var idEstadoDesaprobadaMateria = await ClaseEstado.obtenerIdEstado(
-        "CalificacionesXMateria",
-        "Desaprobada"
-      );
-      var idsCXMDesaprobadas = await ClaseCalifXMateria.obtenerMateriasDesaprobadasv2(
-        inscripcion.materiasPendientes,
-        inscripcion.calificacionesXMateria,
-        idEstadoDesaprobadaMateria
-      );
-      if (idsCXMDesaprobadas.length != 0) {
-        materiasPendientesNuevas.push(...idsCXMDesaprobadas);
-      }
+      inscripcion.estado = idInscripcionInactiva; 
       await inscripcion.save();
-
-      var idCicloLectivo = await ClaseEstado.obtenerIdCicloLectivo(false);
-
-      esCambioDeCurso(inscripcion.idCurso, idCicloLectivo);
     }
 
     var cuotas = [];
@@ -209,7 +195,7 @@ exports.inscribirEstudiante = async function (
       contadorLlegadasTarde: contadorLlegadasTarde,
       calificacionesXMateria: idsCXMNuevas,
       materiasPendientes: materiasPendientesNuevas,
-      CicloLectivo: idCicloLectivo,
+      cicloLectivo: idCicloLectivo,
       cuotas: cuotas,
       sanciones: [],
     });
@@ -233,11 +219,9 @@ exports.inscribirEstudianteProximoAnio = async function (
   idCurso,
   idEstudiante
 ) {
-  let fechaActual = new Date();
-
-  let obtenerCurso = (añoActual) => {
+  let obtenerCurso = (idCicloLectivo) => {
     return new Promise((resolve, reject) => {
-      Curso.findOne({ _id: idCurso, añoLectivo: añoActual })
+      Curso.findOne({ _id: idCurso, cicloLectivo: idCicloLectivo })
         .then((curso) => {
           resolve(curso);
         })
@@ -251,7 +235,9 @@ exports.inscribirEstudianteProximoAnio = async function (
       "Pendiente"
     );
 
-    var cursoSeleccionado = await obtenerCurso(fechaActual.getFullYear() + 1);
+    let idCicloProximo = await ClaseCicloLectivo.obtenerIdCicloProximo();
+
+    var cursoSeleccionado = await obtenerCurso(idCicloProximo);
 
     const nuevaInscripcion = new Inscripcion({
       idEstudiante: idEstudiante,
@@ -260,7 +246,7 @@ exports.inscribirEstudianteProximoAnio = async function (
       contadorInasistenciasInjustificada: 0,
       contadorInasistenciasJustificada: 0,
       contadorLlegadasTarde: 0,
-      año: fechaActual.getFullYear() + 1,
+      cicloLectivo: idCicloProximo,
     });
 
     await nuevaInscripcion.save();
@@ -271,4 +257,135 @@ exports.inscribirEstudianteProximoAnio = async function (
   } catch (error) {
     return false;
   }
+};
+
+exports.actualizarEstadoInscripcion = (inscripcion) => {
+  return new Promise(async (resolve, reject) => {
+    let idEstadoPromovido = await ClaseEstado.obtenerIdEstado(
+      "Inscripcion",
+      "Promovido"
+    );
+    let idEstadoExPendientes = await ClaseEstado.obtenerIdEstado(
+      "Inscripcion",
+      "Examenes pendientes"
+    );
+    let idEstadoPendienteExamen = await ClaseEstado.obtenerIdEstado(
+      "CalificacionesXMateria",
+      "Pendiente examen"
+    );
+    let promovido = true;
+
+    for (const cxm of inscripcion.datosCXM) {
+      //#resolve
+      if (cxm.estado == idEstadoPendienteExamen) {
+        promovido = false;
+        break;
+      }
+    }
+
+    if (promovido) {
+      await Inscripcion.findByIdAndUpdate(inscripcion._id, {
+        estado: idEstadoPromovido,
+      }).exec();
+    } else {
+      await Inscripcion.findByIdAndUpdate(inscripcion._id, {
+        estado: idEstadoExPendientes,
+      }).exec();
+    }
+
+    resolve();
+  });
+};
+
+exports.cambiarEstadoExamPendientes = (idCicloActual) => {
+  return new Promise(async (resolve, reject) => {
+    const idEstadoExamPendientes = await ClaseEstado.obtenerIdEstado(
+      "Inscripcion",
+      "Examenes pendientes"
+    );
+    const idEstadoPromovido = await ClaseEstado.obtenerIdEstado(
+      "Inscripcion",
+      "Promovido"
+    );
+    const idEstadoPromovidoExamPendientes = await ClaseEstado.obtenerIdEstado(
+      "Inscripcion",
+      "Promovido con examenes pendientes"
+    );
+    const idEstadoLibre = await ClaseEstado.obtenerIdEstado(
+      "Inscripcion",
+      "Libre"
+    );
+    const idEstadoCXMPendiente = await ClaseEstado.obtenerIdEstado(
+      "CalificacionesXMateria",
+      "Pendiente examen"
+    );
+    const idEstadoCXMDesaprobada = await ClaseEstado.obtenerIdEstado(
+      "CalificacionesXMateria",
+      "Desaprobada"
+    );
+    const idEstadoPendiente = await ClaseEstado.obtenerIdEstado(
+      "Inscripcion",
+      "Pendiente"
+    );
+
+    let inscripcionesPendientes = await Inscripcion.aggregate([
+      {
+        $match: {
+          cicloLectivo: mongoose.Types.ObjectId(idCicloActual),
+          estado: mongoose.Types.ObjectId(idEstadoExamPendientes),
+        },
+      },
+      {
+        $lookup: {
+          from: "calificacionesXMateria",
+          localField: "calificacionesXMateria",
+          foreignField: "_id",
+          as: "datosCXM",
+        },
+      },
+    ]);
+
+    for (const inscripcion of inscripcionesPendientes) {
+      let idsCXMPendientes = [];
+      for (const cxm of inscripcion.datosCXM) {
+        if (
+          cxm.estado
+            .toString()
+            .localeCompare(idEstadoCXMPendiente.toString()) == 0
+        ) {
+          idsCXMPendientes.push(cxm._id);
+        }
+      }
+
+      if (idsCXMPendientes.length == 0) {
+        await Inscripcion.findByIdAndUpdate(inscripcion._id, {
+          estado: idEstadoPromovido,
+        }).exec();
+      } else if (idsCXMPendientes.length < 4) {
+        for (const idCxm of idsCXMPendientes) {
+          await CalificacionesXMateria.findByIdAndUpdate(idCxm, {
+            estado: idEstadoCXMDesaprobada,
+          }).exec();
+        }
+        await Inscripcion.findByIdAndUpdate(inscripcion._id, {
+          estado: idEstadoPromovidoExamPendientes,
+          materiasPendientes: idsCXMPendientes,
+        }).exec();
+      } else {
+        for (const idCxm of idsCXMPendientes) {
+          await CalificacionesXMateria.findByIdAndUpdate(idCxm, {
+            estado: idEstadoCXMDesaprobada,
+          });
+        }
+        await Inscripcion.findByIdAndUpdate(inscripcion._id, {
+          estado: idEstadoLibre,
+        }).exec();
+        await Inscripcion.findOneAndDelete({
+          idEstudiante: inscripcion.idEstudiante,
+          estado: idEstadoPendiente,
+        }).exec();
+      }
+    }
+    resolve();
+  });
 };

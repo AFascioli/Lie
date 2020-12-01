@@ -1,5 +1,4 @@
 import { AutenticacionService } from "src/app/login/autenticacionService.service";
-import { NgForm } from "@angular/forms";
 import {
   Component,
   OnInit,
@@ -40,6 +39,9 @@ export class DefinirAgendaComponent implements OnInit, OnDestroy {
   indice = -1;
   cursoSelected: Boolean = false;
   mensajeError: string;
+  cursoSeleccionado: string;
+  yearSelected: any = false;
+  nextYearSelect: boolean;
   agendaValida: Boolean = true;
   horariosReservados: any[] = [];
   dias: any[] = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes"];
@@ -93,7 +95,6 @@ export class DefinirAgendaComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.fechaActual = new Date();
     if (!this.inicioCursado() || this.servicioAuth.getRol() == "Admin") {
-      this.obtenerCursos();
       this.servicioAgenda
         .obtenerMaterias()
         .pipe(takeUntil(this.unsubscribe))
@@ -162,10 +163,40 @@ export class DefinirAgendaComponent implements OnInit, OnDestroy {
     }
   }
 
+  onClonar() {
+    this.dialog
+      .open(ConfirmacionClonarPopupComponent, {
+        width: "250px",
+      })
+      .afterClosed()
+      .pipe(takeUntil(this.unsubscribe))
+      .subscribe((confirmacion) => {
+        if (confirmacion) {
+          this.servicioAgenda
+            .clonarAgenda(this.idCursoSeleccionado, this.yearSelected)
+            .pipe(takeUntil(this.unsubscribe))
+            .subscribe((rtdo) => {
+              this.servicioAgenda
+                .obtenerAgendaDeCurso(this.idCursoSeleccionado)
+                .pipe(takeUntil(this.unsubscribe))
+                .subscribe((rtdo) => {
+                  this.dataSource.data = rtdo.agenda;
+                  this.dataSource._updateChangeSubscription();
+                  if (rtdo.exito) {
+                    this.openSnackBar(rtdo.message, "snack-bar-exito");
+                  } else {
+                    this.openSnackBar(rtdo.message, "snack-bar-fracaso");
+                  }
+                });
+            });
+        }
+      });
+  }
+
   obtenerCursos() {
     this.isLoading = true;
     this.servicioEstudiante
-      .obtenerCursos(this.fechaActual.getFullYear())
+      .obtenerCursos(this.yearSelected)
       .pipe(takeUntil(this.unsubscribe))
       .subscribe((response) => {
         this.isLoading = false;
@@ -190,22 +221,23 @@ export class DefinirAgendaComponent implements OnInit, OnDestroy {
       if (this.agendaValida) {
         this.indice = -1;
         this.isEditing = false;
+        this.huboCambios = true;
         document.getElementById("editar" + indice).style.display = "block";
         document.getElementById("reservar" + indice).style.display = "none";
-        this.huboCambios = true;
       }
     }
   }
 
   onGuardar() {
     if (this.agendaValida) {
-      this.servicioAgenda
-        .registrarAgenda(this.dataSource.data, this.idCursoSeleccionado)
-        .subscribe((response) => {
-          this.isEditing = false;
-          this.openSnackBar(response.message, "snack-bar-exito");
-        });
-    } else {
+        this.servicioAgenda
+          .registrarAgenda(this.dataSource.data, this.idCursoSeleccionado)
+          .subscribe((response) => {
+            this.isEditing = false;
+            this.huboCambios = false;
+            this.openSnackBar(response.message, "snack-bar-exito");
+          });
+        } else {
       this.openSnackBar(this.mensajeError, "snack-bar-fracaso");
     }
   }
@@ -351,7 +383,6 @@ export class DefinirAgendaComponent implements OnInit, OnDestroy {
           this.dataSource.data.splice(index, 1)[0]
         );
         this.dataSource._updateChangeSubscription();
-        this.huboCambios = true;
       });
   }
 
@@ -360,6 +391,19 @@ export class DefinirAgendaComponent implements OnInit, OnDestroy {
       panelClass: [exito],
       duration: 4500,
     });
+  }
+
+  onYearSelected(yearSelected) {
+    this.cursoSelected = false;
+    if (yearSelected.value == "actual") {
+      this.yearSelected = this.fechaActual.getFullYear();
+      this.nextYearSelect = false;
+    } else {
+      this.yearSelected = this.fechaActual.getFullYear() + 1;
+      this.nextYearSelect = true;
+    }
+    this.dataSource.data = [];
+    this.obtenerCursos();
   }
 }
 
@@ -370,6 +414,25 @@ export class DefinirAgendaComponent implements OnInit, OnDestroy {
 })
 export class AgendaPopupComponent {
   constructor(public dialogRef: MatDialogRef<AgendaPopupComponent>) {}
+  onYesClick(): void {
+    this.dialogRef.close(true);
+  }
+  onNoClick(): void {
+    this.dialogRef.close(false);
+  }
+}
+
+@Component({
+  selector: "app-clonar-popup",
+  templateUrl: "./confirmacion-clonar-popup.component.html",
+  styleUrls: ["./definir-agenda.component.css"],
+})
+export class ConfirmacionClonarPopupComponent {
+  constructor(
+    public dialogRef: MatDialogRef<ConfirmacionClonarPopupComponent>,
+    public router: Router
+  ) {}
+
   onYesClick(): void {
     this.dialogRef.close(true);
   }

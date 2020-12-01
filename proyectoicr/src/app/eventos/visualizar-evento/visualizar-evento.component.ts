@@ -84,6 +84,24 @@ export class VisualizarEventoComponent implements OnInit, OnDestroy {
     return rtdoMes.charAt(0).toUpperCase() + rtdoMes.slice(1);
   }
 
+  onReportar(commentId) {
+    this.eventoService
+      .eliminarComentariobyID(commentId)
+      .pipe(takeUntil(this.unsubscribe))
+      .subscribe(() => {
+        this.eventoService
+          .obtenerComentariosDeEvento()
+          .pipe(takeUntil(this.unsubscribe))
+          .subscribe((rtdo) => {
+            this.eventoService.comentarios = rtdo.comentarios.reverse();
+          });
+        this.snackBar.open("Se ha reportado el mensaje exitosamente", "", {
+          duration: 4500,
+          panelClass: ["snack-bar-exito"],
+        });
+      });
+  }
+
   obtenerDia(fechaEvento) {
     let fecha = new Date(fechaEvento);
     return fecha.getDate();

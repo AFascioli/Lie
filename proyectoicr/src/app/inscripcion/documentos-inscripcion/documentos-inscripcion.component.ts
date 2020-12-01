@@ -34,6 +34,7 @@ export class DocumentosInscripcionComponent implements OnInit, OnDestroy {
   private unsubscribe: Subject<void> = new Subject();
   _mobileQueryListener: () => void;
   mobileQuery: MediaQueryList;
+  estadoCiclo: string;
 
   constructor(
     public servicioEstudiante: EstudiantesService,
@@ -59,6 +60,7 @@ export class DocumentosInscripcionComponent implements OnInit, OnDestroy {
   //tomar de a dos cursos y ordenarlos alfabeticamente, de esa forma quedan ordenados por año y
   //division
   async ngOnInit() {
+    this.obtenerEstadoCicloLectivo();
     this.fechaActual = new Date();
     if (
       (await this.fechaActualEnPeriodoCursado()) ||
@@ -103,9 +105,9 @@ export class DocumentosInscripcionComponent implements OnInit, OnDestroy {
         if (estudiantes.documentos.length != 0) {
           this.estudiantesConDocumentos = this.estudiantesConDocumentos.sort(
             (a, b) =>
-              a.datosEstudiante[0].apellido > b.datosEstudiante[0].apellido
+              a.datosEstudiante[0].apellido.toLowerCase() > b.datosEstudiante[0].apellido.toLowerCase()
                 ? 1
-                : b.datosEstudiante[0].apellido > a.datosEstudiante[0].apellido
+                : b.datosEstudiante[0].apellido.toLowerCase() > a.datosEstudiante[0].apellido.toLowerCase()
                 ? -1
                 : 0
           );
@@ -120,6 +122,14 @@ export class DocumentosInscripcionComponent implements OnInit, OnDestroy {
     estudiante.documentosEntregados[indiceDoc].entregado = !estudiante
       .documentosEntregados[indiceDoc].entregado;
     this.documentosEntregadosOnChange = true;
+  }
+
+  obtenerEstadoCicloLectivo() {
+    this.servicioCicloLectivo.obtenerEstadoCicloLectivo()
+      .pipe(takeUntil(this.unsubscribe))
+      .subscribe((response) => {
+        this.estadoCiclo = response.estadoCiclo;
+      });
   }
 
   //Guardar los estudiantes con los cambios, resetea los selects y abre snackBar

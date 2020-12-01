@@ -14,7 +14,9 @@ const AdultoResponsable = require("../models/adultoResponsable");
 const Empleado = require("../models/empleado");
 const Usuario = require("../models/usuario");
 const Inscripcion = require("../models/inscripcion");
+const Administrador = require("../models/administrador");
 const Suscripcion = require("../classes/suscripcion");
+const ClaseEstado = require("../classes/estado");
 
 const storage = new GridFsStorage({
   url: Ambiente.stringDeConexion,
@@ -146,14 +148,16 @@ router.post(
           filenamesEvento = req.body.filenames;
         }
         // Se sacan los filenames borrados
-        filenamesEvento = filenamesEvento.filter((filename) => {
-          if (!req.body.filenamesBorrados.includes(filename)) {
-            return true;
-          } else {
-            return false;
-          }
-        });
-
+        if (filenamesEvento.length > 0 && req.body.filenamesBorrados != "null");
+        {
+          filenamesEvento = filenamesEvento.filter((filename) => {
+            if (!req.body.filenamesBorrados.includes(filename)) {
+              return true;
+            } else {
+              return false;
+            }
+          });
+        }
         // Se agregan los filenames nuevos
         for (let index = 0; index < req.files.length; index++) {
           filenamesEvento.push(req.files[index].filename);
@@ -293,11 +297,14 @@ router.post(
             });
           });
         } else if (rol == "Admin") {
-          Usuario.findOne({ email: emailUsuario }).then((usuario) => {
+          Administrador.findOne({ email: emailUsuario }).then((usuario) => {
+            apellido = usuario.apellido;
+            nombre = usuario.nombre;
+            idUsuario = usuario.idUsuario;
             resolve({
-              apellido: "Nistrador", //Para evitar tener una tabla en bd con nombre y apellido de admin, se hardcodea aca
-              nombre: "Admi",
-              idUsuario: usuario._id,
+              apellido: apellido,
+              nombre: nombre,
+              idUsuario: idUsuario,
             });
           });
         } else {
@@ -524,9 +531,9 @@ router.get("/id", checkAuthMiddleware, (req, res) => {
   Evento.findById(req.query.idEvento)
     .then((evento) => {
       if (evento) {
-        res.json({ evento: evento, exito: true, message: "exito" });
+        res.status(200).json({ evento: evento, exito: true, message: "exito" });
       } else {
-        res.json({ evento: null, exito: true, message: "exito" });
+        res.status(200).json({ evento: null, exito: true, message: "exito" });
       }
     })
     .catch((error) => {

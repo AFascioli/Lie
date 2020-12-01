@@ -14,6 +14,8 @@ const ClaseInscripcion = require("../classes/inscripcion");
 const ClaseEstado = require("../classes/estado");
 const Suscripcion = require("../classes/suscripcion");
 const ClaseAsistencia = require("../classes/asistencia");
+const ClaseAgenda = require("../classes/agenda");
+const ClaseCicloLectivo = require("../classes/cicloLectivo");
 
 // Obtiene todos los cursos que están almacenados en la base de datos
 router.get("/", checkAuthMiddleware, (req, res) => {
@@ -346,63 +348,55 @@ router.get("/cursosDeEstudiante", checkAuthMiddleware, async (req, res) => {
       },
     },
   ])
-    .then((inscripcion) => {
-      let idCicloLectivo;
-      CicloLectivo.findOne({ año: parseInt(req.query.añoLectivo, 10) }).then(
-        async (cicloLectivo) => {
-          if (inscripcion.length != 0) {
-            //El estudiante está inscripto a un curso y por ende se fija al curso al que se puede inscribir
-            let siguiente;
-            siguiente = ClaseInscripcion.obtenerAñoHabilitado(
-              inscripcion,
-              parseInt(req.query.añoLectivo, 10)
-            );
-            let cursosDisponibles = [];
-            //Buscamos los cursos que corresponden al que se puede inscribir el estudiante
-            Curso.find({
-              nombre: { $regex: siguiente },
-              cicloLectivo: await cicloLectivo._id,
-            }).then((cursos) => {
-              //Se agregan todos los cursos disponibles para inscribirse excepto el curso actual
-              cursos.forEach((curso) => {
-                if (!(curso.nombre == inscripcion[0].cursoActual[0].nombre)) {
-                  cursosDisponibles.push(curso);
-                }
-              });
-              return res.status(200).json({
-                message: "Devolvio los cursos correctamente",
-                exito: true,
-                cursos: cursosDisponibles,
-                cursoActual: inscripcion[0].cursoActual[0],
-              });
-            });
-          } else {
-            //El estudiante no está inscripto a ningun curso, devuelve todos los cursos almacenados
-            Curso.find()
-              .select({
-                nombre: 1,
-                _id: 1,
-                cicloLectivo: await cicloLectivo._id,
-              })
-              .then((cursos) => {
-                var respuesta = [];
-                cursos.forEach((curso) => {
-                  var cursoConId = {
-                    _id: curso._id,
-                    nombre: curso.nombre,
-                  };
-                  respuesta.push(cursoConId);
-                });
-                return res.status(200).json({
-                  message: "Devolvio los cursos correctamente",
-                  exito: true,
-                  cursos: respuesta,
-                  cursoActual: "",
-                });
-              });
-          }
-        }
+    .then(async (inscripcion) => {
+      let idCicloLectivo = await ClaseCicloLectivo.obtenerIdCicloSegunAño(
+        parseInt(req.query.añoLectivo)
       );
+      if (inscripcion.length != 0) {
+        //El estudiante está inscripto a un curso y por ende se fija al curso al que se puede inscribir
+        let siguiente= await ClaseInscripcion.obtenerAñoHabilitado(
+          inscripcion,
+          idCicloLectivo
+        );
+        let cursosDisponibles = [];
+        //Buscamos los cursos que corresponden al que se puede inscribir el estudiante
+        Curso.find({
+          nombre: { $regex: siguiente },
+          cicloLectivo: idCicloLectivo,
+        }).then((cursos) => {
+          //Se agregan todos los cursos disponibles para inscribirse excepto el curso actual
+          cursos.forEach((curso) => {
+            if (!(curso.nombre == inscripcion[0].cursoActual[0].nombre)) {
+              cursosDisponibles.push(curso);
+            }
+          });
+          return res.status(200).json({
+            message: "Devolvio los cursos correctamente",
+            exito: true,
+            cursos: cursosDisponibles,
+            cursoActual: inscripcion[0].cursoActual[0],
+          });
+        });
+      } else {
+        //!TODO Si selecciono el ciclo actual, buscar si tiene inscripcion pendiente para ver que curso le corresponde
+        //El estudiante no está inscripto a ningun curso, devuelve todos los cursos almacenados
+        Curso.findById(idCicloLectivo).then((cursos) => {
+          var respuesta = [];
+          cursos.forEach((curso) => {
+            var cursoConId = {
+              _id: curso._id,
+              nombre: curso.nombre,
+            };
+            respuesta.push(cursoConId);
+          });
+          return res.status(200).json({
+            message: "Devolvio los cursos correctamente",
+            exito: true,
+            cursos: respuesta,
+            cursoActual: "",
+          });
+        });
+      }
     })
     .catch((error) => {
       res.status(500).json({
@@ -416,6 +410,54 @@ router.get("/cursosDeEstudiante", checkAuthMiddleware, async (req, res) => {
 //@params: id de la docente
 router.get("/docente", checkAuthMiddleware, (req, res) => {
   Curso.aggregate([
+    {
+      $lookup: {
+        from: "materiasXCurso",
+        localField: "materias",
+        foreignField: "_id",
+        as: "mxc",
+      },
+    },
+    {
+      $match: {
+        "mxc.idDocente": mongoose.Types.ObjectId(req.query.idDocente),
+      },
+    },
+  ])
+    .then((cursos) => {
+      var respuesta = [];
+      cursos.forEach((curso) => {
+        var cursoConId = {
+          id: curso._id,
+          nombre: curso.nombre,
+        };
+        respuesta.push(cursoConId);
+      });
+
+      res.status(200).json({
+        cursos: respuesta,
+        message: "Se devolvio los cursos que dicta la docente correctamente",
+        exito: true,
+      });
+    })
+    .catch((error) => {
+      res.status(500).json({
+        message: "Ocurrió un error al obtener los cursos del docente",
+        error: error.message,
+      });
+    });
+});
+
+//Obtiene todos los cursos asignados a un docente en un ciclo lectivo determinado
+//@params: id de la docente, año del ciclo lectivo
+router.get("/docentePorCiclo", checkAuthMiddleware, async (req, res) => {
+  let idCicloLectivo = await ClaseEstado.getIdCicloLectivo(req.query.anio);
+  Curso.aggregate([
+    {
+      $match: {
+        cicloLectivo: mongoose.Types.ObjectId(idCicloLectivo),
+      },
+    },
     {
       $lookup: {
         from: "materiasXCurso",
@@ -1029,7 +1071,7 @@ router.post(
         )
       ) {
         res.status(201).json({
-          message: "Estudiante inscriptoprueba exitoso exitosamente",
+          message: "Estudiante inscripto exitosamente",
           exito: true,
         });
       }
@@ -1199,7 +1241,7 @@ router.get("/agenda", checkAuthMiddleware, (req, res) => {
           },
         ]).then((agendaCompleta) => {
           if (agendaCompleta[0].horarios[0] == null) {
-            return res.json({
+            return res.status(200).json({
               exito: false,
               message: "No existen horarios registrados para este curso",
               agenda: [],
@@ -1253,7 +1295,9 @@ router.post("/eliminarHorario", checkAuthMiddleware, (req, res) => {
         Curso.findByIdAndUpdate(req.body.idCurso, {
           $pull: { materias: { $in: req.body.agenda.idMXC } },
         }).then(() => {
-          res.json({ exito: true, message: "Horario borrado exitosamente" });
+          res
+            .status(200)
+            .json({ exito: true, message: "Horario borrado exitosamente" });
         });
       });
     })
@@ -1336,6 +1380,10 @@ router.post("/agenda", checkAuthMiddleware, async (req, res) => {
       }
     }
     if (mxcNuevas.length != 0) {
+      let idCreada = await ClaseEstado.obtenerIdEstado(
+        "MateriasXCurso",
+        "Creada"
+      );
       //Hay mxc nuevas para guarda en la bd
       for (const mxcNueva of mxcNuevas) {
         let vectorIdsHorarios = [];
@@ -1352,6 +1400,7 @@ router.post("/agenda", checkAuthMiddleware, async (req, res) => {
           idMateria: mxcNueva.idMateria,
           idDocente: mxcNueva.idDocente,
           horarios: vectorIdsHorarios,
+          estado: idCreada,
         });
 
         let idMXC = await crearMateriaXCurso(nuevaMateriaXCurso);
@@ -1360,10 +1409,14 @@ router.post("/agenda", checkAuthMiddleware, async (req, res) => {
       Curso.findByIdAndUpdate(req.body.idCurso, {
         $push: { materias: { $each: vectorIdsMXC } },
       }).then(() => {
-        res.json({ exito: true, message: "Materias agregadas correctamente" });
+        res
+          .status(200)
+          .json({ exito: true, message: "Materias agregadas correctamente" });
       });
     } else {
-      res.json({ exito: true, message: "Horarios modificados correctamente" });
+      res
+        .status(200)
+        .json({ exito: true, message: "Horarios modificados correctamente" });
     }
   } catch (error) {
     res.status(500).json({
@@ -1379,20 +1432,28 @@ router.get(
   checkAuthMiddleware,
   async (req, res) => {
     try {
-      let numeroCursoPasado;
+      let cursoAnterior;
+      let nombreCursoAnterior;
+      let estudiantesRespuesta = [];
       let dateActual = new Date();
-      let añoPasado = dateActual.getFullYear() - 1;
-      await Curso.findById(req.query.idCurso).then((curso) => {
-        numeroCursoPasado = parseInt(curso.nombre, 10) - 1;
-      });
-      let cursosABuscar = [`${numeroCursoPasado}A`, `${numeroCursoPasado}B`];
 
-      let idsCursos = await Curso.find(
-        { nombre: { $in: cursosABuscar } },
-        { _id: 1 }
-      );
-      idsCursos = idsCursos.map((curso) => {
-        return curso._id;
+      let idCicloAnterior = await ClaseCicloLectivo.obtenerIdCicloAnterior();
+
+      Curso.findById(req.query.idCurso).then((curso) => {
+        nombreCursoAnterior = curso.nombre;
+        let numeroCursoPasado = parseInt(curso.nombre, 10) - 1;
+        let division = curso.nombre.substring(1, 2);
+        cursoAnterior = `${numeroCursoPasado}${division}`;
+      });
+
+      let cursoAñoAnterior = await Curso.findOne({
+        nombre: cursoAnterior,
+        idCicloLectivo: idCicloAnterior,
+      });
+
+      let cursoEstudiantesLibres = await Curso.findOne({
+        nombre: nombreCursoAnterior,
+        idCicloLectivo: idCicloAnterior,
       });
 
       let idEstadoPromovido = await ClaseEstado.obtenerIdEstado(
@@ -1411,21 +1472,40 @@ router.get(
         "Estudiante",
         "Registrado"
       );
+      let idEstadoActiva = await ClaseEstado.obtenerIdEstado(
+        "Inscripcion",
+        "Activa"
+      );
 
+      /*  1. Buscar estudiantes en estado registrado*/
+
+      let obtenerEstudiantesSinInscripcion = await Estudiante.find(
+        { estado: idEstadoRegistrado },
+        { nombre: 1, apellido: 1 }
+      );
+
+      obtenerEstudiantesSinInscripcion.forEach((estudiante) => {
+        const estudianteRefinado = {
+          idEstudiante: estudiante._id,
+          nombre: estudiante.nombre,
+          apellido: estudiante.apellido,
+          cursoAnterior: "-",
+          idInscripcion: null,
+          seleccionado: false, //Agregado para facilitar saber quien se debe inscribir
+        };
+        estudiantesRespuesta.push(estudianteRefinado);
+      });
+
+      /* 2. Aggregate de Promovidos o Promovidos con exam. 4A '19. */
       let estadosInscripcionesABuscar = [
         mongoose.Types.ObjectId(idEstadoPromovido),
         mongoose.Types.ObjectId(idEstadoPromovidoConExam),
       ];
 
-      //Buscamos a todas las inscripciones que tengan estado Promovido o Promovido con exam pendientes, y que sean del
-      //año pasado. Filtrando tambien por los cursos que deben ser.
       let obtenerEstudiantesConInscripcion = await Inscripcion.aggregate([
         {
           $match: {
-            idCurso: {
-              $in: idsCursos,
-            },
-            año: añoPasado,
+            idCurso: cursoAñoAnterior._id,
             estado: {
               $in: estadosInscripcionesABuscar,
             },
@@ -1457,11 +1537,24 @@ router.get(
         },
       ]);
 
+      obtenerEstudiantesConInscripcion.forEach((inscripcion) => {
+        const estudianteRefinado = {
+          idEstudiante: inscripcion.datosEstudiantes[0]._id,
+          nombre: inscripcion.datosEstudiantes[0].nombre,
+          apellido: inscripcion.datosEstudiantes[0].apellido,
+          cursoAnterior: inscripcion.datosCurso[0].nombre,
+          idInscripcion: inscripcion._id,
+          seleccionado: false,
+        };
+        estudiantesRespuesta.push(estudianteRefinado);
+      });
+
+      /* 3. Aggregate de Libres 5A '19.  */
+
       let obtenerEstudiantesLibres = await Inscripcion.aggregate([
         {
           $match: {
-            idCurso: mongoose.Types.ObjectId(req.query.idCurso),
-            año: añoPasado,
+            idCurso: mongoose.Types.ObjectId(cursoEstudiantesLibres._id),
             estado: mongoose.Types.ObjectId(idEstadoLibre),
           },
         },
@@ -1491,25 +1584,6 @@ router.get(
         },
       ]);
 
-      let obtenerEstudiantesSinInscripcion = await Estudiante.find(
-        { estado: idEstadoRegistrado },
-        { nombre: 1, apellido: 1 }
-      );
-
-      let estudiantesRespuesta = [];
-
-      obtenerEstudiantesConInscripcion.forEach((inscripcion) => {
-        const estudianteRefinado = {
-          idEstudiante: inscripcion.datosEstudiantes[0]._id,
-          nombre: inscripcion.datosEstudiantes[0].nombre,
-          apellido: inscripcion.datosEstudiantes[0].apellido,
-          cursoAnterior: inscripcion.datosCurso[0].nombre,
-          idInscripcion: inscripcion._id,
-          seleccionado: false,
-        };
-        estudiantesRespuesta.push(estudianteRefinado);
-      });
-
       obtenerEstudiantesLibres.forEach((inscripcion) => {
         const estudianteRefinado = {
           idEstudiante: inscripcion.datosEstudiantes[0]._id,
@@ -1522,21 +1596,25 @@ router.get(
         estudiantesRespuesta.push(estudianteRefinado);
       });
 
-      obtenerEstudiantesSinInscripcion.forEach((estudiante) => {
-        const estudianteRefinado = {
-          idEstudiante: estudiante._id,
-          nombre: estudiante.nombre,
-          apellido: estudiante.apellido,
-          cursoAnterior: "-",
-          idInscripcion: null,
-          seleccionado: false, //Agregado para facilitar saber quien se debe inscribir
-        };
-        estudiantesRespuesta.push(estudianteRefinado);
-      });
+      /* 4. Buscar todas las inscripciones activas del curso selec (2020 5A). */
+      /* 5. Filtramos que los de 4 no esten incluidos en 1, 2 y 3*/
 
-      res.status(200).json({
-        estudiantes: estudiantesRespuesta,
-        exito: true,
+      Inscripcion.find({
+        idCurso: req.query.idCurso,
+        estado: idEstadoActiva,
+      }).then((inscripcionesActivas) => {
+        inscripcionesActivas.forEach((inscripcionActiva) => {
+          estudiantesRespuesta = estudiantesRespuesta.filter(
+            (estudiante) =>
+              estudiante.idEstudiante
+                .toString()
+                .localeCompare(inscripcionActiva.idEstudiante.toString()) != 0
+          );
+        });
+        res.status(200).json({
+          estudiantes: estudiantesRespuesta,
+          exito: true,
+        });
       });
     } catch (error) {
       res.status(500).json({
@@ -1551,13 +1629,14 @@ router.get(
 //Obtener los estudiantes para la inscripcion pendiente a un curso (usada para la inscripcion por curso)
 //@params: id estudiante que se quiere verificar
 router.get(
-  "/estudiantes/inscripcionPendiente",
+  "/estudiantes/inscripcionProximoAnio",
   checkAuthMiddleware,
   async (req, res) => {
     try {
       let cursoAnterior;
       let añoAnterior;
-      let dateActual = new Date();
+      let estudiantesRespuesta = [];
+
       let idEstadoRegistrado = await ClaseEstado.obtenerIdEstado(
         "Estudiante",
         "Registrado"
@@ -1568,12 +1647,25 @@ router.get(
         "Activa"
       );
 
+      let idEstadoInsPromovida = await ClaseEstado.obtenerIdEstado(
+        "Inscripcion",
+        "Promovido"
+      );
+      let idEstadoInsPromovidaConExamPendientes = await ClaseEstado.obtenerIdEstado(
+        "Inscripcion",
+        "Promovido con examenes pendientes"
+      );
+
+      let idEstadoPendienteInscripcion = await ClaseEstado.obtenerIdEstado(
+        "Inscripcion",
+        "Pendiente"
+      );
+
+      //1. Buscar los estudiantes en estado registrado
       let obtenerEstudiantesSinInscripcion = await Estudiante.find(
         { estado: idEstadoRegistrado },
         { nombre: 1, apellido: 1 }
       );
-
-      let estudiantesRespuesta = [];
 
       obtenerEstudiantesSinInscripcion.forEach((estudiante) => {
         const estudianteRefinado = {
@@ -1587,82 +1679,101 @@ router.get(
         estudiantesRespuesta.push(estudianteRefinado);
       });
 
+      //Nos devuelve el curso anterior (año+division), si elegimos 5A nos devuelve 4A
       await Curso.findById(req.query.idCurso).then((curso) => {
         añoAnterior = parseInt(curso.nombre, 10) - 1;
         let division = curso.nombre.substring(1, 2);
         cursoAnterior = `${añoAnterior}${division}`;
       });
 
-      if (añoAnterior == 0) {
-        return res.status(200).json({
+      /* 2. Buscar los estudiantes del curso anterior que sean activo,
+      promovido o promovido con ex pendientes (con todos los datos)*/
+      if (añoAnterior != 0) {
+        let curso = await Curso.findOne({
+          nombre: cursoAnterior,
+          cicloLectivo: await ClaseCicloLectivo.obtenerIdCicloActual(),
+        }).exec();
+
+        let obtenerEstudiantesEnCondicionesInsc = await Inscripcion.aggregate([
+          {
+            $match: {
+              estado: {
+                $in: [
+                  mongoose.Types.ObjectId(idEstadoInscripcionActiva),
+                  mongoose.Types.ObjectId(idEstadoInsPromovida),
+                  mongoose.Types.ObjectId(
+                    idEstadoInsPromovidaConExamPendientes
+                  ),
+                ],
+              },
+              idCurso: mongoose.Types.ObjectId(curso._id),
+            },
+          },
+          {
+            $lookup: {
+              from: "estudiante",
+              localField: "idEstudiante",
+              foreignField: "_id",
+              as: "datosEstudiante",
+            },
+          },
+          {
+            $lookup: {
+              from: "curso",
+              localField: "idCurso",
+              foreignField: "_id",
+              as: "datosCurso",
+            },
+          },
+          {
+            $project: {
+              "datosEstudiante._id": 1,
+              "datosEstudiante.nombre": 1,
+              "datosEstudiante.apellido": 1,
+              "datosCurso.nombre": 1,
+            },
+          },
+        ]);
+
+        obtenerEstudiantesEnCondicionesInsc.forEach((inscripcion) => {
+          const estudianteRefinado = {
+            idEstudiante: inscripcion.datosEstudiante[0]._id,
+            nombre: inscripcion.datosEstudiante[0].nombre,
+            apellido: inscripcion.datosEstudiante[0].apellido,
+            cursoAnterior: inscripcion.datosCurso[0].nombre,
+            idInscripcion: inscripcion._id,
+            seleccionado: false,
+          };
+          estudiantesRespuesta.push(estudianteRefinado);
+        });
+      }
+      /*3. Buscar todas las inscripciones pendientes del curso selecccionado
+       */
+      /*4. Filtras estudiantes paso 1 con los estudiantes obtenidos paso 2 */
+
+      Inscripcion.find({
+        estado: idEstadoPendienteInscripcion,
+        idCurso: req.query.idCurso,
+      }).then((inscripcionesPendientes) => {
+        for (let index = 0; index < inscripcionesPendientes.length; index++) {
+          estudiantesRespuesta = estudiantesRespuesta.filter(
+            (estudiante) =>
+              estudiante.idEstudiante
+                .toString()
+                .localeCompare(
+                  inscripcionesPendientes[index].idEstudiante.toString()
+                ) != 0
+          );
+        }
+        res.status(200).json({
           estudiantes: estudiantesRespuesta,
           exito: true,
         });
-      }
-
-      let cicloLectivo = await CicloLectivo.findOne({
-        año: dateActual.getFullYear(),
-      }).exec();
-
-      let curso = await Curso.findOne({
-        nombre: cursoAnterior,
-        cicloLectivo: cicloLectivo._id,
-      }).exec();
-
-      let obtenerEstudiantesInscripcionActiva = await Inscripcion.aggregate([
-        {
-          $match: {
-            estado: mongoose.Types.ObjectId(idEstadoInscripcionActiva),
-            cicloLectivo: cicloLectivo._id,
-            idCurso: mongoose.Types.ObjectId(curso._id),
-          },
-        },
-        {
-          $lookup: {
-            from: "estudiante",
-            localField: "idEstudiante",
-            foreignField: "_id",
-            as: "datosEstudiante",
-          },
-        },
-        {
-          $lookup: {
-            from: "curso",
-            localField: "idCurso",
-            foreignField: "_id",
-            as: "datosCurso",
-          },
-        },
-        {
-          $project: {
-            "datosEstudiante._id": 1,
-            "datosEstudiante.nombre": 1,
-            "datosEstudiante.apellido": 1,
-            "datosCurso.nombre": 1,
-          },
-        },
-      ]);
-
-      obtenerEstudiantesInscripcionActiva.forEach((inscripcion) => {
-        const estudianteRefinado = {
-          idEstudiante: inscripcion.datosEstudiante[0]._id,
-          nombre: inscripcion.datosEstudiante[0].nombre,
-          apellido: inscripcion.datosEstudiante[0].apellido,
-          cursoAnterior: inscripcion.datosCurso[0].nombre,
-          idInscripcion: inscripcion._id,
-          seleccionado: false,
-        };
-        estudiantesRespuesta.push(estudianteRefinado);
-      });
-
-      res.status(200).json({
-        estudiantes: estudiantesRespuesta,
-        exito: true,
       });
     } catch (error) {
       res.status(500).json({
         message:
-          "Ocurrió un error al querer btener los estudiantes para la inscripcion pendiente a un curso",
+          "Ocurrió un error al querer obtener los estudiantes para la inscripcion pendiente a un curso",
         error: error.message,
       });
     }
@@ -1719,7 +1830,7 @@ router.post(
           entregado: false,
         },
         {
-          nombre: "Ficha medica",
+          nombre: "Ficha médica",
           entregado: false,
         },
         {
@@ -1792,5 +1903,177 @@ router.post(
     }
   }
 );
+
+router.post(
+  "/agenda/horariosAnioAnterior",
+  checkAuthMiddleware,
+  async (req, res) => {
+    try {
+      let rtdo = await ClaseAgenda.clonarAgenda(
+        req.body.idCurso,
+        req.body.yearSelected
+      );
+      if (rtdo) {
+        return res.status(200).json({
+          exito: true,
+          message: "Se clonó la agenda correctamente",
+        });
+      }
+      res.status(200).json({
+        exito: false,
+        message: "No existe una agenda definida para el año anterior",
+      });
+    } catch (error) {
+      res.status(500).json({
+        error: error.message,
+        message: "Ocurrió un error al querer clonar la agenda",
+      });
+    }
+  }
+);
+
+/*router.get("/estudiantes", checkAuthMiddleware, async (req, res) => {
+  let idEstadoActiva = await ClaseEstado.obtenerIdEstado(
+    "Inscripcion",
+    "Activa"
+  );
+  Inscripcion.aggregate([
+    {
+      $lookup: {
+        from: "estudiante",
+        localField: "idEstudiante",
+        foreignField: "_id",
+        as: "datosEstudiante",
+      },
+    },
+    {
+      $project: {
+        "datosEstudiante._id": 1,
+        "datosEstudiante.nombre": 1,
+        "datosEstudiante.apellido": 1,
+        idCurso: 1,
+        calificacionesXMateria: 1,
+        estado: 1,
+      },
+    },
+    {
+      $lookup: {
+        from: "curso",
+        localField: "idCurso",
+        foreignField: "_id",
+        as: "curso",
+      },
+    },
+    {
+      $match: {
+        "curso._id": mongoose.Types.ObjectId(req.query.idCurso),
+        estado: mongoose.Types.ObjectId(idEstadoActiva),
+      },
+    },
+    {
+      $project: {
+        "datosEstudiante._id": 1,
+        "datosEstudiante.nombre": 1,
+        "datosEstudiante.apellido": 1,
+        "curso.nombre": 1,
+      },
+    },
+    {
+      $unwind: {
+        path: "$datosEstudiante",
+      },
+    },
+    {
+      $unwind: {
+        path: "$curso",
+      },
+    },
+  ])
+    .then((estudiantes) => {
+      res.status(200).json({
+        estudiantes: estudiantes,
+        message: "Se obtuvieron los estudiantes de un curso correctamente",
+        exito: true,
+      });
+    })
+    .catch((error) => {
+      res.status(500).json({
+        message:
+          "Ocurrió un error al querer obtener los estudiantes de un curso",
+        error: error.message,
+      });
+    });
+});
+*/
+
+router.get("/estudiantes", checkAuthMiddleware, async (req, res) => {
+  let idEstadoActiva = await ClaseEstado.obtenerIdEstado(
+    "Inscripcion",
+    "Activa"
+  );
+  let idEstadoSuspendido = await ClaseEstado.obtenerIdEstado(
+    "Inscripcion",
+    "Suspendido"
+  );
+  Inscripcion.aggregate([
+    {
+      $lookup: {
+        from: "curso",
+        localField: "idCurso",
+        foreignField: "_id",
+        as: "curso",
+      },
+    },
+    {
+      $match: {
+        idCurso: mongoose.Types.ObjectId(req.query.curso),
+        estado: {
+          $in: [
+            mongoose.Types.ObjectId(idEstadoActiva),
+            mongoose.Types.ObjectId(idEstadoSuspendido),
+          ],
+        },
+      },
+    },
+    {
+      $lookup: {
+        from: "estudiante",
+        localField: "idEstudiante",
+        foreignField: "_id",
+        as: "DatosEstudiantes",
+      },
+    },
+    {
+      $project: {
+        "DatosEstudiantes._id": 1,
+        "DatosEstudiantes.nombre": 1,
+        "DatosEstudiantes.apellido": 1,
+      },
+    },
+  ])
+    .then((estudiantes) => {
+      var est = [];
+      estudiantes.forEach((estudiante) => {
+        let datos = {
+          _id: estudiante.DatosEstudiantes[0]._id,
+          nombre: estudiante.DatosEstudiantes[0].nombre,
+          apellido: estudiante.DatosEstudiantes[0].apellido,
+        };
+        est.push(datos);
+      });
+
+      return res.status(200).json({
+        exito: true,
+        message: "Se obtuvieron correctamente los estudiantes del curso",
+        estudiante: est,
+      });
+    })
+    .catch((error) => {
+      res.status(500).json({
+        message: "Ocurrió un error al querer obtener los estudiantes del curso",
+        error: error.message,
+      });
+    });
+});
 
 module.exports = router;
