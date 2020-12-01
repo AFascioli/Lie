@@ -285,7 +285,7 @@ router.post(
 
     var obtenerDatosUsuario = (rol, emailUsuario) => {
       return new Promise((resolve, reject) => {
-        if (rol == "Adulto Responsable") {
+        if (rol == "AdultoResponsable") {
           AdultoResponsable.findOne({ email: emailUsuario }).then((usuario) => {
             apellido = usuario.apellido;
             nombre = usuario.nombre;

@@ -63,9 +63,7 @@ export class PerfilEstudianteComponent implements OnInit {
   }
 
   esAdultoResponsable() {
-    return this.servicioAutenticación.getRol() == "Adulto Responsable"
-      ? true
-      : false;
+    return this.servicioAutenticación.getRol() == "AdultoResponsable";
   }
 
   onCancelar() {
