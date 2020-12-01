@@ -386,6 +386,7 @@ router.get("/cursosDeEstudiante", checkAuthMiddleware, async (req, res) => {
         let idCicloActual = await ClaseCicloLectivo.obtenerIdCicloActual();
         if (idCicloSeleccionado == idCicloActual) {
           let inscripcionPendiente = await Inscripcion.findOne({
+            idEstudiante: req.query.idEstudiante,
             estado: idEstadoPendiente,
           });
 

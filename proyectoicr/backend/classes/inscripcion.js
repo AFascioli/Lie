@@ -246,6 +246,21 @@ exports.inscribirEstudianteProximoAnio = async function (
 
     var cursoSeleccionado = await obtenerCurso(idCicloProximo);
 
+    let inscripcionPendiente = await Inscripcion.findOne({
+      idEstudiante: idEstudiante,
+      estado: idEstadoPendienteInscripcion,
+    });
+
+    // Si era cambio de curso de la insc pendiente ponemos en inactiva la anterior
+    if (inscripcionPendiente) {
+      var idEstadoInactiva = await ClaseEstado.obtenerIdEstado(
+        "Inscripcion",
+        "Inactiva"
+      );
+      inscripcionPendiente.estado = idEstadoInactiva;
+      await inscripcion.save();
+    }
+
     const nuevaInscripcion = new Inscripcion({
       idEstudiante: idEstudiante,
       idCurso: cursoSeleccionado._id,
