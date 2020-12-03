@@ -95,7 +95,7 @@ export class CalificacionesCicloLectivoComponent implements OnInit, OnDestroy {
     this.fechaActual = new Date();
     this.validarPermisos();
     this.servicioCicloLectivo
-      .obtenerAniosCicloLectivoActualYPrevios()
+      .obtenerAniosCicloLectivo()
       .pipe(takeUntil(this.unsubscribe))
       .subscribe((response) => {
         this.year = response.respuesta;
