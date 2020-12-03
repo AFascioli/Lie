@@ -111,22 +111,22 @@ exports.inscribirEstudiante = async function (
     return cuotas;
   };
 
-  let esCambioDeCurso = (idCurso, idCicloLectivo) => {
-    return new Promise((resolve, reject) => {
-      CicloLectivo.findById(idCicloLectivo)
-        .then((cicloLectivo) => {
-          if (añoLectivo == cicloLectivo.año) {
-            Curso.findByIdAndUpdate(idCurso, { $inc: { capacidad: 1 } }).then(
-              () => {
-                resolve();
-              }
-            );
-            cuotasAnteriores = inscripcion.cuotas;
-          }
-        })
-        .catch((error) => reject(error));
-    });
-  };
+  // let esCambioDeCurso = (idCurso, idCicloLectivo) => {
+  //   return new Promise((resolve, reject) => {
+  //     CicloLectivo.findById(idCicloLectivo)
+  //       .then((cicloLectivo) => {
+  //         if (añoLectivo == cicloLectivo.año) {
+  //           Curso.findByIdAndUpdate(idCurso, { $inc: { capacidad: 1 } }).then(
+  //             () => {
+  //               resolve();
+  //             }
+  //           );
+  //           cuotasAnteriores = inscripcion.cuotas;
+  //         }
+  //       })
+  //       .catch((error) => reject(error));
+  //   });
+  // };
 
   let actualizarEstadoEstudiante = (idEstudiante, idEstado) => {
     return new Promise((resolve, reject) => {
@@ -143,6 +143,7 @@ exports.inscribirEstudiante = async function (
   };
 
   try {
+    let idCicloActual= await ClaseCicloLectivo.obtenerIdCicloActual();
     var cursoSeleccionado = await obtenerCurso();
     var estadoCursandoMateria = await ClaseEstado.obtenerIdEstado(
       "CalificacionesXMateria",
@@ -155,6 +156,8 @@ exports.inscribirEstudiante = async function (
     let contadorInasistenciasJustificada = 0;
     let contadorLlegadasTarde = 0;
     var materiasPendientesNuevas = [];
+
+   
 
     //Si es cambio de curso se deben copiar los siguientes datos de la inscripcion "vieja"
     if (inscripcion != null) {
@@ -191,6 +194,7 @@ exports.inscribirEstudiante = async function (
       materiasDelCurso,
       estadoCursandoMateria._id
     );
+    
 
     const nuevaInscripcion = new Inscripcion({
       idEstudiante: idEstudiante,
@@ -202,7 +206,7 @@ exports.inscribirEstudiante = async function (
       contadorLlegadasTarde: contadorLlegadasTarde,
       calificacionesXMateria: idsCXMNuevas,
       materiasPendientes: materiasPendientesNuevas,
-      cicloLectivo: idCicloLectivo,
+      cicloLectivo: idCicloActual,
       cuotas: cuotas,
       sanciones: inscripcion ? inscripcion.sanciones : [],
     });
@@ -256,9 +260,9 @@ exports.inscribirEstudianteProximoAnio = async function (
       var idEstadoInactiva = await ClaseEstado.obtenerIdEstado(
         "Inscripcion",
         "Inactiva"
-      );
-      inscripcionPendiente.estado = idEstadoInactiva;
-      await inscripcion.save();
+        );
+        inscripcionPendiente.estado = idEstadoInactiva;
+      await inscripcionPendiente.save();
     }
 
     const nuevaInscripcion = new Inscripcion({

@@ -87,6 +87,7 @@ export class InscripcionEstudianteComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.unsubscribe))
       .subscribe((response) => {
         this.tieneInscripcionPendiente = response.inscripcionPendiente;
+        this.cursoActual = response.curso;
       });
     this.isLoading = false;
   }

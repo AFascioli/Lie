@@ -1,6 +1,4 @@
-<h1 class="componente-titulo">
-  Inscribir estudiante a un curso
-</h1>
+<h1 class="componente-titulo">Inscribir estudiante a un curso</h1>
 
 <mat-card class="card-body-componente" *ngIf="!isLoading">
   <form #form="ngForm">
@@ -41,6 +39,17 @@
               <label [innerHTML]="cursoActual" class="mensaje-atencion-curso">
               </label>
             </p>
+            <p class="mensaje-atencion" *ngIf="tieneInscripcionPendiente">
+              <b
+                >Atención, el estudiante seleccionado ya esta inscripto en el
+                curso
+              </b>
+              <label [innerHTML]="cursoActual" class="mensaje-atencion-curso">
+                para el año 
+                <!-- {{añosCiclos.siguiente}} -->
+              </label>
+              <!-- #Resolve añosCiclos.siguiente tiene que ser el año del ciclo lectivo proximo-->
+            </p>
           </mat-card-subtitle>
         </mat-card>
       </div>
@@ -58,7 +67,7 @@
             <mat-option value="actual">
               {{ fechaActual.getFullYear() }}</mat-option
             >
-            <mat-option value="proximo" *ngIf="!tieneInscripcionPendiente">
+            <mat-option value="proximo">
               {{ fechaActual.getFullYear() + 1 }}</mat-option
             >
           </mat-select>
