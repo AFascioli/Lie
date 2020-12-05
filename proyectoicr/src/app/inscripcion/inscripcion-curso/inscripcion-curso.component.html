@@ -1,6 +1,10 @@
-<h1 class="componente-titulo">
-  Inscribir estudiantes a un curso
-</h1>
+<h1 class="componente-titulo">Inscribir estudiantes a un curso</h1>
+<mat-card *ngIf="fueraPeriodoCursado">
+  <p class="aviso">
+    Atención, no se puede realizar inscripciones debido a que nos encontramos
+    fuera de las fechas
+  </p>
+</mat-card>
 <mat-card class="card-body-componente">
   <form #form="ngForm">
     <div class="div-select">
@@ -38,7 +42,12 @@
         </mat-select>
       </mat-form-field>
     </div>
-    <p class="aviso" *ngIf="estudiantes.length == 0 && !loading && seSeleccionoCurso && yearSelected">
+    <p
+      class="aviso"
+      *ngIf="
+        estudiantes.length == 0 && !loading && seSeleccionoCurso && yearSelected
+      "
+    >
       <b>No hay estudiantes para inscribir al curso seleccionado </b>
     </p>
     <table

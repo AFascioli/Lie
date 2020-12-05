@@ -80,7 +80,6 @@ export class CalificacionesEstudiantesComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.obtenerEstadoCicloLectivo();
     this.fechaActual = new Date();
     this.obtenerTrimestreActual();
     this.validarPermisos();
@@ -142,23 +141,14 @@ export class CalificacionesEstudiantesComponent implements OnInit, OnDestroy {
     }
   }
 
-  obtenerEstadoCicloLectivo() {
-    this.cicloLectivoService
-      .obtenerEstadoCicloLectivo()
-      .pipe(takeUntil(this.unsubscribe))
-      .subscribe((response) => {
-        this.estadoCiclo = response.estadoCiclo;
-      });
-  }
-
   obtenerTrimestreActual() {
     this.cicloLectivoService
       .obtenerEstadoCicloLectivo()
       .pipe(takeUntil(this.unsubscribe))
       .subscribe(async (response) => {
-        let estado = await response.estadoCiclo;
+        this.estadoCiclo = await response.estadoCiclo;
         this.puedeEditarCalificaciones = true;
-        switch (estado) {
+        switch (this.estadoCiclo) {
           case "En primer trimestre":
             this.trimestreActual = "1";
             break;
@@ -292,7 +282,11 @@ export class CalificacionesEstudiantesComponent implements OnInit, OnDestroy {
           this.materiaSeleccionada = true;
           this.estudiantes = [...respuesta.estudiantes];
           this.estudiantes = this.estudiantes.sort((a, b) =>
-            a.apellido.toLowerCase() > b.apellido.toLowerCase() ? 1 : b.apellido.toLowerCase() > a.apellido.toLowerCase() ? -1 : 0
+            a.apellido.toLowerCase() > b.apellido.toLowerCase()
+              ? 1
+              : b.apellido.toLowerCase() > a.apellido.toLowerCase()
+              ? -1
+              : 0
           );
           this.dataSource = new MatTableDataSource(this.estudiantes);
           this.dataSource.filter = this.filtroEstudiante;

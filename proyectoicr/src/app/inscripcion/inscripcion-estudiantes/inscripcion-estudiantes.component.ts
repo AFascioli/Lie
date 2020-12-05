@@ -1,3 +1,4 @@
+import { CicloLectivoService } from "src/app/cicloLectivo.service";
 import { InscripcionService } from "../inscripcion.service";
 import { EstudiantesService } from "../../estudiantes/estudiante.service";
 import { OnInit, Component, ChangeDetectorRef, OnDestroy } from "@angular/core";
@@ -36,17 +37,19 @@ export class InscripcionEstudianteComponent implements OnInit, OnDestroy {
   ];
   _mobileQueryListener: () => void;
   mobileQuery: MediaQueryList;
-  fechaDentroDeRangoInscripcion: boolean = true;
   private unsubscribe: Subject<void> = new Subject();
   isLoading: boolean = true;
   cursoActual: any;
   yearSelected: any;
   nextYearSelect: boolean;
   tieneInscripcionPendiente: boolean = false;
+  fueraPeriodoCursado: boolean;
 
   constructor(
     public servicioEstudiante: EstudiantesService,
     public servicioInscripcion: InscripcionService,
+    public servicioCicloLectivo: CicloLectivoService,
+    public autenticacionService: AutenticacionService,
     public dialog: MatDialog,
     public snackBar: MatSnackBar,
     public changeDetectorRef: ChangeDetectorRef,
@@ -63,33 +66,48 @@ export class InscripcionEstudianteComponent implements OnInit, OnDestroy {
     this.unsubscribe.complete();
   }
 
-  ngOnInit() {
+  async ngOnInit() {
     this.fechaActual = new Date();
+    this.fueraPeriodoCursado = true;
     this.apellidoEstudiante = this.servicioEstudiante.estudianteSeleccionado.apellido;
     this.nombreEstudiante = this.servicioEstudiante.estudianteSeleccionado.nombre;
     this._idEstudiante = this.servicioEstudiante.estudianteSeleccionado._id;
-    this.servicioEstudiante
-      .estudianteEstaInscripto(this._idEstudiante)
-      .pipe(takeUntil(this.unsubscribe))
-      .subscribe((response) => {
-        this.estudianteEstaInscripto = response.exito;
+    if (
+      (await this.fechaActualEnPeriodoCursado()) ||
+      this.autenticacionService.getRol() == "Admin"
+    ) {
+      this.servicioEstudiante
+        .estudianteEstaInscripto(this._idEstudiante)
+        .pipe(takeUntil(this.unsubscribe))
+        .subscribe((response) => {
+          this.estudianteEstaInscripto = response.exito;
+        });
+      this.servicioInscripcion
+        .obtenerCursosInscripcionEstudiante(this.fechaActual.getFullYear())
+        .pipe(takeUntil(this.unsubscribe))
+        .subscribe((response) => {
+          if (response.cursoActual != "") {
+            this.cursoActual = response.cursoActual.nombre;
+          }
+        });
+      this.servicioInscripcion
+        .validarInscripcionPendiente(this._idEstudiante)
+        .pipe(takeUntil(this.unsubscribe))
+        .subscribe((response) => {
+          this.tieneInscripcionPendiente = response.inscripcionPendiente;
+          this.cursoActual = response.curso;
+        });
+      this.isLoading = false;
+      this.fueraPeriodoCursado = false;
+    }
+  }
+
+  async fechaActualEnPeriodoCursado() {
+    return new Promise((resolve, reject) => {
+      this.servicioCicloLectivo.validarEnCursado().subscribe((response) => {
+        resolve(response.permiso);
       });
-    this.servicioInscripcion
-      .obtenerCursosInscripcionEstudiante(this.fechaActual.getFullYear())
-      .pipe(takeUntil(this.unsubscribe))
-      .subscribe((response) => {
-        if (response.cursoActual != "") {
-          this.cursoActual = response.cursoActual.nombre;
-        }
-      });
-    this.servicioInscripcion
-      .validarInscripcionPendiente(this._idEstudiante)
-      .pipe(takeUntil(this.unsubscribe))
-      .subscribe((response) => {
-        this.tieneInscripcionPendiente = response.inscripcionPendiente;
-        this.cursoActual = response.curso;
-      });
-    this.isLoading = false;
+    });
   }
 
   //Obtiene la capacidad del curso seleccionado

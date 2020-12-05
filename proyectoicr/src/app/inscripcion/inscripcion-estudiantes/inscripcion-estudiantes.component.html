@@ -1,143 +1,145 @@
 <h1 class="componente-titulo">Inscribir estudiante a un curso</h1>
-
-<mat-card class="card-body-componente" *ngIf="!isLoading">
+<mat-card *ngIf="fueraPeriodoCursado">
+  <p class="aviso">
+    Atención, no se puede realizar inscripciones debido a que nos encontramos
+    fuera de las fechas
+  </p>
+</mat-card>
+<mat-card
+  class="card-body-componente"
+  *ngIf="!isLoading && !fueraPeriodoCursado"
+>
   <form #form="ngForm">
-    <p class="aviso" *ngIf="!fechaDentroDeRangoInscripcion">
-      Atención, no se puede realizar inscripciones debido a que nos encontramos
-      fuera de las fechas
-    </p>
-    <div *ngIf="fechaDentroDeRangoInscripcion">
-      <div class="ubicacion-fecha">
-        <b>Fecha: </b>
-        <mat-form-field class="mat-form-Fecha">
-          <input
-            [disabled]="true"
-            ngModel
-            #diaFecha="ngModel"
-            matInput
-            name="diaFecha"
-            [(ngModel)]="diaActual"
-            required
-            class="input-fecha"
-          />
-          {{ fechaActual | date: "EEEE" | titlecase }}
-          {{ fechaActual | date: "dd/MM/yyyy" }}&nbsp;
-        </mat-form-field>
-      </div>
-      <div class="contenido" [class.contenido-mobile]="mobileQuery.matches">
-        <mat-card>
-          <p class="titulo-datos-est">Datos del estudiante</p>
-          <mat-card-subtitle>
-            <b>Apellido/s: </b> {{ apellidoEstudiante }}
-            <br />
-            <b>Nombre/s: </b> {{ nombreEstudiante }}
-            <p class="mensaje-atencion" *ngIf="estudianteEstaInscripto">
-              <b
-                >Atención, el estudiante seleccionado ya esta inscripto en el
-                curso
-              </b>
-              <label [innerHTML]="cursoActual" class="mensaje-atencion-curso">
-              </label>
-            </p>
-            <p class="mensaje-atencion" *ngIf="tieneInscripcionPendiente">
-              <b
-                >Atención, el estudiante seleccionado ya esta inscripto en el
-                curso
-              </b>
-              <label [innerHTML]="cursoActual" class="mensaje-atencion-curso">
-                para el año 
-                <!-- {{añosCiclos.siguiente}} -->
-              </label>
-              <!-- #Resolve añosCiclos.siguiente tiene que ser el año del ciclo lectivo proximo-->
-            </p>
-          </mat-card-subtitle>
-        </mat-card>
-      </div>
-      <div class="div-select">
-        <mat-form-field class="selectYear">
-          <mat-select
-            placeholder="Seleccione año"
-            name="year"
-            ngModel
-            #yearSelected="ngModel"
-            matNativeControl
-            required
-            (selectionChange)="onYearSelected(yearSelected)"
-          >
-            <mat-option value="actual">
-              {{ fechaActual.getFullYear() }}</mat-option
-            >
-            <mat-option value="proximo">
-              {{ fechaActual.getFullYear() + 1 }}</mat-option
-            >
-          </mat-select>
-        </mat-form-field>
-        <mat-form-field>
-          <mat-select
-            placeholder="Seleccione curso"
-            name="curso"
-            ngModel
-            #cursoSelec="ngModel"
-            [(ngModel)]="cursoSeleccionado"
-            matNativeControl
-            required
-            (selectionChange)="onCursoSeleccionado(cursoSelec)"
-          >
-            <mat-option *ngFor="let objCurso of cursos" [value]="objCurso._id">
-              {{ objCurso.nombre }}
-            </mat-option>
-          </mat-select>
-        </mat-form-field>
-      </div>
-      <p class="capacidad" *ngIf="capacidadCurso >= 0">
-        <b>Cupos disponibles: </b>{{ capacidadCurso }}
-      </p>
-      <br />
-      <mat-accordion>
-        <mat-expansion-panel
-          [class.mat-expansion-panel-mobile]="mobileQuery.matches"
-          [expanded]="true"
-        >
-          <mat-expansion-panel-header>
-            <mat-panel-title>
-              <b
-                class="titulos-reg-doc"
-                [class.titulos-reg-doc-mobile]="mobileQuery.matches"
-                >Registrar documentos entregados</b
-              >
-            </mat-panel-title>
-          </mat-expansion-panel-header>
-          <mat-checkbox
-            (change)="registrarDocumento(0)"
-            [disabled]="nextYearSelect"
-          >
-            Fotocopia del documento</mat-checkbox
-          >
-          <br />
-          <mat-checkbox
-            (change)="registrarDocumento(1)"
-            [disabled]="nextYearSelect"
-          >
-            Ficha médica</mat-checkbox
-          >
-          <br />
-          <mat-checkbox
-            (change)="registrarDocumento(2)"
-            [disabled]="nextYearSelect"
-          >
-            Informe año anterior</mat-checkbox
-          >
-        </mat-expansion-panel>
-      </mat-accordion>
-      <br />
+    <div class="ubicacion-fecha">
+      <b>Fecha: </b>
+      <mat-form-field class="mat-form-Fecha">
+        <input
+          [disabled]="true"
+          ngModel
+          #diaFecha="ngModel"
+          matInput
+          name="diaFecha"
+          [(ngModel)]="diaActual"
+          required
+          class="input-fecha"
+        />
+        {{ fechaActual | date: "EEEE" | titlecase }}
+        {{ fechaActual | date: "dd/MM/yyyy" }}&nbsp;
+      </mat-form-field>
     </div>
+    <div class="contenido" [class.contenido-mobile]="mobileQuery.matches">
+      <mat-card>
+        <p class="titulo-datos-est">Datos del estudiante</p>
+        <mat-card-subtitle>
+          <b>Apellido/s: </b> {{ apellidoEstudiante }}
+          <br />
+          <b>Nombre/s: </b> {{ nombreEstudiante }}
+          <p class="mensaje-atencion" *ngIf="estudianteEstaInscripto">
+            <b
+              >Atención, el estudiante seleccionado ya esta inscripto en el
+              curso
+            </b>
+            <label [innerHTML]="cursoActual" class="mensaje-atencion-curso">
+            </label>
+          </p>
+          <p class="mensaje-atencion" *ngIf="tieneInscripcionPendiente">
+            <b
+              >Atención, el estudiante seleccionado ya esta inscripto en el
+              curso
+            </b>
+            <label [innerHTML]="cursoActual" class="mensaje-atencion-curso">
+              para el año
+              <!-- {{añosCiclos.siguiente}} -->
+            </label>
+            <!-- #Resolve añosCiclos.siguiente tiene que ser el año del ciclo lectivo proximo-->
+          </p>
+        </mat-card-subtitle>
+      </mat-card>
+    </div>
+    <div class="div-select">
+      <mat-form-field class="selectYear">
+        <mat-select
+          placeholder="Seleccione año"
+          name="year"
+          ngModel
+          #yearSelected="ngModel"
+          matNativeControl
+          required
+          (selectionChange)="onYearSelected(yearSelected)"
+        >
+          <mat-option value="actual">
+            {{ fechaActual.getFullYear() }}</mat-option
+          >
+          <mat-option value="proximo">
+            {{ fechaActual.getFullYear() + 1 }}</mat-option
+          >
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field>
+        <mat-select
+          placeholder="Seleccione curso"
+          name="curso"
+          ngModel
+          #cursoSelec="ngModel"
+          [(ngModel)]="cursoSeleccionado"
+          matNativeControl
+          required
+          (selectionChange)="onCursoSeleccionado(cursoSelec)"
+        >
+          <mat-option *ngFor="let objCurso of cursos" [value]="objCurso._id">
+            {{ objCurso.nombre }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+    <p class="capacidad" *ngIf="capacidadCurso >= 0">
+      <b>Cupos disponibles: </b>{{ capacidadCurso }}
+    </p>
+    <br />
+    <mat-accordion>
+      <mat-expansion-panel
+        [class.mat-expansion-panel-mobile]="mobileQuery.matches"
+        [expanded]="true"
+      >
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            <b
+              class="titulos-reg-doc"
+              [class.titulos-reg-doc-mobile]="mobileQuery.matches"
+              >Registrar documentos entregados</b
+            >
+          </mat-panel-title>
+        </mat-expansion-panel-header>
+        <mat-checkbox
+          (change)="registrarDocumento(0)"
+          [disabled]="nextYearSelect"
+        >
+          Fotocopia del documento</mat-checkbox
+        >
+        <br />
+        <mat-checkbox
+          (change)="registrarDocumento(1)"
+          [disabled]="nextYearSelect"
+        >
+          Ficha médica</mat-checkbox
+        >
+        <br />
+        <mat-checkbox
+          (change)="registrarDocumento(2)"
+          [disabled]="nextYearSelect"
+        >
+          Informe año anterior</mat-checkbox
+        >
+      </mat-expansion-panel>
+    </mat-accordion>
+    <br />
     <div class="div-button">
       <button
         mat-raised-button
         class="button-primary"
         (click)="openDialogo(form)"
         mat-raised-button
-        [disabled]="!fechaDentroDeRangoInscripcion"
+        [disabled]="!fueraPeriodoCursado"
       >
         Inscribir
       </button>

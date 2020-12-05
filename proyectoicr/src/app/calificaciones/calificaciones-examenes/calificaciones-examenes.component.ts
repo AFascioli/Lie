@@ -113,9 +113,8 @@ export class CalificacionesExamenesComponent implements OnInit, OnDestroy {
     this.cicloLectivoService
       .obtenerEstadoCicloLectivo()
       .pipe(takeUntil(this.unsubscribe))
-      .subscribe(async (response) => {
-        let estado = await response.estadoCiclo;
-        if (estado == "En examenes") {
+      .subscribe((response) => {
+        if (response.estadoCiclo == "En examenes") {
           return true;
         }
         return false;

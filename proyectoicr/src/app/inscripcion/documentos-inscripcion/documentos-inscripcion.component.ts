@@ -34,7 +34,6 @@ export class DocumentosInscripcionComponent implements OnInit, OnDestroy {
   private unsubscribe: Subject<void> = new Subject();
   _mobileQueryListener: () => void;
   mobileQuery: MediaQueryList;
-  estadoCiclo: string;
 
   constructor(
     public servicioEstudiante: EstudiantesService,
@@ -56,11 +55,8 @@ export class DocumentosInscripcionComponent implements OnInit, OnDestroy {
     this.unsubscribe.complete();
   }
 
-  //Sort ordena solo por año de curso, para ordenar bien, deberia dsp de el sort que esta ahora
-  //tomar de a dos cursos y ordenarlos alfabeticamente, de esa forma quedan ordenados por año y
-  //division
   async ngOnInit() {
-    this.obtenerEstadoCicloLectivo();
+    this.fueraPeriodoCicloLectivo = true;
     this.fechaActual = new Date();
     if (
       (await this.fechaActualEnPeriodoCursado()) ||
@@ -80,8 +76,6 @@ export class DocumentosInscripcionComponent implements OnInit, OnDestroy {
           );
           this.isLoading = false;
         });
-    } else {
-      this.fueraPeriodoCicloLectivo = true;
     }
   }
 
@@ -105,9 +99,11 @@ export class DocumentosInscripcionComponent implements OnInit, OnDestroy {
         if (estudiantes.documentos.length != 0) {
           this.estudiantesConDocumentos = this.estudiantesConDocumentos.sort(
             (a, b) =>
-              a.datosEstudiante[0].apellido.toLowerCase() > b.datosEstudiante[0].apellido.toLowerCase()
+              a.datosEstudiante[0].apellido.toLowerCase() >
+              b.datosEstudiante[0].apellido.toLowerCase()
                 ? 1
-                : b.datosEstudiante[0].apellido.toLowerCase() > a.datosEstudiante[0].apellido.toLowerCase()
+                : b.datosEstudiante[0].apellido.toLowerCase() >
+                  a.datosEstudiante[0].apellido.toLowerCase()
                 ? -1
                 : 0
           );
@@ -122,14 +118,6 @@ export class DocumentosInscripcionComponent implements OnInit, OnDestroy {
     estudiante.documentosEntregados[indiceDoc].entregado = !estudiante
       .documentosEntregados[indiceDoc].entregado;
     this.documentosEntregadosOnChange = true;
-  }
-
-  obtenerEstadoCicloLectivo() {
-    this.servicioCicloLectivo.obtenerEstadoCicloLectivo()
-      .pipe(takeUntil(this.unsubscribe))
-      .subscribe((response) => {
-        this.estadoCiclo = response.estadoCiclo;
-      });
   }
 
   //Guardar los estudiantes con los cambios, resetea los selects y abre snackBar

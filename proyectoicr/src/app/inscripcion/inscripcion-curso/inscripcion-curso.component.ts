@@ -1,3 +1,4 @@
+import { CicloLectivoService } from "src/app/cicloLectivo.service";
 import { MatSnackBar, MatDialog, MatDialogConfig } from "@angular/material";
 import { InscripcionService } from "./../inscripcion.service";
 import { Component, OnInit, OnDestroy, Inject } from "@angular/core";
@@ -17,7 +18,7 @@ import { takeUntil } from "rxjs/operators";
 export class InscripcionCursoComponent implements OnInit {
   fechaActual: Date;
   cursos: any[];
-  estudiantes=[];
+  estudiantes = [];
   seSeleccionoCurso = false;
   cursoSeleccionado: string;
   loading = false;
@@ -32,15 +33,21 @@ export class InscripcionCursoComponent implements OnInit {
   yearSelected: any;
   nextYearSelect: boolean;
   private unsubscribe: Subject<void> = new Subject();
+  periodoCursado: boolean;
+  fueraPeriodoCursado: boolean;
 
   constructor(
     public servicioInscripcion: InscripcionService,
     public snackBar: MatSnackBar,
+    public servicioCicloLectivo: CicloLectivoService,
     public dialog: MatDialog
   ) {}
 
-  ngOnInit(): void {
+  async ngOnInit() {
     this.fechaActual = new Date();
+    if (await this.fechaActualEnPeriodoCursado()) {
+      this.fueraPeriodoCursado = true;
+    }
   }
 
   onYearSelected(yearSelected) {
@@ -52,6 +59,14 @@ export class InscripcionCursoComponent implements OnInit {
       this.nextYearSelect = true;
     }
     this.obtenerCursosEstudiantes();
+  }
+
+  async fechaActualEnPeriodoCursado() {
+    return new Promise((resolve, reject) => {
+      this.servicioCicloLectivo.validarEnCursado().subscribe((response) => {
+        resolve(response.permiso);
+      });
+    });
   }
 
   obtenerCursosEstudiantes() {

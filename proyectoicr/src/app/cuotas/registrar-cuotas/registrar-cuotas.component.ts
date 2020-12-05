@@ -38,17 +38,15 @@ export class RegistrarCuotasComponent implements OnInit, OnDestroy {
     "Septiembre",
     "Octubre",
     "Noviembre",
-    "Diciembre"
+    "Diciembre",
   ];
   cursoNotSelected: Boolean = true;
   cuotasXEstudiante: any[] = [];
   displayedColumns: string[] = ["apellido", "nombre", "accion"];
   isLoading: Boolean = false;
-  estadoCiclo: string;
   private unsubscribe: Subject<void> = new Subject();
 
   async ngOnInit() {
-    this.obtenerEstadoCicloLectivo();
     this.fechaActual = new Date();
 
     if (
@@ -96,7 +94,11 @@ export class RegistrarCuotasComponent implements OnInit, OnDestroy {
       .subscribe((rtdo) => {
         if (rtdo.cuotasXEstudiante.length != 0) {
           this.cuotasXEstudiante = rtdo.cuotasXEstudiante.sort((a, b) =>
-            a.apellido.toLowerCase() > b.apellido.toLowerCase() ? 1 : b.apellido.toLowerCase() > a.apellido.toLowerCase() ? -1 : 0
+            a.apellido.toLowerCase() > b.apellido.toLowerCase()
+              ? 1
+              : b.apellido.toLowerCase() > a.apellido.toLowerCase()
+              ? -1
+              : 0
           );
         } else {
           this.cuotasXEstudiante = [];
@@ -143,14 +145,6 @@ export class RegistrarCuotasComponent implements OnInit, OnDestroy {
         );
       });
     this.cursoEstudiante = "";
-  }
-
-  obtenerEstadoCicloLectivo() {
-    this.cicloLectivoService.obtenerEstadoCicloLectivo()
-      .pipe(takeUntil(this.unsubscribe))
-      .subscribe((response) => {
-        this.estadoCiclo = response.estadoCiclo;
-      });
   }
 
   onGuardar() {
