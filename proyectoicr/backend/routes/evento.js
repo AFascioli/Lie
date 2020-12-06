@@ -199,11 +199,11 @@ router.post(
         eventoModificado
           .save()
           .then(() => {
-            // this.notificarPorEvento(
-            //   this.evento.tags,
-            //   this.evento.titulo,
-            //   "El evento se realizará en la fecha " + evento.fechaEvento + "."
-            // );
+            notificarPorEvento(
+              eventoModificado.tags,
+              eventoModificado.titulo,
+              "El evento se realizará en la fecha " + eventoModificado.fechaEvento + "."
+            );
             res.status(201).json({
               message: "Evento modificado exitosamente",
               exito: true,
