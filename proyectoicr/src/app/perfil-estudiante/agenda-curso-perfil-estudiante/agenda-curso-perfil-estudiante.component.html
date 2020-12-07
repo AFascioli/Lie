@@ -1,35 +1,25 @@
-<h1 class="componente-titulo">Horarios de {{ apellidoEstudiante }}, {{ nombreEstudiante }} - {{curso}}</h1>
+<h1 class="componente-titulo">
+  Horarios de {{ apellidoEstudiante }}, {{ nombreEstudiante }} - {{ curso }}
+</h1>
 <mat-card class="card-body-componente" *ngIf="materias.length != 0">
   <div id="parent-id" class="grid-container" *ngIf="cursoSelected">
     <div class="cabecera" [class.texto-mobile]="mobileQuery.matches">
-      <p class="cabecera">
-        Hora
-      </p>
+      <p class="cabecera">Hora</p>
     </div>
     <div class="cabecera" [class.texto-mobile]="mobileQuery.matches">
-      <p class="cabecera">
-        Lunes
-      </p>
+      <p class="cabecera">Lunes</p>
     </div>
     <div class="cabecera" [class.texto-mobile]="mobileQuery.matches">
-      <p class="cabecera">
-        Martes
-      </p>
+      <p class="cabecera">Martes</p>
     </div>
     <div class="cabecera" [class.texto-mobile]="mobileQuery.matches">
-      <p class="cabecera">
-        Miércoles
-      </p>
+      <p class="cabecera">Miércoles</p>
     </div>
     <div class="cabecera" [class.texto-mobile]="mobileQuery.matches">
-      <p class="cabecera">
-        Jueves
-      </p>
+      <p class="cabecera">Jueves</p>
     </div>
     <div class="cabecera" [class.texto-mobile]="mobileQuery.matches">
-      <p class="cabecera">
-        Viernes
-      </p>
+      <p class="cabecera">Viernes</p>
     </div>
 
     <div class="hora modulo1" [class.texto-mobile]="mobileQuery.matches">
@@ -109,12 +99,16 @@
       </div>
     </div>
   </div>
+  <p class="aviso" *ngIf="this.materias.length == 0">
+    <b> Aún no existe agenda de curso definida </b>
+  </p>
   <div class="div-button">
     <button
-    mat-raised-button
-    [routerLink]="['/perfilEstudiante']"
-    class="button-warn" >
-       Volver
+      mat-raised-button
+      [routerLink]="['/perfilEstudiante']"
+      class="button-warn"
+    >
+      Volver
     </button>
   </div>
 </mat-card>
