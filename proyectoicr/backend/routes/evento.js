@@ -145,7 +145,15 @@ router.post(
       return new Promise((resolve, reject) => {
         let filenamesEvento = [];
         if (req.body.filenames) {
-          filenamesEvento = req.body.filenames;
+          if (req.body.filenames.length > 1) {
+            if (Array.isArray(req.body.filenames)) {
+              for (let index = 0; index < req.body.filenames.length; index++) {
+                filenamesEvento.push(req.body.filenames[index]);
+              }
+            } else {
+              filenamesEvento.push(req.body.filenames);
+            }
+          } else filenamesEvento = req.body.filenames;
         }
         // Se sacan los filenames borrados
         if (filenamesEvento.length > 0 && req.body.filenamesBorrados != "null");
@@ -202,7 +210,9 @@ router.post(
             notificarPorEvento(
               eventoModificado.tags,
               eventoModificado.titulo,
-              "El evento se realizará en la fecha " + eventoModificado.fechaEvento + "."
+              "El evento se realizará en la fecha " +
+                eventoModificado.fechaEvento +
+                "."
             );
             res.status(201).json({
               message: "Evento modificado exitosamente",
