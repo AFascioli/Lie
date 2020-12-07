@@ -34,7 +34,7 @@ export class InscripcionCursoComponent implements OnInit {
   nextYearSelect: boolean;
   private unsubscribe: Subject<void> = new Subject();
   periodoCursado: boolean;
-  fueraPeriodoCursado: boolean;
+  cicloHabilitado: boolean;
 
   constructor(
     public servicioInscripcion: InscripcionService,
@@ -43,11 +43,9 @@ export class InscripcionCursoComponent implements OnInit {
     public dialog: MatDialog
   ) {}
 
-  async ngOnInit() {
+  ngOnInit() {
     this.fechaActual = new Date();
-    if (await this.fechaActualEnPeriodoCursado()) {
-      this.fueraPeriodoCursado = true;
-    }
+    this.cicloActualHabilitado();
   }
 
   onYearSelected(yearSelected) {
@@ -59,14 +57,6 @@ export class InscripcionCursoComponent implements OnInit {
       this.nextYearSelect = true;
     }
     this.obtenerCursosEstudiantes();
-  }
-
-  async fechaActualEnPeriodoCursado() {
-    return new Promise((resolve, reject) => {
-      this.servicioCicloLectivo.validarEnCursado().subscribe((response) => {
-        resolve(response.permiso);
-      });
-    });
   }
 
   obtenerCursosEstudiantes() {
@@ -81,6 +71,19 @@ export class InscripcionCursoComponent implements OnInit {
             ? -1
             : 0
         );
+      });
+  }
+
+  cicloActualHabilitado() {
+    this.servicioCicloLectivo
+      .obtenerEstadoCicloLectivo()
+      .pipe(takeUntil(this.unsubscribe))
+      .subscribe((response) => {
+        this.cicloHabilitado =
+          response.estadoCiclo == "Creado" ||
+          response.estadoCiclo == "En primer trimestre" ||
+          response.estadoCiclo == "En segundo trimestre" ||
+          response.estadoCiclo == "En tercer trimestre";
       });
   }
 

@@ -208,9 +208,9 @@ export class ListaEstudiantesComponent implements OnInit, OnDestroy {
 
   enPeriodoCursado() {
     if (
-      this.estadoCiclo.localeCompare("Inactivo") == 0 ||
-      this.estadoCiclo.localeCompare("Creado") == 0 ||
-      this.estadoCiclo.localeCompare("En examenes") == 0
+      this.estadoCiclo == "Inactivo" ||
+      this.estadoCiclo == "Creado" ||
+      this.estadoCiclo == "En examenes"
     )
       return true;
 

@@ -43,7 +43,8 @@ export class InscripcionEstudianteComponent implements OnInit, OnDestroy {
   yearSelected: any;
   nextYearSelect: boolean;
   tieneInscripcionPendiente: boolean = false;
-  fueraPeriodoCursado: boolean;
+  cicloHabilitado: boolean;
+  estadoCicloLectivo: String;
 
   constructor(
     public servicioEstudiante: EstudiantesService,
@@ -66,51 +67,36 @@ export class InscripcionEstudianteComponent implements OnInit, OnDestroy {
     this.unsubscribe.complete();
   }
 
-  async ngOnInit() {
+  ngOnInit() {
     this.fechaActual = new Date();
-    this.fueraPeriodoCursado = true;
     this.apellidoEstudiante = this.servicioEstudiante.estudianteSeleccionado.apellido;
     this.nombreEstudiante = this.servicioEstudiante.estudianteSeleccionado.nombre;
     this._idEstudiante = this.servicioEstudiante.estudianteSeleccionado._id;
-    if (
-      (await this.fechaActualEnPeriodoCursado()) ||
-      this.autenticacionService.getRol() == "Admin"
-    ) {
-      this.servicioEstudiante
-        .estudianteEstaInscripto(this._idEstudiante)
-        .pipe(takeUntil(this.unsubscribe))
-        .subscribe((response) => {
-          this.estudianteEstaInscripto = response.exito;
-        });
-      this.servicioInscripcion
-        .obtenerCursosInscripcionEstudiante(this.fechaActual.getFullYear())
-        .pipe(takeUntil(this.unsubscribe))
-        .subscribe((response) => {
-          if (response.cursoActual != "") {
-            this.cursoActual = response.cursoActual.nombre;
-          }
-        });
-      this.servicioInscripcion
-        .validarInscripcionPendiente(this._idEstudiante)
-        .pipe(takeUntil(this.unsubscribe))
-        .subscribe((response) => {
-          this.tieneInscripcionPendiente = response.inscripcionPendiente;
-          this.cursoActual = response.curso;
-        });
-      this.isLoading = false;
-      this.fueraPeriodoCursado = false;
-    }
-  }
-
-  async fechaActualEnPeriodoCursado() {
-    return new Promise((resolve, reject) => {
-      this.servicioCicloLectivo.validarEnCursado().subscribe((response) => {
-        resolve(response.permiso);
+    this.cicloActualHabilitado();
+    this.servicioEstudiante
+      .estudianteEstaInscripto(this._idEstudiante)
+      .pipe(takeUntil(this.unsubscribe))
+      .subscribe((response) => {
+        this.estudianteEstaInscripto = response.exito;
       });
-    });
+    this.servicioInscripcion
+      .obtenerCursosInscripcionEstudiante(this.fechaActual.getFullYear())
+      .pipe(takeUntil(this.unsubscribe))
+      .subscribe((response) => {
+        if (response.cursoActual != "") {
+          this.cursoActual = response.cursoActual.nombre;
+        }
+      });
+    this.servicioInscripcion
+      .validarInscripcionPendiente(this._idEstudiante)
+      .pipe(takeUntil(this.unsubscribe))
+      .subscribe((response) => {
+        this.tieneInscripcionPendiente = response.inscripcionPendiente;
+        this.cursoActual = response.curso;
+        this.isLoading = false;
+      });
   }
 
-  //Obtiene la capacidad del curso seleccionado
   onCursoSeleccionado(curso) {
     this.cursoSeleccionado = curso.value;
     this.obtenerCapacidadCurso();
@@ -126,6 +112,7 @@ export class InscripcionEstudianteComponent implements OnInit, OnDestroy {
       this.nextYearSelect = true;
     }
     this.obtenerCursosEstudiante();
+    console.log(this.yearSelected);
   }
 
   //Cambia el valor de entregado del documento seleccionado por el usuario
@@ -249,6 +236,19 @@ export class InscripcionEstudianteComponent implements OnInit, OnDestroy {
           });
       }
     }
+  }
+
+  cicloActualHabilitado() {
+    this.servicioCicloLectivo
+      .obtenerEstadoCicloLectivo()
+      .pipe(takeUntil(this.unsubscribe))
+      .subscribe((response) => {
+        this.cicloHabilitado =
+          response.estadoCiclo == "Creado" ||
+          response.estadoCiclo == "En primer trimestre" ||
+          response.estadoCiclo == "En segundo trimestre" ||
+          response.estadoCiclo == "En tercer trimestre";
+      });
   }
 }
 

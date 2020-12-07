@@ -1,14 +1,5 @@
 <h1 class="componente-titulo">Inscribir estudiante a un curso</h1>
-<mat-card *ngIf="fueraPeriodoCursado">
-  <p class="aviso">
-    Atención, no se puede realizar inscripciones debido a que nos encontramos
-    fuera de las fechas
-  </p>
-</mat-card>
-<mat-card
-  class="card-body-componente"
-  *ngIf="!isLoading && !fueraPeriodoCursado"
->
+<mat-card class="card-body-componente" *ngIf="!isLoading">
   <form #form="ngForm">
     <div class="ubicacion-fecha">
       <b>Fecha: </b>
@@ -67,7 +58,7 @@
           required
           (selectionChange)="onYearSelected(yearSelected)"
         >
-          <mat-option value="actual">
+          <mat-option value="actual" *ngIf="cicloHabilitado">
             {{ fechaActual.getFullYear() }}</mat-option
           >
           <mat-option value="proximo">
@@ -139,7 +130,6 @@
         class="button-primary"
         (click)="openDialogo(form)"
         mat-raised-button
-        [disabled]="fueraPeriodoCursado"
       >
         Inscribir
       </button>
