@@ -206,6 +206,17 @@ export class ListaEstudiantesComponent implements OnInit, OnDestroy {
       });
   }
 
+  enPeriodoCursado() {
+    if (
+      this.estadoCiclo.localeCompare("Inactivo") == 0 ||
+      this.estadoCiclo.localeCompare("Creado") == 0 ||
+      this.estadoCiclo.localeCompare("En examenes") == 0
+    )
+      return true;
+
+    return false;
+  }
+
   onRegistrarExamenes(indice) {
     this.asignarEstudianteSeleccionado(indice);
     this.router.navigate(["./calificacionesExamenes"]);

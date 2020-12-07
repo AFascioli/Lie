@@ -7,6 +7,7 @@ const Curso = require("../models/curso");
 const ClaseEstado = require("../classes/estado");
 const ClaseCicloLectivo = require("../classes/cicloLectivo");
 const ClaseInscripcion = require("../classes/inscripcion");
+
 router.get("/parametros", checkAuthMiddleware, async (req, res) => {
   CicloLectivo.findById(await ClaseCicloLectivo.obtenerIdCicloActual())
     .then((cicloLectivo) => {
