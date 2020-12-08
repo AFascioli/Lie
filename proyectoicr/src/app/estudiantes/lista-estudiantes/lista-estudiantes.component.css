@@ -98,8 +98,17 @@ th {
   font-size: 17px;
 }
 
+.titulo-expansion-panel-mobile {
+  white-space: normal !important;
+  padding-left: 5%;
+}
+
 .mat-expansion-panel {
   margin-bottom: 2%;
+}
+
+.mat-expansion-panel-header-mobile  {
+  height: 80px !important;
 }
 
 .isDisabled {

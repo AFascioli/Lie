@@ -5,13 +5,33 @@
 <mat-card *ngIf="estudiantes.length > 0 && !isLoading">
   <div *ngFor="let estudiante of estudiantes; let i = index">
     <mat-expansion-panel [expanded]="'i == 0'">
-      <mat-expansion-panel-header>
+      <mat-expansion-panel-header
+        [class.mat-expansion-panel-header-mobile]="mobileQuery.matches"
+      >
         <mat-panel-title>
-          <b class="titulo-expansion-panel">
-            {{ estudiante.apellido }}, {{ estudiante.nombre }} -
+          <b
+            class="titulo-expansion-panel"
+            [class.titulo-expansion-panel-mobile]="mobileQuery.matches"
+          >
+            {{ estudiante.apellido }}, {{ estudiante.nombre }}</b
+          >
+          <b class="titulo-expansion-panel" *ngIf="!mobileQuery.matches"
+            >&nbsp; -&nbsp;</b
+          >
+          <b
+            class="titulo-expansion-panel"
+            [class.titulo-expansion-panel-mobile]="mobileQuery.matches"
+          >
             {{ estudiante.tipoDocumento }}: {{ estudiante.numeroDocumento }}</b
-          ><b class="titulo-expansion-panel" *ngIf="inscripto[i]"
-            >&nbsp;- Curso: {{ this.cursos[i] }}
+          >
+          <b class="titulo-expansion-panel" *ngIf="!mobileQuery.matches"
+            >&nbsp; -&nbsp;</b
+          >
+          <b
+            class="titulo-expansion-panel"
+            [class.titulo-expansion-panel-mobile]="mobileQuery.matches"
+            *ngIf="inscripto[i]"
+            >Curso: {{ this.cursos[i] }}
           </b>
         </mat-panel-title>
       </mat-expansion-panel-header>
@@ -33,10 +53,10 @@
           *ngIf="permisos.asistencia > 1 && inscripto[i]"
           [ngClass]="{
             isDisabled:
-              suspendido[i] || (
+              suspendido[i] ||
               this.estadoCiclo == 'Inactivo' ||
               this.estadoCiclo == 'Creado' ||
-              this.estadoCiclo == 'En examenes')
+              this.estadoCiclo == 'En examenes'
           }"
           ><b>Justificar inasistencia</b></mat-card
         >
@@ -58,9 +78,9 @@
           [ngClass]="{
             isDisabled:
               suspendido[i] ||
-              (this.estadoCiclo == 'Inactivo' ||
+              this.estadoCiclo == 'Inactivo' ||
               this.estadoCiclo == 'Creado' ||
-              this.estadoCiclo == 'En examenes')
+              this.estadoCiclo == 'En examenes'
           }"
           ><b>Registrar llegada tarde</b></mat-card
         >
@@ -72,9 +92,9 @@
           [ngClass]="{
             isDisabled:
               suspendido[i] ||
-              (this.estadoCiclo == 'Inactivo' ||
+              this.estadoCiclo == 'Inactivo' ||
               this.estadoCiclo == 'Creado' ||
-              this.estadoCiclo == 'En examenes')
+              this.estadoCiclo == 'En examenes'
           }"
           ><b>Registrar retiro anticipado</b></mat-card
         >
@@ -86,9 +106,9 @@
           [ngClass]="{
             isDisabled:
               suspendido[i] ||
-              (this.estadoCiclo == 'Inactivo' ||
+              this.estadoCiclo == 'Inactivo' ||
               this.estadoCiclo == 'Creado' ||
-              this.estadoCiclo == 'En examenes')
+              this.estadoCiclo == 'En examenes'
           }"
           ><b>Registrar sanción</b></mat-card
         >
