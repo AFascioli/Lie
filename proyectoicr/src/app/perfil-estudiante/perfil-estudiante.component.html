@@ -38,12 +38,12 @@
   >
   <mat-card class="opcion" (click)="onClickDatosEstudiante()"
     ><mat-icon [inline]="true">face</mat-icon><br /><b
-      >Datos estudiante</b
+      >Datos del estudiante</b
     ></mat-card
   >
   <mat-card
     class="opcion"
-    *ngIf="esAdultoResponsable"
+    *ngIf="esAdultoResponsable()"
     (click)="onClickSolicitudReunion()"
     ><mat-icon [inline]="true">message</mat-icon><br /><b
       >Solicitud de reunión</b

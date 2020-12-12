@@ -106,8 +106,8 @@ exports.inscribirEstudiante = async function (
   let crearCuotas = () => {
     cuotas = [];
 
-    for (let i = 0; i < 12; i++) {
-      let cuota = { mes: i + 1, pagado: false };
+    for (let i = 3; i < 12; i++) {
+      let cuota = { mes: i, pagado: false };
       cuotas.push(cuota);
     }
     return cuotas;
