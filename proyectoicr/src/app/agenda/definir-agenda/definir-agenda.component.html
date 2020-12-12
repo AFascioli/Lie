@@ -12,12 +12,8 @@
           required
           (selectionChange)="onYearSelected(yearSelected)"
         >
-          <mat-option value="actual">
-            {{ fechaActual.getFullYear() }}</mat-option
-          >
-          <mat-option value="proximo">
-            {{ fechaActual.getFullYear() + 1 }}</mat-option
-          >
+          <mat-option value="actual"> {{ anosCiclos[0] }}</mat-option>
+          <mat-option value="proximo"> {{ anosCiclos[1] }}</mat-option>
         </mat-select>
       </mat-form-field>
       <mat-form-field>
@@ -310,7 +306,7 @@
       mat-raised-button
       class="button-primary"
       (click)="onGuardar()"
-      *ngIf="cursoSelected && dataSource.data.length != 0 "
+      *ngIf="cursoSelected && dataSource.data.length != 0"
       [disabled]="fueraPeriodoDefinirAgenda || !huboCambios"
     >
       Guardar

@@ -16,7 +16,6 @@ import { takeUntil } from "rxjs/operators";
   styleUrls: ["./inscripcion-curso.component.css"],
 })
 export class InscripcionCursoComponent implements OnInit {
-  fechaActual: Date;
   cursos: any[];
   estudiantes = [];
   seSeleccionoCurso = false;
@@ -35,6 +34,7 @@ export class InscripcionCursoComponent implements OnInit {
   private unsubscribe: Subject<void> = new Subject();
   periodoCursado: boolean;
   cicloHabilitado: boolean;
+  anosCiclos: any[]
 
   constructor(
     public servicioInscripcion: InscripcionService,
@@ -44,16 +44,18 @@ export class InscripcionCursoComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.fechaActual = new Date();
+    this.servicioCicloLectivo.obtenerActualYSiguiente().pipe(takeUntil(this.unsubscribe)).subscribe((response) => {
+      this.anosCiclos = response.añosCiclos;
+    });
     this.cicloActualHabilitado();
   }
 
   onYearSelected(yearSelected) {
     if (yearSelected.value == "actual") {
-      this.yearSelected = this.fechaActual.getFullYear();
+      this.yearSelected = this.anosCiclos[0];
       this.nextYearSelect = false;
     } else {
-      this.yearSelected = this.fechaActual.getFullYear() + 1;
+      this.yearSelected = this.anosCiclos[1];
       this.nextYearSelect = true;
     }
     this.obtenerCursosEstudiantes();
@@ -90,7 +92,7 @@ export class InscripcionCursoComponent implements OnInit {
   onCursoSeleccionado(cursoSeleccionado) {
     this.loading = true;
     this.cursoSeleccionado = cursoSeleccionado.value;
-    if (this.yearSelected == this.fechaActual.getFullYear()) {
+    if (this.yearSelected == this.anosCiclos[0]) {
       this.obtenerEstudiantesAñoActual();
     } else {
       this.obtenerEstudiantesProximoAño();
@@ -126,7 +128,7 @@ export class InscripcionCursoComponent implements OnInit {
   }
 
   inscribirEstudiantes() {
-    if (this.yearSelected == this.fechaActual.getFullYear()) {
+    if (this.yearSelected == this.anosCiclos[0]) {
       this.inscribirEstudiantesAñoActual();
     } else {
       this.inscribirEstudiantesProximoAño();

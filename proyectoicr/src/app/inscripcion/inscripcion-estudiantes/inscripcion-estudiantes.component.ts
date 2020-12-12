@@ -28,7 +28,7 @@ export class InscripcionEstudianteComponent implements OnInit, OnDestroy {
   nombreEstudiante: string;
   _idEstudiante: string;
   matConfig = new MatDialogConfig();
-  fechaActual: Date;
+  fechaActual = new Date();
   estudianteEstaInscripto: boolean;
   documentosEntregados = [
     { nombre: "Fotocopia documento", entregado: false },
@@ -45,6 +45,7 @@ export class InscripcionEstudianteComponent implements OnInit, OnDestroy {
   tieneInscripcionPendiente: boolean = false;
   cicloHabilitado: boolean;
   estadoCicloLectivo: String;
+  anosCiclos: any[];
 
   constructor(
     public servicioEstudiante: EstudiantesService,
@@ -68,7 +69,6 @@ export class InscripcionEstudianteComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.fechaActual = new Date();
     this.apellidoEstudiante = this.servicioEstudiante.estudianteSeleccionado.apellido;
     this.nombreEstudiante = this.servicioEstudiante.estudianteSeleccionado.nombre;
     this._idEstudiante = this.servicioEstudiante.estudianteSeleccionado._id;
@@ -79,14 +79,18 @@ export class InscripcionEstudianteComponent implements OnInit, OnDestroy {
       .subscribe((response) => {
         this.estudianteEstaInscripto = response.exito;
       });
-    this.servicioInscripcion
-      .obtenerCursosInscripcionEstudiante(this.fechaActual.getFullYear())
-      .pipe(takeUntil(this.unsubscribe))
-      .subscribe((response) => {
-        if (response.cursoActual != "") {
-          this.cursoActual = response.cursoActual.nombre;
-        }
+      this.servicioCicloLectivo.obtenerActualYSiguiente().pipe(takeUntil(this.unsubscribe)).subscribe((response) => {
+        this.anosCiclos = response.añosCiclos;
+        this.servicioInscripcion
+        .obtenerCursosInscripcionEstudiante(this.anosCiclos[0])
+        .pipe(takeUntil(this.unsubscribe))
+        .subscribe((response) => {
+          if (response.cursoActual != "") {
+            this.cursoActual = response.cursoActual.nombre;
+          }
+        });
       });
+
     this.servicioInscripcion
       .validarInscripcionPendiente(this._idEstudiante)
       .pipe(takeUntil(this.unsubscribe))
@@ -105,10 +109,10 @@ export class InscripcionEstudianteComponent implements OnInit, OnDestroy {
   onYearSelected(yearSelected) {
     this.cursoSeleccionado = "";
     if (yearSelected.value == "actual") {
-      this.yearSelected = this.fechaActual.getFullYear();
+      this.yearSelected = this.anosCiclos[0];
       this.nextYearSelect = false;
     } else {
-      this.yearSelected = this.fechaActual.getFullYear() + 1;
+      this.yearSelected = this.anosCiclos[1];
       this.nextYearSelect = true;
     }
     this.obtenerCursosEstudiante();
@@ -123,7 +127,7 @@ export class InscripcionEstudianteComponent implements OnInit, OnDestroy {
   }
 
   inscribirEstudiante() {
-    if (this.yearSelected == this.fechaActual.getFullYear()) {
+    if (this.yearSelected == this.anosCiclos[0]) {
       this.inscribirEstudianteAñoActual();
     } else {
       this.inscribirEstudianteProximoAño();

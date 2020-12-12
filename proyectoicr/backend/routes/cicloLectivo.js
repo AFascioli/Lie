@@ -417,6 +417,7 @@ router.get("/cierreExamenes", checkAuthMiddleware, async (req, res) => {
   }
 });
 
+// Busca todos los ciclos lectivos
 router.get("/anios", checkAuthMiddleware, (req, res) => {
   CicloLectivo.find()
     .then((ciclosLectivos) => {
@@ -525,6 +526,62 @@ router.get("/curso/materia/estado", checkAuthMiddleware, async (req, res) => {
     res.status(500).json({
       message:
         "Ocurrió un error al querer obtener los estados de las materias de los cursos",
+      error: error.message,
+    });
+  }
+});
+
+router.get("/actualYSiguiente", async (req, res) => {
+  try {
+    let idCicloActual = await ClaseCicloLectivo.obtenerIdCicloActual();
+    let idCicloProximo = await ClaseCicloLectivo.obtenerIdCicloProximo();
+
+    let cicloActual = await CicloLectivo.findById(idCicloActual).exec();
+    let cicloProximo = await CicloLectivo.findById(idCicloProximo).exec();
+
+    res.status(200).json({
+      añosCiclos: [cicloActual.año, cicloProximo.año],
+      message: "Se han obtenido los años de los ciclos actual y siguiente",
+      exito: true,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message:
+        "Ocurrió un error al querer obtener los ciclos actual y siguiente",
+      error: error.message,
+    });
+  }
+});
+
+router.get("/actualYAnteriores", async (req, res) => {
+  try {
+    let idCicloActual = await ClaseCicloLectivo.obtenerIdCicloActual();
+
+    let cicloActual = await CicloLectivo.findById(idCicloActual).exec();
+
+    let ciclosAnteriores = await CicloLectivo.find({
+      año: { $lt: cicloActual.año },
+    }).exec();
+
+    let arrayAños = [cicloActual.año];
+
+    ciclosAnteriores.forEach((ciclo) => {
+      arrayAños.push(ciclo.año);
+    });
+
+    arrayAños.sort((a, b) => {
+      return a - b;
+    });
+
+    res.status(200).json({
+      añosCiclos: arrayAños,
+      message: "Se han obtenido los años de los ciclos actual y anteriores",
+      exito: true,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message:
+        "Ocurrió un error al querer obtener los años de los ciclos actual y anteriores",
       error: error.message,
     });
   }

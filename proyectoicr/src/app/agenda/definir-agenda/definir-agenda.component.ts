@@ -73,6 +73,7 @@ export class DefinirAgendaComponent implements OnInit, OnDestroy {
   fueraPeriodoDefinirAgenda = false;
   _mobileQueryListener: () => void;
   mobileQuery: MediaQueryList;
+  anosCiclos: any[]
 
   constructor(
     public servicioEstudiante: EstudiantesService,
@@ -94,6 +95,11 @@ export class DefinirAgendaComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.fechaActual = new Date();
+
+    this.servicioCicloLectivo.obtenerActualYSiguiente().pipe(takeUntil(this.unsubscribe)).subscribe((response) => {
+      this.anosCiclos = response.añosCiclos;
+    });
+
     if (!this.inicioCursado() || this.servicioAuth.getRol() == "Admin") {
       this.servicioAgenda
         .obtenerMaterias()
@@ -396,10 +402,10 @@ export class DefinirAgendaComponent implements OnInit, OnDestroy {
   onYearSelected(yearSelected) {
     this.cursoSelected = false;
     if (yearSelected.value == "actual") {
-      this.yearSelected = this.fechaActual.getFullYear();
+      this.yearSelected = this.anosCiclos[0];
       this.nextYearSelect = false;
     } else {
-      this.yearSelected = this.fechaActual.getFullYear() + 1;
+      this.yearSelected = this.anosCiclos[1];
       this.nextYearSelect = true;
     }
     this.dataSource.data = [];

@@ -13,11 +13,9 @@
           (selectionChange)="onYearSelected(yearSelected)"
         >
           <mat-option value="actual" *ngIf="cicloHabilitado">
-            {{ fechaActual.getFullYear() }}</mat-option
+            {{ this.anosCiclos[0] }}</mat-option
           >
-          <mat-option value="proximo">
-            {{ fechaActual.getFullYear() + 1 }}</mat-option
-          >
+          <mat-option value="proximo"> {{ this.anosCiclos[1] }}</mat-option>
         </mat-select>
       </mat-form-field>
       <mat-form-field class="curso">
