@@ -1,6 +1,4 @@
-<h1 class="componente-titulo">
-  Solicitud de reunión con adulto responsable
-</h1>
+<h1 class="componente-titulo">Solicitud de reunión con adulto responsable</h1>
 
 <mat-card class="card-body-componente">
   <table
@@ -57,7 +55,7 @@
     <b>El estudiante no tiene adultos responsables asignados</b>
   </p>
 
-  <mat-form-field>
+  <mat-form-field *ngIf="adultosResponsables.length != 0">
     <textarea
       matInput
       name="cuerpo"
@@ -72,10 +70,18 @@
   </mat-form-field>
 
   <div class="div-button">
-    <button class="button-primary" (click)="onEnviar(cuerpo)" mat-raised-button>
-      Enviar
-    </button>
-    <button mat-raised-button [routerLink]="['/buscar/lista']" class="button-warn">
+    <button
+      class="button-primary"
+      (click)="onEnviar(cuerpo)"
+      mat-raised-button
+      *ngIf="adultosResponsables.length != 0"
+    >
+      Enviar</button
+    ><button
+      mat-raised-button
+      [routerLink]="['/buscar/lista']"
+      class="button-warn"
+    >
       Volver
     </button>
   </div>

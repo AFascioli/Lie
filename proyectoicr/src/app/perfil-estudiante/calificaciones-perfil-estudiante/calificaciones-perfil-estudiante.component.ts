@@ -92,6 +92,9 @@ export class CalificacionesPerfilEstudianteComponent
       .pipe(takeUntil(this.unsubscribe))
       .subscribe((res) => {
         this.calificacionesXMateria = res.vectorCalXMat;
+        this.calificacionesXMateria.sort((a, b) =>
+          a.materia > b.materia ? 1 : b.materia > a.materia ? -1 : 0
+        );
       });
   }
 

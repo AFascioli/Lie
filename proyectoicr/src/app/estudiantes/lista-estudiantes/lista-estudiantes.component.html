@@ -5,13 +5,33 @@
 <mat-card *ngIf="estudiantes.length > 0 && !isLoading">
   <div *ngFor="let estudiante of estudiantes; let i = index">
     <mat-expansion-panel [expanded]="'i == 0'">
-      <mat-expansion-panel-header>
+      <mat-expansion-panel-header
+        [class.mat-expansion-panel-header-mobile]="mobileQuery.matches"
+      >
         <mat-panel-title>
-          <b class="titulo-expansion-panel">
-            {{ estudiante.apellido }}, {{ estudiante.nombre }} -
+          <b
+            class="titulo-expansion-panel"
+            [class.titulo-expansion-panel-mobile]="mobileQuery.matches"
+          >
+            {{ estudiante.apellido }}, {{ estudiante.nombre }}</b
+          >
+          <b class="titulo-expansion-panel" *ngIf="!mobileQuery.matches"
+            >&nbsp; -&nbsp;</b
+          >
+          <b
+            class="titulo-expansion-panel"
+            [class.titulo-expansion-panel-mobile]="mobileQuery.matches"
+          >
             {{ estudiante.tipoDocumento }}: {{ estudiante.numeroDocumento }}</b
-          ><b class="titulo-expansion-panel" *ngIf="inscripto[i]"
-            >&nbsp;- Curso: {{ this.cursos[i] }}
+          >
+          <b class="titulo-expansion-panel" *ngIf="!mobileQuery.matches"
+            >&nbsp; -&nbsp;</b
+          >
+          <b
+            class="titulo-expansion-panel"
+            [class.titulo-expansion-panel-mobile]="mobileQuery.matches"
+            *ngIf="inscripto[i]"
+            >Curso: {{ this.cursos[i] }}
           </b>
         </mat-panel-title>
       </mat-expansion-panel-header>
@@ -51,6 +71,7 @@
           class="opcion"
           [class.opcion-mobile]="mobileQuery.matches"
           (click)="onLlegadaTarde(i)"
+
           *ngIf="
             (this.permisos.asistencia > 1 && this.inscripto[i]) ||
             this.suspendido[i] ||
@@ -62,6 +83,7 @@
           class="opcion"
           [class.opcion-mobile]="mobileQuery.matches"
           (click)="onRetiro(i)"
+
           *ngIf="
             (this.permisos.asistencia > 1 && this.inscripto[i]) ||
             this.suspendido[i] ||
