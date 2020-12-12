@@ -138,4 +138,20 @@ export class CicloLectivoService implements OnDestroy {
       respuesta: any;
     }>(`${environment.apiUrl}/cicloLectivo/anios`);
   }
+  
+  obtenerActualYSiguiente() {
+    return this.http.get<{
+      exito: boolean;
+      message: string;
+      añosCiclos: any[];
+    }>(`${environment.apiUrl}/cicloLectivo/actualYSiguiente`);
+  }
+  
+  obtenerActualYAnteriores() {
+    return this.http.get<{
+      exito: boolean;
+      message: string;
+      añosCiclos: any[];
+    }>(`${environment.apiUrl}/cicloLectivo/actualYAnteriores`);
+  }
 }

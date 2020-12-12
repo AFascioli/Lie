@@ -27,7 +27,6 @@ import html2canvas from "html2canvas";
   styleUrls: ["./calificaciones-ciclo-lectivo.component.css"],
 })
 export class CalificacionesCicloLectivoComponent implements OnInit, OnDestroy {
-  year: any[] = [];
   cursos: any[] = [];
   materias: any[] = [];
   estudiantes: any[] = [];
@@ -60,7 +59,6 @@ export class CalificacionesCicloLectivoComponent implements OnInit, OnDestroy {
   rolConPermisosEdicion = false;
   isLoading = true;
   isLoading2 = false;
-  fechaActual: Date;
   calificacionesChange = false;
   puedeEditarCalificaciones = false;
   promedio = 0;
@@ -74,6 +72,7 @@ export class CalificacionesCicloLectivoComponent implements OnInit, OnDestroy {
   mobileQuery: MediaQueryList;
   materiaSelec: boolean = false;
   docente: string;
+  anosCiclos: any[]
 
   @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
 
@@ -92,8 +91,11 @@ export class CalificacionesCicloLectivoComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.fechaActual = new Date();
+    this.servicioCicloLectivo.obtenerActualYAnteriores().pipe(takeUntil(this.unsubscribe)).subscribe((response) => {
+      this.anosCiclos = response.añosCiclos;
+    });
     this.validarPermisos();
+
     this.servicioCicloLectivo
       .obtenerAniosCicloLectivo()
       .pipe(takeUntil(this.unsubscribe))

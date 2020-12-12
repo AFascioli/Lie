@@ -3,7 +3,7 @@
 </mat-card>
 
 <h1 *ngIf="rolConPermisosEdicion && !isLoading" class="componente-titulo">
-  Calificaciones ciclo lectivo {{ fechaActual.getFullYear() }}
+  Calificaciones por ciclo lectivo
 </h1>
 <mat-card class="card-body-componente" *ngIf="!isLoading">
   <form #form="ngForm">
@@ -18,8 +18,8 @@
           required
           (selectionChange)="onYearSelected(anio)"
         >
-          <mat-option *ngFor="let y of year" [value]="y.anio">
-            {{ y.anio }}
+          <mat-option *ngFor="let ano of anosCiclos" [value]="ano">
+            {{ ano }}
           </mat-option>
         </mat-select>
       </mat-form-field>

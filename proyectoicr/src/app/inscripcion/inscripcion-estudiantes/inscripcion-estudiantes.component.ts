@@ -1,3 +1,4 @@
+import { CicloLectivoService } from "src/app/cicloLectivo.service";
 import { InscripcionService } from "../inscripcion.service";
 import { EstudiantesService } from "../../estudiantes/estudiante.service";
 import { OnInit, Component, ChangeDetectorRef, OnDestroy } from "@angular/core";
@@ -27,7 +28,7 @@ export class InscripcionEstudianteComponent implements OnInit, OnDestroy {
   nombreEstudiante: string;
   _idEstudiante: string;
   matConfig = new MatDialogConfig();
-  fechaActual: Date;
+  fechaActual = new Date();
   estudianteEstaInscripto: boolean;
   documentosEntregados = [
     { nombre: "Fotocopia documento", entregado: false },
@@ -36,17 +37,21 @@ export class InscripcionEstudianteComponent implements OnInit, OnDestroy {
   ];
   _mobileQueryListener: () => void;
   mobileQuery: MediaQueryList;
-  fechaDentroDeRangoInscripcion: boolean = true;
   private unsubscribe: Subject<void> = new Subject();
   isLoading: boolean = true;
   cursoActual: any;
   yearSelected: any;
   nextYearSelect: boolean;
   tieneInscripcionPendiente: boolean = false;
+  cicloHabilitado: boolean;
+  estadoCicloLectivo: String;
+  anosCiclos: any[];
 
   constructor(
     public servicioEstudiante: EstudiantesService,
     public servicioInscripcion: InscripcionService,
+    public servicioCicloLectivo: CicloLectivoService,
+    public autenticacionService: AutenticacionService,
     public dialog: MatDialog,
     public snackBar: MatSnackBar,
     public changeDetectorRef: ChangeDetectorRef,
@@ -64,34 +69,38 @@ export class InscripcionEstudianteComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.fechaActual = new Date();
     this.apellidoEstudiante = this.servicioEstudiante.estudianteSeleccionado.apellido;
     this.nombreEstudiante = this.servicioEstudiante.estudianteSeleccionado.nombre;
     this._idEstudiante = this.servicioEstudiante.estudianteSeleccionado._id;
+    this.cicloActualHabilitado();
     this.servicioEstudiante
       .estudianteEstaInscripto(this._idEstudiante)
       .pipe(takeUntil(this.unsubscribe))
       .subscribe((response) => {
         this.estudianteEstaInscripto = response.exito;
       });
-    this.servicioInscripcion
-      .obtenerCursosInscripcionEstudiante(this.fechaActual.getFullYear())
-      .pipe(takeUntil(this.unsubscribe))
-      .subscribe((response) => {
-        if (response.cursoActual != "") {
-          this.cursoActual = response.cursoActual.nombre;
-        }
+      this.servicioCicloLectivo.obtenerActualYSiguiente().pipe(takeUntil(this.unsubscribe)).subscribe((response) => {
+        this.anosCiclos = response.añosCiclos;
+        this.servicioInscripcion
+        .obtenerCursosInscripcionEstudiante(this.anosCiclos[0])
+        .pipe(takeUntil(this.unsubscribe))
+        .subscribe((response) => {
+          if (response.cursoActual != "") {
+            this.cursoActual = response.cursoActual.nombre;
+          }
+        });
       });
+
     this.servicioInscripcion
       .validarInscripcionPendiente(this._idEstudiante)
       .pipe(takeUntil(this.unsubscribe))
       .subscribe((response) => {
         this.tieneInscripcionPendiente = response.inscripcionPendiente;
+        this.cursoActual = response.curso;
+        this.isLoading = false;
       });
-    this.isLoading = false;
   }
 
-  //Obtiene la capacidad del curso seleccionado
   onCursoSeleccionado(curso) {
     this.cursoSeleccionado = curso.value;
     this.obtenerCapacidadCurso();
@@ -100,13 +109,14 @@ export class InscripcionEstudianteComponent implements OnInit, OnDestroy {
   onYearSelected(yearSelected) {
     this.cursoSeleccionado = "";
     if (yearSelected.value == "actual") {
-      this.yearSelected = this.fechaActual.getFullYear();
+      this.yearSelected = this.anosCiclos[0];
       this.nextYearSelect = false;
     } else {
-      this.yearSelected = this.fechaActual.getFullYear() + 1;
+      this.yearSelected = this.anosCiclos[1];
       this.nextYearSelect = true;
     }
     this.obtenerCursosEstudiante();
+    console.log(this.yearSelected);
   }
 
   //Cambia el valor de entregado del documento seleccionado por el usuario
@@ -117,7 +127,7 @@ export class InscripcionEstudianteComponent implements OnInit, OnDestroy {
   }
 
   inscribirEstudiante() {
-    if (this.yearSelected == this.fechaActual.getFullYear()) {
+    if (this.yearSelected == this.anosCiclos[0]) {
       this.inscribirEstudianteAñoActual();
     } else {
       this.inscribirEstudianteProximoAño();
@@ -230,6 +240,19 @@ export class InscripcionEstudianteComponent implements OnInit, OnDestroy {
           });
       }
     }
+  }
+
+  cicloActualHabilitado() {
+    this.servicioCicloLectivo
+      .obtenerEstadoCicloLectivo()
+      .pipe(takeUntil(this.unsubscribe))
+      .subscribe((response) => {
+        this.cicloHabilitado =
+          response.estadoCiclo == "Creado" ||
+          response.estadoCiclo == "En primer trimestre" ||
+          response.estadoCiclo == "En segundo trimestre" ||
+          response.estadoCiclo == "En tercer trimestre";
+      });
   }
 }
 

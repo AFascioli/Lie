@@ -399,9 +399,7 @@ exports.obtenerIdCicloAnterior = () => {
 
 exports.obtenerIdCicloSegunAño = (añoSeleccionado) => {
   return new Promise(async (resolve, reject) => {
-    let cicloLectivo = await CicloLectivo.findOne(
-      {año: añoSeleccionado}
-    );
+    let cicloLectivo = await CicloLectivo.findOne({ año: añoSeleccionado });
     resolve(cicloLectivo ? cicloLectivo._id : null);
   });
 };

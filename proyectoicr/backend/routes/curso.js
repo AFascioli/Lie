@@ -318,6 +318,10 @@ router.get("/cursosDeEstudiante", checkAuthMiddleware, async (req, res) => {
     "Inscripcion",
     "Activa"
   );
+  let idEstadoPendiente = await ClaseEstado.obtenerIdEstado(
+    "Inscripcion",
+    "Pendiente"
+  );
   Inscripcion.aggregate([
     {
       $match: {
@@ -349,53 +353,143 @@ router.get("/cursosDeEstudiante", checkAuthMiddleware, async (req, res) => {
     },
   ])
     .then(async (inscripcion) => {
-      let idCicloLectivo = await ClaseCicloLectivo.obtenerIdCicloSegunAño(
+      let idCicloSeleccionado = await ClaseCicloLectivo.obtenerIdCicloSegunAño(
         parseInt(req.query.añoLectivo)
       );
+      let idCicloActual = await ClaseCicloLectivo.obtenerIdCicloActual();
+      let cursosDisponibles = [];
       if (inscripcion.length != 0) {
-        //El estudiante está inscripto a un curso y por ende se fija al curso al que se puede inscribir
-        let siguiente= await ClaseInscripcion.obtenerAñoHabilitado(
-          inscripcion,
-          idCicloLectivo
-        );
-        let cursosDisponibles = [];
-        //Buscamos los cursos que corresponden al que se puede inscribir el estudiante
-        Curso.find({
-          nombre: { $regex: siguiente },
-          cicloLectivo: idCicloLectivo,
-        }).then((cursos) => {
-          //Se agregan todos los cursos disponibles para inscribirse excepto el curso actual
-          cursos.forEach((curso) => {
-            if (!(curso.nombre == inscripcion[0].cursoActual[0].nombre)) {
-              cursosDisponibles.push(curso);
-            }
+        if (
+          idCicloSeleccionado
+            .toString()
+            .localeCompare(idCicloActual.toString()) == 0
+        ) {
+          let añoCursoActual = parseInt(
+            inscripcion[0].cursoActual[0].nombre,
+            10
+          );
+          //Buscamos los cursos que corresponden al que se puede inscribir el estudiante
+          Curso.find({
+            nombre: { $regex: añoCursoActual },
+            cicloLectivo: idCicloSeleccionado,
+          }).then((cursos) => {
+            //Se agregan todos los cursos disponibles para inscribirse excepto el curso actual
+            cursos.forEach((curso) => {
+              if (!(curso.nombre == inscripcion[0].cursoActual[0].nombre)) {
+                cursosDisponibles.push(curso);
+              }
+            });
+            return res.status(200).json({
+              message: "Devolvio los cursos correctamente",
+              exito: true,
+              cursos: cursosDisponibles,
+              cursoActual: inscripcion[0].cursoActual[0],
+            });
           });
-          return res.status(200).json({
-            message: "Devolvio los cursos correctamente",
-            exito: true,
-            cursos: cursosDisponibles,
-            cursoActual: inscripcion[0].cursoActual[0],
+        } else {
+          //El estudiante está inscripto a un curso y por ende se fija al curso al que se puede inscribir
+          let siguiente = await ClaseInscripcion.obtenerAñoHabilitado(
+            inscripcion,
+            idCicloSeleccionado
+          );
+
+          //Buscamos los cursos que corresponden al que se puede inscribir el estudiante
+          Curso.find({
+            nombre: { $regex: siguiente },
+            cicloLectivo: idCicloSeleccionado,
+          }).then((cursos) => {
+            console.log("Cursos", cursos);
+            //Se agregan todos los cursos disponibles para inscribirse excepto el curso actual
+            cursos.forEach((curso) => {
+              if (!(curso.nombre == inscripcion[0].cursoActual[0].nombre)) {
+                cursosDisponibles.push(curso);
+              }
+            });
+            return res.status(200).json({
+              message: "Devolvio los cursos correctamente",
+              exito: true,
+              cursos: cursosDisponibles,
+              cursoActual: inscripcion[0].cursoActual[0],
+            });
           });
-        });
+        }
       } else {
         //!TODO Si selecciono el ciclo actual, buscar si tiene inscripcion pendiente para ver que curso le corresponde
-        //El estudiante no está inscripto a ningun curso, devuelve todos los cursos almacenados
-        Curso.findById(idCicloLectivo).then((cursos) => {
-          var respuesta = [];
-          cursos.forEach((curso) => {
-            var cursoConId = {
-              _id: curso._id,
-              nombre: curso.nombre,
-            };
-            respuesta.push(cursoConId);
+
+        if (
+          idCicloSeleccionado
+            .toString()
+            .localeCompare(idCicloActual.toString()) == 0
+        ) {
+          let inscripcionPendiente = await Inscripcion.findOne({
+            idEstudiante: req.query.idEstudiante,
+            estado: idEstadoPendiente,
           });
-          return res.status(200).json({
-            message: "Devolvio los cursos correctamente",
-            exito: true,
-            cursos: respuesta,
-            cursoActual: "",
+
+          if (inscripcionPendiente) {
+            let cursoPendiente = await Curso.findById(
+              inscripcionPendiente.idCurso
+            );
+
+            let añoCurso = parseInt(cursoPendiente.nombre, 10) - 1;
+
+            Curso.find({
+              nombre: { $regex: añoCurso },
+              cicloLectivo: idCicloSeleccionado,
+            }).then((cursos) => {
+              var respuesta = [];
+              cursos.forEach((curso) => {
+                var cursoConId = {
+                  _id: curso._id,
+                  nombre: curso.nombre,
+                };
+                respuesta.push(cursoConId);
+              });
+              return res.status(200).json({
+                message: "Devolvio los cursos correctamente",
+                exito: true,
+                cursos: respuesta,
+                cursoActual: "",
+              });
+            });
+          } else {
+            //El estudiante no está inscripto a ningun curso, devuelve todos los cursos almacenados
+            Curso.find({ cicloLectivo: idCicloSeleccionado }).then((cursos) => {
+              var respuesta = [];
+              cursos.forEach((curso) => {
+                var cursoConId = {
+                  _id: curso._id,
+                  nombre: curso.nombre,
+                };
+                respuesta.push(cursoConId);
+              });
+              return res.status(200).json({
+                message: "Devolvio los cursos correctamente",
+                exito: true,
+                cursos: respuesta,
+                cursoActual: "",
+              });
+            });
+          }
+        } else {
+          //El estudiante no está inscripto a ningun curso, devuelve todos los cursos almacenados
+          Curso.find({ cicloLectivo: idCicloSeleccionado }).then((cursos) => {
+            var respuesta = [];
+            cursos.forEach((curso) => {
+              var cursoConId = {
+                _id: curso._id,
+                nombre: curso.nombre,
+              };
+              respuesta.push(cursoConId);
+            });
+            return res.status(200).json({
+              message: "Devolvio los cursos correctamente",
+              exito: true,
+              cursos: respuesta,
+              cursoActual: "",
+            });
           });
-        });
+        }
       }
     })
     .catch((error) => {
@@ -1790,19 +1884,35 @@ router.get(
       "Inscripcion",
       "Pendiente"
     );
-
-    Inscripcion.find({ idEstudiante: req.query.idEstudiante })
-      .then((inscripciones) => {
-        inscripciones.forEach((inscripcion) => {
-          if (inscripcion.estado.equals(estadoPendienteInscripcion)) {
-            return res.status(200).json({
-              inscripcionPendiente: true,
-              exito: true,
-            });
-          }
-        });
+    Inscripcion.aggregate([
+      [
+        {
+          $match: {
+            idEstudiante: mongoose.Types.ObjectId(req.query.idEstudiante),
+            estado: mongoose.Types.ObjectId(estadoPendienteInscripcion),
+          },
+        },
+        {
+          $lookup: {
+            from: "curso",
+            localField: "idCurso",
+            foreignField: "_id",
+            as: "datosCurso",
+          },
+        },
+      ],
+    ])
+      .then((inscripcion) => {
+        if (inscripcion.length!=0 && inscripcion[0].estado.equals(estadoPendienteInscripcion)) {
+          return res.status(200).json({
+            inscripcionPendiente: true,
+            curso: inscripcion[0].datosCurso[0].nombre,
+            exito: true,
+          });
+        }
         res.status(200).json({
           inscripcionPendiente: false,
+          curso: "",
           exito: true,
         });
       })

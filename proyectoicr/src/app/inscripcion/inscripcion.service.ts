@@ -62,10 +62,13 @@ export class InscripcionService {
   //@params: id estudiante que se quiere verificar
   public validarInscripcionPendiente(idEstudiante: string) {
     let params = new HttpParams().set("idEstudiante", idEstudiante);
-    return this.http.get<{ inscripcionPendiente: boolean; exito: boolean }>(
-      environment.apiUrl + "/curso/estudiante/inscripcionPendiente",
-      { params: params }
-    );
+    return this.http.get<{
+      inscripcionPendiente: boolean;
+      exito: boolean;
+      curso: string;
+    }>(environment.apiUrl + "/curso/estudiante/inscripcionPendiente", {
+      params: params,
+    });
   }
 
   //Inscribe a un estudiante a un curso y los documentos entregados durante la inscripción

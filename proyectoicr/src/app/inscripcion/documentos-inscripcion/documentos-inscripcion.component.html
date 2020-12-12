@@ -6,24 +6,21 @@
   Registrar documentos de inscripción ciclo lectivo
   {{ fechaActual.getFullYear() }}
 </h1>
-<mat-card
-  class="card-body-componente"
-  *ngIf="this.estadoCiclo == 'Inactivo'"
->
-  <p
-    class="parrafo"
-    *ngIf="this.estadoCiclo == 'Inactivo'"
-  >
-    Esta funcionalidad se encuentra deshabilitada.
+<mat-card class="card-body-componente" *ngIf="fueraPeriodoCicloLectivo">
+  <p class="aviso">
+    Atención, no se puede registrar documentación debido a que estamos fuera de
+    las fechas autorizadas
   </p>
 </mat-card>
-<mat-card class="card-body-componente" *ngIf="!isLoading  && this.estadoCiclo != 'Inactivo'">
+<mat-card
+  class="card-body-componente"
+  *ngIf="!isLoading && !fueraPeriodoCicloLectivo"
+>
   <div class="div-selects">
     <mat-form-field>
       <mat-select
         placeholder="Seleccione curso"
         name="curso"
-        [disabled]="fueraPeriodoCicloLectivo"
         ngModel
         #curso="ngModel"
         matNativeControl
@@ -36,10 +33,6 @@
       </mat-select>
     </mat-form-field>
   </div>
-  <p class="aviso" *ngIf="fueraPeriodoCicloLectivo == true">
-    Atención, no se puede registrar documentación debido a que estamos fuera de
-    las fechas autorizadas
-  </p>
   <br />
   <mat-spinner *ngIf="isLoading2" class="spinner" [diameter]="60"></mat-spinner>
   <div *ngIf="estudiantesConDocumentos.length != 0 && !isLoading2">
