@@ -72,7 +72,7 @@ export class CalificacionesCicloLectivoComponent implements OnInit, OnDestroy {
   mobileQuery: MediaQueryList;
   materiaSelec: boolean = false;
   docente: string;
-  anosCiclos: any[]
+  anosCiclos: any[];
 
   @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
 
@@ -91,20 +91,13 @@ export class CalificacionesCicloLectivoComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.servicioCicloLectivo.obtenerActualYAnteriores().pipe(takeUntil(this.unsubscribe)).subscribe((response) => {
-      this.anosCiclos = response.añosCiclos;
-    });
-    this.validarPermisos();
-
     this.servicioCicloLectivo
-      .obtenerAniosCicloLectivo()
+      .obtenerActualYAnteriores()
       .pipe(takeUntil(this.unsubscribe))
       .subscribe((response) => {
-        this.year = response.respuesta;
-        this.year.sort((a, b) =>
-          a.anio > b.anio ? 1 : b.anio > a.anio ? -1 : 0
-        );
+        this.anosCiclos = response.añosCiclos;
       });
+    this.validarPermisos();
   }
 
   ngOnDestroy() {
@@ -209,7 +202,11 @@ export class CalificacionesCicloLectivoComponent implements OnInit, OnDestroy {
         .subscribe((respuesta) => {
           this.estudiantes = [...respuesta.estudiantes];
           this.estudiantes = this.estudiantes.sort((a, b) =>
-            a.apellido.toLowerCase() > b.apellido.toLowerCase() ? 1 : b.apellido.toLowerCase() > a.apellido.toLowerCase() ? -1 : 0
+            a.apellido.toLowerCase() > b.apellido.toLowerCase()
+              ? 1
+              : b.apellido.toLowerCase() > a.apellido.toLowerCase()
+              ? -1
+              : 0
           );
           this.reordenarCalificaciones();
           this.dataSource = new MatTableDataSource(this.estudiantes);

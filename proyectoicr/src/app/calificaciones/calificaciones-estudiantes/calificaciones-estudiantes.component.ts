@@ -148,21 +148,24 @@ export class CalificacionesEstudiantesComponent implements OnInit, OnDestroy {
       .subscribe(async (response) => {
         this.estadoCiclo = await response.estadoCiclo;
         this.puedeEditarCalificaciones = true;
-        switch (this.estadoCiclo) {
-          case "En primer trimestre":
-            this.trimestreActual = "1";
-            break;
-          case "En segundo trimestre":
-            this.trimestreActual = "2";
-            break;
-          case "En tercer trimestre":
-            this.trimestreActual = "3";
-            break;
-          default:
-            this.trimestreSeleccionado = "3";
-            this.puedeEditarCalificaciones = false;
-            break;
+        if (this.servicioAutenticacion.getRol() != "Director") {
+          switch (this.estadoCiclo) {
+            case "En primer trimestre":
+              this.trimestreActual = "1";
+              break;
+            case "En segundo trimestre":
+              this.trimestreActual = "2";
+              break;
+            case "En tercer trimestre":
+              this.trimestreActual = "3";
+              break;
+            default:
+              this.trimestreSeleccionado = "3";
+              this.puedeEditarCalificaciones = false;
+              break;
+          }
         }
+
         this.trimestreSeleccionado = this.trimestreActual;
       });
   }
