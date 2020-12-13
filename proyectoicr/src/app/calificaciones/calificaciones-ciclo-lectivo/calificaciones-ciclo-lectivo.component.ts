@@ -73,6 +73,7 @@ export class CalificacionesCicloLectivoComponent implements OnInit, OnDestroy {
   materiaSelec: boolean = false;
   docente: string;
   anosCiclos: any[]
+  year;
 
   @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
 
