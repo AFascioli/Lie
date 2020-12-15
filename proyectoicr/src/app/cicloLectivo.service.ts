@@ -100,11 +100,11 @@ export class CicloLectivoService implements OnDestroy {
     );
   }
 
-  validarRegistrarAgenda() {
+  validarModificarAgenda() {
     return this.http.get<{
       permiso: boolean;
       message: string;
-    }>(`${environment.apiUrl}/cicloLectivo/registrarAgenda`);
+    }>(`${environment.apiUrl}/cicloLectivo/modificarAgenda`);
   }
 
   validarEnCursado() {

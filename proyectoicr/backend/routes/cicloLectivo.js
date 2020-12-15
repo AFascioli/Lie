@@ -252,8 +252,8 @@ router.get("/inicioCursado", checkAuthMiddleware, async (req, res) => {
   }
 });
 
-//En el caso de que se pueda registrar la agenda devuelve true false caso contrario
-router.get("/registrarAgenda", checkAuthMiddleware, async (req, res) => {
+//En el caso de que se pueda modificar la agenda devuelve true, false caso contrario
+router.get("/modificarAgenda", checkAuthMiddleware, async (req, res) => {
   let idCicloActual = await ClaseCicloLectivo.obtenerIdCicloActual();
   try {
     CicloLectivo.aggregate([
@@ -272,16 +272,16 @@ router.get("/registrarAgenda", checkAuthMiddleware, async (req, res) => {
       },
     ]).then((cicloLectivo) => {
       let nombre = cicloLectivo[0].datosEstado[0].nombre;
-      if (nombre === "Creado") {
+      if (nombre === "En examenes" || nombre === "Fin examenes") {
         return res.status(200).json({
           permiso: false,
-          message: "No esta habilitado el registro de la agenda",
+          message: "No esta habilitado el modificar la agenda actual",
         });
       }
 
       res.status(200).json({
         permiso: true,
-        message: "Está habilitado el registro de la agenda",
+        message: "Está habilitado el modificar la agenda actual",
       });
     });
   } catch (error) {
@@ -538,6 +538,7 @@ router.get("/actualYSiguiente", async (req, res) => {
 
     let cicloActual = await CicloLectivo.findById(idCicloActual).exec();
     let cicloProximo = await CicloLectivo.findById(idCicloProximo).exec();
+    console.log([cicloActual.año, cicloProximo.año]);
 
     res.status(200).json({
       añosCiclos: [cicloActual.año, cicloProximo.año],

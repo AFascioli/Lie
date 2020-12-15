@@ -70,10 +70,10 @@ export class DefinirAgendaComponent implements OnInit, OnDestroy {
   isLoading = false;
   huboCambios = false;
   fechaActual: Date;
-  fueraPeriodoDefinirAgenda = false;
+  fueraPeriodoModificarAgenda = false;
   _mobileQueryListener: () => void;
   mobileQuery: MediaQueryList;
-  anosCiclos: any[]
+  anosCiclos: any[];
 
   constructor(
     public servicioEstudiante: EstudiantesService,
@@ -94,38 +94,40 @@ export class DefinirAgendaComponent implements OnInit, OnDestroy {
   @ViewChild(MatSort, { static: true }) sort: MatSort;
 
   ngOnInit() {
+    this.isLoading=true;
     this.fechaActual = new Date();
 
-    this.servicioCicloLectivo.obtenerActualYSiguiente().pipe(takeUntil(this.unsubscribe)).subscribe((response) => {
-      this.anosCiclos = response.añosCiclos;
-    });
+    this.servicioCicloLectivo
+      .obtenerActualYSiguiente()
+      .pipe(takeUntil(this.unsubscribe))
+      .subscribe((response) => {
+        this.anosCiclos = response.añosCiclos;
+      });
 
-    if (!this.inicioCursado() || this.servicioAuth.getRol() == "Admin") {
-      this.servicioAgenda
-        .obtenerMaterias()
-        .pipe(takeUntil(this.unsubscribe))
-        .subscribe((response) => {
-          this.materias = response.materias;
-        });
-      this.obtenerDocentes();
-    } else {
-      this.fueraPeriodoDefinirAgenda = true;
-    }
+    this.servicioAgenda
+      .obtenerMaterias()
+      .pipe(takeUntil(this.unsubscribe))
+      .subscribe((response) => {
+        this.materias = response.materias;
+        this.isLoading=false;
+      });
+
+    this.obtenerDocentes();
+    
+    this.servicioCicloLectivo
+      .validarModificarAgenda()
+      .pipe(takeUntil(this.unsubscribe))
+      .subscribe((response) => {
+        this.fueraPeriodoModificarAgenda = !response.permiso;
+        
+      });
+      
   }
 
   ngAfterViewInit() {
     this.dataSource.sort = this.sort;
   }
 
-  //Devuelve un booleano segun si se inicio o no el cursado
-  async inicioCursado() {
-    await this.servicioCicloLectivo
-      .validarRegistrarAgenda()
-      .pipe(takeUntil(this.unsubscribe))
-      .subscribe((response) => {
-        return response.permiso;
-      });
-  }
 
   obtenerDocentes() {
     this.servicioAgenda
@@ -200,12 +202,10 @@ export class DefinirAgendaComponent implements OnInit, OnDestroy {
   }
 
   obtenerCursos() {
-    this.isLoading = true;
     this.servicioEstudiante
       .obtenerCursos(this.yearSelected)
       .pipe(takeUntil(this.unsubscribe))
       .subscribe((response) => {
-        this.isLoading = false;
         this.cursos = response.cursos;
         this.cursos.sort((a, b) =>
           a.nombre.charAt(0) > b.nombre.charAt(0)
@@ -236,14 +236,14 @@ export class DefinirAgendaComponent implements OnInit, OnDestroy {
 
   onGuardar() {
     if (this.agendaValida) {
-        this.servicioAgenda
-          .registrarAgenda(this.dataSource.data, this.idCursoSeleccionado)
-          .subscribe((response) => {
-            this.isEditing = false;
-            this.huboCambios = false;
-            this.openSnackBar(response.message, "snack-bar-exito");
-          });
-        } else {
+      this.servicioAgenda
+        .registrarAgenda(this.dataSource.data, this.idCursoSeleccionado)
+        .subscribe((response) => {
+          this.isEditing = false;
+          this.huboCambios = false;
+          this.openSnackBar(response.message, "snack-bar-exito");
+        });
+    } else {
       this.openSnackBar(this.mensajeError, "snack-bar-fracaso");
     }
   }
