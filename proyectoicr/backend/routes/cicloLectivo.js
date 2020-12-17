@@ -538,7 +538,6 @@ router.get("/actualYSiguiente", async (req, res) => {
 
     let cicloActual = await CicloLectivo.findById(idCicloActual).exec();
     let cicloProximo = await CicloLectivo.findById(idCicloProximo).exec();
-    console.log([cicloActual.año, cicloProximo.año]);
 
     res.status(200).json({
       añosCiclos: [cicloActual.año, cicloProximo.año],

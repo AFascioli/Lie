@@ -425,7 +425,6 @@ router.get("/cuotasEstudiante", checkAuthMiddleware, async (req, res) => {
     },
   ])
     .then((docs) => {
-      console.log(docs);
       if (docs[0].inscripcion[0].cuotas.length == 0) {
         return res.status(200).json({
           message: "El estudiante no tiene cuotas",

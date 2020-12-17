@@ -1527,27 +1527,25 @@ router.get(
   async (req, res) => {
     try {
       let cursoAnterior;
-      let nombreCursoAnterior;
+      let nombreCursoCicloAnterior;
       let estudiantesRespuesta = [];
-      let dateActual = new Date();
 
       let idCicloAnterior = await ClaseCicloLectivo.obtenerIdCicloAnterior();
+      let cursoElegido = await Curso.findById(req.query.idCurso);
 
-      Curso.findById(req.query.idCurso).then((curso) => {
-        nombreCursoAnterior = curso.nombre;
-        let numeroCursoPasado = parseInt(curso.nombre, 10) - 1;
-        let division = curso.nombre.substring(1, 2);
-        cursoAnterior = `${numeroCursoPasado}${division}`;
-      });
+      nombreCursoCicloAnterior = cursoElegido.nombre;
+      let numeroCursoPasado = parseInt(cursoElegido.nombre, 10) - 1;
+      let division = cursoElegido.nombre.substring(1, 2);
+      cursoAnterior = `${numeroCursoPasado}${division}`;
 
       let cursoAñoAnterior = await Curso.findOne({
         nombre: cursoAnterior,
-        idCicloLectivo: idCicloAnterior,
+        cicloLectivo: idCicloAnterior,
       });
 
       let cursoEstudiantesLibres = await Curso.findOne({
-        nombre: nombreCursoAnterior,
-        idCicloLectivo: idCicloAnterior,
+        nombre: nombreCursoCicloAnterior,
+        cicloLectivo: idCicloAnterior,
       });
 
       let idEstadoPromovido = await ClaseEstado.obtenerIdEstado(
@@ -1591,58 +1589,59 @@ router.get(
       });
 
       /* 2. Aggregate de Promovidos o Promovidos con exam. 4A '19. */
-      let estadosInscripcionesABuscar = [
-        mongoose.Types.ObjectId(idEstadoPromovido),
-        mongoose.Types.ObjectId(idEstadoPromovidoConExam),
-      ];
+      if (parseInt(cursoElegido.nombre, 10) !== 1) {
+        let estadosInscripcionesABuscar = [
+          mongoose.Types.ObjectId(idEstadoPromovido),
+          mongoose.Types.ObjectId(idEstadoPromovidoConExam),
+        ];
 
-      let obtenerEstudiantesConInscripcion = await Inscripcion.aggregate([
-        {
-          $match: {
-            idCurso: cursoAñoAnterior._id,
-            estado: {
-              $in: estadosInscripcionesABuscar,
+        let obtenerEstudiantesConInscripcion = await Inscripcion.aggregate([
+          {
+            $match: {
+              idCurso: cursoAñoAnterior._id,
+              estado: {
+                $in: estadosInscripcionesABuscar,
+              },
             },
           },
-        },
-        {
-          $lookup: {
-            from: "estudiante",
-            localField: "idEstudiante",
-            foreignField: "_id",
-            as: "datosEstudiantes",
+          {
+            $lookup: {
+              from: "estudiante",
+              localField: "idEstudiante",
+              foreignField: "_id",
+              as: "datosEstudiantes",
+            },
           },
-        },
-        {
-          $lookup: {
-            from: "curso",
-            localField: "idCurso",
-            foreignField: "_id",
-            as: "datosCurso",
+          {
+            $lookup: {
+              from: "curso",
+              localField: "idCurso",
+              foreignField: "_id",
+              as: "datosCurso",
+            },
           },
-        },
-        {
-          $project: {
-            "datosEstudiantes._id": 1,
-            "datosEstudiantes.nombre": 1,
-            "datosEstudiantes.apellido": 1,
-            "datosCurso.nombre": 1,
+          {
+            $project: {
+              "datosEstudiantes._id": 1,
+              "datosEstudiantes.nombre": 1,
+              "datosEstudiantes.apellido": 1,
+              "datosCurso.nombre": 1,
+            },
           },
-        },
-      ]);
+        ]);
 
-      obtenerEstudiantesConInscripcion.forEach((inscripcion) => {
-        const estudianteRefinado = {
-          idEstudiante: inscripcion.datosEstudiantes[0]._id,
-          nombre: inscripcion.datosEstudiantes[0].nombre,
-          apellido: inscripcion.datosEstudiantes[0].apellido,
-          cursoAnterior: inscripcion.datosCurso[0].nombre,
-          idInscripcion: inscripcion._id,
-          seleccionado: false,
-        };
-        estudiantesRespuesta.push(estudianteRefinado);
-      });
-
+        obtenerEstudiantesConInscripcion.forEach((inscripcion) => {
+          const estudianteRefinado = {
+            idEstudiante: inscripcion.datosEstudiantes[0]._id,
+            nombre: inscripcion.datosEstudiantes[0].nombre,
+            apellido: inscripcion.datosEstudiantes[0].apellido,
+            cursoAnterior: inscripcion.datosCurso[0].nombre,
+            idInscripcion: inscripcion._id,
+            seleccionado: false,
+          };
+          estudiantesRespuesta.push(estudianteRefinado);
+        });
+      }
       /* 3. Aggregate de Libres 5A '19.  */
 
       let obtenerEstudiantesLibres = await Inscripcion.aggregate([
@@ -1711,6 +1710,7 @@ router.get(
         });
       });
     } catch (error) {
+      console.log(error);
       res.status(500).json({
         message:
           "Ocurrió un error al querer obtener los estudiantes a inscribir a un curso",
@@ -1903,7 +1903,10 @@ router.get(
       ],
     ])
       .then((inscripcion) => {
-        if (inscripcion.length!=0 && inscripcion[0].estado.equals(estadoPendienteInscripcion)) {
+        if (
+          inscripcion.length != 0 &&
+          inscripcion[0].estado.equals(estadoPendienteInscripcion)
+        ) {
           return res.status(200).json({
             inscripcionPendiente: true,
             curso: inscripcion[0].datosCurso[0].nombre,
