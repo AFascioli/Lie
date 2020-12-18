@@ -499,10 +499,11 @@ export class RendimientoCursoComponent implements OnInit {
     ];
 
     this.barChartOptions = {
-      responsive: true,
+      responsive: false,
       legend: {
         display: this.legend,
         labels: {
+           boxWidth:20,
           fontSize: 12,
           fontFamily:
             '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif',
@@ -530,10 +531,11 @@ export class RendimientoCursoComponent implements OnInit {
       },
     };
     this.barChartOptions1 = {
-      responsive: true,
+      responsive: false,
       legend: {
         display: this.legend,
         labels: {
+          boxWidth:20,
           fontSize: 12,
           fontFamily:
             '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif',
@@ -561,10 +563,11 @@ export class RendimientoCursoComponent implements OnInit {
       },
     };
     this.barChartOptions2 = {
-      responsive: true,
+      responsive: false,
       legend: {
         display: this.legend,
         labels: {
+          boxWidth:20,
           fontSize: 12,
           fontFamily:
             '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif',
@@ -596,6 +599,7 @@ export class RendimientoCursoComponent implements OnInit {
       legend: {
         display: this.legend,
         labels: {
+          usePointStyle: true,
           fontSize: 14,
           fontFamily:
             '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif',
