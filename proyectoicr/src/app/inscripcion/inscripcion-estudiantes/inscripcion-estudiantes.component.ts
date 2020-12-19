@@ -79,16 +79,19 @@ export class InscripcionEstudianteComponent implements OnInit, OnDestroy {
       .subscribe((response) => {
         this.estudianteEstaInscripto = response.exito;
       });
-      this.servicioCicloLectivo.obtenerActualYSiguiente().pipe(takeUntil(this.unsubscribe)).subscribe((response) => {
+    this.servicioCicloLectivo
+      .obtenerActualYSiguiente()
+      .pipe(takeUntil(this.unsubscribe))
+      .subscribe((response) => {
         this.anosCiclos = response.añosCiclos;
         this.servicioInscripcion
-        .obtenerCursosInscripcionEstudiante(this.anosCiclos[0])
-        .pipe(takeUntil(this.unsubscribe))
-        .subscribe((response) => {
-          if (response.cursoActual != "") {
-            this.cursoActual = response.cursoActual.nombre;
-          }
-        });
+          .obtenerCursosInscripcionEstudiante(this.anosCiclos[0])
+          .pipe(takeUntil(this.unsubscribe))
+          .subscribe((response) => {
+            if (response.cursoActual != "") {
+              this.cursoActual = response.cursoActual.nombre;
+            }
+          });
       });
 
     this.servicioInscripcion
@@ -116,7 +119,6 @@ export class InscripcionEstudianteComponent implements OnInit, OnDestroy {
       this.nextYearSelect = true;
     }
     this.obtenerCursosEstudiante();
-    console.log(this.yearSelected);
   }
 
   //Cambia el valor de entregado del documento seleccionado por el usuario

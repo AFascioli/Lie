@@ -398,7 +398,6 @@ router.get("/cursosDeEstudiante", checkAuthMiddleware, async (req, res) => {
             nombre: { $regex: siguiente },
             cicloLectivo: idCicloSeleccionado,
           }).then((cursos) => {
-            console.log("Cursos", cursos);
             //Se agregan todos los cursos disponibles para inscribirse excepto el curso actual
             cursos.forEach((curso) => {
               if (!(curso.nombre == inscripcion[0].cursoActual[0].nombre)) {
@@ -1710,7 +1709,6 @@ router.get(
         });
       });
     } catch (error) {
-      console.log(error);
       res.status(500).json({
         message:
           "Ocurrió un error al querer obtener los estudiantes a inscribir a un curso",

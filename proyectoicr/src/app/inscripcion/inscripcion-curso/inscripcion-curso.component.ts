@@ -34,7 +34,7 @@ export class InscripcionCursoComponent implements OnInit {
   private unsubscribe: Subject<void> = new Subject();
   periodoCursado: boolean;
   cicloHabilitado: boolean;
-  anosCiclos: any[]
+  anosCiclos: any[];
 
   constructor(
     public servicioInscripcion: InscripcionService,
@@ -44,9 +44,12 @@ export class InscripcionCursoComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.servicioCicloLectivo.obtenerActualYSiguiente().pipe(takeUntil(this.unsubscribe)).subscribe((response) => {
-      this.anosCiclos = response.añosCiclos;
-    });
+    this.servicioCicloLectivo
+      .obtenerActualYSiguiente()
+      .pipe(takeUntil(this.unsubscribe))
+      .subscribe((response) => {
+        this.anosCiclos = response.añosCiclos;
+      });
     this.cicloActualHabilitado();
   }
 
@@ -139,7 +142,6 @@ export class InscripcionCursoComponent implements OnInit {
     this.servicioInscripcion
       .inscribirEstudiantesCurso(this.estudiantes, this.cursoSeleccionado)
       .subscribe((response) => {
-        console.log("response", response);
         if (response.exito) {
           this.snackBar.open(response.message, "", {
             panelClass: ["snack-bar-exito"],
@@ -173,7 +175,6 @@ export class InscripcionCursoComponent implements OnInit {
         this.cursoSeleccionado
       )
       .subscribe((response) => {
-        console.log("response", response);
         if (response.exito) {
           this.snackBar.open(response.message, "", {
             panelClass: ["snack-bar-exito"],
