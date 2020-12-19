@@ -141,7 +141,6 @@ exports.obtenerIdsCursos = async () => {
 //se retorna un array vacio. Discrimina segun trimestre.
 exports.materiasSinCerrar = (trimestre) => {
   return new Promise(async (resolve, reject) => {
-    let idCicloActual = await this.obtenerIdCicloActual();
     let idsCursosActuales = await this.obtenerIdsCursos();
     let idEstadoActiva = await ClaseEstado.obtenerIdEstado(
       "Inscripcion",
@@ -156,7 +155,6 @@ exports.materiasSinCerrar = (trimestre) => {
     for (const idCurso of idsCursosActuales) {
       let inscripcion = await Inscripcion.findOne({
         idCurso: idCurso,
-        cicloLectivo: idCicloActual,
         estado: {
           $in: [
             mongoose.Types.ObjectId(idEstadoActiva),
@@ -164,6 +162,7 @@ exports.materiasSinCerrar = (trimestre) => {
           ],
         },
       });
+
       inscripciones.push(inscripcion._id);
     }
     let materiasNoCerrada = [];
@@ -235,7 +234,7 @@ exports.materiasSinCerrar = (trimestre) => {
         {
           $match: {
             _id: {
-              $in: [inscripciones],
+              $in: inscripciones,
             },
           },
         },
@@ -286,7 +285,7 @@ exports.materiasSinCerrar = (trimestre) => {
     } else {
       for (const inscripcion of inscripcionesFiltradas) {
         materiasNoCerrada.push({
-          curso: inscripcion.datosCurso[0].nombre,
+          curso: inscripcion.datosCurso.nombre,
           materia: inscripcion.datosMateria[0].nombre,
         });
       }
