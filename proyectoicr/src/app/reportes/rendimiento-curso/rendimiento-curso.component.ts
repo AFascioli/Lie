@@ -426,13 +426,10 @@ export class RendimientoCursoComponent implements OnInit {
     if (this.cursoS) this.onCursoSeleccionado(this.cursoS, this.materiaS);
     else
       this.servicioCicloLectivo
-        .obtenerAniosCicloLectivo()
+        .obtenerActualYAnteriores()
         .pipe(takeUntil(this.unsubscribe))
         .subscribe((response) => {
-          this.year = response.respuesta;
-          this.year.sort((a, b) =>
-            a.anio > b.anio ? 1 : b.anio > a.anio ? -1 : 0
-          );
+          this.year = response.añosCiclos;
         });
   }
 
@@ -599,7 +596,7 @@ export class RendimientoCursoComponent implements OnInit {
       legend: {
         display: this.legend,
         labels: {
-          usePointStyle: true,
+          boxWidth:20,
           fontSize: 14,
           fontFamily:
             '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif',
