@@ -285,7 +285,7 @@ exports.materiasSinCerrar = (trimestre) => {
     } else {
       for (const inscripcion of inscripcionesFiltradas) {
         materiasNoCerrada.push({
-          curso: inscripcion.datosCurso.nombre,
+          curso: trimestre==3 ? inscripcion.datosCurso[0].nombre : inscripcion.datosCurso.nombre,
           materia: inscripcion.datosMateria[0].nombre,
         });
       }
