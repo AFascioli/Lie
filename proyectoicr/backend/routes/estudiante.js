@@ -5,7 +5,6 @@ const mongoose = require("mongoose");
 const ClaseEstudiante = require("../classes/estudiante");
 const ClaseEstado = require("../classes/estado");
 const ClaseCicloLectivo = require("../classes/cicloLectivo");
-const CicloLectivo = require("../models/cicloLectivo");
 const Estudiante = require("../models/estudiante");
 const Estado = require("../models/estado");
 const Inscripcion = require("../models/inscripcion");
