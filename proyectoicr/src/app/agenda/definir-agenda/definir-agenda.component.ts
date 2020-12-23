@@ -67,6 +67,8 @@ export class DefinirAgendaComponent implements OnInit, OnDestroy {
     "14:15",
   ];
   nuevo: number;
+  indiceNuevo: number[]=[];
+  indiceEditando:number=-1;
   isLoading = false;
   huboCambios = false;
   fechaActual: Date;
@@ -225,6 +227,7 @@ export class DefinirAgendaComponent implements OnInit, OnDestroy {
     } else {
       this.validarHorario(row, indice);
       if (this.agendaValida) {
+        this.indiceEditando=-1;
         this.indice = -1;
         this.isEditing = false;
         this.huboCambios = true;
@@ -241,6 +244,7 @@ export class DefinirAgendaComponent implements OnInit, OnDestroy {
           .subscribe((response) => {
             this.isEditing = false;
             this.huboCambios = false;
+            this.indiceNuevo=[];
             this.openSnackBar(response.message, "snack-bar-exito");
           });
         } else {
@@ -252,6 +256,7 @@ export class DefinirAgendaComponent implements OnInit, OnDestroy {
     if (this.agendaValida) {
       let largo = this.dataSource.data.length;
       this.nuevo = largo;
+      this.indiceNuevo.push(this.dataSource.data.length);
       this.dataSource.data.push({
         nombre: "",
         idMXC: "",
@@ -335,6 +340,7 @@ export class DefinirAgendaComponent implements OnInit, OnDestroy {
   }
 
   editarAgenda(indice) {
+    this.indiceEditando= indice;
     this.agendaValida = false;
     this.mensajeError =
       "Necesitas finalizar la edición de la correspondiente fila";
@@ -410,6 +416,11 @@ export class DefinirAgendaComponent implements OnInit, OnDestroy {
     }
     this.dataSource.data = [];
     this.obtenerCursos();
+  }
+
+  esNuevo(indice):boolean
+  {
+    return this.indiceNuevo.includes(indice);
   }
 }
 

@@ -67,7 +67,10 @@
                 id="materia{{ i }}"
                 ngModel
                 #materia+i="ngModel"
-                [disabled]="(!nextYearSelect || indice != i) && nuevo != i"
+                [disabled]="
+                  (!nextYearSelect || indice != i) &&
+                  (!esNuevo(i)|| this.indiceEditando != i)
+                "
                 [(ngModel)]="agendaCurso.idMateria"
                 matNativeControl
                 required
@@ -101,7 +104,10 @@
                 name="docente{{ i }}"
                 ngModel
                 #docente+i="ngModel"
-                [disabled]="(!nextYearSelect || indice != i) && nuevo != i"
+                [disabled]="
+                  (!nextYearSelect || indice != i) &&
+                  (!esNuevo(i)|| this.indiceEditando != i)
+                "
                 [(ngModel)]="agendaCurso.idDocente"
                 matNativeControl
                 required
