@@ -74,6 +74,7 @@
                 [(ngModel)]="agendaCurso.idMateria"
                 matNativeControl
                 required
+                (selectionChange)="setCambios()"
               >
                 <mat-option
                   *ngFor="let materia of materias"
@@ -111,6 +112,7 @@
                 [(ngModel)]="agendaCurso.idDocente"
                 matNativeControl
                 required
+                (selectionChange)="setCambios()"
               >
                 <mat-option
                   *ngFor="let docente of docentes"
@@ -145,6 +147,7 @@
                 [(ngModel)]="agendaCurso.dia"
                 matNativeControl
                 required
+                (selectionChange)="setCambios()"
               >
                 <mat-option *ngFor="let dia of dias" [value]="dia">
                   {{ dia }}
@@ -186,6 +189,7 @@
                 <ngx-material-timepicker
                   [minutesGap]="15"
                   #picker1
+                  (timeChanged)="setCambios()"
                 ></ngx-material-timepicker>
               </div>
             </mat-form-field>
@@ -224,6 +228,7 @@
                 <ngx-material-timepicker
                   [minutesGap]="15"
                   #picker1
+                  (timeChanged)="setCambios()"
                 ></ngx-material-timepicker>
               </div>
             </mat-form-field>

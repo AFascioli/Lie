@@ -230,7 +230,6 @@ export class DefinirAgendaComponent implements OnInit, OnDestroy {
         this.indiceEditando=-1;
         this.indice = -1;
         this.isEditing = false;
-        this.huboCambios = true;
         document.getElementById("editar" + indice).style.display = "block";
         document.getElementById("reservar" + indice).style.display = "none";
       }
@@ -421,6 +420,10 @@ export class DefinirAgendaComponent implements OnInit, OnDestroy {
   esNuevo(indice):boolean
   {
     return this.indiceNuevo.includes(indice);
+  }
+
+  setCambios(){
+   this.huboCambios=true;
   }
 }
 
