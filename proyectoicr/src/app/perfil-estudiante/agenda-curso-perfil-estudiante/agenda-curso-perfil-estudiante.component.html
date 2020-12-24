@@ -99,8 +99,20 @@
       </div>
     </div>
   </div>
-  <p class="aviso" *ngIf="this.materias.length == 0">
-    <b> Aún no existe agenda de curso definida </b>
+  <div class="div-button">
+    <button
+      mat-raised-button
+      [routerLink]="['/perfilEstudiante']"
+      class="button-warn"
+    >
+      Volver
+    </button>
+  </div>
+</mat-card>
+
+<mat-card class="card-body-componente" *ngIf="materias.length == 0">
+  <p class="aviso">
+    <b> Aún no existe agenda de curso definida. </b>
   </p>
   <div class="div-button">
     <button
