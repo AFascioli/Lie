@@ -1,11 +1,10 @@
+
+<h1 class="componente-titulo">
+  Visualizar agenda de curso ciclo lectivo {{ fechaActual.getFullYear() }}
+</h1>
 <mat-card class="card-spinner" *ngIf="isLoading">
   <mat-spinner class="spinner" [diameter]="60"></mat-spinner>
 </mat-card>
-
-<h1 *ngIf="!isLoading" class="componente-titulo">
-  Visualizar agenda de curso ciclo lectivo {{ fechaActual.getFullYear() }}
-</h1>
-
 <mat-card class="card-body-componente" *ngIf="!isLoading">
   <mat-form-field class="select-curso">
     <mat-select
