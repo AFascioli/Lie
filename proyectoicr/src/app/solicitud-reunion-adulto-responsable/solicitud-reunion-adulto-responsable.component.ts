@@ -15,6 +15,7 @@ export class SolicitudReunionAdultoResponsableComponent implements OnInit {
   private unsubscribe: Subject<void> = new Subject();
   docentes;
   displayedColumns: string[] = ["apellido", "nombre", "materia", "notificar"];
+  cuerpoNotificacion;
   constructor(
     public snackBar: MatSnackBar,
     public servicioAR: AdultoResponsableService,
@@ -65,6 +66,8 @@ export class SolicitudReunionAdultoResponsableComponent implements OnInit {
               .pipe(takeUntil(this.unsubscribe))
               .subscribe((respuesta) => {
                 if (respuesta.exito) {
+                  this.cuerpoNotificacion = "";
+                  docenteSeleccionado[0].seleccionado = false;
                   this.snackBar.open(respuesta.message, "", {
                     panelClass: ["snack-bar-exito"],
                     duration: 4500,
