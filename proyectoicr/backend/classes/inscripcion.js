@@ -302,8 +302,9 @@ exports.actualizarEstadoInscripcion = (inscripcion) => {
     let promovido = true;
 
     for (const cxm of inscripcion.datosCXM) {
-      //#resolve
-      if (cxm.estado == idEstadoPendienteExamen) {
+      if (cxm.estado
+        .toString()
+        .localeCompare(idEstadoPendienteExamen.toString()) == 0) {
         promovido = false;
         break;
       }

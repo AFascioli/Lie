@@ -5,7 +5,6 @@ const mongoose = require("mongoose");
 const ClaseEstudiante = require("../classes/estudiante");
 const ClaseEstado = require("../classes/estado");
 const ClaseCicloLectivo = require("../classes/cicloLectivo");
-const CicloLectivo = require("../models/cicloLectivo");
 const Estudiante = require("../models/estudiante");
 const Estado = require("../models/estado");
 const Inscripcion = require("../models/inscripcion");
@@ -425,7 +424,6 @@ router.get("/cuotasEstudiante", checkAuthMiddleware, async (req, res) => {
     },
   ])
     .then((docs) => {
-      console.log(docs);
       if (docs[0].inscripcion[0].cuotas.length == 0) {
         return res.status(200).json({
           message: "El estudiante no tiene cuotas",

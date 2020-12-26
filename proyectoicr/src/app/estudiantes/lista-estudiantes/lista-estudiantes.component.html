@@ -63,7 +63,7 @@
           (click)="onRegistrarExamenes(i)"
           *ngIf="
             (permisos.notas > 1 && inscripto[i]) ||
-            this.estadoCiclo != 'En examenes'
+            this.estadoCiclo == 'En examenes'
           "
           ><b>Registrar calificaciones de examen</b></mat-card
         >
@@ -71,7 +71,6 @@
           class="opcion"
           [class.opcion-mobile]="mobileQuery.matches"
           (click)="onLlegadaTarde(i)"
-
           *ngIf="
             (this.permisos.asistencia > 1 && this.inscripto[i]) ||
             this.suspendido[i] ||
@@ -83,7 +82,6 @@
           class="opcion"
           [class.opcion-mobile]="mobileQuery.matches"
           (click)="onRetiro(i)"
-
           *ngIf="
             (this.permisos.asistencia > 1 && this.inscripto[i]) ||
             this.suspendido[i] ||

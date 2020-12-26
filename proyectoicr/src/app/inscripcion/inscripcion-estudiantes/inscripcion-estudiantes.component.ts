@@ -123,7 +123,6 @@ export class InscripcionEstudianteComponent implements OnInit, OnDestroy {
       this.nextYearSelect = true;
     }
     this.obtenerCursosEstudiante();
-    console.log(this.yearSelected);
   }
 
   //Cambia el valor de entregado del documento seleccionado por el usuario

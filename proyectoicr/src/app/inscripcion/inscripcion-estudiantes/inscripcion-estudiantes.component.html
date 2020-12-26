@@ -58,10 +58,12 @@
           required
           (selectionChange)="onYearSelected(yearSelected)"
         >
-          <mat-option value="actual" *ngIf="cicloHabilitado">
+          <mat-option value="actual" *ngIf="cicloHabilitado && anosCiclos">
             {{ anosCiclos[0] }}</mat-option
           >
-          <mat-option value="proximo"> {{ anosCiclos[1] }}</mat-option>
+          <mat-option value="proximo" *ngIf="anosCiclos">
+            {{ anosCiclos[1] }}</mat-option
+          >
         </mat-select>
       </mat-form-field>
       <mat-form-field>
