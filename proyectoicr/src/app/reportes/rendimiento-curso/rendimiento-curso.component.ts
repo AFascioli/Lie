@@ -102,6 +102,7 @@ export class RendimientoCursoComponent implements OnInit {
 
   onYearSelected(yearSelected) {
     this.materiaSelec = false;
+    this.materiaS=null;
     this.estudiantes = [];
     this.materias = [];
     this.obtenerCursos(yearSelected.value);
@@ -144,7 +145,7 @@ export class RendimientoCursoComponent implements OnInit {
     }
   }
 
-  onCursoSeleccionado(curso, materia: NgModel) {
+  onCursoSeleccionado(curso, materia) {
     this.cursoS = curso;
     this.cursoSNombre = this.obtenerNombreCurso(curso.value);
     this.materiaS = materia;
@@ -175,14 +176,14 @@ export class RendimientoCursoComponent implements OnInit {
     }
   }
 
-  obtenerNotas(form: NgForm) {
-    this.materiaSNombre = this.obtenerNombreMateria(form.value.materia);
+  obtenerNotas(materia) {
+    this.materiaSNombre = this.obtenerNombreMateria(materia);
     this.isLoading2 = true;
-    if (form.value.curso != "" || form.value.materia != "") {
+    if (this.cursoS.value != "" || materia != "") {
       this.servicioCalificaciones
         .obtenerCalificacionesEstudiantesXCursoXMateriaCicloLectivo(
-          form.value.curso,
-          form.value.materia
+          this.cursoS.value,
+          materia
         )
         .pipe(takeUntil(this.unsubscribe))
         .subscribe((respuesta) => {
@@ -423,16 +424,14 @@ export class RendimientoCursoComponent implements OnInit {
     if (grafico == "pie" || grafico == "doughnut") this.legend = true;
     else this.legend = false;
 
-    if (this.cursoS) this.onCursoSeleccionado(this.cursoS, this.materiaS);
+    if (this.materiaS && (this.materiaS.value!="" && this.materiaS.value!=null)) this.obtenerNotas(this.materiaS.value);
+    else if (this.cursoS) this.onCursoSeleccionado(this.cursoS, this.materiaS);
     else
       this.servicioCicloLectivo
-        .obtenerAniosCicloLectivo()
+        .obtenerActualYAnteriores()
         .pipe(takeUntil(this.unsubscribe))
         .subscribe((response) => {
-          this.year = response.respuesta;
-          this.year.sort((a, b) =>
-            a.anio > b.anio ? 1 : b.anio > a.anio ? -1 : 0
-          );
+          this.year = response.añosCiclos;
         });
   }
 
@@ -499,10 +498,11 @@ export class RendimientoCursoComponent implements OnInit {
     ];
 
     this.barChartOptions = {
-      responsive: true,
+      responsive: false,
       legend: {
         display: this.legend,
         labels: {
+          boxWidth: 20,
           fontSize: 12,
           fontFamily:
             '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif',
@@ -530,10 +530,11 @@ export class RendimientoCursoComponent implements OnInit {
       },
     };
     this.barChartOptions1 = {
-      responsive: true,
+      responsive: false,
       legend: {
         display: this.legend,
         labels: {
+          boxWidth: 20,
           fontSize: 12,
           fontFamily:
             '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif',
@@ -561,10 +562,11 @@ export class RendimientoCursoComponent implements OnInit {
       },
     };
     this.barChartOptions2 = {
-      responsive: true,
+      responsive: false,
       legend: {
         display: this.legend,
         labels: {
+          boxWidth: 20,
           fontSize: 12,
           fontFamily:
             '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif',
@@ -596,6 +598,7 @@ export class RendimientoCursoComponent implements OnInit {
       legend: {
         display: this.legend,
         labels: {
+          boxWidth: 20,
           fontSize: 14,
           fontFamily:
             '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif',

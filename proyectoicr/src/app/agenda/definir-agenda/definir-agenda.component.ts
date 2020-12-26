@@ -67,6 +67,8 @@ export class DefinirAgendaComponent implements OnInit, OnDestroy {
     "14:15",
   ];
   nuevo: number;
+  indiceNuevo: number[]=[];
+  indiceEditando:number=-1;
   isLoading = false;
   huboCambios = false;
   fechaActual: Date;
@@ -225,9 +227,9 @@ export class DefinirAgendaComponent implements OnInit, OnDestroy {
     } else {
       this.validarHorario(row, indice);
       if (this.agendaValida) {
+        this.indiceEditando=-1;
         this.indice = -1;
         this.isEditing = false;
-        this.huboCambios = true;
         document.getElementById("editar" + indice).style.display = "block";
         document.getElementById("reservar" + indice).style.display = "none";
       }
@@ -236,14 +238,15 @@ export class DefinirAgendaComponent implements OnInit, OnDestroy {
 
   onGuardar() {
     if (this.agendaValida) {
-      this.servicioAgenda
-        .registrarAgenda(this.dataSource.data, this.idCursoSeleccionado)
-        .subscribe((response) => {
-          this.isEditing = false;
-          this.huboCambios = false;
-          this.openSnackBar(response.message, "snack-bar-exito");
-        });
-    } else {
+        this.servicioAgenda
+          .registrarAgenda(this.dataSource.data, this.idCursoSeleccionado)
+          .subscribe((response) => {
+            this.isEditing = false;
+            this.huboCambios = false;
+            this.indiceNuevo=[];
+            this.openSnackBar(response.message, "snack-bar-exito");
+          });
+        } else {
       this.openSnackBar(this.mensajeError, "snack-bar-fracaso");
     }
   }
@@ -252,6 +255,7 @@ export class DefinirAgendaComponent implements OnInit, OnDestroy {
     if (this.agendaValida) {
       let largo = this.dataSource.data.length;
       this.nuevo = largo;
+      this.indiceNuevo.push(this.dataSource.data.length);
       this.dataSource.data.push({
         nombre: "",
         idMXC: "",
@@ -335,6 +339,7 @@ export class DefinirAgendaComponent implements OnInit, OnDestroy {
   }
 
   editarAgenda(indice) {
+    this.indiceEditando= indice;
     this.agendaValida = false;
     this.mensajeError =
       "Necesitas finalizar la edición de la correspondiente fila";
@@ -410,6 +415,15 @@ export class DefinirAgendaComponent implements OnInit, OnDestroy {
     }
     this.dataSource.data = [];
     this.obtenerCursos();
+  }
+
+  esNuevo(indice):boolean
+  {
+    return this.indiceNuevo.includes(indice);
+  }
+
+  setCambios(){
+   this.huboCambios=true;
   }
 }
 

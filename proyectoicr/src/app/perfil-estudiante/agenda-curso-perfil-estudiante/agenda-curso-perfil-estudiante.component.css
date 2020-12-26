@@ -17,7 +17,7 @@ mat-card-content {
   margin-right: auto;
   display: grid;
   grid-template-columns: 11% repeat(5,1fr); /*Aca se definen la cantidad de columnas*/
-  grid-template-rows: auto repeat(9,70px);
+  grid-template-rows: auto repeat(9,85px);
   grid-gap: 8px;
   padding: 10px;
   background-color: #c3c8cc; /*2196F3*/

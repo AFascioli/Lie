@@ -72,7 +72,8 @@ export class CalificacionesCicloLectivoComponent implements OnInit, OnDestroy {
   mobileQuery: MediaQueryList;
   materiaSelec: boolean = false;
   docente: string;
-  anosCiclos: any[];
+  anosCiclos: any[]
+  year;
 
   @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
 

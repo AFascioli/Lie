@@ -12,6 +12,7 @@ const Estudiante = require("../models/estudiante");
 const AdultoResponsable = require("../models/adultoResponsable");
 const Administrador = require("../models/administrador");
 const Suscripcion = require("../classes/suscripcion");
+const SolicitudReunion = require("../models/solicitudReunion");
 
 //Compara la contraseña ingresada por el usuario con la contraseña pasada por parametro
 //si coinciden entonces le permite cambiar la contraseña, sino se lo deniega
@@ -341,6 +342,36 @@ router.post(
   }
 );
 
+router.get("/reunion/docente/validarFechas", checkAuthMiddleware, (req, res) => {
+  let fecha = new Date();
+  let aux = new Date();
+  aux.setDate(fecha.getDate() - 7);
+  SolicitudReunion.findOne({
+    idDocente: req.query.idDocente,
+    idAdultoResponsable: req.query.idAdultoResponsable,
+  })
+    .then((SR) => {
+      if (SR == null || SR.fecha <= aux) {
+        res.status(200).json({
+          exito: true,
+          message: "Se obtuvo la fecha correctamente y es valido enviar.",
+        });
+      } else {
+        res.status(200).json({
+          exito: false,
+          message: "Se obtuvo la fecha correctamente pero no es valido enviar.",
+        });
+      }
+    })
+    .catch((error) => {
+      res.status(500).json({
+        message:
+          "Ocurrió un error al querer validar las notificaciones enviadas",
+        error: error.message,
+      });
+    });
+});
+
 // Solicitud para planificar una reunión con un docente.
 router.post("/reunion/docente", checkAuthMiddleware, (req, res) => {
   AdultoResponsable.findOne({ idUsuario: req.body.idAdulto })
@@ -350,6 +381,31 @@ router.post("/reunion/docente", checkAuthMiddleware, (req, res) => {
         `Solicitud de reunión de ${adulto.apellido} ${adulto.nombre}`,
         req.body.cuerpo
       );
+      SolicitudReunion.findOne({
+        idDocente: req.body.idDocente,
+        idAdultoResponsable: req.body.idAdulto,
+      }).then(async (SR) => {
+        fechaHoy = new Date();
+        if (SR) {
+          SolicitudReunion.findOneAndUpdate(
+            {
+              idDocente: req.body.idDocente,
+              idAdultoResponsable: req.body.idAdulto,
+            },
+            {
+              fecha: fechaHoy,
+            }
+          ).exec();
+        } else {
+          const PrimeraSolicitud = new SolicitudReunion({
+            fecha: fechaHoy,
+            idDocente: req.body.idDocente,
+            idAdultoResponsable: req.body.idAdulto,
+          });
+          PrimeraSolicitud.save();
+        }
+      });
+
       res.status(200).json({
         message: "Se envió la notificación al docente",
         exito: true,

@@ -63,9 +63,9 @@
     ciclo lectivo
   </p>
   <br />
-  <mat-card class="card-spinner" *ngIf="isLoading">
-    <mat-spinner class="spinner" [diameter]="60"></mat-spinner>
-  </mat-card>
+
+  <mat-spinner *ngIf="isLoading" class="spinner" [diameter]="60"></mat-spinner>
+
   <div *ngIf="!cursoNotSelected && !isLoading">
     <table
       mat-table

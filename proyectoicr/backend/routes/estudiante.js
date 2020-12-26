@@ -456,10 +456,20 @@ router.get("/sancionesEstudiante", checkAuthMiddleware, async (req, res) => {
     "Inscripcion",
     "Activa"
   );
+  let idEstadoSuspendido = await ClaseEstado.obtenerIdEstado(
+    "Inscripcion",
+    "Suspendido"
+  );
+
   Inscripcion.findOne({
     idEstudiante: req.query.idEstudiante,
     cicloLectivo: idCicloActual,
-    estado: idEstadoActiva,
+    estado: {
+      $in: [
+        mongoose.Types.ObjectId(idEstadoActiva),
+        mongoose.Types.ObjectId(idEstadoSuspendido),
+      ],
+    },
   })
     .then((inscripcion) => {
       if (inscripcion.sanciones.length == 0) {

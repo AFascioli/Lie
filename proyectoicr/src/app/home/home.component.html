@@ -13,7 +13,7 @@
           {{ evento.titulo }}
         </button>
       </div>
-      <div *ngIf="mostrarTooltip" class="tooltip-lie">
+      <div *ngIf="mostrarTooltip" class="tooltip-lie" [class.tooltip-lie-mobile]="mobileQuery.matches">
         Hacé click para ver mas detalles!
       </div>
       <div>

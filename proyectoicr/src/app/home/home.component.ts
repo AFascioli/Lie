@@ -1,6 +1,6 @@
 import { environment } from "src/environments/environment";
 import { EventosService } from "./../eventos/eventos.service";
-import { Component, OnInit, OnDestroy } from "@angular/core";
+import { Component, OnInit, OnDestroy, ChangeDetectorRef } from "@angular/core";
 import { SwPush } from "@angular/service-worker";
 import { AutenticacionService } from "../login/autenticacionService.service";
 import { Router } from "@angular/router";
@@ -8,6 +8,7 @@ import { Evento } from "../eventos/evento.model";
 import { MatSnackBar, MatDialogRef, MatDialog } from "@angular/material";
 import { Subject } from "rxjs";
 import { takeUntil } from "rxjs/operators";
+import { MediaMatcher } from "@angular/cdk/layout";
 
 @Component({
   selector: "app-home",
@@ -25,6 +26,8 @@ export class HomeComponent implements OnInit, OnDestroy {
   enProcesoDeBorrado: boolean = false;
   isLoading: boolean = true;
   mostrarTooltip: boolean = true;
+  _mobileQueryListener: () => void;
+  mobileQuery: MediaQueryList;
 
   constructor(
     public snackBar: MatSnackBar,
@@ -32,8 +35,14 @@ export class HomeComponent implements OnInit, OnDestroy {
     private servicioAuth: AutenticacionService,
     public router: Router,
     public servicioEvento: EventosService,
-    public dialog: MatDialog
-  ) {}
+    public dialog: MatDialog,
+    public changeDetectorRef: ChangeDetectorRef,
+    public media: MediaMatcher
+  ) {
+    this.mobileQuery = media.matchMedia("(max-width: 800px)");
+    this._mobileQueryListener = () => changeDetectorRef.detectChanges();
+    this.mobileQuery.addListener(this._mobileQueryListener);
+  }
 
   eventoSeleccionado(evento: Evento) {
     if (!this.enProcesoDeBorrado) {

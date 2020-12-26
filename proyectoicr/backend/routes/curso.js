@@ -107,7 +107,16 @@ router.post("/registrarSancion", checkAuthMiddleware, async (req, res) => {
           idEstudiante: req.body.idEstudiante,
           estado: idEstadoActiva,
         },
-        { estado: estadoSuspendido }
+        {
+          estado: estadoSuspendido,
+          $push: {
+            sanciones: {
+              tipo: req.body.tipoSancion,
+              cantidad: 1,
+              fecha: req.body.fecha,
+            },
+          },
+        }
       ).then(() => {
         return res.status(200).json({
           message: "Se ha registrado la sanción del estudiante correctamente",
