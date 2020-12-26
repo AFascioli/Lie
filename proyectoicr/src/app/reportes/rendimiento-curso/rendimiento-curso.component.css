@@ -114,11 +114,16 @@ td.mat-cell:last-of-type {
 .div-canvas
 {
   display:flex;
-  width: 37%;
+  width: 100%;
 }
 
 .cv {
   width: 100% !important;
+  height: 100% !important;
+}
+
+.canvas{
+  width: 33% !important;
   height: 100% !important;
 }
 

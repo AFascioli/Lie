@@ -1,4 +1,4 @@
-<h1 *ngIf="!isLoading" class="componente-titulo">Definir agenda de curso</h1>
+<h1 class="componente-titulo">Definir agenda de curso</h1>
 <mat-card class="card-body-componente">
   <form #form="ngForm" *ngIf="!fueraPeriodoDefinirAgenda">
     <div class="div-select">
@@ -67,10 +67,14 @@
                 id="materia{{ i }}"
                 ngModel
                 #materia+i="ngModel"
-                [disabled]="(!nextYearSelect || indice != i) && nuevo != i"
+                [disabled]="
+                  (!nextYearSelect || indice != i) &&
+                  (!esNuevo(i)|| this.indiceEditando != i)
+                "
                 [(ngModel)]="agendaCurso.idMateria"
                 matNativeControl
                 required
+                (selectionChange)="setCambios()"
               >
                 <mat-option
                   *ngFor="let materia of materias"
@@ -101,10 +105,14 @@
                 name="docente{{ i }}"
                 ngModel
                 #docente+i="ngModel"
-                [disabled]="(!nextYearSelect || indice != i) && nuevo != i"
+                [disabled]="
+                  (!nextYearSelect || indice != i) &&
+                  (!esNuevo(i)|| this.indiceEditando != i)
+                "
                 [(ngModel)]="agendaCurso.idDocente"
                 matNativeControl
                 required
+                (selectionChange)="setCambios()"
               >
                 <mat-option
                   *ngFor="let docente of docentes"
@@ -139,6 +147,7 @@
                 [(ngModel)]="agendaCurso.dia"
                 matNativeControl
                 required
+                (selectionChange)="setCambios()"
               >
                 <mat-option *ngFor="let dia of dias" [value]="dia">
                   {{ dia }}
@@ -180,6 +189,7 @@
                 <ngx-material-timepicker
                   [minutesGap]="15"
                   #picker1
+                  (timeChanged)="setCambios()"
                 ></ngx-material-timepicker>
               </div>
             </mat-form-field>
@@ -218,6 +228,7 @@
                 <ngx-material-timepicker
                   [minutesGap]="15"
                   #picker1
+                  (timeChanged)="setCambios()"
                 ></ngx-material-timepicker>
               </div>
             </mat-form-field>

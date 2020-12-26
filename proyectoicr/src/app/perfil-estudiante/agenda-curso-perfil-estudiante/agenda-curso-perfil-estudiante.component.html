@@ -1,5 +1,5 @@
 <h1 class="componente-titulo">
-  Horarios de {{ apellidoEstudiante }}, {{ nombreEstudiante }} - {{ curso }}
+  Horarios de {{ apellidoEstudiante }}, {{ nombreEstudiante }}
 </h1>
 <mat-card class="card-body-componente" *ngIf="materias.length != 0">
   <div id="parent-id" class="grid-container" *ngIf="cursoSelected">
@@ -99,8 +99,20 @@
       </div>
     </div>
   </div>
-  <p class="aviso" *ngIf="this.materias.length == 0">
-    <b> Aún no existe agenda de curso definida </b>
+  <div class="div-button">
+    <button
+      mat-raised-button
+      [routerLink]="['/perfilEstudiante']"
+      class="button-warn"
+    >
+      Volver
+    </button>
+  </div>
+</mat-card>
+
+<mat-card class="card-body-componente" *ngIf="materias.length == 0">
+  <p class="aviso">
+    <b> Aún no existe agenda de curso definida. </b>
   </p>
   <div class="div-button">
     <button

@@ -2,7 +2,7 @@
   <mat-spinner class="spinner" [diameter]="60"></mat-spinner>
 </mat-card>
 
-<mat-card class="card-body-componente-big">
+<mat-card class="card-body-componente-big" *ngIf="!isLoading">
   <div id="content" #content>
     <h1 class="componente-titulo" *ngIf="!isLoading">
       Resumen académico de {{ estudiante }}

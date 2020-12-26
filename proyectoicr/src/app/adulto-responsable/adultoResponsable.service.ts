@@ -134,6 +134,18 @@ export class AdultoResponsableService implements OnDestroy {
     });
   }
 
+  public validarNotificacion(idDocente, idAdulto) {
+    let params = new HttpParams()
+      .set("idDocente", idDocente)
+      .set("idAdultoResponsable", idAdulto);
+    return this.http.get<{
+      message: string;
+      exito: boolean;
+    }>(environment.apiUrl + "/usuario/reunion/docente/validarFechas", {
+      params: params,
+    });
+  }
+
   //Me retorna todos los adultos responsables cuyo tipo y numero de documento coinciden con los pasados por parámetro
   //@params: tipo de documento del adulto responsable
   //@params: número de documento del adulto responsable
