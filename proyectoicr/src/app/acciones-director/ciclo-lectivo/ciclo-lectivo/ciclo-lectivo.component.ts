@@ -137,7 +137,7 @@ export class CicloLectivoComponent implements OnInit {
 
   onCierreExamenes() {
     this.id = 5;
-    this.name = "finalizar las fechas de exámen";
+    this.name = "finalizar las fechas de examen";
     this.openPopUp();
   }
 
