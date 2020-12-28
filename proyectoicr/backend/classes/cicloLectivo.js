@@ -9,7 +9,7 @@ const ClaseCicloLectivo = require("../classes/cicloLectivo");
 
 //Retorna un array con los cursos que no tienen agenda
 exports.cursosTienenAgenda = async () => {
-  let idCicloActual = await ClaseCicloLectivo.obtenerIdCicloActual();
+  let idCicloActual = await ClaseCicloLectivo.obtenerIdCicloProximo();
   return new Promise((resolve, reject) => {
     Curso.find({ cicloLectivo: idCicloActual }).then((cursosActuales) => {
       let cursosSinAgenda = [];
@@ -32,19 +32,27 @@ exports.pasarInscripcionesAActivas = () => {
       "Pendiente"
     );
     let idActiva = await ClaseEstado.obtenerIdEstado("Inscripcion", "Activa");
-    let idInactiva = await ClaseEstado.obtenerIdEstado(
-      "Inscripcion",
-      "Inactiva"
-    );
+
     let idCursandoCXM = await ClaseEstado.obtenerIdEstado(
       "CalificacionesXMateria",
       "Cursando"
     );
+    let idPromovido = await ClaseEstado.obtenerIdEstado(
+      "Inscripcion",
+      "Promovido"
+    );
+    let idExamenesPendientes = await ClaseEstado.obtenerIdEstado(
+      "Inscripcion",
+      "Promovido con examenes pendientes"
+    );
 
+    // Pasar a inactivas las inscripciones del año que se esta por cerrar. #resolve
+    await this.pasarInscripcionesAInactivas();
+
+    let idCicloCreado = await this.obtenerIdCicloProximo();
     let idCicloActual = await this.obtenerIdCicloActual();
-    let idCicloAnterior = await this.obtenerIdCicloAnterior();
 
-    Inscripcion.find({ estado: idPendiente, cicloLectivo: idCicloActual }).then(
+    Inscripcion.find({ estado: idPendiente, cicloLectivo: idCicloCreado }).then(
       async (inscripcionesPendientes) => {
         for (const inscripcion of inscripcionesPendientes) {
           let materiasDelCurso = await ClaseInscripcion.obtenerMateriasDeCurso(
@@ -56,9 +64,9 @@ exports.pasarInscripcionesAActivas = () => {
           let inscripcionAnterior = await Inscripcion.findOne({
             idEstudiante: inscripcion.idEstudiante,
             estado: {
-              $ne: mongoose.Types.ObjectId(idInactiva),
+              $in: [idPromovido, idExamenesPendientes],
             },
-            cicloLectivo: idCicloAnterior,
+            cicloLectivo: idCicloActual,
           });
 
           inscripcion.calificacionesXMateria = idsCXM;
@@ -67,10 +75,40 @@ exports.pasarInscripcionesAActivas = () => {
             : [];
           inscripcion.estado = idActiva;
           inscripcion.save();
-          resolve();
         }
+        resolve();
       }
     );
+  });
+};
+
+exports.pasarInscripcionesAInactivas = () => {
+  // #resolve agregar cuando se pase a trimestre
+  return new Promise(async (resolve, reject) => {
+    let idInactiva = await ClaseEstado.obtenerIdEstado(
+      "Inscripcion",
+      "Inactiva"
+    );
+    let idPromovido = await ClaseEstado.obtenerIdEstado(
+      "Inscripcion",
+      "Promovido"
+    );
+    let idExamenesPendientes = await ClaseEstado.obtenerIdEstado(
+      "Inscripcion",
+      "Promovido con examenes pendientes"
+    );
+    let idLibre = await ClaseEstado.obtenerIdEstado("Inscripcion", "Libre");
+
+    Inscripcion.updateMany(
+      {
+        estado: {
+          $in: [idPromovido, idExamenesPendientes, idLibre],
+        },
+      },
+      { estado: idInactiva }
+    ).then(() => {
+      resolve();
+    });
   });
 };
 
@@ -285,7 +323,10 @@ exports.materiasSinCerrar = (trimestre) => {
     } else {
       for (const inscripcion of inscripcionesFiltradas) {
         materiasNoCerrada.push({
-          curso: trimestre==3 ? inscripcion.datosCurso[0].nombre : inscripcion.datosCurso.nombre,
+          curso:
+            trimestre == 3
+              ? inscripcion.datosCurso[0].nombre
+              : inscripcion.datosCurso.nombre,
           materia: inscripcion.datosMateria[0].nombre,
         });
       }

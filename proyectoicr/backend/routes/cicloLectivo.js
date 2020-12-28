@@ -176,9 +176,6 @@ router.use("/estado", checkAuthMiddleware, async (req, res) => {
 
 router.get("/inicioCursado", checkAuthMiddleware, async (req, res) => {
   try {
-    let fechaActual = new Date();
-    let añoActual = fechaActual.getFullYear();
-
     // Validar que todas las agendas esten definidas
     let idCreado = await ClaseEstado.obtenerIdEstado("CicloLectivo", "Creado");
     let idEnPrimerTrimestre = await ClaseEstado.obtenerIdEstado(
@@ -226,13 +223,17 @@ router.get("/inicioCursado", checkAuthMiddleware, async (req, res) => {
       { estado: idEnPrimerTrimestre }
     ).exec();
 
+    let cicloActual = await CicloLectivo.findById(
+      ClaseCicloLectivo.obtenerIdCicloActual()
+    );
+
     // Crear el proximo ciclo lectivo
     let cicloProximo = new CicloLectivo({
       horarioLLegadaTarde: 8,
       horarioRetiroAnticipado: 10,
       cantidadFaltasSuspension: 15,
       cantidadMateriasInscripcionLibre: 3,
-      año: añoActual + 1,
+      año: cicloActual + 1,
       estado: idCreado,
     });
     await cicloProximo.save();

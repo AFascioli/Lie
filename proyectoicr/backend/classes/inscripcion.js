@@ -143,7 +143,7 @@ exports.inscribirEstudiante = async function (
   };
 
   try {
-    let idCicloActual= await ClaseCicloLectivo.obtenerIdCicloActual();
+    let idCicloActual = await ClaseCicloLectivo.obtenerIdCicloActual();
     var cursoSeleccionado = await obtenerCurso();
     var estadoCursandoMateria = await ClaseEstado.obtenerIdEstado(
       "CalificacionesXMateria",
@@ -156,8 +156,6 @@ exports.inscribirEstudiante = async function (
     let contadorInasistenciasJustificada = 0;
     let contadorLlegadasTarde = 0;
     var materiasPendientesNuevas = [];
-
-   
 
     //Si es cambio de curso se deben copiar los siguientes datos de la inscripcion "vieja"
     if (inscripcion != null) {
@@ -194,7 +192,6 @@ exports.inscribirEstudiante = async function (
       materiasDelCurso,
       estadoCursandoMateria._id
     );
-    
 
     const nuevaInscripcion = new Inscripcion({
       idEstudiante: idEstudiante,
@@ -260,8 +257,8 @@ exports.inscribirEstudianteProximoAnio = async function (
       var idEstadoInactiva = await ClaseEstado.obtenerIdEstado(
         "Inscripcion",
         "Inactiva"
-        );
-        inscripcionPendiente.estado = idEstadoInactiva;
+      );
+      inscripcionPendiente.estado = idEstadoInactiva;
       await inscripcionPendiente.save();
     }
 
@@ -302,9 +299,11 @@ exports.actualizarEstadoInscripcion = (inscripcion) => {
     let promovido = true;
 
     for (const cxm of inscripcion.datosCXM) {
-      if (cxm.estado
-        .toString()
-        .localeCompare(idEstadoPendienteExamen.toString()) == 0) {
+      if (
+        cxm.estado
+          .toString()
+          .localeCompare(idEstadoPendienteExamen.toString()) == 0
+      ) {
         promovido = false;
         break;
       }
