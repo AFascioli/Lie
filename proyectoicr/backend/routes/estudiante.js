@@ -154,23 +154,32 @@ router.delete("/borrar", checkAuthMiddleware, async (req, res, next) => {
     "Inscripcion",
     "Activa"
   );
+  let idEstadoPendiente = await ClaseEstado.obtenerIdEstado(
+    "Inscripcion",
+    "Pendiente"
+  );
   let idEstadoInactiva = await ClaseEstado.obtenerIdEstado(
     "Inscripcion",
     "Inactiva"
   );
-  let idEstadoDeBaja = await ClaseEstado.obtenerIdEstado("Estado", "De baja");
+  let idEstadoDeBaja = await ClaseEstado.obtenerIdEstado(
+    "Estudiante",
+    "De baja"
+  );
   Estudiante.findOneAndUpdate(
     { _id: req.query._id },
     { activo: false, estado: idEstadoDeBaja }
   )
     .then(() => {
-      Inscripcion.findOne({
+      Inscripcion.find({
         idEstudiante: req.query._id,
-        estado: idEstadoActiva,
+        $or: [{ estado: idEstadoActiva }, { estado: idEstadoPendiente }],
       }).then((inscripcion) => {
-        if (inscripcion) {
-          inscripcion.estado = idEstadoInactiva;
-          inscripcion.save();
+        if (inscripcion && inscripcion.length > 0) {
+          inscripcion.forEach((inscripcion) => {
+            inscripcion.estado = idEstadoInactiva;
+            inscripcion.save();
+          });
         }
         res.status(202).json({
           message: "Estudiante exitosamente borrado",
