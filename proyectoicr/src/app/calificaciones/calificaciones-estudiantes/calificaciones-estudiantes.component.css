@@ -102,3 +102,10 @@ td.mat-cell:last-of-type {
 .parrafo{
   text-align: center;
 }
+
+
+.aviso {
+  text-align: center;
+  margin-top: 0% !important;
+  margin-bottom: 3% !important;
+}
