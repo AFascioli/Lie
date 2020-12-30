@@ -12,10 +12,11 @@
   *ngIf="this.estadoCiclo == 'Inactivo' || this.estadoCiclo == 'Creado'"
 >
   <p
-    class="parrafo"
+    class="aviso"
     *ngIf="this.estadoCiclo == 'Inactivo' || this.estadoCiclo == 'Creado'"
   >
-    Esta funcionalidad se encuentra deshabilitada.
+    Atención, no se pueden registrar calificaciones debido a que nos encontramos
+    fuera de las fechas habilitadas para ese fin.
   </p>
 </mat-card>
 <mat-card
@@ -326,7 +327,7 @@
       </mat-paginator>
     </div>
     <p class="aviso" *ngIf="estudiantes.length == 0 && materiaSeleccionada">
-      No se encuentran estudiantes registrados en este curso
+      No se encuentran estudiantes registrados en este curso.
     </p>
     <div class="div-button">
       <button

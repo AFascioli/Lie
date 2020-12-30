@@ -42,10 +42,13 @@ input[type="number"] {
 .aviso {
   text-align: center;
   margin-top: 1% !important;
-  margin-bottom: 0% !important;
+  margin-bottom: 1% !important;
 }
 
 .aviso b {
+  text-align: center;
+  margin-top: 1% !important;
+  margin-bottom: 1% !important;
   font-size: 19px !important;
   font-weight: 500 !important;
 }

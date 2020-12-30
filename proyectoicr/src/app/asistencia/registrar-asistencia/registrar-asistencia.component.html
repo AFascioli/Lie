@@ -44,11 +44,11 @@
     </div>
   </div>
   <p class="aviso" *ngIf="asistenciaNueva != 'true'">
-    Atención, ya se ha tomado asistencia para este curso el día de hoy
+    Atención, ya se ha tomado asistencia para este curso el día de hoy.
   </p>
   <p class="aviso" *ngIf="fueraPeriodoCicloLectivo == true">
     Atención, no se puede tomar asistencia debido a que estamos fuera del ciclo
-    lectivo
+    lectivo.
   </p>
   <br />
   <mat-spinner
@@ -123,8 +123,8 @@
       class="aviso"
       *ngIf="estudiantesXDivision.length == 0 && !cursoNotSelected"
     >
-      No exiten alumnos inscriptos a este curso
-    </p>
+      No exiten alumnos inscriptos a este curso.
+  </p>
   </div>
   <br />
   <div class="div-button">

@@ -1,4 +1,3 @@
-
 <h1 class="componente-titulo">
   Visualizar agenda de curso ciclo lectivo {{ fechaActual.getFullYear() }}
 </h1>
@@ -29,34 +28,22 @@
     *ngIf="materias.length != 0"
   >
     <div class="cabecera" [class.texto-mobile]="mobileQuery.matches">
-      <p class="cabecera">
-        Hora
-      </p>
+      <p class="cabecera">Hora</p>
     </div>
     <div class="cabecera" [class.texto-mobile]="mobileQuery.matches">
-      <p class="cabecera">
-        Lunes
-      </p>
+      <p class="cabecera">Lunes</p>
     </div>
     <div class="cabecera" [class.texto-mobile]="mobileQuery.matches">
-      <p class="cabecera">
-        Martes
-      </p>
+      <p class="cabecera">Martes</p>
     </div>
     <div class="cabecera" [class.texto-mobile]="mobileQuery.matches">
-      <p class="cabecera">
-        Miércoles
-      </p>
+      <p class="cabecera">Miércoles</p>
     </div>
     <div class="cabecera" [class.texto-mobile]="mobileQuery.matches">
-      <p class="cabecera">
-        Jueves
-      </p>
+      <p class="cabecera">Jueves</p>
     </div>
     <div class="cabecera" [class.texto-mobile]="mobileQuery.matches">
-      <p class="cabecera">
-        Viernes
-      </p>
+      <p class="cabecera">Viernes</p>
     </div>
 
     <div class="hora modulo1" [class.texto-mobile]="mobileQuery.matches">
@@ -130,8 +117,8 @@
       </div>
     </div>
   </div>
-  <p class="agenda-vacia" *ngIf="agendaVacia">
-    El curso seleccionado no tiene materias registradas
+  <p class="aviso" *ngIf="agendaVacia">
+    El curso seleccionado no tiene materias registradas.
   </p>
 
   <div class="div-button">

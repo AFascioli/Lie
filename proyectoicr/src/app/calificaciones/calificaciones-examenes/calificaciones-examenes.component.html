@@ -4,8 +4,8 @@
 <mat-card class="card-body-componente">
   <form #form="ngForm">
     <p class="aviso" *ngIf="!fechaDentroDeRangoExamen">
-      Atención, no se puede registrar calificaciones de examen debido a que nos
-      encontramos fuera de las fechas habilitadas para ese fin
+      Atención, no se pueden registrar calificaciones de examen debido a que nos
+      encontramos fuera de las fechas habilitadas para ese fin.
     </p>
     <div *ngIf="fechaDentroDeRangoExamen">
       <div class="ubicacion-fecha">
@@ -38,7 +38,7 @@
         </mat-card>
       </div>
       <p class="aviso" *ngIf="!tieneMateriasDesaprobadas">
-        El estudiante seleccionado no tiene materias desaprobadas
+        El estudiante seleccionado no tiene materias desaprobadas.
       </p>
       <div class="div-selects" *ngIf="tieneMateriasDesaprobadas">
         <mat-form-field
