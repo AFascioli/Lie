@@ -52,7 +52,7 @@
     <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
   </table>
   <p *ngIf="adultosResponsables.length == 0" class="aviso">
-    <b>El estudiante no tiene adultos responsables asignados</b>
+    El estudiante no tiene adultos responsables asignados.
   </p>
 
   <mat-form-field *ngIf="adultosResponsables.length != 0">
