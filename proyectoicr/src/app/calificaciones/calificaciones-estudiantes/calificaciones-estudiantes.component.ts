@@ -171,7 +171,8 @@ export class CalificacionesEstudiantesComponent implements OnInit, OnDestroy {
   }
 
   onTrimestreChange(form: NgForm) {
-    this.obtenerNotas(form);
+    if (this.cursoSeleccionado && this.materiaSeleccionada)
+      this.obtenerNotas(form);
     if (
       this.trimestreSeleccionado == this.trimestreActual ||
       this.servicioAutenticacion.getRol() == "Director"
