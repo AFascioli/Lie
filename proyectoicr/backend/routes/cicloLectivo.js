@@ -204,6 +204,9 @@ router.get("/inicioCursado", checkAuthMiddleware, async (req, res) => {
     // Pasar las inscripciones pendientes a activas (con todo lo que implica)
     await ClaseCicloLectivo.pasarInscripcionesAActivas();
 
+    //Se pasan las materiasXCurso al estado "En primer trimestre" antes de que se cree el ciclo siguiente
+    await ClaseCicloLectivo.pasarMXCAEnPrimerTrimestre();
+
     //Inactivamos el ciclo anterior
     const idEstadoInactivo = await ClaseEstado.obtenerIdEstado(
       "CicloLectivo",

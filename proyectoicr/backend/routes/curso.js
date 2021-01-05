@@ -1596,20 +1596,25 @@ router.get(
         estudiantesRespuesta.push(estudianteRefinado);
       });
 
-      /* 2. Aggregate de Promovidos o Promovidos con exam. 4A '19. */
+      /* 2. Aggregate de Promovidos o Promovidos con exam. 2B '19. */
       if (parseInt(cursoElegido.nombre, 10) !== 1) {
-        let estadosInscripcionesABuscar = [
-          mongoose.Types.ObjectId(idEstadoPromovido),
-          mongoose.Types.ObjectId(idEstadoPromovidoConExam),
-        ];
+        let idMXCDesaprobada = ClaseEstado.obtenerIdEstado(
+          "CalificacionesXMateria",
+          "Desaprobada"
+        );
 
         let obtenerEstudiantesConInscripcion = await Inscripcion.aggregate([
           {
             $match: {
               idCurso: cursoAñoAnterior._id,
-              estado: {
-                $in: estadosInscripcionesABuscar,
-              },
+            },
+          },
+          {
+            $lookup: {
+              from: "calificacionesXMateria",
+              localField: "calificacionesXMateria",
+              foreignField: "_id",
+              as: "datosMXC",
             },
           },
           {
@@ -1634,20 +1639,32 @@ router.get(
               "datosEstudiantes.nombre": 1,
               "datosEstudiantes.apellido": 1,
               "datosCurso.nombre": 1,
+              datosMXC: 1,
             },
           },
         ]);
 
         obtenerEstudiantesConInscripcion.forEach((inscripcion) => {
-          const estudianteRefinado = {
-            idEstudiante: inscripcion.datosEstudiantes[0]._id,
-            nombre: inscripcion.datosEstudiantes[0].nombre,
-            apellido: inscripcion.datosEstudiantes[0].apellido,
-            cursoAnterior: inscripcion.datosCurso[0].nombre,
-            idInscripcion: inscripcion._id,
-            seleccionado: false,
-          };
-          estudiantesRespuesta.push(estudianteRefinado);
+          //Se buscan las inscripciones que tienen 3 o menos cxm desaprobadas
+          let cantidadDesaprobadas=0;
+          for (const mxc of inscripcion.datosMXC) {
+            if(mxc.estado
+              .toString()
+              .localeCompare(idMXCDesaprobada.toString()) == 0){
+                cantidadDesaprobadas++;
+              }
+          }
+          if(cantidadDesaprobadas<=3){
+            const estudianteRefinado = {
+              idEstudiante: inscripcion.datosEstudiantes[0]._id,
+              nombre: inscripcion.datosEstudiantes[0].nombre,
+              apellido: inscripcion.datosEstudiantes[0].apellido,
+              cursoAnterior: inscripcion.datosCurso[0].nombre,
+              idInscripcion: inscripcion._id,
+              seleccionado: false,
+            };
+            estudiantesRespuesta.push(estudianteRefinado);
+          }
         });
       }
       /* 3. Aggregate de Libres 5A '19.  */

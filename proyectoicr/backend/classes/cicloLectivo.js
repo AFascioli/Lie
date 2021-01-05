@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const Curso = require("../models/curso");
 const Inscripcion = require("../models/inscripcion");
+const MateriasXCurso = require("../models/materiasXCurso");
 const ClaseEstado = require("../classes/estado");
 const CicloLectivo = require("../models/cicloLectivo");
 const ClaseCXM = require("../classes/calificacionXMateria");
@@ -441,5 +442,17 @@ exports.obtenerIdCicloSegunAño = (añoSeleccionado) => {
   return new Promise(async (resolve, reject) => {
     let cicloLectivo = await CicloLectivo.findOne({ año: añoSeleccionado });
     resolve(cicloLectivo ? cicloLectivo._id : null);
+  });
+};
+
+//Se buscan las materiasXCurso con el estado "Creada" para pasarlas a "En primer trimestre"
+//Esto se hace antes de que se cree el proximo ciclo lectivo.
+exports.pasarMXCAEnPrimerTrimestre = () => {
+  return new Promise(async (resolve, reject) => {
+    let idMXCCreada = await ClaseEstado.obtenerIdEstado("MateriasXCurso", "Creada");
+    let idMXCEn1Trimestre = await ClaseEstado.obtenerIdEstado("MateriasXCurso", "En primer trimestre");
+
+    await MateriasXCurso.updateMany({estado: idMXCCreada},{$set: {estado: idMXCEn1Trimestre}});
+    resolve();
   });
 };
