@@ -278,13 +278,23 @@ router.get("/modificarAgenda", checkAuthMiddleware, async (req, res) => {
       let nombre = cicloLectivo[0].datosEstado[0].nombre;
       if (nombre === "En examenes" || nombre === "Fin examenes") {
         return res.status(200).json({
-          permiso: false,
+          puedeModificar: false,
+          creado: false,
+          message: "No esta habilitado el modificar la agenda actual",
+        });
+      }
+
+      if (nombre === "Creado") {
+        return res.status(200).json({
+          puedeModificar: true,
+          creado: true,
           message: "No esta habilitado el modificar la agenda actual",
         });
       }
 
       res.status(200).json({
-        permiso: true,
+        puedeModificar: true,
+        creado: false,
         message: "Está habilitado el modificar la agenda actual",
       });
     });

@@ -56,7 +56,6 @@ export class DocumentosInscripcionComponent implements OnInit, OnDestroy {
   }
 
   async ngOnInit() {
-    this.fueraPeriodoCicloLectivo = true;
     this.fechaActual = new Date();
     if (
       (await this.fechaActualEnPeriodoCursado()) ||
