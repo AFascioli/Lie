@@ -71,7 +71,8 @@ export class DefinirAgendaComponent implements OnInit, OnDestroy {
   indiceEditando: number = -1;
   isLoading = false;
   huboCambios = false;
-  fueraPeriodoModificarAgenda = false;
+  permiteModificarAgenda = false;
+  cicloLectivoActualEnCreado = false;
   _mobileQueryListener: () => void;
   mobileQuery: MediaQueryList;
   aniosCiclos: any[];
@@ -102,6 +103,7 @@ export class DefinirAgendaComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.unsubscribe))
       .subscribe((response) => {
         this.aniosCiclos = response.añosCiclos;
+        this.isLoading = false;
       });
 
     this.servicioAgenda
@@ -109,17 +111,9 @@ export class DefinirAgendaComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.unsubscribe))
       .subscribe((response) => {
         this.materias = response.materias;
-        this.isLoading = false;
       });
 
     this.obtenerDocentes();
-
-    this.servicioCicloLectivo
-      .validarModificarAgenda()
-      .pipe(takeUntil(this.unsubscribe))
-      .subscribe((response) => {
-        this.fueraPeriodoModificarAgenda = !response.permiso;
-      });
   }
 
   ngAfterViewInit() {
@@ -404,12 +398,21 @@ export class DefinirAgendaComponent implements OnInit, OnDestroy {
     if (yearSelected.value == "actual") {
       this.yearSelected = this.aniosCiclos[0];
       this.nextYearSelect = false;
+      this.servicioCicloLectivo
+        .validarModificarAgenda()
+        .pipe(takeUntil(this.unsubscribe))
+        .subscribe((response) => {
+          this.permiteModificarAgenda = response.puedeModificar;
+          this.cicloLectivoActualEnCreado = response.creado;
+        });
     } else {
       this.yearSelected = this.aniosCiclos[1];
       this.nextYearSelect = true;
+      this.cicloLectivoActualEnCreado = true;
     }
     this.dataSource.data = [];
     this.obtenerCursos();
+    console.log(this.nextYearSelect);
   }
 
   esNuevo(indice): boolean {

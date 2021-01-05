@@ -102,7 +102,8 @@ export class CicloLectivoService implements OnDestroy {
 
   validarModificarAgenda() {
     return this.http.get<{
-      permiso: boolean;
+      puedeModificar: boolean;
+      creado: boolean;
       message: string;
     }>(`${environment.apiUrl}/cicloLectivo/modificarAgenda`);
   }
@@ -130,7 +131,7 @@ export class CicloLectivoService implements OnDestroy {
       trimestre: trimestre,
     });
   }
-  
+
   obtenerAniosCicloLectivo() {
     return this.http.get<{
       exito: boolean;
@@ -138,7 +139,7 @@ export class CicloLectivoService implements OnDestroy {
       respuesta: any;
     }>(`${environment.apiUrl}/cicloLectivo/anios`);
   }
-  
+
   obtenerActualYSiguiente() {
     return this.http.get<{
       exito: boolean;
@@ -146,7 +147,7 @@ export class CicloLectivoService implements OnDestroy {
       añosCiclos: any[];
     }>(`${environment.apiUrl}/cicloLectivo/actualYSiguiente`);
   }
-  
+
   obtenerActualYAnteriores() {
     return this.http.get<{
       exito: boolean;
