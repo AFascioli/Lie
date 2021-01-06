@@ -21,9 +21,8 @@ export class CalificacionesExamenesComponent implements OnInit, OnDestroy {
   mobileQuery: MediaQueryList;
   fechaActual: Date;
   fechaDentroDeRangoExamen: boolean = false;
-  materiasDesaprobadas: any[];
+  materiasDesaprobadas: any[] = [];
   idMateriaSeleccionada: string;
-  tieneMateriasDesaprobadas: boolean = false;
   notaExamen: any;
   condicionExamen: string;
   private unsubscribe: Subject<void> = new Subject();
@@ -61,13 +60,8 @@ export class CalificacionesExamenesComponent implements OnInit, OnDestroy {
         )
         .pipe(takeUntil(this.unsubscribe))
         .subscribe((materias) => {
-          if (materias.materiasDesaprobadas != null) {
-            this.materiasDesaprobadas = materias.materiasDesaprobadas;
-            this.tieneMateriasDesaprobadas = true;
-          }
+          this.materiasDesaprobadas = materias.materiasDesaprobadas;
         });
-
-      this.fechaDentroDeRangoExamen = true;
       this.fechaActualFinDeSemana();
     }
   }

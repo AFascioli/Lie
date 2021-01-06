@@ -41,8 +41,9 @@ input[type="number"] {
 
 .aviso {
   text-align: center;
-  margin-top: 1% !important;
-  margin-bottom: 0% !important;
+  margin-top: 3% !important;
+  margin-bottom: 3% !important;
+  font-weight: bold;
 }
 
 .aviso b {

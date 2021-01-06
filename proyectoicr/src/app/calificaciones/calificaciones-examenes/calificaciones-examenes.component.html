@@ -37,10 +37,10 @@
           </mat-card-subtitle>
         </mat-card>
       </div>
-      <p class="aviso" *ngIf="!tieneMateriasDesaprobadas">
+      <p class="aviso" *ngIf="materiasDesaprobadas.length == 0">
         El estudiante seleccionado no tiene materias desaprobadas
       </p>
-      <div class="div-selects" *ngIf="tieneMateriasDesaprobadas">
+      <div class="div-selects" *ngIf="materiasDesaprobadas.length != 0">
         <mat-form-field
           [class.select-mobile]="mobileQuery.matches"
           class="select"
@@ -105,7 +105,9 @@
         class="button-primary"
         (click)="guardar(form)"
         mat-raised-button
-        [disabled]="!fechaDentroDeRangoExamen || !tieneMateriasDesaprobadas"
+        [disabled]="
+          !fechaDentroDeRangoExamen || materiasDesaprobadas.length == 0
+        "
       >
         Guardar
       </button>
