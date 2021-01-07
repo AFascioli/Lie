@@ -1,7 +1,4 @@
-
-<h1 class="componente-titulo">
-  Calificaciones por ciclo lectivo
-</h1>
+<h1 class="componente-titulo">Calificaciones por ciclo lectivo</h1>
 
 <mat-card class="card-spinner" *ngIf="isLoading">
   <mat-spinner class="spinner" [diameter]="60"></mat-spinner>
@@ -60,11 +57,10 @@
       </mat-form-field>
     </div>
     <p
-      class="centrar"
+      class="aviso"
       *ngIf="estudiantes.length == 0 && !isLoading2 && materiaSelec"
     >
-      No se encuentran calificaciones registradas para los valores
-      seleccionados.
+      No se encuentran calificaciones registradas para los valores seleccionados
     </p>
     <mat-spinner
       *ngIf="isLoading2"

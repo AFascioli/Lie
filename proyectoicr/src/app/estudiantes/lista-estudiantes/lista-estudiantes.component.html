@@ -54,10 +54,8 @@
           [class.opcion-mobile]="mobileQuery.matches"
           (click)="onJustificar(i)"
           *ngIf="
-            permisos.asistencia > 1 &&
-            inscripto[i] &&
-            suspendido[i] &&
-            enEstadoCLCursando
+            (this.permisos.asistencia > 1 && this.inscripto[i]) ||
+            (this.suspendido[i] && enEstadoCLCursando)
           "
           ><b>Justificar inasistencia</b></mat-card
         >
@@ -73,10 +71,8 @@
           [class.opcion-mobile]="mobileQuery.matches"
           (click)="onLlegadaTarde(i)"
           *ngIf="
-            permisos.asistencia > 1 &&
-            inscripto[i] &&
-            suspendido[i] &&
-            enEstadoCLCursando
+            (this.permisos.asistencia > 1 && this.inscripto[i]) ||
+            (this.suspendido[i] && enEstadoCLCursando)
           "
           ><b>Registrar llegada tarde</b></mat-card
         >
@@ -85,10 +81,8 @@
           [class.opcion-mobile]="mobileQuery.matches"
           (click)="onRetiro(i)"
           *ngIf="
-            permisos.asistencia > 1 &&
-            inscripto[i] &&
-            suspendido[i] &&
-            enEstadoCLCursando
+            (this.permisos.asistencia > 1 && this.inscripto[i]) ||
+            (this.suspendido[i] && enEstadoCLCursando)
           "
           ><b>Registrar retiro anticipado</b></mat-card
         >
@@ -97,10 +91,8 @@
           [class.opcion-mobile]="mobileQuery.matches"
           (click)="onSancion(i)"
           *ngIf="
-            permisos.asistencia > 1 &&
-            inscripto[i] &&
-            suspendido[i] &&
-            (enEstadoCLCursando || enEstadoCLExamenes)
+            (this.permisos.asistencia > 1 && this.inscripto[i]) ||
+            (this.suspendido[i] && (enEstadoCLCursando || enEstadoCLExamenes))
           "
           ><b>Registrar sanción</b></mat-card
         >
