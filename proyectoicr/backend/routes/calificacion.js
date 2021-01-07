@@ -20,6 +20,14 @@ router.get("/materiasDesaprobadas", checkAuthMiddleware, async (req, res) => {
       "Inscripcion",
       "Suspendido"
     );
+    let idEstadoPromovidoConExPend = await ClaseEstado.obtenerIdEstado(
+      "Inscripcion",
+      "Promovido con examenes pendientes"
+    );
+    let idEstadoExPendiente = await ClaseEstado.obtenerIdEstado(
+      "Inscripcion",
+      "Examenes pendientes"
+    );
 
     Inscripcion.findOne({
       idEstudiante: req.query.idEstudiante,
@@ -27,12 +35,14 @@ router.get("/materiasDesaprobadas", checkAuthMiddleware, async (req, res) => {
         $in: [
           mongoose.Types.ObjectId(idEstadoActiva),
           mongoose.Types.ObjectId(idEstadoSuspendido),
+          mongoose.Types.ObjectId(idEstadoPromovidoConExPend),
+          mongoose.Types.ObjectId(idEstadoExPendiente),
         ],
       },
     }).then(async (inscripcion) => {
       let idEstado = await ClaseEstado.obtenerIdEstado(
         "CalificacionesXMateria",
-        "Desaprobada"
+        "Pendiente examen"
       );
 
       let idsCXMDesaprobadas = await ClaseCXM.obtenerMateriasDesaprobadasv2(
@@ -171,11 +181,25 @@ router.post("/examen", checkAuthMiddleware, async (req, res) => {
           "Inscripcion",
           "Activa"
         );
+        let idEstadoPromovidoConExPend = await ClaseEstado.obtenerIdEstado(
+          "Inscripcion",
+          "Promovido con examenes pendientes"
+        );
+        let idEstadoExPendiente = await ClaseEstado.obtenerIdEstado(
+          "Inscripcion",
+          "Examenes pendientes"
+        );
         Inscripcion.aggregate([
           {
             $match: {
               idEstudiante: mongoose.Types.ObjectId(idEstudiante),
-              estado: mongoose.Types.ObjectId(idEstadoActiva),
+              estado: {
+                $in: [
+                  mongoose.Types.ObjectId(idEstadoActiva),
+                  mongoose.Types.ObjectId(idEstadoPromovidoConExPend),
+                  mongoose.Types.ObjectId(idEstadoExPendiente),
+                ],
+              },
             },
           },
           {
