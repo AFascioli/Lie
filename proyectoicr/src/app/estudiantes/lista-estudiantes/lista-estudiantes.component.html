@@ -31,7 +31,7 @@
             class="titulo-expansion-panel"
             [class.titulo-expansion-panel-mobile]="mobileQuery.matches"
             *ngIf="inscripto[i]"
-            >Curso: {{ this.cursos[i] }}
+            >Curso: {{ cursos[i] }}
           </b>
         </mat-panel-title>
       </mat-expansion-panel-header>
@@ -43,7 +43,10 @@
           class="opcion"
           [class.opcion-mobile]="mobileQuery.matches"
           (click)="onInscribir(i)"
-          *ngIf="permisos.inscribirEstudiante > 1"
+          *ngIf="
+            permisos.inscribirEstudiante > 1 &&
+            (enEstadoCLCreado || enEstadoCLCursando)
+          "
           ><b>Inscribir estudiante a un curso</b></mat-card
         >
         <mat-card
@@ -51,9 +54,10 @@
           [class.opcion-mobile]="mobileQuery.matches"
           (click)="onJustificar(i)"
           *ngIf="
-            (this.permisos.asistencia > 1 && this.inscripto[i]) ||
-            this.suspendido[i] ||
-            enPeriodoCursado()
+            permisos.asistencia > 1 &&
+            inscripto[i] &&
+            suspendido[i] &&
+            enEstadoCLCursando
           "
           ><b>Justificar inasistencia</b></mat-card
         >
@@ -61,10 +65,7 @@
           class="opcion"
           [class.opcion-mobile]="mobileQuery.matches"
           (click)="onRegistrarExamenes(i)"
-          *ngIf="
-            (permisos.notas > 1 && inscripto[i]) ||
-            this.estadoCiclo == 'En examenes'
-          "
+          *ngIf="permisos.notas > 1 && inscripto[i] && enEstadoCLExamenes"
           ><b>Registrar calificaciones de examen</b></mat-card
         >
         <mat-card
@@ -72,9 +73,10 @@
           [class.opcion-mobile]="mobileQuery.matches"
           (click)="onLlegadaTarde(i)"
           *ngIf="
-            (this.permisos.asistencia > 1 && this.inscripto[i]) ||
-            this.suspendido[i] ||
-            enPeriodoCursado()
+            permisos.asistencia > 1 &&
+            inscripto[i] &&
+            suspendido[i] &&
+            enEstadoCLCursando
           "
           ><b>Registrar llegada tarde</b></mat-card
         >
@@ -83,9 +85,10 @@
           [class.opcion-mobile]="mobileQuery.matches"
           (click)="onRetiro(i)"
           *ngIf="
-            (this.permisos.asistencia > 1 && this.inscripto[i]) ||
-            this.suspendido[i] ||
-            enPeriodoCursado()
+            permisos.asistencia > 1 &&
+            inscripto[i] &&
+            suspendido[i] &&
+            enEstadoCLCursando
           "
           ><b>Registrar retiro anticipado</b></mat-card
         >
@@ -94,9 +97,10 @@
           [class.opcion-mobile]="mobileQuery.matches"
           (click)="onSancion(i)"
           *ngIf="
-            (this.permisos.asistencia > 1 && this.inscripto[i]) ||
-            this.suspendido[i] ||
-            enPeriodoCursado()
+            permisos.asistencia > 1 &&
+            inscripto[i] &&
+            suspendido[i] &&
+            (enEstadoCLCursando || enEstadoCLExamenes)
           "
           ><b>Registrar sanción</b></mat-card
         >
@@ -119,8 +123,9 @@
           [class.opcion-mobile]="mobileQuery.matches"
           (click)="onReincorporar(i)"
           *ngIf="
-            (permisos.inscribirEstudiante >= 1 && suspendido[i]) ||
-            enPeriodoCursado()
+            permisos.inscribirEstudiante >= 1 &&
+            suspendido[i] &&
+            (enEstadoCLCursando || enEstadoCLExamenes)
           "
           ><b>Reincorporar estudiante</b></mat-card
         >
@@ -128,9 +133,6 @@
           class="opcion"
           [class.opcion-mobile]="mobileQuery.matches"
           (click)="onNotificarReunion(i)"
-          [ngClass]="{
-            isDisabled: this.estadoCiclo == 'Inactivo'
-          }"
           ><b>Enviar notificación de reunión</b></mat-card
         >
         <mat-card
