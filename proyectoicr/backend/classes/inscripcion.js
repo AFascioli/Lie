@@ -302,7 +302,8 @@ exports.actualizarEstadoInscripcion = (inscripcion) => {
       if (
         cxm.estado
           .toString()
-          .localeCompare(idEstadoPendienteExamen.toString()) == 0
+          .localeCompare(idEstadoPendienteExamen.toString()) == 0 &&
+          inscripcion.materiasPendientes.length!=0
       ) {
         promovido = false;
         break;

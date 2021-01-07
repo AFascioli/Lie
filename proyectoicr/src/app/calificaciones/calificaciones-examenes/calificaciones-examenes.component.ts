@@ -48,22 +48,38 @@ export class CalificacionesExamenesComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.fechaActual = new Date();
-    if (
-      this.fechaActualEnRangoFechasExamenes ||
-      this.authService.getRol() == "Admin"
-    ) {
-      this.apellidoEstudiante = this.estudianteService.estudianteSeleccionado.apellido;
-      this.nombreEstudiante = this.estudianteService.estudianteSeleccionado.nombre;
-      this.servicioCalificaciones
-        .obtenerMateriasDesaprobadasEstudiante(
-          this.estudianteService.estudianteSeleccionado._id
-        )
-        .pipe(takeUntil(this.unsubscribe))
-        .subscribe((materias) => {
-          this.materiasDesaprobadas = materias.materiasDesaprobadas;
-        });
-      this.fechaActualFinDeSemana();
-    }
+    this.cicloLectivoService
+      .obtenerEstadoCicloLectivo()
+      .pipe(takeUntil(this.unsubscribe))
+      .subscribe((response) => {
+
+        if (response.estadoCiclo == "En examenes") {
+          this.fechaDentroDeRangoExamen = true;
+        }else{
+          this.fechaDentroDeRangoExamen = false;
+        }
+
+        if (
+          this.fechaDentroDeRangoExamen ||
+          this.authService.getRol() == "Admin"
+        ) {
+          this.apellidoEstudiante = this.estudianteService.estudianteSeleccionado.apellido;
+          this.nombreEstudiante = this.estudianteService.estudianteSeleccionado.nombre;
+          this.servicioCalificaciones
+            .obtenerMateriasDesaprobadasEstudiante(
+              this.estudianteService.estudianteSeleccionado._id
+            )
+            .pipe(takeUntil(this.unsubscribe))
+            .subscribe((materias) => {
+              this.materiasDesaprobadas = materias.materiasDesaprobadas;
+            });
+          this.fechaActualFinDeSemana();
+        }
+
+      });
+
+
+    
   }
 
   onMateriaChange(idMateria) {
@@ -103,14 +119,17 @@ export class CalificacionesExamenesComponent implements OnInit, OnDestroy {
     }
   }
 
-  fechaActualEnRangoFechasExamenes() {
+  async fechaActualEnRangoFechasExamenes() {
     this.cicloLectivoService
       .obtenerEstadoCicloLectivo()
       .pipe(takeUntil(this.unsubscribe))
       .subscribe((response) => {
+        console.log(response);
         if (response.estadoCiclo == "En examenes") {
+          this.fechaDentroDeRangoExamen = true;
           return true;
         }
+        this.fechaDentroDeRangoExamen = false;
         return false;
       });
   }
