@@ -799,11 +799,36 @@ router.get(
       "Inscripcion",
       "Activa"
     );
+    let idEstadoSuspendido = await ClaseEstado.obtenerIdEstado(
+      "Inscripcion",
+      "Suspendido"
+    );
+    let idEstadoPromovidoConExPend = await ClaseEstado.obtenerIdEstado(
+      "Inscripcion",
+      "Promovido con examenes pendientes"
+    );
+    let idEstadoExPendiente = await ClaseEstado.obtenerIdEstado(
+      "Inscripcion",
+      "Examenes pendientes"
+    );
+    let idEstadoPromovido = await ClaseEstado.obtenerIdEstado(
+      "Inscripcion",
+      "Promovido"
+    );
+
     Inscripcion.aggregate([
       {
         $match: {
           idCurso: mongoose.Types.ObjectId(req.query.idCurso),
-          estado: mongoose.Types.ObjectId(idEstadoActiva),
+          estado: {
+            $in: [
+              mongoose.Types.ObjectId(idEstadoActiva),
+              mongoose.Types.ObjectId(idEstadoSuspendido),
+              mongoose.Types.ObjectId(idEstadoPromovidoConExPend),
+              mongoose.Types.ObjectId(idEstadoExPendiente),
+              mongoose.Types.ObjectId(idEstadoPromovido),
+            ],
+          },
         },
       },
       {
@@ -945,6 +970,18 @@ router.get("/estudiante", checkAuthMiddleware, async (req, res) => {
     "Inscripcion",
     "Suspendido"
   );
+  let idEstadoPromovidoConExPend = await ClaseEstado.obtenerIdEstado(
+    "Inscripcion",
+    "Promovido con examenes pendientes"
+  );
+  let idEstadoExPendiente = await ClaseEstado.obtenerIdEstado(
+    "Inscripcion",
+    "Examenes pendientes"
+  );
+  let idEstadoPromovido = await ClaseEstado.obtenerIdEstado(
+    "Inscripcion",
+    "Promovido"
+  );
 
   Inscripcion.findOne({
     idEstudiante: mongoose.Types.ObjectId(req.query.idEstudiante),
@@ -952,6 +989,9 @@ router.get("/estudiante", checkAuthMiddleware, async (req, res) => {
       $in: [
         mongoose.Types.ObjectId(idEstadoActiva),
         mongoose.Types.ObjectId(idEstadoSuspendido),
+        mongoose.Types.ObjectId(idEstadoPromovidoConExPend),
+        mongoose.Types.ObjectId(idEstadoExPendiente),
+        mongoose.Types.ObjectId(idEstadoPromovido),
       ],
     },
   })
@@ -1646,15 +1686,17 @@ router.get(
 
         obtenerEstudiantesConInscripcion.forEach((inscripcion) => {
           //Se buscan las inscripciones que tienen 3 o menos cxm desaprobadas
-          let cantidadDesaprobadas=0;
+          let cantidadDesaprobadas = 0;
           for (const mxc of inscripcion.datosMXC) {
-            if(mxc.estado
-              .toString()
-              .localeCompare(idMXCDesaprobada.toString()) == 0){
-                cantidadDesaprobadas++;
-              }
+            if (
+              mxc.estado
+                .toString()
+                .localeCompare(idMXCDesaprobada.toString()) == 0
+            ) {
+              cantidadDesaprobadas++;
+            }
           }
-          if(cantidadDesaprobadas<=3){
+          if (cantidadDesaprobadas <= 3) {
             const estudianteRefinado = {
               idEstudiante: inscripcion.datosEstudiantes[0]._id,
               nombre: inscripcion.datosEstudiantes[0].nombre,
@@ -2152,6 +2194,18 @@ router.get("/estudiantes", checkAuthMiddleware, async (req, res) => {
     "Inscripcion",
     "Suspendido"
   );
+  let idEstadoPromovidoConExPend = await ClaseEstado.obtenerIdEstado(
+    "Inscripcion",
+    "Promovido con examenes pendientes"
+  );
+  let idEstadoExPendiente = await ClaseEstado.obtenerIdEstado(
+    "Inscripcion",
+    "Examenes pendientes"
+  );
+  let idEstadoPromovido = await ClaseEstado.obtenerIdEstado(
+    "Inscripcion",
+    "Promovido"
+  );
   Inscripcion.aggregate([
     {
       $lookup: {
@@ -2168,6 +2222,9 @@ router.get("/estudiantes", checkAuthMiddleware, async (req, res) => {
           $in: [
             mongoose.Types.ObjectId(idEstadoActiva),
             mongoose.Types.ObjectId(idEstadoSuspendido),
+            mongoose.Types.ObjectId(idEstadoPromovidoConExPend),
+            mongoose.Types.ObjectId(idEstadoExPendiente),
+            mongoose.Types.ObjectId(idEstadoPromovido),
           ],
         },
       },

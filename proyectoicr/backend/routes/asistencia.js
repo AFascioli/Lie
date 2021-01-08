@@ -468,9 +468,30 @@ router.get("/asistenciaEstudiante", checkAuthMiddleware, async (req, res) => {
     "Inscripcion",
     "Suspendido"
   );
+  let idEstadoPromovidoConExPend = await ClaseEstado.obtenerIdEstado(
+    "Inscripcion",
+    "Promovido con examenes pendientes"
+  );
+  let idEstadoExPendiente = await ClaseEstado.obtenerIdEstado(
+    "Inscripcion",
+    "Examenes pendientes"
+  );
+  let idEstadoPromovido = await ClaseEstado.obtenerIdEstado(
+    "Inscripcion",
+    "Promovido"
+  );
+
   Inscripcion.find({
     idEstudiante: req.query.idEstudiante,
-    $or: [{ estado: idEstadoActiva }, { estado: idEstadoSuspendido }],
+    estado: {
+      $in: [
+        mongoose.Types.ObjectId(idEstadoActiva),
+        mongoose.Types.ObjectId(idEstadoSuspendido),
+        mongoose.Types.ObjectId(idEstadoPromovidoConExPend),
+        mongoose.Types.ObjectId(idEstadoExPendiente),
+        mongoose.Types.ObjectId(idEstadoPromovido),
+      ],
+    },
   })
     .then((inscripciones) => {
       let contadorInjustificadas = 0;

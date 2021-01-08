@@ -45,6 +45,14 @@ router.get("/materiasDesaprobadas", checkAuthMiddleware, async (req, res) => {
         "Pendiente examen"
       );
 
+      if (!inscripcion) {
+        return res.status(200).json({
+          message: "El alumno seleccionado no tiene materias desaprobadas",
+          exito: true,
+          materiasDesaprobadas: [],
+        });
+      }
+
       let idsCXMDesaprobadas = await ClaseCXM.obtenerMateriasDesaprobadasv2(
         inscripcion.materiasPendientes,
         inscripcion.calificacionesXMateria,
@@ -88,11 +96,31 @@ router.get("/materia/calificaciones", checkAuthMiddleware, async (req, res) => {
     "Inscripcion",
     "Suspendido"
   );
+  let idEstadoPromovidoConExPend = await ClaseEstado.obtenerIdEstado(
+    "Inscripcion",
+    "Promovido con examenes pendientes"
+  );
+  let idEstadoExPendiente = await ClaseEstado.obtenerIdEstado(
+    "Inscripcion",
+    "Examenes pendientes"
+  );
+  let idEstadoPromovido = await ClaseEstado.obtenerIdEstado(
+    "Inscripcion",
+    "Promovido"
+  );
   Inscripcion.aggregate([
     {
       $match: {
         idEstudiante: mongoose.Types.ObjectId(req.query.idEstudiante),
-        $or: [{ estado: idEstadoActiva }, { estado: idEstadoSuspendido }],
+        estado: {
+          $in: [
+            mongoose.Types.ObjectId(idEstadoActiva),
+            mongoose.Types.ObjectId(idEstadoSuspendido),
+            mongoose.Types.ObjectId(idEstadoPromovidoConExPend),
+            mongoose.Types.ObjectId(idEstadoExPendiente),
+            mongoose.Types.ObjectId(idEstadoPromovido),
+          ],
+        },
       },
     },
     {

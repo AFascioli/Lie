@@ -52,10 +52,9 @@ export class CalificacionesExamenesComponent implements OnInit, OnDestroy {
       .obtenerEstadoCicloLectivo()
       .pipe(takeUntil(this.unsubscribe))
       .subscribe((response) => {
-
         if (response.estadoCiclo == "En examenes") {
           this.fechaDentroDeRangoExamen = true;
-        }else{
+        } else {
           this.fechaDentroDeRangoExamen = false;
         }
 
@@ -75,11 +74,7 @@ export class CalificacionesExamenesComponent implements OnInit, OnDestroy {
             });
           this.fechaActualFinDeSemana();
         }
-
       });
-
-
-    
   }
 
   onMateriaChange(idMateria) {
@@ -117,21 +112,6 @@ export class CalificacionesExamenesComponent implements OnInit, OnDestroy {
         }
       );
     }
-  }
-
-  async fechaActualEnRangoFechasExamenes() {
-    this.cicloLectivoService
-      .obtenerEstadoCicloLectivo()
-      .pipe(takeUntil(this.unsubscribe))
-      .subscribe((response) => {
-        console.log(response);
-        if (response.estadoCiclo == "En examenes") {
-          this.fechaDentroDeRangoExamen = true;
-          return true;
-        }
-        this.fechaDentroDeRangoExamen = false;
-        return false;
-      });
   }
 
   guardar(form: NgForm) {

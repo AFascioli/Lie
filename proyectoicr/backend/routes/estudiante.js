@@ -395,7 +395,22 @@ router.get("/cuotasEstudiante", checkAuthMiddleware, async (req, res) => {
     "Inscripcion",
     "Activa"
   );
-
+  let idEstadoSuspendido = await ClaseEstado.obtenerIdEstado(
+    "Inscripcion",
+    "Suspendido"
+  );
+  let idEstadoPromovidoConExPend = await ClaseEstado.obtenerIdEstado(
+    "Inscripcion",
+    "Promovido con examenes pendientes"
+  );
+  let idEstadoExPendiente = await ClaseEstado.obtenerIdEstado(
+    "Inscripcion",
+    "Examenes pendientes"
+  );
+  let idEstadoPromovido = await ClaseEstado.obtenerIdEstado(
+    "Inscripcion",
+    "Promovido"
+  );
   Estudiante.aggregate([
     {
       $match: {
@@ -413,7 +428,15 @@ router.get("/cuotasEstudiante", checkAuthMiddleware, async (req, res) => {
     },
     {
       $match: {
-        "inscripcion.estado": mongoose.Types.ObjectId(idEstadoActiva),
+        "inscripcion.estado": {
+          $in: [
+            mongoose.Types.ObjectId(idEstadoActiva),
+            mongoose.Types.ObjectId(idEstadoSuspendido),
+            mongoose.Types.ObjectId(idEstadoPromovidoConExPend),
+            mongoose.Types.ObjectId(idEstadoExPendiente),
+            mongoose.Types.ObjectId(idEstadoPromovido),
+          ],
+        },
       },
     },
     {
@@ -460,6 +483,18 @@ router.get("/sancionesEstudiante", checkAuthMiddleware, async (req, res) => {
     "Inscripcion",
     "Suspendido"
   );
+  let idEstadoPromovidoConExPend = await ClaseEstado.obtenerIdEstado(
+    "Inscripcion",
+    "Promovido con examenes pendientes"
+  );
+  let idEstadoExPendiente = await ClaseEstado.obtenerIdEstado(
+    "Inscripcion",
+    "Examenes pendientes"
+  );
+  let idEstadoPromovido = await ClaseEstado.obtenerIdEstado(
+    "Inscripcion",
+    "Promovido"
+  );
 
   Inscripcion.findOne({
     idEstudiante: req.query.idEstudiante,
@@ -468,6 +503,9 @@ router.get("/sancionesEstudiante", checkAuthMiddleware, async (req, res) => {
       $in: [
         mongoose.Types.ObjectId(idEstadoActiva),
         mongoose.Types.ObjectId(idEstadoSuspendido),
+        mongoose.Types.ObjectId(idEstadoPromovidoConExPend),
+        mongoose.Types.ObjectId(idEstadoExPendiente),
+        mongoose.Types.ObjectId(idEstadoPromovido),
       ],
     },
   })
