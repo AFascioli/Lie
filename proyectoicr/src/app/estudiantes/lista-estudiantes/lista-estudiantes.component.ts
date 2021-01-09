@@ -41,7 +41,6 @@ export class ListaEstudiantesComponent implements OnInit, OnDestroy {
   _mobileQueryListener: () => void;
   mobileQuery: MediaQueryList;
   estadoCiclo: string;
-  enEstadoCLCreado;
   enEstadoCLExamenes;
   enEstadoCLCursando;
 
@@ -75,6 +74,7 @@ export class ListaEstudiantesComponent implements OnInit, OnDestroy {
       .getEstudiantesListener()
       .pipe(takeUntil(this.unsubscribe))
       .subscribe((estudiantesBuscados) => {
+        this.verificarEstadoCiclo();
         this.estudiantes = estudiantesBuscados;
         this.isLoading = false;
         for (let i = 0; i < estudiantesBuscados.length; i++) {
@@ -143,8 +143,7 @@ export class ListaEstudiantesComponent implements OnInit, OnDestroy {
           response.estadoCiclo == "En primer trimestre" ||
           response.estadoCiclo == "En segundo trimestre" ||
           response.estadoCiclo == "En tercer trimestre";
-        this.enEstadoCLCreado = "Creado";
-        this.enEstadoCLExamenes = "En examenes";
+        this.enEstadoCLExamenes = response.estadoCiclo == "En examenes";
       });
   }
 

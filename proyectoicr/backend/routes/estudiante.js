@@ -391,84 +391,62 @@ router.get("/tutores", checkAuthMiddleware, (req, res) => {
 //Obtiene todas las cuotas de un estudiante pasado por parámetro
 //@params: id del estudiante
 router.get("/cuotasEstudiante", checkAuthMiddleware, async (req, res) => {
-  let idEstadoActiva = await ClaseEstado.obtenerIdEstado(
-    "Inscripcion",
-    "Activa"
-  );
-  let idEstadoSuspendido = await ClaseEstado.obtenerIdEstado(
-    "Inscripcion",
-    "Suspendido"
-  );
-  let idEstadoPromovidoConExPend = await ClaseEstado.obtenerIdEstado(
-    "Inscripcion",
-    "Promovido con examenes pendientes"
-  );
-  let idEstadoExPendiente = await ClaseEstado.obtenerIdEstado(
-    "Inscripcion",
-    "Examenes pendientes"
-  );
-  let idEstadoPromovido = await ClaseEstado.obtenerIdEstado(
-    "Inscripcion",
-    "Promovido"
-  );
-  Estudiante.aggregate([
-    {
-      $match: {
-        _id: mongoose.Types.ObjectId(req.query.idEstudiante),
-        activo: true,
+  try {
+    let idEstadoActiva = await ClaseEstado.obtenerIdEstado(
+      "Inscripcion",
+      "Activa"
+    );
+    let idEstadoSuspendido = await ClaseEstado.obtenerIdEstado(
+      "Inscripcion",
+      "Suspendido"
+    );
+    let idEstadoPromovidoConExPend = await ClaseEstado.obtenerIdEstado(
+      "Inscripcion",
+      "Promovido con examenes pendientes"
+    );
+    let idEstadoExPendiente = await ClaseEstado.obtenerIdEstado(
+      "Inscripcion",
+      "Examenes pendientes"
+    );
+    let idEstadoPromovido = await ClaseEstado.obtenerIdEstado(
+      "Inscripcion",
+      "Promovido"
+    );
+
+    let inscripcion = await Inscripcion.findOne({
+      idEstudiante: req.query.idEstudiante,
+      estado: {
+        $in: [
+          idEstadoActiva,
+          idEstadoSuspendido,
+          idEstadoPromovidoConExPend,
+          idEstadoExPendiente,
+          idEstadoPromovido,
+        ],
       },
-    },
-    {
-      $lookup: {
-        from: "inscripcion",
-        localField: "_id",
-        foreignField: "idEstudiante",
-        as: "inscripcion",
-      },
-    },
-    {
-      $match: {
-        "inscripcion.estado": {
-          $in: [
-            mongoose.Types.ObjectId(idEstadoActiva),
-            mongoose.Types.ObjectId(idEstadoSuspendido),
-            mongoose.Types.ObjectId(idEstadoPromovidoConExPend),
-            mongoose.Types.ObjectId(idEstadoExPendiente),
-            mongoose.Types.ObjectId(idEstadoPromovido),
-          ],
-        },
-      },
-    },
-    {
-      $project: {
-        _id: 1,
-        inscripcion: 1,
-      },
-    },
-  ])
-    .then((docs) => {
-      if (docs[0].inscripcion[0].cuotas.length == 0) {
-        return res.status(200).json({
-          message: "El estudiante no tiene cuotas",
-          exito: false,
-        });
-      }
-      let cuo = [];
-      docs[0].inscripcion[0].cuotas.forEach((d) => {
-        cuo.push([d.mes, d.pagado]);
-      });
-      return res.status(200).json({
-        message: "Se obtuvieron las cuotas exitosamente",
-        exito: true,
-        cuotas: cuo,
-      });
-    })
-    .catch((error) => {
-      res.status(500).json({
-        message: "No se logró obtener las cuotas correctamente",
-        error: error.message,
-      });
     });
+
+    if (inscripcion.cuotas.length == 0) {
+      return res.status(200).json({
+        message: "El estudiante no tiene cuotas",
+        exito: false,
+      });
+    }
+    let cuotas = [];
+    inscripcion.cuotas.forEach((cuota) => {
+      cuotas.push([cuota.mes, cuota.pagado]);
+    });
+    return res.status(200).json({
+      message: "Se obtuvieron las cuotas exitosamente",
+      exito: true,
+      cuotas: cuotas,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: "No se logró obtener las cuotas correctamente",
+      error: error.message,
+    });
+  }
 });
 
 //Obtiene todas las sanciones de un estudiante pasado por parámetro

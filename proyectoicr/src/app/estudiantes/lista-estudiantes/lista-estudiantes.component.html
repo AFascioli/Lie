@@ -44,8 +44,7 @@
           [class.opcion-mobile]="mobileQuery.matches"
           (click)="onInscribir(i)"
           *ngIf="
-            permisos.inscribirEstudiante > 1 &&
-            (enEstadoCLCreado || enEstadoCLCursando)
+            permisos.inscribirEstudiante > 1 
           "
           ><b>Inscribir estudiante a un curso</b></mat-card
         >
@@ -55,7 +54,7 @@
           (click)="onJustificar(i)"
           *ngIf="
             this.permisos.asistencia > 1 &&
-            (this.inscripto[i] || this.suspendido[i]) &&
+            this.inscripto[i] &&
             enEstadoCLCursando
           "
           ><b>Justificar inasistencia</b></mat-card
@@ -64,7 +63,7 @@
           class="opcion"
           [class.opcion-mobile]="mobileQuery.matches"
           (click)="onRegistrarExamenes(i)"
-          *ngIf="permisos.notas > 1 && inscripto[i] && enEstadoCLExamenes"
+          *ngIf="permisos.notas > 1 && inscripto[i] && enEstadoCLExamenes && materiasPendientes.length!=0"
           ><b>Registrar calificaciones de examen</b></mat-card
         >
         <mat-card
@@ -73,7 +72,7 @@
           (click)="onLlegadaTarde(i)"
           *ngIf="
             this.permisos.asistencia > 1 &&
-            (this.inscripto[i] || this.suspendido[i]) &&
+            this.inscripto[i] &&
             enEstadoCLCursando
           "
           ><b>Registrar llegada tarde</b></mat-card
@@ -84,7 +83,7 @@
           (click)="onRetiro(i)"
           *ngIf="
             this.permisos.asistencia > 1 &&
-            (this.inscripto[i] || this.suspendido[i]) &&
+            this.inscripto[i] &&
             enEstadoCLCursando
           "
           ><b>Registrar retiro anticipado</b></mat-card
@@ -94,8 +93,8 @@
           [class.opcion-mobile]="mobileQuery.matches"
           (click)="onSancion(i)"
           *ngIf="
-            (this.permisos.asistencia > 1 && this.inscripto[i]) ||
-            (this.suspendido[i] && (enEstadoCLCursando || enEstadoCLExamenes))
+            (this.permisos.sanciones > 1 && this.inscripto[i]) ||
+            (enEstadoCLCursando || enEstadoCLExamenes)
           "
           ><b>Registrar sanción</b></mat-card
         >

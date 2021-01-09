@@ -8,8 +8,9 @@ const ClaseEstado = require("../classes/estado");
 const ClaseCicloLectivo = require("../classes/cicloLectivo");
 const ClaseInscripcion = require("../classes/inscripcion");
 
+//Obtiene las reglas de negocio del proximo ciclo lectivo para interfaz director
 router.get("/parametros", checkAuthMiddleware, async (req, res) => {
-  CicloLectivo.findById(await ClaseCicloLectivo.obtenerIdCicloActual())
+  CicloLectivo.findById(await ClaseCicloLectivo.obtenerIdCicloProximo())
     .then((cicloLectivo) => {
       if (cicloLectivo) {
         res.status(200).json({
@@ -35,9 +36,10 @@ router.get("/parametros", checkAuthMiddleware, async (req, res) => {
     });
 });
 
+//Cambia las reglas de negocio para el proximo ciclo lectivo
 router.post("/parametros", checkAuthMiddleware, async (req, res) => {
   CicloLectivo.findByIdAndUpdate(
-    await ClaseCicloLectivo.obtenerIdCicloActual(),
+    await ClaseCicloLectivo.obtenerIdCicloProximo(),
     {
       horarioLLegadaTarde: req.body.horaLlegadaTarde,
       horarioRetiroAnticipado: req.body.horaRetiroAnticipado,

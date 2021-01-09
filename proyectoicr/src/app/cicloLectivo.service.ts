@@ -42,7 +42,7 @@ export class CicloLectivoService implements OnDestroy {
     }>(`${environment.apiUrl}/cicloLectivo/inicioCursado`);
   }
 
-  obtenerParametrosCicloLectivo() {
+  obtenerParametrosProxCicloLectivo() {
     return this.http.get<{
       exito: boolean;
       message: string;

@@ -26,7 +26,7 @@ export class ParametrizarReglasNegocioComponent implements OnInit {
 
   ngOnInit(): void {
     this.servicioCicloLectivo
-      .obtenerParametrosCicloLectivo()
+      .obtenerParametrosProxCicloLectivo()
       .pipe(takeUntil(this.unsubscribe))
       .subscribe((response) => {
         this.horaLlegadaTarde =

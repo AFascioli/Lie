@@ -40,11 +40,6 @@ router.get("/materiasDesaprobadas", checkAuthMiddleware, async (req, res) => {
         ],
       },
     }).then(async (inscripcion) => {
-      let idEstado = await ClaseEstado.obtenerIdEstado(
-        "CalificacionesXMateria",
-        "Pendiente examen"
-      );
-
       if (!inscripcion) {
         return res.status(200).json({
           message: "El alumno seleccionado no tiene materias desaprobadas",
@@ -52,6 +47,11 @@ router.get("/materiasDesaprobadas", checkAuthMiddleware, async (req, res) => {
           materiasDesaprobadas: [],
         });
       }
+
+      let idEstado = await ClaseEstado.obtenerIdEstado(
+        "CalificacionesXMateria",
+        "Pendiente examen"
+      );
 
       let idsCXMDesaprobadas = await ClaseCXM.obtenerMateriasDesaprobadasv2(
         inscripcion.materiasPendientes,
