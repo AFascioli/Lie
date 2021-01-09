@@ -76,11 +76,13 @@ export class DefinirAgendaComponent implements OnInit, OnDestroy {
   _mobileQueryListener: () => void;
   mobileQuery: MediaQueryList;
   aniosCiclos: any[];
+  enEstadoCLCursando;
 
   constructor(
     public servicioEstudiante: EstudiantesService,
     public servicioAgenda: AgendaService,
     public servicioAuth: AutenticacionService,
+    public cicloLectivoService: CicloLectivoService,
     public dialog: MatDialog,
     private snackBar: MatSnackBar,
     public router: Router,
@@ -102,6 +104,7 @@ export class DefinirAgendaComponent implements OnInit, OnDestroy {
       .obtenerActualYSiguiente()
       .pipe(takeUntil(this.unsubscribe))
       .subscribe((response) => {
+        this.verificarEstadoCiclo();
         this.aniosCiclos = response.añosCiclos;
         this.isLoading = false;
       });
@@ -118,6 +121,19 @@ export class DefinirAgendaComponent implements OnInit, OnDestroy {
 
   ngAfterViewInit() {
     this.dataSource.sort = this.sort;
+  }
+
+  //Si el CL esta en "Cursando" se debe mostrar el año actual en el select.
+  verificarEstadoCiclo() {
+    this.cicloLectivoService
+      .obtenerEstadoCicloLectivo()
+      .pipe(takeUntil(this.unsubscribe))
+      .subscribe((response) => {
+        this.enEstadoCLCursando =
+          response.estadoCiclo == "En primer trimestre" ||
+          response.estadoCiclo == "En segundo trimestre" ||
+          response.estadoCiclo == "En tercer trimestre";
+      });
   }
 
   obtenerDocentes() {

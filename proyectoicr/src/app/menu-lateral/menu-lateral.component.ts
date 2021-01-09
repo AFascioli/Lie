@@ -144,8 +144,8 @@ export class MenuLateralComponent implements OnInit, OnDestroy {
           response.estadoCiclo == "En primer trimestre" ||
           response.estadoCiclo == "En segundo trimestre" ||
           response.estadoCiclo == "En tercer trimestre";
-        this.enEstadoCLCreado = "Creado";
-        this.enEstadoCLExamenes = "En examenes";
+        this.enEstadoCLCreado = response.estadoCiclo =="Creado";
+        this.enEstadoCLExamenes =response.estadoCiclo == "En examenes";
       });
   }
 

@@ -1845,6 +1845,9 @@ router.get(
         "Pendiente"
       );
 
+      //Agregar validación para que tambien muestra los estudiantes que estan en estado
+      //"Examenes pendientes" que tengan menos de 3 materias desaprobadas
+
       //1. Buscar los estudiantes en estado registrado
       let obtenerEstudiantesSinInscripcion = await Estudiante.find(
         { estado: idEstadoRegistrado },

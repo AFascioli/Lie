@@ -149,8 +149,7 @@
               class="sinExpansion"
               routerLink="/definirAgenda"
               *ngIf="
-                permisos.agendaCursos > 1 &&
-                (enEstadoCLCreado || enEstadoCLCursando)
+                permisos.agendaCursos > 1 
               "
               (click)="cerrarMenuLateral(sideNav)"
             >
@@ -161,8 +160,7 @@
             <a
               class="sinExpansion"
               *ngIf="
-                permisos.inscribirEstudiante > 1 &&
-                (enEstadoCLCreado || enEstadoCLCursando)
+                permisos.inscribirEstudiante > 1 
               "
               mat-list-item
               routerLink="/inscripcionCurso"

@@ -17,7 +17,7 @@
           required
           (selectionChange)="onYearSelected(yearSelected)"
         >
-          <mat-option value="actual" *ngIf="aniosCiclos">
+          <mat-option value="actual" *ngIf="aniosCiclos && enEstadoCLCursando">
             {{ aniosCiclos[0] }}</mat-option
           >
           <mat-option value="proximo" *ngIf="aniosCiclos">
