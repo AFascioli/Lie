@@ -37,7 +37,6 @@ export class MenuLateralComponent implements OnInit, OnDestroy {
   mobileQuery: MediaQueryList;
   isLoading: boolean = true;
   enEstadoCLCursando;
-  enEstadoCLCreado;
   enEstadoCLExamenes;
 
   //Basicamente tenemos comportamiento que se fija si el display es menor a 600 px o no
@@ -107,6 +106,7 @@ export class MenuLateralComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.verificarEstadoCiclo();
     this.authService
       .obtenerPermisosDeRol()
       .pipe(takeUntil(this.unsubscribe))
@@ -144,7 +144,6 @@ export class MenuLateralComponent implements OnInit, OnDestroy {
           response.estadoCiclo == "En primer trimestre" ||
           response.estadoCiclo == "En segundo trimestre" ||
           response.estadoCiclo == "En tercer trimestre";
-        this.enEstadoCLCreado = response.estadoCiclo =="Creado";
         this.enEstadoCLExamenes =response.estadoCiclo == "En examenes";
       });
   }

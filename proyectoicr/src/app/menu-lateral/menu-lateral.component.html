@@ -207,7 +207,7 @@
               routerLink="/documentosEstudiante"
               *ngIf="
                 permisos.inscribirEstudiante > 1 &&
-                (enEstadoCLCursando || enEstadoCLCreado)
+                enEstadoCLCursando
               "
               (click)="cerrarMenuLateral(sideNav)"
             >
@@ -252,7 +252,7 @@
               routerLink="/registrarCuotas"
               *ngIf="
                 permisos.cuotas > 1 &&
-                (enEstadoCLCursando || enEstadoCLCreado || enEstadoCLExamenes)
+                (enEstadoCLCursando || enEstadoCLExamenes)
               "
               (click)="cerrarMenuLateral(sideNav)"
             >
