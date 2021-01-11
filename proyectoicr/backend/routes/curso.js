@@ -359,7 +359,7 @@ router.get("/cursosDeEstudiante", checkAuthMiddleware, async (req, res) => {
             mongoose.Types.ObjectId(idEstadoExPendiente),
             mongoose.Types.ObjectId(idEstadoPromovido),
           ],
-        }
+        },
       },
     },
     {
@@ -1845,8 +1845,10 @@ router.get(
         "Pendiente"
       );
 
-      //Agregar validación para que tambien muestra los estudiantes que estan en estado
-      //"Examenes pendientes" que tengan menos de 3 materias desaprobadas
+      let idEstadoInscripcionExPend = await ClaseEstado.obtenerIdEstado(
+        "Inscripcion",
+        "Examenes pendientes"
+      );
 
       //1. Buscar los estudiantes en estado registrado
       let obtenerEstudiantesSinInscripcion = await Estudiante.find(
@@ -1874,7 +1876,7 @@ router.get(
       });
 
       /* 2. Buscar los estudiantes del curso anterior que sean activo,
-      promovido o promovido con ex pendientes (con todos los datos)*/
+      promovido, promovido con ex pendientes y tamb Examenes pendientes (con todos los datos)*/
       if (añoAnterior != 0) {
         let curso = await Curso.findOne({
           nombre: cursoAnterior,
@@ -1932,6 +1934,87 @@ router.get(
             seleccionado: false,
           };
           estudiantesRespuesta.push(estudianteRefinado);
+        });
+
+        //Buscamos las inscripciones en estado Examenes pendientes que no tengan mas de 3
+        //CXM con estado Pendiente examen/Desaprobada (condicion para inscribirse al prox año)
+        let idEstadoCXMPendiente = await ClaseEstado.obtenerIdEstado(
+          "CalificacionesXMateria",
+          "Pendiente examen"
+        );
+        let idEstadoCXMDesaprobada = await ClaseEstado.obtenerIdEstado(
+          "CalificacionesXMateria",
+          "Desaprobada"
+        );
+
+        let obtenerEstudiantesExPendientes = await Inscripcion.aggregate([
+          {
+            $match: {
+              estado: mongoose.Types.ObjectId(idEstadoInscripcionExPend),
+              idCurso: mongoose.Types.ObjectId(curso._id),
+            },
+          },
+          {
+            $lookup: {
+              from: "estudiante",
+              localField: "idEstudiante",
+              foreignField: "_id",
+              as: "datosEstudiante",
+            },
+          },
+          {
+            $lookup: {
+              from: "curso",
+              localField: "idCurso",
+              foreignField: "_id",
+              as: "datosCurso",
+            },
+          },
+          {
+            $lookup: {
+              from: "calificacionesXMateria",
+              localField: "calificacionesXMateria",
+              foreignField: "_id",
+              as: "datosCXM",
+            },
+          },
+          {
+            $project: {
+              "datosEstudiante._id": 1,
+              "datosEstudiante.nombre": 1,
+              "datosEstudiante.apellido": 1,
+              "datosCurso.nombre": 1,
+              datosCXM: 1,
+            },
+          },
+        ]);
+
+        obtenerEstudiantesExPendientes.forEach((inscripcion) => {
+          let contadorCXMPendientesDesaprobada=0;
+          for (const cxm of inscripcion.datosCXM) {
+            if (
+              cxm.estado
+                .toString()
+                .localeCompare(idEstadoCXMPendiente.toString()) == 0
+                ||
+              cxm.estado
+                .toString()
+                .localeCompare(idEstadoCXMDesaprobada.toString()) == 0
+            ) {
+              contadorCXMPendientesDesaprobada++;
+            }
+          }
+          if(contadorCXMPendientesDesaprobada<=3){
+            const estudianteRefinado = {
+              idEstudiante: inscripcion.datosEstudiante[0]._id,
+              nombre: inscripcion.datosEstudiante[0].nombre,
+              apellido: inscripcion.datosEstudiante[0].apellido,
+              cursoAnterior: inscripcion.datosCurso[0].nombre,
+              idInscripcion: inscripcion._id,
+              seleccionado: false,
+            };
+            estudiantesRespuesta.push(estudianteRefinado);
+          }
         });
       }
       /*3. Buscar todas las inscripciones pendientes del curso selecccionado
