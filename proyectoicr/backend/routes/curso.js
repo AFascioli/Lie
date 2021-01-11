@@ -532,10 +532,16 @@ router.get("/cursosDeEstudiante", checkAuthMiddleware, async (req, res) => {
     });
 });
 
-//Obtiene todos los cursos asignados a un docente
+//Obtiene todos los cursos asignados a un docente para el ciclo lectivo actual
 //@params: id de la docente
 router.get("/docente", checkAuthMiddleware, (req, res) => {
+  let idCicloActual=await ClaseCicloLectivo.obtenerIdCicloActual();
   Curso.aggregate([
+    {
+    $match: {
+      cicloLectivo: mongoose.Types.ObjectId(idCicloActual),
+    },
+  },
     {
       $lookup: {
         from: "materiasXCurso",
@@ -2017,21 +2023,19 @@ router.get(
           }
         });
       }
-      /*3. Buscar todas las inscripciones pendientes del curso selecccionado
+      /*3. Buscar todas las inscripciones pendientes y filtrar los estudiantes regitrados que tengan una
        */
-      /*4. Filtras estudiantes paso 1 con los estudiantes obtenidos paso 2 */
 
       Inscripcion.find({
         estado: idEstadoPendienteInscripcion,
-        idCurso: req.query.idCurso,
       }).then((inscripcionesPendientes) => {
-        for (let index = 0; index < inscripcionesPendientes.length; index++) {
+        for (const inscripcionPendiente of inscripcionesPendientes) {
           estudiantesRespuesta = estudiantesRespuesta.filter(
             (estudiante) =>
               estudiante.idEstudiante
                 .toString()
                 .localeCompare(
-                  inscripcionesPendientes[index].idEstudiante.toString()
+                  inscripcionPendiente.idEstudiante.toString()
                 ) != 0
           );
         }
