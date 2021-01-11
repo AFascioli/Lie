@@ -95,6 +95,7 @@ export class InscripcionEstudianteComponent implements OnInit, OnDestroy {
             if (response.cursoActual != "") {
               this.cursoActual = response.cursoActual.nombre;
             }
+            this.isLoading = false;
           });
       });
 
@@ -104,7 +105,6 @@ export class InscripcionEstudianteComponent implements OnInit, OnDestroy {
       .subscribe((response) => {
         this.tieneInscripcionPendiente = response.inscripcionPendiente;
         this.cursoActual = response.curso;
-        this.isLoading = false;
       });
   }
 

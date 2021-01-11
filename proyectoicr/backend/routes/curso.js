@@ -534,14 +534,14 @@ router.get("/cursosDeEstudiante", checkAuthMiddleware, async (req, res) => {
 
 //Obtiene todos los cursos asignados a un docente para el ciclo lectivo actual
 //@params: id de la docente
-router.get("/docente", checkAuthMiddleware, (req, res) => {
-  let idCicloActual=await ClaseCicloLectivo.obtenerIdCicloActual();
+router.get("/docente", checkAuthMiddleware, async (req, res) => {
+  let idCicloActual = await ClaseCicloLectivo.obtenerIdCicloActual();
   Curso.aggregate([
     {
-    $match: {
-      cicloLectivo: mongoose.Types.ObjectId(idCicloActual),
+      $match: {
+        cicloLectivo: mongoose.Types.ObjectId(idCicloActual),
+      },
     },
-  },
     {
       $lookup: {
         from: "materiasXCurso",
@@ -1996,13 +1996,12 @@ router.get(
         ]);
 
         obtenerEstudiantesExPendientes.forEach((inscripcion) => {
-          let contadorCXMPendientesDesaprobada=0;
+          let contadorCXMPendientesDesaprobada = 0;
           for (const cxm of inscripcion.datosCXM) {
             if (
               cxm.estado
                 .toString()
-                .localeCompare(idEstadoCXMPendiente.toString()) == 0
-                ||
+                .localeCompare(idEstadoCXMPendiente.toString()) == 0 ||
               cxm.estado
                 .toString()
                 .localeCompare(idEstadoCXMDesaprobada.toString()) == 0
@@ -2010,7 +2009,7 @@ router.get(
               contadorCXMPendientesDesaprobada++;
             }
           }
-          if(contadorCXMPendientesDesaprobada<=3){
+          if (contadorCXMPendientesDesaprobada <= 3) {
             const estudianteRefinado = {
               idEstudiante: inscripcion.datosEstudiante[0]._id,
               nombre: inscripcion.datosEstudiante[0].nombre,
@@ -2034,9 +2033,8 @@ router.get(
             (estudiante) =>
               estudiante.idEstudiante
                 .toString()
-                .localeCompare(
-                  inscripcionPendiente.idEstudiante.toString()
-                ) != 0
+                .localeCompare(inscripcionPendiente.idEstudiante.toString()) !=
+              0
           );
         }
         res.status(200).json({
