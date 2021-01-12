@@ -76,6 +76,8 @@ export class RendimientoCursoComponent implements OnInit {
   barDataSet1 = [];
   barDataSet2 = [];
   barDataSet3 = [];
+  mostrarHorizontal: boolean;
+  mostrarVertical: boolean;
   legend: boolean = false;
   public barChartOptions: ChartOptions;
   public barChartOptions1: ChartOptions;
@@ -102,7 +104,7 @@ export class RendimientoCursoComponent implements OnInit {
 
   onYearSelected(yearSelected) {
     this.materiaSelec = false;
-    this.materiaS=null;
+    this.materiaS = null;
     this.estudiantes = [];
     this.materias = [];
     this.obtenerCursos(yearSelected.value);
@@ -406,15 +408,23 @@ export class RendimientoCursoComponent implements OnInit {
     switch (grafico) {
       case 0:
         grafico = "pie";
+        this.mostrarHorizontal = false;
+        this.mostrarVertical = false;
         break;
       case 1:
         grafico = "doughnut";
+        this.mostrarHorizontal = false;
+        this.mostrarVertical = false;
         break;
       case 2:
         grafico = "bar";
+        this.mostrarHorizontal = true;
+        this.mostrarVertical = false;
         break;
       case 3:
         grafico = "horizontalBar";
+        this.mostrarHorizontal = false;
+        this.mostrarVertical = true;
         break;
       default:
         break;
@@ -424,7 +434,12 @@ export class RendimientoCursoComponent implements OnInit {
     if (grafico == "pie" || grafico == "doughnut") this.legend = true;
     else this.legend = false;
 
-    if (this.materiaS && (this.materiaS.value!="" && this.materiaS.value!=null)) this.obtenerNotas(this.materiaS.value);
+    if (
+      this.materiaS &&
+      this.materiaS.value != "" &&
+      this.materiaS.value != null
+    )
+      this.obtenerNotas(this.materiaS.value);
     else if (this.cursoS) this.onCursoSeleccionado(this.cursoS, this.materiaS);
     else
       this.servicioCicloLectivo
@@ -484,31 +499,57 @@ export class RendimientoCursoComponent implements OnInit {
       },
     ];
 
-    // this.barChartLabels = [
-    //   "Promedio menor o igual a 3",
-    //   "Promedio entre 3 y 6 inclusive",
-    //   "Promedio entre 6 y 8 inclusive",
-    //   "Promedio mayor a 8",
-    // ];
-    this.barChartLabelsH = [
-      "Promedio <= 3",
-      "3 < Promedio <= 6",
-      "6 < Promedio <= 8",
-      "Promedio > 8",
-    ];
-
+    if (this.tipoGrafico == "horizontalBar") {
+      this.barChartLabelsH = [
+        "Prom<=3",
+        "3<Prom<=6",
+        "6<Prom<=8",
+        "Prom>8",
+      ];
+    } else {
+      this.barChartLabelsH = [
+        "Promedio <= 3",
+        "3 < Promedio <= 6",
+        "6 < Promedio <= 8",
+        "Promedio > 8",
+      ];
+    }
     this.barChartOptions = {
       responsive: false,
       legend: {
         display: this.legend,
         labels: {
           boxWidth: 20,
-          fontSize: 12,
+          fontSize: 11,
           fontFamily:
             '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif',
           fontColor: "#181a21",
         },
         position: "right",
+      },
+      scales: {
+        xAxes: [
+          {
+            gridLines: {
+              display: this.mostrarVertical,
+            },
+            ticks: {
+              stepSize: 1,
+              display: this.mostrarHorizontal,
+            },
+          },
+        ],
+        yAxes: [
+          {
+            gridLines: {
+              display: this.mostrarHorizontal,
+            },
+            ticks: {
+              stepSize: 1,
+              display: this.mostrarVertical,
+            },
+          },
+        ],
       },
       plugins: {
         datalabels: {
@@ -535,12 +576,36 @@ export class RendimientoCursoComponent implements OnInit {
         display: this.legend,
         labels: {
           boxWidth: 20,
-          fontSize: 12,
+          fontSize: 11,
           fontFamily:
             '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif',
           fontColor: "#181a21",
         },
         position: "right",
+      },
+      scales: {
+        xAxes: [
+          {
+            gridLines: {
+              display: this.mostrarVertical,
+            },
+            ticks: {
+              stepSize: 1,
+              display: this.mostrarHorizontal,
+            },
+          },
+        ],
+        yAxes: [
+          {
+            gridLines: {
+              display: this.mostrarHorizontal,
+            },
+            ticks: {
+              stepSize: 1,
+              display: this.mostrarVertical,
+            },
+          },
+        ],
       },
       plugins: {
         datalabels: {
@@ -567,12 +632,36 @@ export class RendimientoCursoComponent implements OnInit {
         display: this.legend,
         labels: {
           boxWidth: 20,
-          fontSize: 12,
+          fontSize: 11,
           fontFamily:
             '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif',
           fontColor: "#181a21",
         },
         position: "right",
+      },
+      scales: {
+        xAxes: [
+          {
+            gridLines: {
+              display: this.mostrarVertical,
+            },
+            ticks: {
+              stepSize: 1,
+              display: this.mostrarHorizontal,
+            },
+          },
+        ],
+        yAxes: [
+          {
+            gridLines: {
+              display: this.mostrarHorizontal,
+            },
+            ticks: {
+              stepSize: 1,
+              display: this.mostrarVertical,
+            },
+          },
+        ],
       },
       plugins: {
         datalabels: {
@@ -605,6 +694,30 @@ export class RendimientoCursoComponent implements OnInit {
           fontColor: "#181a21",
         },
         position: "bottom",
+      },
+      scales: {
+        xAxes: [
+          {
+            gridLines: {
+              display: this.mostrarVertical,
+            },
+            ticks: {
+              stepSize: 1,
+              display: this.mostrarHorizontal,
+            },
+          },
+        ],
+        yAxes: [
+          {
+            gridLines: {
+              display: this.mostrarHorizontal,
+            },
+            ticks: {
+              stepSize: 1,
+              display: this.mostrarVertical,
+            },
+          },
+        ],
       },
       plugins: {
         datalabels: {

@@ -115,6 +115,8 @@ td.mat-cell:last-of-type {
 {
   display:flex;
   width: 100%;
+  justify-content: center;
+  align-items: center;
 }
 
 .cv {
