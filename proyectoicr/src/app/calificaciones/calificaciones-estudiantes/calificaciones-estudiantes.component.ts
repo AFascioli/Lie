@@ -67,6 +67,7 @@ export class CalificacionesEstudiantesComponent implements OnInit, OnDestroy {
   constructor(
     public servicioEstudiante: EstudiantesService,
     public servicioCalificaciones: CalificacionesService,
+    public servicioCicloLectivo: CicloLectivoService,
     public popup: MatDialog,
     private snackBar: MatSnackBar,
     public servicioAutenticacion: AutenticacionService,
@@ -125,19 +126,24 @@ export class CalificacionesEstudiantesComponent implements OnInit, OnDestroy {
             });
         });
     } else {
-      this.servicioEstudiante
-        .obtenerCursos(this.fechaActual.getFullYear())
-        .pipe(takeUntil(this.unsubscribe))
-        .subscribe((response) => {
-          this.cursos = response.cursos;
-          this.cursos.sort((a, b) =>
-            a.nombre.charAt(0) > b.nombre.charAt(0)
-              ? 1
-              : b.nombre.charAt(0) > a.nombre.charAt(0)
-              ? -1
-              : 0
-          );
-        });
+      this.servicioCicloLectivo
+      .obtenerActualYSiguiente()
+      .pipe(takeUntil(this.unsubscribe))
+      .subscribe((response) => {
+        this.servicioEstudiante
+          .obtenerCursos(response.añosCiclos[0])
+          .pipe(takeUntil(this.unsubscribe))
+          .subscribe((response) => {
+            this.cursos = response.cursos;
+            this.cursos.sort((a, b) =>
+              a.nombre.charAt(0) > b.nombre.charAt(0)
+                ? 1
+                : b.nombre.charAt(0) > a.nombre.charAt(0)
+                ? -1
+                : 0
+            );
+          });
+      })
     }
   }
 

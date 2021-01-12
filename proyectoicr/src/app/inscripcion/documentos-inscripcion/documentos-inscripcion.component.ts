@@ -61,20 +61,25 @@ export class DocumentosInscripcionComponent implements OnInit, OnDestroy {
       (await this.fechaActualEnPeriodoCursado()) ||
       this.autenticacionService.getRol() == "Admin"
     ) {
-      this.servicioEstudiante
-        .obtenerCursos(this.fechaActual.getFullYear())
-        .pipe(takeUntil(this.unsubscribe))
-        .subscribe((response) => {
-          this.cursos = response.cursos;
-          this.cursos.sort((a, b) =>
-            a.nombre.charAt(0) > b.nombre.charAt(0)
-              ? 1
-              : b.nombre.charAt(0) > a.nombre.charAt(0)
-              ? -1
-              : 0
-          );
-          this.isLoading = false;
-        });
+      this.servicioCicloLectivo
+      .obtenerActualYSiguiente()
+      .pipe(takeUntil(this.unsubscribe))
+      .subscribe((response) => {
+        this.servicioEstudiante
+          .obtenerCursos(response.añosCiclos[0])
+          .pipe(takeUntil(this.unsubscribe))
+          .subscribe((response) => {
+            this.cursos = response.cursos;
+            this.cursos.sort((a, b) =>
+              a.nombre.charAt(0) > b.nombre.charAt(0)
+                ? 1
+                : b.nombre.charAt(0) > a.nombre.charAt(0)
+                ? -1
+                : 0
+            );
+            this.isLoading = false;
+          });
+      })
     }
   }
 

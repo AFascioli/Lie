@@ -6,6 +6,7 @@ import { ReportesService } from "../reportes.service";
 import { Router } from "@angular/router";
 import { jsPDF } from "jspdf";
 import html2canvas from "html2canvas";
+import { CicloLectivoService } from "src/app/cicloLectivo.service";
 
 @Component({
   selector: "app-resumen-academico",
@@ -26,6 +27,7 @@ export class ResumenAcademicoComponent implements OnInit {
   constructor(
     public router: Router,
     public servicioEstudiante: EstudiantesService,
+    public servicioCicloLectivo: CicloLectivoService,
     public reportService: ReportesService
   ) {}
 
@@ -69,19 +71,24 @@ export class ResumenAcademicoComponent implements OnInit {
     }
   }
   obtenerCursos() {
-    this.servicioEstudiante
-      .obtenerCursos(this.fechaActual.getFullYear())
+    this.servicioCicloLectivo
+      .obtenerActualYSiguiente()
       .pipe(takeUntil(this.unsubscribe))
       .subscribe((response) => {
-        this.cursos = response.cursos;
-        this.cursos.sort((a, b) =>
-          a.nombre.charAt(0) > b.nombre.charAt(0)
-            ? 1
-            : b.nombre.charAt(0) > a.nombre.charAt(0)
-            ? -1
-            : 0
-        );
-      });
+        this.servicioEstudiante
+          .obtenerCursos(response.añosCiclos[0])
+          .pipe(takeUntil(this.unsubscribe))
+          .subscribe((response) => {
+            this.cursos = response.cursos;
+            this.cursos.sort((a, b) =>
+              a.nombre.charAt(0) > b.nombre.charAt(0)
+                ? 1
+                : b.nombre.charAt(0) > a.nombre.charAt(0)
+                ? -1
+                : 0
+            );
+          });
+      })
   }
   verResumenAcademico(i) {
     this.reportService.nombreCurso = this.obtenerNombreCurso(

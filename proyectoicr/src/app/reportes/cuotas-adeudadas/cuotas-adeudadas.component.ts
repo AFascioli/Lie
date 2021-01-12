@@ -5,6 +5,8 @@ import { EstudiantesService } from "src/app/estudiantes/estudiante.service";
 import { ReportesService } from "../reportes.service";
 import { jsPDF } from "jspdf";
 import html2canvas from "html2canvas";
+import { CicloLectivoComponent } from "src/app/acciones-director/ciclo-lectivo/ciclo-lectivo/ciclo-lectivo.component";
+import { CicloLectivoService } from "src/app/cicloLectivo.service";
 
 @Component({
   selector: "app-cuotas-adeudadas",
@@ -22,6 +24,7 @@ export class CuotasAdeudadasComponent implements OnInit {
 
   constructor(
     public servicioEstudiante: EstudiantesService,
+    public servicioCicloLectivo: CicloLectivoService,
     public reportService: ReportesService
   ) {}
 
@@ -92,19 +95,24 @@ export class CuotasAdeudadasComponent implements OnInit {
   }
 
   obtenerCursos() {
-    this.servicioEstudiante
-      .obtenerCursos(this.fechaActual.getFullYear())
+    this.servicioCicloLectivo
+      .obtenerActualYSiguiente()
       .pipe(takeUntil(this.unsubscribe))
       .subscribe((response) => {
-        this.cursos = response.cursos;
-        this.cursos.sort((a, b) =>
-          a.nombre.charAt(0) > b.nombre.charAt(0)
-            ? 1
-            : b.nombre.charAt(0) > a.nombre.charAt(0)
-            ? -1
-            : 0
-        );
-      });
+        this.servicioEstudiante
+          .obtenerCursos(response.añosCiclos[0])
+          .pipe(takeUntil(this.unsubscribe))
+          .subscribe((response) => {
+            this.cursos = response.cursos;
+            this.cursos.sort((a, b) =>
+              a.nombre.charAt(0) > b.nombre.charAt(0)
+                ? 1
+                : b.nombre.charAt(0) > a.nombre.charAt(0)
+                ? -1
+                : 0
+            );
+          });
+      })
   }
 
   public descargarPDF() {
