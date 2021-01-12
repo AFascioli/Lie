@@ -228,9 +228,8 @@ router.get("/inicioCursado", checkAuthMiddleware, async (req, res) => {
       { estado: idEnPrimerTrimestre }
     ).exec();
 
-    let cicloActual = await CicloLectivo.findById(
-      ClaseCicloLectivo.obtenerIdCicloActual()
-    );
+    let idCicloActual = await ClaseCicloLectivo.obtenerIdCicloActual();
+    let cicloActual = await CicloLectivo.findById(idCicloActual);
 
     // Crear el proximo ciclo lectivo
     let cicloProximo = new CicloLectivo({
@@ -238,7 +237,7 @@ router.get("/inicioCursado", checkAuthMiddleware, async (req, res) => {
       horarioRetiroAnticipado: 10,
       cantidadFaltasSuspension: 15,
       cantidadMateriasInscripcionLibre: 3,
-      año: cicloActual + 1,
+      año: cicloActual.año + 1,
       estado: idCreado,
     });
     await cicloProximo.save();
@@ -594,6 +593,58 @@ router.get("/actualYAnteriores", async (req, res) => {
       message: "Se han obtenido los años de los ciclos actual y anteriores",
       exito: true,
     });
+  } catch (error) {
+    res.status(500).json({
+      message:
+        "Ocurrió un error al querer obtener los años de los ciclos actual y anteriores",
+      error: error.message,
+    });
+  }
+});
+
+//Obtiene el estado de una MXC dado el idCurso y la idMateria
+router.get("/mxc/estado", checkAuthMiddleware, async (req, res) => {
+  try {
+    let cursoConDatos = await Curso.aggregate([
+      {
+        $match: {
+          _id: mongoose.Types.ObjectId(req.query.idCurso),
+        },
+      },
+      {
+        $unwind: {
+          path: "$materias",
+        },
+      },
+      {
+        $lookup: {
+          from: "materiasXCurso",
+          localField: "materias",
+          foreignField: "_id",
+          as: "datosMXC",
+        },
+      },
+      {
+        $match: {
+          "datosMXC.idMateria": mongoose.Types.ObjectId(req.query.idMateria),
+        },
+      },
+      {
+        $lookup: {
+          from: "estado",
+          localField: "datosMXC.estado",
+          foreignField: "_id",
+          as: "datosEstado",
+        },
+      },
+    ]);
+    res
+      .status(200)
+      .json({
+        exito: true,
+        message: "Estado de la materia por curso obtenido",
+        estadoMXC: cursoConDatos[0].datosEstado[0].nombre,
+      });
   } catch (error) {
     res.status(500).json({
       message:

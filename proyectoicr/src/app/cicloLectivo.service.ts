@@ -1,5 +1,5 @@
 import { environment } from "../environments/environment";
-import { HttpClient } from "@angular/common/http";
+import { HttpClient, HttpParams } from "@angular/common/http";
 import { Injectable, OnDestroy } from "@angular/core";
 import { Subject } from "rxjs";
 @Injectable({
@@ -24,6 +24,16 @@ export class CicloLectivoService implements OnDestroy {
       message: string;
       estadoCiclo: string;
     }>(`${environment.apiUrl}/cicloLectivo/estado`);
+  }
+
+   //Obtiene el estado actual del ciclo lectivo
+   obtenerEstadoMXC(idCurso, idMateria) {
+    let params = new HttpParams().set("idCurso", idCurso).set("idMateria", idMateria);
+    return this.http.get<{
+      exito: boolean;
+      message: string;
+      estadoMXC: string;
+    }>(`${environment.apiUrl}/cicloLectivo/mxc/estado`, {params:params});
   }
 
   obtenerEstadoMateriasCursos() {
