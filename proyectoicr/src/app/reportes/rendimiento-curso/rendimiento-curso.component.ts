@@ -474,7 +474,8 @@ export class RendimientoCursoComponent implements OnInit {
     this.isLoading3 = false;
     this.barDataSet = [
       {
-        backgroundColor: ["#6a8caf", "#75b79e", "#a7e9af", "#eef9bf"],
+        hoverBackgroundColor: ["#43586e", "#588a77", "#7dad83", "#b7bf91"],
+        backgroundColor: ["#6a8caf", "#75b79e", "#a7e9af", "#d0dba0"],
         // backgroundColor: ["#dddddd", "#d9adad", "#84a9ac", "#89c9b8"],
         // backgroundColor: ["#ea907a", "#fbc687", "#f4f7c5", "#aacdbe"],
         data: [this.t1_iMI3, this.t1_iE3Y6, this.t1_iE6y8, this.t1_iM8],
@@ -482,19 +483,22 @@ export class RendimientoCursoComponent implements OnInit {
     ];
     this.barDataSet1 = [
       {
-        backgroundColor: ["#6a8caf", "#75b79e", "#a7e9af", "#eef9bf"],
+        hoverBackgroundColor: ["#43586e", "#588a77", "#7dad83", "#b7bf91"],
+        backgroundColor: ["#6a8caf", "#75b79e", "#a7e9af", "#d0dba0"],
         data: [this.t2_iMI3, this.t2_iE3Y6, this.t2_iE6y8, this.t2_iM8],
       },
     ];
     this.barDataSet2 = [
       {
-        backgroundColor: ["#6a8caf", "#75b79e", "#a7e9af", "#eef9bf"],
+        hoverBackgroundColor: ["#43586e", "#588a77", "#7dad83", "#b7bf91"],
+        backgroundColor: ["#6a8caf", "#75b79e", "#a7e9af", "#d0dba0"],
         data: [this.t3_iMI3, this.t3_iE3Y6, this.t3_iE6y8, this.t3_iM8],
       },
     ];
     this.barDataSet3 = [
       {
-        backgroundColor: ["#6a8caf", "#75b79e", "#a7e9af", "#eef9bf"],
+        hoverBackgroundColor: ["#43586e", "#588a77", "#7dad83", "#b7bf91"],
+        backgroundColor: ["#6a8caf", "#75b79e", "#a7e9af", "#d0dba0"],
         data: [this.f_iMI3, this.f_iE3Y6, this.f_iE6y8, this.f_iM8],
       },
     ];
@@ -517,6 +521,7 @@ export class RendimientoCursoComponent implements OnInit {
     this.barChartOptions = {
       responsive: false,
       legend: {
+        fullWidth:false,
         display: this.legend,
         labels: {
           boxWidth: 20,
