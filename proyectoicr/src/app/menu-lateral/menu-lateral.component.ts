@@ -116,7 +116,11 @@ export class MenuLateralComponent implements OnInit, OnDestroy {
     this.rol = this.authService.getRol();
     this.usuario = this.authService.getUsuarioAutenticado();
     this.isLoading = false;
+      this.cicloLectivoService.getActualizacionMLListener().pipe(takeUntil(this.unsubscribe)).subscribe(() => {
+        this.ngOnInit()
+      })
   }
+
 
   onClickHome() {
     this.router.navigate(["./home"]);

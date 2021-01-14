@@ -9,6 +9,7 @@ export class CicloLectivoService implements OnDestroy {
   private unsubscribe: Subject<void> = new Subject();
   retornoDesdeAcciones: boolean;
   busquedaARXNombre: boolean;
+  private actualizarML = new Subject<any>();
 
   constructor(public http: HttpClient) {}
 
@@ -164,5 +165,16 @@ export class CicloLectivoService implements OnDestroy {
       message: string;
       añosCiclos: any[];
     }>(`${environment.apiUrl}/cicloLectivo/actualYAnteriores`);
+  }
+
+  // Dispara observable para que cuando se cambia el estado del diclo lectivo se recarge el menu lateral para actualizar
+  // las opciones.
+  public actualizarMenuLateral() {
+        this.actualizarML.next();
+  }
+
+  // Usado en el menu lateral para escuchar al publish de arriba.
+  public getActualizacionMLListener() {
+    return this.actualizarML.asObservable();
   }
 }
