@@ -93,10 +93,11 @@
             *matCellDef="let estudiante; let i = index"
             [ngClass]="{
               bajoPromedio:
-                calcularPromedio(
+                (calcularPromedio(
                   indexEst + i,
                   contadorNotasValidas(indexEst + i)
-                ) < 6 ||
+                ) < 6 &&
+                  this.promedio != 0) ||
                 (this.promedioT3 != 0 && this.promedioT3 < 6)
             }"
           >
@@ -114,7 +115,7 @@
             *matCellDef="let estudiante; let i = index"
             [ngClass]="{
               bajoPromedio:
-                this.promedio < 6 ||
+                (this.promedio < 6 && this.promedio != 0) ||
                 (this.promedioT3 != 0 && this.promedioT3 < 6)
             }"
           >
@@ -129,7 +130,7 @@
             *matCellDef="let estudiante; let i = index"
             [ngClass]="{
               bajoPromedio:
-                this.promedio < 6 ||
+                (this.promedio < 6 && this.promedio != 0) ||
                 (this.promedioT3 != 0 && this.promedioT3 < 6)
             }"
           >
@@ -146,7 +147,7 @@
             *matCellDef="let estudiante; let i = index"
             [ngClass]="{
               bajoPromedio:
-                this.promedio < 6 ||
+                (this.promedio < 6 && this.promedio != 0) ||
                 (this.promedioT3 != 0 && this.promedioT3 < 6)
             }"
           >
@@ -163,7 +164,7 @@
             *matCellDef="let estudiante; let i = index"
             [ngClass]="{
               bajoPromedio:
-                this.promedio < 6 ||
+                (this.promedio < 6 && this.promedio != 0) ||
                 (this.promedioT3 != 0 && this.promedioT3 < 6)
             }"
           >
@@ -180,7 +181,7 @@
             *matCellDef="let estudiante; let i = index"
             [ngClass]="{
               bajoPromedio:
-                this.promedio < 6 ||
+                (this.promedio < 6 && this.promedio != 0) ||
                 (this.promedioT3 != 0 && this.promedioT3 < 6)
             }"
           >
@@ -197,7 +198,7 @@
             *matCellDef="let estudiante; let i = index"
             [ngClass]="{
               bajoPromedio:
-                this.promedio < 6 ||
+                (this.promedio < 6 && this.promedio != 0) ||
                 (this.promedioT3 != 0 && this.promedioT3 < 6)
             }"
           >
@@ -214,7 +215,7 @@
             *matCellDef="let estudiante; let i = index"
             [ngClass]="{
               bajoPromedio:
-                this.promedio < 6 ||
+                (this.promedio < 6 && this.promedio != 0) ||
                 (this.promedioT3 != 0 && this.promedioT3 < 6)
             }"
           >
@@ -233,7 +234,7 @@
             *matCellDef="let estudiante; let i = index"
             [ngClass]="{
               bajoPromedio:
-                this.promedio < 6 ||
+                (this.promedio < 6 && this.promedio != 0) ||
                 (this.promedioT3 != 0 && this.promedioT3 < 6)
             }"
           >
@@ -250,7 +251,7 @@
             *matCellDef="let estudiante; let i = index"
             [ngClass]="{
               bajoPromedio:
-                this.promedio < 6 ||
+                (this.promedio < 6 && this.promedio != 0) ||
                 (this.promedioT3 != 0 && this.promedioT3 < 6)
             }"
           >
@@ -267,7 +268,7 @@
             *matCellDef="let estudiante; let i = index"
             [ngClass]="{
               bajoPromedio:
-                this.promedio < 6 ||
+                (this.promedio < 6 && this.promedio != 0) ||
                 (this.promedioT3 != 0 && this.promedioT3 < 6)
             }"
           >
@@ -284,7 +285,7 @@
             *matCellDef="let estudiante; let i = index"
             [ngClass]="{
               bajoPromedio:
-                this.promedio < 6 ||
+                (this.promedio < 6 && this.promedio != 0) ||
                 (this.promedioT3 != 0 && this.promedioT3 < 6)
             }"
           >
@@ -301,7 +302,7 @@
             *matCellDef="let estudiante; let i = index"
             [ngClass]="{
               bajoPromedio:
-                this.promedio < 6 ||
+                (this.promedio < 6 && this.promedio != 0) ||
                 (this.promedioT3 != 0 && this.promedioT3 < 6)
             }"
           >
@@ -318,7 +319,7 @@
             *matCellDef="let estudiante; let i = index"
             [ngClass]="{
               bajoPromedio:
-                this.promedio < 6 ||
+                (this.promedio < 6 && this.promedio != 0) ||
                 (this.promedioT3 != 0 && this.promedioT3 < 6)
             }"
           >
@@ -335,7 +336,7 @@
             *matCellDef="let estudiante; let i = index"
             [ngClass]="{
               bajoPromedio:
-                this.promedio < 6 ||
+                (this.promedio < 6 && this.promedio != 0) ||
                 (this.promedioT3 != 0 && this.promedioT3 < 6)
             }"
           >
@@ -354,7 +355,7 @@
             *matCellDef="let estudiante; let i = index"
             [ngClass]="{
               bajoPromedio:
-                this.promedio < 6 ||
+                (this.promedio < 6 && this.promedio != 0) ||
                 (this.promedioT3 != 0 && this.promedioT3 < 6)
             }"
           >
@@ -371,7 +372,7 @@
             *matCellDef="let estudiante; let i = index"
             [ngClass]="{
               bajoPromedio:
-                this.promedio < 6 ||
+                (this.promedio < 6 && this.promedio != 0) ||
                 (this.promedioT3 != 0 && this.promedioT3 < 6)
             }"
           >
@@ -388,7 +389,7 @@
             *matCellDef="let estudiante; let i = index"
             [ngClass]="{
               bajoPromedio:
-                this.promedio < 6 ||
+                (this.promedio < 6 && this.promedio != 0) ||
                 (this.promedioT3 != 0 && this.promedioT3 < 6)
             }"
           >
@@ -405,7 +406,7 @@
             *matCellDef="let estudiante; let i = index"
             [ngClass]="{
               bajoPromedio:
-                this.promedio < 6 ||
+                (this.promedio < 6 && this.promedio != 0) ||
                 (this.promedioT3 != 0 && this.promedioT3 < 6)
             }"
           >
@@ -422,7 +423,7 @@
             *matCellDef="let estudiante; let i = index"
             [ngClass]="{
               bajoPromedio:
-                this.promedio < 6 ||
+                (this.promedio < 6 && this.promedio != 0) ||
                 (this.promedioT3 != 0 && this.promedioT3 < 6)
             }"
           >
@@ -439,7 +440,7 @@
             *matCellDef="let estudiante; let i = index"
             [ngClass]="{
               bajoPromedio:
-                this.promedio < 6 ||
+                (this.promedio < 6 && this.promedio != 0) ||
                 (this.promedioT3 != 0 && this.promedioT3 < 6)
             }"
           >
@@ -456,7 +457,7 @@
             *matCellDef="let estudiante; let i = index"
             [ngClass]="{
               bajoPromedio:
-                this.promedio < 6 ||
+                (this.promedio < 6 && this.promedio != 0) ||
                 (this.promedioT3 != 0 && this.promedioT3 < 6)
             }"
           >
@@ -475,7 +476,7 @@
             *matCellDef="let estudiante; let i = index"
             [ngClass]="{
               bajoPromedio:
-                this.promedio < 6 ||
+                (this.promedio < 6 && this.promedio != 0) ||
                 (this.promedioT3 != 0 && this.promedioT3 < 6)
             }"
           >
@@ -498,7 +499,7 @@
             *matCellDef="let estudiante; let i = index"
             [ngClass]="{
               bajoPromedio:
-                this.promedio < 6 ||
+                (this.promedio < 6 && this.promedio != 0) ||
                 (this.promedioT3 != 0 && this.promedioT3 < 6)
             }"
           >

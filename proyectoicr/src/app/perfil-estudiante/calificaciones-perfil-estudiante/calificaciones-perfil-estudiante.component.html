@@ -34,7 +34,9 @@
         mat-cell
         *matCellDef="let calificacionesXMateria; let i = index"
         [ngClass]="{
-          bajoPromedio: calcularPromedio(i, contadorNotasValidas(i)) < 6
+          bajoPromedio:
+            calcularPromedio(i, contadorNotasValidas(i)) < 6 &&
+            this.promedio != 0
         }"
       >
         {{ calificacionesXMateria.materia }}
@@ -42,14 +44,12 @@
     </ng-container>
 
     <ng-container matColumnDef="calif1">
-      <th class="columnas-chicas" mat-header-cell *matHeaderCellDef>
-        1º
-      </th>
+      <th class="columnas-chicas" mat-header-cell *matHeaderCellDef>1º</th>
       <td
         class="columnas-chicas"
         mat-cell
         *matCellDef="let calificacionesXMateria"
-        [ngClass]="{ bajoPromedio: this.promedio < 6 }"
+        [ngClass]="{ bajoPromedio: this.promedio < 6 && this.promedio != 0 }"
       >
         <p
           *ngIf="
@@ -66,14 +66,12 @@
     </ng-container>
 
     <ng-container matColumnDef="calif2">
-      <th class="columnas-chicas" mat-header-cell *matHeaderCellDef>
-        2º
-      </th>
+      <th class="columnas-chicas" mat-header-cell *matHeaderCellDef>2º</th>
       <td
         class="columnas-chicas"
         mat-cell
         *matCellDef="let calificacionesXMateria"
-        [ngClass]="{ bajoPromedio: this.promedio < 6 }"
+        [ngClass]="{ bajoPromedio: this.promedio < 6 && this.promedio != 0 }"
       >
         <p
           *ngIf="
@@ -90,14 +88,12 @@
     </ng-container>
 
     <ng-container matColumnDef="calif3">
-      <th class="columnas-chicas" mat-header-cell *matHeaderCellDef>
-        3º
-      </th>
+      <th class="columnas-chicas" mat-header-cell *matHeaderCellDef>3º</th>
       <td
         class="columnas-chicas"
         mat-cell
         *matCellDef="let calificacionesXMateria"
-        [ngClass]="{ bajoPromedio: this.promedio < 6 }"
+        [ngClass]="{ bajoPromedio: this.promedio < 6 && this.promedio != 0 }"
       >
         <p
           *ngIf="
@@ -114,14 +110,12 @@
     </ng-container>
 
     <ng-container matColumnDef="calif4">
-      <th class="columnas-chicas" mat-header-cell *matHeaderCellDef>
-        4º
-      </th>
+      <th class="columnas-chicas" mat-header-cell *matHeaderCellDef>4º</th>
       <td
         class="columnas-chicas"
         mat-cell
         *matCellDef="let calificacionesXMateria"
-        [ngClass]="{ bajoPromedio: this.promedio < 6 }"
+        [ngClass]="{ bajoPromedio: this.promedio < 6 && this.promedio != 0 }"
       >
         <p
           *ngIf="
@@ -138,14 +132,12 @@
     </ng-container>
 
     <ng-container matColumnDef="calif5">
-      <th class="columnas-chicas" mat-header-cell *matHeaderCellDef>
-        5º
-      </th>
+      <th class="columnas-chicas" mat-header-cell *matHeaderCellDef>5º</th>
       <td
         class="columnas-chicas"
         mat-cell
         *matCellDef="let calificacionesXMateria"
-        [ngClass]="{ bajoPromedio: this.promedio < 6 }"
+        [ngClass]="{ bajoPromedio: this.promedio < 6 && this.promedio != 0 }"
       >
         <p
           *ngIf="
@@ -162,14 +154,12 @@
     </ng-container>
 
     <ng-container matColumnDef="calif6">
-      <th class="columnas-chicas" mat-header-cell *matHeaderCellDef>
-        6º
-      </th>
+      <th class="columnas-chicas" mat-header-cell *matHeaderCellDef>6º</th>
       <td
         class="columnas-chicas"
         mat-cell
         *matCellDef="let calificacionesXMateria"
-        [ngClass]="{ bajoPromedio: this.promedio < 6 }"
+        [ngClass]="{ bajoPromedio: this.promedio < 6 && this.promedio != 0 }"
       >
         <p
           *ngIf="
