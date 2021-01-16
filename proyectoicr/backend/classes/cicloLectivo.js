@@ -4,9 +4,11 @@ const Inscripcion = require("../models/inscripcion");
 const MateriasXCurso = require("../models/materiasXCurso");
 const ClaseEstado = require("../classes/estado");
 const CicloLectivo = require("../models/cicloLectivo");
+const Estudiante = require("../models/estudiante");
 const ClaseCXM = require("../classes/calificacionXMateria");
 const ClaseInscripcion = require("../classes/inscripcion");
 const ClaseCicloLectivo = require("../classes/cicloLectivo");
+const ClaseCalificacionesXMateria = require("../classes/calificacionXMateria");
 
 //Retorna un array con los cursos que no tienen agenda
 exports.cursosTienenAgenda = async () => {
@@ -46,6 +48,10 @@ exports.pasarInscripcionesAActivas = () => {
       "Inscripcion",
       "Promovido con examenes pendientes"
     );
+    let idEstadoCXMDesaprobada = await ClaseEstado.obtenerIdEstado(
+      "CalificacionesXMateria",
+      "Desaprobada"
+    );
 
     // Pasar a inactivas las inscripciones del año que se esta por cerrar. #resolve
     await this.pasarInscripcionesAInactivas();
@@ -71,11 +77,28 @@ exports.pasarInscripcionesAActivas = () => {
           });
 
           inscripcion.calificacionesXMateria = idsCXM;
-          inscripcion.materiasPendientes = inscripcionAnterior
-            ? inscripcionAnterior[0].materiasPendientes
-            : [];
+          //Obtenemos las materias pendientes del estudiante
+          let materiasPendientes = [];
+          if (inscripcionAnterior) {
+            materiasPendientes = await ClaseCalificacionesXMateria.obtenerMateriasDesaprobadasv2(
+              inscripcionAnterior.materiasPendientes,
+              inscripcionAnterior.calificacionesXMateria,
+              idEstadoCXMDesaprobada
+            );
+          }
+          inscripcion.materiasPendientes = materiasPendientes;
           inscripcion.estado = idActiva;
           inscripcion.save();
+
+          //Pasar Estudiante de Registrado a Inscripto
+          let idEstadoEstInscripto = await ClaseEstado.obtenerIdEstado(
+            "Estudiante",
+            "Inscripto"
+          );
+          let actualizarEstudiante = await Estudiante.findByIdAndUpdate(
+            inscripcion.idEstudiante,
+            { estado: idEstadoEstInscripto }
+          );
         }
         resolve();
       }
@@ -449,10 +472,19 @@ exports.obtenerIdCicloSegunAño = (añoSeleccionado) => {
 //Esto se hace antes de que se cree el proximo ciclo lectivo.
 exports.pasarMXCAEnPrimerTrimestre = () => {
   return new Promise(async (resolve, reject) => {
-    let idMXCCreada = await ClaseEstado.obtenerIdEstado("MateriasXCurso", "Creada");
-    let idMXCEn1Trimestre = await ClaseEstado.obtenerIdEstado("MateriasXCurso", "En primer trimestre");
+    let idMXCCreada = await ClaseEstado.obtenerIdEstado(
+      "MateriasXCurso",
+      "Creada"
+    );
+    let idMXCEn1Trimestre = await ClaseEstado.obtenerIdEstado(
+      "MateriasXCurso",
+      "En primer trimestre"
+    );
 
-    await MateriasXCurso.updateMany({estado: idMXCCreada},{$set: {estado: idMXCEn1Trimestre}});
+    await MateriasXCurso.updateMany(
+      { estado: idMXCCreada },
+      { $set: { estado: idMXCEn1Trimestre } }
+    );
     resolve();
   });
 };

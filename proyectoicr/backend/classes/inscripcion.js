@@ -111,23 +111,6 @@ exports.inscribirEstudiante = async function (
     return cuotas;
   };
 
-  // let esCambioDeCurso = (idCurso, idCicloLectivo) => {
-  //   return new Promise((resolve, reject) => {
-  //     CicloLectivo.findById(idCicloLectivo)
-  //       .then((cicloLectivo) => {
-  //         if (añoLectivo == cicloLectivo.año) {
-  //           Curso.findByIdAndUpdate(idCurso, { $inc: { capacidad: 1 } }).then(
-  //             () => {
-  //               resolve();
-  //             }
-  //           );
-  //           cuotasAnteriores = inscripcion.cuotas;
-  //         }
-  //       })
-  //       .catch((error) => reject(error));
-  //   });
-  // };
-
   let actualizarEstadoEstudiante = (idEstudiante, idEstado) => {
     return new Promise((resolve, reject) => {
       Estudiante.findByIdAndUpdate(idEstudiante, {
@@ -262,6 +245,31 @@ exports.inscribirEstudianteProximoAnio = async function (
       await inscripcionPendiente.save();
     }
 
+    let crearCuotas = () => {
+      cuotas = [];
+  
+      for (let i = 3; i < 12; i++) {
+        let cuota = { mes: i, pagado: false };
+        cuotas.push(cuota);
+      }
+      return cuotas;
+    };
+    let coutasCreadas= crearCuotas();
+    let documentosEntregados = [
+      {
+        nombre: "Fotocopia documento",
+        entregado: false,
+      },
+      {
+        nombre: "Ficha médica",
+        entregado: false,
+      },
+      {
+        nombre: "Informe año anterior",
+        entregado: false,
+      },
+    ];
+
     const nuevaInscripcion = new Inscripcion({
       idEstudiante: idEstudiante,
       idCurso: cursoSeleccionado._id,
@@ -270,6 +278,8 @@ exports.inscribirEstudianteProximoAnio = async function (
       contadorInasistenciasJustificada: 0,
       contadorLlegadasTarde: 0,
       cicloLectivo: idCicloProximo,
+      cuotas: coutasCreadas,
+      documentosEntregados: documentosEntregados 
     });
 
     await nuevaInscripcion.save();
@@ -407,6 +417,7 @@ exports.cambiarEstadoExamPendientes = (idCicloActual) => {
         await Inscripcion.findByIdAndUpdate(inscripcion._id, {
           estado: idEstadoLibre,
         }).exec();
+        //Se borra la inscripcion pendiente ya que el estudiante quedo libre
         await Inscripcion.findOneAndDelete({
           idEstudiante: inscripcion.idEstudiante,
           estado: idEstadoPendiente,
