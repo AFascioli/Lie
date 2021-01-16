@@ -1,6 +1,6 @@
 
 <h1 class="componente-titulo">
-  Calificaciones por ciclo lectivo
+  Visualizar calificaciones del ciclo lectivo
 </h1>
 
 <mat-card class="card-spinner" *ngIf="isLoading">
@@ -60,7 +60,7 @@
       </mat-form-field>
     </div>
     <p
-      class="centrar"
+      class="aviso"
       *ngIf="estudiantes.length == 0 && !isLoading2 && materiaSelec"
     >
       No se encuentran calificaciones registradas para los valores

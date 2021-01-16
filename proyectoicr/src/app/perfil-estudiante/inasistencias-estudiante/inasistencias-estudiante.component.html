@@ -27,13 +27,11 @@
         contadorInasistenciaInjustificada < this.cantidadFaltasParaSuspension
       "
     >
-      <b
-        >Le quedan
-        {{
-          this.cantidadFaltasParaSuspension - contadorInasistenciaInjustificada
-        }}
-        inasistencias injustificadas para la reincorporación
-      </b>
+      Le quedan
+      {{
+        this.cantidadFaltasParaSuspension - contadorInasistenciaInjustificada
+      }}
+      inasistencias injustificadas para la reincorporación.
     </p>
     <p
       class="aviso"
@@ -41,10 +39,8 @@
         contadorInasistenciaInjustificada >= this.cantidadFaltasParaSuspension
       "
     >
-      <b
-        >El estudiante alcanzó el límite de inasistencias, necesita ser
-        reincorporado.
-      </b>
+      El estudiante alcanzó el límite de inasistencias, necesita ser
+      reincorporado.
     </p>
   </div>
   <p
@@ -54,7 +50,7 @@
       contadorInasistenciaJustificada == 0
     "
   >
-    <b> El estudiante no presenta ninguna inasistencia </b>
+    El estudiante no presenta ninguna inasistencia.
   </p>
   <div class="div-button">
     <button

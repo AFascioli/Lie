@@ -104,7 +104,7 @@ exports.inscribirEstudiante = async function (
   let crearCuotas = () => {
     cuotas = [];
 
-    for (let i = 3; i < 12; i++) {
+    for (let i = 3; i <= 12; i++) {
       let cuota = { mes: i, pagado: false };
       cuotas.push(cuota);
     }
@@ -157,7 +157,7 @@ exports.inscribirEstudiante = async function (
     let contadorLlegadasTarde = 0;
     var materiasPendientesNuevas = [];
 
-   
+
 
     //Si es cambio de curso se deben copiar los siguientes datos de la inscripcion "vieja"
     if (inscripcion != null) {
@@ -194,7 +194,7 @@ exports.inscribirEstudiante = async function (
       materiasDelCurso,
       estadoCursandoMateria._id
     );
-    
+
 
     const nuevaInscripcion = new Inscripcion({
       idEstudiante: idEstudiante,
