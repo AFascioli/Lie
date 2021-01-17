@@ -112,14 +112,20 @@ time.icon span {
   position: absolute;
   right: 8%;
   bottom: 4%;
-  margin-right: 20px !important;
+  margin-right: 10px !important;
 }
 
 .container-img .botonAddImage {
   position: absolute;
-  right: 7%;
-  bottom: 5%;
-  margin-right: 20px !important;
+  right: 8%;
+  bottom: 4%;
+  margin-right: 10px !important;
+}
+
+.icon
+{
+  margin-bottom: 16px !important;
+  margin-right: 10px !important
 }
 
 .container-img .boton-borrar {
