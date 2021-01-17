@@ -1,6 +1,4 @@
-<h1 class="componente-titulo">
-  Modificar evento
-</h1>
+<h1 class="componente-titulo">Modificar evento</h1>
 
 <mat-card class="card-body-componente">
   <form #form="ngForm">
@@ -15,6 +13,7 @@
           type="text"
           [(ngModel)]="evento.titulo"
           required
+          [disabled]="this.eventoService.imageOnly"
         />
       </mat-form-field>
       <br />
@@ -29,6 +28,7 @@
           type="text"
           [maxLength]="250"
           [(ngModel)]="evento.descripcion"
+          [disabled]="this.eventoService.imageOnly"
         >
         </textarea>
       </mat-form-field>
@@ -48,6 +48,7 @@
           (dateChange)="setearHoraMinima()"
           required
           readonly
+          [disabled]="this.eventoService.imageOnly"
         />
         <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
         <mat-datepicker touchUi #picker></mat-datepicker>
@@ -70,6 +71,7 @@
               max="22:00"
               readonly
               required
+              [disabled]="this.eventoService.imageOnly"
             />
             <ngx-material-timepicker #picker1></ngx-material-timepicker>
           </div>
@@ -92,6 +94,7 @@
               placeholder="Hora fin de evento"
               readonly
               required
+              [disabled]="this.eventoService.imageOnly"
             />
             <ngx-material-timepicker #picker2></ngx-material-timepicker>
           </div>
@@ -108,6 +111,7 @@
             [selectable]="selectable"
             [removable]="removable"
             (removed)="remove(chip)"
+            [disabled]="this.eventoService.imageOnly"
           >
             {{ chip }}
             <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
@@ -122,6 +126,7 @@
             [matChipInputAddOnBlur]="addOnBlur"
             (matChipInputTokenEnd)="add($event)"
             required
+            [disabled]="this.eventoService.imageOnly"
           />
         </mat-chip-list>
         <mat-autocomplete
@@ -129,7 +134,11 @@
           #auto="matAutocomplete"
           (optionSelected)="selected($event)"
         >
-          <mat-option *ngFor="let chip of filteredChips | async" [value]="chip">
+          <mat-option
+            *ngFor="let chip of filteredChips | async"
+            [value]="chip"
+            [disabled]="this.eventoService.imageOnly"
+          >
             {{ chip }}
           </mat-option>
         </mat-autocomplete>
@@ -168,11 +177,11 @@
             >
               <mat-icon
                 (click)="onEliminarImagen(i)"
-                style="color: rgb(174, 7, 7); font-size: 26px;"
+                style="color: rgb(174, 7, 7); font-size: 26px"
                 >cancel</mat-icon
               >
             </button>
-            <img [src]="image" style="width: 100%;" />
+            <img [src]="image" style="width: 100%" />
           </div>
         </div>
         <a
@@ -189,7 +198,7 @@
         >
       </div>
       <br />
-      <div *ngIf="evento.filenames.length > 1" style="text-align: center;">
+      <div *ngIf="evento.filenames.length > 1" style="text-align: center">
         <span class="dot" *ngFor="let image of imagenesCargadas"></span>
       </div>
     </div>

@@ -15,6 +15,7 @@ export class EventosService {
   public tituloABorrar: string;
   public comentarios: any[] = [];
   public ImgCargada: string;
+  public imageOnly: boolean;
 
   constructor(
     public snackBar: MatSnackBar,

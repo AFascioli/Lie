@@ -153,10 +153,12 @@ export class ModificarEventoComponent implements OnInit, OnDestroy {
   }
 
   remove(chip: string): void {
-    const index = this.chips.indexOf(chip);
+    if (!this.eventoService.imageOnly) {
+      const index = this.chips.indexOf(chip);
 
-    if (index >= 0) {
-      this.chips.splice(index, 1);
+      if (index >= 0) {
+        this.chips.splice(index, 1);
+      }
     }
   }
 
@@ -262,7 +264,7 @@ export class ModificarEventoComponent implements OnInit, OnDestroy {
   }
 
   onGuardarEvento(form: NgForm) {
-    if (form.valid && this.evento.tags.length != 0) {
+    if ((form.valid || form.disabled) && this.evento.tags.length != 0) {
       if (this.horaInicioEvento != "" && this.horaFinEvento != "") {
         if (
           this.horaEventoEsValido(this.horaInicioEvento, this.horaFinEvento)

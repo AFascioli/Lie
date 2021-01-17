@@ -161,6 +161,14 @@ export class HomeComponent implements OnInit, OnDestroy {
   onEditar(evento) {
     this.servicioEvento.evento = evento;
     this.servicioEvento.eventoSeleccionado = evento;
+    this.servicioEvento.imageOnly= false;
+    this.router.navigate(["./modificarEvento"]);
+  }
+
+  onAgregarFoto(evento) {
+    this.servicioEvento.evento = evento;
+    this.servicioEvento.eventoSeleccionado = evento;
+    this.servicioEvento.imageOnly= true;
     this.router.navigate(["./modificarEvento"]);
   }
 
