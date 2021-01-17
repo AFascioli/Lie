@@ -60,7 +60,7 @@
     Los docentes de este curso no pueden recibir notificaciones
   </p> -->
   <form #form="ngForm">
-    <mat-form-field *ngIf="docentes && docentes.length != 0">
+    <mat-form-field class="center" *ngIf="docentes && docentes.length != 0">
       <textarea
         matInput
         name="cuerpo"
