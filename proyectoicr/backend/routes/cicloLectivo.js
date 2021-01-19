@@ -404,7 +404,7 @@ router.post("/cierreTrimestre", checkAuthMiddleware, async (req, res) => {
   }
 });
 
-//Cierra la etapa de examenes. Se realizan 2 operaciones: Cambiar inscripciones con examenes pendientes a
+// Cierra la etapa de examenes. Se realizan 2 operaciones: Cambiar inscripciones con examenes pendientes a
 // su estado correspondiente (tambien se cambia el estado de las CXM pendientes), Cambia estado ciclo actual
 router.get("/cierreExamenes", checkAuthMiddleware, async (req, res) => {
   try {
@@ -638,13 +638,11 @@ router.get("/mxc/estado", checkAuthMiddleware, async (req, res) => {
         },
       },
     ]);
-    res
-      .status(200)
-      .json({
-        exito: true,
-        message: "Estado de la materia por curso obtenido",
-        estadoMXC: cursoConDatos[0].datosEstado[0].nombre,
-      });
+    res.status(200).json({
+      exito: true,
+      message: "Estado de la materia por curso obtenido",
+      estadoMXC: cursoConDatos[0].datosEstado[0].nombre,
+    });
   } catch (error) {
     res.status(500).json({
       message:

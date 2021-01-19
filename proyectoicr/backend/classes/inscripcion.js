@@ -247,14 +247,14 @@ exports.inscribirEstudianteProximoAnio = async function (
 
     let crearCuotas = () => {
       cuotas = [];
-  
+
       for (let i = 3; i < 12; i++) {
         let cuota = { mes: i, pagado: false };
         cuotas.push(cuota);
       }
       return cuotas;
     };
-    let coutasCreadas= crearCuotas();
+    let coutasCreadas = crearCuotas();
     let documentosEntregados = [
       {
         nombre: "Fotocopia documento",
@@ -279,7 +279,7 @@ exports.inscribirEstudianteProximoAnio = async function (
       contadorLlegadasTarde: 0,
       cicloLectivo: idCicloProximo,
       cuotas: coutasCreadas,
-      documentosEntregados: documentosEntregados 
+      documentosEntregados: documentosEntregados,
     });
 
     await nuevaInscripcion.save();
@@ -313,7 +313,7 @@ exports.actualizarEstadoInscripcion = (inscripcion) => {
         cxm.estado
           .toString()
           .localeCompare(idEstadoPendienteExamen.toString()) == 0 &&
-          inscripcion.materiasPendientes.length!=0
+        inscripcion.materiasPendientes.length != 0
       ) {
         promovido = false;
         break;
@@ -412,7 +412,7 @@ exports.cambiarEstadoExamPendientes = (idCicloActual) => {
         for (const idCxm of idsCXMPendientes) {
           await CalificacionesXMateria.findByIdAndUpdate(idCxm, {
             estado: idEstadoCXMDesaprobada,
-          });
+          }).exec();
         }
         await Inscripcion.findByIdAndUpdate(inscripcion._id, {
           estado: idEstadoLibre,

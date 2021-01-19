@@ -95,10 +95,10 @@ exports.pasarInscripcionesAActivas = () => {
             "Estudiante",
             "Inscripto"
           );
-          let actualizarEstudiante = await Estudiante.findByIdAndUpdate(
-            inscripcion.idEstudiante,
-            { estado: idEstadoEstInscripto }
-          );
+
+          await Estudiante.findByIdAndUpdate(inscripcion.idEstudiante, {
+            estado: idEstadoEstInscripto,
+          }).exec();
         }
         resolve();
       }
