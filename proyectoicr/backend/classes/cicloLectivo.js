@@ -73,20 +73,13 @@ exports.pasarInscripcionesAActivas = () => {
             estado: {
               $in: [idPromovido, idExamenesPendientes],
             },
-            cicloLectivo: idCicloActual,
+            // cicloLectivo: idCicloActual,
           });
 
           inscripcion.calificacionesXMateria = idsCXM;
-          //Obtenemos las materias pendientes del estudiante
-          let materiasPendientes = [];
-          if (inscripcionAnterior) {
-            materiasPendientes = await ClaseCalificacionesXMateria.obtenerMateriasDesaprobadasv2(
-              inscripcionAnterior.materiasPendientes,
-              inscripcionAnterior.calificacionesXMateria,
-              idEstadoCXMDesaprobada
-            );
-          }
-          inscripcion.materiasPendientes = materiasPendientes;
+          inscripcion.materiasPendientes = inscripcionAnterior
+            ? inscripcionAnterior.materiasPendientes
+            : [];
           inscripcion.estado = idActiva;
           inscripcion.save();
 
