@@ -27,9 +27,11 @@ export class RegistrarAsistenciaComponent implements OnInit, OnDestroy {
   private unsubscribe: Subject<void> = new Subject();
   isLoadingStudents: boolean = true;
   idSuspendido: string;
+  aniosCiclos;
 
   constructor(
     private servicioEstudiante: EstudiantesService,
+    private servicioCicloLectivo: CicloLectivoService,
     private servicioAsistencia: AsistenciaService,
     private autenticacionService: AutenticacionService,
     private CicloLectivoService: CicloLectivoService,
@@ -38,9 +40,16 @@ export class RegistrarAsistenciaComponent implements OnInit, OnDestroy {
   ) {}
 
   async ngOnInit() {
+    this.fechaActual = new Date();
+    this.servicioCicloLectivo
+      .obtenerActualYSiguiente()
+      .pipe(takeUntil(this.unsubscribe))
+      .subscribe((response) => {
+        this.aniosCiclos = response.añosCiclos;
+      });
     this.obtenerIdInscripcionSuspendida();
     this.cursoNotSelected = true;
-    this.fechaActual = new Date();
+
     if (
       this.fechaActual.toString().substring(0, 3) == "Sat" ||
       this.fechaActual.toString().substring(0, 3) == "Sun"
@@ -60,7 +69,7 @@ export class RegistrarAsistenciaComponent implements OnInit, OnDestroy {
       this.autenticacionService.getRol() == "Admin"
     ) {
       this.servicioEstudiante
-        .obtenerCursos(this.fechaActual.getFullYear())
+        .obtenerCursos(this.aniosCiclos[0])
         .pipe(takeUntil(this.unsubscribe))
         .subscribe((response) => {
           this.cursos = response.cursos;

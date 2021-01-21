@@ -27,9 +27,11 @@ export class CalificacionesExamenesComponent implements OnInit, OnDestroy {
   notaExamen: any;
   condicionExamen: string;
   private unsubscribe: Subject<void> = new Subject();
+  aniosCiclos;
 
   constructor(
     public estudianteService: EstudiantesService,
+    public servicioCicloLectivo: CicloLectivoService,
     public servicioCalificaciones: CalificacionesService,
     public changeDetectorRef: ChangeDetectorRef,
     public media: MediaMatcher,
@@ -53,6 +55,12 @@ export class CalificacionesExamenesComponent implements OnInit, OnDestroy {
       this.fechaActualEnRangoFechasExamenes ||
       this.authService.getRol() == "Admin"
     ) {
+      this.servicioCicloLectivo
+        .obtenerActualYSiguiente()
+        .pipe(takeUntil(this.unsubscribe))
+        .subscribe((response) => {
+          this.aniosCiclos = response.añosCiclos;
+        });
       this.apellidoEstudiante = this.estudianteService.estudianteSeleccionado.apellido;
       this.nombreEstudiante = this.estudianteService.estudianteSeleccionado.nombre;
       this.servicioCalificaciones

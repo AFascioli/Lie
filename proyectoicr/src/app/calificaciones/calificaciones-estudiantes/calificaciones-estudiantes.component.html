@@ -1,8 +1,8 @@
-<h1 *ngIf="rolConPermisosEdicion" class="componente-titulo">
-  Registrar calificaciones ciclo lectivo {{ fechaActual.getFullYear() }}
+<h1 *ngIf="rolConPermisosEdicion && aniosCiclos" class="componente-titulo">
+  Registrar calificaciones ciclo lectivo {{ aniosCiclos[0] }}
 </h1>
-<h1 *ngIf="!rolConPermisosEdicion" class="componente-titulo">
-  Visualizar calificaciones ciclo lectivo {{ fechaActual.getFullYear() }}
+<h1 *ngIf="!rolConPermisosEdicion && aniosCiclos " class="componente-titulo">
+  Visualizar calificaciones ciclo lectivo {{ aniosCiclos[0] }}
 </h1>
 <mat-card class="card-spinner" *ngIf="isLoading">
   <mat-spinner class="spinner" [diameter]="60"></mat-spinner>
