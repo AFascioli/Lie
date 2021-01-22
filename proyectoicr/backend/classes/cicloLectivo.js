@@ -53,9 +53,6 @@ exports.pasarInscripcionesAActivas = () => {
       "Desaprobada"
     );
 
-    // Pasar a inactivas las inscripciones del año que se esta por cerrar. #resolve
-    await this.pasarInscripcionesAInactivas();
-
     let idCicloCreado = await this.obtenerIdCicloProximo();
     let idCicloActual = await this.obtenerIdCicloActual();
 
@@ -93,6 +90,8 @@ exports.pasarInscripcionesAActivas = () => {
             estado: idEstadoEstInscripto,
           }).exec();
         }
+        // Pasar a inactivas las inscripciones del año que se esta por cerrar. #resolve
+        await this.pasarInscripcionesAInactivas();
         resolve();
       }
     );

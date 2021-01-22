@@ -1668,7 +1668,7 @@ router.get(
 
       /* 2. Aggregate de Promovidos o Promovidos con exam. 2B '19. */
       if (parseInt(cursoElegido.nombre, 10) !== 1) {
-        let idMXCDesaprobada = ClaseEstado.obtenerIdEstado(
+        let idMXCDesaprobada = await ClaseEstado.obtenerIdEstado(
           "CalificacionesXMateria",
           "Desaprobada"
         );
