@@ -116,6 +116,7 @@ export class ListaEstudiantesComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.unsubscribe))
       .subscribe((response) => {
         this.permisos = response.permisos;
+        this.isLoading = false;
       });
     this.rol = this.authService.getRol();
     if (this.rol == "Docente") {
@@ -131,7 +132,6 @@ export class ListaEstudiantesComponent implements OnInit, OnDestroy {
             });
         });
     }
-    this.isLoading = false;
   }
 
   verificarEstadoCiclo() {

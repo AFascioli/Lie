@@ -6,9 +6,18 @@ mat-card-content {
   text-indent: 34%;
 }
 
+.container .button-volver {
+  position: fixed;
+  right: 5%;
+  bottom: 4%;
+}
+
+.container {
+  position: relative;
+}
+
 .button-volver {
-  text-align: right;
-  margin-left: 87% !important;
+  display: flex;
 }
 
 .grid-container {
@@ -16,8 +25,8 @@ mat-card-content {
   margin-left: auto;
   margin-right: auto;
   display: grid;
-  grid-template-columns: 11% repeat(5,1fr); /*Aca se definen la cantidad de columnas*/
-  grid-template-rows: auto repeat(9,85px);
+  grid-template-columns: 11% repeat(5, 1fr); /*Aca se definen la cantidad de columnas*/
+  grid-template-rows: auto repeat(9, 85px);
   grid-gap: 8px;
   padding: 10px;
   background-color: #c3c8cc; /*2196F3*/
@@ -160,6 +169,10 @@ hr {
   max-width: min-content;
 }
 
-.div-button{
+.div-button {
   text-align: right;
+}
+.boton-volver-nomobile {
+  text-align: right;
+  margin-left: 87% !important;
 }

@@ -115,6 +115,8 @@ td.mat-cell:last-of-type {
 {
   display:flex;
   width: 100%;
+  justify-content: center;
+  align-items: center;
 }
 
 .cv {
@@ -123,8 +125,9 @@ td.mat-cell:last-of-type {
 }
 
 .canvas{
-  width: 33% !important;
-  height: 100% !important;
+  width: 30% !important;
+  height: 30% !important;
+  padding: 1% !important;
 }
 
 .componente-titulo {

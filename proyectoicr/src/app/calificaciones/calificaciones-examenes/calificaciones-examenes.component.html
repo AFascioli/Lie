@@ -1,11 +1,11 @@
-<h1 class="componente-titulo">
-  Registrar calificación examen ciclo lectivo {{ fechaActual.getFullYear() }}
+<h1 class="componente-titulo" *ngIf="aniosCiclos">
+  Registrar calificación examen ciclo lectivo {{ aniosCiclos[0] }}
 </h1>
 <mat-card class="card-body-componente">
   <form #form="ngForm">
     <p class="aviso" *ngIf="!fechaDentroDeRangoExamen">
-      Atención, no se puede registrar calificaciones de examen debido a que nos
-      encontramos fuera de las fechas habilitadas para ese fin
+      Atención, no se pueden registrar calificaciones de examen debido a que nos
+      encontramos fuera de las fechas habilitadas para ese fin.
     </p>
     <div *ngIf="fechaDentroDeRangoExamen">
       <div class="ubicacion-fecha">

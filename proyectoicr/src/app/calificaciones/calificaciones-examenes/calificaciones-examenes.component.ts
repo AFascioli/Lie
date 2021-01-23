@@ -26,9 +26,11 @@ export class CalificacionesExamenesComponent implements OnInit, OnDestroy {
   notaExamen: any;
   condicionExamen: string;
   private unsubscribe: Subject<void> = new Subject();
+  aniosCiclos;
 
   constructor(
     public estudianteService: EstudiantesService,
+    public servicioCicloLectivo: CicloLectivoService,
     public servicioCalificaciones: CalificacionesService,
     public changeDetectorRef: ChangeDetectorRef,
     public media: MediaMatcher,

@@ -46,6 +46,7 @@ export class VisualizarAgendaComponent implements OnInit, OnDestroy {
   constructor(
     public servicioEstudiante: EstudiantesService,
     public servicioAgenda: AgendaService,
+    public servicioCicloLectivo: CicloLectivoService,
     public snackBar: MatSnackBar,
     public servicioCicloLectivo: CicloLectivoService,
     public changeDetectorRef: ChangeDetectorRef,
@@ -57,6 +58,7 @@ export class VisualizarAgendaComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.obtenerCursos();
     this.servicioCicloLectivo
       .obtenerActualYSiguiente()
       .pipe(takeUntil(this.unsubscribe))
@@ -112,7 +114,7 @@ export class VisualizarAgendaComponent implements OnInit, OnDestroy {
 
   obtenerCursos() {
     this.servicioEstudiante
-      .obtenerCursos(this.yearSelected)
+      .obtenerCursos(this.aniosCiclos[0])
       .pipe(takeUntil(this.unsubscribe))
       .subscribe((response) => {
         this.cursos = response.cursos;

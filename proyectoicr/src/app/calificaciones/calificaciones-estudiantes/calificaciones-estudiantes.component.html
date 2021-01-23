@@ -1,8 +1,8 @@
-<h1 *ngIf="rolConPermisosEdicion" class="componente-titulo">
-  Registrar calificaciones ciclo lectivo {{ fechaActual.getFullYear() }}
+<h1 *ngIf="rolConPermisosEdicion && aniosCiclos" class="componente-titulo">
+  Registrar calificaciones ciclo lectivo {{ aniosCiclos[0] }}
 </h1>
-<h1 *ngIf="!rolConPermisosEdicion" class="componente-titulo">
-  Visualizar calificaciones ciclo lectivo {{ fechaActual.getFullYear() }}
+<h1 *ngIf="!rolConPermisosEdicion && aniosCiclos " class="componente-titulo">
+  Visualizar calificaciones ciclo lectivo {{ aniosCiclos[0] }}
 </h1>
 <mat-card class="card-spinner" *ngIf="isLoading">
   <mat-spinner class="spinner" [diameter]="60"></mat-spinner>
@@ -12,10 +12,11 @@
   *ngIf="this.estadoCiclo == 'Inactivo' || this.estadoCiclo == 'Creado'"
 >
   <p
-    class="parrafo"
+    class="aviso"
     *ngIf="this.estadoCiclo == 'Inactivo' || this.estadoCiclo == 'Creado'"
   >
-    Esta funcionalidad se encuentra deshabilitada.
+    Atención, no se pueden registrar calificaciones debido a que nos encontramos
+    fuera de las fechas habilitadas para ese fin.
   </p>
 </mat-card>
 <mat-card
@@ -354,7 +355,7 @@
       </mat-paginator>
     </div>
     <p class="aviso" *ngIf="estudiantes.length == 0 && materiaSeleccionada">
-      No se encuentran estudiantes registrados en este curso
+      No se encuentran estudiantes registrados en este curso.
     </p>
     <div class="div-button">
       <button

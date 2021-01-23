@@ -23,6 +23,13 @@ th {
   margin-top: 2%;
 }
 
+.center
+{
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
 .th.mat-header-cell:first-of-type,
 th.mat-header-cell:first-of-type,
 .td.mat-cell:first-of-type,

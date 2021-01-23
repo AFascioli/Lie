@@ -216,7 +216,7 @@ exports.materiasSinCerrar = (trimestre) => {
           ],
         },
       });
-
+      if(inscripcion)
       inscripciones.push(inscripcion._id);
     }
     let materiasNoCerrada = [];

@@ -27,9 +27,11 @@ export class RegistrarAsistenciaComponent implements OnInit, OnDestroy {
   private unsubscribe: Subject<void> = new Subject();
   isLoadingStudents: boolean = true;
   idSuspendido: string;
+  aniosCiclos;
 
   constructor(
     private servicioEstudiante: EstudiantesService,
+    private servicioCicloLectivo: CicloLectivoService,
     private servicioAsistencia: AsistenciaService,
     private autenticacionService: AutenticacionService,
     private CicloLectivoService: CicloLectivoService,
@@ -38,9 +40,16 @@ export class RegistrarAsistenciaComponent implements OnInit, OnDestroy {
   ) {}
 
   async ngOnInit() {
+    this.fechaActual = new Date();
+    this.servicioCicloLectivo
+      .obtenerActualYSiguiente()
+      .pipe(takeUntil(this.unsubscribe))
+      .subscribe((response) => {
+        this.aniosCiclos = response.añosCiclos;
+      });
     this.obtenerIdInscripcionSuspendida();
     this.cursoNotSelected = true;
-    this.fechaActual = new Date();
+
     if (
       this.fechaActual.toString().substring(0, 3) == "Sat" ||
       this.fechaActual.toString().substring(0, 3) == "Sun"
@@ -60,25 +69,20 @@ export class RegistrarAsistenciaComponent implements OnInit, OnDestroy {
       (await this.fechaActualEnPeriodoCursado()) ||
       this.autenticacionService.getRol() == "Admin"
     ) {
-      this.CicloLectivoService
-      .obtenerActualYSiguiente()
-      .pipe(takeUntil(this.unsubscribe))
-      .subscribe((response) => {
-        this.servicioEstudiante
-          .obtenerCursos(response.añosCiclos[0])
-          .pipe(takeUntil(this.unsubscribe))
-          .subscribe((response) => {
-            this.cursos = response.cursos;
-            this.cursos.sort((a, b) =>
-              a.nombre.charAt(0) > b.nombre.charAt(0)
-                ? 1
-                : b.nombre.charAt(0) > a.nombre.charAt(0)
-                ? -1
-                : 0
-            );
-            this.isLoading = false;
-          });
-      });
+      this.servicioEstudiante
+        .obtenerCursos(this.aniosCiclos[0])
+        .pipe(takeUntil(this.unsubscribe))
+        .subscribe((response) => {
+          this.cursos = response.cursos;
+          this.cursos.sort((a, b) =>
+            a.nombre.charAt(0) > b.nombre.charAt(0)
+              ? 1
+              : b.nombre.charAt(0) > a.nombre.charAt(0)
+              ? -1
+              : 0
+          );
+          this.isLoading = false;
+        });
     } else {
       this.fueraPeriodoCicloLectivo = true;
       this.isLoading = false;

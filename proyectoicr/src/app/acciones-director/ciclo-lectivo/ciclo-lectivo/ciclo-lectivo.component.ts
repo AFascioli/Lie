@@ -1,15 +1,19 @@
 import { CicloLectivoService } from "./../../../cicloLectivo.service";
-import { Component, OnInit, Inject, EventEmitter, Output } from "@angular/core";
+import { Component, OnInit, Inject, NgZone, ViewChild, EventEmitter, Output } from "@angular/core";
 import {
   MatDialog,
   MatDialogRef,
   MAT_DIALOG_DATA,
 } from "@angular/material/dialog";
 import { MatSnackBar } from "@angular/material";
+import { CdkTextareaAutosize } from "@angular/cdk/text-field";
+import { take } from "rxjs/operators";
 
 export interface DialogData {
   name: string;
   resultYes: boolean;
+  mensaje: string;
+  materia: string;
 }
 
 @Component({
@@ -26,6 +30,7 @@ export class CicloLectivoComponent implements OnInit {
   fechasExamen: Boolean;
   name: string;
   id;
+  mostrarMateria;
 
   constructor(
     public dialog: MatDialog,
@@ -138,7 +143,7 @@ export class CicloLectivoComponent implements OnInit {
 
   onCierreExamenes() {
     this.id = 5;
-    this.name = "finalizar las fechas de exámen";
+    this.name = "finalizar las fechas de examen";
     this.openPopUp();
   }
 
@@ -183,13 +188,13 @@ export class CicloLectivoComponent implements OnInit {
           for (const cursoYMateria of response.materiasSinCerrar) {
             cursosYMaterias += `${cursoYMateria.materia} de ${cursoYMateria.curso}, `;
           }
-          let mensaje =
-            response.message +
-            cursosYMaterias.slice(0, cursosYMaterias.length - 2);
+          let mensaje = response.message;
+
+          let materias = cursosYMaterias.slice(0, cursosYMaterias.length - 2);
 
           this.dialog.open(PopUpMateriasSinCerrar, {
             width: "250px",
-            data: { mensaje: mensaje },
+            data: { mensaje: mensaje, materia: materias },
           });
         }
       });
@@ -227,13 +232,23 @@ export class PopUpCerrarEtapa {
   templateUrl: "../popUp-materiasSinCerrar.html",
   styleUrls: ["../ciclo-lectivo/ciclo-lectivo.component.css"],
 })
-export class PopUpMateriasSinCerrar {
+export class PopUpMateriasSinCerrar implements OnInit {
+  mostrarMateria;
   constructor(
     public dialogRef: MatDialogRef<PopUpCerrarEtapa>,
-    @Inject(MAT_DIALOG_DATA) public data: DialogData
+    @Inject(MAT_DIALOG_DATA) public data: DialogData,
+    private _ngZone: NgZone
   ) {}
+  ngOnInit() {
+    this.mostrarMateria = false;
+  }
+
+  @ViewChild("autosize", { static: true }) autosize: CdkTextareaAutosize;
 
   onOkClick(): void {
     this.dialogRef.close();
+  }
+  mostrarMaterias() {
+    this.mostrarMateria = !this.mostrarMateria;
   }
 }

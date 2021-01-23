@@ -8,6 +8,7 @@ const ClaseCicloLectivo = require("../classes/cicloLectivo");
 const Estudiante = require("../models/estudiante");
 const Estado = require("../models/estado");
 const Inscripcion = require("../models/inscripcion");
+const Curso = require("../models/curso");
 
 //Registra un nuevo estudiante y pone su estado a registrado
 router.post("", checkAuthMiddleware, (req, res, next) => {
@@ -154,24 +155,37 @@ router.delete("/borrar", checkAuthMiddleware, async (req, res, next) => {
     "Inscripcion",
     "Activa"
   );
+  let idEstadoPendiente = await ClaseEstado.obtenerIdEstado(
+    "Inscripcion",
+    "Pendiente"
+  );
   let idEstadoInactiva = await ClaseEstado.obtenerIdEstado(
     "Inscripcion",
     "Inactiva"
   );
-  let idEstadoDeBaja = await ClaseEstado.obtenerIdEstado("Estado", "De baja");
+  let idEstadoDeBaja = await ClaseEstado.obtenerIdEstado(
+    "Estudiante",
+    "De baja"
+  );
   Estudiante.findOneAndUpdate(
     { _id: req.query._id },
     { activo: false, estado: idEstadoDeBaja }
   )
     .then(() => {
-      Inscripcion.findOne({
+      Inscripcion.find({
         idEstudiante: req.query._id,
-        estado: idEstadoActiva,
-      }).then((inscripcion) => {
-        if (inscripcion) {
-          inscripcion.estado = idEstadoInactiva;
-          inscripcion.save();
+        $or: [{ estado: idEstadoActiva }, { estado: idEstadoPendiente }],
+      }).then(async (inscripcion) => {
+        if (inscripcion && inscripcion.length > 0) {
+          for (let index = 0; index < inscripcion.length; index++) {
+            inscripcion.estado = idEstadoInactiva;
+            inscripcion[index].save();
+            let curso = await Curso.findById(inscripcion[index].idCurso);
+            curso.capacidad += 1;
+            curso.save();
+          }
         }
+
         res.status(202).json({
           message: "Estudiante exitosamente borrado",
           exito: true,

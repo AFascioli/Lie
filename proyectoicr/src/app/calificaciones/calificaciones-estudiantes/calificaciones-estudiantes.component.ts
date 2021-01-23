@@ -45,7 +45,6 @@ export class CalificacionesEstudiantesComponent implements OnInit, OnDestroy {
   rolConPermisosEdicion = false;
   isLoading = true;
   isLoading2 = false;
-  fechaActual: Date;
   calificacionesChange = false;
   puedeEditarCalificaciones = false;
   promedio = 0;
@@ -60,6 +59,7 @@ export class CalificacionesEstudiantesComponent implements OnInit, OnDestroy {
   sePuedeCerrar = false;
   estadoCiclo: string;
   estadoMXC: string;
+  aniosCiclos;
 
   @ViewChild("comboCurso", { static: false }) comboCurso: any;
   @ViewChild("comboTrimestre", { static: false }) comboTrimestre: any;
@@ -72,6 +72,7 @@ export class CalificacionesEstudiantesComponent implements OnInit, OnDestroy {
     public popup: MatDialog,
     private snackBar: MatSnackBar,
     public servicioAutenticacion: AutenticacionService,
+    public servicioCicloLectivo: CicloLectivoService,
     public changeDetectorRef: ChangeDetectorRef,
     public media: MediaMatcher
   ) {
@@ -81,7 +82,12 @@ export class CalificacionesEstudiantesComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.fechaActual = new Date();
+    this.servicioCicloLectivo
+      .obtenerActualYSiguiente()
+      .pipe(takeUntil(this.unsubscribe))
+      .subscribe((response) => {
+        this.aniosCiclos = response.añosCiclos;
+      });
     this.obtenerTrimestreActual();
     this.validarPermisos();
     this.obtenerCursos();
@@ -192,7 +198,8 @@ export class CalificacionesEstudiantesComponent implements OnInit, OnDestroy {
   }
 
   onTrimestreChange(form: NgForm) {
-    this.obtenerNotas(form);
+    if (this.cursoSeleccionado && this.materiaSeleccionada)
+      this.obtenerNotas(form);
     if (
       this.trimestreSeleccionado == this.trimestreActual ||
       this.servicioAutenticacion.getRol() == "Director"
