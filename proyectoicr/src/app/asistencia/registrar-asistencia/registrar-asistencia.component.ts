@@ -27,23 +27,29 @@ export class RegistrarAsistenciaComponent implements OnInit, OnDestroy {
   private unsubscribe: Subject<void> = new Subject();
   isLoadingStudents: boolean = true;
   idSuspendido: string;
-  estadoCiclo: string;
+  aniosCiclos;
 
   constructor(
     private servicioEstudiante: EstudiantesService,
+    private servicioCicloLectivo: CicloLectivoService,
     private servicioAsistencia: AsistenciaService,
     private autenticacionService: AutenticacionService,
     private CicloLectivoService: CicloLectivoService,
     public popup: MatDialog,
-    public snackBar: MatSnackBar,
-
+    public snackBar: MatSnackBar
   ) {}
 
   async ngOnInit() {
-    this.obtenerEstadoCicloLectivo();
+    this.fechaActual = new Date();
+    this.servicioCicloLectivo
+      .obtenerActualYSiguiente()
+      .pipe(takeUntil(this.unsubscribe))
+      .subscribe((response) => {
+        this.aniosCiclos = response.añosCiclos;
+      });
     this.obtenerIdInscripcionSuspendida();
     this.cursoNotSelected = true;
-    this.fechaActual = new Date();
+
     if (
       this.fechaActual.toString().substring(0, 3) == "Sat" ||
       this.fechaActual.toString().substring(0, 3) == "Sun"
@@ -57,13 +63,14 @@ export class RegistrarAsistenciaComponent implements OnInit, OnDestroy {
         }
       );
     }
+    
 
     if (
       (await this.fechaActualEnPeriodoCursado()) ||
       this.autenticacionService.getRol() == "Admin"
     ) {
       this.servicioEstudiante
-        .obtenerCursos(this.fechaActual.getFullYear())
+        .obtenerCursos(this.aniosCiclos[0])
         .pipe(takeUntil(this.unsubscribe))
         .subscribe((response) => {
           this.cursos = response.cursos;
@@ -100,7 +107,11 @@ export class RegistrarAsistenciaComponent implements OnInit, OnDestroy {
         this.asistenciaNueva = respuesta.asistenciaNueva;
         if (respuesta.estudiantes.length != 0) {
           this.estudiantesXDivision = respuesta.estudiantes.sort((a, b) =>
-            a.apellido.toLowerCase() > b.apellido.toLowerCase() ? 1 : b.apellido.toLowerCase() > a.apellido.toLowerCase() ? -1 : 0
+            a.apellido.toLowerCase() > b.apellido.toLowerCase()
+              ? 1
+              : b.apellido.toLowerCase() > a.apellido.toLowerCase()
+              ? -1
+              : 0
           );
         } else {
           this.estudiantesXDivision = [];
@@ -140,9 +151,8 @@ export class RegistrarAsistenciaComponent implements OnInit, OnDestroy {
     if (estudiantesXDivision.estado == this.idSuspendido) {
       estudiantesXDivision.presente = false;
       return true;
-    } else {
-      return false;
     }
+    return false;
   }
 
   obtenerIdInscripcionSuspendida() {
@@ -151,14 +161,6 @@ export class RegistrarAsistenciaComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.unsubscribe))
       .subscribe((response) => {
         this.idSuspendido = response.respuesta;
-      });
-  }
-
-  obtenerEstadoCicloLectivo() {
-    this.CicloLectivoService.obtenerEstadoCicloLectivo()
-      .pipe(takeUntil(this.unsubscribe))
-      .subscribe((response) => {
-        this.estadoCiclo = response.estadoCiclo;
       });
   }
 

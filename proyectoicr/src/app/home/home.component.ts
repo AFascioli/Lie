@@ -1,6 +1,6 @@
 import { environment } from "src/environments/environment";
 import { EventosService } from "./../eventos/eventos.service";
-import { Component, OnInit, OnDestroy } from "@angular/core";
+import { Component, OnInit, OnDestroy, ChangeDetectorRef } from "@angular/core";
 import { SwPush } from "@angular/service-worker";
 import { AutenticacionService } from "../login/autenticacionService.service";
 import { Router } from "@angular/router";
@@ -8,6 +8,7 @@ import { Evento } from "../eventos/evento.model";
 import { MatSnackBar, MatDialogRef, MatDialog } from "@angular/material";
 import { Subject } from "rxjs";
 import { takeUntil } from "rxjs/operators";
+import { MediaMatcher } from "@angular/cdk/layout";
 
 @Component({
   selector: "app-home",
@@ -25,6 +26,8 @@ export class HomeComponent implements OnInit, OnDestroy {
   enProcesoDeBorrado: boolean = false;
   isLoading: boolean = true;
   mostrarTooltip: boolean = true;
+  _mobileQueryListener: () => void;
+  mobileQuery: MediaQueryList;
 
   constructor(
     public snackBar: MatSnackBar,
@@ -32,8 +35,14 @@ export class HomeComponent implements OnInit, OnDestroy {
     private servicioAuth: AutenticacionService,
     public router: Router,
     public servicioEvento: EventosService,
-    public dialog: MatDialog
-  ) {}
+    public dialog: MatDialog,
+    public changeDetectorRef: ChangeDetectorRef,
+    public media: MediaMatcher
+  ) {
+    this.mobileQuery = media.matchMedia("(max-width: 800px)");
+    this._mobileQueryListener = () => changeDetectorRef.detectChanges();
+    this.mobileQuery.addListener(this._mobileQueryListener);
+  }
 
   eventoSeleccionado(evento: Evento) {
     if (!this.enProcesoDeBorrado) {
@@ -63,14 +72,28 @@ export class HomeComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    let auxEventoPasado = [];
+    let auxEventoProximo = [];
     this.fechaActual = new Date();
     this.servicioEvento
       .obtenerEvento()
       .pipe(takeUntil(this.unsubscribe))
       .subscribe((rtdo) => {
         this.eventos = rtdo.eventos;
-        this.eventos.sort((a, b) => this.compareFechaEventos(a, b));
-        this.isLoading = false;
+        for (let index = 0; index < rtdo.eventos.length; index++) {
+          if (this.eventoYaOcurrio(index))
+            auxEventoPasado.push(rtdo.eventos[index]);
+          else auxEventoProximo.push(rtdo.eventos[index]);
+        }
+        setTimeout(() => {
+          auxEventoPasado.sort((a, b) => this.compareFechaEventos(a, b));
+          auxEventoProximo.sort((a, b) => this.compareFechaEventos(a, b));
+        }, 100);
+
+        setTimeout(() => {
+          this.eventos = auxEventoProximo.concat(auxEventoPasado);
+          this.isLoading = false;
+        }, 250);
       });
     if ("serviceWorker" in navigator) {
       navigator.serviceWorker.register("ngsw-worker.js").then((swreg) => {
@@ -138,6 +161,14 @@ export class HomeComponent implements OnInit, OnDestroy {
   onEditar(evento) {
     this.servicioEvento.evento = evento;
     this.servicioEvento.eventoSeleccionado = evento;
+    this.servicioEvento.imageOnly= false;
+    this.router.navigate(["./modificarEvento"]);
+  }
+
+  onAgregarFoto(evento) {
+    this.servicioEvento.evento = evento;
+    this.servicioEvento.eventoSeleccionado = evento;
+    this.servicioEvento.imageOnly= true;
     this.router.navigate(["./modificarEvento"]);
   }
 

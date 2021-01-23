@@ -1,6 +1,11 @@
-<h1 *ngIf="!isLoading" class="componente-titulo">Definir agenda de curso</h1>
+<h1 class="componente-titulo">Definir agenda de curso</h1>
 <mat-card class="card-body-componente">
-  <form #form="ngForm" *ngIf="!fueraPeriodoDefinirAgenda">
+  <mat-spinner
+    class="spinner"
+    [diameter]="60"
+    *ngIf="isLoading && !cursoSelected"
+  ></mat-spinner>
+  <form #form="ngForm" *ngIf="!isLoading">
     <div class="div-select">
       <mat-form-field class="selectYear">
         <mat-select
@@ -12,11 +17,11 @@
           required
           (selectionChange)="onYearSelected(yearSelected)"
         >
-          <mat-option value="actual">
-            {{ fechaActual.getFullYear() }}</mat-option
+          <mat-option value="actual" *ngIf="aniosCiclos && enEstadoCLCursando">
+            {{ aniosCiclos[0] }}</mat-option
           >
-          <mat-option value="proximo">
-            {{ fechaActual.getFullYear() + 1 }}</mat-option
+          <mat-option value="proximo" *ngIf="aniosCiclos">
+            {{ aniosCiclos[1] }}</mat-option
           >
         </mat-select>
       </mat-form-field>
@@ -37,10 +42,6 @@
         </mat-select>
       </mat-form-field>
     </div>
-
-    <mat-card class="card-spinner" *ngIf="isLoading">
-      <mat-spinner class="spinner" [diameter]="60"></mat-spinner>
-    </mat-card>
 
     <div class="contenedor-tabla" *ngIf="!isLoading || cursoSelected">
       <table
@@ -71,10 +72,14 @@
                 id="materia{{ i }}"
                 ngModel
                 #materia+i="ngModel"
-                [disabled]="(!nextYearSelect || indice != i) && nuevo != i"
+                [disabled]="
+                  (!nextYearSelect || indice != i) &&
+                  (!esNuevo(i) || this.indiceEditando != i)
+                "
                 [(ngModel)]="agendaCurso.idMateria"
                 matNativeControl
                 required
+                (selectionChange)="setCambios()"
               >
                 <mat-option
                   *ngFor="let materia of materias"
@@ -105,10 +110,14 @@
                 name="docente{{ i }}"
                 ngModel
                 #docente+i="ngModel"
-                [disabled]="(!nextYearSelect || indice != i) && nuevo != i"
+                [disabled]="
+                  (!nextYearSelect || indice != i) &&
+                  (!esNuevo(i) || this.indiceEditando != i)
+                "
                 [(ngModel)]="agendaCurso.idDocente"
                 matNativeControl
                 required
+                (selectionChange)="setCambios()"
               >
                 <mat-option
                   *ngFor="let docente of docentes"
@@ -143,6 +152,7 @@
                 [(ngModel)]="agendaCurso.dia"
                 matNativeControl
                 required
+                (selectionChange)="setCambios()"
               >
                 <mat-option *ngFor="let dia of dias" [value]="dia">
                   {{ dia }}
@@ -184,6 +194,7 @@
                 <ngx-material-timepicker
                   [minutesGap]="15"
                   #picker1
+                  (timeChanged)="setCambios()"
                 ></ngx-material-timepicker>
               </div>
             </mat-form-field>
@@ -222,6 +233,7 @@
                 <ngx-material-timepicker
                   [minutesGap]="15"
                   #picker1
+                  (timeChanged)="setCambios()"
                 ></ngx-material-timepicker>
               </div>
             </mat-form-field>
@@ -239,7 +251,9 @@
             <p class="botones-accion">
               <button
                 id="editar{{ i }}"
-                [disabled]="indice == i"
+                [disabled]="
+                  indice == i || !cicloLectivoActualEnCreado || !nextYearSelect
+                "
                 mat-icon-button
                 (click)="editarAgenda(i)"
                 matTooltip="Editar"
@@ -249,7 +263,9 @@
               <button
                 id="reservar{{ i }}"
                 style="display: none"
-                [disabled]="indice != i"
+                [disabled]="
+                  indice != i || !cicloLectivoActualEnCreado || !nextYearSelect
+                "
                 mat-icon-button
                 (click)="reservarAgenda(i, row)"
                 matTooltip="Aceptar"
@@ -260,6 +276,7 @@
                 mat-icon-button
                 (click)="popupEliminar(i)"
                 matTooltip="Eliminar"
+                [disabled]="!cicloLectivoActualEnCreado || !nextYearSelect"
               >
                 <mat-icon>remove_circle_outline</mat-icon>
               </button>
@@ -274,17 +291,24 @@
       </table>
     </div>
   </form>
+  <p
+    class="aviso"
+    *ngIf="cursoSelected && !isLoading && dataSource.data.length == 0"
+  >
+    <b>El curso seleccionado no tiene horarios registrados</b>
+  </p>
+  <br />
   <div
     class="div-agregar"
-    *ngIf="!fueraPeriodoDefinirAgenda"
     [class.div-agregar-mobile]="mobileQuery.matches"
+    *ngIf="cursoSelected && cicloLectivoActualEnCreado"
   >
     <button
       mat-raised-button
       class="button-agregar"
       (click)="onAgregar()"
       [disabled]="!cursoSelected"
-      *ngIf="yearSelected"
+      *ngIf="cursoSelected"
     >
       <mat-icon>add_circle_outline</mat-icon>
       Agregar horario
@@ -293,25 +317,21 @@
     <button
       mat-raised-button
       class="button-clonar"
-      (click)="onClonar(yearSelected)"
+      (click)="onClonar()"
       *ngIf="cursoSelected"
     >
       <mat-icon>content_copy</mat-icon>
       Copiar agenda del año anterior
     </button>
   </div>
-  <p class="aviso" *ngIf="fueraPeriodoDefinirAgenda">
-    Atención, estamos fuera del periodo correspondiente para definir las agendas
-    de los cursos
-  </p>
   <br />
   <div class="div-guardar">
     <button
       mat-raised-button
       class="button-primary"
       (click)="onGuardar()"
-      *ngIf="cursoSelected && dataSource.data.length != 0 "
-      [disabled]="fueraPeriodoDefinirAgenda || !huboCambios"
+      *ngIf="cursoSelected && dataSource.data.length != 0"
+      [disabled]="!huboCambios"
     >
       Guardar
     </button>

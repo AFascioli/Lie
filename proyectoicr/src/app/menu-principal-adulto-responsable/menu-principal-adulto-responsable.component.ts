@@ -92,6 +92,8 @@ export class MenuPrincipalAdultoResponsableComponent implements OnInit {
   }
 
   obtenerDatosEstudiante() {
+    let auxEventoPasado = [];
+    let auxEventoProximo = [];
     this.servicioAR.getDatosEstudiantes(this.authService.getId()).subscribe(
       (response) => {
         this.estudiantes = response.estudiantes;
@@ -102,6 +104,19 @@ export class MenuPrincipalAdultoResponsableComponent implements OnInit {
           .obtenerEventosDeCursos(this.cursos.join(","))
           .subscribe((response) => {
             this.eventos = response.eventos;
+            for (let index = 0; index < this.eventos.length; index++) {
+              if (this.eventoYaOcurrio(index))
+                auxEventoPasado.push(this.eventos[index]);
+              else auxEventoProximo.push(this.eventos[index]);
+            }
+            setTimeout(() => {
+              auxEventoPasado.sort((a, b) => this.compareFechaEventos(a, b));
+              auxEventoProximo.sort((a, b) => this.compareFechaEventos(a, b));
+            }, 100);
+
+            setTimeout(() => {
+              this.eventos = auxEventoProximo.concat(auxEventoPasado);
+            }, 250);
           });
       },
       (error) => {
@@ -111,6 +126,31 @@ export class MenuPrincipalAdultoResponsableComponent implements OnInit {
         );
       }
     );
+  }
+  eventoYaOcurrio(indexEvento: number) {
+    const fechaActual = new Date();
+    const fechaEvento = new Date(this.eventos[indexEvento].fechaEvento);
+    if (
+      fechaActual.getMonth() == fechaEvento.getMonth() &&
+      fechaActual.getDate() == fechaEvento.getDate()
+    ) {
+      const horaEvento = new Date(
+        "01/01/2020 " + this.eventos[indexEvento].horaInicio
+      );
+      return fechaActual.getHours() >= horaEvento.getHours();
+    } else {
+      return fechaActual.getTime() > fechaEvento.getTime();
+    }
+  }
+
+  compareFechaEventos(a, b) {
+    if (a.fechaEvento < b.fechaEvento) {
+      return -1;
+    }
+    if (a.fechaEvento > b.fechaEvento) {
+      return 1;
+    }
+    return 0;
   }
 
   obtenerMes(fechaEvento) {

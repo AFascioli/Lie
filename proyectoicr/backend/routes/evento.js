@@ -145,7 +145,15 @@ router.post(
       return new Promise((resolve, reject) => {
         let filenamesEvento = [];
         if (req.body.filenames) {
-          filenamesEvento = req.body.filenames;
+          if (req.body.filenames.length > 1) {
+            if (Array.isArray(req.body.filenames)) {
+              for (let index = 0; index < req.body.filenames.length; index++) {
+                filenamesEvento.push(req.body.filenames[index]);
+              }
+            } else {
+              filenamesEvento.push(req.body.filenames);
+            }
+          } else filenamesEvento = req.body.filenames;
         }
         // Se sacan los filenames borrados
         if (filenamesEvento.length > 0 && req.body.filenamesBorrados != "null");
@@ -199,11 +207,13 @@ router.post(
         eventoModificado
           .save()
           .then(() => {
-            // this.notificarPorEvento(
-            //   this.evento.tags,
-            //   this.evento.titulo,
-            //   "El evento se realizará en la fecha " + evento.fechaEvento + "."
-            // );
+            notificarPorEvento(
+              eventoModificado.tags,
+              eventoModificado.titulo,
+              "El evento se realizará en la fecha " +
+                eventoModificado.fechaEvento +
+                "."
+            );
             res.status(201).json({
               message: "Evento modificado exitosamente",
               exito: true,
@@ -285,7 +295,7 @@ router.post(
 
     var obtenerDatosUsuario = (rol, emailUsuario) => {
       return new Promise((resolve, reject) => {
-        if (rol == "Adulto Responsable") {
+        if (rol == "AdultoResponsable") {
           AdultoResponsable.findOne({ email: emailUsuario }).then((usuario) => {
             apellido = usuario.apellido;
             nombre = usuario.nombre;
@@ -414,7 +424,7 @@ router.delete("/eliminarComentario", checkAuthMiddleware, (req, res, next) => {
 notificarPorEvento = async function (tags, titulo, cuerpo) {
   //Notificar a los adultos que correspondan a los cursos de los tags/chips
   if (tags.includes("Todos los cursos")) {
-    Suscripcion.notificacionMasiva(evento.titulo, this.cuerpo);
+    Suscripcion.notificacionMasiva(titulo, this.cuerpo);
   } else {
     let idEstadoActiva = await ClaseEstado.obtenerIdEstado(
       "Inscripcion",

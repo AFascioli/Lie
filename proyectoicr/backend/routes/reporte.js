@@ -10,57 +10,79 @@ router.get("/documentos", checkAuthMiddleware, async (req, res) => {
     "Inscripcion",
     "Activa"
   );
+  let idEstadoSuspendido = await ClaseEstado.obtenerIdEstado(
+    "Inscripcion",
+    "Suspendido"
+  );
+  let idEstadoPromovidoConExPend = await ClaseEstado.obtenerIdEstado(
+    "Inscripcion",
+    "Promovido con examenes pendientes"
+  );
+  let idEstadoExPendiente = await ClaseEstado.obtenerIdEstado(
+    "Inscripcion",
+    "Examenes pendientes"
+  );
+  let idEstadoPromovido = await ClaseEstado.obtenerIdEstado(
+    "Inscripcion",
+    "Promovido"
+  );
   Inscripcion.aggregate([
-    [
-      {
-        $match: {
-          idCurso: mongoose.Types.ObjectId(req.query.idCurso),
-          estado: mongoose.Types.ObjectId(idEstadoActiva),
+    {
+      $match: {
+        idCurso: mongoose.Types.ObjectId(req.query.idCurso),
+        estado: {
+          $in: [
+            mongoose.Types.ObjectId(idEstadoActiva),
+            mongoose.Types.ObjectId(idEstadoSuspendido),
+            mongoose.Types.ObjectId(idEstadoPromovidoConExPend),
+            mongoose.Types.ObjectId(idEstadoExPendiente),
+            mongoose.Types.ObjectId(idEstadoPromovido),
+          ],
         },
       },
-      {
-        $unwind: {
-          path: "$documentosEntregados",
+    },
+    {
+      $unwind: {
+        path: "$documentosEntregados",
+      },
+    },
+    {
+      $match: {
+        "documentosEntregados.entregado": false,
+      },
+    },
+    {
+      $lookup: {
+        from: "estudiante",
+        localField: "idEstudiante",
+        foreignField: "_id",
+        as: "estudiante",
+      },
+    },
+    {
+      $unwind: {
+        path: "$estudiante",
+      },
+    },
+    {
+      $addFields: {
+        estudiante: {
+          $concat: ["$estudiante.apellido", ", ", "$estudiante.nombre"],
+        },
+        documento: "$documentosEntregados.nombre",
+      },
+    },
+    {
+      $group: {
+        _id: "$idEstudiante",
+        nombres: {
+          $first: "$estudiante",
+        },
+        documentos: {
+          $push: "$documento",
         },
       },
-      {
-        $match: {
-          "documentosEntregados.entregado": false,
-        },
-      },
-      {
-        $lookup: {
-          from: "estudiante",
-          localField: "idEstudiante",
-          foreignField: "_id",
-          as: "estudiante",
-        },
-      },
-      {
-        $unwind: {
-          path: "$estudiante",
-        },
-      },
-      {
-        $addFields: {
-          estudiante: {
-            $concat: ["$estudiante.apellido", ", ", "$estudiante.nombre"],
-          },
-          documento: "$documentosEntregados.nombre",
-        },
-      },
-      {
-        $group: {
-          _id: "$idEstudiante",
-          nombres: {
-            $first: "$estudiante",
-          },
-          documentos: {
-            $push: "$documento",
-          },
-        },
-      },
-    ],
+    },
   ])
     .then((estudiantesXDocs) => {
       if (!estudiantesXDocs) {
@@ -91,12 +113,36 @@ router.get("/cuotas", checkAuthMiddleware, async (req, res) => {
     "Inscripcion",
     "Activa"
   );
+  let idEstadoSuspendido = await ClaseEstado.obtenerIdEstado(
+    "Inscripcion",
+    "Suspendido"
+  );
+  let idEstadoPromovidoConExPend = await ClaseEstado.obtenerIdEstado(
+    "Inscripcion",
+    "Promovido con examenes pendientes"
+  );
+  let idEstadoExPendiente = await ClaseEstado.obtenerIdEstado(
+    "Inscripcion",
+    "Examenes pendientes"
+  );
+  let idEstadoPromovido = await ClaseEstado.obtenerIdEstado(
+    "Inscripcion",
+    "Promovido"
+  );
 
   Inscripcion.aggregate([
     {
       $match: {
         idCurso: mongoose.Types.ObjectId(req.query.idCurso),
-        estado: mongoose.Types.ObjectId(idEstadoActiva),
+        estado: {
+          $in: [
+            mongoose.Types.ObjectId(idEstadoActiva),
+            mongoose.Types.ObjectId(idEstadoSuspendido),
+            mongoose.Types.ObjectId(idEstadoPromovidoConExPend),
+            mongoose.Types.ObjectId(idEstadoExPendiente),
+            mongoose.Types.ObjectId(idEstadoPromovido),
+          ],
+        },
       },
     },
     {

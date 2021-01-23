@@ -45,7 +45,6 @@ export class CalificacionesEstudiantesComponent implements OnInit, OnDestroy {
   rolConPermisosEdicion = false;
   isLoading = true;
   isLoading2 = false;
-  fechaActual: Date;
   calificacionesChange = false;
   puedeEditarCalificaciones = false;
   promedio = 0;
@@ -59,6 +58,8 @@ export class CalificacionesEstudiantesComponent implements OnInit, OnDestroy {
   mobileQuery: MediaQueryList;
   sePuedeCerrar = false;
   estadoCiclo: string;
+  estadoMXC: string;
+  aniosCiclos;
 
   @ViewChild("comboCurso", { static: false }) comboCurso: any;
   @ViewChild("comboTrimestre", { static: false }) comboTrimestre: any;
@@ -67,12 +68,12 @@ export class CalificacionesEstudiantesComponent implements OnInit, OnDestroy {
   constructor(
     public servicioEstudiante: EstudiantesService,
     public servicioCalificaciones: CalificacionesService,
+    public servicioCicloLectivo: CicloLectivoService,
     public popup: MatDialog,
     private snackBar: MatSnackBar,
     public servicioAutenticacion: AutenticacionService,
     public changeDetectorRef: ChangeDetectorRef,
-    public media: MediaMatcher,
-    public cicloLectivoService: CicloLectivoService
+    public media: MediaMatcher
   ) {
     this.mobileQuery = media.matchMedia("(max-width: 880px)");
     this._mobileQueryListener = () => changeDetectorRef.detectChanges();
@@ -80,8 +81,12 @@ export class CalificacionesEstudiantesComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.obtenerEstadoCicloLectivo();
-    this.fechaActual = new Date();
+    this.servicioCicloLectivo
+      .obtenerActualYSiguiente()
+      .pipe(takeUntil(this.unsubscribe))
+      .subscribe((response) => {
+        this.aniosCiclos = response.añosCiclos;
+      });
     this.obtenerTrimestreActual();
     this.validarPermisos();
     this.obtenerCursos();
@@ -91,6 +96,21 @@ export class CalificacionesEstudiantesComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.unsubscribe.next();
     this.unsubscribe.complete();
+  }
+
+  //Obtiene el estado de la MXC para saber si esta en otro estado distinto al del ciclo
+  //En caso que sea distinto no se puede modificar notas
+  obtenerEstadoMXC(idCurso, idMateria) {
+    this.servicioCicloLectivo
+      .obtenerEstadoMXC(idCurso, idMateria)
+      .pipe(takeUntil(this.unsubscribe))
+      .subscribe((response) => {
+        if (!this.validarEstadoMXC(response.estadoMXC)) {
+          this.puedeEditarCalificaciones = false;
+        } else {
+          this.puedeEditarCalificaciones = true;
+        }
+      });
   }
 
   validarPermisos() {
@@ -126,59 +146,59 @@ export class CalificacionesEstudiantesComponent implements OnInit, OnDestroy {
             });
         });
     } else {
-      this.servicioEstudiante
-        .obtenerCursos(this.fechaActual.getFullYear())
+      this.servicioCicloLectivo
+        .obtenerActualYSiguiente()
         .pipe(takeUntil(this.unsubscribe))
         .subscribe((response) => {
-          this.cursos = response.cursos;
-          this.cursos.sort((a, b) =>
-            a.nombre.charAt(0) > b.nombre.charAt(0)
-              ? 1
-              : b.nombre.charAt(0) > a.nombre.charAt(0)
-              ? -1
-              : 0
-          );
+          this.servicioEstudiante
+            .obtenerCursos(response.añosCiclos[0])
+            .pipe(takeUntil(this.unsubscribe))
+            .subscribe((response) => {
+              this.cursos = response.cursos;
+              this.cursos.sort((a, b) =>
+                a.nombre.charAt(0) > b.nombre.charAt(0)
+                  ? 1
+                  : b.nombre.charAt(0) > a.nombre.charAt(0)
+                  ? -1
+                  : 0
+              );
+            });
         });
     }
   }
 
-  obtenerEstadoCicloLectivo() {
-    this.cicloLectivoService
-      .obtenerEstadoCicloLectivo()
-      .pipe(takeUntil(this.unsubscribe))
-      .subscribe((response) => {
-        this.estadoCiclo = response.estadoCiclo;
-      });
-  }
-
   obtenerTrimestreActual() {
-    this.cicloLectivoService
+    this.servicioCicloLectivo
       .obtenerEstadoCicloLectivo()
       .pipe(takeUntil(this.unsubscribe))
       .subscribe(async (response) => {
-        let estado = await response.estadoCiclo;
+        this.estadoCiclo = await response.estadoCiclo;
         this.puedeEditarCalificaciones = true;
-        switch (estado) {
-          case "En primer trimestre":
-            this.trimestreActual = "1";
-            break;
-          case "En segundo trimestre":
-            this.trimestreActual = "2";
-            break;
-          case "En tercer trimestre":
-            this.trimestreActual = "3";
-            break;
-          default:
-            this.trimestreSeleccionado = "3";
-            this.puedeEditarCalificaciones = false;
-            break;
+        if (this.servicioAutenticacion.getRol() != "Director") {
+          switch (this.estadoCiclo) {
+            case "En primer trimestre":
+              this.trimestreActual = "1";
+              break;
+            case "En segundo trimestre":
+              this.trimestreActual = "2";
+              break;
+            case "En tercer trimestre":
+              this.trimestreActual = "3";
+              break;
+            default:
+              this.trimestreSeleccionado = "3";
+              this.puedeEditarCalificaciones = false;
+              break;
+          }
         }
+
         this.trimestreSeleccionado = this.trimestreActual;
       });
   }
 
   onTrimestreChange(form: NgForm) {
-    this.obtenerNotas(form);
+    if (this.cursoSeleccionado && this.materiaSeleccionada)
+      this.obtenerNotas(form);
     if (
       this.trimestreSeleccionado == this.trimestreActual ||
       this.servicioAutenticacion.getRol() == "Director"
@@ -218,6 +238,7 @@ export class CalificacionesEstudiantesComponent implements OnInit, OnDestroy {
             duration: 3000,
           });
           this.sePuedeCerrar = false;
+          this.puedeEditarCalificaciones = false;
         } else {
           this.snackBar.open(response.message, "", {
             panelClass: ["snack-bar-fracaso"],
@@ -277,6 +298,24 @@ export class CalificacionesEstudiantesComponent implements OnInit, OnDestroy {
     }
   }
 
+  //Valida si el estado de la MXC es el mismo al trimestre actual
+  validarEstadoMXC(estadoMXC) {
+    if (estadoMXC == "En primer trimestre" && this.trimestreActual == "1") {
+      return true;
+    } else if (
+      estadoMXC == "En segundo trimestre" &&
+      this.trimestreActual == "2"
+    ) {
+      return true;
+    } else if (
+      estadoMXC == "En tercer trimestre" &&
+      this.trimestreActual == "3"
+    ) {
+      return true;
+    }
+    return false;
+  }
+
   obtenerNotas(form: NgForm) {
     this.isLoading2 = true;
     if (form.value.curso != null && form.value.materia != null) {
@@ -292,13 +331,18 @@ export class CalificacionesEstudiantesComponent implements OnInit, OnDestroy {
           this.materiaSeleccionada = true;
           this.estudiantes = [...respuesta.estudiantes];
           this.estudiantes = this.estudiantes.sort((a, b) =>
-            a.apellido.toLowerCase() > b.apellido.toLowerCase() ? 1 : b.apellido.toLowerCase() > a.apellido.toLowerCase() ? -1 : 0
+            a.apellido.toLowerCase() > b.apellido.toLowerCase()
+              ? 1
+              : b.apellido.toLowerCase() > a.apellido.toLowerCase()
+              ? -1
+              : 0
           );
           this.dataSource = new MatTableDataSource(this.estudiantes);
           this.dataSource.filter = this.filtroEstudiante;
           this.dataSource.paginator = this.paginator;
           this.dataSource.paginator.firstPage();
           this.sePuedeCerrarTrimestre(form);
+          this.obtenerEstadoMXC(form.value.curso, form.value.materia);
           this.isLoading2 = false;
         });
     }

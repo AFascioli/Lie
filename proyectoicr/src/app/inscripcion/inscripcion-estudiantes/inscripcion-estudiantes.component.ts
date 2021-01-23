@@ -1,3 +1,4 @@
+import { CicloLectivoService } from "src/app/cicloLectivo.service";
 import { InscripcionService } from "../inscripcion.service";
 import { EstudiantesService } from "../../estudiantes/estudiante.service";
 import { OnInit, Component, ChangeDetectorRef, OnDestroy } from "@angular/core";
@@ -12,6 +13,7 @@ import { MediaMatcher } from "@angular/cdk/layout";
 import { AutenticacionService } from "src/app/login/autenticacionService.service";
 import { Subject } from "rxjs";
 import { takeUntil } from "rxjs/operators";
+import { Router } from "@angular/router";
 
 @Component({
   selector: "app-inscripcion-estudiantes",
@@ -27,7 +29,7 @@ export class InscripcionEstudianteComponent implements OnInit, OnDestroy {
   nombreEstudiante: string;
   _idEstudiante: string;
   matConfig = new MatDialogConfig();
-  fechaActual: Date;
+  fechaActual = new Date();
   estudianteEstaInscripto: boolean;
   documentosEntregados = [
     { nombre: "Fotocopia documento", entregado: false },
@@ -36,22 +38,28 @@ export class InscripcionEstudianteComponent implements OnInit, OnDestroy {
   ];
   _mobileQueryListener: () => void;
   mobileQuery: MediaQueryList;
-  fechaDentroDeRangoInscripcion: boolean = true;
   private unsubscribe: Subject<void> = new Subject();
   isLoading: boolean = true;
   cursoActual: any;
   yearSelected: any;
   nextYearSelect: boolean;
   tieneInscripcionPendiente: boolean = false;
+  cicloHabilitado: boolean;
+  estadoCicloLectivo: String;
+  aniosCiclos: any[];
+  inscripto = false;
 
   constructor(
     public servicioEstudiante: EstudiantesService,
     public servicioInscripcion: InscripcionService,
+    public servicioCicloLectivo: CicloLectivoService,
+    public autenticacionService: AutenticacionService,
     public dialog: MatDialog,
     public snackBar: MatSnackBar,
     public changeDetectorRef: ChangeDetectorRef,
     public authService: AutenticacionService,
-    public media: MediaMatcher
+    public media: MediaMatcher,
+    private router: Router
   ) {
     this.mobileQuery = media.matchMedia("(max-width: 1000px)");
     this._mobileQueryListener = () => changeDetectorRef.detectChanges();
@@ -64,34 +72,42 @@ export class InscripcionEstudianteComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.fechaActual = new Date();
+    this.inscripto = false;
     this.apellidoEstudiante = this.servicioEstudiante.estudianteSeleccionado.apellido;
     this.nombreEstudiante = this.servicioEstudiante.estudianteSeleccionado.nombre;
     this._idEstudiante = this.servicioEstudiante.estudianteSeleccionado._id;
+    this.cicloActualHabilitado();
     this.servicioEstudiante
       .estudianteEstaInscripto(this._idEstudiante)
       .pipe(takeUntil(this.unsubscribe))
       .subscribe((response) => {
         this.estudianteEstaInscripto = response.exito;
       });
-    this.servicioInscripcion
-      .obtenerCursosInscripcionEstudiante(this.fechaActual.getFullYear())
+    this.servicioCicloLectivo
+      .obtenerActualYSiguiente()
       .pipe(takeUntil(this.unsubscribe))
       .subscribe((response) => {
-        if (response.cursoActual != "") {
-          this.cursoActual = response.cursoActual.nombre;
-        }
+        this.aniosCiclos = response.añosCiclos;
+        this.servicioInscripcion
+          .obtenerCursosInscripcionEstudiante(this.aniosCiclos[0])
+          .pipe(takeUntil(this.unsubscribe))
+          .subscribe((response) => {
+            if (response.cursoActual != "") {
+              this.cursoActual = response.cursoActual.nombre;
+            }
+            this.isLoading = false;
+          });
       });
+
     this.servicioInscripcion
       .validarInscripcionPendiente(this._idEstudiante)
       .pipe(takeUntil(this.unsubscribe))
       .subscribe((response) => {
         this.tieneInscripcionPendiente = response.inscripcionPendiente;
+        this.cursoActual = response.curso;
       });
-    this.isLoading = false;
   }
 
-  //Obtiene la capacidad del curso seleccionado
   onCursoSeleccionado(curso) {
     this.cursoSeleccionado = curso.value;
     this.obtenerCapacidadCurso();
@@ -100,10 +116,10 @@ export class InscripcionEstudianteComponent implements OnInit, OnDestroy {
   onYearSelected(yearSelected) {
     this.cursoSeleccionado = "";
     if (yearSelected.value == "actual") {
-      this.yearSelected = this.fechaActual.getFullYear();
+      this.yearSelected = this.aniosCiclos[0];
       this.nextYearSelect = false;
     } else {
-      this.yearSelected = this.fechaActual.getFullYear() + 1;
+      this.yearSelected = this.aniosCiclos[1];
       this.nextYearSelect = true;
     }
     this.obtenerCursosEstudiante();
@@ -117,7 +133,7 @@ export class InscripcionEstudianteComponent implements OnInit, OnDestroy {
   }
 
   inscribirEstudiante() {
-    if (this.yearSelected == this.fechaActual.getFullYear()) {
+    if (this.yearSelected == this.aniosCiclos[0]) {
       this.inscribirEstudianteAñoActual();
     } else {
       this.inscribirEstudianteProximoAño();
@@ -135,12 +151,16 @@ export class InscripcionEstudianteComponent implements OnInit, OnDestroy {
       .subscribe((response) => {
         let exito = response.exito;
         if (exito) {
+          this.inscripto = true;
           this.capacidadCurso--;
           this.snackBar.open(response.message, "", {
             panelClass: ["snack-bar-exito"],
-            duration: 4500,
+            duration: 3500,
           });
           this.obtenerCursosEstudiante();
+          setTimeout(() => {
+            this.router.navigate(["./buscar/lista"]);
+          }, 3500);
         } else {
           this.snackBar.open(response.message, "", {
             duration: 4500,
@@ -157,12 +177,16 @@ export class InscripcionEstudianteComponent implements OnInit, OnDestroy {
       .subscribe((response) => {
         let exito = response.exito;
         if (exito) {
+          this.inscripto = true;
           this.capacidadCurso--;
           this.snackBar.open(response.message, "", {
             panelClass: ["snack-bar-exito"],
-            duration: 4500,
+            duration: 3500,
           });
           this.obtenerCursosEstudiante();
+          setTimeout(() => {
+            this.router.navigate(["./buscar/lista"]);
+          }, 3500);
         } else {
           this.snackBar.open(response.message, "", {
             duration: 4500,
@@ -230,6 +254,19 @@ export class InscripcionEstudianteComponent implements OnInit, OnDestroy {
           });
       }
     }
+  }
+
+  cicloActualHabilitado() {
+    this.servicioCicloLectivo
+      .obtenerEstadoCicloLectivo()
+      .pipe(takeUntil(this.unsubscribe))
+      .subscribe((response) => {
+        this.cicloHabilitado =
+          response.estadoCiclo == "Creado" ||
+          response.estadoCiclo == "En primer trimestre" ||
+          response.estadoCiclo == "En segundo trimestre" ||
+          response.estadoCiclo == "En tercer trimestre";
+      });
   }
 }
 

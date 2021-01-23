@@ -6,6 +6,7 @@ import { ReportesService } from "../reportes.service";
 import { Router } from "@angular/router";
 import { jsPDF } from "jspdf";
 import html2canvas from "html2canvas";
+import { CicloLectivoService } from "src/app/cicloLectivo.service";
 
 @Component({
   selector: "app-resumen-academico",
@@ -26,16 +27,16 @@ export class ResumenAcademicoComponent implements OnInit {
   constructor(
     public router: Router,
     public servicioEstudiante: EstudiantesService,
+    public servicioCicloLectivo: CicloLectivoService,
     public reportService: ReportesService
   ) {}
 
   ngOnInit(): void {
     this.fechaActual = new Date();
-    if (!this.reportService.retornoDeResumenAcademico)
-    this.obtenerCursos();
+    if (!this.reportService.retornoDeResumenAcademico) this.obtenerCursos();
     else {
       this.obtenerCursos();
-      this.cursoSeleccionado=this.reportService.cursoSeleccionado;
+      this.cursoSeleccionado = this.reportService.cursoSeleccionado;
       this.obtenerEstudiantes(this.reportService.cursoSeleccionado);
     }
   }
@@ -44,16 +45,18 @@ export class ResumenAcademicoComponent implements OnInit {
     this.reportService.cursoSeleccionado = curso;
     this.isLoading = true;
     this.cursoNotSelected = false;
-    this.cursoSeleccionado=curso;
+    this.cursoSeleccionado = curso;
     this.servicioEstudiante
       .obtenerEstudiantesDeCurso(curso)
       .pipe(takeUntil(this.unsubscribe))
       .subscribe((response) => {
         this.estudiantes = response.estudiante;
         this.estudiantes.sort((a, b) =>
-          a.apellido.toLowerCase().charAt(0) > b.apellido.toLowerCase().charAt(0)
+          a.apellido.toLowerCase().charAt(0) >
+          b.apellido.toLowerCase().charAt(0)
             ? 1
-            : b.apellido.toLowerCase().charAt(0) > a.apellido.toLowerCase().charAt(0)
+            : b.apellido.toLowerCase().charAt(0) >
+              a.apellido.toLowerCase().charAt(0)
             ? -1
             : 0
         );
@@ -68,22 +71,29 @@ export class ResumenAcademicoComponent implements OnInit {
     }
   }
   obtenerCursos() {
-    this.servicioEstudiante
-      .obtenerCursos(this.fechaActual.getFullYear())
+    this.servicioCicloLectivo
+      .obtenerActualYSiguiente()
       .pipe(takeUntil(this.unsubscribe))
       .subscribe((response) => {
-        this.cursos = response.cursos;
-        this.cursos.sort((a, b) =>
-          a.nombre.charAt(0) > b.nombre.charAt(0)
-            ? 1
-            : b.nombre.charAt(0) > a.nombre.charAt(0)
-            ? -1
-            : 0
-        );
-      });
+        this.servicioEstudiante
+          .obtenerCursos(response.añosCiclos[0])
+          .pipe(takeUntil(this.unsubscribe))
+          .subscribe((response) => {
+            this.cursos = response.cursos;
+            this.cursos.sort((a, b) =>
+              a.nombre.charAt(0) > b.nombre.charAt(0)
+                ? 1
+                : b.nombre.charAt(0) > a.nombre.charAt(0)
+                ? -1
+                : 0
+            );
+          });
+      })
   }
   verResumenAcademico(i) {
-    this.reportService.nombreCurso= this.obtenerNombreCurso(this.reportService.cursoSeleccionado);
+    this.reportService.nombreCurso = this.obtenerNombreCurso(
+      this.reportService.cursoSeleccionado
+    );
     this.reportService.idEstudianteSeleccionado = i._id;
     this.router.navigate(["reporteResumenAcademico"]);
   }
@@ -157,7 +167,9 @@ export class ReporteResumenAcademicoComponent implements OnInit {
         );
         this.sanciones = this.resumen[0].sanciones;
         this.estudiante =
-          (this.resumen[0].apellido).toUpperCase() + ", " + this.resumen[0].nombre;
+          this.resumen[0].apellido.toUpperCase() +
+          ", " +
+          this.resumen[0].nombre;
         this.inasistenciasInjustificadas = this.resumen[0].contadorInasistenciasInjustificada;
         this.inasistenciasJustificadas = this.resumen[0].contadorInasistenciasJustificada;
         this.reordenarCalificaciones();
@@ -168,7 +180,6 @@ export class ReporteResumenAcademicoComponent implements OnInit {
   }
 
   calcularSumatoriaSanciones() {
-    console.log(this.sanciones);
     this.sanciones.forEach((sancion) => {
       switch (sancion.tipo) {
         case "Llamado de atencion":
@@ -303,7 +314,6 @@ export class ReporteResumenAcademicoComponent implements OnInit {
     else this.promedioGeneral = 0;
   }
 
-
   public descargarPDF() {
     var element = document.getElementById("content");
 
@@ -317,12 +327,12 @@ export class ReporteResumenAcademicoComponent implements OnInit {
       var imgH = (canvas.height * 208) / canvas.width;
       // doc.addImage(imgData, 0, 7, 208, imgH);
       var imgICR = new Image();
-      imgICR.src = 'assets/reports/logoICR.png'
+      imgICR.src = "assets/reports/logoICR.png";
       var imgLIE = new Image();
-      imgLIE.src = 'assets/reports/logoLIE.png'
-      doc.addImage(imgICR,10,2,15,15);
-      doc.addImage(imgLIE,190,4,10,10);
-      doc.setTextColor(156,156,156);
+      imgLIE.src = "assets/reports/logoLIE.png";
+      doc.addImage(imgICR, 10, 2, 15, 15);
+      doc.addImage(imgLIE, 190, 4, 10, 10);
+      doc.setTextColor(156, 156, 156);
       doc.setFontSize(10);
       doc.setFont("Segoe UI");
       doc.text("Instituto Cristo Rey", 94, 7);
@@ -330,9 +340,19 @@ export class ReporteResumenAcademicoComponent implements OnInit {
       doc.setDrawColor(184, 184, 184);
       doc.line(10, 17, 200, 17);
       doc.addImage(imgData, 0, 30, 208, imgH);
-      doc.text("Fecha: " + m_date.day + '/' + m_date.month + '/' + m_date.year, 10, 295 - 5);
+      doc.text(
+        "Fecha: " + m_date.day + "/" + m_date.month + "/" + m_date.year,
+        10,
+        295 - 5
+      );
       doc.text("Página: 1", 180, 295 - 5);
-      doc.save("ResumenAcadémico-"+this.reportService.nombreCurso+"-"+this.estudiante+".pdf");
+      doc.save(
+        "ResumenAcadémico-" +
+          this.reportService.nombreCurso +
+          "-" +
+          this.estudiante +
+          ".pdf"
+      );
     });
   }
 }

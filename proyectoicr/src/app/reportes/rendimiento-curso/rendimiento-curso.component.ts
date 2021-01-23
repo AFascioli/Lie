@@ -76,6 +76,8 @@ export class RendimientoCursoComponent implements OnInit {
   barDataSet1 = [];
   barDataSet2 = [];
   barDataSet3 = [];
+  mostrarHorizontal: boolean;
+  mostrarVertical: boolean;
   legend: boolean = false;
   public barChartOptions: ChartOptions;
   public barChartOptions1: ChartOptions;
@@ -102,6 +104,7 @@ export class RendimientoCursoComponent implements OnInit {
 
   onYearSelected(yearSelected) {
     this.materiaSelec = false;
+    this.materiaS = null;
     this.estudiantes = [];
     this.materias = [];
     this.obtenerCursos(yearSelected.value);
@@ -144,7 +147,7 @@ export class RendimientoCursoComponent implements OnInit {
     }
   }
 
-  onCursoSeleccionado(curso, materia: NgModel) {
+  onCursoSeleccionado(curso, materia) {
     this.cursoS = curso;
     this.cursoSNombre = this.obtenerNombreCurso(curso.value);
     this.materiaS = materia;
@@ -175,14 +178,14 @@ export class RendimientoCursoComponent implements OnInit {
     }
   }
 
-  obtenerNotas(form: NgForm) {
-    this.materiaSNombre = this.obtenerNombreMateria(form.value.materia);
+  obtenerNotas(materia) {
+    this.materiaSNombre = this.obtenerNombreMateria(materia);
     this.isLoading2 = true;
-    if (form.value.curso != "" || form.value.materia != "") {
+    if (this.cursoS.value != "" || materia != "") {
       this.servicioCalificaciones
         .obtenerCalificacionesEstudiantesXCursoXMateriaCicloLectivo(
-          form.value.curso,
-          form.value.materia
+          this.cursoS.value,
+          materia
         )
         .pipe(takeUntil(this.unsubscribe))
         .subscribe((respuesta) => {
@@ -405,15 +408,23 @@ export class RendimientoCursoComponent implements OnInit {
     switch (grafico) {
       case 0:
         grafico = "pie";
+        this.mostrarHorizontal = false;
+        this.mostrarVertical = false;
         break;
       case 1:
         grafico = "doughnut";
+        this.mostrarHorizontal = false;
+        this.mostrarVertical = false;
         break;
       case 2:
         grafico = "bar";
+        this.mostrarHorizontal = true;
+        this.mostrarVertical = false;
         break;
       case 3:
         grafico = "horizontalBar";
+        this.mostrarHorizontal = false;
+        this.mostrarVertical = true;
         break;
       default:
         break;
@@ -423,16 +434,19 @@ export class RendimientoCursoComponent implements OnInit {
     if (grafico == "pie" || grafico == "doughnut") this.legend = true;
     else this.legend = false;
 
-    if (this.cursoS) this.onCursoSeleccionado(this.cursoS, this.materiaS);
+    if (
+      this.materiaS &&
+      this.materiaS.value != "" &&
+      this.materiaS.value != null
+    )
+      this.obtenerNotas(this.materiaS.value);
+    else if (this.cursoS) this.onCursoSeleccionado(this.cursoS, this.materiaS);
     else
       this.servicioCicloLectivo
-        .obtenerAniosCicloLectivoActualYPrevios()
+        .obtenerActualYAnteriores()
         .pipe(takeUntil(this.unsubscribe))
         .subscribe((response) => {
-          this.year = response.respuesta;
-          this.year.sort((a, b) =>
-            a.anio > b.anio ? 1 : b.anio > a.anio ? -1 : 0
-          );
+          this.year = response.añosCiclos;
         });
   }
 
@@ -460,7 +474,8 @@ export class RendimientoCursoComponent implements OnInit {
     this.isLoading3 = false;
     this.barDataSet = [
       {
-        backgroundColor: ["#6a8caf", "#75b79e", "#a7e9af", "#eef9bf"],
+        hoverBackgroundColor: ["#43586e", "#588a77", "#7dad83", "#b7bf91"],
+        backgroundColor: ["#6a8caf", "#75b79e", "#a7e9af", "#d0dba0"],
         // backgroundColor: ["#dddddd", "#d9adad", "#84a9ac", "#89c9b8"],
         // backgroundColor: ["#ea907a", "#fbc687", "#f4f7c5", "#aacdbe"],
         data: [this.t1_iMI3, this.t1_iE3Y6, this.t1_iE6y8, this.t1_iM8],
@@ -468,47 +483,78 @@ export class RendimientoCursoComponent implements OnInit {
     ];
     this.barDataSet1 = [
       {
-        backgroundColor: ["#6a8caf", "#75b79e", "#a7e9af", "#eef9bf"],
+        hoverBackgroundColor: ["#43586e", "#588a77", "#7dad83", "#b7bf91"],
+        backgroundColor: ["#6a8caf", "#75b79e", "#a7e9af", "#d0dba0"],
         data: [this.t2_iMI3, this.t2_iE3Y6, this.t2_iE6y8, this.t2_iM8],
       },
     ];
     this.barDataSet2 = [
       {
-        backgroundColor: ["#6a8caf", "#75b79e", "#a7e9af", "#eef9bf"],
+        hoverBackgroundColor: ["#43586e", "#588a77", "#7dad83", "#b7bf91"],
+        backgroundColor: ["#6a8caf", "#75b79e", "#a7e9af", "#d0dba0"],
         data: [this.t3_iMI3, this.t3_iE3Y6, this.t3_iE6y8, this.t3_iM8],
       },
     ];
     this.barDataSet3 = [
       {
-        backgroundColor: ["#6a8caf", "#75b79e", "#a7e9af", "#eef9bf"],
+        hoverBackgroundColor: ["#43586e", "#588a77", "#7dad83", "#b7bf91"],
+        backgroundColor: ["#6a8caf", "#75b79e", "#a7e9af", "#d0dba0"],
         data: [this.f_iMI3, this.f_iE3Y6, this.f_iE6y8, this.f_iM8],
       },
     ];
 
-    // this.barChartLabels = [
-    //   "Promedio menor o igual a 3",
-    //   "Promedio entre 3 y 6 inclusive",
-    //   "Promedio entre 6 y 8 inclusive",
-    //   "Promedio mayor a 8",
-    // ];
-    this.barChartLabelsH = [
-      "Promedio <= 3",
-      "3 < Promedio <= 6",
-      "6 < Promedio <= 8",
-      "Promedio > 8",
-    ];
-
+    if (this.tipoGrafico == "horizontalBar") {
+      this.barChartLabelsH = [
+        "Prom<=3",
+        "3<Prom<=6",
+        "6<Prom<=8",
+        "Prom>8",
+      ];
+    } else {
+      this.barChartLabelsH = [
+        "Promedio <= 3",
+        "3 < Promedio <= 6",
+        "6 < Promedio <= 8",
+        "Promedio > 8",
+      ];
+    }
     this.barChartOptions = {
-      responsive: true,
+      responsive: false,
       legend: {
+        fullWidth:false,
         display: this.legend,
         labels: {
-          fontSize: 12,
+          boxWidth: 20,
+          fontSize: 11,
           fontFamily:
             '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif',
           fontColor: "#181a21",
         },
         position: "right",
+      },
+      scales: {
+        xAxes: [
+          {
+            gridLines: {
+              display: this.mostrarVertical,
+            },
+            ticks: {
+              stepSize: 1,
+              display: this.mostrarHorizontal,
+            },
+          },
+        ],
+        yAxes: [
+          {
+            gridLines: {
+              display: this.mostrarHorizontal,
+            },
+            ticks: {
+              stepSize: 1,
+              display: this.mostrarVertical,
+            },
+          },
+        ],
       },
       plugins: {
         datalabels: {
@@ -530,16 +576,41 @@ export class RendimientoCursoComponent implements OnInit {
       },
     };
     this.barChartOptions1 = {
-      responsive: true,
+      responsive: false,
       legend: {
         display: this.legend,
         labels: {
-          fontSize: 12,
+          boxWidth: 20,
+          fontSize: 11,
           fontFamily:
             '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif',
           fontColor: "#181a21",
         },
         position: "right",
+      },
+      scales: {
+        xAxes: [
+          {
+            gridLines: {
+              display: this.mostrarVertical,
+            },
+            ticks: {
+              stepSize: 1,
+              display: this.mostrarHorizontal,
+            },
+          },
+        ],
+        yAxes: [
+          {
+            gridLines: {
+              display: this.mostrarHorizontal,
+            },
+            ticks: {
+              stepSize: 1,
+              display: this.mostrarVertical,
+            },
+          },
+        ],
       },
       plugins: {
         datalabels: {
@@ -561,16 +632,41 @@ export class RendimientoCursoComponent implements OnInit {
       },
     };
     this.barChartOptions2 = {
-      responsive: true,
+      responsive: false,
       legend: {
         display: this.legend,
         labels: {
-          fontSize: 12,
+          boxWidth: 20,
+          fontSize: 11,
           fontFamily:
             '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif',
           fontColor: "#181a21",
         },
         position: "right",
+      },
+      scales: {
+        xAxes: [
+          {
+            gridLines: {
+              display: this.mostrarVertical,
+            },
+            ticks: {
+              stepSize: 1,
+              display: this.mostrarHorizontal,
+            },
+          },
+        ],
+        yAxes: [
+          {
+            gridLines: {
+              display: this.mostrarHorizontal,
+            },
+            ticks: {
+              stepSize: 1,
+              display: this.mostrarVertical,
+            },
+          },
+        ],
       },
       plugins: {
         datalabels: {
@@ -596,12 +692,37 @@ export class RendimientoCursoComponent implements OnInit {
       legend: {
         display: this.legend,
         labels: {
+          boxWidth: 20,
           fontSize: 14,
           fontFamily:
             '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif',
           fontColor: "#181a21",
         },
         position: "bottom",
+      },
+      scales: {
+        xAxes: [
+          {
+            gridLines: {
+              display: this.mostrarVertical,
+            },
+            ticks: {
+              stepSize: 1,
+              display: this.mostrarHorizontal,
+            },
+          },
+        ],
+        yAxes: [
+          {
+            gridLines: {
+              display: this.mostrarHorizontal,
+            },
+            ticks: {
+              stepSize: 1,
+              display: this.mostrarVertical,
+            },
+          },
+        ],
       },
       plugins: {
         datalabels: {

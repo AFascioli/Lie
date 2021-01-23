@@ -67,17 +67,22 @@ export class DefinirAgendaComponent implements OnInit, OnDestroy {
     "14:15",
   ];
   nuevo: number;
+  indiceNuevo: number[] = [];
+  indiceEditando: number = -1;
   isLoading = false;
   huboCambios = false;
-  fechaActual: Date;
-  fueraPeriodoDefinirAgenda = false;
+  permiteModificarAgenda = false;
+  cicloLectivoActualEnCreado = false;
   _mobileQueryListener: () => void;
   mobileQuery: MediaQueryList;
+  aniosCiclos: any[];
+  enEstadoCLCursando;
 
   constructor(
     public servicioEstudiante: EstudiantesService,
     public servicioAgenda: AgendaService,
     public servicioAuth: AutenticacionService,
+    public cicloLectivoService: CicloLectivoService,
     public dialog: MatDialog,
     private snackBar: MatSnackBar,
     public router: Router,
@@ -93,31 +98,41 @@ export class DefinirAgendaComponent implements OnInit, OnDestroy {
   @ViewChild(MatSort, { static: true }) sort: MatSort;
 
   ngOnInit() {
-    this.fechaActual = new Date();
-    if (!this.inicioCursado() || this.servicioAuth.getRol() == "Admin") {
-      this.servicioAgenda
-        .obtenerMaterias()
-        .pipe(takeUntil(this.unsubscribe))
-        .subscribe((response) => {
-          this.materias = response.materias;
-        });
-      this.obtenerDocentes();
-    } else {
-      this.fueraPeriodoDefinirAgenda = true;
-    }
+    this.isLoading = true;
+
+    this.servicioCicloLectivo
+      .obtenerActualYSiguiente()
+      .pipe(takeUntil(this.unsubscribe))
+      .subscribe((response) => {
+        this.verificarEstadoCiclo();
+        this.aniosCiclos = response.añosCiclos;
+        this.isLoading = false;
+      });
+
+    this.servicioAgenda
+      .obtenerMaterias()
+      .pipe(takeUntil(this.unsubscribe))
+      .subscribe((response) => {
+        this.materias = response.materias;
+      });
+
+    this.obtenerDocentes();
   }
 
   ngAfterViewInit() {
     this.dataSource.sort = this.sort;
   }
 
-  //Devuelve un booleano segun si se inicio o no el cursado
-  async inicioCursado() {
-    await this.servicioCicloLectivo
-      .validarRegistrarAgenda()
+  //Si el CL esta en "Cursando" se debe mostrar el año actual en el select.
+  verificarEstadoCiclo() {
+    this.cicloLectivoService
+      .obtenerEstadoCicloLectivo()
       .pipe(takeUntil(this.unsubscribe))
       .subscribe((response) => {
-        return response.permiso;
+        this.enEstadoCLCursando =
+          response.estadoCiclo == "En primer trimestre" ||
+          response.estadoCiclo == "En segundo trimestre" ||
+          response.estadoCiclo == "En tercer trimestre";
       });
   }
 
@@ -194,12 +209,10 @@ export class DefinirAgendaComponent implements OnInit, OnDestroy {
   }
 
   obtenerCursos() {
-    this.isLoading = true;
     this.servicioEstudiante
       .obtenerCursos(this.yearSelected)
       .pipe(takeUntil(this.unsubscribe))
       .subscribe((response) => {
-        this.isLoading = false;
         this.cursos = response.cursos;
         this.cursos.sort((a, b) =>
           a.nombre.charAt(0) > b.nombre.charAt(0)
@@ -219,9 +232,9 @@ export class DefinirAgendaComponent implements OnInit, OnDestroy {
     } else {
       this.validarHorario(row, indice);
       if (this.agendaValida) {
+        this.indiceEditando = -1;
         this.indice = -1;
         this.isEditing = false;
-        this.huboCambios = true;
         document.getElementById("editar" + indice).style.display = "block";
         document.getElementById("reservar" + indice).style.display = "none";
       }
@@ -230,14 +243,15 @@ export class DefinirAgendaComponent implements OnInit, OnDestroy {
 
   onGuardar() {
     if (this.agendaValida) {
-        this.servicioAgenda
-          .registrarAgenda(this.dataSource.data, this.idCursoSeleccionado)
-          .subscribe((response) => {
-            this.isEditing = false;
-            this.huboCambios = false;
-            this.openSnackBar(response.message, "snack-bar-exito");
-          });
-        } else {
+      this.servicioAgenda
+        .registrarAgenda(this.dataSource.data, this.idCursoSeleccionado)
+        .subscribe((response) => {
+          this.isEditing = false;
+          this.huboCambios = false;
+          this.indiceNuevo = [];
+          this.openSnackBar(response.message, "snack-bar-exito");
+        });
+    } else {
       this.openSnackBar(this.mensajeError, "snack-bar-fracaso");
     }
   }
@@ -246,6 +260,7 @@ export class DefinirAgendaComponent implements OnInit, OnDestroy {
     if (this.agendaValida) {
       let largo = this.dataSource.data.length;
       this.nuevo = largo;
+      this.indiceNuevo.push(this.dataSource.data.length);
       this.dataSource.data.push({
         nombre: "",
         idMXC: "",
@@ -329,6 +344,7 @@ export class DefinirAgendaComponent implements OnInit, OnDestroy {
   }
 
   editarAgenda(indice) {
+    this.indiceEditando = indice;
     this.agendaValida = false;
     this.mensajeError =
       "Necesitas finalizar la edición de la correspondiente fila";
@@ -396,14 +412,31 @@ export class DefinirAgendaComponent implements OnInit, OnDestroy {
   onYearSelected(yearSelected) {
     this.cursoSelected = false;
     if (yearSelected.value == "actual") {
-      this.yearSelected = this.fechaActual.getFullYear();
+      this.yearSelected = this.aniosCiclos[0];
       this.nextYearSelect = false;
+      this.servicioCicloLectivo
+        .validarModificarAgenda()
+        .pipe(takeUntil(this.unsubscribe))
+        .subscribe((response) => {
+          this.permiteModificarAgenda = response.puedeModificar;
+          this.cicloLectivoActualEnCreado = response.creado;
+        });
     } else {
-      this.yearSelected = this.fechaActual.getFullYear() + 1;
+      this.yearSelected = this.aniosCiclos[1];
       this.nextYearSelect = true;
+      this.cicloLectivoActualEnCreado = true;
     }
     this.dataSource.data = [];
     this.obtenerCursos();
+    console.log(this.nextYearSelect);
+  }
+
+  esNuevo(indice): boolean {
+    return this.indiceNuevo.includes(indice);
+  }
+
+  setCambios() {
+    this.huboCambios = true;
   }
 }
 

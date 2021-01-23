@@ -5,13 +5,33 @@
 <mat-card *ngIf="estudiantes.length > 0 && !isLoading">
   <div *ngFor="let estudiante of estudiantes; let i = index">
     <mat-expansion-panel [expanded]="'i == 0'">
-      <mat-expansion-panel-header>
+      <mat-expansion-panel-header
+        [class.mat-expansion-panel-header-mobile]="mobileQuery.matches"
+      >
         <mat-panel-title>
-          <b class="titulo-expansion-panel">
-            {{ estudiante.apellido }}, {{ estudiante.nombre }} -
+          <b
+            class="titulo-expansion-panel"
+            [class.titulo-expansion-panel-mobile]="mobileQuery.matches"
+          >
+            {{ estudiante.apellido }}, {{ estudiante.nombre }}</b
+          >
+          <b class="titulo-expansion-panel" *ngIf="!mobileQuery.matches"
+            >&nbsp; -&nbsp;</b
+          >
+          <b
+            class="titulo-expansion-panel"
+            [class.titulo-expansion-panel-mobile]="mobileQuery.matches"
+          >
             {{ estudiante.tipoDocumento }}: {{ estudiante.numeroDocumento }}</b
-          ><b class="titulo-expansion-panel" *ngIf="inscripto[i]"
-            >&nbsp;- Curso: {{ this.cursos[i] }}
+          >
+          <b class="titulo-expansion-panel" *ngIf="!mobileQuery.matches"
+            >&nbsp; -&nbsp;</b
+          >
+          <b
+            class="titulo-expansion-panel"
+            [class.titulo-expansion-panel-mobile]="mobileQuery.matches"
+            *ngIf="inscripto[i]"
+            >Curso: {{ cursos[i] }}
           </b>
         </mat-panel-title>
       </mat-expansion-panel-header>
@@ -23,73 +43,59 @@
           class="opcion"
           [class.opcion-mobile]="mobileQuery.matches"
           (click)="onInscribir(i)"
-          *ngIf="permisos.inscribirEstudiante > 1"
+          *ngIf="
+            permisos.inscribirEstudiante > 1 
+          "
           ><b>Inscribir estudiante a un curso</b></mat-card
         >
         <mat-card
           class="opcion"
           [class.opcion-mobile]="mobileQuery.matches"
           (click)="onJustificar(i)"
-          *ngIf="permisos.asistencia > 1 && inscripto[i]"
-          [ngClass]="{
-            isDisabled:
-              suspendido[i] || (
-              this.estadoCiclo == 'Inactivo' ||
-              this.estadoCiclo == 'Creado' ||
-              this.estadoCiclo == 'En examenes')
-          }"
+          *ngIf="
+            this.permisos.asistencia > 1 &&
+            this.inscripto[i] &&
+            enEstadoCLCursando
+          "
           ><b>Justificar inasistencia</b></mat-card
         >
         <mat-card
           class="opcion"
           [class.opcion-mobile]="mobileQuery.matches"
           (click)="onRegistrarExamenes(i)"
-          *ngIf="permisos.notas > 1 && inscripto[i]"
-          [ngClass]="{
-            isDisabled: this.estadoCiclo != 'En examenes'
-          }"
+          *ngIf="permisos.notas > 1 && inscripto[i] && enEstadoCLExamenes && materiasPendientes.length!=0"
           ><b>Registrar calificaciones de examen</b></mat-card
         >
         <mat-card
           class="opcion"
           [class.opcion-mobile]="mobileQuery.matches"
           (click)="onLlegadaTarde(i)"
-          *ngIf="permisos.asistencia > 1 && inscripto[i]"
-          [ngClass]="{
-            isDisabled:
-              suspendido[i] ||
-              (this.estadoCiclo == 'Inactivo' ||
-              this.estadoCiclo == 'Creado' ||
-              this.estadoCiclo == 'En examenes')
-          }"
+          *ngIf="
+            this.permisos.asistencia > 1 &&
+            this.inscripto[i] &&
+            enEstadoCLCursando
+          "
           ><b>Registrar llegada tarde</b></mat-card
         >
         <mat-card
           class="opcion"
           [class.opcion-mobile]="mobileQuery.matches"
           (click)="onRetiro(i)"
-          *ngIf="permisos.asistencia > 1 && inscripto[i]"
-          [ngClass]="{
-            isDisabled:
-              suspendido[i] ||
-              (this.estadoCiclo == 'Inactivo' ||
-              this.estadoCiclo == 'Creado' ||
-              this.estadoCiclo == 'En examenes')
-          }"
+          *ngIf="
+            this.permisos.asistencia > 1 &&
+            this.inscripto[i] &&
+            enEstadoCLCursando
+          "
           ><b>Registrar retiro anticipado</b></mat-card
         >
         <mat-card
           class="opcion"
           [class.opcion-mobile]="mobileQuery.matches"
           (click)="onSancion(i)"
-          *ngIf="permisos.sanciones >= 1 && inscripto[i]"
-          [ngClass]="{
-            isDisabled:
-              suspendido[i] ||
-              (this.estadoCiclo == 'Inactivo' ||
-              this.estadoCiclo == 'Creado' ||
-              this.estadoCiclo == 'En examenes')
-          }"
+          *ngIf="
+            (this.permisos.sanciones > 1 && this.inscripto[i]) ||
+            (enEstadoCLCursando || enEstadoCLExamenes)
+          "
           ><b>Registrar sanción</b></mat-card
         >
         <mat-card
@@ -110,22 +116,17 @@
           class="opcion"
           [class.opcion-mobile]="mobileQuery.matches"
           (click)="onReincorporar(i)"
-          *ngIf="permisos.inscribirEstudiante >= 1 && suspendido[i]"
-          [ngClass]="{
-            isDisabled:
-              this.estadoCiclo == 'Inactivo' ||
-              this.estadoCiclo == 'Creado' ||
-              this.estadoCiclo == 'En examenes'
-          }"
+          *ngIf="
+            permisos.inscribirEstudiante >= 1 &&
+            suspendido[i] &&
+            (enEstadoCLCursando || enEstadoCLExamenes)
+          "
           ><b>Reincorporar estudiante</b></mat-card
         >
         <mat-card
           class="opcion"
           [class.opcion-mobile]="mobileQuery.matches"
           (click)="onNotificarReunion(i)"
-          [ngClass]="{
-            isDisabled: this.estadoCiclo == 'Inactivo'
-          }"
           ><b>Enviar notificación de reunión</b></mat-card
         >
         <mat-card
@@ -142,6 +143,6 @@
 
 <mat-card *ngIf="estudiantes.length == 0 && !isLoading">
   <p>
-    <b>No se encontraron estudiantes que coincidan con los datos ingresados</b>
+    <b class="aviso">No se encontraron estudiantes que coincidan con los datos ingresados.</b>
   </p>
 </mat-card>

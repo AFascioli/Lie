@@ -31,10 +31,10 @@ export class DocumentosInscripcionComponent implements OnInit, OnDestroy {
   fechaActual: Date;
   isLoading = true;
   isLoading2 = false;
+  aniosCiclos;
   private unsubscribe: Subject<void> = new Subject();
   _mobileQueryListener: () => void;
   mobileQuery: MediaQueryList;
-  estadoCiclo: string;
 
   constructor(
     public servicioEstudiante: EstudiantesService,
@@ -56,41 +56,28 @@ export class DocumentosInscripcionComponent implements OnInit, OnDestroy {
     this.unsubscribe.complete();
   }
 
-  //Sort ordena solo por año de curso, para ordenar bien, deberia dsp de el sort que esta ahora
-  //tomar de a dos cursos y ordenarlos alfabeticamente, de esa forma quedan ordenados por año y
-  //division
   async ngOnInit() {
-    this.obtenerEstadoCicloLectivo();
     this.fechaActual = new Date();
-    if (
-      (await this.fechaActualEnPeriodoCursado()) ||
-      this.autenticacionService.getRol() == "Admin"
-    ) {
-      this.servicioEstudiante
-        .obtenerCursos(this.fechaActual.getFullYear())
-        .pipe(takeUntil(this.unsubscribe))
-        .subscribe((response) => {
-          this.cursos = response.cursos;
-          this.cursos.sort((a, b) =>
-            a.nombre.charAt(0) > b.nombre.charAt(0)
-              ? 1
-              : b.nombre.charAt(0) > a.nombre.charAt(0)
-              ? -1
-              : 0
-          );
-          this.isLoading = false;
-        });
-    } else {
-      this.fueraPeriodoCicloLectivo = true;
-    }
-  }
-
-  async fechaActualEnPeriodoCursado() {
-    return new Promise((resolve, reject) => {
-      this.servicioCicloLectivo.validarEnCursado().subscribe((result) => {
-        resolve(result.permiso);
+    this.servicioCicloLectivo
+      .obtenerActualYSiguiente()
+      .pipe(takeUntil(this.unsubscribe))
+      .subscribe((response) => {
+        this.aniosCiclos = response.añosCiclos;
+        this.servicioEstudiante
+          .obtenerCursos(response.añosCiclos[0])
+          .pipe(takeUntil(this.unsubscribe))
+          .subscribe((response) => {
+            this.cursos = response.cursos;
+            this.cursos.sort((a, b) =>
+              a.nombre.charAt(0) > b.nombre.charAt(0)
+                ? 1
+                : b.nombre.charAt(0) > a.nombre.charAt(0)
+                ? -1
+                : 0
+            );
+            this.isLoading = false;
+          });
       });
-    });
   }
 
   //Cuando el usuario selecciona una division, se obtienen los datos del estudiantes necesarios
@@ -105,9 +92,11 @@ export class DocumentosInscripcionComponent implements OnInit, OnDestroy {
         if (estudiantes.documentos.length != 0) {
           this.estudiantesConDocumentos = this.estudiantesConDocumentos.sort(
             (a, b) =>
-              a.datosEstudiante[0].apellido.toLowerCase() > b.datosEstudiante[0].apellido.toLowerCase()
+              a.datosEstudiante[0].apellido.toLowerCase() >
+              b.datosEstudiante[0].apellido.toLowerCase()
                 ? 1
-                : b.datosEstudiante[0].apellido.toLowerCase() > a.datosEstudiante[0].apellido.toLowerCase()
+                : b.datosEstudiante[0].apellido.toLowerCase() >
+                  a.datosEstudiante[0].apellido.toLowerCase()
                 ? -1
                 : 0
           );
@@ -122,14 +111,6 @@ export class DocumentosInscripcionComponent implements OnInit, OnDestroy {
     estudiante.documentosEntregados[indiceDoc].entregado = !estudiante
       .documentosEntregados[indiceDoc].entregado;
     this.documentosEntregadosOnChange = true;
-  }
-
-  obtenerEstadoCicloLectivo() {
-    this.servicioCicloLectivo.obtenerEstadoCicloLectivo()
-      .pipe(takeUntil(this.unsubscribe))
-      .subscribe((response) => {
-        this.estadoCiclo = response.estadoCiclo;
-      });
   }
 
   //Guardar los estudiantes con los cambios, resetea los selects y abre snackBar

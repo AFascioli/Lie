@@ -1,3 +1,4 @@
+import { CicloLectivoService } from "src/app/cicloLectivo.service";
 import { MatSnackBar, MatDialog, MatDialogConfig } from "@angular/material";
 import { InscripcionService } from "./../inscripcion.service";
 import { Component, OnInit, OnDestroy, Inject } from "@angular/core";
@@ -15,9 +16,8 @@ import { takeUntil } from "rxjs/operators";
   styleUrls: ["./inscripcion-curso.component.css"],
 })
 export class InscripcionCursoComponent implements OnInit {
-  fechaActual: Date;
   cursos: any[];
-  estudiantes=[];
+  estudiantes = [];
   seSeleccionoCurso = false;
   cursoSeleccionado: string;
   loading = false;
@@ -32,23 +32,33 @@ export class InscripcionCursoComponent implements OnInit {
   yearSelected: any;
   nextYearSelect: boolean;
   private unsubscribe: Subject<void> = new Subject();
+  periodoCursado: boolean;
+  cicloHabilitado: boolean;
+  aniosCiclos: any[];
 
   constructor(
     public servicioInscripcion: InscripcionService,
     public snackBar: MatSnackBar,
+    public servicioCicloLectivo: CicloLectivoService,
     public dialog: MatDialog
   ) {}
 
-  ngOnInit(): void {
-    this.fechaActual = new Date();
+  ngOnInit() {
+    this.servicioCicloLectivo
+      .obtenerActualYSiguiente()
+      .pipe(takeUntil(this.unsubscribe))
+      .subscribe((response) => {
+        this.aniosCiclos = response.añosCiclos;
+      });
+    this.cicloActualHabilitado();
   }
 
   onYearSelected(yearSelected) {
     if (yearSelected.value == "actual") {
-      this.yearSelected = this.fechaActual.getFullYear();
+      this.yearSelected = this.aniosCiclos[0];
       this.nextYearSelect = false;
     } else {
-      this.yearSelected = this.fechaActual.getFullYear() + 1;
+      this.yearSelected = this.aniosCiclos[1];
       this.nextYearSelect = true;
     }
     this.obtenerCursosEstudiantes();
@@ -69,10 +79,23 @@ export class InscripcionCursoComponent implements OnInit {
       });
   }
 
+  cicloActualHabilitado() {
+    this.servicioCicloLectivo
+      .obtenerEstadoCicloLectivo()
+      .pipe(takeUntil(this.unsubscribe))
+      .subscribe((response) => {
+        this.cicloHabilitado =
+          response.estadoCiclo == "Creado" ||
+          response.estadoCiclo == "En primer trimestre" ||
+          response.estadoCiclo == "En segundo trimestre" ||
+          response.estadoCiclo == "En tercer trimestre";
+      });
+  }
+
   onCursoSeleccionado(cursoSeleccionado) {
     this.loading = true;
     this.cursoSeleccionado = cursoSeleccionado.value;
-    if (this.yearSelected == this.fechaActual.getFullYear()) {
+    if (this.yearSelected == this.aniosCiclos[0]) {
       this.obtenerEstudiantesAñoActual();
     } else {
       this.obtenerEstudiantesProximoAño();
@@ -108,7 +131,7 @@ export class InscripcionCursoComponent implements OnInit {
   }
 
   inscribirEstudiantes() {
-    if (this.yearSelected == this.fechaActual.getFullYear()) {
+    if (this.yearSelected == this.aniosCiclos[0]) {
       this.inscribirEstudiantesAñoActual();
     } else {
       this.inscribirEstudiantesProximoAño();
@@ -119,7 +142,6 @@ export class InscripcionCursoComponent implements OnInit {
     this.servicioInscripcion
       .inscribirEstudiantesCurso(this.estudiantes, this.cursoSeleccionado)
       .subscribe((response) => {
-        console.log("response", response);
         if (response.exito) {
           this.snackBar.open(response.message, "", {
             panelClass: ["snack-bar-exito"],
@@ -153,7 +175,6 @@ export class InscripcionCursoComponent implements OnInit {
         this.cursoSeleccionado
       )
       .subscribe((response) => {
-        console.log("response", response);
         if (response.exito) {
           this.snackBar.open(response.message, "", {
             panelClass: ["snack-bar-exito"],

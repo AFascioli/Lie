@@ -70,12 +70,12 @@ export class InasistenciasEstudianteComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.unsubscribe))
       .subscribe((response) => {
         this.contadorInasistenciaInjustificada =
-          response.contadorInasistenciasInjustificada;
+        response.contadorInasistenciasInjustificada;
         this.contadorInasistenciaJustificada =
-          response.contadorInasistenciasJustificada;
+        response.contadorInasistenciasJustificada;
         this.barDataSet = [
           {
-            backgroundColor: ["#38AECC", "#E9FE00"],
+            backgroundColor: ["#fbc687", "#ea907a"],
             data: [
               response.contadorInasistenciasInjustificada,
               response.contadorInasistenciasJustificada,

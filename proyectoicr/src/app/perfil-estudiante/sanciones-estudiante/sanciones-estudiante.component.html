@@ -29,9 +29,7 @@
     [class.table-mobile]="mobileQuery.matches"
   >
     <ng-container matColumnDef="fecha">
-      <th class="columnas-normales" mat-header-cell *matHeaderCellDef>
-        Fecha
-      </th>
+      <th class="columnas-normales" mat-header-cell *matHeaderCellDef>Fecha</th>
       <td class="columnas-normales" mat-cell *matCellDef="let sancion">
         {{ sancion.fecha | date: "dd/MM/yyyy" }}
       </td>
@@ -56,8 +54,8 @@
     <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
   </table>
 
-  <p *ngIf="sanciones.length == 0" class="sin-sanciones">
-    <b> El estudiante no presenta sanciones</b>
+  <p class="aviso" *ngIf="sanciones.length == 0">
+    El estudiante no presenta sanciones.
   </p>
   <div class="div-button">
     <button

@@ -67,7 +67,7 @@ export class VisualizarEventoComponent implements OnInit, OnDestroy {
       if (
         this.eventoService.comentarios[i].idUsuario ==
           this.autenticacionService.getId() ||
-        this.autenticacionService.getRol() == "Admin"
+        this.autenticacionService.getRol() != "AdultoResponsable"
       )
         this.permisos[i] = true;
       else this.permisos[i] = false;

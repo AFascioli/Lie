@@ -1,20 +1,7 @@
-import { CicloLectivoService } from './../cicloLectivo.service';
-import { CambiarPassword } from "./../login/cambiar-password.component";
+import { CicloLectivoService } from "./../cicloLectivo.service";
 import { DomSanitizer } from "@angular/platform-browser";
-import {
-  MatDialog,
-  MatDialogRef,
-  MatDrawer,
-  MatSidenav,
-} from "@angular/material";
-import {
-  Component,
-  OnInit,
-  ChangeDetectorRef,
-  OnDestroy,
-  QueryList,
-  ViewChildren,
-} from "@angular/core";
+import { MatDialog, MatDialogRef, MatSidenav } from "@angular/material";
+import { Component, OnInit, ChangeDetectorRef, OnDestroy } from "@angular/core";
 import { Router } from "@angular/router";
 import { AutenticacionService } from "../login/autenticacionService.service";
 import { EstudiantesService } from "../estudiantes/estudiante.service";
@@ -32,8 +19,9 @@ export class MenuLateralComponent implements OnInit, OnDestroy {
   rol: string;
   usuario: string;
   apellidoNombre: string;
-  estadoCiclo:string;
+  estadoCiclo: string;
   private unsubscribe: Subject<void> = new Subject();
+
   //Lo inicializo porque sino salta error en la consola del browser
   permisos = {
     notas: 0,
@@ -44,17 +32,18 @@ export class MenuLateralComponent implements OnInit, OnDestroy {
     inscribirEstudiante: 0,
     registrarEmpleado: 0,
     cuotas: 0,
-
   };
   _mobileQueryListener: () => void;
   mobileQuery: MediaQueryList;
   isLoading: boolean = true;
+  enEstadoCLCursando;
+  enEstadoCLExamenes;
 
   //Basicamente tenemos comportamiento que se fija si el display es menor a 600 px o no
   constructor(
     public router: Router,
     public authService: AutenticacionService,
-    public CicloLectivoService: CicloLectivoService,
+    public cicloLectivoService: CicloLectivoService,
     public dialog: MatDialog,
     public estudianteService: EstudiantesService,
     public changeDetectorRef: ChangeDetectorRef,
@@ -117,21 +106,21 @@ export class MenuLateralComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.obtenerEstadoCicloLectivo();
+    this.verificarEstadoCiclo();
     this.authService
       .obtenerPermisosDeRol()
       .pipe(takeUntil(this.unsubscribe))
       .subscribe((response) => {
         this.permisos = response.permisos;
       });
-    // this.authService.obtenerNombreApellido().subscribe((user) => {
-    //   this.apellidoNombre=user.usuario.apellido + " " + user.usuario.nombre;
-    // });
-
     this.rol = this.authService.getRol();
     this.usuario = this.authService.getUsuarioAutenticado();
     this.isLoading = false;
+      this.cicloLectivoService.getActualizacionMLListener().pipe(takeUntil(this.unsubscribe)).subscribe(() => {
+        this.ngOnInit()
+      })
   }
+
 
   onClickHome() {
     this.router.navigate(["./home"]);
@@ -150,14 +139,17 @@ export class MenuLateralComponent implements OnInit, OnDestroy {
     });
   }
 
-  obtenerEstadoCicloLectivo()
-  {
-    this.CicloLectivoService
-    .obtenerEstadoCicloLectivo()
-    .pipe(takeUntil(this.unsubscribe))
-    .subscribe((response) => {
-      this.estadoCiclo = response.estadoCiclo;
-    });
+  verificarEstadoCiclo() {
+    this.cicloLectivoService
+      .obtenerEstadoCicloLectivo()
+      .pipe(takeUntil(this.unsubscribe))
+      .subscribe((response) => {
+        this.enEstadoCLCursando =
+          response.estadoCiclo == "En primer trimestre" ||
+          response.estadoCiclo == "En segundo trimestre" ||
+          response.estadoCiclo == "En tercer trimestre";
+        this.enEstadoCLExamenes =response.estadoCiclo == "En examenes";
+      });
   }
 
   cerrarMenuLateral(sideNav: MatSidenav) {

@@ -51,6 +51,11 @@ export class AltaEstudiantesComponent implements OnInit, OnDestroy {
 
   // Cuando se inicializa el componente se cargar las provincias.
   ngOnInit() {
+    this.setearValoresPorDefecto();
+  }
+
+  setearValoresPorDefecto() {
+    this.defaultEstadoCivil = "soltero";
     this.codigoPostalEstudiante = "2421";
     this.nacionalidadEstudiante = "Argentina";
     this.servicioUbicacion.getProvincias();
@@ -123,6 +128,9 @@ export class AltaEstudiantesComponent implements OnInit, OnDestroy {
               duration: 4000,
             });
             form.resetForm();
+            setTimeout(() => {
+              this.setearValoresPorDefecto();
+            }, 100);
           } else {
             this.snackBar.open(respuesta.message, "", {
               panelClass: ["snack-bar-fracaso"],

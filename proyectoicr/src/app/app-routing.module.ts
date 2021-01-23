@@ -108,7 +108,7 @@ const routes: Routes = [
         canActivate: [RoleGuard, RouteEventoGuard],
       },
       {
-        path: "alta",
+        path: "altaEstudiante",
         component: AltaEstudiantesComponent,
         canActivate: [RoleGuard],
         data: { rolesValidos: ["Admin", "Preceptor", "Director"] },
