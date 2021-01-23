@@ -45,11 +45,17 @@ export class RegistrarCuotasComponent implements OnInit, OnDestroy {
   cuotasXEstudiante: any[] = [];
   displayedColumns: string[] = ["apellido", "nombre", "accion"];
   isLoading: Boolean = false;
+  aniosCiclos;
   private unsubscribe: Subject<void> = new Subject();
 
   async ngOnInit() {
     this.fechaActual = new Date();
-
+    this.servicioCicloLectivo
+      .obtenerActualYSiguiente()
+      .pipe(takeUntil(this.unsubscribe))
+      .subscribe((response) => {
+        this.aniosCiclos = response.añosCiclos;
+      });
     if (
       this.fechaActual.toString().substring(0, 3) == "Sat" ||
       this.fechaActual.toString().substring(0, 3) == "Sun"
@@ -62,15 +68,6 @@ export class RegistrarCuotasComponent implements OnInit, OnDestroy {
           duration: 4000,
         }
       );
-    }
-
-    if (
-      !(
-        (await this.fechaActualEnPeriodoCursado()) ||
-        this.autenticacionService.getRol() == "Admin"
-      )
-    ) {
-      this.fueraPeriodoCicloLectivo = true;
     }
   }
 
@@ -132,25 +129,21 @@ export class RegistrarCuotasComponent implements OnInit, OnDestroy {
   onMesSeleccionado(mes) {
     this.cursoNotSelected = true;
     this.mesSeleccionado = mes.value;
-    this.servicioCicloLectivo
-      .obtenerActualYSiguiente()
+
+    this.servicioEstudiante
+      .obtenerCursos(this.aniosCiclos[0])
       .pipe(takeUntil(this.unsubscribe))
       .subscribe((response) => {
-        this.servicioEstudiante
-          .obtenerCursos(response.añosCiclos[0])
-          .pipe(takeUntil(this.unsubscribe))
-          .subscribe((response) => {
-            this.cursos = response.cursos;
-            this.cursos.sort((a, b) =>
-              a.nombre.charAt(0) > b.nombre.charAt(0)
-                ? 1
-                : b.nombre.charAt(0) > a.nombre.charAt(0)
-                ? -1
-                : 0
-            );
-          });
-          this.cursoEstudiante = "";
+        this.cursos = response.cursos;
+        this.cursos.sort((a, b) =>
+          a.nombre.charAt(0) > b.nombre.charAt(0)
+            ? 1
+            : b.nombre.charAt(0) > a.nombre.charAt(0)
+            ? -1
+            : 0
+        );
       });
+    this.cursoEstudiante = "";
   }
 
   onGuardar() {

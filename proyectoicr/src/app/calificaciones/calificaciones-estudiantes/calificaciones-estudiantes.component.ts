@@ -72,7 +72,6 @@ export class CalificacionesEstudiantesComponent implements OnInit, OnDestroy {
     public popup: MatDialog,
     private snackBar: MatSnackBar,
     public servicioAutenticacion: AutenticacionService,
-    public servicioCicloLectivo: CicloLectivoService,
     public changeDetectorRef: ChangeDetectorRef,
     public media: MediaMatcher
   ) {
@@ -107,9 +106,9 @@ export class CalificacionesEstudiantesComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.unsubscribe))
       .subscribe((response) => {
         if (!this.validarEstadoMXC(response.estadoMXC)) {
-          this.puedeEditarCalificaciones=false;
-        }else{
-          this.puedeEditarCalificaciones=true;
+          this.puedeEditarCalificaciones = false;
+        } else {
+          this.puedeEditarCalificaciones = true;
         }
       });
   }
@@ -300,12 +299,18 @@ export class CalificacionesEstudiantesComponent implements OnInit, OnDestroy {
   }
 
   //Valida si el estado de la MXC es el mismo al trimestre actual
-  validarEstadoMXC(estadoMXC){    
-    if(estadoMXC=="En primer trimestre"&&this.trimestreActual=="1"){
+  validarEstadoMXC(estadoMXC) {
+    if (estadoMXC == "En primer trimestre" && this.trimestreActual == "1") {
       return true;
-    }else if(estadoMXC=="En segundo trimestre"&&this.trimestreActual=="2"){
+    } else if (
+      estadoMXC == "En segundo trimestre" &&
+      this.trimestreActual == "2"
+    ) {
       return true;
-    }else if(estadoMXC=="En tercer trimestre"&&this.trimestreActual=="3"){
+    } else if (
+      estadoMXC == "En tercer trimestre" &&
+      this.trimestreActual == "3"
+    ) {
       return true;
     }
     return false;

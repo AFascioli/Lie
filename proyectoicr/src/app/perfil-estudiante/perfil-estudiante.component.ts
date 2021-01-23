@@ -1,3 +1,4 @@
+import { CicloLectivoService } from "src/app/cicloLectivo.service";
 import { Component, OnInit, ChangeDetectorRef } from "@angular/core";
 import { EstudiantesService } from "../estudiantes/estudiante.service";
 import { Estudiante } from "../estudiantes/estudiante.model";
@@ -25,7 +26,7 @@ export class PerfilEstudianteComponent implements OnInit {
   suspendido: Boolean;
   idUsuario: string;
   calificacionesSelected: boolean;
-  fechaActual: Date;
+  aniosCiclos;
   _mobileQueryListener: () => void;
   mobileQuery: MediaQueryList;
   private unsubscribe: Subject<void> = new Subject();
@@ -33,6 +34,7 @@ export class PerfilEstudianteComponent implements OnInit {
   constructor(
     public servicio: EstudiantesService,
     public servicioAutenticación: AutenticacionService,
+    public servicioCicloLectivo: CicloLectivoService,
     public router: Router,
     public popup: MatDialog,
     public changeDetectorRef: ChangeDetectorRef,
@@ -44,7 +46,13 @@ export class PerfilEstudianteComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.fechaActual = new Date();
+    this.servicioCicloLectivo
+      .obtenerActualYSiguiente()
+      .pipe(takeUntil(this.unsubscribe))
+      .subscribe((response) => {
+        this.aniosCiclos = response.añosCiclos;
+      });
+
     this.apellidoEstudiante = this.servicio.estudianteSeleccionado.apellido;
     this.nombreEstudiante = this.servicio.estudianteSeleccionado.nombre;
     this._idEstudiante = this.servicio.estudianteSeleccionado._id;

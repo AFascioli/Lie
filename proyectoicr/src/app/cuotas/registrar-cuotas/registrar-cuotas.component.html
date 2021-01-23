@@ -1,5 +1,5 @@
-<h1 class="componente-titulo">
-  Registrar pago de cuotas ciclo lectivo {{ fechaActual.getFullYear() }}
+<h1 class="componente-titulo" *ngIf="aniosCiclos">
+  Registrar pago de cuotas ciclo lectivo {{ aniosCiclos[0] }}
 </h1>
 <mat-card class="card-body-componente">
   <div class="div-mes-curso-fecha">

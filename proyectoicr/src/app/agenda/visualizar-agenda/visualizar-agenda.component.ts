@@ -48,7 +48,6 @@ export class VisualizarAgendaComponent implements OnInit, OnDestroy {
     public servicioAgenda: AgendaService,
     public servicioCicloLectivo: CicloLectivoService,
     public snackBar: MatSnackBar,
-    public servicioCicloLectivo: CicloLectivoService,
     public changeDetectorRef: ChangeDetectorRef,
     public media: MediaMatcher
   ) {

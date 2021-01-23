@@ -31,6 +31,7 @@ export class DocumentosInscripcionComponent implements OnInit, OnDestroy {
   fechaActual: Date;
   isLoading = true;
   isLoading2 = false;
+  aniosCiclos;
   private unsubscribe: Subject<void> = new Subject();
   _mobileQueryListener: () => void;
   mobileQuery: MediaQueryList;
@@ -57,14 +58,11 @@ export class DocumentosInscripcionComponent implements OnInit, OnDestroy {
 
   async ngOnInit() {
     this.fechaActual = new Date();
-    if (
-      (await this.fechaActualEnPeriodoCursado()) ||
-      this.autenticacionService.getRol() == "Admin"
-    ) {
-      this.servicioCicloLectivo
+    this.servicioCicloLectivo
       .obtenerActualYSiguiente()
       .pipe(takeUntil(this.unsubscribe))
       .subscribe((response) => {
+        this.aniosCiclos = response.añosCiclos;
         this.servicioEstudiante
           .obtenerCursos(response.añosCiclos[0])
           .pipe(takeUntil(this.unsubscribe))
@@ -79,16 +77,7 @@ export class DocumentosInscripcionComponent implements OnInit, OnDestroy {
             );
             this.isLoading = false;
           });
-      })
-    }
-  }
-
-  async fechaActualEnPeriodoCursado() {
-    return new Promise((resolve, reject) => {
-      this.servicioCicloLectivo.validarEnCursado().subscribe((result) => {
-        resolve(result.permiso);
       });
-    });
   }
 
   //Cuando el usuario selecciona una division, se obtienen los datos del estudiantes necesarios
