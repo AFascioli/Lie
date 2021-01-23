@@ -135,7 +135,7 @@
               class="sinExpansion"
               routerLink="/buscarAdultoResponsable"
               (click)="cerrarMenuLateral(sideNav)"
-              *ngIf="rol != 'Docente'"
+              *ngIf="permisos.inscribirEstudiante > 1"
             >
               <mat-icon
                 class="iconSinExpansion"
@@ -148,7 +148,9 @@
               mat-list-item
               class="sinExpansion"
               routerLink="/definirAgenda"
-              *ngIf="permisos.agendaCursos > 1"
+              *ngIf="
+                permisos.agendaCursos > 1 
+              "
               (click)="cerrarMenuLateral(sideNav)"
             >
               <mat-icon class="iconSinExpansion" svgIcon="agenda"></mat-icon>
@@ -157,7 +159,9 @@
 
             <a
               class="sinExpansion"
-              *ngIf="permisos.inscribirEstudiante > 1"
+              *ngIf="
+                permisos.inscribirEstudiante > 1 
+              "
               mat-list-item
               routerLink="/inscripcionCurso"
               (click)="cerrarMenuLateral(sideNav)"
@@ -173,12 +177,8 @@
               mat-list-item
               class="sinExpansion"
               routerLink="/asistencia"
-              *ngIf="permisos.asistencia > 1"
+              *ngIf="permisos.asistencia > 1 && enEstadoCLCursando"
               (click)="cerrarMenuLateral(sideNav)"
-              [ngClass]="{
-                isDisabled:
-                  this.estadoCiclo == 'Inactivo' || this.estadoCiclo == 'Creado'
-              }"
             >
               <mat-icon
                 class="iconSinExpansion"
@@ -191,12 +191,8 @@
               mat-list-item
               class="sinExpansion"
               routerLink="/calificacionesEstudiantes"
-              *ngIf="permisos.notas > 1"
+              *ngIf="permisos.notas > 1 && enEstadoCLCursando"
               (click)="cerrarMenuLateral(sideNav)"
-              [ngClass]="{
-                isDisabled:
-                  this.estadoCiclo == 'Inactivo' || this.estadoCiclo == 'Creado'
-              }"
             >
               <mat-icon
                 class="iconSinExpansion"
@@ -209,9 +205,11 @@
               mat-list-item
               class="sinExpansion"
               routerLink="/documentosEstudiante"
-              *ngIf="permisos.inscribirEstudiante > 1"
+              *ngIf="
+                permisos.inscribirEstudiante > 1 &&
+                enEstadoCLCursando
+              "
               (click)="cerrarMenuLateral(sideNav)"
-              [ngClass]="{ isDisabled: this.estadoCiclo == 'Inactivo' }"
             >
               <mat-icon
                 class="iconSinExpansion"
@@ -252,9 +250,11 @@
               mat-list-item
               class="sinExpansion"
               routerLink="/registrarCuotas"
-              *ngIf="permisos.cuotas > 1"
+              *ngIf="
+                permisos.cuotas > 1 &&
+                (enEstadoCLCursando || enEstadoCLExamenes)
+              "
               (click)="cerrarMenuLateral(sideNav)"
-              [ngClass]="{ isDisabled: this.estadoCiclo == 'Inactivo' }"
             >
               <mat-icon class="iconSinExpansion" svgIcon="pagoCuota"></mat-icon>
               <p class="titulo-expansion">Registrar pago de cuotas</p>

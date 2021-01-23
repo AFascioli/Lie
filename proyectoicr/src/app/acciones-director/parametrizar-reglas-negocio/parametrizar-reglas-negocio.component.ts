@@ -15,22 +15,27 @@ export class ParametrizarReglasNegocioComponent implements OnInit {
   cantidadFaltasSuspension: number;
   cantidadMateriasInscripcionLibre: number;
   estadoCiclo: string;
+  aniosCiclos;
 
   private unsubscribe: Subject<void> = new Subject();
 
   constructor(
     private servicioCicloLectivo: CicloLectivoService,
-    public snackBar: MatSnackBar,
-
+    public snackBar: MatSnackBar
   ) {}
 
   ngOnInit(): void {
     this.servicioCicloLectivo
-      .obtenerParametrosCicloLectivo()
+      .obtenerActualYSiguiente()
       .pipe(takeUntil(this.unsubscribe))
       .subscribe((response) => {
-        this.horaLlegadaTarde =
-          response.cicloLectivo.horarioLLegadaTarde;
+        this.aniosCiclos = response.añosCiclos;
+      });
+    this.servicioCicloLectivo
+      .obtenerParametrosProxCicloLectivo()
+      .pipe(takeUntil(this.unsubscribe))
+      .subscribe((response) => {
+        this.horaLlegadaTarde = response.cicloLectivo.horarioLLegadaTarde;
         this.horaRetiroAnticipado =
           response.cicloLectivo.horarioRetiroAnticipado;
         this.cantidadFaltasSuspension =
@@ -38,7 +43,6 @@ export class ParametrizarReglasNegocioComponent implements OnInit {
         this.cantidadMateriasInscripcionLibre =
           response.cicloLectivo.cantidadMateriasInscripcionLibre;
       });
-      this.obtenerEstadoCicloLectivo();
   }
 
   onGuardar() {
@@ -47,7 +51,7 @@ export class ParametrizarReglasNegocioComponent implements OnInit {
         this.cantidadFaltasSuspension,
         this.cantidadMateriasInscripcionLibre,
         this.horaLlegadaTarde,
-        this.horaRetiroAnticipado,
+        this.horaRetiroAnticipado
       )
       .pipe(takeUntil(this.unsubscribe))
       .subscribe(
@@ -64,13 +68,5 @@ export class ParametrizarReglasNegocioComponent implements OnInit {
           );
         }
       );
-  }
-
-obtenerEstadoCicloLectivo() {
-  this.servicioCicloLectivo.obtenerEstadoCicloLectivo()
-    .pipe(takeUntil(this.unsubscribe))
-    .subscribe((response) => {
-    this.estadoCiclo = response.estadoCiclo;
-      });
   }
 }

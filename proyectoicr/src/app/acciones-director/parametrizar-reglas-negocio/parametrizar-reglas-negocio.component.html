@@ -1,4 +1,6 @@
-<h1 class="componente-titulo">Parametrizar Reglas de Negocio</h1>
+<h1 class="componente-titulo" *ngIf="aniosCiclos">
+  Parametrizar Reglas de Negocio para el año {{ aniosCiclos[1] }}
+</h1>
 <mat-card class="card-body-componente">
   <h3 class="margen2">Horario llegada tarde</h3>
   <mat-grid-list class="margen" cols="1" rowHeight="55px">
@@ -13,7 +15,6 @@
           [format]="24"
           placeholder="Ingrese hora"
           min="07:00"
-          [disabled]="this.estadoCiclo != 'Creado'"
           readonly
           required
         />
@@ -38,7 +39,6 @@
           [format]="24"
           placeholder="Ingrese hora"
           min="07:00"
-          [disabled]="this.estadoCiclo != 'Creado'"
           readonly
           required
         />
@@ -63,14 +63,13 @@
           matInput
           placeholder="Ingrese cantidad de faltas"
           type="number"
-          [disabled]="this.estadoCiclo != 'Creado'"
           required
         />
       </mat-form-field>
     </mat-grid-tile>
   </mat-grid-list>
   <mat-divider></mat-divider>
-  <h3 class="margen">Materias desaprobadas para Libre</h3>
+  <h3 class="margen">Materias desaprobadas para libre</h3>
   <mat-grid-list class="margen" cols="1" rowHeight="55px">
     <mat-grid-tile
       >Cantidad de materias para el estado libre
@@ -83,7 +82,6 @@
           matInput
           placeholder="Ingrese cantidad de materias"
           type="number"
-          [disabled]="this.estadoCiclo != 'Creado'"
           required
         />
       </mat-form-field>

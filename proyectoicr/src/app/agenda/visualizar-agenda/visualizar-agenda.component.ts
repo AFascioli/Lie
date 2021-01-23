@@ -39,13 +39,16 @@ export class VisualizarAgendaComponent implements OnInit, OnDestroy {
   private unsubscribe: Subject<void> = new Subject();
   isLoading = true;
   agendaVacia: boolean = false;
-  aniosCiclos;
+  yearSelected;
+  nextYearSelect;
+  aniosCiclos: any[];
 
   constructor(
     public servicioEstudiante: EstudiantesService,
     public servicioAgenda: AgendaService,
     public servicioCicloLectivo: CicloLectivoService,
     public snackBar: MatSnackBar,
+    public servicioCicloLectivo: CicloLectivoService,
     public changeDetectorRef: ChangeDetectorRef,
     public media: MediaMatcher
   ) {
@@ -61,6 +64,8 @@ export class VisualizarAgendaComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.unsubscribe))
       .subscribe((response) => {
         this.aniosCiclos = response.añosCiclos;
+        this.isLoading = false;
+        console.log(this.aniosCiclos);
       });
   }
 
@@ -93,6 +98,18 @@ export class VisualizarAgendaComponent implements OnInit, OnDestroy {
         this.agendaVacia = true;
       }
     })();
+  }
+
+  onYearSelected(yearSelected) {
+    this.cursoSelected = false;
+    if (yearSelected.value == "actual") {
+      this.yearSelected = this.aniosCiclos[0];
+      this.nextYearSelect = false;
+    } else {
+      this.yearSelected = this.aniosCiclos[1];
+      this.nextYearSelect = true;
+    }
+    this.obtenerCursos();
   }
 
   obtenerCursos() {

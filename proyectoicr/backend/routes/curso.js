@@ -331,11 +331,35 @@ router.get("/cursosDeEstudiante", checkAuthMiddleware, async (req, res) => {
     "Inscripcion",
     "Pendiente"
   );
+  let idEstadoSuspendido = await ClaseEstado.obtenerIdEstado(
+    "Inscripcion",
+    "Suspendido"
+  );
+  let idEstadoPromovidoConExPend = await ClaseEstado.obtenerIdEstado(
+    "Inscripcion",
+    "Promovido con examenes pendientes"
+  );
+  let idEstadoExPendiente = await ClaseEstado.obtenerIdEstado(
+    "Inscripcion",
+    "Examenes pendientes"
+  );
+  let idEstadoPromovido = await ClaseEstado.obtenerIdEstado(
+    "Inscripcion",
+    "Promovido"
+  );
   Inscripcion.aggregate([
     {
       $match: {
         idEstudiante: mongoose.Types.ObjectId(req.query.idEstudiante),
-        estado: mongoose.Types.ObjectId(idEstadoActiva),
+        estado: {
+          $in: [
+            mongoose.Types.ObjectId(idEstadoActiva),
+            mongoose.Types.ObjectId(idEstadoSuspendido),
+            mongoose.Types.ObjectId(idEstadoPromovidoConExPend),
+            mongoose.Types.ObjectId(idEstadoExPendiente),
+            mongoose.Types.ObjectId(idEstadoPromovido),
+          ],
+        },
       },
     },
     {
@@ -508,10 +532,16 @@ router.get("/cursosDeEstudiante", checkAuthMiddleware, async (req, res) => {
     });
 });
 
-//Obtiene todos los cursos asignados a un docente
+//Obtiene todos los cursos asignados a un docente para el ciclo lectivo actual
 //@params: id de la docente
-router.get("/docente", checkAuthMiddleware, (req, res) => {
+router.get("/docente", checkAuthMiddleware, async (req, res) => {
+  let idCicloActual = await ClaseCicloLectivo.obtenerIdCicloActual();
   Curso.aggregate([
+    {
+      $match: {
+        cicloLectivo: mongoose.Types.ObjectId(idCicloActual),
+      },
+    },
     {
       $lookup: {
         from: "materiasXCurso",
@@ -799,11 +829,36 @@ router.get(
       "Inscripcion",
       "Activa"
     );
+    let idEstadoSuspendido = await ClaseEstado.obtenerIdEstado(
+      "Inscripcion",
+      "Suspendido"
+    );
+    let idEstadoPromovidoConExPend = await ClaseEstado.obtenerIdEstado(
+      "Inscripcion",
+      "Promovido con examenes pendientes"
+    );
+    let idEstadoExPendiente = await ClaseEstado.obtenerIdEstado(
+      "Inscripcion",
+      "Examenes pendientes"
+    );
+    let idEstadoPromovido = await ClaseEstado.obtenerIdEstado(
+      "Inscripcion",
+      "Promovido"
+    );
+
     Inscripcion.aggregate([
       {
         $match: {
           idCurso: mongoose.Types.ObjectId(req.query.idCurso),
-          estado: mongoose.Types.ObjectId(idEstadoActiva),
+          estado: {
+            $in: [
+              mongoose.Types.ObjectId(idEstadoActiva),
+              mongoose.Types.ObjectId(idEstadoSuspendido),
+              mongoose.Types.ObjectId(idEstadoPromovidoConExPend),
+              mongoose.Types.ObjectId(idEstadoExPendiente),
+              mongoose.Types.ObjectId(idEstadoPromovido),
+            ],
+          },
         },
       },
       {
@@ -945,6 +1000,18 @@ router.get("/estudiante", checkAuthMiddleware, async (req, res) => {
     "Inscripcion",
     "Suspendido"
   );
+  let idEstadoPromovidoConExPend = await ClaseEstado.obtenerIdEstado(
+    "Inscripcion",
+    "Promovido con examenes pendientes"
+  );
+  let idEstadoExPendiente = await ClaseEstado.obtenerIdEstado(
+    "Inscripcion",
+    "Examenes pendientes"
+  );
+  let idEstadoPromovido = await ClaseEstado.obtenerIdEstado(
+    "Inscripcion",
+    "Promovido"
+  );
 
   Inscripcion.findOne({
     idEstudiante: mongoose.Types.ObjectId(req.query.idEstudiante),
@@ -952,6 +1019,9 @@ router.get("/estudiante", checkAuthMiddleware, async (req, res) => {
       $in: [
         mongoose.Types.ObjectId(idEstadoActiva),
         mongoose.Types.ObjectId(idEstadoSuspendido),
+        mongoose.Types.ObjectId(idEstadoPromovidoConExPend),
+        mongoose.Types.ObjectId(idEstadoExPendiente),
+        mongoose.Types.ObjectId(idEstadoPromovido),
       ],
     },
   })
@@ -1596,20 +1666,25 @@ router.get(
         estudiantesRespuesta.push(estudianteRefinado);
       });
 
-      /* 2. Aggregate de Promovidos o Promovidos con exam. 4A '19. */
+      /* 2. Aggregate de Promovidos o Promovidos con exam. 2B '19. */
       if (parseInt(cursoElegido.nombre, 10) !== 1) {
-        let estadosInscripcionesABuscar = [
-          mongoose.Types.ObjectId(idEstadoPromovido),
-          mongoose.Types.ObjectId(idEstadoPromovidoConExam),
-        ];
+        let idMXCDesaprobada = await ClaseEstado.obtenerIdEstado(
+          "CalificacionesXMateria",
+          "Desaprobada"
+        );
 
         let obtenerEstudiantesConInscripcion = await Inscripcion.aggregate([
           {
             $match: {
               idCurso: cursoAñoAnterior._id,
-              estado: {
-                $in: estadosInscripcionesABuscar,
-              },
+            },
+          },
+          {
+            $lookup: {
+              from: "calificacionesXMateria",
+              localField: "calificacionesXMateria",
+              foreignField: "_id",
+              as: "datosMXC",
             },
           },
           {
@@ -1634,20 +1709,34 @@ router.get(
               "datosEstudiantes.nombre": 1,
               "datosEstudiantes.apellido": 1,
               "datosCurso.nombre": 1,
+              datosMXC: 1,
             },
           },
         ]);
 
         obtenerEstudiantesConInscripcion.forEach((inscripcion) => {
-          const estudianteRefinado = {
-            idEstudiante: inscripcion.datosEstudiantes[0]._id,
-            nombre: inscripcion.datosEstudiantes[0].nombre,
-            apellido: inscripcion.datosEstudiantes[0].apellido,
-            cursoAnterior: inscripcion.datosCurso[0].nombre,
-            idInscripcion: inscripcion._id,
-            seleccionado: false,
-          };
-          estudiantesRespuesta.push(estudianteRefinado);
+          //Se buscan las inscripciones que tienen 3 o menos cxm desaprobadas
+          let cantidadDesaprobadas = 0;
+          for (const mxc of inscripcion.datosMXC) {
+            if (
+              mxc.estado
+                .toString()
+                .localeCompare(idMXCDesaprobada.toString()) == 0
+            ) {
+              cantidadDesaprobadas++;
+            }
+          }
+          if (cantidadDesaprobadas <= 3) {
+            const estudianteRefinado = {
+              idEstudiante: inscripcion.datosEstudiantes[0]._id,
+              nombre: inscripcion.datosEstudiantes[0].nombre,
+              apellido: inscripcion.datosEstudiantes[0].apellido,
+              cursoAnterior: inscripcion.datosCurso[0].nombre,
+              idInscripcion: inscripcion._id,
+              seleccionado: false,
+            };
+            estudiantesRespuesta.push(estudianteRefinado);
+          }
         });
       }
       /* 3. Aggregate de Libres 5A '19.  */
@@ -1762,6 +1851,11 @@ router.get(
         "Pendiente"
       );
 
+      let idEstadoInscripcionExPend = await ClaseEstado.obtenerIdEstado(
+        "Inscripcion",
+        "Examenes pendientes"
+      );
+
       //1. Buscar los estudiantes en estado registrado
       let obtenerEstudiantesSinInscripcion = await Estudiante.find(
         { estado: idEstadoRegistrado },
@@ -1788,7 +1882,7 @@ router.get(
       });
 
       /* 2. Buscar los estudiantes del curso anterior que sean activo,
-      promovido o promovido con ex pendientes (con todos los datos)*/
+      promovido, promovido con ex pendientes y tamb Examenes pendientes (con todos los datos)*/
       if (añoAnterior != 0) {
         let curso = await Curso.findOne({
           nombre: cursoAnterior,
@@ -1847,23 +1941,100 @@ router.get(
           };
           estudiantesRespuesta.push(estudianteRefinado);
         });
+
+        //Buscamos las inscripciones en estado Examenes pendientes que no tengan mas de 3
+        //CXM con estado Pendiente examen/Desaprobada (condicion para inscribirse al prox año)
+        let idEstadoCXMPendiente = await ClaseEstado.obtenerIdEstado(
+          "CalificacionesXMateria",
+          "Pendiente examen"
+        );
+        let idEstadoCXMDesaprobada = await ClaseEstado.obtenerIdEstado(
+          "CalificacionesXMateria",
+          "Desaprobada"
+        );
+
+        let obtenerEstudiantesExPendientes = await Inscripcion.aggregate([
+          {
+            $match: {
+              estado: mongoose.Types.ObjectId(idEstadoInscripcionExPend),
+              idCurso: mongoose.Types.ObjectId(curso._id),
+            },
+          },
+          {
+            $lookup: {
+              from: "estudiante",
+              localField: "idEstudiante",
+              foreignField: "_id",
+              as: "datosEstudiante",
+            },
+          },
+          {
+            $lookup: {
+              from: "curso",
+              localField: "idCurso",
+              foreignField: "_id",
+              as: "datosCurso",
+            },
+          },
+          {
+            $lookup: {
+              from: "calificacionesXMateria",
+              localField: "calificacionesXMateria",
+              foreignField: "_id",
+              as: "datosCXM",
+            },
+          },
+          {
+            $project: {
+              "datosEstudiante._id": 1,
+              "datosEstudiante.nombre": 1,
+              "datosEstudiante.apellido": 1,
+              "datosCurso.nombre": 1,
+              datosCXM: 1,
+            },
+          },
+        ]);
+
+        obtenerEstudiantesExPendientes.forEach((inscripcion) => {
+          let contadorCXMPendientesDesaprobada = 0;
+          for (const cxm of inscripcion.datosCXM) {
+            if (
+              cxm.estado
+                .toString()
+                .localeCompare(idEstadoCXMPendiente.toString()) == 0 ||
+              cxm.estado
+                .toString()
+                .localeCompare(idEstadoCXMDesaprobada.toString()) == 0
+            ) {
+              contadorCXMPendientesDesaprobada++;
+            }
+          }
+          if (contadorCXMPendientesDesaprobada <= 3) {
+            const estudianteRefinado = {
+              idEstudiante: inscripcion.datosEstudiante[0]._id,
+              nombre: inscripcion.datosEstudiante[0].nombre,
+              apellido: inscripcion.datosEstudiante[0].apellido,
+              cursoAnterior: inscripcion.datosCurso[0].nombre,
+              idInscripcion: inscripcion._id,
+              seleccionado: false,
+            };
+            estudiantesRespuesta.push(estudianteRefinado);
+          }
+        });
       }
-      /*3. Buscar todas las inscripciones pendientes del curso selecccionado
+      /*3. Buscar todas las inscripciones pendientes y filtrar los estudiantes regitrados que tengan una
        */
-      /*4. Filtras estudiantes paso 1 con los estudiantes obtenidos paso 2 */
 
       Inscripcion.find({
         estado: idEstadoPendienteInscripcion,
-        idCurso: req.query.idCurso,
       }).then((inscripcionesPendientes) => {
-        for (let index = 0; index < inscripcionesPendientes.length; index++) {
+        for (const inscripcionPendiente of inscripcionesPendientes) {
           estudiantesRespuesta = estudiantesRespuesta.filter(
             (estudiante) =>
               estudiante.idEstudiante
                 .toString()
-                .localeCompare(
-                  inscripcionesPendientes[index].idEstudiante.toString()
-                ) != 0
+                .localeCompare(inscripcionPendiente.idEstudiante.toString()) !=
+              0
           );
         }
         res.status(200).json({
@@ -2135,6 +2306,18 @@ router.get("/estudiantes", checkAuthMiddleware, async (req, res) => {
     "Inscripcion",
     "Suspendido"
   );
+  let idEstadoPromovidoConExPend = await ClaseEstado.obtenerIdEstado(
+    "Inscripcion",
+    "Promovido con examenes pendientes"
+  );
+  let idEstadoExPendiente = await ClaseEstado.obtenerIdEstado(
+    "Inscripcion",
+    "Examenes pendientes"
+  );
+  let idEstadoPromovido = await ClaseEstado.obtenerIdEstado(
+    "Inscripcion",
+    "Promovido"
+  );
   Inscripcion.aggregate([
     {
       $lookup: {
@@ -2151,6 +2334,9 @@ router.get("/estudiantes", checkAuthMiddleware, async (req, res) => {
           $in: [
             mongoose.Types.ObjectId(idEstadoActiva),
             mongoose.Types.ObjectId(idEstadoSuspendido),
+            mongoose.Types.ObjectId(idEstadoPromovidoConExPend),
+            mongoose.Types.ObjectId(idEstadoExPendiente),
+            mongoose.Types.ObjectId(idEstadoPromovido),
           ],
         },
       },

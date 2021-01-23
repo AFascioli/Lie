@@ -63,6 +63,7 @@ export class RegistrarAsistenciaComponent implements OnInit, OnDestroy {
         }
       );
     }
+    
 
     if (
       (await this.fechaActualEnPeriodoCursado()) ||

@@ -41,13 +41,15 @@ export class ListaEstudiantesComponent implements OnInit, OnDestroy {
   _mobileQueryListener: () => void;
   mobileQuery: MediaQueryList;
   estadoCiclo: string;
+  enEstadoCLExamenes;
+  enEstadoCLCursando;
 
   constructor(
     public servicio: EstudiantesService,
     public servicioCalificaciones: CalificacionesService,
     public servicioAsistencia: AsistenciaService,
     public servicioInscripcion: InscripcionService,
-    public CicloLectivoService: CicloLectivoService,
+    public servicioCicloLectivo: CicloLectivoService,
     public servicioUbicacion: UbicacionService,
     public router: Router,
     public authService: AutenticacionService,
@@ -67,11 +69,12 @@ export class ListaEstudiantesComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.obtenerEstadoCicloLectivo();
+    //this.obtenerEstadoCicloLectivo();
     this.servicio
       .getEstudiantesListener()
       .pipe(takeUntil(this.unsubscribe))
       .subscribe((estudiantesBuscados) => {
+        this.verificarEstadoCiclo();
         this.estudiantes = estudiantesBuscados;
         this.isLoading = false;
         for (let i = 0; i < estudiantesBuscados.length; i++) {
@@ -129,6 +132,19 @@ export class ListaEstudiantesComponent implements OnInit, OnDestroy {
             });
         });
     }
+  }
+
+  verificarEstadoCiclo() {
+    this.servicioCicloLectivo
+      .obtenerEstadoCicloLectivo()
+      .pipe(takeUntil(this.unsubscribe))
+      .subscribe((response) => {
+        this.enEstadoCLCursando =
+          response.estadoCiclo == "En primer trimestre" ||
+          response.estadoCiclo == "En segundo trimestre" ||
+          response.estadoCiclo == "En tercer trimestre";
+        this.enEstadoCLExamenes = response.estadoCiclo == "En examenes";
+      });
   }
 
   //Retorna un booleano segun si se deberia mostrar la opcion Registrar examen
@@ -228,7 +244,8 @@ export class ListaEstudiantesComponent implements OnInit, OnDestroy {
   }
 
   obtenerEstadoCicloLectivo() {
-    this.CicloLectivoService.obtenerEstadoCicloLectivo()
+    this.servicioCicloLectivo
+      .obtenerEstadoCicloLectivo()
       .pipe(takeUntil(this.unsubscribe))
       .subscribe((response) => {
         this.estadoCiclo = response.estadoCiclo;

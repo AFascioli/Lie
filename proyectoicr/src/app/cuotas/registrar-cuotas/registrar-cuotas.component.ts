@@ -17,6 +17,7 @@ export class RegistrarCuotasComponent implements OnInit, OnDestroy {
   constructor(
     public autenticacionService: AutenticacionService,
     public servicioEstudiante: EstudiantesService,
+    public servicioCicloLectivo: CicloLectivoService,
     public cuotasService: CuotasService,
     public popup: MatDialog,
     public snackBar: MatSnackBar,
@@ -131,20 +132,25 @@ export class RegistrarCuotasComponent implements OnInit, OnDestroy {
   onMesSeleccionado(mes) {
     this.cursoNotSelected = true;
     this.mesSeleccionado = mes.value;
-    this.servicioEstudiante
-      .obtenerCursos(this.fechaActual.getFullYear())
+    this.servicioCicloLectivo
+      .obtenerActualYSiguiente()
       .pipe(takeUntil(this.unsubscribe))
       .subscribe((response) => {
-        this.cursos = response.cursos;
-        this.cursos.sort((a, b) =>
-          a.nombre.charAt(0) > b.nombre.charAt(0)
-            ? 1
-            : b.nombre.charAt(0) > a.nombre.charAt(0)
-            ? -1
-            : 0
-        );
+        this.servicioEstudiante
+          .obtenerCursos(response.añosCiclos[0])
+          .pipe(takeUntil(this.unsubscribe))
+          .subscribe((response) => {
+            this.cursos = response.cursos;
+            this.cursos.sort((a, b) =>
+              a.nombre.charAt(0) > b.nombre.charAt(0)
+                ? 1
+                : b.nombre.charAt(0) > a.nombre.charAt(0)
+                ? -1
+                : 0
+            );
+          });
+          this.cursoEstudiante = "";
       });
-    this.cursoEstudiante = "";
   }
 
   onGuardar() {
