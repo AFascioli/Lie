@@ -8,6 +8,7 @@ const ClaseCicloLectivo = require("../classes/cicloLectivo");
 const Estudiante = require("../models/estudiante");
 const Estado = require("../models/estado");
 const Inscripcion = require("../models/inscripcion");
+const Curso = require("../models/curso");
 
 //Registra un nuevo estudiante y pone su estado a registrado
 router.post("", checkAuthMiddleware, (req, res, next) => {
@@ -174,13 +175,17 @@ router.delete("/borrar", checkAuthMiddleware, async (req, res, next) => {
       Inscripcion.find({
         idEstudiante: req.query._id,
         $or: [{ estado: idEstadoActiva }, { estado: idEstadoPendiente }],
-      }).then((inscripcion) => {
+      }).then(async (inscripcion) => {
         if (inscripcion && inscripcion.length > 0) {
-          inscripcion.forEach((inscripcion) => {
+          for (let index = 0; index < inscripcion.length; index++) {
             inscripcion.estado = idEstadoInactiva;
-            inscripcion.save();
-          });
+            inscripcion[index].save();
+            let curso = await Curso.findById(inscripcion[index].idCurso);
+            curso.capacidad += 1;
+            curso.save();
+          }
         }
+
         res.status(202).json({
           message: "Estudiante exitosamente borrado",
           exito: true,

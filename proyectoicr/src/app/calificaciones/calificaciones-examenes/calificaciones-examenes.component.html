@@ -1,5 +1,5 @@
-<h1 class="componente-titulo">
-  Registrar calificación examen ciclo lectivo {{ fechaActual.getFullYear() }}
+<h1 class="componente-titulo" *ngIf="aniosCiclos">
+  Registrar calificación examen ciclo lectivo {{ aniosCiclos[0] }}
 </h1>
 <mat-card class="card-body-componente">
   <form #form="ngForm">
