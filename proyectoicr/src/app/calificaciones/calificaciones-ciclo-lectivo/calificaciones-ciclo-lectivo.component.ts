@@ -97,6 +97,7 @@ export class CalificacionesCicloLectivoComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.unsubscribe))
       .subscribe((response) => {
         this.anosCiclos = response.añosCiclos;
+        this.anosCiclos.sort(function(a, b){return b-a});
       });
     this.validarPermisos();
   }
@@ -130,9 +131,9 @@ export class CalificacionesCicloLectivoComponent implements OnInit, OnDestroy {
             .subscribe((response) => {
               this.cursos = response.cursos;
               this.cursos.sort((a, b) =>
-                a.nombre.charAt(0) > b.nombre.charAt(0)
+                a.nombre.charAt(0) < b.nombre.charAt(0)
                   ? 1
-                  : b.nombre.charAt(0) > a.nombre.charAt(0)
+                  : b.nombre.charAt(0) < a.nombre.charAt(0)
                   ? -1
                   : 0
               );
