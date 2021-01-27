@@ -335,18 +335,7 @@ router.get("/cursosDeEstudiante", checkAuthMiddleware, async (req, res) => {
     "Inscripcion",
     "Suspendido"
   );
-  let idEstadoPromovidoConExPend = await ClaseEstado.obtenerIdEstado(
-    "Inscripcion",
-    "Promovido con examenes pendientes"
-  );
-  let idEstadoExPendiente = await ClaseEstado.obtenerIdEstado(
-    "Inscripcion",
-    "Examenes pendientes"
-  );
-  let idEstadoPromovido = await ClaseEstado.obtenerIdEstado(
-    "Inscripcion",
-    "Promovido"
-  );
+
   Inscripcion.aggregate([
     {
       $match: {
@@ -355,9 +344,6 @@ router.get("/cursosDeEstudiante", checkAuthMiddleware, async (req, res) => {
           $in: [
             mongoose.Types.ObjectId(idEstadoActiva),
             mongoose.Types.ObjectId(idEstadoSuspendido),
-            mongoose.Types.ObjectId(idEstadoPromovidoConExPend),
-            mongoose.Types.ObjectId(idEstadoExPendiente),
-            mongoose.Types.ObjectId(idEstadoPromovido),
           ],
         },
       },
@@ -390,6 +376,7 @@ router.get("/cursosDeEstudiante", checkAuthMiddleware, async (req, res) => {
         parseInt(req.query.añoLectivo)
       );
       let idCicloActual = await ClaseCicloLectivo.obtenerIdCicloActual();
+      let idCicloAnterior = await ClaseCicloLectivo.obtenerIdCicloAnterior();
       let cursosDisponibles = [];
       if (inscripcion.length != 0) {
         if (
@@ -401,6 +388,7 @@ router.get("/cursosDeEstudiante", checkAuthMiddleware, async (req, res) => {
             inscripcion[0].cursoActual[0].nombre,
             10
           );
+
           //Buscamos los cursos que corresponden al que se puede inscribir el estudiante
           Curso.find({
             nombre: { $regex: añoCursoActual },
@@ -447,7 +435,6 @@ router.get("/cursosDeEstudiante", checkAuthMiddleware, async (req, res) => {
         }
       } else {
         //!TODO Si selecciono el ciclo actual, buscar si tiene inscripcion pendiente para ver que curso le corresponde
-
         if (
           idCicloSeleccionado
             .toString()
@@ -485,23 +472,132 @@ router.get("/cursosDeEstudiante", checkAuthMiddleware, async (req, res) => {
               });
             });
           } else {
-            //El estudiante no está inscripto a ningun curso, devuelve todos los cursos almacenados
-            Curso.find({ cicloLectivo: idCicloSeleccionado }).then((cursos) => {
-              var respuesta = [];
-              cursos.forEach((curso) => {
-                var cursoConId = {
-                  _id: curso._id,
-                  nombre: curso.nombre,
-                };
-                respuesta.push(cursoConId);
-              });
-              return res.status(200).json({
-                message: "Devolvio los cursos correctamente",
-                exito: true,
-                cursos: respuesta,
-                cursoActual: "",
-              });
-            });
+            let idEstadoRegistrado = await ClaseEstado.obtenerIdEstado(
+              "Estudiante",
+              "Registrado"
+            );
+            let idEstadoDesaprobada = await ClaseEstado.obtenerIdEstado(
+              "CalificacionesXMateria",
+              "Desaprobada"
+            );
+
+            let estudianteSeleccionado = await Estudiante.findById(
+              req.query.idEstudiante
+            ).exec();
+
+            if (
+              estudianteSeleccionado.estado
+                .toString()
+                .localeCompare(idEstadoRegistrado.toString()) == 0
+            ) {
+              //El estudiante no está inscripto a ningun curso, devuelve todos los cursos almacenados
+              Curso.find({ cicloLectivo: idCicloSeleccionado }).then(
+                (cursos) => {
+                  var respuesta = [];
+                  cursos.forEach((curso) => {
+                    var cursoConId = {
+                      _id: curso._id,
+                      nombre: curso.nombre,
+                    };
+                    respuesta.push(cursoConId);
+                  });
+                  return res.status(200).json({
+                    message: "Devolvio los cursos correctamente",
+                    exito: true,
+                    cursos: respuesta,
+                    cursoActual: "",
+                  });
+                }
+              );
+            } else {
+              // Se busca la inscripcion anterior para fijarse si quedo libre
+              let inscripcionAnterior = await Inscripcion.aggregate([
+                {
+                  $match: {
+                    idEstudiante: mongoose.Types.ObjectId(
+                      req.query.idEstudiante
+                    ),
+                    cicloLectivo: mongoose.Types.ObjectId(idCicloAnterior),
+                  },
+                },
+                {
+                  $lookup: {
+                    from: "calificacionesXMateria",
+                    localField: "calificacionesXMateria",
+                    foreignField: "_id",
+                    as: "datosMXC",
+                  },
+                },
+              ]);
+
+              let cursoInscripcionAnterior = await Curso.findById(
+                inscripcionAnterior[0].idCurso
+              );
+
+              let añoCursoInscripcionAnterior = parseInt(
+                cursoInscripcionAnterior.nombre,
+                10
+              );
+
+              //Se buscan las inscripciones que tienen 3 o menos cxm desaprobadas
+              let cantidadDesaprobadas = 0;
+              for (const mxc of inscripcionAnterior[0].datosMXC) {
+                if (
+                  mxc.estado
+                    .toString()
+                    .localeCompare(idEstadoDesaprobada.toString()) == 0
+                ) {
+                  cantidadDesaprobadas++;
+                }
+              }
+
+              // Si la condicion valua true, estaba promovido o promovido con examenes pendientes y se le ofrece los cursos
+              // del año superior al anterior
+              if (cantidadDesaprobadas <= 3) {
+                let respuesta = [];
+                let cursos = await Curso.find({
+                  nombre: { $regex: añoCursoInscripcionAnterior + 1 },
+                  cicloLectivo: idCicloActual,
+                });
+
+                cursos.forEach((curso) => {
+                  var cursoConId = {
+                    _id: curso._id,
+                    nombre: curso.nombre,
+                  };
+                  respuesta.push(cursoConId);
+                });
+
+                return res.status(200).json({
+                  message: "Devolvio los cursos correctamente",
+                  exito: true,
+                  cursos: respuesta,
+                  cursoActual: "",
+                });
+              } else {
+                // El estudiante esta libre, se le ofrece el mismo año que la inscripcion anterior
+                let respuesta = [];
+                let cursos = Curso.find({
+                  nombre: { $regex: añoCursoInscripcionAnterior },
+                  cicloLectivo: idCicloActual,
+                });
+
+                cursos.forEach((curso) => {
+                  var cursoConId = {
+                    _id: curso._id,
+                    nombre: curso.nombre,
+                  };
+                  respuesta.push(cursoConId);
+                });
+
+                return res.status(200).json({
+                  message: "Devolvio los cursos correctamente",
+                  exito: true,
+                  cursos: respuesta,
+                  cursoActual: "",
+                });
+              }
+            }
           }
         } else {
           //El estudiante no está inscripto a ningun curso, devuelve todos los cursos almacenados
