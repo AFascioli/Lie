@@ -32,7 +32,6 @@ export class InscripcionCursoComponent implements OnInit {
   yearSelected: any;
   nextYearSelect: boolean;
   private unsubscribe: Subject<void> = new Subject();
-  periodoCursado: boolean;
   cicloHabilitado: boolean;
   aniosCiclos: any[];
 

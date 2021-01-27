@@ -64,7 +64,6 @@ export class VisualizarAgendaComponent implements OnInit, OnDestroy {
       .subscribe((response) => {
         this.aniosCiclos = response.añosCiclos;
         this.isLoading = false;
-        console.log(this.aniosCiclos);
       });
   }
 

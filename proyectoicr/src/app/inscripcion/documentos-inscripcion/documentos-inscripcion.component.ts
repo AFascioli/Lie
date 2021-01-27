@@ -27,8 +27,6 @@ export class DocumentosInscripcionComponent implements OnInit, OnDestroy {
   ];
   matConfig = new MatDialogConfig();
   documentosEntregadosOnChange = false;
-  fueraPeriodoCicloLectivo = false;
-  fechaActual: Date;
   isLoading = true;
   isLoading2 = false;
   aniosCiclos;
@@ -57,7 +55,6 @@ export class DocumentosInscripcionComponent implements OnInit, OnDestroy {
   }
 
   async ngOnInit() {
-    this.fechaActual = new Date();
     this.servicioCicloLectivo
       .obtenerActualYSiguiente()
       .pipe(takeUntil(this.unsubscribe))

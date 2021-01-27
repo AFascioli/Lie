@@ -14,15 +14,14 @@ import { CicloLectivoService } from "src/app/cicloLectivo.service";
   styleUrls: ["./resumen-academico.component.css"],
 })
 export class ResumenAcademicoComponent implements OnInit {
-  // cursoS;
   cursos;
-  fechaActual: Date;
   estudiantes: any;
   displayedColumns: string[] = ["apellido", "nombre", "accion"];
   cursoNotSelected = true;
   isLoading = false;
   private unsubscribe: Subject<void> = new Subject();
   cursoSeleccionado;
+  anios: any[];
 
   constructor(
     public router: Router,
@@ -32,7 +31,6 @@ export class ResumenAcademicoComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.fechaActual = new Date();
     if (!this.reportService.retornoDeResumenAcademico) this.obtenerCursos();
     else {
       this.obtenerCursos();
@@ -75,6 +73,7 @@ export class ResumenAcademicoComponent implements OnInit {
       .obtenerActualYSiguiente()
       .pipe(takeUntil(this.unsubscribe))
       .subscribe((response) => {
+        this.anios = response.añosCiclos;
         this.servicioEstudiante
           .obtenerCursos(response.añosCiclos[0])
           .pipe(takeUntil(this.unsubscribe))
@@ -88,7 +87,7 @@ export class ResumenAcademicoComponent implements OnInit {
                 : 0
             );
           });
-      })
+      });
   }
   verResumenAcademico(i) {
     this.reportService.nombreCurso = this.obtenerNombreCurso(
@@ -111,7 +110,6 @@ export class ResumenAcademicoComponent implements OnInit {
 export class ReporteResumenAcademicoComponent implements OnInit {
   private unsubscribe: Subject<void> = new Subject();
   public idEstudiante = this.reportService.idEstudianteSeleccionado;
-  fechaActual: any;
   promedio;
   promedioT1;
   promedioT2;
@@ -150,13 +148,13 @@ export class ReporteResumenAcademicoComponent implements OnInit {
     "prom3",
     "prom",
   ];
+  anios: any;
   constructor(
     public servicioEstudiante: EstudiantesService,
     public reportService: ReportesService
   ) {}
 
   ngOnInit(): void {
-    this.fechaActual = new Date().getFullYear();
     this.isLoading = true;
     this.reportService
       .obtenerResumenAcademico(this.idEstudiante)
@@ -336,7 +334,7 @@ export class ReporteResumenAcademicoComponent implements OnInit {
       doc.setFontSize(10);
       doc.setFont("Segoe UI");
       doc.text("Instituto Cristo Rey", 94, 7);
-      doc.text("Ciclo lectivo " + this.fechaActual, 95, 12);
+      doc.text("Ciclo lectivo " + this.anios[0], 95, 12);
       doc.setDrawColor(184, 184, 184);
       doc.line(10, 17, 200, 17);
       doc.addImage(imgData, 0, 30, 208, imgH);

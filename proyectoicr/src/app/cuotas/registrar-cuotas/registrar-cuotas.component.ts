@@ -117,14 +117,6 @@ export class RegistrarCuotasComponent implements OnInit, OnDestroy {
     this.cuotasXEstudiante[indexEstudiante].changed = true;
   }
 
-  async fechaActualEnPeriodoCursado() {
-    return new Promise((resolve, reject) => {
-      this.cicloLectivoService.validarEnCursado().subscribe((result) => {
-        resolve(result.permiso);
-      });
-    });
-  }
-
   //Al seleccionar el mes obtiene todos los cursos y los ordena alfabeticamente
   onMesSeleccionado(mes) {
     this.cursoNotSelected = true;

@@ -6,7 +6,6 @@ import { CalificacionesService } from "src/app/calificaciones/calificaciones.ser
 import { CicloLectivoService } from "src/app/cicloLectivo.service";
 import { EstudiantesService } from "src/app/estudiantes/estudiante.service";
 import { ReportesService } from "../reportes.service";
-import { NgForm, NgModel } from "@angular/forms";
 import { MatTableDataSource } from "@angular/material";
 import { Label } from "ng2-charts";
 import { ChartOptions, ChartType } from "chart.js";
@@ -34,7 +33,6 @@ export class RendimientoCursoComponent implements OnInit {
   idDocente;
 
   year: any[] = [];
-  fechaActual: any;
 
   rolConPermisosEdicion = false;
 
@@ -88,6 +86,7 @@ export class RendimientoCursoComponent implements OnInit {
   public barChartLegend;
 
   private unsubscribe: Subject<void> = new Subject();
+  anios: any[];
 
   constructor(
     public servicioEstudiante: EstudiantesService,
@@ -98,7 +97,6 @@ export class RendimientoCursoComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.fechaActual = new Date().getFullYear();
     this.onTipoGraficoChange(0);
   }
 
@@ -131,18 +129,24 @@ export class RendimientoCursoComponent implements OnInit {
             });
         });
     } else {
-      this.servicioEstudiante
-        .obtenerCursos(yearS)
+      this.servicioCicloLectivo
+        .obtenerActualYSiguiente()
         .pipe(takeUntil(this.unsubscribe))
         .subscribe((response) => {
-          this.cursos = response.cursos;
-          this.cursos.sort((a, b) =>
-            a.nombre.charAt(0) > b.nombre.charAt(0)
-              ? 1
-              : b.nombre.charAt(0) > a.nombre.charAt(0)
-              ? -1
-              : 0
-          );
+          this.anios = response.añosCiclos;
+          this.servicioEstudiante
+            .obtenerCursos(response.añosCiclos[0])
+            .pipe(takeUntil(this.unsubscribe))
+            .subscribe((response) => {
+              this.cursos = response.cursos;
+              this.cursos.sort((a, b) =>
+                a.nombre.charAt(0) > b.nombre.charAt(0)
+                  ? 1
+                  : b.nombre.charAt(0) > a.nombre.charAt(0)
+                  ? -1
+                  : 0
+              );
+            });
         });
     }
   }
@@ -504,12 +508,7 @@ export class RendimientoCursoComponent implements OnInit {
     ];
 
     if (this.tipoGrafico == "horizontalBar") {
-      this.barChartLabelsH = [
-        "Prom<=3",
-        "3<Prom<=6",
-        "6<Prom<=8",
-        "Prom>8",
-      ];
+      this.barChartLabelsH = ["Prom<=3", "3<Prom<=6", "6<Prom<=8", "Prom>8"];
     } else {
       this.barChartLabelsH = [
         "Promedio <= 3",
@@ -521,7 +520,7 @@ export class RendimientoCursoComponent implements OnInit {
     this.barChartOptions = {
       responsive: false,
       legend: {
-        fullWidth:false,
+        fullWidth: false,
         display: this.legend,
         labels: {
           boxWidth: 20,
@@ -766,7 +765,7 @@ export class RendimientoCursoComponent implements OnInit {
       doc.setFontSize(10);
       doc.setFont("Segoe UI");
       doc.text("Instituto Cristo Rey", 94, 7);
-      doc.text("Ciclo lectivo " + this.fechaActual, 95, 12);
+      doc.text("Ciclo lectivo " + this.anios[0], 95, 12);
       doc.setDrawColor(184, 184, 184);
       doc.line(10, 17, 200, 17);
       doc.addImage(imgData, 0, 30, 208, imgH);
