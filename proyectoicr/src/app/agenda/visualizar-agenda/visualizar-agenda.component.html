@@ -1,4 +1,4 @@
-<h1 class="componente-titulo">
+<h1 class="componente-titulo" *ngIf="aniosCiclos">
   Visualizar agenda de curso ciclo lectivo {{ aniosCiclos[0] }}
 </h1>
 <mat-card class="card-spinner" *ngIf="isLoading">
