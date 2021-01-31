@@ -941,6 +941,10 @@ router.get(
       "Inscripcion",
       "Promovido"
     );
+    let idEstadoInactiva = await ClaseEstado.obtenerIdEstado(
+      "Inscripcion",
+      "Inactiva"
+    );
 
     Inscripcion.aggregate([
       {
@@ -953,6 +957,7 @@ router.get(
               mongoose.Types.ObjectId(idEstadoPromovidoConExPend),
               mongoose.Types.ObjectId(idEstadoExPendiente),
               mongoose.Types.ObjectId(idEstadoPromovido),
+              mongoose.Types.ObjectId(idEstadoInactiva),
             ],
           },
         },

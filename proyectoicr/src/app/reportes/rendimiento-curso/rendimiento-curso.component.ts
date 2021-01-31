@@ -32,7 +32,8 @@ export class RendimientoCursoComponent implements OnInit {
 
   idDocente;
 
-  year: any[] = [];
+  years: any[] = [];
+  yearSelected;
 
   rolConPermisosEdicion = false;
 
@@ -101,6 +102,7 @@ export class RendimientoCursoComponent implements OnInit {
   }
 
   onYearSelected(yearSelected) {
+    this.yearSelected = yearSelected;
     this.materiaSelec = false;
     this.materiaS = null;
     this.estudiantes = [];
@@ -135,7 +137,7 @@ export class RendimientoCursoComponent implements OnInit {
         .subscribe((response) => {
           this.anios = response.añosCiclos;
           this.servicioEstudiante
-            .obtenerCursos(response.añosCiclos[0])
+            .obtenerCursos(this.yearSelected)
             .pipe(takeUntil(this.unsubscribe))
             .subscribe((response) => {
               this.cursos = response.cursos;
@@ -450,7 +452,7 @@ export class RendimientoCursoComponent implements OnInit {
         .obtenerActualYAnteriores()
         .pipe(takeUntil(this.unsubscribe))
         .subscribe((response) => {
-          this.year = response.añosCiclos;
+          this.years = response.añosCiclos;
         });
   }
 

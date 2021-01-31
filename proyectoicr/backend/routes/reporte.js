@@ -26,6 +26,10 @@ router.get("/documentos", checkAuthMiddleware, async (req, res) => {
     "Inscripcion",
     "Promovido"
   );
+  let idEstadoInactiva = await ClaseEstado.obtenerIdEstado(
+    "Inscripcion",
+    "Inactiva"
+  );
   Inscripcion.aggregate([
     {
       $match: {
@@ -37,6 +41,7 @@ router.get("/documentos", checkAuthMiddleware, async (req, res) => {
             mongoose.Types.ObjectId(idEstadoPromovidoConExPend),
             mongoose.Types.ObjectId(idEstadoExPendiente),
             mongoose.Types.ObjectId(idEstadoPromovido),
+            mongoose.Types.ObjectId(idEstadoInactiva),
           ],
         },
       },
@@ -129,6 +134,10 @@ router.get("/cuotas", checkAuthMiddleware, async (req, res) => {
     "Inscripcion",
     "Promovido"
   );
+  let idEstadoInactiva = await ClaseEstado.obtenerIdEstado(
+    "Inscripcion",
+    "Inactiva"
+  );
 
   Inscripcion.aggregate([
     {
@@ -141,6 +150,7 @@ router.get("/cuotas", checkAuthMiddleware, async (req, res) => {
             mongoose.Types.ObjectId(idEstadoPromovidoConExPend),
             mongoose.Types.ObjectId(idEstadoExPendiente),
             mongoose.Types.ObjectId(idEstadoPromovido),
+            mongoose.Types.ObjectId(idEstadoInactiva),
           ],
         },
       },
