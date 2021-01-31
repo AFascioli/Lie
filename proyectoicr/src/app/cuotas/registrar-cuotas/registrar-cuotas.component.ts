@@ -48,7 +48,7 @@ export class RegistrarCuotasComponent implements OnInit, OnDestroy {
   aniosCiclos;
   private unsubscribe: Subject<void> = new Subject();
 
-  async ngOnInit() {
+  ngOnInit() {
     this.fechaActual = new Date();
     this.servicioCicloLectivo
       .obtenerActualYSiguiente()

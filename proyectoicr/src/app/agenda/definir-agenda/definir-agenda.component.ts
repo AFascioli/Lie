@@ -428,7 +428,6 @@ export class DefinirAgendaComponent implements OnInit, OnDestroy {
     }
     this.dataSource.data = [];
     this.obtenerCursos();
-    console.log(this.nextYearSelect);
   }
 
   esNuevo(indice): boolean {

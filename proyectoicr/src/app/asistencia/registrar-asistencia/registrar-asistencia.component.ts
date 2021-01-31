@@ -15,7 +15,7 @@ import { Subject } from "rxjs";
 })
 export class RegistrarAsistenciaComponent implements OnInit, OnDestroy {
   cursos: any[];
-  cursoNotSelected: boolean;
+  cursoNotSelected: boolean = true;
   diaActual: string;
   estudiantesXDivision: any[] = [];
   displayedColumns: string[] = ["apellido", "nombre", "accion"];
@@ -37,15 +37,29 @@ export class RegistrarAsistenciaComponent implements OnInit, OnDestroy {
     public snackBar: MatSnackBar
   ) {}
 
-  async ngOnInit() {
+  ngOnInit() {
     this.servicioCicloLectivo
       .obtenerActualYSiguiente()
       .pipe(takeUntil(this.unsubscribe))
       .subscribe((response) => {
         this.aniosCiclos = response.añosCiclos;
+        this.servicioEstudiante
+          .obtenerCursos(this.aniosCiclos[0])
+          .pipe(takeUntil(this.unsubscribe))
+          .subscribe((response) => {
+            this.cursos = response.cursos;
+            this.cursos.sort((a, b) =>
+              a.nombre.charAt(0) > b.nombre.charAt(0)
+                ? 1
+                : b.nombre.charAt(0) > a.nombre.charAt(0)
+                ? -1
+                : 0
+            );
+            this.isLoading = false;
+          });
       });
+
     this.obtenerIdInscripcionSuspendida();
-    this.cursoNotSelected = true;
 
     if (
       this.fechaActual.toString().substring(0, 3) == "Sat" ||
@@ -60,21 +74,6 @@ export class RegistrarAsistenciaComponent implements OnInit, OnDestroy {
         }
       );
     }
-
-    this.servicioEstudiante
-      .obtenerCursos(this.aniosCiclos[0])
-      .pipe(takeUntil(this.unsubscribe))
-      .subscribe((response) => {
-        this.cursos = response.cursos;
-        this.cursos.sort((a, b) =>
-          a.nombre.charAt(0) > b.nombre.charAt(0)
-            ? 1
-            : b.nombre.charAt(0) > a.nombre.charAt(0)
-            ? -1
-            : 0
-        );
-        this.isLoading = false;
-      });
   }
 
   //Busca los estudiantes segun el curso que se selecciono en pantalla. Los orden alfabeticamente

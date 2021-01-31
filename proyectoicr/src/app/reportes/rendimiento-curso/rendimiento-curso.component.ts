@@ -33,7 +33,6 @@ export class RendimientoCursoComponent implements OnInit {
   idDocente;
 
   years: any[] = [];
-  yearSelected;
 
   rolConPermisosEdicion = false;
 
@@ -102,7 +101,6 @@ export class RendimientoCursoComponent implements OnInit {
   }
 
   onYearSelected(yearSelected) {
-    this.yearSelected = yearSelected;
     this.materiaSelec = false;
     this.materiaS = null;
     this.estudiantes = [];
@@ -110,7 +108,7 @@ export class RendimientoCursoComponent implements OnInit {
     this.obtenerCursos(yearSelected.value);
   }
 
-  obtenerCursos(yearS) {
+  obtenerCursos(yearSelected) {
     if (this.servicioAutenticacion.getRol() == "Docente") {
       this.servicioAutenticacion
         .obtenerIdEmpleado(this.servicioAutenticacion.getId())
@@ -131,24 +129,18 @@ export class RendimientoCursoComponent implements OnInit {
             });
         });
     } else {
-      this.servicioCicloLectivo
-        .obtenerActualYSiguiente()
+      this.servicioEstudiante
+        .obtenerCursos(yearSelected)
         .pipe(takeUntil(this.unsubscribe))
         .subscribe((response) => {
-          this.anios = response.añosCiclos;
-          this.servicioEstudiante
-            .obtenerCursos(this.yearSelected)
-            .pipe(takeUntil(this.unsubscribe))
-            .subscribe((response) => {
-              this.cursos = response.cursos;
-              this.cursos.sort((a, b) =>
-                a.nombre.charAt(0) > b.nombre.charAt(0)
-                  ? 1
-                  : b.nombre.charAt(0) > a.nombre.charAt(0)
-                  ? -1
-                  : 0
-              );
-            });
+          this.cursos = response.cursos;
+          this.cursos.sort((a, b) =>
+            a.nombre.charAt(0) > b.nombre.charAt(0)
+              ? 1
+              : b.nombre.charAt(0) > a.nombre.charAt(0)
+              ? -1
+              : 0
+          );
         });
     }
   }
@@ -453,6 +445,9 @@ export class RendimientoCursoComponent implements OnInit {
         .pipe(takeUntil(this.unsubscribe))
         .subscribe((response) => {
           this.years = response.añosCiclos;
+          this.years.sort(function (a, b) {
+            return b - a;
+          });
         });
   }
 

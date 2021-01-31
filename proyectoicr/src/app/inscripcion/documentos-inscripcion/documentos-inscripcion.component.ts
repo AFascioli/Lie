@@ -54,7 +54,7 @@ export class DocumentosInscripcionComponent implements OnInit, OnDestroy {
     this.unsubscribe.complete();
   }
 
-  async ngOnInit() {
+  ngOnInit() {
     this.servicioCicloLectivo
       .obtenerActualYSiguiente()
       .pipe(takeUntil(this.unsubscribe))
