@@ -39,6 +39,7 @@
         type="button"
         mat-icon-button
         class="boton-editar"
+        [class.botonAddEditMobile]="mobileQuery.matches"
         *ngIf="
           conocerUsuarioLogueado(j) &&
           evento.filenames.length != 0 &&
@@ -52,6 +53,7 @@
         type="button"
         mat-icon-button
         class="botonAddImage"
+        [class.botonAddEditMobile]="mobileQuery.matches"
         *ngIf="
           conocerUsuarioLogueado(j) &&
           evento.filenames.length != 0 &&
@@ -59,7 +61,9 @@
         "
         matTooltip="Agregar foto"
       >
-        <mat-icon class="icono" (click)="onAgregarFoto(evento)">add_a_photo </mat-icon>
+        <mat-icon class="icono" (click)="onAgregarFoto(evento)"
+          >add_a_photo
+        </mat-icon>
       </button>
       <button
         type="button"
