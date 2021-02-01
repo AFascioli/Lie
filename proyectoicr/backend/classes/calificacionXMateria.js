@@ -212,7 +212,8 @@ exports.obtenerNombresMaterias = async (arrayIdCXM) => {
           datosMaterias[0].datosMateria[index].nombre =
             datosMaterias[0].datosMateria[index].nombre +
             " (" +
-            datosMaterias[0].curso[index].nombre + ") ";
+            datosMaterias[0].curso[index].nombre +
+            ") ";
         }
         nombresMaterias.push(datosMaterias[0].datosMateria[0]);
       });

@@ -271,6 +271,9 @@ router.get("/resumenAcademico", checkAuthMiddleware, async (req, res) => {
         contadorInasistenciasJustificada: {
           $first: "$contadorInasistenciasJustificada",
         },
+        promedio: {
+          $first: "$calificacionesXMateriaDif.promedio",
+        },
       },
     },
     {
@@ -318,6 +321,9 @@ router.get("/resumenAcademico", checkAuthMiddleware, async (req, res) => {
         contadorInasistenciasJustificada: {
           $first: "$contadorInasistenciasJustificada",
         },
+        promedio: {
+          $first: "$promedio",
+        },
       },
     },
     {
@@ -343,6 +349,9 @@ router.get("/resumenAcademico", checkAuthMiddleware, async (req, res) => {
         },
         contadorInasistenciasJustificada: {
           $first: "$contadorInasistenciasJustificada",
+        },
+        promedio: {
+          $first: "$promedio",
         },
       },
     },
@@ -377,6 +386,7 @@ router.get("/resumenAcademico", checkAuthMiddleware, async (req, res) => {
           $arrayElemAt: ["$materia.nombre", 0],
         },
         sanciones: 1,
+        promedio: 1,
         contadorInasistenciasInjustificada: 1,
         contadorInasistenciasJustificada: 1,
       },

@@ -147,8 +147,10 @@ export class ReporteResumenAcademicoComponent implements OnInit {
     "cal18",
     "prom3",
     "prom",
+    "examen",
   ];
   anios: any;
+  examen: number;
   constructor(
     public servicioEstudiante: EstudiantesService,
     public reportService: ReportesService
@@ -199,6 +201,13 @@ export class ReporteResumenAcademicoComponent implements OnInit {
   calcularPromedio(index) {
     var notas: number = 0;
     var cont: number = 0;
+
+    if (this.resumen[index].promedio.length != 0) {
+      this.examen = parseFloat(this.resumen[index].promedio[0]);
+    } else {
+      this.examen = 0;
+    }
+
     this.resumen[index].calificaciones[0][0].forEach((nota) => {
       if (nota != 0 && nota != null) {
         notas = notas + nota;
@@ -236,6 +245,7 @@ export class ReporteResumenAcademicoComponent implements OnInit {
 
     this.promedioF[index] = this.promedio;
     this.obtenerPromedioGeneral();
+
     return this.promedio;
   }
 
