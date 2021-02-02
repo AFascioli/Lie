@@ -1,5 +1,14 @@
 import { CicloLectivoService } from "./../../../cicloLectivo.service";
-import { Component, OnInit, Inject, NgZone, ViewChild, EventEmitter, Output } from "@angular/core";
+import {
+  Component,
+  OnInit,
+  Inject,
+  NgZone,
+  ViewChild,
+  EventEmitter,
+  Output,
+  ChangeDetectorRef,
+} from "@angular/core";
 import {
   MatDialog,
   MatDialogRef,
@@ -8,6 +17,7 @@ import {
 import { MatSnackBar } from "@angular/material";
 import { CdkTextareaAutosize } from "@angular/cdk/text-field";
 import { take } from "rxjs/operators";
+import { MediaMatcher } from "@angular/cdk/layout";
 
 export interface DialogData {
   name: string;
@@ -31,12 +41,20 @@ export class CicloLectivoComponent implements OnInit {
   name: string;
   id;
   mostrarMateria;
+  _mobileQueryListener: () => void;
+  mobileQuery: MediaQueryList;
 
   constructor(
     public dialog: MatDialog,
     public servicioCicloLectivo: CicloLectivoService,
-    private snackBar: MatSnackBar
-  ) {}
+    private snackBar: MatSnackBar,
+    public changeDetectorRef: ChangeDetectorRef,
+    public media: MediaMatcher,
+  ) {
+    this.mobileQuery = media.matchMedia("(max-width: 700px)");
+    this._mobileQueryListener = () => changeDetectorRef.detectChanges();
+    this.mobileQuery.addListener(this._mobileQueryListener);
+  }
 
   openPopUp(): void {
     const dialogRef = this.dialog.open(PopUpCerrarEtapa, {
@@ -147,13 +165,12 @@ export class CicloLectivoComponent implements OnInit {
     this.openPopUp();
   }
 
-
   cerrarEtapaExamenes() {
     this.servicioCicloLectivo.cierreEtapaExamenes().subscribe((response) => {
       if (response.exito) {
         this.showSnackbar(response.message, "snack-bar-exito");
         this.onVariableChange(5);
-    this.servicioCicloLectivo.actualizarMenuLateral();
+        this.servicioCicloLectivo.actualizarMenuLateral();
       } else {
         this.showSnackbar(response.message, "snack-bar-fracaso");
       }
@@ -165,7 +182,7 @@ export class CicloLectivoComponent implements OnInit {
       if (response.exito) {
         this.showSnackbar(response.message, "snack-bar-exito");
         this.onVariableChange(1);
-    this.servicioCicloLectivo.actualizarMenuLateral();
+        this.servicioCicloLectivo.actualizarMenuLateral();
       } else {
         this.dialog.open(PopUpMateriasSinCerrar, {
           width: "250px",
@@ -182,7 +199,7 @@ export class CicloLectivoComponent implements OnInit {
         if (response.exito) {
           this.onVariableChange(trimestre + 1);
           this.showSnackbar(response.message, "snack-bar-exito");
-    this.servicioCicloLectivo.actualizarMenuLateral();
+          this.servicioCicloLectivo.actualizarMenuLateral();
         } else {
           let cursosYMaterias = "";
           for (const cursoYMateria of response.materiasSinCerrar) {

@@ -86,15 +86,17 @@
         {{ evento.descripcion }}
       </p>
     </mat-card-content>
-    <div
-      class="boton-visualizar"
-      [ngClass]="{
-        visualizar: evento.filenames.length == 0 && conocerUsuarioLogueado(j)
-      }"
-    >
-      <button class="boton-comentario" (click)="eventoSeleccionado(evento)">
-        Ver comentarios
-      </button>
+    <div class="boton-visualizar">
+      <div
+        [ngClass]="{
+          botonComentarioNoimagen:
+            evento.filenames.length == 0 && conocerUsuarioLogueado(j)
+        }"
+      >
+        <button class="boton-comentario" (click)="eventoSeleccionado(evento)">
+          Ver comentarios
+        </button>
+      </div>
       <div class="botones">
         <button
           type="button"

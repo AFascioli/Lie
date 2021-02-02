@@ -205,3 +205,9 @@ time.icon span {
   animation-name: tooltipfade;
   /* animation-duration: 6s; */
 }
+
+.botonComentarioNoimagen
+{
+  display: block;
+  text-align: center;
+}
