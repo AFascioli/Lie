@@ -50,6 +50,12 @@ export class CalificacionesExamenesComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.fechaActual = new Date();
+    this.servicioCicloLectivo
+    .obtenerActualYSiguiente()
+    .pipe(takeUntil(this.unsubscribe))
+    .subscribe((response) => {
+      this.aniosCiclos = response.añosCiclos;
+    });
     this.cicloLectivoService
       .obtenerEstadoCicloLectivo()
       .pipe(takeUntil(this.unsubscribe))
@@ -137,6 +143,14 @@ export class CalificacionesExamenesComponent implements OnInit, OnDestroy {
                 panelClass: ["snack-bar-exito"],
                 duration: 3000,
               });
+              this.servicioCalificaciones
+                .obtenerMateriasDesaprobadasEstudiante(
+                  this.estudianteService.estudianteSeleccionado._id
+                )
+                .pipe(takeUntil(this.unsubscribe))
+                .subscribe((materias) => {
+                  this.materiasDesaprobadas = materias.materiasDesaprobadas;
+                });
             } else {
               this.snackBar.open(rtdo.message, "", {
                 panelClass: ["snack-bar-fracaso"],
