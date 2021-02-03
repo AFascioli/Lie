@@ -37,7 +37,7 @@ export class LlegadaTardeComponent implements OnInit, OnDestroy {
     this.mobileQuery.addListener(this._mobileQueryListener);
   }
 
-  async ngOnInit() {
+  ngOnInit() {
     this.fechaActualFinDeSemana();
     this.servicioCicloLectivo
       .obtenerHoraLlegadaTarde()

@@ -941,6 +941,10 @@ router.get(
       "Inscripcion",
       "Promovido"
     );
+    let idEstadoInactiva = await ClaseEstado.obtenerIdEstado(
+      "Inscripcion",
+      "Inactiva"
+    );
 
     Inscripcion.aggregate([
       {
@@ -953,6 +957,7 @@ router.get(
               mongoose.Types.ObjectId(idEstadoPromovidoConExPend),
               mongoose.Types.ObjectId(idEstadoExPendiente),
               mongoose.Types.ObjectId(idEstadoPromovido),
+              mongoose.Types.ObjectId(idEstadoInactiva),
             ],
           },
         },
@@ -985,6 +990,12 @@ router.get(
           },
           idEstudiante: {
             $first: "$idEstudiante",
+          },
+          idEstadoCalifXMateria: {
+            $push: "$calificacionesXMateriaDif.estado",
+          },
+          promedio: {
+            $push: "$calificacionesXMateriaDif.promedio",
           },
           calificacionesXTrimestre: {
             $push: {
@@ -1029,6 +1040,12 @@ router.get(
           trim: {
             $first: "$calificacionesTrim.trimestre",
           },
+          promedio: {
+            $first: "$promedio",
+          },
+          idEstadoCalifXMateria: {
+            $first: "$idEstadoCalifXMateria",
+          },
         },
       },
       {
@@ -1042,6 +1059,12 @@ router.get(
           },
           trimestre: {
             $push: "$trim",
+          },
+          promedio: {
+            $first: "$promedio",
+          },
+          idEstadoCalifXMateria: {
+            $first: "$idEstadoCalifXMateria",
           },
         },
       },
@@ -1058,6 +1081,8 @@ router.get(
           idEstudiante: 1,
           calificaciones: 1,
           trimestre: 1,
+          promedio: 1,
+          idEstadoCalifXMateria: 1,
           nombre: {
             $arrayElemAt: ["$Estudiante.nombre", 0],
           },

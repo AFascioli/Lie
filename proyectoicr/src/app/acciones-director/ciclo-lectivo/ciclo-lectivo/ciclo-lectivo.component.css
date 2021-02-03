@@ -2,6 +2,13 @@
   text-align: right;
   margin-right: 3%;
 }
+
+.div-button-mobile
+{
+  text-align: right;
+  margin-right: 7%;
+}
+
 .grid-container {
   width: 95%;
   margin-left: auto;
@@ -9,6 +16,19 @@
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   grid-template-rows: 170px 170px;
+  grid-gap: 8px;
+  padding: 10px;
+  border-radius: 4px;
+}
+
+.grid-container-mobile {
+  width: 90%;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 2%;
+  display: grid;
+  grid-template-columns: auto;
+  grid-auto-rows:auto;
   grid-gap: 8px;
   padding: 10px;
   border-radius: 4px;

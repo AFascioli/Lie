@@ -32,7 +32,7 @@ export class RendimientoCursoComponent implements OnInit {
 
   idDocente;
 
-  year: any[] = [];
+  years: any[] = [];
 
   rolConPermisosEdicion = false;
 
@@ -108,7 +108,7 @@ export class RendimientoCursoComponent implements OnInit {
     this.obtenerCursos(yearSelected.value);
   }
 
-  obtenerCursos(yearS) {
+  obtenerCursos(yearSelected) {
     if (this.servicioAutenticacion.getRol() == "Docente") {
       this.servicioAutenticacion
         .obtenerIdEmpleado(this.servicioAutenticacion.getId())
@@ -129,24 +129,18 @@ export class RendimientoCursoComponent implements OnInit {
             });
         });
     } else {
-      this.servicioCicloLectivo
-        .obtenerActualYSiguiente()
+      this.servicioEstudiante
+        .obtenerCursos(yearSelected)
         .pipe(takeUntil(this.unsubscribe))
         .subscribe((response) => {
-          this.anios = response.añosCiclos;
-          this.servicioEstudiante
-            .obtenerCursos(response.añosCiclos[0])
-            .pipe(takeUntil(this.unsubscribe))
-            .subscribe((response) => {
-              this.cursos = response.cursos;
-              this.cursos.sort((a, b) =>
-                a.nombre.charAt(0) > b.nombre.charAt(0)
-                  ? 1
-                  : b.nombre.charAt(0) > a.nombre.charAt(0)
-                  ? -1
-                  : 0
-              );
-            });
+          this.cursos = response.cursos;
+          this.cursos.sort((a, b) =>
+            a.nombre.charAt(0) > b.nombre.charAt(0)
+              ? 1
+              : b.nombre.charAt(0) > a.nombre.charAt(0)
+              ? -1
+              : 0
+          );
         });
     }
   }
@@ -450,7 +444,10 @@ export class RendimientoCursoComponent implements OnInit {
         .obtenerActualYAnteriores()
         .pipe(takeUntil(this.unsubscribe))
         .subscribe((response) => {
-          this.year = response.añosCiclos;
+          this.years = response.añosCiclos;
+          this.years.sort(function (a, b) {
+            return b - a;
+          });
         });
   }
 

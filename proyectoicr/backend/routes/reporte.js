@@ -26,6 +26,10 @@ router.get("/documentos", checkAuthMiddleware, async (req, res) => {
     "Inscripcion",
     "Promovido"
   );
+  let idEstadoInactiva = await ClaseEstado.obtenerIdEstado(
+    "Inscripcion",
+    "Inactiva"
+  );
   Inscripcion.aggregate([
     {
       $match: {
@@ -37,6 +41,7 @@ router.get("/documentos", checkAuthMiddleware, async (req, res) => {
             mongoose.Types.ObjectId(idEstadoPromovidoConExPend),
             mongoose.Types.ObjectId(idEstadoExPendiente),
             mongoose.Types.ObjectId(idEstadoPromovido),
+            mongoose.Types.ObjectId(idEstadoInactiva),
           ],
         },
       },
@@ -129,6 +134,10 @@ router.get("/cuotas", checkAuthMiddleware, async (req, res) => {
     "Inscripcion",
     "Promovido"
   );
+  let idEstadoInactiva = await ClaseEstado.obtenerIdEstado(
+    "Inscripcion",
+    "Inactiva"
+  );
 
   Inscripcion.aggregate([
     {
@@ -141,6 +150,7 @@ router.get("/cuotas", checkAuthMiddleware, async (req, res) => {
             mongoose.Types.ObjectId(idEstadoPromovidoConExPend),
             mongoose.Types.ObjectId(idEstadoExPendiente),
             mongoose.Types.ObjectId(idEstadoPromovido),
+            mongoose.Types.ObjectId(idEstadoInactiva),
           ],
         },
       },
@@ -261,6 +271,9 @@ router.get("/resumenAcademico", checkAuthMiddleware, async (req, res) => {
         contadorInasistenciasJustificada: {
           $first: "$contadorInasistenciasJustificada",
         },
+        promedio: {
+          $first: "$calificacionesXMateriaDif.promedio",
+        },
       },
     },
     {
@@ -308,6 +321,9 @@ router.get("/resumenAcademico", checkAuthMiddleware, async (req, res) => {
         contadorInasistenciasJustificada: {
           $first: "$contadorInasistenciasJustificada",
         },
+        promedio: {
+          $first: "$promedio",
+        },
       },
     },
     {
@@ -333,6 +349,9 @@ router.get("/resumenAcademico", checkAuthMiddleware, async (req, res) => {
         },
         contadorInasistenciasJustificada: {
           $first: "$contadorInasistenciasJustificada",
+        },
+        promedio: {
+          $first: "$promedio",
         },
       },
     },
@@ -367,6 +386,7 @@ router.get("/resumenAcademico", checkAuthMiddleware, async (req, res) => {
           $arrayElemAt: ["$materia.nombre", 0],
         },
         sanciones: 1,
+        promedio: 1,
         contadorInasistenciasInjustificada: 1,
         contadorInasistenciasJustificada: 1,
       },

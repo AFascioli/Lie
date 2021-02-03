@@ -30,7 +30,7 @@ export class JustificacionInasistenciaComponent implements OnInit, OnDestroy {
     public servicioCicloLectivo: CicloLectivoService
   ) {}
 
-  async ngOnInit() {
+  ngOnInit() {
     this.servicioAsistencia
       .obtenerUltimasInasistencias()
       .pipe(takeUntil(this.unsubscribe))

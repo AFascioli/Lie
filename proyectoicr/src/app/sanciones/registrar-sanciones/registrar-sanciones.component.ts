@@ -52,7 +52,7 @@ export class RegistrarSancionesComponent implements OnInit, OnDestroy {
     this.unsubscribe.complete();
   }
 
-  async ngOnInit() {
+  ngOnInit() {
     this.apellidoEstudiante = this.servicioEstudiante.estudianteSeleccionado.apellido;
     this.nombreEstudiante = this.servicioEstudiante.estudianteSeleccionado.nombre;
     this.idEstudiante = this.servicioEstudiante.estudianteSeleccionado._id;
