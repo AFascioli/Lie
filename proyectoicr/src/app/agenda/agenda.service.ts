@@ -44,10 +44,10 @@ export class AgendaService {
   //Regista la agenda de un curso
   //@params: id del curso
   //@params: agenda del curso (dia, hora inicio y hora fin)
-  public registrarAgenda(agenda: any[], curso: string) {
+  public registrarAgenda(agenda: any[], curso: string, seClono: boolean) {
     return this.http.post<{ exito: boolean; message: string }>(
       environment.apiUrl + "/curso/agenda",
-      { agenda: agenda, idCurso: curso }
+      { agenda: agenda, idCurso: curso, seClono: seClono }
     );
   }
 
@@ -62,10 +62,10 @@ export class AgendaService {
     return this.http.get<{ materias: any[] }>(environment.apiUrl + "/materia");
   }
 
-  public clonarAgenda(idCurso: string, yearSelected: any) {
-    return this.http.post<{ exito: boolean; message: string }>(
-      environment.apiUrl + "/curso/agenda/horariosAnioAnterior",
-      { idCurso: idCurso, yearSelected: yearSelected }
+  public obtenerAgendaAnterior(idCurso: string) {
+    return this.http.post<{ exito: boolean; message: string; agenda: any }>(
+      environment.apiUrl + "/curso/agenda/anterior",
+      { idCurso: idCurso}
     );
   }
 }
