@@ -59,7 +59,7 @@ export class RetiroAnticipadoComponent implements OnInit {
       .obtenerHoraRetiroAnticipado()
       .pipe(takeUntil(this.unsubscribe))
       .subscribe((response) => {
-        this.horaRetiroAnticipado = response.hora.substring(0, 2);
+        this.horaRetiroAnticipado = response.hora;
       });
     if (
       this.fechaActual.toString().substring(0, 3) == "Sat" ||

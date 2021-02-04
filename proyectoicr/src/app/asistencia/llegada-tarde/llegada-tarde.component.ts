@@ -43,7 +43,7 @@ export class LlegadaTardeComponent implements OnInit, OnDestroy {
       .obtenerHoraLlegadaTarde()
       .pipe(takeUntil(this.unsubscribe))
       .subscribe((response) => {
-        this.horaLlegadaTarde = response.hora.substring(0, 2);
+        this.horaLlegadaTarde = response.hora;
       });
     if (this.fechaActual.getHours() < this.horaLlegadaTarde) {
       this.antesHorario = true;
