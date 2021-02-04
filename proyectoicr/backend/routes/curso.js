@@ -1578,6 +1578,111 @@ router.get("/agenda", checkAuthMiddleware, (req, res) => {
   }
 });
 
+//Obtiene la agenda del año anterior de un curso seleccionado (materias, horario y día dictadas)
+//@params: idCurso
+router.post("/agenda/anterior", checkAuthMiddleware, async (req, res) => {
+  try {
+    let cursoSeleccionado = await Curso.findById(req.body.idCurso).exec();
+    let idCicloAnterior = await ClaseCicloLectivo.obtenerIdCicloAnterior();
+
+    Curso.aggregate([
+      {
+        $match: {
+          nombre: cursoSeleccionado.nombre,
+          cicloLectivo: mongoose.Types.ObjectId(idCicloAnterior),
+        },
+      },
+      {
+        $lookup: {
+          from: "materiasXCurso",
+          localField: "materias",
+          foreignField: "_id",
+          as: "MXC",
+        },
+      },
+      {
+        $unwind: {
+          path: "$MXC",
+        },
+      },
+      {
+        $lookup: {
+          from: "materia",
+          localField: "MXC.idMateria",
+          foreignField: "_id",
+          as: "nombreMateria",
+        },
+      },
+      {
+        $lookup: {
+          from: "empleado",
+          localField: "MXC.idDocente",
+          foreignField: "_id",
+          as: "docente",
+        },
+      },
+      {
+        $unwind: {
+          path: "$MXC.horarios",
+        },
+      },
+      {
+        $lookup: {
+          from: "horario",
+          localField: "MXC.horarios",
+          foreignField: "_id",
+          as: "horarios",
+        },
+      },
+      {
+        $project: {
+          "nombreMateria.nombre": 1,
+          "nombreMateria._id": 1,
+          horarios: 1,
+          "docente.nombre": 1,
+          "docente.apellido": 1,
+          "docente._id": 1,
+          "MXC._id": 1,
+        },
+      },
+    ]).then((agendaCompleta) => {
+      if (agendaCompleta[0].horarios[0] == null) {
+        return res.status(200).json({
+          exito: false,
+          message: "No existen horarios registrados para este curso",
+          agenda: [],
+        });
+      } else {
+        let agenda = [];
+        for (let i = 0; i < agendaCompleta.length; i++) {
+          let valor = {
+            nombre: agendaCompleta[i].nombreMateria[0].nombre,
+            idMXC: "",
+            dia: agendaCompleta[i].horarios[0].dia,
+            inicio: agendaCompleta[i].horarios[0].horaInicio,
+            fin: agendaCompleta[i].horarios[0].horaFin,
+            idDocente: agendaCompleta[i].docente[0]._id,
+            idMateria: agendaCompleta[i].nombreMateria[0]._id,
+            idHorarios: null,
+            modificado: false,
+          };
+          agenda.push(valor);
+        }
+        res.status(200).json({
+          exito: true,
+          message: "Se ha obtenido la agenda correctamente",
+          agenda: agenda,
+        });
+      }
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: "Ocurrió un error al obtener la agenda",
+      error: error.message,
+    });
+  }
+});
+
 //Elimina un horario para un curso y una materia
 //@params: agenda, que se usa solo idHorario y la idMXC
 //@params: idCurso
@@ -1623,8 +1728,15 @@ router.post("/agenda", checkAuthMiddleware, async (req, res) => {
         });
       });
     };
+
     var mxcNuevas = [];
     let vectorIdsMXC = [];
+
+    // Cuando se clona la agenda se borra la anterior para que no queden las materias "apiladas"
+    if (req.body.seClono) {
+      await Curso.findByIdAndUpdate(req.body.idCurso, { materias: [] }).exec();
+    }
+
     for (const materia of req.body.agenda) {
       //Recorrer agenda del front
       if (materia.idHorarios == null) {
@@ -2316,6 +2428,7 @@ router.post(
   }
 );
 
+// #deprecado
 router.post(
   "/agenda/horariosAnioAnterior",
   checkAuthMiddleware,
