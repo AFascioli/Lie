@@ -198,6 +198,10 @@ router.get("/estadoCuotas", checkAuthMiddleware, async (req, res) => {
     "Inscripcion",
     "Activa"
   );
+  let idEstadoSuspendido = await ClaseEstado.obtenerIdEstado(
+    "Inscripcion",
+    "Suspendido"
+  );
   Curso.findById(req.query.idCurso)
     .then((curso) => {
       Inscripcion.aggregate([
@@ -208,7 +212,12 @@ router.get("/estadoCuotas", checkAuthMiddleware, async (req, res) => {
         },
         {
           $match: {
-            estado: mongoose.Types.ObjectId(idEstadoActiva),
+            estado: {
+              $in: [
+                mongoose.Types.ObjectId(idEstadoActiva),
+                mongoose.Types.ObjectId(idEstadoSuspendido),
+              ],
+            },
             idCurso: mongoose.Types.ObjectId(curso._id),
             "cuotas.mes": parseInt(req.query.mes, 10),
           },
@@ -276,11 +285,20 @@ router.post("/publicarEstadoCuotas", checkAuthMiddleware, async (req, res) => {
       "Inscripcion",
       "Activa"
     );
+    let idEstadoSuspendido = await ClaseEstado.obtenerIdEstado(
+      "Inscripcion",
+      "Suspendido"
+    );
     let final = req.body.length - 1;
     for (let i = 0; i <= final; i++) {
       Inscripcion.findOne({
         _id: req.body[i]._id,
-        estado: idEstadoActiva,
+        estado: {
+          $in: [
+            mongoose.Types.ObjectId(idEstadoActiva),
+            mongoose.Types.ObjectId(idEstadoSuspendido),
+          ],
+        },
       }).then((inscripcion) => {
         inscripcion.cuotas[req.body[i].mes - 3].pagado = !inscripcion.cuotas[
           req.body[i].mes - 3
@@ -731,6 +749,10 @@ router.get("/documentos", checkAuthMiddleware, async (req, res) => {
     "Inscripcion",
     "Activa"
   );
+  let idEstadoSuspendido = await ClaseEstado.obtenerIdEstado(
+    "Inscripcion",
+    "Suspendido"
+  );
   Inscripcion.aggregate([
     {
       $lookup: {
@@ -751,7 +773,12 @@ router.get("/documentos", checkAuthMiddleware, async (req, res) => {
     {
       $match: {
         "cursos.nombre": req.query.curso,
-        estado: mongoose.Types.ObjectId(idEstadoActiva),
+        estado: {
+          $in: [
+            mongoose.Types.ObjectId(idEstadoActiva),
+            mongoose.Types.ObjectId(idEstadoSuspendido),
+          ],
+        },
       },
     },
     {
@@ -793,6 +820,10 @@ router.get(
       "Inscripcion",
       "Activa"
     );
+    let idEstadoSuspendido = await ClaseEstado.obtenerIdEstado(
+      "Inscripcion",
+      "Suspendido"
+    );
     Inscripcion.aggregate([
       {
         $lookup: {
@@ -823,7 +854,12 @@ router.get(
       {
         $match: {
           "curso._id": mongoose.Types.ObjectId(req.query.idCurso),
-          estado: mongoose.Types.ObjectId(idEstadoActiva),
+          estado: {
+            $in: [
+              mongoose.Types.ObjectId(idEstadoActiva),
+              mongoose.Types.ObjectId(idEstadoSuspendido),
+            ],
+          },
         },
       },
       {
@@ -1391,12 +1427,21 @@ router.post(
         "Inscripcion",
         "Activa"
       );
+      let idEstadoSuspendido = await ClaseEstado.obtenerIdEstado(
+        "Inscripcion",
+        "Suspendido"
+      );
       req.body.forEach((estudiante) => {
         Inscripcion.aggregate([
           {
             $match: {
               idEstudiante: mongoose.Types.ObjectId(estudiante.idEstudiante),
-              estado: mongoose.Types.ObjectId(idEstadoActiva),
+              estado: {
+                $in: [
+                  mongoose.Types.ObjectId(idEstadoActiva),
+                  mongoose.Types.ObjectId(idEstadoSuspendido),
+                ],
+              },
             },
           },
           {
