@@ -46,27 +46,39 @@ export class ParametrizarReglasNegocioComponent implements OnInit {
   }
 
   onGuardar() {
-    this.servicioCicloLectivo
-      .guardarParametros(
-        this.cantidadFaltasSuspension,
-        this.cantidadMateriasInscripcionLibre,
-        this.horaLlegadaTarde,
-        this.horaRetiroAnticipado
-      )
-      .pipe(takeUntil(this.unsubscribe))
-      .subscribe(
-        (response) => {
-          this.snackBar.open(response.message, "", {
-            panelClass: ["snack-bar-exito"],
-            duration: 4500,
-          });
-        },
-        (error) => {
-          console.error(
-            "Ocurrió un error al querer guardar los parámetros. El error es: " +
-              error
-          );
-        }
-      );
+    if (
+      this.cantidadFaltasSuspension &&
+      this.cantidadMateriasInscripcionLibre &&
+      this.horaLlegadaTarde &&
+      this.horaRetiroAnticipado
+    ) {
+      this.servicioCicloLectivo
+        .guardarParametros(
+          this.cantidadFaltasSuspension,
+          this.cantidadMateriasInscripcionLibre,
+          this.horaLlegadaTarde,
+          this.horaRetiroAnticipado
+        )
+        .pipe(takeUntil(this.unsubscribe))
+        .subscribe(
+          (response) => {
+            this.snackBar.open(response.message, "", {
+              panelClass: ["snack-bar-exito"],
+              duration: 4500,
+            });
+          },
+          (error) => {
+            console.error(
+              "Ocurrió un error al querer guardar los parámetros. El error es: " +
+                error
+            );
+          }
+        );
+    } else {
+      this.snackBar.open("Faltan campos por completar", "", {
+        panelClass: ["snack-bar-fracaso"],
+        duration: 4500,
+      });
+    }
   }
 }

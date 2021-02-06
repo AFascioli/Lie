@@ -59,7 +59,7 @@ button {
   margin-right: auto;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  grid-template-rows: 150px;
+  grid-template-rows: auto;
   grid-gap: 8px;
   padding: 10px;
   border-radius: 4px;

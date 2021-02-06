@@ -24,8 +24,8 @@
           required
           (selectionChange)="onYearSelected(anio)"
         >
-          <mat-option *ngFor="let y of year" [value]="y">
-            {{ y }}
+          <mat-option *ngFor="let year of years" [value]="year">
+            {{ year }}
           </mat-option>
         </mat-select>
       </mat-form-field>
