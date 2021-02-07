@@ -93,7 +93,7 @@ time.icon span {
   color: #2f2f2f;
 }
 
-.boton-editar,
+.botonAddImage .boton-editar,
 .boton-borrar {
   display: flex;
 }
@@ -103,7 +103,7 @@ time.icon span {
   margin-bottom: 5px !important;
 }
 
-.boton-editar:hover,
+.botonAddImage:hover .boton-editar:hover,
 .boton-borrar:hover {
   background-color: #bbded6;
 }
@@ -112,7 +112,27 @@ time.icon span {
   position: absolute;
   right: 8%;
   bottom: 4%;
-  margin-right: 20px !important;
+  margin-right: 10px !important;
+}
+
+.container-img .botonAddImage {
+  position: absolute;
+  right: 8%;
+  bottom: 4%;
+  margin-right: 10px !important;
+}
+
+.container-img .botonAddEditMobile {
+  position: absolute;
+  right: 8%;
+  bottom: 4%;
+  margin-right: 35px !important;
+}
+
+.icono
+{
+  margin-bottom: 16px !important;
+  margin-right: 10px !important
 }
 
 .container-img .boton-borrar {
@@ -166,4 +186,28 @@ time.icon span {
 
 .card-body-componente {
   cursor: pointer;
+}
+
+.tooltip-lie-mobile {
+  background: rgb(92, 73, 187, 0.5);
+  border-radius: 5rem 5rem 5rem 0rem;
+  padding: 0.75em;
+  display: block;
+  z-index: 2;
+  color: white;
+  height: fit-content;
+  width: fit-content;
+
+  max-width: 17%;
+  position: absolute;
+  right: 3%;
+  top: 3%;
+  animation-name: tooltipfade;
+  /* animation-duration: 6s; */
+}
+
+.botonComentarioNoimagen
+{
+  display: block;
+  text-align: center;
 }

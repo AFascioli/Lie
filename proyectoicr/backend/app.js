@@ -110,7 +110,6 @@ app.get("/status", (req, res, next) => {
 });
 
 const ClaseSuscripcion = require("./classes/suscripcion");
-app.get("/testi", async (req, res, next) => {});
 
 // #resolve Guardar comentarios y diccionario
 // Endpoint save diccionario
@@ -135,6 +134,99 @@ app.get("/sdict", (res) => {
     res.status(200).json({
       message: "Diccionario creado.",
     });
+  });
+});
+
+const ClaseCicloLectivo = require("./classes/cicloLectivo");
+const ClaseEstado = require("./classes/estado");
+const Inscripcion = require("./models/inscripcion");
+const MateriasXCurso = require("./models/materiasXCurso");
+const CalificacionesXMateria = require("./models/calificacionesXMateria");
+const ClaseCalificacionesXMateria = require("./classes/calificacionXMateria");
+app.get("/testi", async (req, res, next) => {
+  // let idEstudiante = "";
+  // let idCicloActual = await this.obtenerIdCicloActual();
+  // let idPromovido = await ClaseEstado.obtenerIdEstado(
+  //   "Inscripcion",
+  //   "Promovido"
+  // );
+  // let idExamenesPendientes = await ClaseEstado.obtenerIdEstado(
+  //   "Inscripcion",
+  //   "Promovido con examenes pendientes"
+  // );
+  // let idEstadoCXMDesaprobada = await ClaseEstado.obtenerIdEstado(
+  //   "CalificacionesXMateria",
+  //   "Desaprobada"
+  // );
+
+  // let inscripcionAnterior = await Inscripcion.findOne({
+  //   idEstudiante: inscripcion.idEstudiante,
+  //   estado: {
+  //     $in: [idPromovido, idExamenesPendientes],
+  //   },
+  //   cicloLectivo: idCicloActual,
+  // });
+
+  // inscripcion.calificacionesXMateria = idsCXM;
+  // //Obtenemos las materias pendientes del estudiante
+  // let materiasPendientes = [];
+  // if (inscripcionAnterior) {
+  //   materiasPendientes = await ClaseCalificacionesXMateria.obtenerMateriasDesaprobadasv2(
+  //     inscripcionAnterior.materiasPendientes,
+  //     inscripcionAnterior.calificacionesXMateria,
+  //     idEstadoCXMDesaprobada
+  //   );
+  // }
+  // inscripcion.materiasPendientes = materiasPendientes;
+  // inscripcion.save();
+
+  const idEstadoCXMPendiente = await ClaseEstado.obtenerIdEstado(
+    "CalificacionesXMateria",
+    "Pendiente examen"
+  );
+  const idEstadoCXMDesaprobada = await ClaseEstado.obtenerIdEstado(
+    "CalificacionesXMateria",
+    "Desaprobada"
+  );
+
+  let idsCXMPendientes = [];
+
+  let inscripcionesPendientes = await Inscripcion.aggregate([
+    {
+      $match: {
+        cicloLectivo: mongoose.Types.ObjectId("5fea5b787678e028fc7023cf"),
+        idEstudiante: mongoose.Types.ObjectId("5fd93e7e40fb9f06845c23a9"),
+      },
+    },
+    {
+      $lookup: {
+        from: "calificacionesXMateria",
+        localField: "calificacionesXMateria",
+        foreignField: "_id",
+        as: "datosCXM",
+      },
+    },
+  ]);
+
+  for (const inscripcion of inscripcionesPendientes) {
+    for (const cxm of inscripcion.datosCXM) {
+      if (
+        cxm.estado.toString().localeCompare(idEstadoCXMPendiente.toString()) ==
+        0
+      ) {
+        idsCXMPendientes.push(cxm._id);
+      }
+    }
+  }
+
+  for (const idCxm of idsCXMPendientes) {
+    await CalificacionesXMateria.findByIdAndUpdate(idCxm, {
+      estado: idEstadoCXMDesaprobada,
+    }).exec();
+  }
+
+  res.status(200).json({
+    message: idsCXMPendientes,
   });
 });
 

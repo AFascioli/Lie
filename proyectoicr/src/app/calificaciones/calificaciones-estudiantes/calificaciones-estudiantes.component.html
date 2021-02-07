@@ -1,8 +1,8 @@
-<h1 *ngIf="rolConPermisosEdicion && !isLoading" class="componente-titulo">
-  Registrar calificaciones ciclo lectivo {{ fechaActual.getFullYear() }}
+<h1 *ngIf="rolConPermisosEdicion && aniosCiclos" class="componente-titulo">
+  Registrar calificaciones ciclo lectivo {{ aniosCiclos[0] }}
 </h1>
-<h1 *ngIf="!rolConPermisosEdicion && !isLoading" class="componente-titulo">
-  Visualizar calificaciones ciclo lectivo {{ fechaActual.getFullYear() }}
+<h1 *ngIf="!rolConPermisosEdicion && aniosCiclos " class="componente-titulo">
+  Visualizar calificaciones ciclo lectivo {{ aniosCiclos[0] }}
 </h1>
 <mat-card class="card-spinner" *ngIf="isLoading">
   <mat-spinner class="spinner" [diameter]="60"></mat-spinner>
@@ -12,10 +12,11 @@
   *ngIf="this.estadoCiclo == 'Inactivo' || this.estadoCiclo == 'Creado'"
 >
   <p
-    class="parrafo"
+    class="aviso"
     *ngIf="this.estadoCiclo == 'Inactivo' || this.estadoCiclo == 'Creado'"
   >
-    Esta funcionalidad se encuentra deshabilitada.
+    Atención, no se pueden registrar calificaciones debido a que nos encontramos
+    fuera de las fechas habilitadas para ese fin.
   </p>
 </mat-card>
 <mat-card
@@ -124,7 +125,7 @@
                 calcularPromedio(
                   indexEst + i,
                   contadorNotasValidas(indexEst + i)
-                ) < 6
+                ) < 6 && this.promedio != 0
             }"
           >
             {{ estudiante.apellido }}
@@ -139,7 +140,9 @@
             class="columnas-normales nombre-tabla"
             mat-cell
             *matCellDef="let estudiante; let i = index"
-            [ngClass]="{ bajoPromedio: this.promedio < 6 }"
+            [ngClass]="{
+              bajoPromedio: this.promedio < 6 && this.promedio != 0
+            }"
           >
             {{ estudiante.nombre }}
           </td>
@@ -151,7 +154,9 @@
             class="columnas-chicas"
             mat-cell
             *matCellDef="let estudiante; let row"
-            [ngClass]="{ bajoPromedio: this.promedio < 6 }"
+            [ngClass]="{
+              bajoPromedio: this.promedio < 6 && this.promedio != 0
+            }"
           >
             <input
               *ngIf="rolConPermisosEdicion && puedeEditarCalificaciones"
@@ -163,7 +168,9 @@
               (keydown)="deshabilitarFlechas($event)"
               (keypress)="checkNotas($event, estudiante.calificaciones[0])"
               (change)="onCalificacionChange()"
-              [ngClass]="{ bajoPromedio: this.promedio < 6 }"
+              [ngClass]="{
+                bajoPromedio: this.promedio < 6 && this.promedio != 0
+              }"
             />
             <p *ngIf="!rolConPermisosEdicion || !puedeEditarCalificaciones">
               {{ estudiante.calificaciones[0] }}
@@ -176,7 +183,9 @@
             class="columnas-chicas"
             mat-cell
             *matCellDef="let estudiante; let row"
-            [ngClass]="{ bajoPromedio: this.promedio < 6 }"
+            [ngClass]="{
+              bajoPromedio: this.promedio < 6 && this.promedio != 0
+            }"
           >
             <input
               *ngIf="rolConPermisosEdicion && puedeEditarCalificaciones"
@@ -187,7 +196,9 @@
               (keydown)="deshabilitarFlechas($event)"
               (keypress)="checkNotas($event, estudiante.calificaciones[1])"
               (change)="onCalificacionChange()"
-              [ngClass]="{ bajoPromedio: this.promedio < 6 }"
+              [ngClass]="{
+                bajoPromedio: this.promedio < 6 && this.promedio != 0
+              }"
               [value]="estudiante.calificaciones[1]"
             />
             <p *ngIf="!rolConPermisosEdicion || !puedeEditarCalificaciones">
@@ -201,7 +212,9 @@
             class="columnas-chicas"
             mat-cell
             *matCellDef="let estudiante; let row"
-            [ngClass]="{ bajoPromedio: this.promedio < 6 }"
+            [ngClass]="{
+              bajoPromedio: this.promedio < 6 && this.promedio != 0
+            }"
           >
             <input
               *ngIf="rolConPermisosEdicion && puedeEditarCalificaciones"
@@ -212,7 +225,9 @@
               (keydown)="deshabilitarFlechas($event)"
               (keypress)="checkNotas($event, estudiante.calificaciones[2])"
               (change)="onCalificacionChange()"
-              [ngClass]="{ bajoPromedio: this.promedio < 6 }"
+              [ngClass]="{
+                bajoPromedio: this.promedio < 6 && this.promedio != 0
+              }"
               [value]="estudiante.calificaciones[2]"
             />
             <p *ngIf="!rolConPermisosEdicion || !puedeEditarCalificaciones">
@@ -226,7 +241,9 @@
             class="columnas-chicas"
             mat-cell
             *matCellDef="let estudiante; let row"
-            [ngClass]="{ bajoPromedio: this.promedio < 6 }"
+            [ngClass]="{
+              bajoPromedio: this.promedio < 6 && this.promedio != 0
+            }"
           >
             <input
               *ngIf="rolConPermisosEdicion && puedeEditarCalificaciones"
@@ -237,7 +254,9 @@
               (keydown)="deshabilitarFlechas($event)"
               (keypress)="checkNotas($event, estudiante.calificaciones[3])"
               (change)="onCalificacionChange()"
-              [ngClass]="{ bajoPromedio: this.promedio < 6 }"
+              [ngClass]="{
+                bajoPromedio: this.promedio < 6 && this.promedio != 0
+              }"
               [value]="estudiante.calificaciones[3]"
             />
             <p *ngIf="!rolConPermisosEdicion || !puedeEditarCalificaciones">
@@ -251,7 +270,9 @@
             class="columnas-chicas"
             mat-cell
             *matCellDef="let estudiante; let row"
-            [ngClass]="{ bajoPromedio: this.promedio < 6 }"
+            [ngClass]="{
+              bajoPromedio: this.promedio < 6 && this.promedio != 0
+            }"
           >
             <input
               *ngIf="rolConPermisosEdicion && puedeEditarCalificaciones"
@@ -262,7 +283,9 @@
               (keydown)="deshabilitarFlechas($event)"
               (keypress)="checkNotas($event, estudiante.calificaciones[4])"
               (change)="onCalificacionChange()"
-              [ngClass]="{ bajoPromedio: this.promedio < 6 }"
+              [ngClass]="{
+                bajoPromedio: this.promedio < 6 && this.promedio != 0
+              }"
               [value]="estudiante.calificaciones[4]"
             />
             <p *ngIf="!rolConPermisosEdicion || !puedeEditarCalificaciones">
@@ -276,7 +299,9 @@
             class="columnas-chicas"
             mat-cell
             *matCellDef="let estudiante; let row"
-            [ngClass]="{ bajoPromedio: this.promedio < 6 }"
+            [ngClass]="{
+              bajoPromedio: this.promedio < 6 && this.promedio != 0
+            }"
           >
             <input
               *ngIf="rolConPermisosEdicion && puedeEditarCalificaciones"
@@ -287,7 +312,9 @@
               (keydown)="deshabilitarFlechas($event)"
               (keypress)="checkNotas($event, estudiante.calificaciones[5])"
               (change)="onCalificacionChange()"
-              [ngClass]="{ bajoPromedio: this.promedio < 6 }"
+              [ngClass]="{
+                bajoPromedio: this.promedio < 6 && this.promedio != 0
+              }"
             />
             <p *ngIf="!rolConPermisosEdicion || !puedeEditarCalificaciones">
               {{ estudiante.calificaciones[5] }}
@@ -303,7 +330,9 @@
             class="columnas-chicas promedio"
             mat-cell
             *matCellDef="let estudiante; let i = index"
-            [ngClass]="{ bajoPromedio: this.promedio < 6 }"
+            [ngClass]="{
+              bajoPromedio: this.promedio < 6 && this.promedio != 0
+            }"
           >
             <p *ngIf="!(contadorNotasValidas(i) == 0); else sinNotas">
               {{ this.promedio.toFixed(2) }}
@@ -326,7 +355,7 @@
       </mat-paginator>
     </div>
     <p class="aviso" *ngIf="estudiantes.length == 0 && materiaSeleccionada">
-      No se encuentran estudiantes registrados en este curso
+      No se encuentran estudiantes registrados en este curso.
     </p>
     <div class="div-button">
       <button

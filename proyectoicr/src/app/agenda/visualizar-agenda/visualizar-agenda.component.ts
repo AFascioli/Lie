@@ -1,3 +1,4 @@
+import { CicloLectivoService } from "./../../cicloLectivo.service";
 import { AgendaService } from "../agenda.service";
 import { Component, OnInit, ChangeDetectorRef, OnDestroy } from "@angular/core";
 import { EstudiantesService } from "src/app/estudiantes/estudiante.service";
@@ -12,7 +13,6 @@ import { Subject } from "rxjs";
   styleUrls: ["./visualizar-agenda.component.css"],
 })
 export class VisualizarAgendaComponent implements OnInit, OnDestroy {
-  fechaActual: Date;
   dias = ["Hora", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes"];
   //Agrego Hora en los dos vectores para que el calculo sea siempre +1 +2
   modulo = [
@@ -39,10 +39,14 @@ export class VisualizarAgendaComponent implements OnInit, OnDestroy {
   private unsubscribe: Subject<void> = new Subject();
   isLoading = true;
   agendaVacia: boolean = false;
+  yearSelected;
+  nextYearSelect;
+  aniosCiclos: any[];
 
   constructor(
     public servicioEstudiante: EstudiantesService,
     public servicioAgenda: AgendaService,
+    public servicioCicloLectivo: CicloLectivoService,
     public snackBar: MatSnackBar,
     public changeDetectorRef: ChangeDetectorRef,
     public media: MediaMatcher
@@ -53,8 +57,14 @@ export class VisualizarAgendaComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.fechaActual = new Date();
-    this.obtenerCursos();
+    this.servicioCicloLectivo
+      .obtenerActualYSiguiente()
+      .pipe(takeUntil(this.unsubscribe))
+      .subscribe((response) => {
+        this.aniosCiclos = response.añosCiclos;
+        this.obtenerCursos();
+        this.isLoading = false;
+      });
   }
 
   // Obtiene la agenda de un curso y le asigna a las materias un color distinto
@@ -88,9 +98,21 @@ export class VisualizarAgendaComponent implements OnInit, OnDestroy {
     })();
   }
 
+  onYearSelected(yearSelected) {
+    this.cursoSelected = false;
+    if (yearSelected.value == "actual") {
+      this.yearSelected = this.aniosCiclos[0];
+      this.nextYearSelect = false;
+    } else {
+      this.yearSelected = this.aniosCiclos[1];
+      this.nextYearSelect = true;
+    }
+    this.obtenerCursos();
+  }
+
   obtenerCursos() {
     this.servicioEstudiante
-      .obtenerCursos(this.fechaActual.getFullYear())
+      .obtenerCursos(this.aniosCiclos[0])
       .pipe(takeUntil(this.unsubscribe))
       .subscribe((response) => {
         this.cursos = response.cursos;

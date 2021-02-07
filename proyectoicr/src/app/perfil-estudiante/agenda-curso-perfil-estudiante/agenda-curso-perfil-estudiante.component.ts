@@ -125,11 +125,16 @@ export class AgendaCursoPerfilEstudianteComponent implements OnInit, OnDestroy {
     this.colores[3] = "#ffb961";
     this.colores[4] = "#899857";
     this.colores[5] = "#ba6b57";
-    this.colores[6] = "#e7b2a5";
+    this.colores[6] = "#4e8d7c";
     this.colores[7] = "#6e5773";
     this.colores[8] = "#f1935c";
-    this.colores[9] = "#a3f7bf";
+    this.colores[9] = "#965d62";
     this.colores[10] = "#ce0f3d";
+    this.colores[11] = "#03506f";
+    this.colores[12] = "#a6a9b6";
+    this.colores[13] = "#c7956d";
+    this.colores[14] = "#519872";
+    this.colores[15] = "#a35d6a";
   }
 
   getMateriasDistintas() {

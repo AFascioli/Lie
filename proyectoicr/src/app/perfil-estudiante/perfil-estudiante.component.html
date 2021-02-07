@@ -1,9 +1,9 @@
-<h1 class="componente-titulo">
-  Resumen académico {{ fechaActual.getFullYear() }} de:
-  {{ apellidoEstudiante }}, {{ nombreEstudiante }}
+<h1 class="componente-titulo" *ngIf="aniosCiclos">
+  Resumen académico {{ aniosCiclos[0] }} de: {{ apellidoEstudiante }},
+  {{ nombreEstudiante }}
 </h1>
 <h3 class="mensaje-suspendido" *ngIf="suspendido">
-  El estudiante se encuentra suspendido
+  El estudiante se encuentra suspendido.
 </h3>
 
 <div class="grid-container" [class.grid-container-mobile]="mobileQuery.matches">

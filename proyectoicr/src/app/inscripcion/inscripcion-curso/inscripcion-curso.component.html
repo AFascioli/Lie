@@ -1,4 +1,4 @@
-<h1 class="componente-titulo">Inscribir estudiantes a un curso</h1>
+<h1 class="componente-titulo">Inscripción por curso</h1>
 <mat-card class="card-body-componente">
   <form #form="ngForm">
     <div class="div-select">
@@ -12,10 +12,12 @@
           required
           (selectionChange)="onYearSelected(yearSelected)"
         >
-          <mat-option value="actual" *ngIf="cicloHabilitado">
-            {{ this.anosCiclos[0] }}</mat-option
+          <mat-option value="actual" *ngIf="cicloHabilitado && aniosCiclos">
+            {{ this.aniosCiclos[0] }}</mat-option
           >
-          <mat-option value="proximo"> {{ this.anosCiclos[1] }}</mat-option>
+          <mat-option value="proximo" *ngIf="aniosCiclos">
+            {{ this.aniosCiclos[1] }}</mat-option
+          >
         </mat-select>
       </mat-form-field>
       <mat-form-field class="curso">
@@ -40,7 +42,7 @@
         estudiantes.length == 0 && !loading && seSeleccionoCurso && yearSelected
       "
     >
-      <b>No hay estudiantes para inscribir al curso seleccionado </b>
+      No hay estudiantes para inscribir al curso seleccionado.
     </p>
     <table
       mat-table

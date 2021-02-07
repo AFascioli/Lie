@@ -1,21 +1,12 @@
+<h1 class="componente-titulo">
+  Registrar documentos de inscripción ciclo lectivo
+  {{ aniosCiclos[0] }}
+</h1>
+
 <mat-card class="card-spinner" *ngIf="isLoading">
   <mat-spinner class="spinner" [diameter]="60"></mat-spinner>
 </mat-card>
-
-<h1 *ngIf="!isLoading" class="componente-titulo">
-  Registrar documentos de inscripción ciclo lectivo
-  {{ fechaActual.getFullYear() }}
-</h1>
-<mat-card class="card-body-componente" *ngIf="fueraPeriodoCicloLectivo">
-  <p class="aviso">
-    Atención, no se puede registrar documentación debido a que estamos fuera de
-    las fechas autorizadas
-  </p>
-</mat-card>
-<mat-card
-  class="card-body-componente"
-  *ngIf="!isLoading && !fueraPeriodoCicloLectivo"
->
+<mat-card class="card-body-componente" *ngIf="!isLoading">
   <div class="div-selects">
     <mat-form-field>
       <mat-select
@@ -101,9 +92,14 @@
   </div>
   <p
     class="aviso"
-    *ngIf="estudiantesConDocumentos.length == 0 && cursoSeleccionado"
+    *ngIf="
+      estudiantesConDocumentos.length == 0 &&
+      cursoSeleccionado &&
+      !isLoading &&
+      !isLoading2
+    "
   >
-    No se encuentran estudiantes inscriptos en el curso seleccionado
+    No se encuentran estudiantes inscriptos en el curso seleccionado.
   </p>
   <div class="div-button">
     <button

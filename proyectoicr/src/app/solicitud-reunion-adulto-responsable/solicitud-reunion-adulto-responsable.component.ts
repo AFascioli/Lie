@@ -15,6 +15,7 @@ export class SolicitudReunionAdultoResponsableComponent implements OnInit {
   private unsubscribe: Subject<void> = new Subject();
   docentes;
   displayedColumns: string[] = ["apellido", "nombre", "materia", "notificar"];
+  cuerpoNotificacion;
   constructor(
     public snackBar: MatSnackBar,
     public servicioAR: AdultoResponsableService,
@@ -49,23 +50,44 @@ export class SolicitudReunionAdultoResponsableComponent implements OnInit {
 
     if (this.validarCampos(form.value.cuerpo, docenteSeleccionado)) {
       this.servicioAR
-        .notificarReunionDocente(
+        .validarNotificacion(
           docenteSeleccionado[0].idUsuario,
-          form.value.cuerpo,
           this.servicioAutenticacion.getId()
         )
         .pipe(takeUntil(this.unsubscribe))
-        .subscribe((respuesta) => {
-          if (respuesta.exito) {
-            this.snackBar.open(respuesta.message, "", {
-              panelClass: ["snack-bar-exito"],
-              duration: 4500,
-            });
+        .subscribe((response) => {
+          if (response.exito) {
+            this.servicioAR
+              .notificarReunionDocente(
+                docenteSeleccionado[0].idUsuario,
+                form.value.cuerpo,
+                this.servicioAutenticacion.getId()
+              )
+              .pipe(takeUntil(this.unsubscribe))
+              .subscribe((respuesta) => {
+                if (respuesta.exito) {
+                  this.cuerpoNotificacion = "";
+                  docenteSeleccionado[0].seleccionado = false;
+                  this.snackBar.open(respuesta.message, "", {
+                    panelClass: ["snack-bar-exito"],
+                    duration: 4500,
+                  });
+                } else {
+                  this.snackBar.open(respuesta.message, "", {
+                    panelClass: ["snack-bar-fracaso"],
+                    duration: 4500,
+                  });
+                }
+              });
           } else {
-            this.snackBar.open(respuesta.message, "", {
-              panelClass: ["snack-bar-fracaso"],
-              duration: 4500,
-            });
+            this.snackBar.open(
+              "Deben pasar al menos 7 días de la última solicitud realizada a dicho docente.",
+              "",
+              {
+                panelClass: ["snack-bar-fracaso"],
+                duration: 4500,
+              }
+            );
           }
         });
     }

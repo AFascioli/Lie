@@ -27,10 +27,9 @@ export class DocumentosInscripcionComponent implements OnInit, OnDestroy {
   ];
   matConfig = new MatDialogConfig();
   documentosEntregadosOnChange = false;
-  fueraPeriodoCicloLectivo = false;
-  fechaActual: Date;
   isLoading = true;
   isLoading2 = false;
+  aniosCiclos;
   private unsubscribe: Subject<void> = new Subject();
   _mobileQueryListener: () => void;
   mobileQuery: MediaQueryList;
@@ -55,36 +54,27 @@ export class DocumentosInscripcionComponent implements OnInit, OnDestroy {
     this.unsubscribe.complete();
   }
 
-  async ngOnInit() {
-    this.fueraPeriodoCicloLectivo = true;
-    this.fechaActual = new Date();
-    if (
-      (await this.fechaActualEnPeriodoCursado()) ||
-      this.autenticacionService.getRol() == "Admin"
-    ) {
-      this.servicioEstudiante
-        .obtenerCursos(this.fechaActual.getFullYear())
-        .pipe(takeUntil(this.unsubscribe))
-        .subscribe((response) => {
-          this.cursos = response.cursos;
-          this.cursos.sort((a, b) =>
-            a.nombre.charAt(0) > b.nombre.charAt(0)
-              ? 1
-              : b.nombre.charAt(0) > a.nombre.charAt(0)
-              ? -1
-              : 0
-          );
-          this.isLoading = false;
-        });
-    }
-  }
-
-  async fechaActualEnPeriodoCursado() {
-    return new Promise((resolve, reject) => {
-      this.servicioCicloLectivo.validarEnCursado().subscribe((result) => {
-        resolve(result.permiso);
+  ngOnInit() {
+    this.servicioCicloLectivo
+      .obtenerActualYSiguiente()
+      .pipe(takeUntil(this.unsubscribe))
+      .subscribe((response) => {
+        this.aniosCiclos = response.añosCiclos;
+        this.servicioEstudiante
+          .obtenerCursos(response.añosCiclos[0])
+          .pipe(takeUntil(this.unsubscribe))
+          .subscribe((response) => {
+            this.cursos = response.cursos;
+            this.cursos.sort((a, b) =>
+              a.nombre.charAt(0) > b.nombre.charAt(0)
+                ? 1
+                : b.nombre.charAt(0) > a.nombre.charAt(0)
+                ? -1
+                : 0
+            );
+            this.isLoading = false;
+          });
       });
-    });
   }
 
   //Cuando el usuario selecciona una division, se obtienen los datos del estudiantes necesarios

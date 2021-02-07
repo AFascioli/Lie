@@ -1,6 +1,4 @@
-<h1 class="componente-titulo">
-  Instituto Cristo Rey
-</h1>
+<h1 class="componente-titulo">Instituto Cristo Rey</h1>
 <ng-container *ngIf="eventos.length != 0 && !isLoading">
   <mat-card
     class="card-body-componente"
@@ -13,7 +11,11 @@
           {{ evento.titulo }}
         </button>
       </div>
-      <div *ngIf="mostrarTooltip" class="tooltip-lie">
+      <div
+        *ngIf="mostrarTooltip"
+        class="tooltip-lie"
+        [class.tooltip-lie-mobile]="mobileQuery.matches"
+      >
         Hacé click para ver mas detalles!
       </div>
       <div>
@@ -31,12 +33,13 @@
       <img
         [src]="getImage(evento.filenames[0])"
         *ngIf="evento.filenames.length > 0"
-        style="width: 100%;"
+        style="width: 100%"
       />
       <button
         type="button"
         mat-icon-button
         class="boton-editar"
+        [class.botonAddEditMobile]="mobileQuery.matches"
         *ngIf="
           conocerUsuarioLogueado(j) &&
           evento.filenames.length != 0 &&
@@ -44,7 +47,23 @@
         "
         matTooltip="Editar evento"
       >
-        <mat-icon (click)="onEditar(evento)">mode_edit </mat-icon>
+        <mat-icon class="icono" (click)="onEditar(evento)">mode_edit </mat-icon>
+      </button>
+      <button
+        type="button"
+        mat-icon-button
+        class="botonAddImage"
+        [class.botonAddEditMobile]="mobileQuery.matches"
+        *ngIf="
+          conocerUsuarioLogueado(j) &&
+          evento.filenames.length != 0 &&
+          eventoYaOcurrio(j)
+        "
+        matTooltip="Agregar foto"
+      >
+        <mat-icon class="icono" (click)="onAgregarFoto(evento)"
+          >add_a_photo
+        </mat-icon>
       </button>
       <button
         type="button"
@@ -67,27 +86,50 @@
         {{ evento.descripcion }}
       </p>
     </mat-card-content>
-    <div
-      class="boton-visualizar"
-      [ngClass]="{ visualizar: evento.filenames.length == 0 && conocerUsuarioLogueado(j) }"
-    >
-      <button class="boton-comentario" (click)="eventoSeleccionado(evento)">
-        Ver comentarios
-      </button>
+    <div class="boton-visualizar">
+      <div
+        [ngClass]="{
+          botonComentarioNoimagen:
+            evento.filenames.length == 0 && conocerUsuarioLogueado(j)
+        }"
+      >
+        <button class="boton-comentario" (click)="eventoSeleccionado(evento)">
+          Ver comentarios
+        </button>
+      </div>
       <div class="botones">
         <button
           type="button"
           mat-icon-button
           class="botonEditar"
-          *ngIf="conocerUsuarioLogueado(j) && evento.filenames.length == 0"
+          *ngIf="
+            conocerUsuarioLogueado(j) &&
+            evento.filenames.length == 0 &&
+            !eventoYaOcurrio(j)
+          "
+          matTooltip="Editar evento"
         >
           <mat-icon (click)="onEditar(evento)">mode_edit </mat-icon>
+        </button>
+
+        <button
+          type="button"
+          mat-icon-button
+          *ngIf="
+            conocerUsuarioLogueado(j) &&
+            evento.filenames.length == 0 &&
+            eventoYaOcurrio(j)
+          "
+          matTooltip="Agregar foto"
+        >
+          <mat-icon (click)="onAgregarFoto(evento)">add_a_photo </mat-icon>
         </button>
         <button
           type="button"
           mat-icon-button
           class="botonBorrar"
           *ngIf="conocerUsuarioLogueado(j) && evento.filenames.length == 0"
+          matTooltip="Eliminar evento"
         >
           <mat-icon (click)="onBorrar(evento)">delete </mat-icon>
         </button>

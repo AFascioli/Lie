@@ -36,7 +36,7 @@
     <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
     <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
   </table>
-  <p *ngIf="tutores.length==0" class="aviso"><b>El estudiante no tiene tutores asignados</b></p>
+  <p *ngIf="tutores.length==0" class="aviso">El estudiante no tiene tutores asignados</p>
   <div class="div-button">
     <button
     mat-raised-button

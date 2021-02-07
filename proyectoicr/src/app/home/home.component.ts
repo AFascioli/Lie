@@ -1,6 +1,6 @@
 import { environment } from "src/environments/environment";
 import { EventosService } from "./../eventos/eventos.service";
-import { Component, OnInit, OnDestroy } from "@angular/core";
+import { Component, OnInit, OnDestroy, ChangeDetectorRef } from "@angular/core";
 import { SwPush } from "@angular/service-worker";
 import { AutenticacionService } from "../login/autenticacionService.service";
 import { Router } from "@angular/router";
@@ -8,6 +8,7 @@ import { Evento } from "../eventos/evento.model";
 import { MatSnackBar, MatDialogRef, MatDialog } from "@angular/material";
 import { Subject } from "rxjs";
 import { takeUntil } from "rxjs/operators";
+import { MediaMatcher } from "@angular/cdk/layout";
 
 @Component({
   selector: "app-home",
@@ -25,6 +26,8 @@ export class HomeComponent implements OnInit, OnDestroy {
   enProcesoDeBorrado: boolean = false;
   isLoading: boolean = true;
   mostrarTooltip: boolean = true;
+  _mobileQueryListener: () => void;
+  mobileQuery: MediaQueryList;
 
   constructor(
     public snackBar: MatSnackBar,
@@ -32,8 +35,14 @@ export class HomeComponent implements OnInit, OnDestroy {
     private servicioAuth: AutenticacionService,
     public router: Router,
     public servicioEvento: EventosService,
-    public dialog: MatDialog
-  ) {}
+    public dialog: MatDialog,
+    public changeDetectorRef: ChangeDetectorRef,
+    public media: MediaMatcher
+  ) {
+    this.mobileQuery = media.matchMedia("(max-width: 800px)");
+    this._mobileQueryListener = () => changeDetectorRef.detectChanges();
+    this.mobileQuery.addListener(this._mobileQueryListener);
+  }
 
   eventoSeleccionado(evento: Evento) {
     if (!this.enProcesoDeBorrado) {
@@ -103,18 +112,17 @@ export class HomeComponent implements OnInit, OnDestroy {
   //si el evento ya paso. Si estamos en el dia del evento, devuelve true si ya estamos
   //en la misma hora que el evento
   eventoYaOcurrio(indexEvento: number) {
-    const fechaActual = new Date();
     const fechaEvento = new Date(this.eventos[indexEvento].fechaEvento);
     if (
-      fechaActual.getMonth() == fechaEvento.getMonth() &&
-      fechaActual.getDate() == fechaEvento.getDate()
+      this.fechaActual.getMonth() == fechaEvento.getMonth() &&
+      this.fechaActual.getDate() == fechaEvento.getDate()
     ) {
       const horaEvento = new Date(
         "01/01/2020 " + this.eventos[indexEvento].horaInicio
       );
-      return fechaActual.getHours() >= horaEvento.getHours();
+      return this.fechaActual.getHours() >= horaEvento.getHours();
     } else {
-      return fechaActual.getTime() > fechaEvento.getTime();
+      return this.fechaActual.getTime() > fechaEvento.getTime();
     }
   }
 
@@ -152,6 +160,14 @@ export class HomeComponent implements OnInit, OnDestroy {
   onEditar(evento) {
     this.servicioEvento.evento = evento;
     this.servicioEvento.eventoSeleccionado = evento;
+    this.servicioEvento.imageOnly = false;
+    this.router.navigate(["./modificarEvento"]);
+  }
+
+  onAgregarFoto(evento) {
+    this.servicioEvento.evento = evento;
+    this.servicioEvento.eventoSeleccionado = evento;
+    this.servicioEvento.imageOnly = true;
     this.router.navigate(["./modificarEvento"]);
   }
 

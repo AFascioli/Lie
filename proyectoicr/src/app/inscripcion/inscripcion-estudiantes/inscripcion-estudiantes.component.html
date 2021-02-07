@@ -31,18 +31,18 @@
               curso
             </b>
             <label [innerHTML]="cursoActual" class="mensaje-atencion-curso">
+              para el año
+              {{ aniosCiclos[0] }}
             </label>
           </p>
           <p class="mensaje-atencion" *ngIf="tieneInscripcionPendiente">
             <b
-              >Atención, el estudiante seleccionado ya esta inscripto en el
-              curso
+              >Atención, el estudiante seleccionado ya tiene una inscripcion
             </b>
             <label [innerHTML]="cursoActual" class="mensaje-atencion-curso">
               para el año
-              <!-- {{añosCiclos.siguiente}} -->
+              {{ aniosCiclos[1] }}
             </label>
-            <!-- #Resolve añosCiclos.siguiente tiene que ser el año del ciclo lectivo proximo-->
           </p>
         </mat-card-subtitle>
       </mat-card>
@@ -58,10 +58,12 @@
           required
           (selectionChange)="onYearSelected(yearSelected)"
         >
-          <mat-option value="actual" *ngIf="cicloHabilitado">
-            {{ anosCiclos[0] }}</mat-option
+          <mat-option value="actual" *ngIf="cicloHabilitado && aniosCiclos">
+            {{ aniosCiclos[0] }}</mat-option
           >
-          <mat-option value="proximo"> {{ anosCiclos[1] }}</mat-option>
+          <mat-option value="proximo" *ngIf="aniosCiclos">
+            {{ aniosCiclos[1] }}</mat-option
+          >
         </mat-select>
       </mat-form-field>
       <mat-form-field>
@@ -128,6 +130,7 @@
         class="button-primary"
         (click)="openDialogo(form)"
         mat-raised-button
+        [disabled]="inscripto"
       >
         Inscribir
       </button>

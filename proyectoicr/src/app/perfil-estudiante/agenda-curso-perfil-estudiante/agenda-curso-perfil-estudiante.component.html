@@ -1,107 +1,120 @@
 <h1 class="componente-titulo">
-  Horarios de {{ apellidoEstudiante }}, {{ nombreEstudiante }} - {{ curso }}
+  Horarios de {{ apellidoEstudiante }}, {{ nombreEstudiante }}
 </h1>
 <mat-card class="card-body-componente" *ngIf="materias.length != 0">
-  <div id="parent-id" class="grid-container" *ngIf="cursoSelected">
-    <div class="cabecera" [class.texto-mobile]="mobileQuery.matches">
-      <p class="cabecera">Hora</p>
-    </div>
-    <div class="cabecera" [class.texto-mobile]="mobileQuery.matches">
-      <p class="cabecera">Lunes</p>
-    </div>
-    <div class="cabecera" [class.texto-mobile]="mobileQuery.matches">
-      <p class="cabecera">Martes</p>
-    </div>
-    <div class="cabecera" [class.texto-mobile]="mobileQuery.matches">
-      <p class="cabecera">Miércoles</p>
-    </div>
-    <div class="cabecera" [class.texto-mobile]="mobileQuery.matches">
-      <p class="cabecera">Jueves</p>
-    </div>
-    <div class="cabecera" [class.texto-mobile]="mobileQuery.matches">
-      <p class="cabecera">Viernes</p>
-    </div>
+  <div [class.container]="mobileQuery.matches">
+    <div id="parent-id" class="grid-container" *ngIf="cursoSelected">
+      <div class="cabecera" [class.texto-mobile]="mobileQuery.matches">
+        <p class="cabecera">Hora</p>
+      </div>
+      <div class="cabecera" [class.texto-mobile]="mobileQuery.matches">
+        <p class="cabecera">Lunes</p>
+      </div>
+      <div class="cabecera" [class.texto-mobile]="mobileQuery.matches">
+        <p class="cabecera">Martes</p>
+      </div>
+      <div class="cabecera" [class.texto-mobile]="mobileQuery.matches">
+        <p class="cabecera">Miércoles</p>
+      </div>
+      <div class="cabecera" [class.texto-mobile]="mobileQuery.matches">
+        <p class="cabecera">Jueves</p>
+      </div>
+      <div class="cabecera" [class.texto-mobile]="mobileQuery.matches">
+        <p class="cabecera">Viernes</p>
+      </div>
 
-    <div class="hora modulo1" [class.texto-mobile]="mobileQuery.matches">
-      <p class="modulo">
-        07:30 <br />-<br />
-        08:15
-      </p>
-    </div>
+      <div class="hora modulo1" [class.texto-mobile]="mobileQuery.matches">
+        <p class="modulo">
+          07:30 <br />-<br />
+          08:15
+        </p>
+      </div>
 
-    <div class="hora modulo2" [class.texto-mobile]="mobileQuery.matches">
-      <p class="modulo">
-        08:15 <br />-<br />
-        09:00
-      </p>
-    </div>
+      <div class="hora modulo2" [class.texto-mobile]="mobileQuery.matches">
+        <p class="modulo">
+          08:15 <br />-<br />
+          09:00
+        </p>
+      </div>
 
-    <div class="hora modulo3" [class.texto-mobile]="mobileQuery.matches">
-      <p class="modulo">
-        09:00 <br />-<br />
-        09:45
-      </p>
-    </div>
-    <div class="hora modulo4" [class.texto-mobile]="mobileQuery.matches">
-      <p class="modulo">
-        09:45 <br />-<br />
-        10:30
-      </p>
-    </div>
+      <div class="hora modulo3" [class.texto-mobile]="mobileQuery.matches">
+        <p class="modulo">
+          09:00 <br />-<br />
+          09:45
+        </p>
+      </div>
+      <div class="hora modulo4" [class.texto-mobile]="mobileQuery.matches">
+        <p class="modulo">
+          09:45 <br />-<br />
+          10:30
+        </p>
+      </div>
 
-    <div class="hora modulo5" [class.texto-mobile]="mobileQuery.matches">
-      <p class="modulo">
-        10:30 <br />-<br />
-        11:15
-      </p>
-    </div>
-    <div class="hora modulo6" [class.texto-mobile]="mobileQuery.matches">
-      <p class="modulo">
-        11:15 <br />-<br />
-        12:00
-      </p>
-    </div>
+      <div class="hora modulo5" [class.texto-mobile]="mobileQuery.matches">
+        <p class="modulo">
+          10:30 <br />-<br />
+          11:15
+        </p>
+      </div>
+      <div class="hora modulo6" [class.texto-mobile]="mobileQuery.matches">
+        <p class="modulo">
+          11:15 <br />-<br />
+          12:00
+        </p>
+      </div>
 
-    <div class="hora modulo7" [class.texto-mobile]="mobileQuery.matches">
-      <p class="modulo">
-        12:00 <br />-<br />
-        12:45
-      </p>
-    </div>
-    <div class="hora modulo8" [class.texto-mobile]="mobileQuery.matches">
-      <p class="modulo">
-        13:30 <br />-<br />
-        14:15
-      </p>
-    </div>
+      <div class="hora modulo7" [class.texto-mobile]="mobileQuery.matches">
+        <p class="modulo">
+          12:00 <br />-<br />
+          12:45
+        </p>
+      </div>
+      <div class="hora modulo8" [class.texto-mobile]="mobileQuery.matches">
+        <p class="modulo">
+          13:30 <br />-<br />
+          14:15
+        </p>
+      </div>
 
-    <div class="hora modulo9" [class.texto-mobile]="mobileQuery.matches">
-      <p class="modulo">
-        14:05 <br />-<br />
-        14:50
-      </p>
-    </div>
+      <div class="hora modulo9" [class.texto-mobile]="mobileQuery.matches">
+        <p class="modulo">
+          14:05 <br />-<br />
+          14:50
+        </p>
+      </div>
 
-    <div
-      class="materia"
-      *ngFor="let materia of materias; let i = index"
-      [id]="i"
-    >
       <div
         class="materia"
-        [ngStyle]="{ 'background-color': getColores(materia.nombre) }"
-        [class.texto-mobile]="mobileQuery.matches"
+        *ngFor="let materia of materias; let i = index"
+        [id]="i"
       >
-        <div class="nombre-materia">{{ materia.nombre }}</div>
-        <div class="horario-materia">
-          {{ materia.inicio }} - {{ materia.fin }}
+        <div
+          class="materia"
+          [ngStyle]="{ 'background-color': getColores(materia.nombre) }"
+          [class.texto-mobile]="mobileQuery.matches"
+        >
+          <div class="nombre-materia">{{ materia.nombre }}</div>
+          <div class="horario-materia">
+            {{ materia.inicio }} - {{ materia.fin }}
+          </div>
         </div>
       </div>
     </div>
+    <div class="div-button">
+      <button
+        mat-raised-button
+        [routerLink]="['/perfilEstudiante']"
+        class="button-warn boton-volver-nomobile"
+        [class.button-volver]="mobileQuery.matches"
+      >
+        Volver
+      </button>
+    </div>
   </div>
-  <p class="aviso" *ngIf="this.materias.length == 0">
-    <b> Aún no existe agenda de curso definida </b>
-  </p>
+</mat-card>
+
+<mat-card class="card-body-componente" *ngIf="materias.length == 0">
+  <p class="aviso">Aún no existe agenda de curso definida.</p>
   <div class="div-button">
     <button
       mat-raised-button

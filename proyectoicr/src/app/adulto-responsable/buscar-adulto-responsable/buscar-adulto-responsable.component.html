@@ -100,8 +100,8 @@
     </div>
   </form>
   <mat-spinner *ngIf="isLoading" class="spinner" [diameter]="60"></mat-spinner>
-  <b class="parrafo" *ngIf="ARFiltrados.length == 0 && busqueda && !isLoading">
-    No se encontró un adulto responsable que coincida con los datos ingresados
+  <b class="aviso" *ngIf="ARFiltrados.length == 0 && busqueda && !isLoading">
+    No se encontró un adulto responsable que coincida con los datos ingresados.
   </b>
   <div class="contenido" *ngIf="ARFiltrados.length != 0 && !isLoading">
     <div>

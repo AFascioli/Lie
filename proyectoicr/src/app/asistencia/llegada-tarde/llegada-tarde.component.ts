@@ -14,11 +14,10 @@ import { MediaMatcher } from "@angular/cdk/layout";
   styleUrls: ["./llegada-tarde.component.css"],
 })
 export class LlegadaTardeComponent implements OnInit, OnDestroy {
-  fechaActual: Date;
+  fechaActual: Date = new Date();
   apellidoEstudiante: string;
   nombreEstudiante: string;
   antesHorario = false;
-  fueraPeriodoCicloLectivo = false;
   private unsubscribe: Subject<void> = new Subject();
   _mobileQueryListener: () => void;
   mobileQuery: MediaQueryList;
@@ -38,27 +37,19 @@ export class LlegadaTardeComponent implements OnInit, OnDestroy {
     this.mobileQuery.addListener(this._mobileQueryListener);
   }
 
-  async ngOnInit() {
-    this.fechaActual = new Date();
+  ngOnInit() {
     this.fechaActualFinDeSemana();
     this.servicioCicloLectivo
       .obtenerHoraLlegadaTarde()
       .pipe(takeUntil(this.unsubscribe))
       .subscribe((response) => {
-        this.horaLlegadaTarde = response.hora.substring(0, 2);
+        this.horaLlegadaTarde = response.hora;
       });
-    if (
-      (await this.fechaActualEnPeriodoCursado()) ||
-      this.autenticacionService.getRol() == "Admin"
-    ) {
-      if (this.fechaActual.getHours() < this.horaLlegadaTarde) {
-        this.antesHorario = true;
-      }
-      this.apellidoEstudiante = this.servicioEstudiante.estudianteSeleccionado.apellido;
-      this.nombreEstudiante = this.servicioEstudiante.estudianteSeleccionado.nombre;
-    } else {
-      this.fueraPeriodoCicloLectivo = true;
+    if (this.fechaActual.getHours() < this.horaLlegadaTarde) {
+      this.antesHorario = true;
     }
+    this.apellidoEstudiante = this.servicioEstudiante.estudianteSeleccionado.apellido;
+    this.nombreEstudiante = this.servicioEstudiante.estudianteSeleccionado.nombre;
   }
 
   fechaActualFinDeSemana() {
@@ -75,14 +66,6 @@ export class LlegadaTardeComponent implements OnInit, OnDestroy {
         }
       );
     }
-  }
-
-  async fechaActualEnPeriodoCursado() {
-    return new Promise((resolve, reject) => {
-      this.servicioCicloLectivo.validarEnCursado().subscribe((result) => {
-        resolve(result.permiso);
-      });
-    });
   }
 
   radioButtonChange() {

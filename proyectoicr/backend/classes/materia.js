@@ -109,8 +109,6 @@ exports.seCerroMateria = (idMateria, idCurso, trimestre) => {
 
     vectorEstados = vectorEstados.slice(trimestre, vectorEstados.length);
 
-    console.log("vector" + vectorEstados);
-
     let MXC = await Curso.aggregate([
       {
         $match: {

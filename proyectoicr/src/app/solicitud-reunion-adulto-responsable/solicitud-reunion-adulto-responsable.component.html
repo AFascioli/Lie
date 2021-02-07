@@ -1,10 +1,8 @@
-<h1 class="componente-titulo">
-  Solicitud de reunión con docente
-</h1>
+<h1 class="componente-titulo">Solicitud de reunión con docente</h1>
 
 <mat-card class="card-body-componente">
   <p class="aviso" *ngIf="docentes == null || docentes.length == 0">
-    <b> No existen docentes asociados para este curso </b>
+    No existen docentes asociados para este curso.
   </p>
   <table
     mat-table
@@ -55,18 +53,19 @@
     <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
   </table>
   <p class="aviso" *ngIf="docentes && docentes.length != 0">
-    Sólo puede enviarle una solicitud a un único docente
+    Sólo puede enviarle una solicitud a un único docente.
   </p>
 
   <!-- <p class="aviso" *ngIf="docentes && docentes.length == 0">
     Los docentes de este curso no pueden recibir notificaciones
   </p> -->
   <form #form="ngForm">
-    <mat-form-field *ngIf="docentes && docentes.length != 0">
+    <mat-form-field class="center" *ngIf="docentes && docentes.length != 0">
       <textarea
         matInput
         name="cuerpo"
         ngModel
+        [(ngModel)]="cuerpoNotificacion"
         #cuerpo="ngModel"
         rows="3"
         placeholder="Ingrese el cuerpo de la notificación"

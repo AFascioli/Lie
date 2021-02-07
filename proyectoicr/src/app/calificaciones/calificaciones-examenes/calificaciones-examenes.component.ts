@@ -21,15 +21,16 @@ export class CalificacionesExamenesComponent implements OnInit, OnDestroy {
   mobileQuery: MediaQueryList;
   fechaActual: Date;
   fechaDentroDeRangoExamen: boolean = false;
-  materiasDesaprobadas: any[];
+  materiasDesaprobadas: any[] = [];
   idMateriaSeleccionada: string;
-  tieneMateriasDesaprobadas: boolean = false;
   notaExamen: any;
   condicionExamen: string;
   private unsubscribe: Subject<void> = new Subject();
+  aniosCiclos;
 
   constructor(
     public estudianteService: EstudiantesService,
+    public servicioCicloLectivo: CicloLectivoService,
     public servicioCalificaciones: CalificacionesService,
     public changeDetectorRef: ChangeDetectorRef,
     public media: MediaMatcher,
@@ -49,27 +50,39 @@ export class CalificacionesExamenesComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.fechaActual = new Date();
-    if (
-      this.fechaActualEnRangoFechasExamenes ||
-      this.authService.getRol() == "Admin"
-    ) {
-      this.apellidoEstudiante = this.estudianteService.estudianteSeleccionado.apellido;
-      this.nombreEstudiante = this.estudianteService.estudianteSeleccionado.nombre;
-      this.servicioCalificaciones
-        .obtenerMateriasDesaprobadasEstudiante(
-          this.estudianteService.estudianteSeleccionado._id
-        )
-        .pipe(takeUntil(this.unsubscribe))
-        .subscribe((materias) => {
-          if (materias.materiasDesaprobadas != null) {
-            this.materiasDesaprobadas = materias.materiasDesaprobadas;
-            this.tieneMateriasDesaprobadas = true;
-          }
-        });
+    this.servicioCicloLectivo
+    .obtenerActualYSiguiente()
+    .pipe(takeUntil(this.unsubscribe))
+    .subscribe((response) => {
+      this.aniosCiclos = response.añosCiclos;
+    });
+    this.cicloLectivoService
+      .obtenerEstadoCicloLectivo()
+      .pipe(takeUntil(this.unsubscribe))
+      .subscribe((response) => {
+        if (response.estadoCiclo == "En examenes") {
+          this.fechaDentroDeRangoExamen = true;
+        } else {
+          this.fechaDentroDeRangoExamen = false;
+        }
 
-      this.fechaDentroDeRangoExamen = true;
-      this.fechaActualFinDeSemana();
-    }
+        if (
+          this.fechaDentroDeRangoExamen ||
+          this.authService.getRol() == "Admin"
+        ) {
+          this.apellidoEstudiante = this.estudianteService.estudianteSeleccionado.apellido;
+          this.nombreEstudiante = this.estudianteService.estudianteSeleccionado.nombre;
+          this.servicioCalificaciones
+            .obtenerMateriasDesaprobadasEstudiante(
+              this.estudianteService.estudianteSeleccionado._id
+            )
+            .pipe(takeUntil(this.unsubscribe))
+            .subscribe((materias) => {
+              this.materiasDesaprobadas = materias.materiasDesaprobadas;
+            });
+          this.fechaActualFinDeSemana();
+        }
+      });
   }
 
   onMateriaChange(idMateria) {
@@ -109,18 +122,6 @@ export class CalificacionesExamenesComponent implements OnInit, OnDestroy {
     }
   }
 
-  fechaActualEnRangoFechasExamenes() {
-    this.cicloLectivoService
-      .obtenerEstadoCicloLectivo()
-      .pipe(takeUntil(this.unsubscribe))
-      .subscribe((response) => {
-        if (response.estadoCiclo == "En examenes") {
-          return true;
-        }
-        return false;
-      });
-  }
-
   guardar(form: NgForm) {
     if (form.invalid) {
       this.snackBar.open("Faltan campos por completar", "", {
@@ -142,6 +143,14 @@ export class CalificacionesExamenesComponent implements OnInit, OnDestroy {
                 panelClass: ["snack-bar-exito"],
                 duration: 3000,
               });
+              this.servicioCalificaciones
+                .obtenerMateriasDesaprobadasEstudiante(
+                  this.estudianteService.estudianteSeleccionado._id
+                )
+                .pipe(takeUntil(this.unsubscribe))
+                .subscribe((materias) => {
+                  this.materiasDesaprobadas = materias.materiasDesaprobadas;
+                });
             } else {
               this.snackBar.open(rtdo.message, "", {
                 panelClass: ["snack-bar-fracaso"],

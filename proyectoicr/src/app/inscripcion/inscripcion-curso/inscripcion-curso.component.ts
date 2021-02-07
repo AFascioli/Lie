@@ -32,9 +32,8 @@ export class InscripcionCursoComponent implements OnInit {
   yearSelected: any;
   nextYearSelect: boolean;
   private unsubscribe: Subject<void> = new Subject();
-  periodoCursado: boolean;
   cicloHabilitado: boolean;
-  anosCiclos: any[]
+  aniosCiclos: any[];
 
   constructor(
     public servicioInscripcion: InscripcionService,
@@ -44,18 +43,21 @@ export class InscripcionCursoComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.servicioCicloLectivo.obtenerActualYSiguiente().pipe(takeUntil(this.unsubscribe)).subscribe((response) => {
-      this.anosCiclos = response.añosCiclos;
-    });
+    this.servicioCicloLectivo
+      .obtenerActualYSiguiente()
+      .pipe(takeUntil(this.unsubscribe))
+      .subscribe((response) => {
+        this.aniosCiclos = response.añosCiclos;
+      });
     this.cicloActualHabilitado();
   }
 
   onYearSelected(yearSelected) {
     if (yearSelected.value == "actual") {
-      this.yearSelected = this.anosCiclos[0];
+      this.yearSelected = this.aniosCiclos[0];
       this.nextYearSelect = false;
     } else {
-      this.yearSelected = this.anosCiclos[1];
+      this.yearSelected = this.aniosCiclos[1];
       this.nextYearSelect = true;
     }
     this.obtenerCursosEstudiantes();
@@ -92,7 +94,7 @@ export class InscripcionCursoComponent implements OnInit {
   onCursoSeleccionado(cursoSeleccionado) {
     this.loading = true;
     this.cursoSeleccionado = cursoSeleccionado.value;
-    if (this.yearSelected == this.anosCiclos[0]) {
+    if (this.yearSelected == this.aniosCiclos[0]) {
       this.obtenerEstudiantesAñoActual();
     } else {
       this.obtenerEstudiantesProximoAño();
@@ -128,7 +130,7 @@ export class InscripcionCursoComponent implements OnInit {
   }
 
   inscribirEstudiantes() {
-    if (this.yearSelected == this.anosCiclos[0]) {
+    if (this.yearSelected == this.aniosCiclos[0]) {
       this.inscribirEstudiantesAñoActual();
     } else {
       this.inscribirEstudiantesProximoAño();
@@ -139,7 +141,6 @@ export class InscripcionCursoComponent implements OnInit {
     this.servicioInscripcion
       .inscribirEstudiantesCurso(this.estudiantes, this.cursoSeleccionado)
       .subscribe((response) => {
-        console.log("response", response);
         if (response.exito) {
           this.snackBar.open(response.message, "", {
             panelClass: ["snack-bar-exito"],
@@ -173,7 +174,6 @@ export class InscripcionCursoComponent implements OnInit {
         this.cursoSeleccionado
       )
       .subscribe((response) => {
-        console.log("response", response);
         if (response.exito) {
           this.snackBar.open(response.message, "", {
             panelClass: ["snack-bar-exito"],

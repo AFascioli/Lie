@@ -15,7 +15,7 @@ import { MediaMatcher } from "@angular/cdk/layout";
   styleUrls: ["./registrar-sanciones.component.css"],
 })
 export class RegistrarSancionesComponent implements OnInit, OnDestroy {
-  fechaActual: Date;
+  fechaActual: Date = new Date();
   apellidoEstudiante: String;
   nombreEstudiante: String;
   idEstudiante: String;
@@ -27,14 +27,15 @@ export class RegistrarSancionesComponent implements OnInit, OnDestroy {
   ];
   tipoSancionSelected: Boolean = false;
   suspensionSelected: Boolean = false;
-  fueraPeriodoCicloLectivo: Boolean = false;
   private unsubscribe: Subject<void> = new Subject();
   _mobileQueryListener: () => void;
   mobileQuery: MediaQueryList;
+  anios: any[];
 
   constructor(
     public servicioEstudiante: EstudiantesService,
     public servicioSancion: SancionService,
+    public servicioCicloLectivo: CicloLectivoService,
     public autenticacionService: AutenticacionService,
     public snackBar: MatSnackBar,
     public changeDetectorRef: ChangeDetectorRef,
@@ -51,26 +52,16 @@ export class RegistrarSancionesComponent implements OnInit, OnDestroy {
     this.unsubscribe.complete();
   }
 
-  async ngOnInit() {
-    this.fechaActual = new Date();
-    if (
-      (await this.fechaActualEnPeriodoCursado()) ||
-      this.autenticacionService.getRol() == "Admin"
-    ) {
-      this.apellidoEstudiante = this.servicioEstudiante.estudianteSeleccionado.apellido;
-      this.nombreEstudiante = this.servicioEstudiante.estudianteSeleccionado.nombre;
-      this.idEstudiante = this.servicioEstudiante.estudianteSeleccionado._id;
-    } else {
-      this.fueraPeriodoCicloLectivo = true;
-    }
-  }
-
-  async fechaActualEnPeriodoCursado() {
-    return new Promise((resolve, reject) => {
-      this.cicloLectivoService.validarEnCursado().subscribe((result) => {
-        resolve(result.permiso);
+  ngOnInit() {
+    this.apellidoEstudiante = this.servicioEstudiante.estudianteSeleccionado.apellido;
+    this.nombreEstudiante = this.servicioEstudiante.estudianteSeleccionado.nombre;
+    this.idEstudiante = this.servicioEstudiante.estudianteSeleccionado._id;
+    this.servicioCicloLectivo
+      .obtenerActualYSiguiente()
+      .pipe(takeUntil(this.unsubscribe))
+      .subscribe((response) => {
+        this.anios = response.añosCiclos;
       });
-    });
   }
 
   onTipoSancionChange(tipoSancion) {

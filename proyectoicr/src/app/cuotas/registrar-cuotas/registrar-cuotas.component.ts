@@ -17,6 +17,7 @@ export class RegistrarCuotasComponent implements OnInit, OnDestroy {
   constructor(
     public autenticacionService: AutenticacionService,
     public servicioEstudiante: EstudiantesService,
+    public servicioCicloLectivo: CicloLectivoService,
     public cuotasService: CuotasService,
     public popup: MatDialog,
     public snackBar: MatSnackBar,
@@ -44,11 +45,17 @@ export class RegistrarCuotasComponent implements OnInit, OnDestroy {
   cuotasXEstudiante: any[] = [];
   displayedColumns: string[] = ["apellido", "nombre", "accion"];
   isLoading: Boolean = false;
+  aniosCiclos;
   private unsubscribe: Subject<void> = new Subject();
 
-  async ngOnInit() {
+  ngOnInit() {
     this.fechaActual = new Date();
-
+    this.servicioCicloLectivo
+      .obtenerActualYSiguiente()
+      .pipe(takeUntil(this.unsubscribe))
+      .subscribe((response) => {
+        this.aniosCiclos = response.añosCiclos;
+      });
     if (
       this.fechaActual.toString().substring(0, 3) == "Sat" ||
       this.fechaActual.toString().substring(0, 3) == "Sun"
@@ -61,15 +68,6 @@ export class RegistrarCuotasComponent implements OnInit, OnDestroy {
           duration: 4000,
         }
       );
-    }
-
-    if (
-      !(
-        (await this.fechaActualEnPeriodoCursado()) ||
-        this.autenticacionService.getRol() == "Admin"
-      )
-    ) {
-      this.fueraPeriodoCicloLectivo = true;
     }
   }
 
@@ -119,20 +117,13 @@ export class RegistrarCuotasComponent implements OnInit, OnDestroy {
     this.cuotasXEstudiante[indexEstudiante].changed = true;
   }
 
-  async fechaActualEnPeriodoCursado() {
-    return new Promise((resolve, reject) => {
-      this.cicloLectivoService.validarEnCursado().subscribe((result) => {
-        resolve(result.permiso);
-      });
-    });
-  }
-
   //Al seleccionar el mes obtiene todos los cursos y los ordena alfabeticamente
   onMesSeleccionado(mes) {
     this.cursoNotSelected = true;
     this.mesSeleccionado = mes.value;
+
     this.servicioEstudiante
-      .obtenerCursos(this.fechaActual.getFullYear())
+      .obtenerCursos(this.aniosCiclos[0])
       .pipe(takeUntil(this.unsubscribe))
       .subscribe((response) => {
         this.cursos = response.cursos;

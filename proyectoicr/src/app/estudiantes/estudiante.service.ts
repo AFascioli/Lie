@@ -211,7 +211,6 @@ export class EstudiantesService implements OnDestroy {
   }
 
   public notificarReunionAR(adultosResponsables, cuerpo, idUsuarioEmpleado) {
-    console.log(idUsuarioEmpleado);
     return this.http.post<{
       message: string;
       exito: boolean;
