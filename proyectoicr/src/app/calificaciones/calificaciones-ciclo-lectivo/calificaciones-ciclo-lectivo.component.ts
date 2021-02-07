@@ -72,7 +72,7 @@ export class CalificacionesCicloLectivoComponent implements OnInit, OnDestroy {
   mobileQuery: MediaQueryList;
   materiaSelec: boolean = false;
   docente: string;
-  anosCiclos: any[]
+  anosCiclos: any[];
 
   @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
 
@@ -95,16 +95,6 @@ export class CalificacionesCicloLectivoComponent implements OnInit, OnDestroy {
       this.anosCiclos = response.añosCiclos;
     });
     this.validarPermisos();
-
-    this.servicioCicloLectivo
-      .obtenerAniosCicloLectivo()
-      .pipe(takeUntil(this.unsubscribe))
-      .subscribe((response) => {
-        this.year = response.respuesta;
-        this.year.sort((a, b) =>
-          a.anio > b.anio ? 1 : b.anio > a.anio ? -1 : 0
-        );
-      });
   }
 
   ngOnDestroy() {
