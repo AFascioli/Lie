@@ -22,7 +22,8 @@ export class CalificacionesExamenesComponent implements OnInit, OnDestroy {
   fechaActual: Date;
   fechaDentroDeRangoExamen: boolean = false;
   materiasDesaprobadas: any[] = [];
-  idMateriaSeleccionada: string;
+  idMateriaSeleccionada: string = null;
+  idCursoMateria: string;
   notaExamen: any;
   condicionExamen: string;
   private unsubscribe: Subject<void> = new Subject();
@@ -51,11 +52,11 @@ export class CalificacionesExamenesComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.fechaActual = new Date();
     this.servicioCicloLectivo
-    .obtenerActualYSiguiente()
-    .pipe(takeUntil(this.unsubscribe))
-    .subscribe((response) => {
-      this.aniosCiclos = response.añosCiclos;
-    });
+      .obtenerActualYSiguiente()
+      .pipe(takeUntil(this.unsubscribe))
+      .subscribe((response) => {
+        this.aniosCiclos = response.añosCiclos;
+      });
     this.cicloLectivoService
       .obtenerEstadoCicloLectivo()
       .pipe(takeUntil(this.unsubscribe))
@@ -85,8 +86,9 @@ export class CalificacionesExamenesComponent implements OnInit, OnDestroy {
       });
   }
 
-  onMateriaChange(idMateria) {
-    this.idMateriaSeleccionada = idMateria;
+  onMateriaChange(materia) {
+    this.idMateriaSeleccionada = materia._id;
+    this.idCursoMateria = materia.cursoId;
   }
 
   onCondicionChage(condicion) {
@@ -133,7 +135,8 @@ export class CalificacionesExamenesComponent implements OnInit, OnDestroy {
         this.servicioCalificaciones
           .registrarCalificacionExamen(
             this.idMateriaSeleccionada,
-            this.notaExamen
+            this.notaExamen,
+            this.idCursoMateria
           )
           .pipe(takeUntil(this.unsubscribe))
           .subscribe((rtdo) => {
@@ -180,6 +183,7 @@ export class CalificacionesExamenesComponent implements OnInit, OnDestroy {
   resetearForm() {
     this.condicionExamen = null;
     this.idMateriaSeleccionada = null;
+    this.idCursoMateria = null;
     this.notaExamen = null;
   }
 }

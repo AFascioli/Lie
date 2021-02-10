@@ -205,6 +205,7 @@ exports.obtenerNombresMaterias = async (arrayIdCXM) => {
             "datosMateria._id": 1,
             "datosMateria.nombre": 1,
             "curso.nombre": 1,
+            "curso._id": 1,
           },
         },
       ]).then((datosMaterias) => {
@@ -214,6 +215,8 @@ exports.obtenerNombresMaterias = async (arrayIdCXM) => {
             " (" +
             datosMaterias[0].curso[index].nombre +
             ") ";
+          datosMaterias[0].datosMateria[index].cursoId =
+            datosMaterias[0].curso[index]._id;
         }
         nombresMaterias.push(datosMaterias[0].datosMateria[0]);
       });
