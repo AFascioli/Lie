@@ -93,6 +93,7 @@ export class CalificacionesCicloLectivoComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.servicioCicloLectivo.obtenerActualYAnteriores().pipe(takeUntil(this.unsubscribe)).subscribe((response) => {
       this.anosCiclos = response.añosCiclos;
+      this.anosCiclos.sort(function(a, b){return b-a});
     });
     this.validarPermisos();
   }
