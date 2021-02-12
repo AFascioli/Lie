@@ -136,30 +136,35 @@ export class CicloLectivoComponent implements OnInit {
   }
 
   onCierreInicioCursado() {
+    this.servicioCicloLectivo.esInicioCursado = true;
     this.id = 1;
     this.name = "iniciar el ciclo lectivo";
     this.openPopUp();
   }
 
   onCierrePrimerTrimestre() {
+    this.servicioCicloLectivo.esInicioCursado = false;
     this.id = 2;
     this.name = "cerrar el primer trimestre";
     this.openPopUp();
   }
 
   onCierreSegundoTrimestre() {
+    this.servicioCicloLectivo.esInicioCursado = false;
     this.id = 3;
     this.name = "cerrar el segundo trimestre";
     this.openPopUp();
   }
 
   onCierreTercerTrimestre() {
+    this.servicioCicloLectivo.esInicioCursado = false;
     this.id = 4;
     this.name = "cerrar el tercer trimestre";
     this.openPopUp();
   }
 
   onCierreExamenes() {
+    this.servicioCicloLectivo.esInicioCursado = false;
     this.id = 5;
     this.name = "finalizar las fechas de examen";
     this.openPopUp();
@@ -251,13 +256,16 @@ export class PopUpCerrarEtapa {
 })
 export class PopUpMateriasSinCerrar implements OnInit {
   mostrarMateria;
+  esInicioCursado;
   constructor(
     public dialogRef: MatDialogRef<PopUpCerrarEtapa>,
     @Inject(MAT_DIALOG_DATA) public data: DialogData,
-    private _ngZone: NgZone
+    private _ngZone: NgZone,
+    public servicioCicloLectivo: CicloLectivoService
   ) {}
   ngOnInit() {
     this.mostrarMateria = false;
+    this.esInicioCursado = this.servicioCicloLectivo.esInicioCursado;
   }
 
   @ViewChild("autosize", { static: true }) autosize: CdkTextareaAutosize;
