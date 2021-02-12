@@ -11,6 +11,7 @@ const ClaseEstado = require("../classes/estado");
 const ClaseCicloLectivo = require("../classes/cicloLectivo");
 
 async function validarLibreInasistencias(idEst) {
+  const faltasSuspencion = await ClaseCicloLectivo.obtenerCantidadFaltasSuspension();
   const idEstadoSuspendido = await ClaseEstado.obtenerIdEstado(
     "Inscripcion",
     "Suspendido"
@@ -39,7 +40,8 @@ async function validarLibreInasistencias(idEst) {
       ).exec();
     } else if (
       inscripcion &&
-      inscripcion.contadorInasistenciasInjustificada % 12 == 0
+      inscripcion.contadorInasistenciasInjustificada % (faltasSuspencion - 3) ==
+        0
     ) {
       //No fijamos si el estudiante tiene 12 inasistencias, para luego notificar a los AR
       let idsUsuariosAR = await ClaseSuscripcion.obtenerIdsUsuarios(idEst);
