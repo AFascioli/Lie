@@ -132,11 +132,12 @@ export class CalificacionesService {
   //@params: id de la materia
   //@params: id del estudiante
   //@params: trimestre (1,2 o 3)
-  public registrarCalificacionExamen(idMateria, calificacion) {
+  public registrarCalificacionExamen(idMateria, calificacion, idCurso) {
     let datosExamen = {
       idMateria: idMateria,
       idEstudiante: this.estudianteSeleccionado._id,
-      calificacion: calificacion
+      calificacion: calificacion,
+      idCurso: idCurso
     };
     return this.http.post<{ message: string; exito: boolean }>(
       environment.apiUrl + "/calificacion/examen",

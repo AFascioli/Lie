@@ -43,9 +43,7 @@
           class="opcion"
           [class.opcion-mobile]="mobileQuery.matches"
           (click)="onInscribir(i)"
-          *ngIf="
-            permisos.inscribirEstudiante > 1 
-          "
+          *ngIf="permisos.inscribirEstudiante > 1"
           ><b>Inscribir estudiante a un curso</b></mat-card
         >
         <mat-card
@@ -55,7 +53,8 @@
           *ngIf="
             this.permisos.asistencia > 1 &&
             this.inscripto[i] &&
-            enEstadoCLCursando
+            enEstadoCLCursando &&
+            !suspendido[i]
           "
           ><b>Justificar inasistencia</b></mat-card
         >
@@ -63,7 +62,12 @@
           class="opcion"
           [class.opcion-mobile]="mobileQuery.matches"
           (click)="onRegistrarExamenes(i)"
-          *ngIf="permisos.notas > 1 && inscripto[i] && enEstadoCLExamenes && materiasPendientes.length!=0"
+          *ngIf="
+            permisos.notas > 1 &&
+            inscripto[i] &&
+            enEstadoCLExamenes &&
+            materiasPendientes.length != 0
+          "
           ><b>Registrar calificaciones de examen</b></mat-card
         >
         <mat-card
@@ -73,7 +77,8 @@
           *ngIf="
             this.permisos.asistencia > 1 &&
             this.inscripto[i] &&
-            enEstadoCLCursando
+            enEstadoCLCursando &&
+            !suspendido[i]
           "
           ><b>Registrar llegada tarde</b></mat-card
         >
@@ -84,7 +89,8 @@
           *ngIf="
             this.permisos.asistencia > 1 &&
             this.inscripto[i] &&
-            enEstadoCLCursando
+            enEstadoCLCursando &&
+            !suspendido[i]
           "
           ><b>Registrar retiro anticipado</b></mat-card
         >
@@ -93,8 +99,11 @@
           [class.opcion-mobile]="mobileQuery.matches"
           (click)="onSancion(i)"
           *ngIf="
-            (this.permisos.sanciones > 1 && this.inscripto[i]) ||
-            (enEstadoCLCursando || enEstadoCLExamenes)
+            ((this.permisos.sanciones > 1 && this.inscripto[i]) ||
+              enEstadoCLCursando ||
+              enEstadoCLExamenes) &&
+            this.inscripto[i] &&
+            !suspendido[i]
           "
           ><b>Registrar sanción</b></mat-card
         >
@@ -143,6 +152,8 @@
 
 <mat-card *ngIf="estudiantes.length == 0 && !isLoading">
   <p>
-    <b class="aviso">No se encontraron estudiantes que coincidan con los datos ingresados.</b>
+    <b class="aviso"
+      >No se encontraron estudiantes que coincidan con los datos ingresados.</b
+    >
   </p>
 </mat-card>

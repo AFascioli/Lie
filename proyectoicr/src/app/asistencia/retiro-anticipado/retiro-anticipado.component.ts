@@ -24,6 +24,7 @@ export class RetiroAnticipadoComponent implements OnInit {
   matConfig = new MatDialogConfig();
   _mobileQueryListener: () => void;
   mobileQuery: MediaQueryList;
+  fueraPeriodoCicloLectivo: Boolean = false;
   displayedColumns: string[] = [
     "seleccion",
     "apellido",
@@ -55,6 +56,7 @@ export class RetiroAnticipadoComponent implements OnInit {
   }
 
   async ngOnInit() {
+    this.verificarEstadoCiclo();
     this.servicioCicloLectivo
       .obtenerHoraRetiroAnticipado()
       .pipe(takeUntil(this.unsubscribe))
@@ -101,6 +103,19 @@ export class RetiroAnticipadoComponent implements OnInit {
 
   CambiarTipoRetiro() {
     this.antes10am = !this.antes10am;
+  }
+
+  verificarEstadoCiclo() {
+    this.servicioCicloLectivo
+      .obtenerEstadoCicloLectivo()
+      .pipe(takeUntil(this.unsubscribe))
+      .subscribe((response) => {
+        this.fueraPeriodoCicloLectivo = !(
+          response.estadoCiclo == "En primer trimestre" ||
+          response.estadoCiclo == "En segundo trimestre" ||
+          response.estadoCiclo == "En tercer trimestre"
+        );
+      });
   }
 
   onGuardar() {

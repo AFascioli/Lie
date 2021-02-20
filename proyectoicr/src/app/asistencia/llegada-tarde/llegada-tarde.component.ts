@@ -22,6 +22,7 @@ export class LlegadaTardeComponent implements OnInit, OnDestroy {
   _mobileQueryListener: () => void;
   mobileQuery: MediaQueryList;
   horaLlegadaTarde;
+  fueraPeriodoCicloLectivo: Boolean = false;
 
   constructor(
     public servicioEstudiante: EstudiantesService,
@@ -38,6 +39,7 @@ export class LlegadaTardeComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.verificarEstadoCiclo();
     this.fechaActualFinDeSemana();
     this.servicioCicloLectivo
       .obtenerHoraLlegadaTarde()
@@ -50,6 +52,19 @@ export class LlegadaTardeComponent implements OnInit, OnDestroy {
     }
     this.apellidoEstudiante = this.servicioEstudiante.estudianteSeleccionado.apellido;
     this.nombreEstudiante = this.servicioEstudiante.estudianteSeleccionado.nombre;
+  }
+
+  verificarEstadoCiclo() {
+    this.servicioCicloLectivo
+      .obtenerEstadoCicloLectivo()
+      .pipe(takeUntil(this.unsubscribe))
+      .subscribe((response) => {
+        this.fueraPeriodoCicloLectivo = !(
+          response.estadoCiclo == "En primer trimestre" ||
+          response.estadoCiclo == "En segundo trimestre" ||
+          response.estadoCiclo == "En tercer trimestre"
+        );
+      });
   }
 
   fechaActualFinDeSemana() {

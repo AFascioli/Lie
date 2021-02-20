@@ -4,11 +4,11 @@
 </mat-card>
 
 <mat-card class="card-body-componente" *ngIf="!isLoading">
-  <p class="aviso">
+  <p class="aviso" *ngIf="fueraPeriodoCicloLectivo">
     Atención, no se puede registrar el retiro anticipado debido a que estamos
     fuera del ciclo lectivo
   </p>
-  <div>
+  <div *ngIf="!fueraPeriodoCicloLectivo">
     <div class="ubicacion-fecha">
       <b>Fecha: </b>
       <mat-form-field class="mat-form-Fecha">

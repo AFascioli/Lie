@@ -60,7 +60,7 @@ export class CalificacionesCicloLectivoComponent implements OnInit, OnDestroy {
   isLoading2 = false;
   calificacionesChange = false;
   puedeEditarCalificaciones = false;
-  examen = 0;
+  examen;
   promedio = 0;
   promedioT1 = 0;
   promedioT2 = 0;
@@ -91,9 +91,15 @@ export class CalificacionesCicloLectivoComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.servicioCicloLectivo.obtenerActualYAnteriores().pipe(takeUntil(this.unsubscribe)).subscribe((response) => {
-      this.anosCiclos = response.añosCiclos;
-    });
+    this.servicioCicloLectivo
+      .obtenerActualYAnteriores()
+      .pipe(takeUntil(this.unsubscribe))
+      .subscribe((response) => {
+        this.anosCiclos = response.añosCiclos;
+        this.anosCiclos.sort(function (a, b) {
+          return b - a;
+        });
+      });
     this.validarPermisos();
   }
 
@@ -325,6 +331,8 @@ export class CalificacionesCicloLectivoComponent implements OnInit, OnDestroy {
     else if (this.promedioT1 != 0 && this.promedioT2 != 0)
       this.promedio = (this.promedioT1 + this.promedioT2) / 2;
     else this.promedio = this.promedioT1;
+
+    if (this.promedio == this.examen) this.examen = "-";
 
     return this.promedio;
   }

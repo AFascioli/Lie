@@ -1,7 +1,7 @@
 <h3 mat-dialog-title class="titulo-popup">¡Atención!</h3>
 <div mat-dialog-content>
   <p class="parrafo">{{data.mensaje}}</p>
-  <div class="center">
+  <div class="center" *ngIf="!esInicioCursado">
     <button mat-button (click)="mostrarMaterias()">
       <u *ngIf="!mostrarMateria">Ver materias</u>
       <u *ngIf="mostrarMateria"> Ocultar materias</u>
