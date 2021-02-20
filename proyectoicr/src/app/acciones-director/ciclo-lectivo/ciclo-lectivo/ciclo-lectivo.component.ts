@@ -1,5 +1,14 @@
 import { CicloLectivoService } from "./../../../cicloLectivo.service";
-import { Component, OnInit, Inject, NgZone, ViewChild, EventEmitter, Output } from "@angular/core";
+import {
+  Component,
+  OnInit,
+  Inject,
+  NgZone,
+  ViewChild,
+  EventEmitter,
+  Output,
+  ChangeDetectorRef,
+} from "@angular/core";
 import {
   MatDialog,
   MatDialogRef,
@@ -8,6 +17,7 @@ import {
 import { MatSnackBar } from "@angular/material";
 import { CdkTextareaAutosize } from "@angular/cdk/text-field";
 import { take } from "rxjs/operators";
+import { MediaMatcher } from "@angular/cdk/layout";
 
 export interface DialogData {
   name: string;
@@ -31,12 +41,20 @@ export class CicloLectivoComponent implements OnInit {
   name: string;
   id;
   mostrarMateria;
+  _mobileQueryListener: () => void;
+  mobileQuery: MediaQueryList;
 
   constructor(
     public dialog: MatDialog,
     public servicioCicloLectivo: CicloLectivoService,
-    private snackBar: MatSnackBar
-  ) {}
+    private snackBar: MatSnackBar,
+    public changeDetectorRef: ChangeDetectorRef,
+    public media: MediaMatcher,
+  ) {
+    this.mobileQuery = media.matchMedia("(max-width: 700px)");
+    this._mobileQueryListener = () => changeDetectorRef.detectChanges();
+    this.mobileQuery.addListener(this._mobileQueryListener);
+  }
 
   openPopUp(): void {
     const dialogRef = this.dialog.open(PopUpCerrarEtapa, {
@@ -118,42 +136,46 @@ export class CicloLectivoComponent implements OnInit {
   }
 
   onCierreInicioCursado() {
+    this.servicioCicloLectivo.esInicioCursado = true;
     this.id = 1;
     this.name = "iniciar el ciclo lectivo";
     this.openPopUp();
   }
 
   onCierrePrimerTrimestre() {
+    this.servicioCicloLectivo.esInicioCursado = false;
     this.id = 2;
     this.name = "cerrar el primer trimestre";
     this.openPopUp();
   }
 
   onCierreSegundoTrimestre() {
+    this.servicioCicloLectivo.esInicioCursado = false;
     this.id = 3;
     this.name = "cerrar el segundo trimestre";
     this.openPopUp();
   }
 
   onCierreTercerTrimestre() {
+    this.servicioCicloLectivo.esInicioCursado = false;
     this.id = 4;
     this.name = "cerrar el tercer trimestre";
     this.openPopUp();
   }
 
   onCierreExamenes() {
+    this.servicioCicloLectivo.esInicioCursado = false;
     this.id = 5;
     this.name = "finalizar las fechas de examen";
     this.openPopUp();
   }
-
 
   cerrarEtapaExamenes() {
     this.servicioCicloLectivo.cierreEtapaExamenes().subscribe((response) => {
       if (response.exito) {
         this.showSnackbar(response.message, "snack-bar-exito");
         this.onVariableChange(5);
-    this.servicioCicloLectivo.actualizarMenuLateral();
+        this.servicioCicloLectivo.actualizarMenuLateral();
       } else {
         this.showSnackbar(response.message, "snack-bar-fracaso");
       }
@@ -165,7 +187,7 @@ export class CicloLectivoComponent implements OnInit {
       if (response.exito) {
         this.showSnackbar(response.message, "snack-bar-exito");
         this.onVariableChange(1);
-    this.servicioCicloLectivo.actualizarMenuLateral();
+        this.servicioCicloLectivo.actualizarMenuLateral();
       } else {
         this.dialog.open(PopUpMateriasSinCerrar, {
           width: "250px",
@@ -182,7 +204,7 @@ export class CicloLectivoComponent implements OnInit {
         if (response.exito) {
           this.onVariableChange(trimestre + 1);
           this.showSnackbar(response.message, "snack-bar-exito");
-    this.servicioCicloLectivo.actualizarMenuLateral();
+          this.servicioCicloLectivo.actualizarMenuLateral();
         } else {
           let cursosYMaterias = "";
           for (const cursoYMateria of response.materiasSinCerrar) {
@@ -234,13 +256,16 @@ export class PopUpCerrarEtapa {
 })
 export class PopUpMateriasSinCerrar implements OnInit {
   mostrarMateria;
+  esInicioCursado;
   constructor(
     public dialogRef: MatDialogRef<PopUpCerrarEtapa>,
     @Inject(MAT_DIALOG_DATA) public data: DialogData,
-    private _ngZone: NgZone
+    private _ngZone: NgZone,
+    public servicioCicloLectivo: CicloLectivoService
   ) {}
   ngOnInit() {
     this.mostrarMateria = false;
+    this.esInicioCursado = this.servicioCicloLectivo.esInicioCursado;
   }
 
   @ViewChild("autosize", { static: true }) autosize: CdkTextareaAutosize;

@@ -112,18 +112,17 @@ export class HomeComponent implements OnInit, OnDestroy {
   //si el evento ya paso. Si estamos en el dia del evento, devuelve true si ya estamos
   //en la misma hora que el evento
   eventoYaOcurrio(indexEvento: number) {
-    const fechaActual = new Date();
     const fechaEvento = new Date(this.eventos[indexEvento].fechaEvento);
     if (
-      fechaActual.getMonth() == fechaEvento.getMonth() &&
-      fechaActual.getDate() == fechaEvento.getDate()
+      this.fechaActual.getMonth() == fechaEvento.getMonth() &&
+      this.fechaActual.getDate() == fechaEvento.getDate()
     ) {
       const horaEvento = new Date(
         "01/01/2020 " + this.eventos[indexEvento].horaInicio
       );
-      return fechaActual.getHours() >= horaEvento.getHours();
+      return this.fechaActual.getHours() >= horaEvento.getHours();
     } else {
-      return fechaActual.getTime() > fechaEvento.getTime();
+      return this.fechaActual.getTime() > fechaEvento.getTime();
     }
   }
 
@@ -161,14 +160,14 @@ export class HomeComponent implements OnInit, OnDestroy {
   onEditar(evento) {
     this.servicioEvento.evento = evento;
     this.servicioEvento.eventoSeleccionado = evento;
-    this.servicioEvento.imageOnly= false;
+    this.servicioEvento.imageOnly = false;
     this.router.navigate(["./modificarEvento"]);
   }
 
   onAgregarFoto(evento) {
     this.servicioEvento.evento = evento;
     this.servicioEvento.eventoSeleccionado = evento;
-    this.servicioEvento.imageOnly= true;
+    this.servicioEvento.imageOnly = true;
     this.router.navigate(["./modificarEvento"]);
   }
 

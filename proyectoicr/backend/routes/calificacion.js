@@ -196,6 +196,7 @@ router.get("/materia/calificaciones", checkAuthMiddleware, async (req, res) => {
 //@params: idEstudiante
 //@params: idMateria
 //@params: Calificacion
+//@params: idCurso
 router.post("/examen", checkAuthMiddleware, async (req, res) => {
   try {
     let estadoAprobada = await ClaseEstado.obtenerIdEstado(
@@ -221,6 +222,7 @@ router.post("/examen", checkAuthMiddleware, async (req, res) => {
           {
             $match: {
               idEstudiante: mongoose.Types.ObjectId(idEstudiante),
+              idCurso: mongoose.Types.ObjectId(req.body.idCurso),
               estado: {
                 $in: [
                   mongoose.Types.ObjectId(idEstadoActiva),
@@ -269,11 +271,20 @@ router.post("/examen", checkAuthMiddleware, async (req, res) => {
           "Inscripcion",
           "Activa"
         );
+        let idEstadoExPendiente = await ClaseEstado.obtenerIdEstado(
+          "Inscripcion",
+          "Examenes pendientes"
+        );
         Inscripcion.aggregate([
           {
             $match: {
               idEstudiante: mongoose.Types.ObjectId(idEstudiante),
-              estado: mongoose.Types.ObjectId(idEstadoActiva),
+              estado: {
+                $in: [
+                  mongoose.Types.ObjectId(idEstadoActiva),
+                  mongoose.Types.ObjectId(idEstadoExPendiente),
+                ],
+              },
             },
           },
           {
@@ -338,10 +349,22 @@ router.post("/examen", checkAuthMiddleware, async (req, res) => {
         "Inscripcion",
         "Activa"
       );
+      let idEstadoExPendiente = await ClaseEstado.obtenerIdEstado(
+        "Inscripcion",
+        "Examenes pendientes"
+      );
       idCXMAEditar = idCXMPendiente;
       //Se elimina la cxm del vector de materias pendientes
       Inscripcion.findOneAndUpdate(
-        { idEstudiante: req.body.idEstudiante, estado: idEstadoActiva },
+        {
+          idEstudiante: req.body.idEstudiante,
+          estado: {
+            $in: [
+              mongoose.Types.ObjectId(idEstadoActiva),
+              mongoose.Types.ObjectId(idEstadoExPendiente),
+            ],
+          },
+        },
         { $pull: { materiasPendientes: idCXMAEditar } }
       ).exec();
     }

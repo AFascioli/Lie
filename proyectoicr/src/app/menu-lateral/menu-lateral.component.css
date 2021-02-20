@@ -55,7 +55,7 @@ hr {
 .sidenav-mobile {
   box-shadow: 2px 0 5px -2px #888;
   border-right: 0px !important;
-  width: 60%;
+  width: 100%;
 }
 
 /* Para que el container del sidenav sea del tamaño completo del body,

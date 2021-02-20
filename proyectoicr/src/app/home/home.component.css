@@ -122,6 +122,13 @@ time.icon span {
   margin-right: 10px !important;
 }
 
+.container-img .botonAddEditMobile {
+  position: absolute;
+  right: 8%;
+  bottom: 4%;
+  margin-right: 35px !important;
+}
+
 .icono
 {
   margin-bottom: 16px !important;
@@ -197,4 +204,10 @@ time.icon span {
   top: 3%;
   animation-name: tooltipfade;
   /* animation-duration: 6s; */
+}
+
+.botonComentarioNoimagen
+{
+  display: block;
+  text-align: center;
 }

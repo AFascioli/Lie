@@ -16,11 +16,11 @@ import { CicloLectivoService } from "src/app/cicloLectivo.service";
 export class CuotasAdeudadasComponent implements OnInit {
   cursos;
   valueCursoSelected;
-  fechaActual: Date;
   estudiantesXCuotas = [];
   cursoSelected = false;
   private unsubscribe: Subject<void> = new Subject();
   displayedColumns: string[] = ["estudiante", "cuotas"];
+  anios;
 
   constructor(
     public servicioEstudiante: EstudiantesService,
@@ -29,7 +29,6 @@ export class CuotasAdeudadasComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.fechaActual = new Date();
     this.obtenerCursos();
   }
 
@@ -99,6 +98,7 @@ export class CuotasAdeudadasComponent implements OnInit {
       .obtenerActualYSiguiente()
       .pipe(takeUntil(this.unsubscribe))
       .subscribe((response) => {
+        this.anios = response.añosCiclos;
         this.servicioEstudiante
           .obtenerCursos(response.añosCiclos[0])
           .pipe(takeUntil(this.unsubscribe))
@@ -112,7 +112,7 @@ export class CuotasAdeudadasComponent implements OnInit {
                 : 0
             );
           });
-      })
+      });
   }
 
   public descargarPDF() {
@@ -123,7 +123,7 @@ export class CuotasAdeudadasComponent implements OnInit {
     const f_date = (m_ca, m_it) => Object({ ...m_ca, [m_it.type]: m_it.value });
     const m_date = o_date.formatToParts().reduce(f_date, {});
 
-    let pag=1;
+    let pag = 1;
 
     html2canvas(element).then((canvas) => {
       var imgData = canvas.toDataURL("image/png");
@@ -144,7 +144,7 @@ export class CuotasAdeudadasComponent implements OnInit {
       doc.setFontSize(10);
       doc.setFont("Segoe UI");
       doc.text("Instituto Cristo Rey", 94, 7);
-      doc.text("Ciclo lectivo " + this.fechaActual.getFullYear(), 95, 12);
+      doc.text("Ciclo lectivo " + this.anios[0], 95, 12);
       doc.setDrawColor(184, 184, 184);
       doc.line(10, 17, 200, 17);
       doc.addImage(imgData, "PNG", 16, position, imgWidth, imgHeight);
@@ -152,7 +152,11 @@ export class CuotasAdeudadasComponent implements OnInit {
       heightLeft -= pageHeight - 18;
       doc.setFillColor(255, 255, 255);
       doc.rect(0, pageHeight - 10, 200, 12, "F");
-      doc.text("Fecha: " + m_date.day + '/' + m_date.month + '/' + m_date.year, 10, pageHeight - 5);
+      doc.text(
+        "Fecha: " + m_date.day + "/" + m_date.month + "/" + m_date.year,
+        10,
+        pageHeight - 5
+      );
       doc.text("Página: 1", 180, pageHeight - 5);
 
       while (heightLeft >= 0) {
@@ -170,13 +174,16 @@ export class CuotasAdeudadasComponent implements OnInit {
         doc.setFontSize(10);
         doc.setFont("Segoe UI");
         doc.text("Instituto Cristo Rey", 94, 7);
-        doc.text("Ciclo lectivo " + this.fechaActual.getFullYear(), 95, 12);
+        doc.text("Ciclo lectivo " + this.anios[0], 95, 12);
         doc.setDrawColor(184, 184, 184);
         doc.line(10, 17, 200, 17);
-        doc.text("Fecha: " + m_date.day + '/' + m_date.month + '/' + m_date.year, 10, pageHeight - 5);
+        doc.text(
+          "Fecha: " + m_date.day + "/" + m_date.month + "/" + m_date.year,
+          10,
+          pageHeight - 5
+        );
         doc.text("Página: " + pag, 180, pageHeight - 5);
         heightLeft -= pageHeight;
-
       }
       doc.save("CuotasAdeudadas-" + this.valueCursoSelected + ".pdf");
     });

@@ -31,7 +31,6 @@ export class CalificacionesPerfilEstudianteComponent
     "prom",
   ];
   trimestreActual: string;
-  fechaActual: Date;
   promedio = 0;
   private unsubscribe: Subject<void> = new Subject();
   materiasPendientes = [];
@@ -57,7 +56,6 @@ export class CalificacionesPerfilEstudianteComponent
   }
 
   ngOnInit() {
-    this.fechaActual = new Date();
     this.apellidoEstudiante = this.servicioEstudiante.estudianteSeleccionado.apellido;
     this.nombreEstudiante = this.servicioEstudiante.estudianteSeleccionado.nombre;
 

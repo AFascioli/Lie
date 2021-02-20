@@ -48,7 +48,7 @@ export class RegistrarCuotasComponent implements OnInit, OnDestroy {
   aniosCiclos;
   private unsubscribe: Subject<void> = new Subject();
 
-  async ngOnInit() {
+  ngOnInit() {
     this.fechaActual = new Date();
     this.servicioCicloLectivo
       .obtenerActualYSiguiente()
@@ -115,14 +115,6 @@ export class RegistrarCuotasComponent implements OnInit, OnDestroy {
       indexEstudiante
     ].pagado;
     this.cuotasXEstudiante[indexEstudiante].changed = true;
-  }
-
-  async fechaActualEnPeriodoCursado() {
-    return new Promise((resolve, reject) => {
-      this.cicloLectivoService.validarEnCursado().subscribe((result) => {
-        resolve(result.permiso);
-      });
-    });
   }
 
   //Al seleccionar el mes obtiene todos los cursos y los ordena alfabeticamente
