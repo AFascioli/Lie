@@ -198,6 +198,22 @@ router.get("/estadoCuotas", checkAuthMiddleware, async (req, res) => {
     "Inscripcion",
     "Activa"
   );
+  let idEstadoSuspendido = await ClaseEstado.obtenerIdEstado(
+    "Inscripcion",
+    "Suspendido"
+  );
+  let idEstadoPromovidoConExPend = await ClaseEstado.obtenerIdEstado(
+    "Inscripcion",
+    "Promovido con examenes pendientes"
+  );
+  let idEstadoExPendiente = await ClaseEstado.obtenerIdEstado(
+    "Inscripcion",
+    "Examenes pendientes"
+  );
+  let idEstadoPromovido = await ClaseEstado.obtenerIdEstado(
+    "Inscripcion",
+    "Promovido"
+  );
   Curso.findById(req.query.idCurso)
     .then((curso) => {
       Inscripcion.aggregate([
@@ -208,7 +224,15 @@ router.get("/estadoCuotas", checkAuthMiddleware, async (req, res) => {
         },
         {
           $match: {
-            estado: mongoose.Types.ObjectId(idEstadoActiva),
+            estado: {
+              $in: [
+                mongoose.Types.ObjectId(idEstadoActiva),
+                mongoose.Types.ObjectId(idEstadoSuspendido),
+                mongoose.Types.ObjectId(idEstadoPromovidoConExPend),
+                mongoose.Types.ObjectId(idEstadoExPendiente),
+                mongoose.Types.ObjectId(idEstadoPromovido),
+              ],
+            },
             idCurso: mongoose.Types.ObjectId(curso._id),
             "cuotas.mes": parseInt(req.query.mes, 10),
           },
