@@ -1,7 +1,4 @@
-
-<h1 class="componente-titulo">
-  Registrar retiro anticipado
-</h1>
+<h1 class="componente-titulo">Registrar retiro anticipado</h1>
 <mat-card class="cardSpinner" *ngIf="isLoading">
   <mat-spinner class="spinner" [diameter]="60"></mat-spinner>
 </mat-card>
@@ -129,12 +126,7 @@
     <br />
   </div>
   <div class="div-button">
-    <button
-      class="button-primary"
-      (click)="onGuardar()"
-      mat-raised-button
-      [disabled]="fueraPeriodoCicloLectivo"
-    >
+    <button class="button-primary" (click)="onGuardar()" mat-raised-button>
       Guardar
     </button>
     <button

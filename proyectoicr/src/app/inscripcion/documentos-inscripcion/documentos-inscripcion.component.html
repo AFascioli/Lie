@@ -6,19 +6,7 @@
 <mat-card class="card-spinner" *ngIf="isLoading">
   <mat-spinner class="spinner" [diameter]="60"></mat-spinner>
 </mat-card>
-<mat-card
-  class="card-body-componente"
-  *ngIf="fueraPeriodoCicloLectivo && !isLoading && !isLoading2"
->
-  <p class="aviso">
-    Atención, no se puede registrar documentación debido a que estamos fuera de
-    las fechas autorizadas.
-  </p>
-</mat-card>
-<mat-card
-  class="card-body-componente"
-  *ngIf="!isLoading && !fueraPeriodoCicloLectivo"
->
+<mat-card class="card-body-componente" *ngIf="!isLoading">
   <div class="div-selects">
     <mat-form-field>
       <mat-select

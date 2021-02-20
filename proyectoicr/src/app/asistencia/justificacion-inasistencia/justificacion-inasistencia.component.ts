@@ -13,14 +13,12 @@ import { CicloLectivoService } from "src/app/cicloLectivo.service";
   styleUrls: ["./justificacion-inasistencia.component.css"],
 })
 export class JustificacionInasistenciaComponent implements OnInit, OnDestroy {
-  fechaActual = new Date();
   fechaUnica = new Date();
   fechaInicio = new Date();
   fechaFin = new Date();
   esMultiple: boolean = false;
   ultimasInasistencias = [];
   inasistenciasAJustificar = [];
-  fueraDeCursado = false;
   isLoading: boolean = true;
   private unsubscribe: Subject<void> = new Subject();
 
@@ -32,22 +30,14 @@ export class JustificacionInasistenciaComponent implements OnInit, OnDestroy {
     public servicioCicloLectivo: CicloLectivoService
   ) {}
 
-  async ngOnInit() {
-    if (
-      (await this.fechaActualEnPeriodoCursado()) ||
-      this.autenticacionService.getRol() == "Admin"
-    ) {
-      this.servicioAsistencia
-        .obtenerUltimasInasistencias()
-        .pipe(takeUntil(this.unsubscribe))
-        .subscribe((response) => {
-          this.ultimasInasistencias = response.inasistencias;
-          this.isLoading = false;
-        });
-    } else {
-      this.fueraDeCursado = true;
-      this.isLoading = false;
-    }
+  ngOnInit() {
+    this.servicioAsistencia
+      .obtenerUltimasInasistencias()
+      .pipe(takeUntil(this.unsubscribe))
+      .subscribe((response) => {
+        this.ultimasInasistencias = response.inasistencias;
+        this.isLoading = false;
+      });
   }
 
   //Se fija si el usuario hizo cambios en la interfaz
@@ -84,14 +74,6 @@ export class JustificacionInasistenciaComponent implements OnInit, OnDestroy {
         }
       );
     }
-  }
-
-  async fechaActualEnPeriodoCursado() {
-    return new Promise((resolve, reject) => {
-      this.servicioCicloLectivo.validarEnCursado().subscribe((result) => {
-        resolve(result.permiso);
-      });
-    });
   }
 
   //Con el indice, cambia el valor del campo justificado de la inasistencia

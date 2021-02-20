@@ -4,14 +4,14 @@ const MateriaXCurso = require("../models/materiasXCurso");
 const ClaseEstado = require("../classes/estado");
 const ClaseCicloLectivo = require("../classes/cicloLectivo");
 
-exports.clonarAgenda = async function (idCurso, yearSelected) {
+// #deprecado
+exports.clonarAgenda = async function (idCurso) {
   let idMateriasXCursoAñoAnterior = [];
   let idMateriasXCurso = [];
 
   let idCreada = await ClaseEstado.obtenerIdEstado("MateriasXCurso", "Creada");
 
   //obtener el ciclo lectivo para el año anterior
-
   let idCicloAnterior = await ClaseCicloLectivo.obtenerIdCicloAnterior();
 
   if (idCicloAnterior == null) {

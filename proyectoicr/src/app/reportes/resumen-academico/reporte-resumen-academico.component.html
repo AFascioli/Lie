@@ -341,6 +341,25 @@
               <ng-template #sinNotas>0</ng-template>
             </td>
           </ng-container>
+          <ng-container matColumnDef="examen">
+            <th
+              class="columnas-promedios promedio"
+              mat-header-cell
+              *matHeaderCellDef
+            >
+              Con examen
+            </th>
+            <td
+              class="columnas-promedios promedio"
+              mat-cell
+              *matCellDef="let resumen; let i = index"
+            >
+              <b>
+                {{ examen.toFixed(2) }}
+              </b>
+            </td>
+            <ng-template #sinNotas>0</ng-template>
+          </ng-container>
 
           <ng-container matColumnDef="estudiante" class="header">
             <th
@@ -387,7 +406,7 @@
               class="header"
               mat-header-cell
               *matHeaderCellDef
-              [attr.colspan]="1"
+              [attr.colspan]="2"
             >
               Promedio
             </th>

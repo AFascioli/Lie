@@ -24,6 +24,7 @@ export class RetiroAnticipadoComponent implements OnInit {
   matConfig = new MatDialogConfig();
   _mobileQueryListener: () => void;
   mobileQuery: MediaQueryList;
+  fueraPeriodoCicloLectivo: Boolean = false;
   displayedColumns: string[] = [
     "seleccion",
     "apellido",
@@ -33,7 +34,6 @@ export class RetiroAnticipadoComponent implements OnInit {
     "nroDocumento",
   ];
   tutores: any[] = [];
-  fueraPeriodoCicloLectivo = false;
   seleccion = new SelectionModel(true, []);
   isLoading = true;
   horaRetiroAnticipado: string;
@@ -56,12 +56,12 @@ export class RetiroAnticipadoComponent implements OnInit {
   }
 
   async ngOnInit() {
-    this.fechaActual = new Date();
+    this.verificarEstadoCiclo();
     this.servicioCicloLectivo
       .obtenerHoraRetiroAnticipado()
       .pipe(takeUntil(this.unsubscribe))
       .subscribe((response) => {
-        this.horaRetiroAnticipado = response.hora.substring(0, 2);
+        this.horaRetiroAnticipado = response.hora;
       });
     if (
       this.fechaActual.toString().substring(0, 3) == "Sat" ||
@@ -76,38 +76,22 @@ export class RetiroAnticipadoComponent implements OnInit {
         }
       );
     }
-    if (
-      (await this.fechaActualEnPeriodoCursado()) ||
-      this.autenticacionService.getRol() == "Admin"
-    ) {
-      this.apellidoEstudiante = this.servicioEstudiante.estudianteSeleccionado.apellido;
-      this.nombreEstudiante = this.servicioEstudiante.estudianteSeleccionado.nombre;
-      this._idEstudiante = this.servicioEstudiante.estudianteSeleccionado._id;
-      this.validarHora();
-      this.servicioEstudiante
-        .getTutoresDeEstudiante()
-        .pipe(takeUntil(this.unsubscribe))
-        .subscribe((respuesta) => {
-          this.tutores = respuesta.tutores;
-          this.isLoading = false;
-        });
-    } else {
-      this.fueraPeriodoCicloLectivo = true;
-      this.isLoading = false;
-    }
+    this.apellidoEstudiante = this.servicioEstudiante.estudianteSeleccionado.apellido;
+    this.nombreEstudiante = this.servicioEstudiante.estudianteSeleccionado.nombre;
+    this._idEstudiante = this.servicioEstudiante.estudianteSeleccionado._id;
+    this.validarHora();
+    this.servicioEstudiante
+      .getTutoresDeEstudiante()
+      .pipe(takeUntil(this.unsubscribe))
+      .subscribe((respuesta) => {
+        this.tutores = respuesta.tutores;
+        this.isLoading = false;
+      });
   }
 
   ngOnDestroy() {
     this.unsubscribe.next();
     this.unsubscribe.complete();
-  }
-
-  async fechaActualEnPeriodoCursado() {
-    return new Promise((resolve, reject) => {
-      this.cicloLectivoService.validarEnCursado().subscribe((result) => {
-        resolve(result.permiso);
-      });
-    });
   }
 
   //Segun que hora sea, cambia el valor de antes10am y cambia que radio button esta seleccionado
@@ -119,6 +103,19 @@ export class RetiroAnticipadoComponent implements OnInit {
 
   CambiarTipoRetiro() {
     this.antes10am = !this.antes10am;
+  }
+
+  verificarEstadoCiclo() {
+    this.servicioCicloLectivo
+      .obtenerEstadoCicloLectivo()
+      .pipe(takeUntil(this.unsubscribe))
+      .subscribe((response) => {
+        this.fueraPeriodoCicloLectivo = !(
+          response.estadoCiclo == "En primer trimestre" ||
+          response.estadoCiclo == "En segundo trimestre" ||
+          response.estadoCiclo == "En tercer trimestre"
+        );
+      });
   }
 
   onGuardar() {

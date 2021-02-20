@@ -77,6 +77,7 @@ export class DefinirAgendaComponent implements OnInit, OnDestroy {
   mobileQuery: MediaQueryList;
   aniosCiclos: any[];
   enEstadoCLCursando;
+  seClono = false;
 
   constructor(
     public servicioEstudiante: EstudiantesService,
@@ -188,13 +189,11 @@ export class DefinirAgendaComponent implements OnInit, OnDestroy {
       .subscribe((confirmacion) => {
         if (confirmacion) {
           this.servicioAgenda
-            .clonarAgenda(this.idCursoSeleccionado, this.yearSelected)
+            .obtenerAgendaAnterior(this.idCursoSeleccionado)
             .pipe(takeUntil(this.unsubscribe))
             .subscribe((rtdo) => {
-              this.servicioAgenda
-                .obtenerAgendaDeCurso(this.idCursoSeleccionado)
-                .pipe(takeUntil(this.unsubscribe))
-                .subscribe((rtdo) => {
+              this.seClono = true;
+              this.huboCambios = true;
                   this.dataSource.data = rtdo.agenda;
                   this.dataSource._updateChangeSubscription();
                   if (rtdo.exito) {
@@ -202,7 +201,6 @@ export class DefinirAgendaComponent implements OnInit, OnDestroy {
                   } else {
                     this.openSnackBar(rtdo.message, "snack-bar-fracaso");
                   }
-                });
             });
         }
       });
@@ -244,10 +242,11 @@ export class DefinirAgendaComponent implements OnInit, OnDestroy {
   onGuardar() {
     if (this.agendaValida) {
       this.servicioAgenda
-        .registrarAgenda(this.dataSource.data, this.idCursoSeleccionado)
+        .registrarAgenda(this.dataSource.data, this.idCursoSeleccionado, this.seClono)
         .subscribe((response) => {
           this.isEditing = false;
           this.huboCambios = false;
+          this.seClono = false;
           this.indiceNuevo = [];
           this.openSnackBar(response.message, "snack-bar-exito");
         });
@@ -428,7 +427,6 @@ export class DefinirAgendaComponent implements OnInit, OnDestroy {
     }
     this.dataSource.data = [];
     this.obtenerCursos();
-    console.log(this.nextYearSelect);
   }
 
   esNuevo(indice): boolean {

@@ -233,8 +233,8 @@ router.get("/inicioCursado", checkAuthMiddleware, async (req, res) => {
 
     // Crear el proximo ciclo lectivo
     let cicloProximo = new CicloLectivo({
-      horarioLLegadaTarde: 8,
-      horarioRetiroAnticipado: 10,
+      horarioLLegadaTarde: "8:00",
+      horarioRetiroAnticipado: "10:00",
       cantidadFaltasSuspension: 15,
       cantidadMateriasInscripcionLibre: 3,
       año: cicloActual.año + 1,

@@ -18,8 +18,6 @@ import { MatPaginatorIntl } from "@angular/material";
 import { Subject } from "rxjs";
 import { takeUntil } from "rxjs/operators";
 import { MediaMatcher } from "@angular/cdk/layout";
-import { jsPDF } from "jspdf";
-import html2canvas from "html2canvas";
 
 @Component({
   selector: "app-calificaciones-ciclo-lectivo",
@@ -55,12 +53,14 @@ export class CalificacionesCicloLectivoComponent implements OnInit, OnDestroy {
     "cal18",
     "prom3",
     "prom",
+    "examen",
   ];
   rolConPermisosEdicion = false;
   isLoading = true;
   isLoading2 = false;
   calificacionesChange = false;
   puedeEditarCalificaciones = false;
+  examen;
   promedio = 0;
   promedioT1 = 0;
   promedioT2 = 0;
@@ -72,8 +72,7 @@ export class CalificacionesCicloLectivoComponent implements OnInit, OnDestroy {
   mobileQuery: MediaQueryList;
   materiaSelec: boolean = false;
   docente: string;
-  anosCiclos: any[]
-  year;
+  anosCiclos: any[];
 
   @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
 
@@ -97,6 +96,9 @@ export class CalificacionesCicloLectivoComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.unsubscribe))
       .subscribe((response) => {
         this.anosCiclos = response.añosCiclos;
+        this.anosCiclos.sort(function (a, b) {
+          return b - a;
+        });
       });
     this.validarPermisos();
   }
@@ -130,9 +132,9 @@ export class CalificacionesCicloLectivoComponent implements OnInit, OnDestroy {
             .subscribe((response) => {
               this.cursos = response.cursos;
               this.cursos.sort((a, b) =>
-                a.nombre.charAt(0) > b.nombre.charAt(0)
+                a.nombre.charAt(0) < b.nombre.charAt(0)
                   ? 1
-                  : b.nombre.charAt(0) > a.nombre.charAt(0)
+                  : b.nombre.charAt(0) < a.nombre.charAt(0)
                   ? -1
                   : 0
               );
@@ -288,6 +290,13 @@ export class CalificacionesCicloLectivoComponent implements OnInit, OnDestroy {
   calcularPromedio(index) {
     var notas: number = 0;
     var cont: number = 0;
+
+    if (this.estudiantes[index].promedio[0].length != 0) {
+      this.examen = parseFloat(this.estudiantes[index].promedio[0]);
+    } else {
+      this.examen = 0;
+    }
+
     this.estudiantes[index].calificaciones[0][0].forEach((nota) => {
       if (nota != 0 && nota != null) {
         notas = notas + nota;
@@ -322,6 +331,8 @@ export class CalificacionesCicloLectivoComponent implements OnInit, OnDestroy {
     else if (this.promedioT1 != 0 && this.promedioT2 != 0)
       this.promedio = (this.promedioT1 + this.promedioT2) / 2;
     else this.promedio = this.promedioT1;
+
+    if (this.promedio == this.examen) this.examen = "-";
 
     return this.promedio;
   }

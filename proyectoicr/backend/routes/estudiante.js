@@ -159,6 +159,23 @@ router.delete("/borrar", checkAuthMiddleware, async (req, res, next) => {
     "Inscripcion",
     "Pendiente"
   );
+  let idEstadoSuspendido = await ClaseEstado.obtenerIdEstado(
+    "Inscripcion",
+    "Suspendido"
+  );
+  let idEstadoPromovExamenesPendientes = await ClaseEstado.obtenerIdEstado(
+    "Inscripcion",
+    "Promovido con examenes pendientes"
+  );
+  let idEstadoLibre = await ClaseEstado.obtenerIdEstado("Inscripcion", "Libre");
+  let idEstadoPromovido = await ClaseEstado.obtenerIdEstado(
+    "Inscripcion",
+    "Promovido"
+  );
+  let idEstadoExamenesPendientes = await ClaseEstado.obtenerIdEstado(
+    "Inscripcion",
+    "Examenes pendientes"
+  );
   let idEstadoInactiva = await ClaseEstado.obtenerIdEstado(
     "Inscripcion",
     "Inactiva"
@@ -174,8 +191,17 @@ router.delete("/borrar", checkAuthMiddleware, async (req, res, next) => {
     .then(() => {
       Inscripcion.find({
         idEstudiante: req.query._id,
-        $or: [{ estado: idEstadoActiva }, { estado: idEstadoPendiente }],
+        $or: [
+          { estado: idEstadoActiva },
+          { estado: idEstadoPendiente },
+          { estado: idEstadoSuspendido },
+          { estado: idEstadoPromovExamenesPendientes },
+          { estado: idEstadoLibre },
+          { estado: idEstadoPromovido },
+          { estado: idEstadoExamenesPendientes },
+        ],
       }).then(async (inscripcion) => {
+        console.log(inscripcion);
         if (inscripcion && inscripcion.length > 0) {
           for (let index = 0; index < inscripcion.length; index++) {
             inscripcion.estado = idEstadoInactiva;
@@ -184,12 +210,16 @@ router.delete("/borrar", checkAuthMiddleware, async (req, res, next) => {
             curso.capacidad += 1;
             curso.save();
           }
+          res.status(202).json({
+            message: "Estudiante exitosamente borrado",
+            exito: true,
+          });
+        } else {
+          res.status(202).json({
+            message: "No existe estudiante con inscripcion para borrar",
+            exito: true,
+          });
         }
-
-        res.status(202).json({
-          message: "Estudiante exitosamente borrado",
-          exito: true,
-        });
       });
     })
     .catch((error) => {
@@ -208,9 +238,19 @@ router.get("/curso", checkAuthMiddleware, async (req, res) => {
       "Activa"
     );
 
+    let idEstadoSuspendido = await ClaseEstado.obtenerIdEstado(
+      "Inscripcion",
+      "Suspendido"
+    );
+
     let inscripcion = await Inscripcion.findOne({
       idEstudiante: req.query.idEstudiante,
-      estado: idEstadoActiva,
+      estado: {
+        $in: [
+          mongoose.Types.ObjectId(idEstadoActiva),
+          mongoose.Types.ObjectId(idEstadoSuspendido),
+        ],
+      },
     });
 
     if (inscripcion) {
@@ -265,9 +305,21 @@ router.post("/documentos", checkAuthMiddleware, async (req, res) => {
       "Inscripcion",
       "Activa"
     );
+    let idEstadoSuspendido = await ClaseEstado.obtenerIdEstado(
+      "Inscripcion",
+      "Suspendido"
+    );
     req.body.forEach((estudiante) => {
       Inscripcion.findOneAndUpdate(
-        { idEstudiante: estudiante.idEstudiante, estado: idEstadoActiva },
+        {
+          idEstudiante: estudiante.idEstudiante,
+          estado: {
+            $in: [
+              mongoose.Types.ObjectId(idEstadoActiva),
+              mongoose.Types.ObjectId(idEstadoSuspendido),
+            ],
+          },
+        },
         { $set: { documentosEntregados: estudiante.documentosEntregados } }
       ).exec();
     });
@@ -531,11 +583,20 @@ router.get("/agenda", checkAuthMiddleware, async (req, res) => {
     "Inscripcion",
     "Activa"
   );
+  let idEstadoSuspendido = await ClaseEstado.obtenerIdEstado(
+    "Inscripcion",
+    "Suspendido"
+  );
   Inscripcion.aggregate([
     {
       $match: {
         idEstudiante: mongoose.Types.ObjectId(req.query.idEstudiante),
-        estado: mongoose.Types.ObjectId(idEstadoActiva),
+        estado: {
+          $in: [
+            mongoose.Types.ObjectId(idEstadoActiva),
+            mongoose.Types.ObjectId(idEstadoSuspendido),
+          ],
+        },
       },
     },
     {

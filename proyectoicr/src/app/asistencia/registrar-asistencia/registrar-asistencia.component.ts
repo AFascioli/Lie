@@ -15,11 +15,11 @@ import { Subject } from "rxjs";
 })
 export class RegistrarAsistenciaComponent implements OnInit, OnDestroy {
   cursos: any[];
-  cursoNotSelected: boolean;
+  cursoNotSelected: boolean = true;
   diaActual: string;
   estudiantesXDivision: any[] = [];
   displayedColumns: string[] = ["apellido", "nombre", "accion"];
-  fechaActual: Date;
+  fechaActual: Date = new Date();
   asistenciaNueva: string = "true";
   agent: any;
   fueraPeriodoCicloLectivo = false;
@@ -33,22 +33,33 @@ export class RegistrarAsistenciaComponent implements OnInit, OnDestroy {
     private servicioEstudiante: EstudiantesService,
     private servicioCicloLectivo: CicloLectivoService,
     private servicioAsistencia: AsistenciaService,
-    private autenticacionService: AutenticacionService,
-    private CicloLectivoService: CicloLectivoService,
     public popup: MatDialog,
     public snackBar: MatSnackBar
   ) {}
 
-  async ngOnInit() {
-    this.fechaActual = new Date();
+  ngOnInit() {
     this.servicioCicloLectivo
       .obtenerActualYSiguiente()
       .pipe(takeUntil(this.unsubscribe))
       .subscribe((response) => {
         this.aniosCiclos = response.añosCiclos;
+        this.servicioEstudiante
+          .obtenerCursos(this.aniosCiclos[0])
+          .pipe(takeUntil(this.unsubscribe))
+          .subscribe((response) => {
+            this.cursos = response.cursos;
+            this.cursos.sort((a, b) =>
+              a.nombre.charAt(0) > b.nombre.charAt(0)
+                ? 1
+                : b.nombre.charAt(0) > a.nombre.charAt(0)
+                ? -1
+                : 0
+            );
+            this.isLoading = false;
+          });
       });
+
     this.obtenerIdInscripcionSuspendida();
-    this.cursoNotSelected = true;
 
     if (
       this.fechaActual.toString().substring(0, 3) == "Sat" ||
@@ -63,38 +74,6 @@ export class RegistrarAsistenciaComponent implements OnInit, OnDestroy {
         }
       );
     }
-    
-
-    if (
-      (await this.fechaActualEnPeriodoCursado()) ||
-      this.autenticacionService.getRol() == "Admin"
-    ) {
-      this.servicioEstudiante
-        .obtenerCursos(this.aniosCiclos[0])
-        .pipe(takeUntil(this.unsubscribe))
-        .subscribe((response) => {
-          this.cursos = response.cursos;
-          this.cursos.sort((a, b) =>
-            a.nombre.charAt(0) > b.nombre.charAt(0)
-              ? 1
-              : b.nombre.charAt(0) > a.nombre.charAt(0)
-              ? -1
-              : 0
-          );
-          this.isLoading = false;
-        });
-    } else {
-      this.fueraPeriodoCicloLectivo = true;
-      this.isLoading = false;
-    }
-  }
-
-  async fechaActualEnPeriodoCursado() {
-    return new Promise((resolve, reject) => {
-      this.CicloLectivoService.validarEnCursado().subscribe((result) => {
-        resolve(result.permiso);
-      });
-    });
   }
 
   //Busca los estudiantes segun el curso que se selecciono en pantalla. Los orden alfabeticamente

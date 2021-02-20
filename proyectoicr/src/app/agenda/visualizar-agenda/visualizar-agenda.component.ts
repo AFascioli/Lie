@@ -57,14 +57,13 @@ export class VisualizarAgendaComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.obtenerCursos();
     this.servicioCicloLectivo
       .obtenerActualYSiguiente()
       .pipe(takeUntil(this.unsubscribe))
       .subscribe((response) => {
         this.aniosCiclos = response.añosCiclos;
+        this.obtenerCursos();
         this.isLoading = false;
-        console.log(this.aniosCiclos);
       });
   }
 

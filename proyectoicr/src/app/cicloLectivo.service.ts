@@ -9,6 +9,7 @@ export class CicloLectivoService implements OnDestroy {
   private unsubscribe: Subject<void> = new Subject();
   retornoDesdeAcciones: boolean;
   busquedaARXNombre: boolean;
+  esInicioCursado:boolean;
   private actualizarML = new Subject<any>();
 
   constructor(public http: HttpClient) {}

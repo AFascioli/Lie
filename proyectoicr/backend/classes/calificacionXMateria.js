@@ -103,7 +103,10 @@ exports.obtenerMateriasDesaprobadasv2 = async function (
       idsCXMDesaprobadas.push(...arrayPendientes);
     }
     for (const cxm of idsCalificacionesXMateria) {
-      let cxmEncontrada = await CalificacionesXMateria.findOne({ _id: cxm, estado: idEstado });
+      let cxmEncontrada = await CalificacionesXMateria.findOne({
+        _id: cxm,
+        estado: idEstado,
+      });
 
       if (cxmEncontrada != null) {
         idsCXMDesaprobadas.push(cxm);
@@ -182,12 +185,39 @@ exports.obtenerNombresMaterias = async (arrayIdCXM) => {
           },
         },
         {
+          $lookup: {
+            from: "inscripcion",
+            localField: "_id",
+            foreignField: "calificacionesXMateria",
+            as: "insc",
+          },
+        },
+        {
+          $lookup: {
+            from: "curso",
+            localField: "insc.idCurso",
+            foreignField: "_id",
+            as: "curso",
+          },
+        },
+        {
           $project: {
             "datosMateria._id": 1,
             "datosMateria.nombre": 1,
+            "curso.nombre": 1,
+            "curso._id": 1,
           },
         },
       ]).then((datosMaterias) => {
+        for (let index = 0; index < datosMaterias.length; index++) {
+          datosMaterias[0].datosMateria[index].nombre =
+            datosMaterias[0].datosMateria[index].nombre +
+            " (" +
+            datosMaterias[0].curso[index].nombre +
+            ") ";
+          datosMaterias[0].datosMateria[index].cursoId =
+            datosMaterias[0].curso[index]._id;
+        }
         nombresMaterias.push(datosMaterias[0].datosMateria[0]);
       });
     }

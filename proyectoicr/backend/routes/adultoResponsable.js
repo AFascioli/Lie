@@ -6,6 +6,7 @@ const Estudiante = require("../models/estudiante");
 const Inscripcion = require("../models/inscripcion");
 const Curso = require("../models/curso");
 const ClaseEstado = require("../classes/estado");
+const mongoose = require("mongoose");
 
 // Retorna los adultos responsables de un estudiante
 router.get("/", checkAuthMiddleware, (req, res) => {
@@ -189,9 +190,18 @@ router.get("/estudiantes", checkAuthMiddleware, async (req, res) => {
             "Inscripcion",
             "Activa"
           );
+          let idEstadoSuspendido = await ClaseEstado.obtenerIdEstado(
+            "Inscripcion",
+            "Suspendido"
+          );
           Inscripcion.findOne({
             idEstudiante: idEstudiante,
-            estado: idEstadoActiva,
+            estado: {
+              $in: [
+                mongoose.Types.ObjectId(idEstadoActiva),
+                mongoose.Types.ObjectId(idEstadoSuspendido),
+              ],
+            },
           }).then((inscripcion) => {
             if (inscripcion != null) {
               Curso.findById(inscripcion.idCurso).then((curso) => {
