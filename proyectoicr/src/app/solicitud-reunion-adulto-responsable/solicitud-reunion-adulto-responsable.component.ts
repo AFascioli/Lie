@@ -42,12 +42,11 @@ export class SolicitudReunionAdultoResponsableComponent implements OnInit {
     this.unsubscribe.next();
     this.unsubscribe.complete();
   }
-
+ 
   onEnviar(form: NgForm) {
     let docenteSeleccionado = this.docentes.filter(
       (docente) => docente.seleccionado
     );
-
     if (this.validarCampos(form.value.cuerpo, docenteSeleccionado)) {
       this.servicioAR
         .validarNotificacion(

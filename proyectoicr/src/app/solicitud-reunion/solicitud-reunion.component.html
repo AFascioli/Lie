@@ -57,7 +57,8 @@
   <p *ngIf="adultosResponsables.length == 0" class="aviso">
     Tenga en cuenta que a los tutores no se les puede notificar.
   </p>
-
+  
+  <form #form="ngForm">
   <mat-form-field *ngIf="adultosResponsables.length != 0">
     <textarea
       matInput
@@ -71,11 +72,11 @@
     >
     </textarea>
   </mat-form-field>
-
+  </form>
   <div class="div-button">
     <button
       class="button-primary"
-      (click)="onEnviar(cuerpo)"
+      (click)="onEnviar(form)"
       mat-raised-button
       *ngIf="adultosResponsables.length != 0"
     >

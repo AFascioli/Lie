@@ -41,12 +41,12 @@ export class SolicitudReunionComponent implements OnInit {
     this.unsubscribe.complete();
   }
 
-  onEnviar(cuerpo) {
-    if (this.validarCampos(cuerpo.value)) {
+  onEnviar(form) {    
+    if (this.validarCampos(form.value.cuerpo)) {
       this.servicio
         .notificarReunionAR(
           this.adultosResponsables,
-          cuerpo.value,
+          form.value.cuerpo,
           this.servicioAutenticacion.getId()
         )
         .pipe(takeUntil(this.unsubscribe))
