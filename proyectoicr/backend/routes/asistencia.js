@@ -40,6 +40,7 @@ async function validarLibreInasistencias(idEst) {
       ).exec();
     } else if (
       inscripcion &&
+      inscripcion.contadorInasistenciasInjustificada != 0 &&
       inscripcion.contadorInasistenciasInjustificada % (faltasSuspencion - 3) ==
         0
     ) {
