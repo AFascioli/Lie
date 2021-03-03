@@ -27,13 +27,19 @@ export class EstadoCursosComponent implements OnInit {
       .pipe(takeUntil(this.unsubscribe))
       .subscribe((response) => {
         this.cursosEstados = response.cursosEstados;
-          this.cursosEstados.sort((a, b) =>
-            a.nombre.charAt(0) > b.nombre.charAt(0)
-              ? 1
-              : b.nombre.charAt(0) > a.nombre.charAt(0)
-              ? -1
-              : 0
-          );
+        this.cursosEstados.sort((a, b) =>
+          a.nombre.charAt(0) > b.nombre.charAt(0)
+            ? 1
+            : b.nombre.charAt(0) > a.nombre.charAt(0)
+            ? -1
+            : a.nombre.charAt(1) > b.nombre.charAt(1)
+            ? 1
+            : b.nombre.charAt(1) > a.nombre.charAt(1)
+            ? -1
+            : 0
+        );
+        console.log(response.cursosEstados);
+        console.log(this.cursosEstados);
         this.isLoading = false;
       });
   }

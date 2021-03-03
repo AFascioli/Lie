@@ -2,10 +2,10 @@
 <mat-card class="card-spinner" *ngIf="isLoading">
   <mat-spinner class="spinner" [diameter]="60"></mat-spinner>
 </mat-card>
-<mat-accordion class="example-headers-align" multi *ngIf="!isLoading">
+<mat-accordion class="example-headers-align" *ngIf="!isLoading">
   <mat-expansion-panel *ngFor="let curso of cursosEstados">
-    <mat-expansion-panel-header>
-      <mat-panel-title> Curso: {{ curso.nombre }} </mat-panel-title>
+    <mat-expansion-panel-header >
+      <mat-panel-title> <b>Curso: {{ curso.nombre }}</b> </mat-panel-title>
     </mat-expansion-panel-header>
     <table
       mat-table
@@ -13,13 +13,13 @@
       *ngIf="curso.materiasConEstado.length != 0"
     >
       <ng-container matColumnDef="materia">
-        <th class="centrar" mat-header-cell *matHeaderCellDef>Materia</th>
+        <th class="centrar" mat-header-cell *matHeaderCellDef><b>Materia</b></th>
         <td mat-cell *matCellDef="let materiaConEstado">
           {{ materiaConEstado.materia }}
         </td>
       </ng-container>
       <ng-container matColumnDef="estado">
-        <th class="centrar" mat-header-cell *matHeaderCellDef>Estado</th>
+        <th class="centrar" mat-header-cell *matHeaderCellDef><b>Estado</b></th>
         <td mat-cell *matCellDef="let materiaConEstado">
           {{ materiaConEstado.estado }}
         </td>

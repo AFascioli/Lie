@@ -1,5 +1,10 @@
 <h1 class="componente-titulo">Administrar ciclo lectivo</h1>
-
+<div *ngIf="isLoading" class="loading-overlay">
+  <div class="loading-div">
+    <mat-spinner class="spinner" [diameter]="60"></mat-spinner>
+    <p class="loading-text">Cargando</p>
+  </div>
+</div>
 <div class="grid-container" [class.grid-container-mobile]="mobileQuery.matches">
   <mat-card class="opcion" [ngClass]="{ colorCard: this.iniciarCursado }">
     <br /><b>Inicio de cursado</b>

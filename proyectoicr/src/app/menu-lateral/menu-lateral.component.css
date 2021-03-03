@@ -203,18 +203,28 @@ a:hover {
 }
 
 .icon-usuario {
-  font-size: 80px;
-  /* margin: auto;
-  margin-top: 8px;
-  display: table; */
-  margin: 8% 0% 0% 10%;
+  transform: scale(3);
+  margin: 20% 0% 5% 15%;
   color: #222831;
 }
+
+.icon-user-menu-lateral {
+  background-image: url("../../img/icon-user.png");
+  display: block;
+  height: 70px;
+  width: 70px;
+  background-repeat: no-repeat;
+  background-size: cover;
+  margin: 20% 0% 0% 10%;
+}
+
 .usuario {
   /* text-align: center;
   margin: 8px 8px;
   word-break: break-all; */
-  margin: 5px 0px 5px 50px !important;
+  overflow: hidden;
+  word-break: break-all;
+  margin: 5px 0% 5% 12% !important;
   color: #222831;
   font-size: 18px !important;
 }
@@ -228,7 +238,6 @@ a:hover {
   background-repeat: no-repeat;
   background-size: cover;
   display: flow-root;
-  height: 190px;
 }
 
 .sinExpansion {

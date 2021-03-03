@@ -1,6 +1,7 @@
 .div-button {
   text-align: right;
   margin-top: 1%;
+  margin-right: 6%;
 }
 
 .mat-form1 {
@@ -11,6 +12,16 @@
 .mat-form-hora2 {
   width: 29%;
   margin-left: 7%;
+}
+
+.parametro-nombre{
+  max-width: 307px;
+}
+.div-parametro{
+  display: flex;
+  justify-content: space-between;
+  margin-left: 7%;
+  margin-right: 7%;
 }
 
 .center

@@ -24,6 +24,10 @@ table {
   max-width: 800px;
 }
 
+.mat-expanded{
+  background: #47988d59 !important;
+}
+
 .div-button {
   text-align: right;
   margin-right: 3%;

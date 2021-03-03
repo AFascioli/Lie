@@ -3,10 +3,39 @@
   margin-right: 3%;
 }
 
-.div-button-mobile
-{
+.div-button-mobile {
   text-align: right;
   margin-right: 7%;
+}
+
+.loading-overlay {
+  z-index: 10;
+  display: block;
+  position: absolute;
+  height: 100%;
+  top: 0;
+  left: 0;
+  right: 0;
+  background: rgba(0, 0, 0, 0.5);
+}
+
+.spinner {
+  top: 50%;
+}
+
+.loading-div {
+  text-align: center;
+  background-color: #eef0f1;
+  width: 20%;
+  position: relative;
+  top: 40%;
+  margin: auto;
+  border-radius: 4px;
+  padding: 15px;
+}
+
+.loading-text {
+  font-weight: bold;
 }
 
 .grid-container {
@@ -28,7 +57,7 @@
   margin-bottom: 2%;
   display: grid;
   grid-template-columns: auto;
-  grid-auto-rows:auto;
+  grid-auto-rows: auto;
   grid-gap: 8px;
   padding: 10px;
   border-radius: 4px;

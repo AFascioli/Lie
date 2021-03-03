@@ -203,12 +203,16 @@ export class InscripcionEstudianteComponent implements OnInit, OnDestroy {
       .subscribe((response) => {
         this.cursos = response.cursos;
         this.cursos.sort((a, b) =>
-          a.nombre.charAt(0) > b.nombre.charAt(0)
-            ? 1
-            : b.nombre.charAt(0) > a.nombre.charAt(0)
-            ? -1
-            : 0
-        );
+        a.nombre.charAt(0) > b.nombre.charAt(0)
+          ? 1
+          : b.nombre.charAt(0) > a.nombre.charAt(0)
+          ? -1
+          : a.nombre.charAt(1) > b.nombre.charAt(1)
+          ? 1
+          : b.nombre.charAt(1) > a.nombre.charAt(1)
+          ? -1
+          : 0
+      );
       });
   }
 

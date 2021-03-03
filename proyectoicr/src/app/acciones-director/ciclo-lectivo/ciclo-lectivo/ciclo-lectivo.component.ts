@@ -43,6 +43,7 @@ export class CicloLectivoComponent implements OnInit {
   mostrarMateria;
   _mobileQueryListener: () => void;
   mobileQuery: MediaQueryList;
+  isLoading= false;
 
   constructor(
     public dialog: MatDialog,
@@ -86,6 +87,7 @@ export class CicloLectivoComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.isLoading=true;
     this.servicioCicloLectivo
       .obtenerEstadoCicloLectivo()
       .subscribe((response) => {
@@ -106,6 +108,7 @@ export class CicloLectivoComponent implements OnInit {
             this.onVariableChange(5);
             break;
         }
+        this.isLoading=false;
       });
   }
 
@@ -171,7 +174,9 @@ export class CicloLectivoComponent implements OnInit {
   }
 
   cerrarEtapaExamenes() {
+    this.isLoading=true;
     this.servicioCicloLectivo.cierreEtapaExamenes().subscribe((response) => {
+      this.isLoading=false;
       if (response.exito) {
         this.showSnackbar(response.message, "snack-bar-exito");
         this.onVariableChange(5);
@@ -183,7 +188,9 @@ export class CicloLectivoComponent implements OnInit {
   }
 
   onIniciarCursado() {
+    this.isLoading=true;
     this.servicioCicloLectivo.inicioCursado().subscribe((response) => {
+      this.isLoading=false;
       if (response.exito) {
         this.showSnackbar(response.message, "snack-bar-exito");
         this.onVariableChange(1);
@@ -198,9 +205,11 @@ export class CicloLectivoComponent implements OnInit {
   }
 
   cerrarTrimestre(trimestre) {
+    this.isLoading=true;
     this.servicioCicloLectivo
-      .cierreTrimestre(trimestre)
-      .subscribe((response) => {
+    .cierreTrimestre(trimestre)
+    .subscribe((response) => {
+        this.isLoading=false;
         if (response.exito) {
           this.onVariableChange(trimestre + 1);
           this.showSnackbar(response.message, "snack-bar-exito");
