@@ -62,7 +62,6 @@ export class VisualizarAgendaComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.unsubscribe))
       .subscribe((response) => {
         this.aniosCiclos = response.añosCiclos;
-        this.obtenerCursos();
         this.isLoading = false;
       });
   }
@@ -112,7 +111,7 @@ export class VisualizarAgendaComponent implements OnInit, OnDestroy {
 
   obtenerCursos() {
     this.servicioEstudiante
-      .obtenerCursos(this.aniosCiclos[0])
+      .obtenerCursos(this.yearSelected)
       .pipe(takeUntil(this.unsubscribe))
       .subscribe((response) => {
         this.cursos = response.cursos;
