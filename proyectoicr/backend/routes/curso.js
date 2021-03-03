@@ -1837,7 +1837,7 @@ router.post("/agenda", checkAuthMiddleware, async (req, res) => {
         }
       } else if (materia.modificado) {
         //Se actualiza el nuevo horario para una mxc dada
-        Horario.findByIdAndUpdate(materia.idHorarios, {
+        await Horario.findByIdAndUpdate(materia.idHorarios, {
           dia: materia.dia,
           horaInicio: materia.inicio,
           horaFin: materia.fin,
