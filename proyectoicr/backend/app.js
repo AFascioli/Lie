@@ -104,8 +104,8 @@ app.use("/evento", eventoRoutes);
 app.use("/reporte", reporteRoutes);
 
 app.get("/status", (req, res, next) => {
-  res.status(200).json({
-    message: "Servidor Node.js Lie®",
+  return res.status(200).json({
+    message: "Servidor Node.js Lie® 4/3/2021",
   });
 });
 
