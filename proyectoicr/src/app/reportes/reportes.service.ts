@@ -8,8 +8,9 @@ import { environment } from "src/environments/environment";
 export class ReportesService {
   public idEstudianteSeleccionado: string;
   public retornoDeResumenAcademico: boolean;
-  public cursoSeleccionado:string;
-  public nombreCurso:string;
+  public cursoSeleccionado: string;
+  public nombreCurso: string;
+  aniosCL: any[];
 
   constructor(public http: HttpClient) {
     this.retornoDeResumenAcademico = false;
@@ -50,5 +51,4 @@ export class ReportesService {
       resumen: any[];
     }>(environment.apiUrl + "/reporte/resumenAcademico", { params: params });
   }
-
 }

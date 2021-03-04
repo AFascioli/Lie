@@ -933,6 +933,7 @@ router.get(
           "datosEstudiante.nombre": 1,
           "datosEstudiante.apellido": 1,
           "notasXTrimestre.calificaciones": 1,
+          "calXMateria._id": 1,
         },
       },
     ])
@@ -944,6 +945,7 @@ router.get(
             apellido: califEst.datosEstudiante[0].apellido,
             nombre: califEst.datosEstudiante[0].nombre,
             calificaciones: califEst.notasXTrimestre[0].calificaciones,
+            calXMateria: califEst.calXMateria,
           };
           respuesta.push(calificacionesEstudiante);
         });

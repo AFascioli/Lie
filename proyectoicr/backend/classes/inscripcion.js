@@ -175,7 +175,7 @@ exports.inscribirEstudiante = async function (
       materiasDelCurso,
       estadoCursandoMateria._id
     );
-    
+
     const nuevaInscripcion = new Inscripcion({
       idEstudiante: idEstudiante,
       idCurso: cursoSeleccionado._id,
@@ -248,7 +248,7 @@ exports.inscribirEstudianteProximoAnio = async function (
     let crearCuotas = () => {
       cuotas = [];
 
-      for (let i = 3; i < 12; i++) {
+      for (let i = 3; i <= 12; i++) {
         let cuota = { mes: i, pagado: false };
         cuotas.push(cuota);
       }

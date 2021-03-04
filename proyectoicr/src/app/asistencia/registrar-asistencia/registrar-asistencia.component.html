@@ -1,135 +1,143 @@
 <h1 class="componente-titulo" *ngIf="aniosCiclos">
   Registrar asistencia ciclo lectivo {{ aniosCiclos[0] }}
 </h1>
-<mat-card class="card-spinner" *ngIf="isLoading">
-  <mat-spinner class="spinner" [diameter]="60"></mat-spinner>
-</mat-card>
-<mat-card class="card-body-componente" *ngIf="!isLoading">
-  <div class="div-curso-fecha">
-    <mat-form-field class="curso">
-      <mat-select
-        placeholder="Seleccione curso"
-        name="curso"
-        ngModel
-        #curso="ngModel"
-        matNativeControl
-        required
-        (selectionChange)="onCursoSeleccionado(curso)"
-      >
-        <mat-option *ngFor="let objCurso of cursos" [value]="objCurso.nombre">
-          {{ objCurso.nombre }}
-        </mat-option>
-      </mat-select>
-    </mat-form-field>
-    <div class="ubicacion-fecha">
-      <b>Fecha: </b>&nbsp;
-      <mat-form-field class="mat-form-fecha">
-        <input
-          [disabled]="true"
+<mat-card class="card-body-componente">
+  <div *ngIf="isLoading">
+    <mat-spinner class="spinner" [diameter]="60"></mat-spinner>
+  </div>
+  <div *ngIf="!isLoading">
+    <div class="div-curso-fecha">
+      <mat-form-field class="curso">
+        <mat-select
+          placeholder="Seleccione curso"
+          name="curso"
           ngModel
-          #diaFecha="ngModel"
-          matInput
-          name="diaFecha"
-          [(ngModel)]="diaActual"
+          #curso="ngModel"
+          matNativeControl
           required
-          class="input-fecha"
-        />
-        {{ fechaActual | date: "EEEE" | titlecase }}
-        {{ fechaActual | date: "dd/MM/yyyy" }}&nbsp;
+          (selectionChange)="onCursoSeleccionado(curso)"
+        >
+          <mat-option *ngFor="let objCurso of cursos" [value]="objCurso.nombre">
+            {{ objCurso.nombre }}
+          </mat-option>
+        </mat-select>
       </mat-form-field>
+      <div class="ubicacion-fecha">
+        <b>Fecha: </b>&nbsp;
+        <mat-form-field class="mat-form-fecha">
+          <input
+            [disabled]="true"
+            ngModel
+            #diaFecha="ngModel"
+            matInput
+            name="diaFecha"
+            [(ngModel)]="diaActual"
+            required
+            class="input-fecha"
+          />
+          {{ fechaActual | date: "EEEE" | titlecase }}
+          {{ fechaActual | date: "dd/MM/yyyy" }}&nbsp;
+        </mat-form-field>
+      </div>
     </div>
-  </div>
-  <p class="aviso" *ngIf="asistenciaNueva != 'true'">
-    Atención, ya se ha tomado asistencia para este curso el día de hoy.
-  </p>
-  <br />
-  <mat-spinner
-    *ngIf="isLoadingStudents && !cursoNotSelected"
-    class="spinner"
-    [diameter]="60"
-  ></mat-spinner>
-  <div class="contenedor-tabla" *ngIf="!cursoNotSelected && !isLoadingStudents">
-    <table
-      mat-table
-      [dataSource]="estudiantesXDivision"
-      *ngIf="estudiantesXDivision.length != 0"
-    >
-      <ng-container matColumnDef="apellido">
-        <th class="nombre-apellido" mat-header-cell *matHeaderCellDef>
-          Apellido/s
-        </th>
-        <td
-          class="nombre-apellido"
-          mat-cell
-          *matCellDef="let estudiantesXDivision"
-          [ngClass]="{
-            suspendido: esSuspendido(estudiantesXDivision)
-          }"
-        >
-          {{ estudiantesXDivision.apellido }}
-        </td>
-      </ng-container>
-      <ng-container matColumnDef="nombre">
-        <th class="nombre-apellido" mat-header-cell *matHeaderCellDef>
-          Nombre/s
-        </th>
-        <td
-          class="nombre-apellido"
-          mat-cell
-          *matCellDef="let estudiantesXDivision"
-          [ngClass]="{
-            suspendido: esSuspendido(estudiantesXDivision)
-          }"
-        >
-          {{ estudiantesXDivision.nombre }}
-        </td>
-      </ng-container>
-
-      <ng-container matColumnDef="accion">
-        <th class="presentismo" mat-header-cell *matHeaderCellDef>
-          Presentismo
-        </th>
-        <td
-          class="presentismo"
-          mat-cell
-          *matCellDef="let row"
-          [ngClass]="{
-            suspendido: esSuspendido(row)
-          }"
-        >
-          <mat-slide-toggle
-            [checked]="row.presente"
-            (change)="onCambioPresentismo(row)"
-            [disabled]="this.esSuspendido(row)"
-          >
-            <p *ngIf="row.presente">Presente</p>
-            <p *ngIf="!row.presente">Ausente</p></mat-slide-toggle
-          >
-        </td>
-      </ng-container>
-      <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
-      <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
-    </table>
-
-    <p
-      class="aviso"
-      *ngIf="estudiantesXDivision.length == 0 && !cursoNotSelected"
-    >
-      No exiten alumnos inscriptos a este curso.
+    <p class="aviso" *ngIf="asistenciaNueva != 'true'">
+      Atención, ya se ha tomado asistencia para este curso el día de hoy.
     </p>
-  </div>
-  <br />
-  <div class="div-button">
-    <button
-      class="button-primary"
-      (click)="onGuardar()"
-      mat-raised-button
-      [disabled]="cursoNotSelected"
+    <br />
+    <mat-spinner
+      *ngIf="isLoadingStudents && !cursoNotSelected"
+      class="spinner"
+      [diameter]="60"
+    ></mat-spinner>
+    <div
+      class="contenedor-tabla"
+      *ngIf="!cursoNotSelected && !isLoadingStudents"
     >
-      Guardar
-    </button>
-    <button mat-raised-button class="button-warn" (click)="onCancelar()">
-      Cancelar
-    </button>
+      <table
+        mat-table
+        [dataSource]="estudiantesXDivision"
+        *ngIf="estudiantesXDivision.length != 0"
+      >
+        <ng-container matColumnDef="apellido">
+          <th class="nombre-apellido" mat-header-cell *matHeaderCellDef>
+            Apellido/s
+          </th>
+          <td
+            class="nombre-apellido"
+            mat-cell
+            *matCellDef="let estudiantesXDivision"
+            [ngClass]="{
+              suspendido: esSuspendido(estudiantesXDivision)
+            }"
+          >
+            {{ estudiantesXDivision.apellido }}
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="nombre">
+          <th class="nombre-apellido" mat-header-cell *matHeaderCellDef>
+            Nombre/s
+          </th>
+          <td
+            class="nombre-apellido"
+            mat-cell
+            *matCellDef="let estudiantesXDivision"
+            [ngClass]="{
+              suspendido: esSuspendido(estudiantesXDivision)
+            }"
+          >
+            {{ estudiantesXDivision.nombre }}
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="accion">
+          <th class="presentismo" mat-header-cell *matHeaderCellDef>
+            Presentismo
+          </th>
+          <td
+            class="presentismo"
+            mat-cell
+            *matCellDef="let row"
+            [ngClass]="{
+              suspendido: esSuspendido(row)
+            }"
+          >
+            <mat-slide-toggle
+              [checked]="row.presente"
+              (change)="onCambioPresentismo(row)"
+              [disabled]="this.esSuspendido(row)"
+            >
+              <p *ngIf="row.presente">Presente</p>
+              <p *ngIf="!row.presente">Ausente</p></mat-slide-toggle
+            >
+          </td>
+        </ng-container>
+        <tr
+          mat-header-row
+          *matHeaderRowDef="displayedColumns; sticky: true"
+        ></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+      </table>
+
+      <p
+        class="aviso"
+        *ngIf="estudiantesXDivision.length == 0 && !cursoNotSelected"
+      >
+        No exiten alumnos inscriptos a este curso.
+      </p>
+    </div>
+    <br />
+    <div class="div-button">
+      <button
+        class="button-primary"
+        (click)="onGuardar()"
+        mat-raised-button
+        [disabled]="cursoNotSelected"
+      >
+        Guardar
+      </button>
+      <button mat-raised-button class="button-warn" (click)="onCancelar()">
+        Cancelar
+      </button>
+    </div>
   </div>
 </mat-card>

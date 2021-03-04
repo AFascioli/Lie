@@ -43,7 +43,7 @@ router.get("/docente", checkAuthMiddleware, (req, res) => {
   Empleado.find({ tipoEmpleado: "Docente" })
     .select("nombre apellido")
     .then((docentes) => {
-      res.status(201).json({
+      res.status(200).json({
         docentes: docentes,
       });
     })

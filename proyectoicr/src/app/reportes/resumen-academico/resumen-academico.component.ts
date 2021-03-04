@@ -80,16 +80,16 @@ export class ResumenAcademicoComponent implements OnInit {
           .subscribe((response) => {
             this.cursos = response.cursos;
             this.cursos.sort((a, b) =>
-            a.nombre.charAt(0) > b.nombre.charAt(0)
-              ? 1
-              : b.nombre.charAt(0) > a.nombre.charAt(0)
-              ? -1
-              : a.nombre.charAt(1) > b.nombre.charAt(1)
-              ? 1
-              : b.nombre.charAt(1) > a.nombre.charAt(1)
-              ? -1
-              : 0
-          );
+              a.nombre.charAt(0) > b.nombre.charAt(0)
+                ? 1
+                : b.nombre.charAt(0) > a.nombre.charAt(0)
+                ? -1
+                : a.nombre.charAt(1) > b.nombre.charAt(1)
+                ? 1
+                : b.nombre.charAt(1) > a.nombre.charAt(1)
+                ? -1
+                : 0
+            );
           });
       });
   }
@@ -98,6 +98,7 @@ export class ResumenAcademicoComponent implements OnInit {
       this.reportService.cursoSeleccionado
     );
     this.reportService.idEstudianteSeleccionado = i._id;
+    this.reportService.aniosCL = this.anios;
     this.router.navigate(["reporteResumenAcademico"]);
   }
 
@@ -348,7 +349,7 @@ export class ReporteResumenAcademicoComponent implements OnInit {
       doc.setFontSize(10);
       doc.setFont("Segoe UI");
       doc.text("Instituto Cristo Rey", 94, 7);
-      doc.text("Ciclo lectivo " + this.anios[0], 95, 12);
+      doc.text("Ciclo lectivo " + this.reportService.aniosCL[0], 95, 12);
       doc.setDrawColor(184, 184, 184);
       doc.line(10, 17, 200, 17);
       doc.addImage(imgData, 0, 30, 208, imgH);
