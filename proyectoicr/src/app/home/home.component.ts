@@ -72,6 +72,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    console.log("Version 4/3/2021");
     let auxEventoPasado = [];
     let auxEventoProximo = [];
     this.fechaActual = new Date();
