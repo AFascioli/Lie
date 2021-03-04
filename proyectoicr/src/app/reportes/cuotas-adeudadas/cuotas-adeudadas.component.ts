@@ -5,7 +5,6 @@ import { EstudiantesService } from "src/app/estudiantes/estudiante.service";
 import { ReportesService } from "../reportes.service";
 import { jsPDF } from "jspdf";
 import html2canvas from "html2canvas";
-import { CicloLectivoComponent } from "src/app/acciones-director/ciclo-lectivo/ciclo-lectivo/ciclo-lectivo.component";
 import { CicloLectivoService } from "src/app/cicloLectivo.service";
 
 @Component({
@@ -44,6 +43,12 @@ export class CuotasAdeudadasComponent implements OnInit {
             ? 1
             : b.nombres.toLowerCase().charAt(0) >
               a.nombres.toLowerCase().charAt(0)
+            ? -1
+            : a.nombres.toLowerCase().charAt(1) >
+              b.nombres.toLowerCase().charAt(1)
+            ? 1
+            : b.nombres.toLowerCase().charAt(1) >
+              a.nombres.toLowerCase().charAt(1)
             ? -1
             : 0
         );
@@ -105,16 +110,16 @@ export class CuotasAdeudadasComponent implements OnInit {
           .subscribe((response) => {
             this.cursos = response.cursos;
             this.cursos.sort((a, b) =>
-            a.nombre.charAt(0) > b.nombre.charAt(0)
-              ? 1
-              : b.nombre.charAt(0) > a.nombre.charAt(0)
-              ? -1
-              : a.nombre.charAt(1) > b.nombre.charAt(1)
-              ? 1
-              : b.nombre.charAt(1) > a.nombre.charAt(1)
-              ? -1
-              : 0
-          );
+              a.nombre.charAt(0) > b.nombre.charAt(0)
+                ? 1
+                : b.nombre.charAt(0) > a.nombre.charAt(0)
+                ? -1
+                : a.nombre.charAt(1) > b.nombre.charAt(1)
+                ? 1
+                : b.nombre.charAt(1) > a.nombre.charAt(1)
+                ? -1
+                : 0
+            );
           });
       });
   }

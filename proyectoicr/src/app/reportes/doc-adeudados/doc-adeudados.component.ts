@@ -44,6 +44,12 @@ export class DocAdeudadosComponent implements OnInit {
             : b.nombres.toLowerCase().charAt(0) >
               a.nombres.toLowerCase().charAt(0)
             ? -1
+            : a.nombres.toLowerCase().charAt(1) >
+              b.nombres.toLowerCase().charAt(1)
+            ? 1
+            : b.nombres.toLowerCase().charAt(1) >
+              a.nombres.toLowerCase().charAt(1)
+            ? -1
             : 0
         );
         this.cursoSelected = true;
@@ -70,16 +76,16 @@ export class DocAdeudadosComponent implements OnInit {
           .subscribe((response) => {
             this.cursos = response.cursos;
             this.cursos.sort((a, b) =>
-            a.nombre.charAt(0) > b.nombre.charAt(0)
-              ? 1
-              : b.nombre.charAt(0) > a.nombre.charAt(0)
-              ? -1
-              : a.nombre.charAt(1) > b.nombre.charAt(1)
-              ? 1
-              : b.nombre.charAt(1) > a.nombre.charAt(1)
-              ? -1
-              : 0
-          );
+              a.nombre.charAt(0) > b.nombre.charAt(0)
+                ? 1
+                : b.nombre.charAt(0) > a.nombre.charAt(0)
+                ? -1
+                : a.nombre.charAt(1) > b.nombre.charAt(1)
+                ? 1
+                : b.nombre.charAt(1) > a.nombre.charAt(1)
+                ? -1
+                : 0
+            );
           });
       });
   }
