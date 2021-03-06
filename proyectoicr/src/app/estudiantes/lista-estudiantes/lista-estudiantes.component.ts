@@ -93,6 +93,10 @@ export class ListaEstudiantesComponent implements OnInit, OnDestroy {
                     this.materiasPendientes.push(
                       response.materiasDesaprobadas.length > 0
                     );
+                    console.log(
+                      "materias desaprobadas ",
+                      this.materiasPendientes
+                    );
                   });
 
                 // Validación por suspendido
