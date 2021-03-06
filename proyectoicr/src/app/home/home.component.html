@@ -5,6 +5,7 @@
     *ngFor="let evento of eventos; let j = index"
     (click)="eventoSeleccionado(evento)"
   >
+  <label class="label-anioEvento">{{ evento.anioEvento }}</label>
     <mat-card-title>
       <div class="titulo">
         <button (click)="eventoSeleccionado(evento)" class="titulo">

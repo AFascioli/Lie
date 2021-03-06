@@ -33,7 +33,7 @@ export interface DialogData {
 })
 export class CicloLectivoComponent implements OnInit {
   @Output() actualizarML = new EventEmitter<string>();
-  iniciarCursado: Boolean = true;
+  iniciarCursado: Boolean;
   primerTrimestre: Boolean;
   segundoTrimestre: Boolean;
   tercerTrimestre: Boolean;

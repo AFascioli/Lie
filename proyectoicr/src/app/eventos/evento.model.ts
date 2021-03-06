@@ -9,4 +9,5 @@ export interface Evento {
   autor: string;
   filenames: any;
   comentarios: string[];
+  anioEvento: any;
 }

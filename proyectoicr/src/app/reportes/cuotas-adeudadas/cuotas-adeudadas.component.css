@@ -35,3 +35,8 @@ li {
   width: 8% !important;
   text-align: center;
 }
+.aviso-cantidadMorosos{
+  font-weight: 600;
+    margin: auto;
+    text-align: center;
+}

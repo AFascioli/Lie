@@ -82,6 +82,9 @@ export class HomeComponent implements OnInit, OnDestroy {
       .subscribe((rtdo) => {
         this.eventos = rtdo.eventos;
         for (let index = 0; index < rtdo.eventos.length; index++) {
+          const anioEvento = new Date(rtdo.eventos[index].fechaEvento).getFullYear();
+          rtdo.eventos[index].anioEvento = anioEvento;
+
           if (this.eventoYaOcurrio(index))
             auxEventoPasado.push(rtdo.eventos[index]);
           else auxEventoProximo.push(rtdo.eventos[index]);

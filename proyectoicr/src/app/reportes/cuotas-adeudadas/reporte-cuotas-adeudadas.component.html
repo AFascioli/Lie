@@ -1,5 +1,5 @@
 <h1 class="componente-titulo" *ngIf="!cursoSelected">
-  Listado de estudiantes morosos del curso {{ valueCursoSelected }}
+  Listado de estudiantes morosos, ciclo lectivo {{ anios[0] }}
 </h1>
 <mat-card class="card-body-componente">
   <mat-form-field>
@@ -21,9 +21,13 @@
   <br />
   <div id="content" #content>
     <h1 class="componente-titulo" *ngIf="cursoSelected">
-      Listado de estudiantes morosos del curso {{ valueCursoSelected }}
+      Listado de estudiantes morosos del curso {{ valueCursoSelected }}, ciclo lectivo {{ anios[0] }}
     </h1>
     <br />
+    <p class="aviso-cantidadMorosos" *ngIf="estudiantesXCuotas.length != 0 && cursoSelected">
+      El total de estudiantes morosos es de {{ estudiantesXCuotas.length }}
+    </p>
+
     <p class="aviso" *ngIf="estudiantesXCuotas.length == 0 && cursoSelected">
       Los estudiantes no tienen cuotas adeudadas.
     </p>
@@ -47,7 +51,7 @@
 
       <ng-container matColumnDef="cuotas">
         <th class="columnas-normales" mat-header-cell *matHeaderCellDef>
-          <b>Cuotas</b>
+          <b>Cuotas adeudadas</b>
         </th>
         <td
           class="columnas-normales"

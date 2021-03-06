@@ -65,7 +65,7 @@
           *ngIf="
             permisos.notas > 1 &&
             inscripto[i] &&
-            enEstadoCLExamenes &&
+            (enEstadoCLExamenes || enEstadoCLCursando) &&
             materiasPendientes.length != 0
           "
           ><b>Registrar calificaciones de examen</b></mat-card

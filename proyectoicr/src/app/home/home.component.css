@@ -211,3 +211,13 @@ time.icon span {
   display: block;
   text-align: center;
 }
+
+.label-anioEvento{
+  margin: 6px;
+  margin-top: 15px !important;
+  font-size: 18px;
+  position: absolute;
+  border-radius: 60px;
+    background-color: #e0e0e0;
+    padding: 5px 9px 6px 10px;
+}
