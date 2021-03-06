@@ -281,10 +281,12 @@ export class EstudiantesService implements OnDestroy {
   //@params: id de la docente
   public obtenerCursosDeDocente(idDocente: string) {
     let params = new HttpParams().set("idDocente", idDocente);
-    return this.http.get<{ cursos: any[]; message: string; exito: boolean }>(
-      environment.apiUrl + "/curso/docente",
-      { params: params }
-    );
+    return this.http.get<{
+      cursos: any[];
+      materiasYCursoDocente: any[];
+      message: string;
+      exito: boolean;
+    }>(environment.apiUrl + "/curso/docente", { params: params });
   }
 
   //Obtiene todos los cursos que son dictados por una docente en un ciclo lectivo

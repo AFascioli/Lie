@@ -686,17 +686,27 @@ router.get("/docente", checkAuthMiddleware, async (req, res) => {
     },
   ])
     .then((cursos) => {
-      var respuesta = [];
+      console.log(JSON.stringify(cursos));
+      let respuesta = [];
+      let materiasYCursoDocente=[];
       cursos.forEach((curso) => {
         var cursoConId = {
           id: curso._id,
           nombre: curso.nombre,
         };
         respuesta.push(cursoConId);
+
+        for (const mxc of curso.mxc) {
+          materiasYCursoDocente.push({
+            idMateria: mxc.idMateria,
+            nombreCurso:curso.nombre
+          })
+        }
       });
 
       res.status(200).json({
         cursos: respuesta,
+        materiasYCursoDocente:materiasYCursoDocente,
         message: "Se devolvio los cursos que dicta la docente correctamente",
         exito: true,
       });

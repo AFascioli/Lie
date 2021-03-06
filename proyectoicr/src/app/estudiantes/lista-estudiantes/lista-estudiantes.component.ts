@@ -93,10 +93,6 @@ export class ListaEstudiantesComponent implements OnInit, OnDestroy {
                     this.materiasPendientes.push(
                       response.materiasDesaprobadas.length > 0
                     );
-                    console.log(
-                      "materias desaprobadas ",
-                      this.materiasPendientes
-                    );
                   });
 
                 // Validación por suspendido
@@ -131,7 +127,7 @@ export class ListaEstudiantesComponent implements OnInit, OnDestroy {
             .obtenerCursosDeDocente(response.id)
             .subscribe((response2) => {
               response2.cursos.forEach((objetoCurso) => {
-                this.cursosDeDocente.push(objetoCurso.curso);
+                this.cursosDeDocente.push(objetoCurso.nombre);
               });
             });
         });
@@ -149,17 +145,6 @@ export class ListaEstudiantesComponent implements OnInit, OnDestroy {
           response.estadoCiclo == "En tercer trimestre";
         this.enEstadoCLExamenes = response.estadoCiclo == "En examenes";
       });
-  }
-
-  //Retorna un booleano segun si se deberia mostrar la opcion Registrar examen
-  //(si rol es docente, el estudiante debe estar en el curso del docente)
-  correspondeRegistrarExamen(indexEstudiante: number) {
-    if (this.rol == "Docente") {
-      return this.cursosDeDocente.includes(this.cursos[indexEstudiante]);
-    } else {
-      if (this.rol == "Admin") return true;
-      else return false;
-    }
   }
 
   asignarEstudianteSeleccionado(indice) {
