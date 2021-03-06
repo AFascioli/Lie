@@ -20,7 +20,6 @@ export class CalificacionesExamenesComponent implements OnInit, OnDestroy {
   _mobileQueryListener: () => void;
   mobileQuery: MediaQueryList;
   fechaActual: Date;
-  fechaDentroDeRangoExamen: boolean = false;
   materiasDesaprobadas: any[] = [];
   idMateriaSeleccionada: string = null;
   idCursoMateria: string;
@@ -57,33 +56,17 @@ export class CalificacionesExamenesComponent implements OnInit, OnDestroy {
       .subscribe((response) => {
         this.aniosCiclos = response.añosCiclos;
       });
-    this.cicloLectivoService
-      .obtenerEstadoCicloLectivo()
+    this.apellidoEstudiante = this.estudianteService.estudianteSeleccionado.apellido;
+    this.nombreEstudiante = this.estudianteService.estudianteSeleccionado.nombre;
+    this.servicioCalificaciones
+      .obtenerMateriasDesaprobadasEstudiante(
+        this.estudianteService.estudianteSeleccionado._id
+      )
       .pipe(takeUntil(this.unsubscribe))
-      .subscribe((response) => {
-        if (response.estadoCiclo == "En examenes") {
-          this.fechaDentroDeRangoExamen = true;
-        } else {
-          this.fechaDentroDeRangoExamen = false;
-        }
-
-        if (
-          this.fechaDentroDeRangoExamen ||
-          this.authService.getRol() == "Admin"
-        ) {
-          this.apellidoEstudiante = this.estudianteService.estudianteSeleccionado.apellido;
-          this.nombreEstudiante = this.estudianteService.estudianteSeleccionado.nombre;
-          this.servicioCalificaciones
-            .obtenerMateriasDesaprobadasEstudiante(
-              this.estudianteService.estudianteSeleccionado._id
-            )
-            .pipe(takeUntil(this.unsubscribe))
-            .subscribe((materias) => {
-              this.materiasDesaprobadas = materias.materiasDesaprobadas;
-            });
-          this.fechaActualFinDeSemana();
-        }
+      .subscribe((materias) => {
+        this.materiasDesaprobadas = materias.materiasDesaprobadas;
       });
+    this.fechaActualFinDeSemana();
   }
 
   onMateriaChange(materia) {

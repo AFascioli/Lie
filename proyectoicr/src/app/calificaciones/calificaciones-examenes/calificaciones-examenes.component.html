@@ -3,11 +3,7 @@
 </h1>
 <mat-card class="card-body-componente">
   <form #form="ngForm">
-    <p class="aviso" *ngIf="!fechaDentroDeRangoExamen">
-      Atención, no se pueden registrar calificaciones de examen debido a que nos
-      encontramos fuera de las fechas habilitadas para ese fin.
-    </p>
-    <div *ngIf="fechaDentroDeRangoExamen">
+    <div>
       <div class="ubicacion-fecha">
         <b>Fecha:</b>
         <mat-form-field class="mat-form-fecha">
@@ -37,9 +33,6 @@
           </mat-card-subtitle>
         </mat-card>
       </div>
-      <p class="aviso" *ngIf="materiasDesaprobadas.length == 0">
-        El estudiante seleccionado no tiene materias desaprobadas
-      </p>
       <div class="div-selects" *ngIf="materiasDesaprobadas.length != 0">
         <mat-form-field
           [class.select-mobile]="mobileQuery.matches"
@@ -105,9 +98,7 @@
         class="button-primary"
         (click)="guardar(form)"
         mat-raised-button
-        [disabled]="
-          !fechaDentroDeRangoExamen || materiasDesaprobadas.length == 0
-        "
+        [disabled]="materiasDesaprobadas.length == 0"
       >
         Guardar
       </button>

@@ -201,20 +201,27 @@ exports.obtenerNombresMaterias = async (arrayIdCXM) => {
           },
         },
         {
+          $lookup: {
+            from: "cicloLectivo",
+            localField: "insc.cicloLectivo",
+            foreignField: "_id",
+            as: "datosCicloLectivo",
+          },
+        },
+        {
           $project: {
             "datosMateria._id": 1,
             "datosMateria.nombre": 1,
+            "datosCicloLectivo.año": 1,
             "curso.nombre": 1,
             "curso._id": 1,
           },
         },
       ]).then((datosMaterias) => {
         for (let index = 0; index < datosMaterias.length; index++) {
-          datosMaterias[0].datosMateria[index].nombre =
-            datosMaterias[0].datosMateria[index].nombre +
-            " (" +
-            datosMaterias[0].curso[index].nombre +
-            ") ";
+          datosMaterias[0].datosMateria[
+            index
+          ].nombre = `${datosMaterias[0].datosMateria[index].nombre} ${datosMaterias[0].curso[index].nombre} - ${datosMaterias[0].datosCicloLectivo[index].año}`;
           datosMaterias[0].datosMateria[index].cursoId =
             datosMaterias[0].curso[index]._id;
         }
