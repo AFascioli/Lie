@@ -25,7 +25,7 @@ import { MediaMatcher } from "@angular/cdk/layout";
   styleUrls: ["./calificaciones-estudiantes.component.css"],
 })
 export class CalificacionesEstudiantesComponent implements OnInit, OnDestroy {
-  cursos: any[];
+  cursos: any[]=[];
   materias: any[];
   estudiantes: any[] = [];
   displayedColumns: string[] = [

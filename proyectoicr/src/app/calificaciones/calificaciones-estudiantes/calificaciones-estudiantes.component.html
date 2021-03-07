@@ -25,8 +25,14 @@
     !isLoading && this.estadoCiclo != 'Inactivo' && this.estadoCiclo != 'Creado'
   "
 >
+<p
+  class="aviso"
+  *ngIf="this.cursos.length==0"
+>
+  Actualmente no tiene asignado ningún curso. 
+</p>
   <form #form="ngForm">
-    <div class="div-selects">
+    <div class="div-selects" *ngIf="this.cursos.length!=0">
       <mat-form-field>
         <mat-select
           name="trimestre"
