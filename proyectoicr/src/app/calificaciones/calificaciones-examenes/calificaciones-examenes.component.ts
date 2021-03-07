@@ -27,6 +27,8 @@ export class CalificacionesExamenesComponent implements OnInit, OnDestroy {
   condicionExamen: string;
   private unsubscribe: Subject<void> = new Subject();
   aniosCiclos;
+  rol: string;
+  cursosDeDocente = [];
 
   constructor(
     public estudianteService: EstudiantesService,
@@ -64,7 +66,30 @@ export class CalificacionesExamenesComponent implements OnInit, OnDestroy {
       )
       .pipe(takeUntil(this.unsubscribe))
       .subscribe((materias) => {
-        this.materiasDesaprobadas = materias.materiasDesaprobadas;
+        this.rol = this.authService.getRol();
+        if (this.rol == "Docente") {
+          this.authService
+            .obtenerIdEmpleado(this.authService.getId())
+            .subscribe((response) => {
+              this.estudianteService
+                .obtenerCursosDeDocente(response.id)
+                .subscribe((response2) => {
+                  for (const materiaPendiente of materias.materiasDesaprobadas) {
+                    for (const materiaYCursoDocente of response2.materiasYCursoDocente) {
+                      if (
+                        materiaPendiente.nombreCurso ==
+                          materiaYCursoDocente.nombreCurso &&
+                        materiaPendiente._id == materiaYCursoDocente.idMateria
+                      ) {
+                        this.materiasDesaprobadas.push(materiaPendiente);
+                      }
+                    }
+                  }
+                });
+            });
+        }else if(this.rol == "Admin"){
+          this.materiasDesaprobadas=materias.materiasDesaprobadas;
+        }
       });
     this.fechaActualFinDeSemana();
   }

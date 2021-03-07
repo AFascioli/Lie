@@ -219,13 +219,14 @@ exports.obtenerNombresMaterias = async (arrayIdCXM) => {
         },
       ]).then((datosMaterias) => {
         for (let index = 0; index < datosMaterias.length; index++) {
-          datosMaterias[0].datosMateria[
-            index
-          ].nombre = `${datosMaterias[0].datosMateria[index].nombre} ${datosMaterias[0].curso[index].nombre} - ${datosMaterias[0].datosCicloLectivo[index].año}`;
-          datosMaterias[0].datosMateria[index].cursoId =
-            datosMaterias[0].curso[index]._id;
+          let materiaYCursoDatos = {
+            nombre: `${datosMaterias[0].datosMateria[index].nombre} ${datosMaterias[0].curso[index].nombre} - ${datosMaterias[0].datosCicloLectivo[index].año}`,
+            cursoId: datosMaterias[0].curso[index]._id,
+            _id: datosMaterias[0].datosMateria[index]._id,
+            nombreCurso: datosMaterias[0].curso[index].nombre,
+          };
+          nombresMaterias.push(materiaYCursoDatos);
         }
-        nombresMaterias.push(datosMaterias[0].datosMateria[0]);
       });
     }
     resolve(nombresMaterias);
