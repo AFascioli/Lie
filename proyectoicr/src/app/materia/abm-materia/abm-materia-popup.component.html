@@ -1,0 +1,32 @@
+<div class="pop-up">
+  <h3 mat-dialog-title class="titulo-popup">Agregar materia</h3>
+  <div mat-dialog-content class="div-input-materia">
+    <mat-form-field class="input-materia">
+      <input
+        name="nombreMateria"
+        minlength="2"
+        ngModel
+        #nombreMateria="ngModel"
+        matInput
+        placeholder="Ingrese nombre de la materia"
+        type="text"
+        required
+        (keypress)="checkLetrasNumeros($event)"
+      />
+    </mat-form-field>
+  </div>
+  <div mat-dialog-actions class="button-popup">
+    <button
+      mat-raised-button
+      (click)="onGuardar(nombreMateria.value)"
+      cdkFocusInitial
+      class="button-primary"
+      [disabled]="nombreMateria.value==''"
+    >
+      Agregar
+    </button>
+    <button mat-raised-button (click)="onCancelarClick()" class="button-warn">
+      Cancelar
+    </button>
+  </div>
+</div>

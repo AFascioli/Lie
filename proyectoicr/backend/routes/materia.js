@@ -134,4 +134,29 @@ router.post("/cierre", checkAuthMiddleware, async (req, res) => {
   }
 });
 
+
+//Responde con un booleano si se puede cerrar o no un trimestre en particular
+router.post("/abm", async (req, res) => {
+  try {
+    for(const materia of req.body.materias){
+      if(materia.borrar){
+        await Materia.deleteOne({_id: materia._id}).exec();
+      }else if (materia._id==null){
+        let materiaNueva= new Materia({nombre: materia.nombre});
+        await materiaNueva.save();
+      }
+    }
+    res.status(200).json({
+      exito: true,
+      message: "Cambios registrados correctamente",
+    });
+  } catch (error) {
+    res.status(400).json({
+      exito: false,
+      message:
+        "Ocurrió un error al actualizar las materias",
+      error: error.message,
+    });
+  }
+});
 module.exports = router;

@@ -55,6 +55,7 @@ import { EstadoCursosComponent } from "./acciones-director/estado-cursos/estado-
 import { CicloLectivoComponent } from "./acciones-director/ciclo-lectivo/ciclo-lectivo/ciclo-lectivo.component";
 import { ReportesComponent } from "./reportes/reportes.component";
 import { ResumenAcademicoComponent, ReporteResumenAcademicoComponent } from './reportes/resumen-academico/resumen-academico.component';
+import { AbmMateriaComponent } from './materia/abm-materia/abm-materia.component';
 
 const routes: Routes = [
   { path: "login", component: LoginComponent },
@@ -170,6 +171,12 @@ const routes: Routes = [
         component: DocumentosInscripcionComponent,
         canActivate: [RoleGuard],
         data: { rolesValidos: ["Admin", "Preceptor", "Director"] },
+      },
+      {
+        path: "abmMateria",
+        component: AbmMateriaComponent,
+        canActivate: [RoleGuard],
+        data: { rolesValidos: ["Admin", "Director"] },
       },
       {
         path: "calificacionesEstudiantes",

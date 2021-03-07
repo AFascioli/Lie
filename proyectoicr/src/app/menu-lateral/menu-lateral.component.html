@@ -154,6 +154,16 @@
               <mat-icon class="iconSinExpansion" svgIcon="agenda"></mat-icon>
               <p class="titulo-expansion">Definir agenda de curso</p>
             </a>
+            <a
+              mat-list-item
+              class="sinExpansion"
+              routerLink="/abmMateria"
+              *ngIf="permisos.agendaCursos > 1"
+              (click)="cerrarMenuLateral(sideNav)"
+            >
+              <mat-icon class="iconSinExpansion" svgIcon="agenda"></mat-icon>
+              <p class="titulo-expansion">Gestión de materias</p>
+            </a>
 
             <a
               class="sinExpansion"

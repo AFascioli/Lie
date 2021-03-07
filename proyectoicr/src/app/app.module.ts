@@ -153,6 +153,10 @@ import {
   ResumenAcademicoComponent,
 } from "./reportes/resumen-academico/resumen-academico.component";
 import { RendimientoCursoComponent } from "./reportes/rendimiento-curso/rendimiento-curso.component";
+import {
+  AbmMateriaComponent,
+  AbmMateriaPopupComponent,
+} from "./materia/abm-materia/abm-materia.component";
 
 @NgModule({
   declarations: [
@@ -162,6 +166,7 @@ import { RendimientoCursoComponent } from "./reportes/rendimiento-curso/rendimie
     AltaEstudiantesComponent,
     BuscarEstudiantesComponent,
     ListaEstudiantesComponent,
+    AbmMateriaPopupComponent,
     ReincorporarPopupComponent,
     MostrarEstudiantesComponent,
     CancelPopupComponent,
@@ -231,9 +236,11 @@ import { RendimientoCursoComponent } from "./reportes/rendimiento-curso/rendimie
     ReporteResumenAcademicoComponent,
     RendimientoCursoComponent,
     PopUpMateriasSinCerrar,
+    AbmMateriaComponent,
   ],
   //entryComponents declara los componentes que se generan dinamicamente dentro de otros.
   entryComponents: [
+    AbmMateriaPopupComponent,
     CancelPopupComponent,
     AsociarAdultoResponsablePopupComponent,
     ConfirmacionClonarPopupComponent,

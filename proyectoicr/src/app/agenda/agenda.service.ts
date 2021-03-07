@@ -68,4 +68,12 @@ export class AgendaService {
       { idCurso: idCurso}
     );
   }
+
+  //Recibe un verctor de materias, para borrar y/o agregar
+  public abmMateria(materias: any[]) {
+    return this.http.post<{ exito: boolean; message: string;}>(
+      environment.apiUrl + "/materia/abm",
+      { materias: materias}
+    );
+  }
 }
