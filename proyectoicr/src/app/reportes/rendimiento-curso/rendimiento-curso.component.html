@@ -1,4 +1,4 @@
-<h1 class="componente-titulo" *ngIf="!materiaSelec">Rendimiento del curso</h1>
+<h1 class="componente-titulo">Rendimiento del curso</h1>
 
 <mat-tab-group
   mat-align-tabs="center"
@@ -64,7 +64,7 @@
       </mat-form-field>
     </div>
     <div id="content" #content *ngIf="materiaSelec">
-      <h1 class="componente-titulo" *ngIf="materiaSelec">
+      <h1 class="componente-titulo-pdf" *ngIf="materiaSelec">
         Rendimiento del curso {{ cursoSNombre }}: {{ materiaSNombre }}
       </h1>
       <br *ngIf="materiaSelec" />

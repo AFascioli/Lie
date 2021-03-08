@@ -39,6 +39,15 @@ input[type="number"] {
   font-size: 33px;
 }
 
+.componente-titulo-pdf {
+  text-align: center;
+  font-weight: 600;
+  color: #181a21;
+  margin: 0 0.5rem;
+  /* text-shadow: 1px 1px 2px #c7c7c7; */
+  font-size: 22px;
+}
+
 .aviso {
   text-align: center;
   margin-top: 3% !important;

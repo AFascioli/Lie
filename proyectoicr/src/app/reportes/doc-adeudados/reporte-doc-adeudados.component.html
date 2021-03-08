@@ -1,6 +1,5 @@
-<h1 class="componente-titulo" *ngIf="!cursoSelected">
-  Listado de documentos adeudados del curso
-  {{ valueCursoSelected }}
+<h1 class="componente-titulo">
+  Listado de documentos adeudados
 </h1>
 <mat-card class="card-body-componente">
   <mat-form-field>
@@ -21,7 +20,7 @@
   </mat-form-field>
   <br />
   <div id="content" #content>
-    <h1 class="componente-titulo" *ngIf="cursoSelected">
+    <h1 class="componente-titulo-pdf" *ngIf="cursoSelected">
       Listado de documentos adeudados del curso
       {{ valueCursoSelected }}
     </h1>
