@@ -178,4 +178,12 @@ export class CicloLectivoService implements OnDestroy {
   public getActualizacionMLListener() {
     return this.actualizarML.asObservable();
   }
+
+  puedoInscribirTercer(idCurso) {
+    let params = new HttpParams().set("idCurso", idCurso);
+    return this.http.get<{
+      exito: boolean;
+      message: string;
+    }>(`${environment.apiUrl}/materia/puedoInscribir`, {params:params});
+  }
 }

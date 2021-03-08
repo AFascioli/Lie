@@ -134,15 +134,14 @@ router.post("/cierre", checkAuthMiddleware, async (req, res) => {
   }
 });
 
-
 //Responde con un booleano si se puede cerrar o no un trimestre en particular
 router.post("/abm", async (req, res) => {
   try {
-    for(const materia of req.body.materias){
-      if(materia.borrar){
-        await Materia.deleteOne({_id: materia._id}).exec();
-      }else if (materia._id==null){
-        let materiaNueva= new Materia({nombre: materia.nombre});
+    for (const materia of req.body.materias) {
+      if (materia.borrar) {
+        await Materia.deleteOne({ _id: materia._id }).exec();
+      } else if (materia._id == null) {
+        let materiaNueva = new Materia({ nombre: materia.nombre });
         await materiaNueva.save();
       }
     }
@@ -153,10 +152,49 @@ router.post("/abm", async (req, res) => {
   } catch (error) {
     res.status(400).json({
       exito: false,
-      message:
-        "Ocurrió un error al actualizar las materias",
+      message: "Ocurrió un error al actualizar las materias",
       error: error.message,
     });
   }
 });
+
+// Se fija si se cerro alguna materia del curso dado para el tercer trimestre (si es asi no se habilita inscribir)
+router.get("/puedoInscribir", async (req, res) => {
+  let cursoMXCs = await Curso.aggregate([
+    {
+      $match: {
+        _id: mongoose.Types.ObjectId(req.query.idCurso),
+      },
+    },
+    {
+      $lookup: {
+        from: "materiasXCurso",
+        localField: "materias",
+        foreignField: "_id",
+        as: "MXC",
+      },
+    },
+  ]);
+
+  for (const mxc of cursoMXCs[0].MXC) {
+    const seCerro = await ClaseMateria.seCerroMateria(
+      mxc.idMateria,
+      req.query.idCurso,
+      3
+    );
+
+    if (seCerro) {
+      return res.status(200).json({
+        exito: false,
+        message: "No se puede inscribir un estudiante.",
+      });
+    }
+  }
+
+  return res.status(200).json({
+    exito: true,
+    message: "Se puede inscribir un estudiante.",
+  });
+});
+
 module.exports = router;

@@ -96,7 +96,7 @@ button {
 }
 
 .mat-icon {
-  font-size: 45px;
+  font-size: 45px !important;
 }
 
 .div-button {

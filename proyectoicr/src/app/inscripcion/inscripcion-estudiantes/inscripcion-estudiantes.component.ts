@@ -45,7 +45,7 @@ export class InscripcionEstudianteComponent implements OnInit, OnDestroy {
   nextYearSelect: boolean;
   tieneInscripcionPendiente: boolean = false;
   cicloHabilitado: boolean;
-  estadoCicloLectivo: String;
+  estadoCicloLectivo: string;
   aniosCiclos: any[];
   inscripto = false;
 
@@ -111,6 +111,24 @@ export class InscripcionEstudianteComponent implements OnInit, OnDestroy {
   onCursoSeleccionado(curso) {
     this.cursoSeleccionado = curso.value;
     this.obtenerCapacidadCurso();
+    if (this.estadoCicloLectivo == "En tercer trimestre") {
+      this.servicioCicloLectivo
+        .puedoInscribirTercer(this.cursoSeleccionado)
+        .pipe(takeUntil(this.unsubscribe))
+        .subscribe((response) => {
+          if (!response.exito) {
+            this.inscripto = true;
+            this.snackBar.open(
+              "No se puede inscribir en este curso, ya que tiene materias cerradas",
+              "",
+              {
+                panelClass: ["snack-bar-fracaso"],
+                duration: 4500,
+              }
+            );
+          }
+        });
+    }
   }
 
   onYearSelected(yearSelected) {
@@ -270,6 +288,8 @@ export class InscripcionEstudianteComponent implements OnInit, OnDestroy {
           response.estadoCiclo == "En primer trimestre" ||
           response.estadoCiclo == "En segundo trimestre" ||
           response.estadoCiclo == "En tercer trimestre";
+
+        this.estadoCicloLectivo = response.estadoCiclo;
       });
   }
 }

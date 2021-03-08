@@ -34,6 +34,7 @@ export class InscripcionCursoComponent implements OnInit {
   private unsubscribe: Subject<void> = new Subject();
   cicloHabilitado: boolean;
   aniosCiclos: any[];
+  estadoCiclo: string;
 
   constructor(
     public servicioInscripcion: InscripcionService,
@@ -69,16 +70,16 @@ export class InscripcionCursoComponent implements OnInit {
       .subscribe((response) => {
         this.cursos = response.cursos;
         this.cursos.sort((a, b) =>
-        a.nombre.charAt(0) > b.nombre.charAt(0)
-          ? 1
-          : b.nombre.charAt(0) > a.nombre.charAt(0)
-          ? -1
-          : a.nombre.charAt(1) > b.nombre.charAt(1)
-          ? 1
-          : b.nombre.charAt(1) > a.nombre.charAt(1)
-          ? -1
-          : 0
-      );
+          a.nombre.charAt(0) > b.nombre.charAt(0)
+            ? 1
+            : b.nombre.charAt(0) > a.nombre.charAt(0)
+            ? -1
+            : a.nombre.charAt(1) > b.nombre.charAt(1)
+            ? 1
+            : b.nombre.charAt(1) > a.nombre.charAt(1)
+            ? -1
+            : 0
+        );
       });
   }
 
@@ -92,6 +93,8 @@ export class InscripcionCursoComponent implements OnInit {
           response.estadoCiclo == "En primer trimestre" ||
           response.estadoCiclo == "En segundo trimestre" ||
           response.estadoCiclo == "En tercer trimestre";
+
+        this.estadoCiclo == response.estadoCiclo;
       });
   }
 
@@ -99,7 +102,27 @@ export class InscripcionCursoComponent implements OnInit {
     this.loading = true;
     this.cursoSeleccionado = cursoSeleccionado.value;
     if (this.yearSelected == this.aniosCiclos[0]) {
-      this.obtenerEstudiantesAñoActual();
+      if (this.estadoCiclo == "En tercer trimestre") {
+        this.servicioCicloLectivo
+          .puedoInscribirTercer(this.cursoSeleccionado)
+          .pipe(takeUntil(this.unsubscribe))
+          .subscribe((response) => {
+            if (response.exito) {
+              this.obtenerEstudiantesAñoActual();
+            } else {
+              this.snackBar.open(
+                "No se puede inscribir en este curso, ya que tiene materias cerradas",
+                "",
+                {
+                  panelClass: ["snack-bar-fracaso"],
+                  duration: 4500,
+                }
+              );
+            }
+          });
+      } else {
+        this.obtenerEstudiantesAñoActual();
+      }
     } else {
       this.obtenerEstudiantesProximoAño();
     }

@@ -149,3 +149,4 @@ exports.seCerroMateria = (idMateria, idCurso, trimestre) => {
     }
   });
 };
+
