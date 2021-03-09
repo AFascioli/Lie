@@ -4,6 +4,8 @@ const router = express.Router();
 const mongoose = require("mongoose");
 const Inscripcion = require("../models/inscripcion");
 const ClaseEstado = require("../classes/estado");
+const ClaseCXM = require("../classes/calificacionXMateria");
+const ClaseCicloLectivo = require("../classes/cicloLectivo");
 
 router.get("/documentos", checkAuthMiddleware, async (req, res) => {
   let idEstadoActiva = await ClaseEstado.obtenerIdEstado(
@@ -413,6 +415,158 @@ router.get("/resumenAcademico", checkAuthMiddleware, async (req, res) => {
         error: error.message,
       });
     });
+});
+
+//Retorna un array con cursos, donde cada uno tiene su promedio general, sus materias y sus respectivos promedios
+router.get("/cursos/promedios", async (req, res) => {
+  try {
+    let idCicloActual = await ClaseCicloLectivo.obtenerIdCicloActual();
+
+    let inscripcionesTotales = await Inscripcion.aggregate([
+      {
+        $match: {
+          cicloLectivo: mongoose.Types.ObjectId(idCicloActual),
+        },
+      },
+      {
+        $lookup: {
+          from: "calificacionesXMateria",
+          localField: "calificacionesXMateria",
+          foreignField: "_id",
+          as: "datosCXM",
+        },
+      },
+      {
+        $unwind: {
+          path: "$datosCXM",
+        },
+      },
+      {
+        $lookup: {
+          from: "materia",
+          localField: "datosCXM.idMateria",
+          foreignField: "_id",
+          as: "datosMateria",
+        },
+      },
+      {
+        $lookup: {
+          from: "calificacionesXTrimestre",
+          localField: "datosCXM.calificacionesXTrimestre",
+          foreignField: "_id",
+          as: "datosCXT",
+        },
+      },
+      {
+        $lookup: {
+          from: "curso",
+          localField: "idCurso",
+          foreignField: "_id",
+          as: "datosCurso",
+        },
+      },
+    ]);
+    let arrayCursos = [];
+
+    //Recorrer inscripciones del ciclo actual
+    for (const inscripcion of inscripcionesTotales) {
+      let nombreCursoInsc = inscripcion.datosCurso[0].nombre;
+      let nombreMateriaInsc = inscripcion.datosMateria[0].nombre;
+      let cursoPerteneciente = null;
+      for (const curso of arrayCursos) {
+        if (
+          curso.nombreCurso
+            .toString()
+            .localeCompare(nombreCursoInsc.toString()) == 0
+        ) {
+          cursoPerteneciente = curso;
+        }
+      }
+      //Si ya esta en el array arrayCursos el curso de la inscripcion
+      if (cursoPerteneciente) {
+        let seAgregoMateria = false;
+        //Recorrer cada materia del curso
+        for (const materia of cursoPerteneciente.materias) {
+          //Si existe esa materia en ese curso, se agrega un promedio nuevo
+          if (
+            materia.nombreMateria
+              .toString()
+              .localeCompare(nombreMateriaInsc.toString()) == 0
+          ) {
+            seAgregoMateria = true;
+            materia.promedios.push(
+              ClaseCXM.obtenerPromedioTotal(
+                  inscripcion.datosCXT[0].calificaciones,
+                  inscripcion.datosCXT[1].calificaciones,
+                  inscripcion.datosCXT[2].calificaciones
+                )
+            );
+          }
+        }
+        //Si no existe esa materia en ese curso, la materia con el primer promedio
+        if (!seAgregoMateria) {
+          //Agregar al array
+          cursoPerteneciente.materias.push({
+            nombreMateria: nombreMateriaInsc,
+            promedios: [
+              ClaseCXM.obtenerPromedioTotal(
+                inscripcion.datosCXT[0].calificaciones,
+                inscripcion.datosCXT[1].calificaciones,
+                inscripcion.datosCXT[2].calificaciones
+              )
+            ],
+          });
+        }
+      } else {
+        //Esto pasa si en el array arrayCursos no existe entrada para el curso
+        arrayCursos.push({
+          nombreCurso: nombreCursoInsc,
+          materias: [
+            {
+              nombreMateria: nombreMateriaInsc,
+              promedios: [
+                ClaseCXM.obtenerPromedioTotal(
+                  inscripcion.datosCXT[0].calificaciones,
+                  inscripcion.datosCXT[1].calificaciones,
+                  inscripcion.datosCXT[2].calificaciones
+                ),
+              ],
+            },
+          ],
+        });
+      }
+      cursoPerteneciente = null;
+    }
+
+    for (const curso of arrayCursos) {
+      //Al final del loop de abajo se obtiene el promedio de cada una de las materias
+      for (const materia of curso.materias) {
+        let total = materia.promedios.reduce((total, promedio) => {
+          return total + promedio;
+        }, 0);
+        materia.promedioMateria = parseFloat((total / materia.promedios.length).toFixed(2));
+        delete materia.promedios;
+      }
+
+      //Una vez calculado el promedio de las materias, se calcula el promedio del curso
+      let totalCurso = curso.materias.reduce((total, materia) => {
+        return total + materia.promedioMateria;
+      }, 0);
+      curso.promedioGral = parseFloat((totalCurso / curso.materias.length).toFixed(2));
+    }
+
+    res.status(200).json({
+      exito: true,
+      message: "Se obtuvo correctamente el promedio general de cada curso",
+      arrayCursos: arrayCursos,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      message: "Ocurrió un error al obtener el promedio general de cada curso",
+      error: error,
+    });
+  }
 });
 
 module.exports = router;
