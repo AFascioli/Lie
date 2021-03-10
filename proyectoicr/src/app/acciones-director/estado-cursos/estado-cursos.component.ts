@@ -38,8 +38,6 @@ export class EstadoCursosComponent implements OnInit {
             ? -1
             : 0
         );
-        console.log(response.cursosEstados);
-        console.log(this.cursosEstados);
         this.isLoading = false;
       });
   }

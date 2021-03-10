@@ -157,6 +157,7 @@ import {
   AbmMateriaComponent,
   AbmMateriaPopupComponent,
 } from "./materia/abm-materia/abm-materia.component";
+import { PromedioCursosComponent } from './reportes/promedio-cursos/promedio-cursos.component';
 
 @NgModule({
   declarations: [
@@ -237,6 +238,7 @@ import {
     RendimientoCursoComponent,
     PopUpMateriasSinCerrar,
     AbmMateriaComponent,
+    PromedioCursosComponent,
   ],
   //entryComponents declara los componentes que se generan dinamicamente dentro de otros.
   entryComponents: [

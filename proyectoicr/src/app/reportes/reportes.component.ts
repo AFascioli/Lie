@@ -38,4 +38,8 @@ export class ReportesComponent implements OnInit {
   onRendimientoCurso() {
     this.router.navigate(["./rendimientoCurso"]);
   }
+
+  onPromedioCursos() {
+    this.router.navigate(["./promedioCursos"]);
+  }
 }

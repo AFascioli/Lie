@@ -51,4 +51,13 @@ export class ReportesService {
       resumen: any[];
     }>(environment.apiUrl + "/reporte/resumenAcademico", { params: params });
   }
+
+  //Obtiene un array con los cursos, cada uno con su promedio gral y un array de cada materia con su promedio
+  public obtenerPromedioCursos() {
+    return this.http.get<{
+      exito: boolean;
+      message: string;
+      arrayCursos: any[];
+    }>(environment.apiUrl + "/reporte/cursos/promedios");
+  }
 }

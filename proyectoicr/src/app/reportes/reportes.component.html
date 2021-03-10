@@ -21,6 +21,11 @@
     >Rendimiento del curso</b
   ></mat-card
 >
+<mat-card class="opcion" (click)="onPromedioCursos()" *ngIf="!esDocente"
+    ><mat-icon [inline]="true">receipt</mat-icon><br /><b
+      >Promedio cursos</b
+    ></mat-card
+  >
 </div>
 <div class="div-button">
   <button mat-raised-button [routerLink]="['/home']" class="button-warn">

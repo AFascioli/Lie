@@ -56,6 +56,7 @@ import { CicloLectivoComponent } from "./acciones-director/ciclo-lectivo/ciclo-l
 import { ReportesComponent } from "./reportes/reportes.component";
 import { ResumenAcademicoComponent, ReporteResumenAcademicoComponent } from './reportes/resumen-academico/resumen-academico.component';
 import { AbmMateriaComponent } from './materia/abm-materia/abm-materia.component';
+import { PromedioCursosComponent } from './reportes/promedio-cursos/promedio-cursos.component';
 
 const routes: Routes = [
   { path: "login", component: LoginComponent },
@@ -452,6 +453,10 @@ const routes: Routes = [
       {
         path: "rendimientoCurso",
         component: RendimientoCursoComponent,
+      },
+      {
+        path: "promedioCursos",
+        component: PromedioCursosComponent,
       },
     ],
   },
