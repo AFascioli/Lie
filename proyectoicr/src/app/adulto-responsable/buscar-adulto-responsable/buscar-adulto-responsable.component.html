@@ -4,6 +4,24 @@
   <form #form="ngForm">
     <mat-radio-group class="opciones-busqueda" aria-label="Select an option">
       <mat-radio-button
+        [checked]="buscarAdulto"
+        (change)="this.buscarAdulto = !this.buscarAdulto"
+        value="true"
+        ><span class="label-radio-button"
+          >Buscar adultos responsables</span
+        ></mat-radio-button
+      >
+      <mat-radio-button
+        [checked]="!buscarAdulto"
+        (change)="this.buscarAdulto = !this.buscarAdulto"
+        value="false"
+        ><span class="label-radio-button">
+          Buscar empleados</span
+        ></mat-radio-button
+      >
+    </mat-radio-group>
+    <mat-radio-group class="opciones-busqueda" aria-label="Select an option">
+      <mat-radio-button
         [checked]="buscarPorNomYAp"
         (change)="deshabilitarInputs(form)"
         value="1"
@@ -94,21 +112,21 @@
       <button class="button-primary" (click)="onBuscar(form)" mat-raised-button>
         Buscar
       </button>
-      <button mat-raised-button (click)="onVolver() "class="button-primary">
+      <button mat-raised-button (click)="onVolver() "class="button-warn">
         Volver
       </button>
     </div>
   </form>
   <mat-spinner *ngIf="isLoading" class="spinner" [diameter]="60"></mat-spinner>
-  <b class="aviso" *ngIf="ARFiltrados.length == 0 && busqueda && !isLoading">
-    No se encontró un adulto responsable que coincida con los datos ingresados.
+  <b class="aviso" *ngIf="personasFiltradas.length == 0 && busqueda && !isLoading">
+    No se encontró un {{this.buscarAdulto ? "adulto responsable" : "empleado"}} que coincida con los datos ingresados.
   </b>
-  <div class="contenido" *ngIf="ARFiltrados.length != 0 && !isLoading">
+  <div class="contenido" *ngIf="personasFiltradas.length != 0 && !isLoading">
     <div>
       <table
         mat-table
-        [dataSource]="ARFiltrados"
-        *ngIf="ARFiltrados.length != 0 && !isLoading"
+        [dataSource]="personasFiltradas"
+        *ngIf="personasFiltradas.length != 0 && !isLoading"
       >
         <ng-container matColumnDef="apellido">
           <th class="columnas-normales" mat-header-cell *matHeaderCellDef>
@@ -167,6 +185,13 @@
               [routerLink]="['/modificarAdultoResponsable']"
             >
               <mat-icon>edit</mat-icon>
+            </button>
+            <button
+              mat-icon-button
+              (click)="onDelete(i)"
+              matTooltip="Borrar"
+            >
+              <mat-icon>delete_forever</mat-icon>
             </button>
           </td>
         </ng-container>

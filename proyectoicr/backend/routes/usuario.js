@@ -13,6 +13,80 @@ const AdultoResponsable = require("../models/adultoResponsable");
 const Administrador = require("../models/administrador");
 const Suscripcion = require("../classes/suscripcion");
 const SolicitudReunion = require("../models/solicitudReunion");
+const Curso = require("../models/curso");
+const ClaseCicloLectivo = require("../classes/cicloLectivo");
+
+router.post("/delete", async (req, res) => {
+ if (req.body.rol == "AdultoResponsable") {
+    // AR hay que desasociar del estudiante y borrar el usuario
+    Usuario.deleteOne({_id: req.body.idUsuario}).exec();
+    Estudiante.updateMany(
+      {
+        adultoResponsable: req.body.idPersona,
+      },
+      { $pullAll: { adultoResponsable: [req.body.idPersona] } }
+      ).exec();
+      
+      AdultoResponsable.deleteOne({ _id: req.body.idPersona }).exec();
+  } else {
+
+    let rolEmpleado = await Usuario.aggregate([
+      {
+        '$match': {
+          '_id': mongoose.Types.ObjectId(req.body.idUsuario)
+        }
+      }, {
+        '$lookup': {
+          'from': 'rol', 
+          'localField': 'rol', 
+          'foreignField': '_id', 
+          'as': 'datosRol'
+        }
+      }
+    ]);
+
+    if (rolEmpleado[0].datosRol[0].tipo == "Docente") {   
+      let idCicloActual = await ClaseCicloLectivo.obtenerIdCicloActual();
+      // Empleado (si es docente) hay que fijarse que no tenga ninguna MXC este año o el proximo
+      let tieneClases = await Curso.aggregate([
+        {
+          '$match': {
+            'cicloLectivo': mongoose.Types.ObjectId(idCicloActual)
+          }
+        }, {
+          '$lookup': {
+            'from': 'materiasXCurso', 
+            'localField': 'materias', 
+            'foreignField': '_id', 
+            'as': 'datosMXC'
+          }
+        }, {
+          '$unwind': {
+            'path': '$datosMXC'
+          }
+        }, {
+          '$match': {
+            'datosMXC.idDocente':mongoose.Types.ObjectId(req.body.idPersona)
+          }
+        }
+      ])
+      
+      if (tieneClases.length != 0) {
+        return res
+        .status(200)
+        .json({ message: "No se puede borrar al docente. Tiene materias asignadas.", exito: false });
+      }
+    }
+    
+    Usuario.deleteOne({_id: req.body.idUsuario}).exec();
+    Empleado.deleteOne({ _id: req.body.idPersona }).exec();
+  }
+
+  return res
+  .status(200)
+  .json({ message: "Borrado exitoso del "+ req.body.rol, exito: true });
+    
+});
 
 //Compara la contraseña ingresada por el usuario con la contraseña pasada por parametro
 //si coinciden entonces le permite cambiar la contraseña, sino se lo deniega
@@ -342,35 +416,40 @@ router.post(
   }
 );
 
-router.get("/reunion/docente/validarFechas", checkAuthMiddleware, (req, res) => {
-  let fecha = new Date();
-  let aux = new Date();
-  aux.setDate(fecha.getDate() - 7);
-  SolicitudReunion.findOne({
-    idDocente: req.query.idDocente,
-    idAdultoResponsable: req.query.idAdultoResponsable,
-  })
-    .then((SR) => {
-      if (SR == null || SR.fecha <= aux) {
-        res.status(200).json({
-          exito: true,
-          message: "Se obtuvo la fecha correctamente y es valido enviar.",
-        });
-      } else {
-        res.status(200).json({
-          exito: false,
-          message: "Se obtuvo la fecha correctamente pero no es valido enviar.",
-        });
-      }
+router.get(
+  "/reunion/docente/validarFechas",
+  checkAuthMiddleware,
+  (req, res) => {
+    let fecha = new Date();
+    let aux = new Date();
+    aux.setDate(fecha.getDate() - 7);
+    SolicitudReunion.findOne({
+      idDocente: req.query.idDocente,
+      idAdultoResponsable: req.query.idAdultoResponsable,
     })
-    .catch((error) => {
-      res.status(500).json({
-        message:
-          "Ocurrió un error al querer validar las notificaciones enviadas",
-        error: error.message,
+      .then((SR) => {
+        if (SR == null || SR.fecha <= aux) {
+          res.status(200).json({
+            exito: true,
+            message: "Se obtuvo la fecha correctamente y es valido enviar.",
+          });
+        } else {
+          res.status(200).json({
+            exito: false,
+            message:
+              "Se obtuvo la fecha correctamente pero no es valido enviar.",
+          });
+        }
+      })
+      .catch((error) => {
+        res.status(500).json({
+          message:
+            "Ocurrió un error al querer validar las notificaciones enviadas",
+          error: error.message,
+        });
       });
-    });
-});
+  }
+);
 
 // Solicitud para planificar una reunión con un docente.
 router.post("/reunion/docente", checkAuthMiddleware, (req, res) => {

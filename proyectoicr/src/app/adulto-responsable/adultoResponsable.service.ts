@@ -215,4 +215,11 @@ export class AdultoResponsableService implements OnDestroy {
       adultoResponsable: adultoResponsable,
     });
   }
+
+  public deletePersona(rol: string, idPersona: string, idUsuario: string) {
+    return this.http.post<{message: string, exito: boolean}>(
+      environment.apiUrl + "/usuario/delete",
+      { rol: rol, idPersona: idPersona, idUsuario: idUsuario} 
+    );
+  }
 }

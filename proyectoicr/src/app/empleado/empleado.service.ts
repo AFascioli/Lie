@@ -4,6 +4,7 @@ import { Injectable, OnDestroy } from "@angular/core";
 import { Empleado } from "./empleado.model";
 import { Subject } from "rxjs";
 import { takeUntil } from "rxjs/operators";
+import { environment } from "src/environments/environment";
 
 @Injectable({
   providedIn: "root",
@@ -74,5 +75,25 @@ export class EmpleadoService implements OnDestroy {
         }
       });
     return subject.asObservable();
+  }
+
+  public buscarEmpleadoXDocumento(tipo: string, numero: number) {
+    let params = new HttpParams()
+      .set("tipo", tipo)
+      .set("numero", numero.toString());
+    return this.http.get<{ empleados: any[] }>(
+      environment.apiUrl + "/empleado/documento",
+      { params: params }
+    );
+  }
+
+  public buscarEmpleadoXNombre(nombre: string, apellido: string) {
+    let params = new HttpParams()
+      .set("nombre", nombre)
+      .set("apellido", apellido);
+    return this.http.get<{ empleados: any[] }>(
+      environment.apiUrl + "/empleado/nombre",
+      { params: params }
+    );
   }
 }

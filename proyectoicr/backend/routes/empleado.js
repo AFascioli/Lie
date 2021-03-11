@@ -176,4 +176,46 @@ router.get("/estudiante", checkAuthMiddleware, async (req, res) => {
     });
 });
 
+router.get("/nombre", checkAuthMiddleware, (req, res, next) => {
+  const nombre = req.query.nombre;
+  const apellido = req.query.apellido;
+  Empleado.find({
+    nombre: { $regex: new RegExp(nombre, "i") },
+    apellido: { $regex: new RegExp(apellido, "i") },
+  })
+    .then((empleados) => {
+      res.status(200).json({
+        empleados: empleados,
+      });
+    })
+    .catch((error) => {
+      res.status(500).json({
+        message:
+          "Ocurrió un error al querer obtener el empleado por nombre",
+        error: error.message,
+      });
+    });
+});
+
+router.get("/documento", checkAuthMiddleware, (req, res, next) => {
+  const tipo = req.query.tipo;
+  const numero = req.query.numero;
+
+  Empleado.find({
+    tipoDocumento: tipo,
+    numeroDocumento: numero,
+  })
+    .then((empleados) => {
+      res.status(200).json({
+        empleados: empleados,
+      });
+    })
+    .catch((error) => {
+      res.status(500).json({
+        message: "Ocurrió un error al querer obtener el empleado por documento",
+        error: error.message,
+      });
+    });
+});
+
 module.exports = router;
