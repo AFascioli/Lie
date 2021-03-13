@@ -14,9 +14,10 @@ export class AdultoResponsableService implements OnDestroy {
   adultoResponsableEstudiante: AdultoResponsable;
   adultosResponsablesFiltrados: AdultoResponsable[];
   private unsubscribe: Subject<void> = new Subject();
-  public adultoResponsableSeleccionado: AdultoResponsable;
+  public personaSeleccionada: AdultoResponsable;
   retornoDesdeAcciones: boolean;
-  busquedaARXNombre: boolean;
+  busquedaPersonaXNombre: boolean;
+  buscoAR: boolean;
 
   constructor(
     public http: HttpClient,

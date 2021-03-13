@@ -1,4 +1,4 @@
-<h1 class="componente-titulo">Buscar adulto responsable</h1>
+<h1 class="componente-titulo">Buscar adulto o empleado</h1>
 
 <mat-card class="card-body-componente">
   <form #form="ngForm">
@@ -44,7 +44,7 @@
         [disabled]="!buscarPorNomYAp"
         ngModel
         #apellido="ngModel"
-        [(ngModel)]="apellidoAR"
+        [(ngModel)]="apellidoPersona"
         matInput
         name="apellido"
         placeholder="Ingrese apellido"
@@ -60,7 +60,7 @@
         [disabled]="!buscarPorNomYAp"
         ngModel
         #nombre="ngModel"
-        [(ngModel)]="nombreAR"
+        [(ngModel)]="nombrePersona"
         matInput
         name="nombre"
         placeholder="Ingrese nombre"
@@ -80,7 +80,7 @@
         #tipoDocumento="ngModel"
         matNativeControl
         required
-        [(ngModel)]="tipoDocAR"
+        [(ngModel)]="tipoDocPersona"
       >
         <mat-option value="DNI">DNI</mat-option>
         <mat-option value="Cedula de Identidad">Cédula de Identidad</mat-option>
@@ -97,7 +97,7 @@
         [disabled]="buscarPorNomYAp"
         matInput
         name="numeroDocumento"
-        [(ngModel)]="nroDocAR"
+        [(ngModel)]="nroDocPersona"
         ngModel
         #numeroDocumento="ngModel"
         maxlength="8"
@@ -180,7 +180,7 @@
             <button
               mat-icon-button
               matTooltip="Editar"
-              (click)="onEditarAdultoResponsable(i)"
+              (click)="onEditarPersona(i)"
               matTooltip="Editar"
               [routerLink]="['/modificarAdultoResponsable']"
             >

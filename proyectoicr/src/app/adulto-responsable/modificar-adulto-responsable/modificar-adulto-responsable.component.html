@@ -1,4 +1,4 @@
-<h1 class="componente-titulo">Modificar adulto responsable</h1>
+<h1 class="componente-titulo">{{this.esEmpleado ? "Modificar empleado" : "Modificar adulto responsable" }}</h1>
 <mat-card class="card-body-componente">
   <meta charset="utf-8" />
   <form #form="ngForm">
@@ -9,7 +9,7 @@
           name="apellido"
           minlength="2"
           maxlength="40"
-          [(ngModel)]="adultoResponsable.apellido"
+          [(ngModel)]="persona.apellido"
           matInput
           placeholder="Ingrese apellido/s"
           type="text"
@@ -23,7 +23,7 @@
           name="nombre"
           minlength="2"
           maxlength="40"
-          [(ngModel)]="adultoResponsable.nombre"
+          [(ngModel)]="persona.nombre"
           matInput
           placeholder="Ingrese nombre/s"
           type="text"
@@ -36,7 +36,7 @@
         <mat-select
           placeholder="Seleccione tipo de documento"
           name="tipoDocumento"
-          [(ngModel)]="adultoResponsable.tipoDocumento"
+          [(ngModel)]="persona.tipoDocumento"
           ngModel
           #tipoDocumento="ngModel"
           matNativeControl
@@ -57,7 +57,7 @@
       <mat-form-field [class.mat-form-field-mobile]="mobileQuery.matches">
         <input
           name="numeroDocumento"
-          [(ngModel)]="adultoResponsable.numeroDocumento"
+          [(ngModel)]="persona.numeroDocumento"
           maxlength="8"
           ngModel
           #numeroDocumento="ngModel"
@@ -71,7 +71,7 @@
       <mat-form-field [class.mat-form-field-mobile]="mobileQuery.matches">
         <mat-select
           placeholder="Seleccione sexo"
-          [(ngModel)]="adultoResponsable.sexo"
+          [(ngModel)]="persona.sexo"
           name="sexo"
           ngModel
           #sexo="ngModel"
@@ -86,7 +86,7 @@
       <mat-form-field [class.mat-form-field-mobile]="mobileQuery.matches">
         <input
           matInput
-          [(ngModel)]="adultoResponsable.fechaNacimiento"
+          [(ngModel)]="persona.fechaNacimiento"
           name="fechaNac"
           ngModel
           #fechaNac="ngModel"
@@ -109,7 +109,7 @@
       <mat-form-field [class.mat-form-field-mobile]="mobileQuery.matches">
         <mat-select
           placeholder="Seleccione nacionalidad"
-          [(ngModel)]="adultoResponsable.nacionalidad"
+          [(ngModel)]="persona.nacionalidad"
           name="nacionalidad"
           ngModel
           #nacionalidad="ngModel"
@@ -127,7 +127,7 @@
       <mat-form-field [class.mat-form-field-mobile]="mobileQuery.matches">
         <input
           matInput
-          [(ngModel)]="adultoResponsable.telefono"
+          [(ngModel)]="persona.telefono"
           name="telefono"
           maxlength="20"
           ngModel
@@ -142,7 +142,7 @@
       <mat-form-field [class.mat-form-field-mobile]="mobileQuery.matches">
         <input
           matInput
-          [(ngModel)]="adultoResponsable.email"
+          [(ngModel)]="persona.email"
           name="email"
           ngModel
           #Email="ngModel"
@@ -154,11 +154,27 @@
       </mat-form-field>
       <br />
       <mat-checkbox
-        [checked]="adultoResponsable.tutor"
-        (change)="adultoResponsable.tutor = !adultoResponsable.tutor"
+      *ngIf="!esEmpleado"
+        [checked]="persona.tutor"
+        (change)="persona.tutor = !persona.tutor"
       >
         Tutor
       </mat-checkbox>
+      <mat-form-field [class.mat-form-field-mobile]="mobileQuery.matches" *ngIf="esEmpleado">
+        <mat-select
+          placeholder="Seleccione tipo empleado"
+          [(ngModel)]="persona.tipoEmpleado"
+          name="tipoEmpleado"
+          ngModel
+          #tipoEmpleado="ngModel"
+          matNativeControl
+          
+        >
+        <mat-option value="Director">Director</mat-option>
+        <mat-option value="Preceptor">Preceptor</mat-option>
+        <mat-option value="Docente">Docente</mat-option>
+        </mat-select>
+      </mat-form-field>
     </div>
     <div class="div-button">
       <button

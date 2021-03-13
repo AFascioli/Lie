@@ -218,4 +218,31 @@ router.get("/documento", checkAuthMiddleware, (req, res, next) => {
     });
 });
 
+router.post("/modificar", checkAuthMiddleware, (req, res) => {
+  Empleado.findByIdAndUpdate(req.body.empleado._id, {
+    apellido: req.body.empleado.apellido,
+    nombre: req.body.empleado.nombre,
+    tipoDocumento: req.body.empleado.tipoDocumento,
+    numeroDocumento: req.body.empleado.numeroDocumento,
+    sexo: req.body.empleado.sexo,
+    nacionalidad: req.body.empleado.nacionalidad,
+    fechaNacimiento: req.body.empleado.fechaNacimiento,
+    telefono: req.body.empleado.telefono,
+    email: req.body.empleado.email,
+    tipoEmpleado: req.body.empleado.tipoEmpleado,
+  })
+    .then((adulto) => {
+      res.status(200).json({
+        message: "Empleado modificado correctamente",
+        exito: true,
+      });
+    })
+    .catch((error) => {
+      res.status(500).json({
+        message: "Ocurrió un error al querer modificar el empleado",
+        error: error.message,
+      });
+    });
+});
+
 module.exports = router;

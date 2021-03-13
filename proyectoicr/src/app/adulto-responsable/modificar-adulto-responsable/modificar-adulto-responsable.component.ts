@@ -8,6 +8,7 @@ import { MatSnackBar } from "@angular/material";
 import { Router } from "@angular/router";
 import { Subject } from "rxjs";
 import { takeUntil } from "rxjs/operators";
+import { EmpleadoService } from "src/app/empleado/empleado.service";
 
 @Component({
   selector: "app-modificar-adulto-responsable",
@@ -15,22 +16,24 @@ import { takeUntil } from "rxjs/operators";
   styleUrls: ["./modificar-adulto-responsable.component.css"],
 })
 export class ModificarAdultoResponsableComponent implements OnInit {
-  adultoResponsable: AdultoResponsable;
+  persona: any;
   nacionalidades: any[];
   _mobileQueryListener: () => void;
   mobileQuery: MediaQueryList;
   maxDate = new Date();
   private unsubscribe: Subject<void> = new Subject();
+  esEmpleado=false;
 
   constructor(
     public servicioAR: AdultoResponsableService,
+    public servicioEmpleado: EmpleadoService,
     public media: MediaMatcher,
     public changeDetectorRef: ChangeDetectorRef,
     public servicioUbicacion: UbicacionService,
     public snackBar: MatSnackBar,
     public router: Router
   ) {
-    if (!this.servicioAR.adultoResponsableSeleccionado)
+    if (!this.servicioAR.personaSeleccionada)
       this.router.navigate(["./home"]);
     this.mobileQuery = media.matchMedia("(max-width: 1000px)");
     this._mobileQueryListener = () => changeDetectorRef.detectChanges();
@@ -38,7 +41,8 @@ export class ModificarAdultoResponsableComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.adultoResponsable = this.servicioAR.adultoResponsableSeleccionado;
+    this.esEmpleado= !this.servicioAR.buscoAR;
+    this.persona = this.servicioAR.personaSeleccionada;    
     this.obtenerNacionalidades();
   }
 
@@ -87,30 +91,45 @@ export class ModificarAdultoResponsableComponent implements OnInit {
 
   onGuardar(form: NgForm) {
     if (form.valid) {
-      this.servicioAR
-        .modificarAdultoResponsable(this.adultoResponsable)
-        .pipe(takeUntil(this.unsubscribe))
-        .subscribe(
-          (response) => {
-            if (response.exito) {
-              this.snackBar.open(response.message, "", {
-                panelClass: ["snack-bar-exito"],
-                duration: 4000,
-              });
-            } else {
-              this.snackBar.open(response.message, "", {
-                panelClass: ["snack-bar-fracaso"],
-                duration: 4000,
-              });
+      if(this.esEmpleado){
+        this.servicioEmpleado
+          .modificarEmpleado(this.persona)
+          .pipe(takeUntil(this.unsubscribe))
+          .subscribe(
+            (response) => {
+              if (response.exito) {
+                this.snackBar.open(response.message, "", {
+                  panelClass: ["snack-bar-exito"],
+                  duration: 4000,
+                });
+              } else {
+                this.snackBar.open(response.message, "", {
+                  panelClass: ["snack-bar-fracaso"],
+                  duration: 4000,
+                });
+              }
             }
-          },
-          (error) => {
-            console.log(
-              "Se presentaron problemas al querer modificar el adulto responsable: ",
-              error
-            );
-          }
-        );
+          );
+      }else{
+        this.servicioAR
+          .modificarAdultoResponsable(this.persona)
+          .pipe(takeUntil(this.unsubscribe))
+          .subscribe(
+            (response) => {
+              if (response.exito) {
+                this.snackBar.open(response.message, "", {
+                  panelClass: ["snack-bar-exito"],
+                  duration: 4000,
+                });
+              } else {
+                this.snackBar.open(response.message, "", {
+                  panelClass: ["snack-bar-fracaso"],
+                  duration: 4000,
+                });
+              }
+            }
+          );
+      }
     } else {
       this.snackBar.open("Faltan campos por completar", "", {
         panelClass: ["snack-bar-fracaso"],

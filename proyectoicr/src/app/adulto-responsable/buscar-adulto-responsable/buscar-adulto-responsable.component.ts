@@ -16,6 +16,7 @@ import { EmpleadoService } from "src/app/empleado/empleado.service";
 })
 export class BuscarAdultoResponsableComponent implements OnInit {
   buscarPorNomYAp = true;
+  buscarAdulto: boolean = true;
   personasFiltradas: any[] = [];
   private unsubscribe: Subject<void> = new Subject();
   displayedColumns: string[];
@@ -27,11 +28,10 @@ export class BuscarAdultoResponsableComponent implements OnInit {
   ];
   busqueda: boolean = false;
   isLoading: boolean = false;
-  nombreAR;
-  apellidoAR;
-  nroDocAR;
-  tipoDocAR;
-  buscarAdulto: boolean = true;
+  nombrePersona;
+  apellidoPersona;
+  nroDocPersona;
+  tipoDocPersona;
 
   constructor(
     public dialog: MatDialog,
@@ -46,42 +46,70 @@ export class BuscarAdultoResponsableComponent implements OnInit {
   ngOnInit() {
     if (browserRefresh) {
       this.router.navigate(["/buscarAdultoResponsable"]);
-      this.servicioAdultoResponsable.adultoResponsableSeleccionado = null;
+      this.servicioAdultoResponsable.personaSeleccionada = null;
       this.servicioAdultoResponsable.retornoDesdeAcciones = false;
     }
     if (!this.servicioAdultoResponsable.retornoDesdeAcciones) {
-      this.nombreAR = "";
-      this.apellidoAR = "";
-    } else if (this.servicioAdultoResponsable.busquedaARXNombre) {
-      this.servicioAdultoResponsable
-        .buscarAdultoResponsableXNombre(
-          this.servicioAdultoResponsable.adultoResponsableSeleccionado.nombre,
-          this.servicioAdultoResponsable.adultoResponsableSeleccionado.apellido
-        )
-        .pipe(takeUntil(this.unsubscribe))
-        .subscribe((response) => {
-          this.personasFiltradas = response.adultosResponsables;
-          this.setColumns();
-          this.isLoading = false;
-        });
-      this.nombreAR = this.servicioAdultoResponsable.adultoResponsableSeleccionado.nombre;
-      this.apellidoAR = this.servicioAdultoResponsable.adultoResponsableSeleccionado.apellido;
+      this.nombrePersona = "";
+      this.apellidoPersona = "";
+    } else if (this.servicioAdultoResponsable.busquedaPersonaXNombre) {
+      this.buscarAdulto=this.servicioAdultoResponsable.buscoAR;
+      if (this.buscarAdulto) {
+        this.servicioAdultoResponsable
+          .buscarAdultoResponsableXNombre(
+            this.servicioAdultoResponsable.personaSeleccionada.nombre,
+            this.servicioAdultoResponsable.personaSeleccionada.apellido
+          )
+          .pipe(takeUntil(this.unsubscribe))
+          .subscribe((response) => {
+            this.personasFiltradas = response.adultosResponsables;
+            this.setColumns();
+            this.isLoading = false;
+          });
+      } else {
+        this.servicioEmpleado
+          .buscarEmpleadoXNombre(
+            this.servicioAdultoResponsable.personaSeleccionada.nombre,
+            this.servicioAdultoResponsable.personaSeleccionada.apellido
+          )
+          .pipe(takeUntil(this.unsubscribe))
+          .subscribe((response) => {
+            this.personasFiltradas = response.empleados;
+            this.setColumns();
+            this.isLoading = false;
+          });
+      }
+      this.nombrePersona = this.servicioAdultoResponsable.personaSeleccionada.nombre;
+      this.apellidoPersona = this.servicioAdultoResponsable.personaSeleccionada.apellido;
     } else {
-      this.servicioAdultoResponsable
-        .buscarAdultoResponsableXDocumento(
-          this.servicioAdultoResponsable.adultoResponsableSeleccionado
-            .tipoDocumento,
-          this.servicioAdultoResponsable.adultoResponsableSeleccionado
-            .numeroDocumento
-        )
-        .pipe(takeUntil(this.unsubscribe))
-        .subscribe((response) => {
-          this.personasFiltradas = response.adultosResponsables;
-          this.setColumns();
-          this.isLoading = false;
-        });
-      this.nroDocAR = this.servicioAdultoResponsable.adultoResponsableSeleccionado.numeroDocumento;
-      this.tipoDocAR = this.servicioAdultoResponsable.adultoResponsableSeleccionado.tipoDocumento;
+      this.buscarAdulto=this.servicioAdultoResponsable.buscoAR;
+      if (this.buscarAdulto) {
+        this.servicioAdultoResponsable
+          .buscarAdultoResponsableXDocumento(
+            this.servicioAdultoResponsable.personaSeleccionada.tipoDocumento,
+            this.servicioAdultoResponsable.personaSeleccionada.numeroDocumento
+          )
+          .pipe(takeUntil(this.unsubscribe))
+          .subscribe((response) => {
+            this.personasFiltradas = response.adultosResponsables;
+            this.setColumns();
+            this.isLoading = false;
+          });
+      } else {
+        this.servicioEmpleado
+          .buscarEmpleadoXDocumento(
+            this.servicioAdultoResponsable.personaSeleccionada.tipoDocumento,
+            this.servicioAdultoResponsable.personaSeleccionada.numeroDocumento
+          )
+          .pipe(takeUntil(this.unsubscribe))
+          .subscribe((response) => {
+            this.personasFiltradas = response.empleados;
+            this.setColumns();
+            this.isLoading = false;
+          });
+      }
+      this.nroDocPersona = this.servicioAdultoResponsable.personaSeleccionada.numeroDocumento;
+      this.tipoDocPersona = this.servicioAdultoResponsable.personaSeleccionada.tipoDocumento;
       this.buscarPorNomYAp = false;
     }
   }
@@ -98,7 +126,7 @@ export class BuscarAdultoResponsableComponent implements OnInit {
   }
 
   buscarAdultoResponsableXNombre(form) {
-    this.servicioAdultoResponsable.busquedaARXNombre = true;
+    this.servicioAdultoResponsable.busquedaPersonaXNombre = true;
     this.servicioAdultoResponsable
       .buscarAdultoResponsableXNombre(
         form.value.nombre.trim(),
@@ -113,7 +141,7 @@ export class BuscarAdultoResponsableComponent implements OnInit {
   }
 
   buscarAdultoResponsableXDocumento(form) {
-    this.servicioAdultoResponsable.busquedaARXNombre = false;
+    this.servicioAdultoResponsable.busquedaPersonaXNombre = false;
     this.servicioAdultoResponsable
       .buscarAdultoResponsableXDocumento(
         form.value.tipoDocumento,
@@ -128,6 +156,7 @@ export class BuscarAdultoResponsableComponent implements OnInit {
   }
 
   buscarEmpleadoXNombre(form) {
+    this.servicioAdultoResponsable.busquedaPersonaXNombre = true;
     this.servicioEmpleado
       .buscarEmpleadoXNombre(
         form.value.nombre.trim(),
@@ -142,6 +171,7 @@ export class BuscarAdultoResponsableComponent implements OnInit {
   }
 
   buscarEmpleadoXDocumento(form) {
+    this.servicioAdultoResponsable.busquedaPersonaXNombre = false;
     this.servicioEmpleado
       .buscarEmpleadoXDocumento(
         form.value.tipoDocumento,
@@ -160,12 +190,14 @@ export class BuscarAdultoResponsableComponent implements OnInit {
       this.isLoading = true;
       this.busqueda = true;
       if (!this.buscarAdulto) {
+        this.servicioAdultoResponsable.buscoAR=false;
         if (this.buscarPorNomYAp) {
           this.buscarEmpleadoXNombre(form);
         } else {
           this.buscarEmpleadoXDocumento(form);
         }
-      } else {   
+      } else {
+        this.servicioAdultoResponsable.buscoAR=true;
         if (this.buscarPorNomYAp) {
           this.buscarAdultoResponsableXNombre(form);
         } else {
@@ -211,22 +243,22 @@ export class BuscarAdultoResponsableComponent implements OnInit {
     }
   }
 
-  onEditarAdultoResponsable(row) {
-    this.servicioAdultoResponsable.adultoResponsableSeleccionado = this.personasFiltradas[
+  onEditarPersona(row) {
+    this.servicioAdultoResponsable.personaSeleccionada = this.personasFiltradas[
       row
     ];
   }
 
-  onDelete(row) {    
+  onDelete(row) {
     this.servicioAdultoResponsable
-    .deletePersona(
-      this.buscarAdulto ? "AdultoResponsable" : "Empleado",
-      this.personasFiltradas[row]._id,
-      this.personasFiltradas[row].idUsuario
+      .deletePersona(
+        this.buscarAdulto ? "AdultoResponsable" : "Empleado",
+        this.personasFiltradas[row]._id,
+        this.personasFiltradas[row].idUsuario
       )
       .subscribe((response) => {
         if (response.exito) {
-          this.personasFiltradas.splice(row,1);
+          this.personasFiltradas.splice(row, 1);
           this.snackBar.open(response.message, "", {
             panelClass: ["snack-bar-exito"],
             duration: 4000,
@@ -246,9 +278,9 @@ export class BuscarAdultoResponsableComponent implements OnInit {
   }
 
   onVolver() {
-    this.servicioAdultoResponsable.busquedaARXNombre = true;
+    this.servicioAdultoResponsable.busquedaPersonaXNombre = true;
     this.servicioAdultoResponsable.retornoDesdeAcciones = false;
-    this.servicioAdultoResponsable.adultoResponsableSeleccionado = null;
+    this.servicioAdultoResponsable.personaSeleccionada = null;
     this.router.navigate(["./home"]);
   }
 }

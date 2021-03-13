@@ -96,4 +96,13 @@ export class EmpleadoService implements OnDestroy {
       { params: params }
     );
   }
+
+  public modificarEmpleado(empleado) {
+    return this.http.post<{
+      message: string;
+      exito: boolean;
+    }>(environment.apiUrl + "/empleado/modificar", {
+      empleado: empleado,
+    });
+  }
 }
