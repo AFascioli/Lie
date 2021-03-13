@@ -74,7 +74,7 @@ const routes: Routes = [
         },
       },
       {
-        path: "modificarAdultoResponsable",
+        path: "modificarPersona",
         component: ModificarAdultoResponsableComponent,
         data: {
           rolesValidos: ["Admin", "Preceptor", "Director"],
@@ -415,7 +415,7 @@ const routes: Routes = [
         },
       },
       {
-        path: "buscarAdultoResponsable",
+        path: "buscarPersona",
         component: BuscarAdultoResponsableComponent,
         canActivate: [RoleGuard],
         data: {

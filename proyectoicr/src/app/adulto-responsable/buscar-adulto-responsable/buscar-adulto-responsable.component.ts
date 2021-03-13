@@ -45,7 +45,7 @@ export class BuscarAdultoResponsableComponent implements OnInit {
 
   ngOnInit() {
     if (browserRefresh) {
-      this.router.navigate(["/buscarAdultoResponsable"]);
+      this.router.navigate(["/buscarPersona"]);
       this.servicioAdultoResponsable.personaSeleccionada = null;
       this.servicioAdultoResponsable.retornoDesdeAcciones = false;
     }

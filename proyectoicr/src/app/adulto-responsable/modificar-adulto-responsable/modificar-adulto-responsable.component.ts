@@ -139,7 +139,7 @@ export class ModificarAdultoResponsableComponent implements OnInit {
   }
 
   onVolver(form: NgForm){
-    this.router.navigate(["./buscarAdultoResponsable"]);
+    this.router.navigate(["./buscarPersona"]);
     this.servicioAR.retornoDesdeAcciones=true;
   }
 }
