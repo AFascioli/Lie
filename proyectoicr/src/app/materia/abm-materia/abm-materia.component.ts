@@ -108,10 +108,26 @@ export class AbmMateriaComponent implements OnInit {
           this.materias._updateChangeSubscription();
           this.isLoading = false;
         });
-        this.snackBar.open(response.message, "", {
-          panelClass: ["snack-bar-exito"],
-          duration: 4000,
-        });
+        if (response.materiasNoBorradas != "") {
+          this.snackBar.open(
+            "Las siguientes materias no pudieron ser borradas ya que tienen una agenda de curso asignada " +
+              response.materiasNoBorradas,
+            "",
+            {
+              panelClass: ["snack-bar-fracaso"],
+              duration: 4000,
+            }
+          );
+          this.snackBar.open(response.message, "", {
+            panelClass: ["snack-bar-exito"],
+            duration: 4000,
+          });
+        } else {
+          this.snackBar.open(response.message, "", {
+            panelClass: ["snack-bar-exito"],
+            duration: 4000,
+          });
+        }
       } else {
         this.isLoading = false;
         this.snackBar.open(response.message, "", {

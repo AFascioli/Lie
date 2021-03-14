@@ -71,7 +71,7 @@ export class AgendaService {
 
   //Recibe un verctor de materias, para borrar y/o agregar
   public abmMateria(materias: any[]) {
-    return this.http.post<{ exito: boolean; message: string;}>(
+    return this.http.post<{ exito: boolean; message: string; materiasNoBorradas: string}>(
       environment.apiUrl + "/materia/abm",
       { materias: materias}
     );

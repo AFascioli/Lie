@@ -134,18 +134,27 @@ router.post("/cierre", checkAuthMiddleware, async (req, res) => {
   }
 });
 
-//Responde con un booleano si se puede cerrar o no un trimestre en particular
+//Agrega o borra una materia si esta no tiene asociada una MateriaXCurso. 
 router.post("/abm", async (req, res) => {
   try {
+    let materiasNoBorradas="";
     for (const materia of req.body.materias) {
       if (materia.borrar) {
-        await Materia.deleteOne({ _id: materia._id }).exec();
+        let tieneMXC = await MateriasXCurso.findOne({idMateria: materia._id});
+        if(tieneMXC!=null){
+          await Materia.deleteOne({ _id: materia._id }).exec();
+        }else{
+          materiasNoBorradas += materia.nombre + ", "; 
+        }
       } else if (materia._id == null) {
         let materiaNueva = new Materia({ nombre: materia.nombre });
         await materiaNueva.save();
       }
     }
+    if(materiasNoBorradas !="") materiasNoBorradas.substring(0, materiasNoBorradas.length-2);
+   
     res.status(200).json({
+      materiasNoBorradas: materiasNoBorradas,
       exito: true,
       message: "Cambios registrados correctamente",
     });
