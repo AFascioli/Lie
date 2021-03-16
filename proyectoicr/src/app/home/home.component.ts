@@ -9,6 +9,7 @@ import { MatSnackBar, MatDialogRef, MatDialog } from "@angular/material";
 import { Subject } from "rxjs";
 import { takeUntil } from "rxjs/operators";
 import { MediaMatcher } from "@angular/cdk/layout";
+import { CicloLectivoService } from "../cicloLectivo.service";
 
 @Component({
   selector: "app-home",
@@ -28,6 +29,8 @@ export class HomeComponent implements OnInit, OnDestroy {
   mostrarTooltip: boolean = true;
   _mobileQueryListener: () => void;
   mobileQuery: MediaQueryList;
+  aniosEventos: any[] = [];
+  anioSeleccionado: number;
 
   constructor(
     public snackBar: MatSnackBar,
@@ -35,6 +38,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     private servicioAuth: AutenticacionService,
     public router: Router,
     public servicioEvento: EventosService,
+    public servicioCiclo: CicloLectivoService,
     public dialog: MatDialog,
     public changeDetectorRef: ChangeDetectorRef,
     public media: MediaMatcher
@@ -76,11 +80,17 @@ export class HomeComponent implements OnInit, OnDestroy {
     let auxEventoPasado = [];
     let auxEventoProximo = [];
     this.fechaActual = new Date();
+
     this.servicioEvento
       .obtenerEvento()
       .pipe(takeUntil(this.unsubscribe))
       .subscribe((rtdo) => {
         this.eventos = rtdo.eventos;
+        
+        this.servicioCiclo.obtenerActualYSiguiente()
+        .pipe(takeUntil(this.unsubscribe))
+        .subscribe((res) => { this.anioSeleccionado = res.añosCiclos[0] });
+        
         for (let index = 0; index < rtdo.eventos.length; index++) {
           const anioEvento = new Date(rtdo.eventos[index].fechaEvento).getFullYear();
           rtdo.eventos[index].anioEvento = anioEvento;
@@ -88,17 +98,27 @@ export class HomeComponent implements OnInit, OnDestroy {
           if (this.eventoYaOcurrio(index))
             auxEventoPasado.push(rtdo.eventos[index]);
           else auxEventoProximo.push(rtdo.eventos[index]);
+
+          //Juntamos los años de todos los eventos
+          let existeAnio = this.aniosEventos.indexOf(anioEvento)
+
+          if (existeAnio == -1) {
+            this.aniosEventos.push(anioEvento);
+          }
         }
-        setTimeout(() => {
+        
+        this.aniosEventos.sort((a, b) => this.compareAnioEventos(a, b));
+        // setTimeout(() => {
           auxEventoPasado.sort((a, b) => this.compareFechaEventos(a, b));
           auxEventoProximo.sort((a, b) => this.compareFechaEventos(a, b));
-        }, 100);
+        // }, 100);
 
-        setTimeout(() => {
+        // setTimeout(() => {
           this.eventos = auxEventoProximo.concat(auxEventoPasado);
           this.isLoading = false;
-        }, 250);
+        // }, 250);
       });
+
     if ("serviceWorker" in navigator) {
       navigator.serviceWorker.register("ngsw-worker.js").then((swreg) => {
         if (swreg.active) {
@@ -110,6 +130,15 @@ export class HomeComponent implements OnInit, OnDestroy {
     setTimeout(() => {
       this.mostrarTooltip = false;
     }, 6010);
+  }
+
+  mostrarEvento(anioEvento){    
+    return anioEvento == this.anioSeleccionado
+  }
+
+  onAnioSelectedChange(anio){
+    this.anioSeleccionado = anio;
+
   }
 
   //Compara la fecha del evento con la fecha actual para deshabilitar el boton editar
@@ -135,6 +164,16 @@ export class HomeComponent implements OnInit, OnDestroy {
       return -1;
     }
     if (a.fechaEvento > b.fechaEvento) {
+      return 1;
+    }
+    return 0;
+  }
+
+  compareAnioEventos(a, b) {
+    if (a < b) {
+      return -1;
+    }
+    if (a > b) {
       return 1;
     }
     return 0;
