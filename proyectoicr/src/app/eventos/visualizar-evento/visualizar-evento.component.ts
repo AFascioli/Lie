@@ -1,6 +1,6 @@
 import { MatSnackBar, MatDialog } from "@angular/material";
 import { AutenticacionService } from "src/app/login/autenticacionService.service";
-import { Component, OnInit, OnDestroy } from "@angular/core";
+import { Component, OnInit, OnDestroy, ViewChildren, QueryList } from "@angular/core";
 import { EventosService } from "../eventos.service";
 import { Evento } from "../evento.model";
 import { Comentario } from "../comentario.model";
@@ -30,6 +30,8 @@ export class VisualizarEventoComponent implements OnInit, OnDestroy {
   slideIndex: number = 1;
   isLoading: boolean = false;
 
+  @ViewChildren('imgSlides') slidesList: QueryList<any>;
+
   constructor(
     public eventoService: EventosService,
     public autenticacionService: AutenticacionService,
@@ -50,11 +52,12 @@ export class VisualizarEventoComponent implements OnInit, OnDestroy {
         this.actualizarPermisos();
         this.isLoading = false;
       });
-    if (this.evento.filenames.length > 0) {
-      setTimeout(() => {
-        this.showSlide(1);
-      }, 100);
-    }
+  }
+
+  ngAfterViewInit() {
+    this.slidesList.changes.subscribe(t => {
+      this.showSlide(1);
+    })
   }
 
   ngOnDestroy() {
@@ -169,18 +172,18 @@ export class VisualizarEventoComponent implements OnInit, OnDestroy {
 
   showSlide(n) {
     var slides = document.getElementsByClassName("my-slides");
-    var dots = document.getElementsByClassName("dot");
-    this.esSlideValido(n, slides);
-    for (let i = 0; i < slides.length; i++) {
-      slides[i].setAttribute("style", "display:none;");
-    }
-    for (let i = 0; i < dots.length; i++) {
-      dots[i].className = dots[i].className.replace(" active", "");
-    }
-    slides[this.slideIndex - 1].setAttribute("style", "display:block;");
-    if (this.evento.filenames.length > 1) {
-      dots[this.slideIndex - 1].className += " active";
-    }
+      var dots = document.getElementsByClassName("dot");
+      this.esSlideValido(n, slides);
+      for (let i = 0; i < slides.length; i++) {
+        slides[i].setAttribute("style", "display:none;");
+      }
+      for (let i = 0; i < dots.length; i++) {
+        dots[i].className = dots[i].className.replace(" active", "");
+      }
+      slides[this.slideIndex - 1].setAttribute("style", "display:block;");
+      if (this.evento.filenames.length > 1) {
+        dots[this.slideIndex - 1].className += " active";
+      }
   }
 
   esSlideValido(n, slides) {

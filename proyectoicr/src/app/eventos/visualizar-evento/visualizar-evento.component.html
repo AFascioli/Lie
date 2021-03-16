@@ -15,7 +15,7 @@
   </p>
   <div *ngIf="evento.filenames.length != 0">
     <div class="slideshow-container">
-      <div *ngFor="let filename of evento.filenames">
+      <div #imgSlides *ngFor="let filename of evento.filenames; let i = index">
         <div class="my-slides fade">
           <img [src]="getImage(filename)" style="width: 100%" />
         </div>
