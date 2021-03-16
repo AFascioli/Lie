@@ -112,7 +112,7 @@ input[type="number"] {
 .loading-overlay {
   z-index: 10;
   display: block;
-  position: absolute;
+  position: fixed;
   height: 100%;
   top: 0;
   left: 0;
@@ -128,6 +128,7 @@ input[type="number"] {
   text-align: center;
   background-color: #eef0f1;
   width: 20%;
+  max-width: 140px;
   position: relative;
   top: 40%;
   margin: auto;
