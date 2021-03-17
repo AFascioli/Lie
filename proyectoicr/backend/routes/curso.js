@@ -10,12 +10,14 @@ const Horario = require("../models/horario");
 const MateriaXCurso = require("../models/materiasXCurso");
 const AdultoResponsable = require("../models/adultoResponsable");
 const CicloLectivo = require("../models/cicloLectivo");
+const MateriasXCurso = require("../models/materiasXCurso");
 const ClaseInscripcion = require("../classes/inscripcion");
 const ClaseEstado = require("../classes/estado");
 const Suscripcion = require("../classes/suscripcion");
 const ClaseAsistencia = require("../classes/asistencia");
 const ClaseAgenda = require("../classes/agenda");
 const ClaseCicloLectivo = require("../classes/cicloLectivo");
+const ClaseCalificacionXMateria = require("../classes/calificacionXMateria");
 
 // Obtiene todos los cursos que están almacenados en la base de datos
 router.get("/", checkAuthMiddleware, (req, res) => {
@@ -688,7 +690,7 @@ router.get("/docente", checkAuthMiddleware, async (req, res) => {
     .then((cursos) => {
       console.log(JSON.stringify(cursos));
       let respuesta = [];
-      let materiasYCursoDocente=[];
+      let materiasYCursoDocente = [];
       cursos.forEach((curso) => {
         var cursoConId = {
           id: curso._id,
@@ -699,14 +701,14 @@ router.get("/docente", checkAuthMiddleware, async (req, res) => {
         for (const mxc of curso.mxc) {
           materiasYCursoDocente.push({
             idMateria: mxc.idMateria,
-            nombreCurso:curso.nombre
-          })
+            nombreCurso: curso.nombre,
+          });
         }
       });
 
       res.status(200).json({
         cursos: respuesta,
-        materiasYCursoDocente:materiasYCursoDocente,
+        materiasYCursoDocente: materiasYCursoDocente,
         message: "Se devolvio los cursos que dicta la docente correctamente",
         exito: true,
       });
@@ -2686,6 +2688,128 @@ router.get("/estudiantes", checkAuthMiddleware, async (req, res) => {
         error: error.message,
       });
     });
+});
+
+//Endpoint dev: Pone las 3 calificaciones a todos los estudiantes y cierra el trimestre de las materias.
+router.get("/dev/calificaciones", async (req, res) => {
+  try {
+    let idCicloActual = await ClaseCicloLectivo.obtenerIdCicloActual();
+    let estadoCiclo = await CicloLectivo.aggregate([
+      {
+        $match: {
+          _id: mongoose.Types.ObjectId(idCicloActual),
+        },
+      },
+      {
+        $lookup: {
+          from: "estado",
+          localField: "estado",
+          foreignField: "_id",
+          as: "datosEstado",
+        },
+      },
+    ]);
+
+    estadoCiclo = estadoCiclo[0].datosEstado[0].nombre;
+
+    let inscripcionesCiclo = await Inscripcion.aggregate([
+      {
+        $match: {
+          cicloLectivo: mongoose.Types.ObjectId(idCicloActual),
+        },
+      },
+      {
+        $lookup: {
+          from: "calificacionesXMateria",
+          localField: "calificacionesXMateria",
+          foreignField: "_id",
+          as: "datosCXM",
+        },
+      },
+      {
+        $lookup: {
+          from: "calificacionesXTrimestre",
+          localField: "datosCXM.calificacionesXTrimestre",
+          foreignField: "_id",
+          as: "datosCXT",
+        },
+      },
+    ]);
+
+    let trimestre =
+      estadoCiclo == "En primer trimestre"
+        ? 0
+        : estadoCiclo == "En segundo trimestre"
+        ? 1
+        : 2;
+
+    for (const inscripcion of inscripcionesCiclo) {
+      let idCXT = inscripcion.datosCXT[trimestre]._id;
+      let calificaciones = inscripcion.datosCXT[trimestre].calificaciones;
+      //Cambia el vector de calificaciones del trimestre correspondiente con notas random >=6
+      for (let index = 0; index < 3; index++) {
+        const calificacionesTrimestre = calificaciones[index];
+        if (calificacionesTrimestre == 0) {
+          calificaciones[index] = Math.floor(Math.random() * 4) + 6;
+        }
+      }
+      //Se actualiza la CXT con las calificaciones nuevas
+      await CalificacionesXTrimestre.findByIdAndUpdate(idCXT, {
+        calificaciones: inscripcion.datosCXT[trimestre].calificaciones,
+      }).exec();
+    }
+
+    let cursosConMXC = await Curso.aggregate([
+      {
+        $match: {
+          cicloLectivo: idCicloActual,
+        },
+      },
+      {
+        $lookup: {
+          from: "materiasXCurso",
+          localField: "materias",
+          foreignField: "_id",
+          as: "datosMXC",
+        },
+      },
+    ]);
+
+    let estadoMXC =
+      trimestre + 1 == 1
+        ? "En segundo trimestre"
+        : trimestre + 1 == 2
+        ? "En tercer trimestre"
+        : "Cerrada";
+    let idEstadoMXC = await ClaseEstado.obtenerIdEstado(
+      "MateriasXCurso",
+      estadoMXC
+    );
+
+    for (const curso of cursosConMXC) {
+      for (const mxc of curso.datosMXC) {
+        if (trimestre + 1 == 3) {
+          //Cierra las CXM 
+          await ClaseCalificacionXMateria.cerrarMateriaTercerTrimestre(
+            curso._id,
+            mxc.idMateria
+          );
+        }
+        //Actualiza el estado de las MXC
+        await MateriasXCurso.findByIdAndUpdate(mxc._id, {
+          estado: idEstadoMXC,
+        }).exec();
+      }
+    }
+    res.status(200).json({
+      message: "Calificaciones registradas exitosamente",
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: "Ocurrió un error al querer registrar las calificaciones",
+      error: error.message,
+    });
+  }
 });
 
 module.exports = router;
