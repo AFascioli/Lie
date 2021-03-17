@@ -420,8 +420,8 @@ router.get("/resumenAcademico", checkAuthMiddleware, async (req, res) => {
 //Retorna un array con cursos, donde cada uno tiene su promedio general, sus materias y sus respectivos promedios
 router.get("/cursos/promedios", async (req, res) => {
   try {
-    // let idCicloActual = await ClaseCicloLectivo.obtenerIdCicloActual();
-    let idCicloActual = "60206236bfaa2d1d007c9e92";
+    let idCicloActual = await ClaseCicloLectivo.obtenerIdCicloActual();
+    // let idCicloActual = "60206236bfaa2d1d007c9e92";//icr-test: Id de ciclo que tiene materias
 
     let inscripcionesTotales = await Inscripcion.aggregate([
       {
