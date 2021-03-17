@@ -275,6 +275,7 @@
             </a>
             <a
               class="sinExpansion"
+              *ngIf="permisos.agendaCursos > 1"
               mat-list-item
               routerLink="/reportes"
               (click)="cerrarMenuLateral(sideNav)"

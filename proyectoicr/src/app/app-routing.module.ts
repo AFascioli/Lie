@@ -433,30 +433,58 @@ const routes: Routes = [
       {
         path: "documentosAdeudados",
         component: DocAdeudadosComponent,
+        canActivate: [RoleGuard],
+        data: {
+          rolesValidos: ["Admin", "Preceptor", "Director"],
+        },
       },
       {
         path: "reportes",
         component: ReportesComponent,
+        canActivate: [RoleGuard],
+        data: {
+          rolesValidos: ["Admin", "Preceptor", "Director"],
+        },
       },
       {
         path: "cuotasAdeudadas",
         component: CuotasAdeudadasComponent,
+        canActivate: [RoleGuard],
+        data: {
+          rolesValidos: ["Admin", "Preceptor", "Director"],
+        },
       },
       {
         path: "resumenAcademico",
         component: ResumenAcademicoComponent,
+        canActivate: [RoleGuard],
+        data: {
+          rolesValidos: ["Admin", "Preceptor", "Director"],
+        },
       },
       {
         path: "reporteResumenAcademico",
         component: ReporteResumenAcademicoComponent,
+        canActivate: [RoleGuard],
+        data: {
+          rolesValidos: ["Admin", "Preceptor", "Director"],
+        },
       },
       {
         path: "rendimientoCurso",
         component: RendimientoCursoComponent,
+        canActivate: [RoleGuard],
+        data: {
+          rolesValidos: ["Admin", "Preceptor", "Director"],
+        },
       },
       {
         path: "promedioCursos",
         component: PromedioCursosComponent,
+        canActivate: [RoleGuard],
+        data: {
+          rolesValidos: ["Admin", "Preceptor", "Director"],
+        },
       },
     ],
   },
