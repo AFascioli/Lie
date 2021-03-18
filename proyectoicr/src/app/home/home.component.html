@@ -14,10 +14,9 @@
       >
     </mat-select>
   </mat-form-field>
-  <div *ngFor="let evento of eventos; let j = index">
-    <!-- *ngIf="evento.anioEvento == this.anioSeleccionado" -->
+  <div *ngFor="let evento of eventosFiltrados; let j = index">
+    
     <mat-card
-    *ngIf="mostrarEvento(evento.anioEvento)"
       class="card-body-componente"
       (click)="eventoSeleccionado(evento)"
     >
@@ -158,10 +157,10 @@
   </div>
   <mat-card
     class="card-body-componente"
-    *ngIf="eventos.length == 0 && isLoading"
+    *ngIf="eventosFiltrados.length==0"
   >
     <h1 class="titulo-aviso">
-      No existen eventos publicados por la institución
+      No existen eventos publicados para el año seleccionado
     </h1>
   </mat-card>
 </ng-container>

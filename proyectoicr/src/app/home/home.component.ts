@@ -31,6 +31,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   mobileQuery: MediaQueryList;
   aniosEventos: any[] = [];
   anioSeleccionado: number;
+  eventosFiltrados: any[] = [];
 
   constructor(
     public snackBar: MatSnackBar,
@@ -77,8 +78,6 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     console.log("Version 4/3/2021");
-    let auxEventoPasado = [];
-    let auxEventoProximo = [];
     this.fechaActual = new Date();
 
     this.servicioEvento
@@ -86,37 +85,25 @@ export class HomeComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.unsubscribe))
       .subscribe((rtdo) => {
         this.eventos = rtdo.eventos;
-        
-        this.servicioCiclo.obtenerActualYSiguiente()
-        .pipe(takeUntil(this.unsubscribe))
-        .subscribe((res) => { this.anioSeleccionado = res.añosCiclos[0] });
-        
-        for (let index = 0; index < rtdo.eventos.length; index++) {
-          const anioEvento = new Date(rtdo.eventos[index].fechaEvento).getFullYear();
-          rtdo.eventos[index].anioEvento = anioEvento;
 
-          if (this.eventoYaOcurrio(index))
-            auxEventoPasado.push(rtdo.eventos[index]);
-          else auxEventoProximo.push(rtdo.eventos[index]);
+        this.servicioCiclo
+          .obtenerActualYAnteriores()
+          .pipe(takeUntil(this.unsubscribe))
+          .subscribe((res) => {
+            this.aniosEventos = res.añosCiclos.reverse();
+            this.anioSeleccionado = this.aniosEventos[0];
 
-          //Juntamos los años de todos los eventos
-          let existeAnio = this.aniosEventos.indexOf(anioEvento)
+            for (let index = 0; index < rtdo.eventos.length; index++) {
+              const anioEvento = new Date(
+                rtdo.eventos[index].fechaEvento
+              ).getFullYear();
+              rtdo.eventos[index].anioEvento = anioEvento;
+            }
+            this.filtrarEventos(this.anioSeleccionado);
 
-          if (existeAnio == -1) {
-            this.aniosEventos.push(anioEvento);
-          }
-        }
-        
-        this.aniosEventos.sort((a, b) => this.compareAnioEventos(a, b));
-        // setTimeout(() => {
-          auxEventoPasado.sort((a, b) => this.compareFechaEventos(a, b));
-          auxEventoProximo.sort((a, b) => this.compareFechaEventos(a, b));
-        // }, 100);
-
-        // setTimeout(() => {
-          this.eventos = auxEventoProximo.concat(auxEventoPasado);
-          this.isLoading = false;
-        // }, 250);
+            this.aniosEventos.sort((a, b) => this.compareAnioEventos(a, b));
+            this.isLoading = false;
+          });
       });
 
     if ("serviceWorker" in navigator) {
@@ -132,13 +119,31 @@ export class HomeComponent implements OnInit, OnDestroy {
     }, 6010);
   }
 
-  mostrarEvento(anioEvento){    
-    return anioEvento == this.anioSeleccionado
+  filtrarEventos(anio) {
+    let auxEventoPasado = [];
+    let auxEventoProximo = [];
+    
+    for (let index = 0; index <= this.eventos.length - 1; index++) {
+      const evento = this.eventos[index];
+      
+      if (anio == evento.anioEvento) {
+        this.eventoYaOcurrio(index)
+          ? auxEventoPasado.push(evento)
+          : auxEventoProximo.push(evento);          
+      }
+    }
+    auxEventoPasado.sort((a, b) => this.compareFechaEventos(a, b));
+    auxEventoProximo.sort((a, b) => this.compareFechaEventos(a, b));
+    this.eventosFiltrados = auxEventoProximo.concat(auxEventoPasado);
+    
+  }
+  mostrarEvento(anioEvento) {
+    return anioEvento == this.anioSeleccionado;
   }
 
-  onAnioSelectedChange(anio){
+  onAnioSelectedChange(anio) {
     this.anioSeleccionado = anio;
-
+    this.filtrarEventos(this.anioSeleccionado)
   }
 
   //Compara la fecha del evento con la fecha actual para deshabilitar el boton editar
