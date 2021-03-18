@@ -28,6 +28,7 @@ mongoose
   .connect(Ambiente.stringDeConexion, options)
   .then(() => {
     console.log("Conexión a base de datos exitosa");
+    console.log(Ambiente.stringDeConexion);
   })
   .catch(() => {
     console.log("Fallo conexión a la base de datos");

@@ -99,7 +99,7 @@
           [class.opcion-mobile]="mobileQuery.matches"
           (click)="onSancion(i)"
           *ngIf="
-            ((this.permisos.sanciones > 1 && this.inscripto[i]) ||
+            ((this.permisos.sanciones > 1 && this.inscripto[i]) &&
               enEstadoCLCursando ||
               enEstadoCLExamenes) &&
             this.inscripto[i] &&
@@ -126,7 +126,7 @@
           [class.opcion-mobile]="mobileQuery.matches"
           (click)="onReincorporar(i)"
           *ngIf="
-            permisos.inscribirEstudiante >= 1 &&
+            permisos.inscribirEstudiante > 1 &&
             suspendido[i] &&
             (enEstadoCLCursando || enEstadoCLExamenes)
           "
