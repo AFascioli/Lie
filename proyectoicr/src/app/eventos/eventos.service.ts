@@ -16,6 +16,7 @@ export class EventosService {
   public comentarios: any[] = [];
   public ImgCargada: string;
   public imageOnly: boolean;
+  public anioSeleccionadoEvento: number;
 
   constructor(
     public snackBar: MatSnackBar,

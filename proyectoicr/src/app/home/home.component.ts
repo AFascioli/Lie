@@ -91,7 +91,8 @@ export class HomeComponent implements OnInit, OnDestroy {
           .pipe(takeUntil(this.unsubscribe))
           .subscribe((res) => {
             this.aniosEventos = res.añosCiclos.reverse();
-            this.anioSeleccionado = this.aniosEventos[0];
+            this.anioSeleccionado = this.servicioEvento.anioSeleccionadoEvento ?this.servicioEvento.anioSeleccionadoEvento : this.aniosEventos[0];
+            this.servicioEvento.anioSeleccionadoEvento= this.anioSeleccionado;
 
             for (let index = 0; index < rtdo.eventos.length; index++) {
               const anioEvento = new Date(
@@ -143,6 +144,7 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   onAnioSelectedChange(anio) {
     this.anioSeleccionado = anio;
+    this.servicioEvento.anioSeleccionadoEvento= this.anioSeleccionado;
     this.filtrarEventos(this.anioSeleccionado)
   }
 

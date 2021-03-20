@@ -2744,19 +2744,24 @@ router.get("/dev/calificaciones", async (req, res) => {
         : 2;
 
     for (const inscripcion of inscripcionesCiclo) {
-      let idCXT = inscripcion.datosCXT[trimestre]._id;
-      let calificaciones = inscripcion.datosCXT[trimestre].calificaciones;
-      //Cambia el vector de calificaciones del trimestre correspondiente con notas random >=6
-      for (let index = 0; index < 3; index++) {
-        const calificacionesTrimestre = calificaciones[index];
-        if (calificacionesTrimestre == 0) {
-          calificaciones[index] = Math.floor(Math.random() * 4) + 6;
+      for (const cxt of inscripcion.datosCXT) {
+        if(cxt.trimestre==trimestre+1){
+          let idCXT = inscripcion.datosCXT[trimestre]._id;
+    
+          let calificaciones = inscripcion.datosCXT[trimestre].calificaciones;
+          //Cambia el vector de calificaciones del trimestre correspondiente con notas random >=6
+          for (let index = 0; index < 3; index++) {
+            const calificacionesTrimestre = calificaciones[index];
+            if (calificacionesTrimestre == 0) {
+              calificaciones[index] = Math.floor(Math.random() * 4) + 6;
+            }
+          }
+          //Se actualiza la CXT con las calificaciones nuevas
+          await CalificacionesXTrimestre.findByIdAndUpdate(idCXT, {
+            calificaciones: inscripcion.datosCXT[trimestre].calificaciones,
+          }).exec();
         }
       }
-      //Se actualiza la CXT con las calificaciones nuevas
-      await CalificacionesXTrimestre.findByIdAndUpdate(idCXT, {
-        calificaciones: inscripcion.datosCXT[trimestre].calificaciones,
-      }).exec();
     }
 
     let cursosConMXC = await Curso.aggregate([

@@ -485,6 +485,14 @@ router.get("/cursos/promedios", async (req, res) => {
       }
       //Si ya esta en el array arrayCursos el curso de la inscripcion
       if (cursoPerteneciente) {
+        let promedioT1=ClaseCXM.obtenerPromedioDeTrimestre(inscripcion.datosCXT[0].calificaciones)
+        let promedioT2=ClaseCXM.obtenerPromedioDeTrimestre(inscripcion.datosCXT[1].calificaciones)
+        let promedioT3=ClaseCXM.obtenerPromedioDeTrimestre(inscripcion.datosCXT[2].calificaciones)
+        let total = 0;
+        let cantPromedios = 0;
+        if(promedioT1!=0){total+=promedioT1, cantPromedios++}
+        if(promedioT2!=0){total+=promedioT2, cantPromedios++}
+        if(promedioT3!=0){total+=promedioT3, cantPromedios++}
         let seAgregoMateria = false;
         //Recorrer cada materia del curso
         for (const materia of cursoPerteneciente.materias) {
@@ -496,11 +504,7 @@ router.get("/cursos/promedios", async (req, res) => {
           ) {
             seAgregoMateria = true;
             materia.promedios.push(
-              ClaseCXM.obtenerPromedioTotal(
-                  inscripcion.datosCXT[0].calificaciones,
-                  inscripcion.datosCXT[1].calificaciones,
-                  inscripcion.datosCXT[2].calificaciones
-                )
+              total/cantPromedios
             );
           }
         }
@@ -510,27 +514,28 @@ router.get("/cursos/promedios", async (req, res) => {
           cursoPerteneciente.materias.push({
             nombreMateria: nombreMateriaInsc,
             promedios: [
-              ClaseCXM.obtenerPromedioTotal(
-                inscripcion.datosCXT[0].calificaciones,
-                inscripcion.datosCXT[1].calificaciones,
-                inscripcion.datosCXT[2].calificaciones
-              )
+              total/cantPromedios
             ],
           });
         }
       } else {
         //Esto pasa si en el array arrayCursos no existe entrada para el curso
+        let promedioT1=ClaseCXM.obtenerPromedioDeTrimestre(inscripcion.datosCXT[0].calificaciones)
+        let promedioT2=ClaseCXM.obtenerPromedioDeTrimestre(inscripcion.datosCXT[1].calificaciones)
+        let promedioT3=ClaseCXM.obtenerPromedioDeTrimestre(inscripcion.datosCXT[2].calificaciones)
+        let total = 0;
+        let cantPromedios = 0;
+        if(promedioT1!=0){total+=promedioT1, cantPromedios++}
+        if(promedioT2!=0){total+=promedioT2, cantPromedios++}
+        if(promedioT3!=0){total+=promedioT3, cantPromedios++}
+
         arrayCursos.push({
           nombreCurso: nombreCursoInsc,
           materias: [
             {
               nombreMateria: nombreMateriaInsc,
               promedios: [
-                ClaseCXM.obtenerPromedioTotal(
-                  inscripcion.datosCXT[0].calificaciones,
-                  inscripcion.datosCXT[1].calificaciones,
-                  inscripcion.datosCXT[2].calificaciones
-                ),
+                total/cantPromedios
               ],
             },
           ],

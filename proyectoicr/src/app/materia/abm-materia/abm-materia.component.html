@@ -38,7 +38,7 @@
             <p class="botones-accion">
               <button
                 mat-icon-button
-                (click)="onBorrar(materia.nombre,i)"
+                (click)="onBorrar(materia.nombre, i)"
                 matTooltip="Borrar"
               >
                 <mat-icon>delete_forever</mat-icon>
@@ -75,11 +75,11 @@
       mat-raised-button
       class="button-primary"
       (click)="onGuardar()"
-      [disabled]=" materias.data.length == 0"
+      [disabled]="materias.data.length == 0"
     >
       Guardar
     </button>
-    <button mat-raised-button (click)="popUpCancelar()" class="button-warn">
+    <button mat-raised-button [routerLink]="['/home']" class="button-warn">
       Cancelar
     </button>
   </div>
