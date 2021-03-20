@@ -1657,13 +1657,14 @@ router.get("/agenda", checkAuthMiddleware, (req, res) => {
 router.post("/agenda/anterior", checkAuthMiddleware, async (req, res) => {
   try {
     let cursoSeleccionado = await Curso.findById(req.body.idCurso).exec();
-    let idCicloAnterior = await ClaseCicloLectivo.obtenerIdCicloAnterior();
+    //Se saca la agenda del curso "actual" porque en la interfaz se muestra el año siguiente
+    let idCicloActual = await ClaseCicloLectivo.obtenerIdCicloActual();
 
     Curso.aggregate([
       {
         $match: {
           nombre: cursoSeleccionado.nombre,
-          cicloLectivo: mongoose.Types.ObjectId(idCicloAnterior),
+          cicloLectivo: mongoose.Types.ObjectId(idCicloActual),
         },
       },
       {
@@ -2746,9 +2747,9 @@ router.get("/dev/calificaciones", async (req, res) => {
     for (const inscripcion of inscripcionesCiclo) {
       for (const cxt of inscripcion.datosCXT) {
         if(cxt.trimestre==trimestre+1){
-          let idCXT = inscripcion.datosCXT[trimestre]._id;
+          let idCXT = cxt._id;
     
-          let calificaciones = inscripcion.datosCXT[trimestre].calificaciones;
+          let calificaciones = cxt.calificaciones;
           //Cambia el vector de calificaciones del trimestre correspondiente con notas random >=6
           for (let index = 0; index < 3; index++) {
             const calificacionesTrimestre = calificaciones[index];
@@ -2758,7 +2759,7 @@ router.get("/dev/calificaciones", async (req, res) => {
           }
           //Se actualiza la CXT con las calificaciones nuevas
           await CalificacionesXTrimestre.findByIdAndUpdate(idCXT, {
-            calificaciones: inscripcion.datosCXT[trimestre].calificaciones,
+            calificaciones: cxt.calificaciones,
           }).exec();
         }
       }
