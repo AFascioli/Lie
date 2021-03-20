@@ -724,7 +724,7 @@ router.get("/docente", checkAuthMiddleware, async (req, res) => {
 //Obtiene todos los cursos asignados a un docente en un ciclo lectivo determinado
 //@params: id de la docente, año del ciclo lectivo
 router.get("/docentePorCiclo", checkAuthMiddleware, async (req, res) => {
-  let idCicloLectivo = await ClaseEstado.getIdCicloLectivo(req.query.anio);
+  let idCicloLectivo = await ClaseCicloLectivo.getIdCicloLectivo(req.query.anio);
   Curso.aggregate([
     {
       $match: {

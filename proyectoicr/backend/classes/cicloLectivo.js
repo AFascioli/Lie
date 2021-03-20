@@ -480,3 +480,10 @@ exports.pasarMXCAEnPrimerTrimestre = () => {
     resolve();
   });
 };
+
+exports.getIdCicloLectivo = (year) => {
+  return new Promise(async (resolve, reject) => {
+    let cicloLectivo= await CicloLectivo.findOne({año: year}).exec();
+    resolve(cicloLectivo ? cicloLectivo._id : null);
+  });
+};
