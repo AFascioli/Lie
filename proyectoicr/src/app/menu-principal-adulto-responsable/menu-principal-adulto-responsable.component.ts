@@ -13,6 +13,8 @@ import { MediaMatcher } from "@angular/cdk/layout";
 import { takeUntil } from "rxjs/operators";
 import { Subject } from "rxjs";
 import { SwPush } from "@angular/service-worker";
+import { CicloLectivoService } from "../cicloLectivo.service";
+import { MatSnackBar } from "@angular/material";
 
 @Component({
   selector: "app-menu-principal-adulto-responsable",
@@ -21,7 +23,11 @@ import { SwPush } from "@angular/service-worker";
 })
 export class MenuPrincipalAdultoResponsableComponent implements OnInit {
   estudiantes;
+  idEstudiantes = [];
+  aniosEventos = [];
   eventos;
+  eventosFiltrados=[];
+  anioSeleccionado: number;
   _mobileQueryListener: () => void;
   mobileQuery: MediaQueryList;
   cursos = [];
@@ -40,9 +46,11 @@ export class MenuPrincipalAdultoResponsableComponent implements OnInit {
     public servicioAsistencia: AsistenciaService,
     public servicioInscripcion: InscripcionService,
     public servicioUbicacion: UbicacionService,
+    public servicioCiclo: CicloLectivoService,
     public router: Router,
     public changeDetectorRef: ChangeDetectorRef,
-    public media: MediaMatcher
+    public media: MediaMatcher,
+    public snackBar: MatSnackBar
   ) {
     this.mobileQuery = media.matchMedia("(max-width: 1000px)");
     this._mobileQueryListener = () => changeDetectorRef.detectChanges();
@@ -50,7 +58,13 @@ export class MenuPrincipalAdultoResponsableComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.obtenerDatosEstudiante();
+    this.servicioCiclo
+      .obtenerActualYSiguiente()
+      .pipe(takeUntil(this.unsubscribe))
+      .subscribe((response) => {
+        this.anioSeleccionado = response.añosCiclos[0];
+        this.obtenerDatosEstudiante();
+      });
     if ("serviceWorker" in navigator) {
       navigator.serviceWorker.register("ngsw-worker.js").then((swreg) => {
         if (swreg.active) {
@@ -94,39 +108,68 @@ export class MenuPrincipalAdultoResponsableComponent implements OnInit {
   obtenerDatosEstudiante() {
     let auxEventoPasado = [];
     let auxEventoProximo = [];
-    this.servicioAR.getDatosEstudiantes(this.authService.getId()).subscribe(
-      (response) => {
-        this.estudiantes = response.estudiantes;
-        this.estudiantes.forEach((estudiante) => {
-          this.cursos.push(estudiante.curso);
-        });
-        this.servicioEvento
-          .obtenerEventosDeCursos(this.cursos.join(","))
-          .subscribe((response) => {
-            this.eventos = response.eventos;
-            for (let index = 0; index < this.eventos.length; index++) {
-              if (this.eventoYaOcurrio(index))
-                auxEventoPasado.push(this.eventos[index]);
-              else auxEventoProximo.push(this.eventos[index]);
-            }
-            setTimeout(() => {
-              auxEventoPasado.sort((a, b) => this.compareFechaEventos(a, b));
-              auxEventoProximo.sort((a, b) => this.compareFechaEventos(a, b));
-            }, 100);
-
-            setTimeout(() => {
-              this.eventos = auxEventoProximo.concat(auxEventoPasado);
-            }, 250);
+    this.servicioAR
+      .getDatosEstudiantes(this.authService.getId())
+      .pipe(takeUntil(this.unsubscribe))
+      .subscribe(
+        (response) => {
+          this.estudiantes = response.estudiantes;
+          this.estudiantes.forEach((estudiante) => {
+            this.cursos.push(estudiante.curso);
+            this.idEstudiantes.push(estudiante.idEstudiante);
           });
-      },
-      (error) => {
-        console.log(
-          "Ocurrió un error al querer obtener los datos del estudiante: ",
-          error
-        );
-      }
-    );
+          this.servicioEvento
+            .obtenerEventosDeCursos(this.idEstudiantes)
+            .pipe(takeUntil(this.unsubscribe))
+            .subscribe((response) => {
+              this.aniosEventos = response.aniosEventos;
+              this.anioSeleccionado = this.aniosEventos[
+                this.aniosEventos.length - 1
+              ];
+              this.eventos = response.eventos;
+              for (let index = 0; index < this.eventos.length; index++) {
+                const anioEvento = new Date(
+                  this.eventos[index].fechaEvento
+                ).getFullYear();
+                this.eventos[index].anioEvento = anioEvento;
+              }
+              this.filtrarEventos(this.anioSeleccionado);
+            });
+        },
+        (error) => {
+          console.log(
+            "Ocurrió un error al querer obtener los datos del estudiante: ",
+            error
+          );
+        }
+      );
   }
+
+  onAnioSelectedChange(anio) {
+    this.anioSeleccionado = anio;
+    this.filtrarEventos(this.anioSeleccionado);
+  }
+
+  filtrarEventos(anio) {
+    let auxEventoPasado = [];
+    let auxEventoProximo = [];
+
+    for (let index = 0; index <= this.eventos.length - 1; index++) {
+      const evento = this.eventos[index];
+      console.log(anio , " ",evento.anioEvento);
+      if (anio == evento.anioEvento) {
+        this.eventoYaOcurrio(index)
+          ? auxEventoPasado.push(evento)
+          : auxEventoProximo.push(evento);
+      }
+    }
+    auxEventoPasado.sort((a, b) => this.compareFechaEventos(a, b));
+    auxEventoProximo.sort((a, b) => this.compareFechaEventos(a, b));
+    this.eventosFiltrados = auxEventoProximo.concat(auxEventoPasado);
+    
+    
+  }
+
   eventoYaOcurrio(indexEvento: number) {
     const fechaActual = new Date();
     const fechaEvento = new Date(this.eventos[indexEvento].fechaEvento);
@@ -168,22 +211,35 @@ export class MenuPrincipalAdultoResponsableComponent implements OnInit {
     if (this.cursos[0]) {
       this.servicioEstudiante
         .obtenerEstudiantePorId(idEstudiante)
+        .pipe(takeUntil(this.unsubscribe))
         .subscribe((response) => {
           if (response.exito) {
             this.asignarEstudianteSeleccionado(response.estudiante);
             this.router.navigate(["./perfilEstudiante"]);
           }
         });
+    } else {
+      this.snackBar.open(
+        "El estudiante no está inscripto en ningún curso",
+        "",
+        {
+          panelClass: ["snack-bar-fracaso"],
+          duration: 4000,
+        }
+      );
     }
   }
 
   onEventoClick(idEvento: string) {
-    this.servicioEvento.obtenerEventoPorId(idEvento).subscribe((response) => {
-      if (response.exito) {
-        this.servicioEvento.eventoSeleccionado = response.evento;
-        this.router.navigate(["./visualizarEvento"]);
-      }
-    });
+    this.servicioEvento
+      .obtenerEventoPorId(idEvento)
+      .pipe(takeUntil(this.unsubscribe))
+      .subscribe((response) => {
+        if (response.exito) {
+          this.servicioEvento.eventoSeleccionado = response.evento;
+          this.router.navigate(["./visualizarEvento"]);
+        }
+      });
   }
 
   asignarEstudianteSeleccionado(estudiante: Estudiante) {

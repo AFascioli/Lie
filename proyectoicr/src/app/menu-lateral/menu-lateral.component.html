@@ -139,7 +139,8 @@
             >
               <mat-icon
                 class="iconSinExpansion"
-                svgIcon="findStudent"
+                svgIcon="personSearch"
+                style="transform: scaleX(-1);"
               ></mat-icon>
               <p class="titulo-expansion">Buscar adulto o empleado</p>
             </a>
@@ -161,7 +162,7 @@
               *ngIf="permisos.agendaCursos > 1"
               (click)="cerrarMenuLateral(sideNav)"
             >
-              <mat-icon class="iconSinExpansion" svgIcon="agenda"></mat-icon>
+              <mat-icon class="iconSinExpansion" svgIcon="sliders"></mat-icon>
               <p class="titulo-expansion">Gestión de materias</p>
             </a>
 

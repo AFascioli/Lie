@@ -89,6 +89,18 @@ export class MenuLateralComponent implements OnInit, OnDestroy {
       )
     );
     this.matIconRegistry.addSvgIcon(
+      "personSearch",
+      this.domSanitizer.bypassSecurityTrustResourceUrl(
+        "../assets/personSearch.svg"
+      )
+    );
+    this.matIconRegistry.addSvgIcon(
+      "sliders",
+      this.domSanitizer.bypassSecurityTrustResourceUrl(
+        "../assets/sliders.svg"
+      )
+    );
+    this.matIconRegistry.addSvgIcon(
       "inscripcion",
       this.domSanitizer.bypassSecurityTrustResourceUrl(
         "../assets/inscripcion.svg"

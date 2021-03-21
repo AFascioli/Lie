@@ -207,11 +207,12 @@ export class EventosService {
     );
   }
 
-  public obtenerEventosDeCursos(cursos: string) {
-    let params = new HttpParams().set("cursos", cursos);
-    return this.http.get<{ eventos: any[]; exito: boolean; message: string }>(
+  public obtenerEventosDeCursos(
+    idEstudiantes: any[]
+  ) {
+    return this.http.post<{ aniosEventos: any[],eventos: any[]; exito: boolean; message: string }>(
       environment.apiUrl + "/evento/curso",
-      { params: params }
+      { idEstudiantes }
     );
   }
 

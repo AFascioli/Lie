@@ -17,8 +17,22 @@
       </mat-chip-list>
     </div>
   </mat-card>
+  <mat-form-field class="select-anios" *ngIf="aniosEventos.length!=0">
+    <mat-select
+      placeholder="Año ciclo lectivo"
+      name="anioSelec"
+      [(ngModel)]="anioSeleccionado"
+      #anioSelec="ngModel"
+      matNativeControl
+      (selectionChange)="onAnioSelectedChange(anioSelec.value)"
+    >
+      <mat-option *ngFor="let anio of aniosEventos" [value]="anio">{{
+        anio
+      }}</mat-option>
+    </mat-select>
+  </mat-form-field>
   <mat-card
-    *ngFor="let evento of eventos"
+    *ngFor="let evento of eventosFiltrados"
     style="cursor: pointer;"
     (click)="onEventoClick(evento._id)"
   >
@@ -33,5 +47,10 @@
     <mat-chip-list class="curso" *ngFor="let curso of evento.tags">
       <mat-chip>{{ curso }}</mat-chip>
     </mat-chip-list>
+  </mat-card>
+  <mat-card class="card-body-componente" *ngIf="eventosFiltrados.length == 0">
+    <h1 class="titulo-aviso">
+      No existen eventos publicados para el año seleccionado
+    </h1>
   </mat-card>
 </div>

@@ -17,6 +17,7 @@ const Inscripcion = require("../models/inscripcion");
 const Administrador = require("../models/administrador");
 const Suscripcion = require("../classes/suscripcion");
 const ClaseEstado = require("../classes/estado");
+const ClaseCicloLectivo = require("../classes/cicloLectivo");
 
 const storage = new GridFsStorage({
   url: Ambiente.stringDeConexion,
@@ -526,17 +527,66 @@ notificarPorEvento = async function (tags, titulo, cuerpo) {
   }
 };
 
-//Retorna datos de los eventos dado una string que tienen multiples cursos
-//@params: cursos (ej: "2A,5A")
-router.get("/curso", checkAuthMiddleware, (req, res) => {
-  let cursos = req.query.cursos.split(",");
-  cursos.push("Todos los cursos");
+//Retorna los eventos en donde formaron parte el array de ids de estudiantes provisto
+router.post("/curso", checkAuthMiddleware, async (req, res) => {
+  let idEstudiantes = req.body.idEstudiantes.map((idEstudiante) => {
+    return mongoose.Types.ObjectId(idEstudiante);
+  });
+
+  let tags = ["Todos los cursos"];
+  let aniosCursados = [];
+
+  let inscripcionesConCurso = await Inscripcion.aggregate([
+    {
+      $match: {
+        idEstudiante: {
+          $in: idEstudiantes,
+        },
+      },
+    },
+    {
+      $lookup: {
+        from: "curso",
+        localField: "idCurso",
+        foreignField: "_id",
+        as: "datosCurso",
+      },
+    },{
+      $lookup: {
+        from: "cicloLectivo",
+        localField: "cicloLectivo",
+        foreignField: "_id",
+        as: "datosCiclo",
+      },
+    },
+  ]);
+
+  for (const inscripcion of inscripcionesConCurso) {
+    tags.push(inscripcion.datosCurso[0].nombre);
+    if(!aniosCursados.includes(inscripcion.datosCiclo[0].año)){
+      aniosCursados.push(inscripcion.datosCiclo[0].año);
+    }
+  }
+  aniosCursados.sort((a, b) => {
+    return a - b;
+  });
   Evento.find(
-    { tags: { $in: cursos } },
+    { tags: { $in: tags } },
     { tags: 1, titulo: 1, fechaEvento: 1, horaInicio: 1, horaFin: 1 }
   )
     .then((eventos) => {
-      res.status(200).json({ eventos: eventos, exito: true, message: "exito" });
+      let eventosFiltrados = [];
+      for (const evento of eventos) {
+        let anioEvento = new Date(evento.fechaEvento).getFullYear();
+        for(const anioCursado of aniosCursados)
+          if (anioEvento == anioCursado) {
+            eventosFiltrados.push(evento);
+          }
+      }
+      
+      res
+        .status(200)
+        .json({ aniosEventos: aniosCursados,eventos: eventosFiltrados, exito: true, message: "exito" });
     })
     .catch((error) => {
       res.status(500).json({

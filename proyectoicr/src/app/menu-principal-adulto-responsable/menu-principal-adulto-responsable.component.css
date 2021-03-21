@@ -107,3 +107,8 @@ time.icon span {
   right: 2% !important;
   top: 7% !important;
 }
+
+.select-anios{
+  max-width: 25% !important;
+  margin: auto !important;
+}

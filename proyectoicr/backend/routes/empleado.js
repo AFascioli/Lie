@@ -2,6 +2,8 @@ const express = require("express");
 const router = express.Router();
 const mongoose = require("mongoose");
 const Empleado = require("../models/empleado");
+const Rol = require("../models/rol");
+const Usuario = require("../models/usuario");
 const Inscripcion = require("../models/inscripcion");
 const checkAuthMiddleware = require("../middleware/check-auth");
 const ClaseEstado = require("../classes/estado");
@@ -190,8 +192,7 @@ router.get("/nombre", checkAuthMiddleware, (req, res, next) => {
     })
     .catch((error) => {
       res.status(500).json({
-        message:
-          "Ocurrió un error al querer obtener el empleado por nombre",
+        message: "Ocurrió un error al querer obtener el empleado por nombre",
         error: error.message,
       });
     });
@@ -231,11 +232,18 @@ router.post("/modificar", checkAuthMiddleware, (req, res) => {
     email: req.body.empleado.email,
     tipoEmpleado: req.body.empleado.tipoEmpleado,
   })
-    .then((adulto) => {
-      res.status(200).json({
-        message: "Empleado modificado correctamente",
-        exito: true,
-      });
+    .then(async () => {
+      let rolNuevo = await Rol.findOne({
+        tipo: req.body.empleado.tipoEmpleado,
+      }).exec();
+      Usuario.findByIdAndUpdate(req.body.empleado.idUsuario, { rol: rolNuevo._id }).then(
+        (user) => {
+          res.status(200).json({
+            message: "Empleado modificado correctamente",
+            exito: true,
+          });
+        }
+      );
     })
     .catch((error) => {
       res.status(500).json({
