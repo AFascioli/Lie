@@ -28,13 +28,14 @@ export class MenuPrincipalAdultoResponsableComponent implements OnInit {
   eventos;
   eventosFiltrados=[];
   anioSeleccionado: number;
+  cursos = [];
+  mostrarTooltip: boolean = true;
+  isLoading=false;
   _mobileQueryListener: () => void;
   mobileQuery: MediaQueryList;
-  cursos = [];
   private unsubscribe: Subject<void> = new Subject();
   readonly VAPID_PUBLIC =
     "BMlC2dLJTBP6T1GCl3S3sDBmhERNVcjN7ff2a6JAoOg8bA_qXjikveleRwjz0Zn8c9-58mnrNo2K4p07UPK0DKQ";
-  mostrarTooltip: boolean = true;
 
   constructor(
     private swPush: SwPush,
@@ -58,6 +59,7 @@ export class MenuPrincipalAdultoResponsableComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.isLoading=true;
     this.servicioCiclo
       .obtenerActualYSiguiente()
       .pipe(takeUntil(this.unsubscribe))
@@ -106,8 +108,6 @@ export class MenuPrincipalAdultoResponsableComponent implements OnInit {
   }
 
   obtenerDatosEstudiante() {
-    let auxEventoPasado = [];
-    let auxEventoProximo = [];
     this.servicioAR
       .getDatosEstudiantes(this.authService.getId())
       .pipe(takeUntil(this.unsubscribe))
@@ -134,6 +134,7 @@ export class MenuPrincipalAdultoResponsableComponent implements OnInit {
                 this.eventos[index].anioEvento = anioEvento;
               }
               this.filtrarEventos(this.anioSeleccionado);
+              this.isLoading=false;
             });
         },
         (error) => {
