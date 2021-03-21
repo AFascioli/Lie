@@ -1,5 +1,5 @@
 <h1 class="componente-titulo">Instituto Cristo Rey</h1>
-<ng-container *ngIf="eventos.length != 0 && !isLoading">
+<ng-container *ngIf="eventos.length != 0">
   <mat-form-field class="select-anios">
     <mat-select
       placeholder="Año ciclo lectivo"
@@ -9,18 +9,13 @@
       matNativeControl
       (selectionChange)="onAnioSelectedChange(anioSelec.value)"
     >
-      <mat-option *ngFor="let anio of aniosEventos" [value]="anio"
-        >{{anio}}</mat-option
-      >
+      <mat-option *ngFor="let anio of aniosEventos" [value]="anio">{{
+        anio
+      }}</mat-option>
     </mat-select>
   </mat-form-field>
   <div *ngFor="let evento of eventosFiltrados; let j = index">
-    
-    <mat-card
-      class="card-body-componente"
-      (click)="eventoSeleccionado(evento)"
-    >
-      <label class="label-anioEvento">{{ evento.anioEvento }}</label>
+    <mat-card class="card-body-componente" (click)="eventoSeleccionado(evento)">
       <mat-card-title>
         <div class="titulo">
           <button (click)="eventoSeleccionado(evento)" class="titulo">
@@ -34,6 +29,7 @@
         >
           Hacé click para ver mas detalles!
         </div>
+        <label class="label-anioEvento">{{ evento.anioEvento }}</label>
         <div>
           <time datetime="evento.fechaEvento" class="icon fecha-evento">
             <strong>{{ obtenerMes(evento.fechaEvento) }}</strong>
@@ -155,16 +151,16 @@
       </div>
     </mat-card>
   </div>
-  <mat-card
-    class="card-body-componente"
-    *ngIf="eventosFiltrados.length==0"
-  >
+  <mat-card class="card-body-componente" *ngIf="eventosFiltrados.length == 0">
     <h1 class="titulo-aviso">
       No existen eventos publicados para el año seleccionado
     </h1>
   </mat-card>
 </ng-container>
 
-<mat-card class="card-spinner" *ngIf="isLoading">
-  <mat-spinner class="spinner" [diameter]="60"></mat-spinner>
-</mat-card>
+<div *ngIf="isLoading" class="loading-overlay">
+  <div class="loading-div">
+    <mat-spinner class="spinner" [diameter]="60"></mat-spinner>
+    <p class="loading-text">Cargando</p>
+  </div>
+</div>

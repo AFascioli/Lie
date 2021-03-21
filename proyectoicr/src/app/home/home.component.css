@@ -7,10 +7,13 @@
   text-align: center;
   font-size: 20px;
   margin-bottom: 20px;
+  margin-top: 10px !important;
+  color: rgba(0,0,0,.69) !important;
 }
 
 .titulo {
-  text-align: center !important;
+  text-align: center !important; 
+  margin-bottom: 0px !important;
 }
 
 .titulo:hover {
@@ -49,7 +52,7 @@ button {
 }
 
 time.icon {
-  font-size: 15px;
+  font-size: 13px;
   display: block;
   position: relative;
   width: 6em;
@@ -59,6 +62,7 @@ time.icon {
   box-shadow: 0 1px 0 #bdbdbd, 0 2px 0 #fff, 0 3px 0 #bdbdbd, 0 4px 0 #fff,
     0 5px 0 #bdbdbd, 0 0 0 1px #bdbdbd;
   overflow: hidden;
+  margin-top: 8px !important;
 }
 
 time.icon * {
@@ -93,14 +97,16 @@ time.icon span {
   color: #2f2f2f;
 }
 
-.botonAddImage .boton-editar,
-.boton-borrar {
+.botonAddImage .boton-editar
+ {
   display: flex;
+}
+.boton-borrar{
+  display: block;
 }
 
 .mat-icon {
-  margin-left: 8px !important;
-  margin-bottom: 5px !important;
+  line-height: 9px !important;
 }
 
 .botonAddImage:hover .boton-editar:hover,
@@ -129,11 +135,6 @@ time.icon span {
   margin-right: 35px !important;
 }
 
-.icono
-{
-  margin-bottom: 16px !important;
-  margin-right: 10px !important
-}
 
 .container-img .boton-borrar {
   position: absolute;
@@ -216,7 +217,7 @@ time.icon span {
   margin: 6px;
   margin-top: 15px !important;
   font-size: 18px;
-  position: absolute;
+  /* position: absolute; */
   border-radius: 60px;
     background-color: #e0e0e0;
     padding: 5px 9px 6px 10px;

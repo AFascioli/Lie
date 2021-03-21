@@ -33,8 +33,6 @@ export class AppComponent implements OnInit {
       if (!(evt instanceof NavigationEnd)) {
         return;
       }
-        const contentContainer = document.querySelector('.mat-sidenav-content');
-        contentContainer.scrollTo(0, 0);
     });
   }
 }

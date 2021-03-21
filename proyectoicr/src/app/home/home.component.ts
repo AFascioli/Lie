@@ -91,8 +91,10 @@ export class HomeComponent implements OnInit, OnDestroy {
           .pipe(takeUntil(this.unsubscribe))
           .subscribe((res) => {
             this.aniosEventos = res.añosCiclos.reverse();
-            this.anioSeleccionado = this.servicioEvento.anioSeleccionadoEvento ?this.servicioEvento.anioSeleccionadoEvento : this.aniosEventos[0];
-            this.servicioEvento.anioSeleccionadoEvento= this.anioSeleccionado;
+            this.anioSeleccionado = this.servicioEvento.anioSeleccionadoEvento
+              ? this.servicioEvento.anioSeleccionadoEvento
+              : this.aniosEventos[0];
+            this.servicioEvento.anioSeleccionadoEvento = this.anioSeleccionado;
 
             for (let index = 0; index < rtdo.eventos.length; index++) {
               const anioEvento = new Date(
@@ -123,20 +125,19 @@ export class HomeComponent implements OnInit, OnDestroy {
   filtrarEventos(anio) {
     let auxEventoPasado = [];
     let auxEventoProximo = [];
-    
+
     for (let index = 0; index <= this.eventos.length - 1; index++) {
       const evento = this.eventos[index];
-      
+
       if (anio == evento.anioEvento) {
         this.eventoYaOcurrio(index)
           ? auxEventoPasado.push(evento)
-          : auxEventoProximo.push(evento);          
+          : auxEventoProximo.push(evento);
       }
     }
     auxEventoPasado.sort((a, b) => this.compareFechaEventos(a, b));
     auxEventoProximo.sort((a, b) => this.compareFechaEventos(a, b));
     this.eventosFiltrados = auxEventoProximo.concat(auxEventoPasado);
-    
   }
   mostrarEvento(anioEvento) {
     return anioEvento == this.anioSeleccionado;
@@ -144,8 +145,8 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   onAnioSelectedChange(anio) {
     this.anioSeleccionado = anio;
-    this.servicioEvento.anioSeleccionadoEvento= this.anioSeleccionado;
-    this.filtrarEventos(this.anioSeleccionado)
+    this.servicioEvento.anioSeleccionadoEvento = this.anioSeleccionado;
+    this.filtrarEventos(this.anioSeleccionado);
   }
 
   //Compara la fecha del evento con la fecha actual para deshabilitar el boton editar
