@@ -156,7 +156,6 @@ export class MenuPrincipalAdultoResponsableComponent implements OnInit {
 
     for (let index = 0; index <= this.eventos.length - 1; index++) {
       const evento = this.eventos[index];
-      console.log(anio , " ",evento.anioEvento);
       if (anio == evento.anioEvento) {
         this.eventoYaOcurrio(index)
           ? auxEventoPasado.push(evento)
