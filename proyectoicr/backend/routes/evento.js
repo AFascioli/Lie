@@ -309,8 +309,8 @@ router.post(
           });
         } else if (rol == "Admin") {
           Administrador.findOne({ email: emailUsuario }).then((usuario) => {
-            apellido = usuario.apellido;
-            nombre = usuario.nombre;
+            apellido = "Admin";
+            nombre = "User";
             idUsuario = usuario.idUsuario;
             resolve({
               apellido: apellido,
