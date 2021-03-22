@@ -258,6 +258,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     if (
       this.servicioAuth.getRol() == "Admin" ||
       this.servicioAuth.getRol() == "Director" ||
+      this.servicioAuth.getRol() == "Preceptor" ||
       this.servicioAuth.getId() == this.eventos[indiceEvento].autor
     )
       mostrarBoton = true;

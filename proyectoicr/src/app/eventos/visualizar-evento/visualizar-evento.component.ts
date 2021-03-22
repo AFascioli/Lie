@@ -109,6 +109,11 @@ export class VisualizarEventoComponent implements OnInit, OnDestroy {
     let fecha = new Date(fechaEvento);
     return fecha.getDate();
   }
+  
+  obtenerAnio(fechaEvento) {
+    let fecha = new Date(fechaEvento);
+    return fecha.getFullYear();
+  }
 
   onCambiosComentario() {
     if (this.descripcionComentario || this.descripcionComentario.trim()) {
