@@ -17,6 +17,7 @@ import { AgendaService } from "src/app/agenda/agenda.service";
 })
 export class AbmMateriaComponent implements OnInit {
   isLoading = false;
+  huboCambios = false;
   materias = new MatTableDataSource<any>();
   materiasArray = [];
   displayedColumns: string[] = ["Materia", "Accion"];
@@ -57,10 +58,11 @@ export class AbmMateriaComponent implements OnInit {
           if (
             !this.materias.data.find(
               (materia) =>
-                materia.nombre.toUpperCase() ==
-                resultado.nombreMateria.toUpperCase()
+                materia.nombre.toUpperCase().trim() ==
+                resultado.nombreMateria.toUpperCase().trim()
             )
           ) {
+            this.huboCambios = true;
             let objetoMateria = {
               _id: null,
               nombre: resultado.nombreMateria,
@@ -80,6 +82,7 @@ export class AbmMateriaComponent implements OnInit {
   }
 
   onBorrar(nombreMateria: string, index: number) {
+    this.huboCambios = true;
     this.materias.data.splice(index, 1);
     this.materiasArray.map((materia) => {
       if (materia.nombre.toUpperCase() == nombreMateria.toUpperCase()) {
@@ -93,6 +96,7 @@ export class AbmMateriaComponent implements OnInit {
     this.isLoading = true;
     this.agendaService.abmMateria(this.materiasArray).subscribe((response) => {
       if (response.exito) {
+        this.huboCambios = false;
         this.materias.data = [];
         this.materiasArray = [];
         this.agendaService.obtenerMaterias().subscribe((response) => {
@@ -110,18 +114,20 @@ export class AbmMateriaComponent implements OnInit {
         });
         if (response.materiasNoBorradas != "") {
           this.snackBar.open(
-            "Las siguientes materias no pudieron ser borradas ya que tienen una agenda de curso asignada " +
+            "Las siguientes materias no pudieron ser borradas ya que tienen una agenda de curso asignada: " +
               response.materiasNoBorradas,
             "",
             {
-              panelClass: ["snack-bar-fracaso"],
-              duration: 4000,
+              panelClass: ["snack-bar-aviso"],
+              duration: 6000,
             }
           );
-          this.snackBar.open(response.message, "", {
-            panelClass: ["snack-bar-exito"],
-            duration: 4000,
-          });
+            setTimeout(() => {
+              this.snackBar.open(response.message, "", {
+                panelClass: ["snack-bar-exito"],
+                duration: 4000,
+              });
+            },6000)
         } else {
           this.snackBar.open(response.message, "", {
             panelClass: ["snack-bar-exito"],

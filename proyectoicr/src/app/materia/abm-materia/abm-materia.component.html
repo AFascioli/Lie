@@ -75,12 +75,18 @@
       mat-raised-button
       class="button-primary"
       (click)="onGuardar()"
-      [disabled]="materias.data.length == 0"
+      [disabled]="materias.data.length == 0 || !huboCambios"
     >
       Guardar
     </button>
     <button mat-raised-button [routerLink]="['/home']" class="button-warn">
-      Cancelar
+      Volver
     </button>
   </div>
 </mat-card>
+<div *ngIf="isLoading" class="loading-overlay">
+  <div class="loading-div">
+    <mat-spinner class="spinner" [diameter]="60"></mat-spinner>
+    <p class="loading-text">Cargando</p>
+  </div>
+</div>

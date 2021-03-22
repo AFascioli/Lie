@@ -159,7 +159,7 @@
               mat-list-item
               class="sinExpansion"
               routerLink="/abmMateria"
-              *ngIf="permisos.agendaCursos > 1"
+              *ngIf="permisos.agendaCursos > 1 && permisos.registrarEmpleado > 1"
               (click)="cerrarMenuLateral(sideNav)"
             >
               <mat-icon class="iconSinExpansion" svgIcon="sliders"></mat-icon>

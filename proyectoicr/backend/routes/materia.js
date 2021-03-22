@@ -141,7 +141,7 @@ router.post("/abm", async (req, res) => {
     for (const materia of req.body.materias) {
       if (materia.borrar) {
         let tieneMXC = await MateriasXCurso.findOne({idMateria: materia._id});
-        if(tieneMXC!=null){
+        if(tieneMXC==null){
           await Materia.deleteOne({ _id: materia._id }).exec();
         }else{
           materiasNoBorradas += materia.nombre + ", "; 
@@ -151,7 +151,7 @@ router.post("/abm", async (req, res) => {
         await materiaNueva.save();
       }
     }
-    if(materiasNoBorradas !="") materiasNoBorradas.substring(0, materiasNoBorradas.length-2);
+    if(materiasNoBorradas !="") materiasNoBorradas = materiasNoBorradas.substring(0, materiasNoBorradas.length-2);
    
     res.status(200).json({
       materiasNoBorradas: materiasNoBorradas,

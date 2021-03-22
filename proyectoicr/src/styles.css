@@ -110,7 +110,7 @@ input[type="number"] {
 }
 
 .loading-overlay {
-  z-index: 10;
+  z-index: 101;
   display: block;
   position: fixed;
   height: 100%;
