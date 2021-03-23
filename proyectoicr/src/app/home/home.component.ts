@@ -136,7 +136,7 @@ export class HomeComponent implements OnInit, OnDestroy {
       }
     }
     auxEventoPasado.sort((a, b) => this.compareFechaEventos(a, b));
-    auxEventoProximo.sort((a, b) => this.compareFechaEventos(a, b));
+    auxEventoProximo.sort((a, b) => this.compareFechaEventos(a, b));    
     this.eventosFiltrados = auxEventoProximo.concat(auxEventoPasado);
   }
   mostrarEvento(anioEvento) {
@@ -144,22 +144,28 @@ export class HomeComponent implements OnInit, OnDestroy {
   }
 
   onAnioSelectedChange(anio) {
+    this.eventosFiltrados=[]
     this.anioSeleccionado = anio;
     this.servicioEvento.anioSeleccionadoEvento = this.anioSeleccionado;
     this.filtrarEventos(this.anioSeleccionado);
+    
   }
 
   //Compara la fecha del evento con la fecha actual para deshabilitar el boton editar
   //si el evento ya paso. Si estamos en el dia del evento, devuelve true si ya estamos
   //en la misma hora que el evento
   eventoYaOcurrio(indexEvento: number) {
-    const fechaEvento = new Date(this.eventos[indexEvento].fechaEvento);
+    let eventosArray= this.eventos;
+    if(this.eventosFiltrados.length!=0){
+      eventosArray= this.eventosFiltrados;
+    }
+    const fechaEvento = new Date(eventosArray[indexEvento].fechaEvento);    
     if (
       this.fechaActual.getMonth() == fechaEvento.getMonth() &&
       this.fechaActual.getDate() == fechaEvento.getDate()
     ) {
       const horaEvento = new Date(
-        "01/01/2020 " + this.eventos[indexEvento].horaInicio
+        "01/01/2020 " + eventosArray[indexEvento].horaInicio
       );
       return this.fechaActual.getHours() >= horaEvento.getHours();
     } else {
@@ -254,12 +260,12 @@ export class HomeComponent implements OnInit, OnDestroy {
   }
 
   conocerUsuarioLogueado(indiceEvento): boolean {
-    let mostrarBoton = false;
+    let mostrarBoton = false;    
     if (
       this.servicioAuth.getRol() == "Admin" ||
       this.servicioAuth.getRol() == "Director" ||
       this.servicioAuth.getRol() == "Preceptor" ||
-      this.servicioAuth.getId() == this.eventos[indiceEvento].autor
+      this.servicioAuth.getId() == this.eventosFiltrados[indiceEvento].autor
     )
       mostrarBoton = true;
     return mostrarBoton;
