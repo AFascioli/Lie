@@ -1,8 +1,5 @@
 <h1 class="componente-titulo">Estado de los cursos</h1>
-<mat-card class="card-spinner" *ngIf="isLoading">
-  <mat-spinner class="spinner" [diameter]="60"></mat-spinner>
-</mat-card>
-<mat-accordion class="example-headers-align" *ngIf="!isLoading">
+<mat-accordion class="example-headers-align">
   <mat-expansion-panel *ngFor="let curso of cursosEstados">
     <mat-expansion-panel-header >
       <mat-panel-title> <b>Curso: {{ curso.nombre }}</b> </mat-panel-title>
@@ -38,4 +35,10 @@
   >
     Volver
   </button>
+</div>
+<div *ngIf="isLoading" class="loading-overlay">
+  <div class="loading-div">
+    <mat-spinner class="spinner" [diameter]="60"></mat-spinner>
+    <p class="loading-text">Cargando</p>
+  </div>
 </div>

@@ -105,11 +105,8 @@ export class CalificacionesEstudiantesComponent implements OnInit, OnDestroy {
       .obtenerEstadoMXC(idCurso, idMateria)
       .pipe(takeUntil(this.unsubscribe))
       .subscribe((response) => {
-        if (!this.validarEstadoMXC(response.estadoMXC)) {
-          this.puedeEditarCalificaciones = false;
-        } else {
-          this.puedeEditarCalificaciones = true;
-        }
+        this.puedeEditarCalificaciones = this.validarEstadoMXC(response.estadoMXC);
+        
       });
   }
 
@@ -308,6 +305,7 @@ export class CalificacionesEstudiantesComponent implements OnInit, OnDestroy {
 
   //Valida si el estado de la MXC es el mismo al trimestre actual
   validarEstadoMXC(estadoMXC) {
+    if(this.servicioAutenticacion.getRol() == "Director") return true;
     if (estadoMXC == "En primer trimestre" && this.trimestreActual == "1") {
       return true;
     } else if (
