@@ -724,7 +724,9 @@ router.get("/docente", checkAuthMiddleware, async (req, res) => {
 //Obtiene todos los cursos asignados a un docente en un ciclo lectivo determinado
 //@params: id de la docente, año del ciclo lectivo
 router.get("/docentePorCiclo", checkAuthMiddleware, async (req, res) => {
-  let idCicloLectivo = await ClaseCicloLectivo.getIdCicloLectivo(req.query.anio);
+  let idCicloLectivo = await ClaseCicloLectivo.getIdCicloLectivo(
+    req.query.anio
+  );
   Curso.aggregate([
     {
       $match: {
@@ -1198,7 +1200,6 @@ router.get("/estudiante", checkAuthMiddleware, async (req, res) => {
     "Inscripcion",
     "Promovido"
   );
-
   Inscripcion.findOne({
     idEstudiante: mongoose.Types.ObjectId(req.query.idEstudiante),
     estado: {
@@ -1211,7 +1212,7 @@ router.get("/estudiante", checkAuthMiddleware, async (req, res) => {
       ],
     },
   })
-    .then((inscripcion) => {      
+    .then((inscripcion) => {
       if (inscripcion) {
         Curso.findById(inscripcion.idCurso).then((cursoDeEstudiante) => {
           return res.status(200).json({
@@ -1391,13 +1392,12 @@ router.get("/materias", checkAuthMiddleware, (req, res) => {
 //@params: array documentos entregados en inscripcion: true si se entregó ese documente
 router.post("/inscripcion", checkAuthMiddleware, async (req, res) => {
   try {
-    if (
-      ClaseInscripcion.inscribirEstudiante(
-        req.body.idCurso,
-        req.body.idEstudiante,
-        req.body.documentosEntregados
-      )
-    ) {
+    let resultadoInscripcion = await ClaseInscripcion.inscribirEstudiante(
+      req.body.idCurso,
+      req.body.idEstudiante,
+      req.body.documentosEntregados
+    );
+    if (resultadoInscripcion) {
       res.status(201).json({
         message: "Estudiante inscripto exitosamente",
         exito: true,
@@ -2745,9 +2745,9 @@ router.get("/dev/calificaciones", async (req, res) => {
 
     for (const inscripcion of inscripcionesCiclo) {
       for (const cxt of inscripcion.datosCXT) {
-        if(cxt.trimestre==trimestre+1){
+        if (cxt.trimestre == trimestre + 1) {
           let idCXT = cxt._id;
-    
+
           let calificaciones = cxt.calificaciones;
           //Cambia el vector de calificaciones del trimestre correspondiente con notas random >=6
           for (let index = 0; index < 3; index++) {
@@ -2794,7 +2794,7 @@ router.get("/dev/calificaciones", async (req, res) => {
     for (const curso of cursosConMXC) {
       for (const mxc of curso.datosMXC) {
         if (trimestre + 1 == 3) {
-          //Cierra las CXM 
+          //Cierra las CXM
           await ClaseCalificacionXMateria.cerrarMateriaTercerTrimestre(
             curso._id,
             mxc.idMateria

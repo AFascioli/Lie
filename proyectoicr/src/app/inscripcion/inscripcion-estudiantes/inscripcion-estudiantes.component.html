@@ -1,5 +1,5 @@
 <h1 class="componente-titulo">Inscribir estudiante a un curso</h1>
-<mat-card class="card-body-componente" *ngIf="!isLoading">
+<mat-card class="card-body-componente">
   <form #form="ngForm">
     <div class="ubicacion-fecha">
       <b>Fecha: </b>
@@ -25,21 +25,22 @@
           <b>Apellido/s: </b> {{ apellidoEstudiante }}
           <br />
           <b>Nombre/s: </b> {{ nombreEstudiante }}
-          <p class="mensaje-atencion" *ngIf="estudianteEstaInscripto">
+          <p class="mensaje-atencion" *ngIf="estudianteEstaInscripto && !nextYearSelect && aniosCiclos.length!=0">
             <b
               >Atención, el estudiante seleccionado ya esta inscripto en el
-              curso
+              curso {{cursoActualYSiguiente[0] }}
             </b>
-            <label [innerHTML]="cursoActual" class="mensaje-atencion-curso">
+            <label class="mensaje-atencion-curso">
               para el año
               {{ aniosCiclos[0] }}
             </label>
           </p>
-          <p class="mensaje-atencion" *ngIf="tieneInscripcionPendiente">
+          <p class="mensaje-atencion" *ngIf="tieneInscripcionPendiente && nextYearSelect">
             <b
-              >Atención, el estudiante seleccionado ya tiene una inscripcion
+              >Atención, el estudiante seleccionado ya esta inscripto en el
+              curso {{cursoActualYSiguiente[1] }}
             </b>
-            <label [innerHTML]="cursoActual" class="mensaje-atencion-curso">
+            <label class="mensaje-atencion-curso">
               para el año
               {{ aniosCiclos[1] }}
             </label>
@@ -87,7 +88,8 @@
       <b>Cupos disponibles: </b>{{ capacidadCurso }}
     </p>
     <br />
-    <mat-accordion>
+    <mat-accordion 
+    [hidden]="nextYearSelect">
       <mat-expansion-panel
         [class.mat-expansion-panel-mobile]="mobileQuery.matches"
         [expanded]="true"
@@ -147,7 +149,9 @@
     </div>
   </form>
 </mat-card>
-
-<mat-card class="card-spinner" *ngIf="isLoading">
-  <mat-spinner class="spinner" [diameter]="60"></mat-spinner>
-</mat-card>
+<div *ngIf="isLoading" class="loading-overlay">
+  <div class="loading-div">
+    <mat-spinner class="spinner" [diameter]="60"></mat-spinner>
+    <p class="loading-text">Cargando</p>
+  </div>
+</div>

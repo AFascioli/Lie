@@ -39,6 +39,7 @@ export class MostrarEstudiantesComponent implements OnInit, OnDestroy {
   maxDate = new Date();
   primeraVez = true;
   modoEditar = false;
+  isLoading=false;
   private unsubscribe: Subject<void> = new Subject();
   //Atributos Estudiantes del HTML
   apellidoEstudiante: string;
@@ -109,6 +110,7 @@ export class MostrarEstudiantesComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.isLoading=true;
     this.servicioUbicacion.getProvincias();
     this.suscripcion = this.servicioUbicacion
       .getProvinciasListener()
@@ -130,6 +132,7 @@ export class MostrarEstudiantesComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.unsubscribe))
       .subscribe((nacionalidadesActualizadas) => {
         this.nacionalidades = nacionalidadesActualizadas;
+        this.isLoading=false;
       });
     this.authService
       .obtenerPermisosDeRol()
@@ -150,11 +153,12 @@ export class MostrarEstudiantesComponent implements OnInit, OnDestroy {
   }
 
   onEditar() {
-    this.modoEditar = true;
+    this.modoEditar = !this.modoEditar;
   }
 
   onGuardar(form: NgForm) {
     if (!form.invalid && form.dirty) {
+      this.isLoading=true;
       this.servicioEstudiante
         .modificarEstudiante(
           this.servicioEstudiante.estudianteSeleccionado._id,
@@ -178,6 +182,7 @@ export class MostrarEstudiantesComponent implements OnInit, OnDestroy {
         )
         .pipe(takeUntil(this.unsubscribe))
         .subscribe((resultado) => {
+        this.isLoading=false;
           if (resultado.exito) {
             this.modoEditar = false;
             this.snackBar.open(resultado.message, "", {
@@ -230,11 +235,13 @@ export class MostrarEstudiantesComponent implements OnInit, OnDestroy {
 
       popup.afterClosed().subscribe((borrar) => {
         if (borrar) {
+          this.isLoading=true;
           this.servicioEstudiante
             .borrarEstudiante(
               this.servicioEstudiante.estudianteSeleccionado._id
             )
             .subscribe((rta) => {
+              this.isLoading=false;
               if (rta.exito) {
                 this.snackBar.open(rta.message, "", {
                   panelClass: ["snack-bar-exito"],

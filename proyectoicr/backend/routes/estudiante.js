@@ -201,14 +201,13 @@ router.delete("/borrar", checkAuthMiddleware, async (req, res, next) => {
           { estado: idEstadoExamenesPendientes },
         ],
       }).then(async (inscripcion) => {
-        console.log(inscripcion);
         if (inscripcion && inscripcion.length > 0) {
           for (let index = 0; index < inscripcion.length; index++) {
             inscripcion.estado = idEstadoInactiva;
-            inscripcion[index].save();
+            await inscripcion[index].save();
             let curso = await Curso.findById(inscripcion[index].idCurso);
             curso.capacidad += 1;
-            curso.save();
+            await curso.save();
           }
           res.status(202).json({
             message: "Estudiante exitosamente borrado",
