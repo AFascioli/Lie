@@ -59,6 +59,9 @@
   border: 1px solid rgb(33, 70, 91) !important;
   color: rgb(33, 70, 91) !important;
   width: 70%;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 .mat-card > :last-child:not(.mat-card-footer) {
   margin-top: inherit;
