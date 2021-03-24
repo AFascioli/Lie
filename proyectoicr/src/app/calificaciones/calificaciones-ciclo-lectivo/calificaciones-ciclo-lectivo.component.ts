@@ -340,7 +340,7 @@ export class CalificacionesCicloLectivoComponent implements OnInit, OnDestroy {
       this.promedio = (this.promedioT1 + this.promedioT2) / 2;
     else this.promedio = this.promedioT1;
 
-    if (this.promedio == this.examen) this.examen = "-";
+    if (this.promedio == this.examen || this.examen==0) this.examen = "-";
 
     return this.promedio;
   }

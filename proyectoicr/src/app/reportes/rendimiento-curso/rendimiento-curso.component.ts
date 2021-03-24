@@ -86,7 +86,7 @@ export class RendimientoCursoComponent implements OnInit {
   public barChartLegend;
 
   private unsubscribe: Subject<void> = new Subject();
-  anios: any[];
+  anio: any[];
 
   constructor(
     public servicioEstudiante: EstudiantesService,
@@ -106,6 +106,7 @@ export class RendimientoCursoComponent implements OnInit {
     this.estudiantes = [];
     this.materias = [];
     this.obtenerCursos(yearSelected.value);
+    this.anio= yearSelected.value;
   }
 
   obtenerCursos(yearSelected) {
@@ -770,7 +771,7 @@ export class RendimientoCursoComponent implements OnInit {
       doc.setFontSize(10);
       doc.setFont("Segoe UI");
       doc.text("Instituto Cristo Rey", 94, 7);
-      doc.text("Ciclo lectivo " + this.anios[0], 95, 12);
+      doc.text("Ciclo lectivo " + this.anio, 95, 12);
       doc.setDrawColor(184, 184, 184);
       doc.line(10, 17, 200, 17);
       doc.addImage(imgData, 0, 30, 208, imgH);

@@ -92,15 +92,13 @@
             *matCellDef="let estudiante; let i = index"
             [ngClass]="{
               bajoPromedio:
-                calcularPromedio(
+                ((calcularPromedio(
                   indexEst + i,
                   contadorNotasValidas(indexEst + i)
                 ) < 6 &&
-                this.promedio != 0 &&
-                this.examen != 0 &&
-                this.examen < 6 &&
-                this.promedioT3 != 0 &&
-                this.promedioT3 < 6
+                  this.promedio != 0) ||
+                  (this.promedioT3 < 6 && this.promedioT3 != 0)) &&
+                this.examen == '-'
             }"
           >
             {{ estudiante.apellido }}
@@ -117,12 +115,9 @@
             *matCellDef="let estudiante; let i = index"
             [ngClass]="{
               bajoPromedio:
-                this.examen != 0 &&
-                this.examen < 6 &&
-                this.promedio < 6 &&
-                this.promedio != 0 &&
-                this.promedioT3 != 0 &&
-                this.promedioT3 < 6
+                ((this.promedio < 6 && this.promedio != 0) ||
+                  (this.promedioT3 < 6 && this.promedioT3 != 0)) &&
+                this.examen == '-'
             }"
           >
             {{ estudiante.nombre }}
@@ -136,12 +131,9 @@
             *matCellDef="let estudiante; let i = index"
             [ngClass]="{
               bajoPromedio:
-                this.examen != 0 &&
-                this.examen < 6 &&
-                this.promedio < 6 &&
-                this.promedio != 0 &&
-                this.promedioT3 != 0 &&
-                this.promedioT3 < 6
+                ((this.promedio < 6 && this.promedio != 0) ||
+                  (this.promedioT3 < 6 && this.promedioT3 != 0)) &&
+                this.examen == '-'
             }"
           >
             <p *ngIf="!rolConPermisosEdicion || !puedeEditarCalificaciones">
@@ -157,12 +149,9 @@
             *matCellDef="let estudiante; let i = index"
             [ngClass]="{
               bajoPromedio:
-                this.examen != 0 &&
-                this.examen < 6 &&
-                this.promedio < 6 &&
-                this.promedio != 0 &&
-                this.promedioT3 != 0 &&
-                this.promedioT3 < 6
+                ((this.promedio < 6 && this.promedio != 0) ||
+                  (this.promedioT3 < 6 && this.promedioT3 != 0)) &&
+                this.examen == '-'
             }"
           >
             <p *ngIf="!rolConPermisosEdicion || !puedeEditarCalificaciones">
@@ -178,12 +167,9 @@
             *matCellDef="let estudiante; let i = index"
             [ngClass]="{
               bajoPromedio:
-                this.examen != 0 &&
-                this.examen < 6 &&
-                this.promedio < 6 &&
-                this.promedio != 0 &&
-                this.promedioT3 != 0 &&
-                this.promedioT3 < 6
+                ((this.promedio < 6 && this.promedio != 0) ||
+                  (this.promedioT3 < 6 && this.promedioT3 != 0)) &&
+                this.examen == '-'
             }"
           >
             <p *ngIf="!rolConPermisosEdicion || !puedeEditarCalificaciones">
@@ -199,12 +185,9 @@
             *matCellDef="let estudiante; let i = index"
             [ngClass]="{
               bajoPromedio:
-                this.examen != 0 &&
-                this.examen < 6 &&
-                this.promedio < 6 &&
-                this.promedio != 0 &&
-                this.promedioT3 != 0 &&
-                this.promedioT3 < 6
+                ((this.promedio < 6 && this.promedio != 0) ||
+                  (this.promedioT3 < 6 && this.promedioT3 != 0)) &&
+                this.examen == '-'
             }"
           >
             <p *ngIf="!rolConPermisosEdicion || !puedeEditarCalificaciones">
@@ -220,12 +203,9 @@
             *matCellDef="let estudiante; let i = index"
             [ngClass]="{
               bajoPromedio:
-                this.examen != 0 &&
-                this.examen < 6 &&
-                this.promedio < 6 &&
-                this.promedio != 0 &&
-                this.promedioT3 != 0 &&
-                this.promedioT3 < 6
+                ((this.promedio < 6 && this.promedio != 0) ||
+                  (this.promedioT3 < 6 && this.promedioT3 != 0)) &&
+                this.examen == '-'
             }"
           >
             <p *ngIf="!rolConPermisosEdicion || !puedeEditarCalificaciones">
@@ -241,12 +221,9 @@
             *matCellDef="let estudiante; let i = index"
             [ngClass]="{
               bajoPromedio:
-                this.examen != 0 &&
-                this.examen < 6 &&
-                this.promedio < 6 &&
-                this.promedio != 0 &&
-                this.promedioT3 != 0 &&
-                this.promedioT3 < 6
+                ((this.promedio < 6 && this.promedio != 0) ||
+                  (this.promedioT3 < 6 && this.promedioT3 != 0)) &&
+                this.examen == '-'
             }"
           >
             <p *ngIf="!rolConPermisosEdicion || !puedeEditarCalificaciones">
@@ -264,12 +241,9 @@
             *matCellDef="let estudiante; let i = index"
             [ngClass]="{
               bajoPromedio:
-                this.examen != 0 &&
-                this.examen < 6 &&
-                this.promedio < 6 &&
-                this.promedio != 0 &&
-                this.promedioT3 != 0 &&
-                this.promedioT3 < 6
+                ((this.promedio < 6 && this.promedio != 0) ||
+                  (this.promedioT3 < 6 && this.promedioT3 != 0)) &&
+                this.examen == '-'
             }"
           >
             <b *ngIf="!rolConPermisosEdicion || !puedeEditarCalificaciones">
@@ -285,12 +259,9 @@
             *matCellDef="let estudiante; let i = index"
             [ngClass]="{
               bajoPromedio:
-                this.examen != 0 &&
-                this.examen < 6 &&
-                this.promedio < 6 &&
-                this.promedio != 0 &&
-                this.promedioT3 != 0 &&
-                this.promedioT3 < 6
+                ((this.promedio < 6 && this.promedio != 0) ||
+                  (this.promedioT3 < 6 && this.promedioT3 != 0)) &&
+                this.examen == '-'
             }"
           >
             <p *ngIf="!rolConPermisosEdicion || !puedeEditarCalificaciones">
@@ -306,12 +277,9 @@
             *matCellDef="let estudiante; let i = index"
             [ngClass]="{
               bajoPromedio:
-                this.examen != 0 &&
-                this.examen < 6 &&
-                this.promedio < 6 &&
-                this.promedio != 0 &&
-                this.promedioT3 != 0 &&
-                this.promedioT3 < 6
+                ((this.promedio < 6 && this.promedio != 0) ||
+                  (this.promedioT3 < 6 && this.promedioT3 != 0)) &&
+                this.examen == '-'
             }"
           >
             <p *ngIf="!rolConPermisosEdicion || !puedeEditarCalificaciones">
@@ -327,12 +295,9 @@
             *matCellDef="let estudiante; let i = index"
             [ngClass]="{
               bajoPromedio:
-                this.examen != 0 &&
-                this.examen < 6 &&
-                this.promedio < 6 &&
-                this.promedio != 0 &&
-                this.promedioT3 != 0 &&
-                this.promedioT3 < 6
+                ((this.promedio < 6 && this.promedio != 0) ||
+                  (this.promedioT3 < 6 && this.promedioT3 != 0)) &&
+                this.examen == '-'
             }"
           >
             <p *ngIf="!rolConPermisosEdicion || !puedeEditarCalificaciones">
@@ -348,12 +313,9 @@
             *matCellDef="let estudiante; let i = index"
             [ngClass]="{
               bajoPromedio:
-                this.examen != 0 &&
-                this.examen < 6 &&
-                this.promedio < 6 &&
-                this.promedio != 0 &&
-                this.promedioT3 != 0 &&
-                this.promedioT3 < 6
+                ((this.promedio < 6 && this.promedio != 0) ||
+                  (this.promedioT3 < 6 && this.promedioT3 != 0)) &&
+                this.examen == '-'
             }"
           >
             <p *ngIf="!rolConPermisosEdicion || !puedeEditarCalificaciones">
@@ -369,12 +331,9 @@
             *matCellDef="let estudiante; let i = index"
             [ngClass]="{
               bajoPromedio:
-                this.examen != 0 &&
-                this.examen < 6 &&
-                this.promedio < 6 &&
-                this.promedio != 0 &&
-                this.promedioT3 != 0 &&
-                this.promedioT3 < 6
+                ((this.promedio < 6 && this.promedio != 0) ||
+                  (this.promedioT3 < 6 && this.promedioT3 != 0)) &&
+                this.examen == '-'
             }"
           >
             <p *ngIf="!rolConPermisosEdicion || !puedeEditarCalificaciones">
@@ -390,12 +349,9 @@
             *matCellDef="let estudiante; let i = index"
             [ngClass]="{
               bajoPromedio:
-                this.examen != 0 &&
-                this.examen < 6 &&
-                this.promedio < 6 &&
-                this.promedio != 0 &&
-                this.promedioT3 != 0 &&
-                this.promedioT3 < 6
+                ((this.promedio < 6 && this.promedio != 0) ||
+                  (this.promedioT3 < 6 && this.promedioT3 != 0)) &&
+                this.examen == '-'
             }"
           >
             <p *ngIf="!rolConPermisosEdicion || !puedeEditarCalificaciones">
@@ -413,12 +369,9 @@
             *matCellDef="let estudiante; let i = index"
             [ngClass]="{
               bajoPromedio:
-                this.examen != 0 &&
-                this.examen < 6 &&
-                this.promedio < 6 &&
-                this.promedio != 0 &&
-                this.promedioT3 != 0 &&
-                this.promedioT3 < 6
+                ((this.promedio < 6 && this.promedio != 0) ||
+                  (this.promedioT3 < 6 && this.promedioT3 != 0)) &&
+                this.examen == '-'
             }"
           >
             <b *ngIf="!rolConPermisosEdicion || !puedeEditarCalificaciones">
@@ -434,12 +387,9 @@
             *matCellDef="let estudiante; let i = index"
             [ngClass]="{
               bajoPromedio:
-                this.examen != 0 &&
-                this.examen < 6 &&
-                this.promedio < 6 &&
-                this.promedio != 0 &&
-                this.promedioT3 != 0 &&
-                this.promedioT3 < 6
+                ((this.promedio < 6 && this.promedio != 0) ||
+                  (this.promedioT3 < 6 && this.promedioT3 != 0)) &&
+                this.examen == '-'
             }"
           >
             <p *ngIf="!rolConPermisosEdicion || !puedeEditarCalificaciones">
@@ -455,12 +405,9 @@
             *matCellDef="let estudiante; let i = index"
             [ngClass]="{
               bajoPromedio:
-                this.examen != 0 &&
-                this.examen < 6 &&
-                this.promedio < 6 &&
-                this.promedio != 0 &&
-                this.promedioT3 != 0 &&
-                this.promedioT3 < 6
+                ((this.promedio < 6 && this.promedio != 0) ||
+                  (this.promedioT3 < 6 && this.promedioT3 != 0)) &&
+                this.examen == '-'
             }"
           >
             <p *ngIf="!rolConPermisosEdicion || !puedeEditarCalificaciones">
@@ -476,12 +423,9 @@
             *matCellDef="let estudiante; let i = index"
             [ngClass]="{
               bajoPromedio:
-                this.examen != 0 &&
-                this.examen < 6 &&
-                this.promedio < 6 &&
-                this.promedio != 0 &&
-                this.promedioT3 != 0 &&
-                this.promedioT3 < 6
+                ((this.promedio < 6 && this.promedio != 0) ||
+                  (this.promedioT3 < 6 && this.promedioT3 != 0)) &&
+                this.examen == '-'
             }"
           >
             <p *ngIf="!rolConPermisosEdicion || !puedeEditarCalificaciones">
@@ -497,12 +441,9 @@
             *matCellDef="let estudiante; let i = index"
             [ngClass]="{
               bajoPromedio:
-                this.examen != 0 &&
-                this.examen < 6 &&
-                this.promedio < 6 &&
-                this.promedio != 0 &&
-                this.promedioT3 != 0 &&
-                this.promedioT3 < 6
+                ((this.promedio < 6 && this.promedio != 0) ||
+                  (this.promedioT3 < 6 && this.promedioT3 != 0)) &&
+                this.examen == '-'
             }"
           >
             <p *ngIf="!rolConPermisosEdicion || !puedeEditarCalificaciones">
@@ -518,12 +459,9 @@
             *matCellDef="let estudiante; let i = index"
             [ngClass]="{
               bajoPromedio:
-                this.examen != 0 &&
-                this.examen < 6 &&
-                this.promedio < 6 &&
-                this.promedio != 0 &&
-                this.promedioT3 != 0 &&
-                this.promedioT3 < 6
+                ((this.promedio < 6 && this.promedio != 0) ||
+                  (this.promedioT3 < 6 && this.promedioT3 != 0)) &&
+                this.examen == '-'
             }"
           >
             <p *ngIf="!rolConPermisosEdicion || !puedeEditarCalificaciones">
@@ -539,12 +477,9 @@
             *matCellDef="let estudiante; let i = index"
             [ngClass]="{
               bajoPromedio:
-                this.examen != 0 &&
-                this.examen < 6 &&
-                this.promedio < 6 &&
-                this.promedio != 0 &&
-                this.promedioT3 != 0 &&
-                this.promedioT3 < 6
+                ((this.promedio < 6 && this.promedio != 0) ||
+                  (this.promedioT3 < 6 && this.promedioT3 != 0)) &&
+                this.examen == '-'
             }"
           >
             <p *ngIf="!rolConPermisosEdicion || !puedeEditarCalificaciones">
@@ -562,12 +497,9 @@
             *matCellDef="let estudiante; let i = index"
             [ngClass]="{
               bajoPromedio:
-                this.examen != 0 &&
-                this.examen < 6 &&
-                this.promedio < 6 &&
-                this.promedio != 0 &&
-                this.promedioT3 != 0 &&
-                this.promedioT3 < 6
+                ((this.promedio < 6 && this.promedio != 0) ||
+                  (this.promedioT3 < 6 && this.promedioT3 != 0)) &&
+                this.examen == '-'
             }"
           >
             <b *ngIf="!rolConPermisosEdicion || !puedeEditarCalificaciones">
@@ -589,12 +521,9 @@
             *matCellDef="let estudiante; let i = index"
             [ngClass]="{
               bajoPromedio:
-                this.examen != 0 &&
-                this.examen < 6 &&
-                this.promedio < 6 &&
-                this.promedio != 0 &&
-                this.promedioT3 != 0 &&
-                this.promedioT3 < 6
+                ((this.promedio < 6 && this.promedio != 0) ||
+                  (this.promedioT3 < 6 && this.promedioT3 != 0)) &&
+                this.examen == '-'
             }"
           >
             <b *ngIf="!(contadorNotasValidas(i) == 0); else sinNotas">
@@ -617,12 +546,9 @@
             *matCellDef="let estudiante; let i = index"
             [ngClass]="{
               bajoPromedio:
-                this.examen != 0 &&
-                this.examen < 6 &&
-                this.promedio < 6 &&
-                this.promedio != 0 &&
-                this.promedioT3 != 0 &&
-                this.promedioT3 < 6
+                ((this.promedio < 6 && this.promedio != 0) ||
+                  (this.promedioT3 < 6 && this.promedioT3 != 0)) &&
+                this.examen == '-'
             }"
           >
             <b>
