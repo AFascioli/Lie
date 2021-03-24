@@ -82,6 +82,7 @@ export class InscripcionEstudianteComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.unsubscribe))
       .subscribe((response) => {
         this.estudianteEstaInscripto = response.exito;
+        this.documentosEntregados = response.documentos;
       });
     this.servicioCicloLectivo
       .obtenerActualYSiguiente()
@@ -171,14 +172,14 @@ export class InscripcionEstudianteComponent implements OnInit, OnDestroy {
         if (exito) {
           this.inscripto = true;
           this.capacidadCurso--;
-          this.snackBar.open(response.message, "", {
-            panelClass: ["snack-bar-exito"],
-            duration: 3500,
-          });
-          this.obtenerCursosEstudiante();
+          // this.obtenerCursosEstudiante();
           setTimeout(() => {
+            this.snackBar.open(response.message, "", {
+              panelClass: ["snack-bar-exito"],
+              duration: 3500,
+            });
             this.router.navigate(["./buscar/lista"]);
-          }, 3500);
+          }, 7500);
         } else {
           this.snackBar.open(response.message, "", {
             duration: 4500,
@@ -201,10 +202,10 @@ export class InscripcionEstudianteComponent implements OnInit, OnDestroy {
             panelClass: ["snack-bar-exito"],
             duration: 3500,
           });
-          this.obtenerCursosEstudiante();
-          setTimeout(() => {
+          // this.obtenerCursosEstudiante();
+          // setTimeout(() => {
+          // }, 3500);
             this.router.navigate(["./buscar/lista"]);
-          }, 3500);
         } else {
           this.snackBar.open(response.message, "", {
             duration: 4500,

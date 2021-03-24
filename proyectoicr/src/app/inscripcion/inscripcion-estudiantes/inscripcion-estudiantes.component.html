@@ -102,6 +102,7 @@
           </mat-panel-title>
         </mat-expansion-panel-header>
         <mat-checkbox
+          [checked]="this.documentosEntregados[0].entregado"
           (change)="registrarDocumento(0)"
           [disabled]="nextYearSelect"
         >
@@ -109,6 +110,7 @@
         >
         <br />
         <mat-checkbox
+        [checked]="this.documentosEntregados[1].entregado"
           (change)="registrarDocumento(1)"
           [disabled]="nextYearSelect"
         >
@@ -116,6 +118,7 @@
         >
         <br />
         <mat-checkbox
+        [checked]="this.documentosEntregados[2].entregado"
           (change)="registrarDocumento(2)"
           [disabled]="nextYearSelect"
         >

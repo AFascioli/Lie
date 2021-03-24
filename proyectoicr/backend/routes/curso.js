@@ -1211,7 +1211,7 @@ router.get("/estudiante", checkAuthMiddleware, async (req, res) => {
       ],
     },
   })
-    .then((inscripcion) => {
+    .then((inscripcion) => {      
       if (inscripcion) {
         Curso.findById(inscripcion.idCurso).then((cursoDeEstudiante) => {
           return res.status(200).json({
@@ -1390,7 +1390,6 @@ router.get("/materias", checkAuthMiddleware, (req, res) => {
 //@params: id curso al que se lo quiere inscribir
 //@params: array documentos entregados en inscripcion: true si se entregó ese documente
 router.post("/inscripcion", checkAuthMiddleware, async (req, res) => {
-  //Dado una id de curso, encuentra todos los datos del mismo
   try {
     if (
       ClaseInscripcion.inscribirEstudiante(

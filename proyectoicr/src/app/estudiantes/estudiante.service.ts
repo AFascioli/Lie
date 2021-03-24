@@ -130,7 +130,7 @@ export class EstudiantesService implements OnDestroy {
   //@params: id del estudiante
   public estudianteEstaInscripto(idEstudiante: string) {
     let params = new HttpParams().set("idEstudiante", idEstudiante);
-    return this.http.get<{ message: string; exito: boolean }>(
+    return this.http.get<{ message: string; exito: boolean, documentos: any[] }>(
       environment.apiUrl + "/estudiante/curso",
       { params: params }
     );

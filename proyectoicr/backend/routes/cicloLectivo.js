@@ -16,13 +16,13 @@ router.get("/parametros", checkAuthMiddleware, async (req, res) => {
         res.status(200).json({
           cicloLectivo: cicloLectivo,
           message:
-            "Se han obtenido los parámetros correspondientes a este año exitosamente",
+            "Se han obtenido los parámetros correspondientes al año siguiente exitosamente",
           exito: true,
         });
       } else {
         res.status(200).json({
           message:
-            "No se han obtenido los parámetros correspondientes a este año",
+            "No se han obtenido los parámetros correspondientes al año siguiente",
           exito: false,
         });
       }
@@ -53,7 +53,7 @@ router.post("/parametros", checkAuthMiddleware, async (req, res) => {
       res.status(200).json({
         cicloLectivo: cicloLectivo,
         message:
-          "Se han guardado los parámetros correspondientes a este año exitosamente",
+          "Se han guardado los parámetros correspondientes al año siguiente exitosamente",
         exito: true,
       });
     })

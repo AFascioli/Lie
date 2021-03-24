@@ -258,6 +258,7 @@ router.get("/curso", checkAuthMiddleware, async (req, res) => {
         message:
           "El estudiante seleccionado ya se encuentra inscripto en un curso",
         exito: true,
+        documentos: inscripcion.documentosEntregados,
       });
     }
 

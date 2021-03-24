@@ -21,6 +21,19 @@ exports.cursosTienenAgenda = async () => {
           cursosSinAgenda.push({ _id: curso._id, nombre: curso.nombre });
         }
       });
+
+      cursosSinAgenda.sort((a, b) =>
+      a.nombre.charAt(0) > b.nombre.charAt(0)
+        ? 1
+        : b.nombre.charAt(0) > a.nombre.charAt(0)
+        ? -1
+        : a.nombre.charAt(1) > b.nombre.charAt(1)
+        ? 1
+        : b.nombre.charAt(1) > a.nombre.charAt(1)
+        ? -1
+        : 0
+    );
+
       resolve(cursosSinAgenda);
     });
   });
@@ -346,6 +359,19 @@ exports.materiasSinCerrar = (trimestre) => {
           materia: inscripcion.datosMateria[0].nombre,
         });
       }
+
+      materiasNoCerrada.sort((a, b) =>
+      a.curso.charAt(0) > b.curso.charAt(0)
+        ? 1
+        : b.curso.charAt(0) > a.curso.charAt(0)
+        ? -1
+        : a.curso.charAt(1) > b.curso.charAt(1)
+        ? 1
+        : b.curso.charAt(1) > a.curso.charAt(1)
+        ? -1
+        : 0
+    );
+
       resolve(materiasNoCerrada);
     }
   });

@@ -24,7 +24,7 @@
           >
             {{ estudiante.tipoDocumento }}: {{ estudiante.numeroDocumento }}</b
           >
-          <b class="titulo-expansion-panel" *ngIf="!mobileQuery.matches"
+          <b class="titulo-expansion-panel" *ngIf="!mobileQuery.matches && inscripto[i]"
             >&nbsp; -&nbsp;</b
           >
           <b
@@ -157,3 +157,9 @@
     >
   </p>
 </mat-card>
+<div *ngIf="isLoading" class="loading-overlay">
+  <div class="loading-div">
+    <mat-spinner class="spinner" [diameter]="60"></mat-spinner>
+    <p class="loading-text">Cargando</p>
+  </div>
+</div>

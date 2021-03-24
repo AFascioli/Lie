@@ -16,6 +16,7 @@ export class ParametrizarReglasNegocioComponent implements OnInit {
   cantidadMateriasInscripcionLibre: number;
   estadoCiclo: string;
   aniosCiclos;
+  isLoading = false;
 
   private unsubscribe: Subject<void> = new Subject();
 
@@ -25,6 +26,7 @@ export class ParametrizarReglasNegocioComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.isLoading = true;
     this.servicioCicloLectivo
       .obtenerActualYSiguiente()
       .pipe(takeUntil(this.unsubscribe))
@@ -42,6 +44,8 @@ export class ParametrizarReglasNegocioComponent implements OnInit {
           response.cicloLectivo.cantidadFaltasSuspension;
         this.cantidadMateriasInscripcionLibre =
           response.cicloLectivo.cantidadMateriasInscripcionLibre;
+
+        this.isLoading = false;
       });
   }
 
@@ -52,6 +56,7 @@ export class ParametrizarReglasNegocioComponent implements OnInit {
       this.horaLlegadaTarde &&
       this.horaRetiroAnticipado
     ) {
+      this.isLoading = true;
       this.servicioCicloLectivo
         .guardarParametros(
           this.cantidadFaltasSuspension,
@@ -62,6 +67,7 @@ export class ParametrizarReglasNegocioComponent implements OnInit {
         .pipe(takeUntil(this.unsubscribe))
         .subscribe(
           (response) => {
+            this.isLoading = false;
             this.snackBar.open(response.message, "", {
               panelClass: ["snack-bar-exito"],
               duration: 4500,
@@ -79,6 +85,19 @@ export class ParametrizarReglasNegocioComponent implements OnInit {
         panelClass: ["snack-bar-fracaso"],
         duration: 4500,
       });
+    }
+  }
+
+  //Chequea que solo se puedan tipear numeros
+  checkNumeros(event) {
+    var inputValue = event.which;
+
+    if (
+      !(inputValue >= 48 && inputValue <= 57) &&
+      inputValue != 32 &&
+      inputValue != 0
+    ) {
+      event.preventDefault();
     }
   }
 }

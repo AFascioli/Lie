@@ -76,7 +76,7 @@ export class ListaEstudiantesComponent implements OnInit, OnDestroy {
       .subscribe((estudiantesBuscados) => {
         this.verificarEstadoCiclo();
         this.estudiantes = estudiantesBuscados;
-        this.isLoading = false;
+        this.isLoading = this.estudiantes.length > 0;
         for (let i = 0; i < estudiantesBuscados.length; i++) {
           this.servicio
             .obtenerCursoDeEstudianteById(this.estudiantes[i]._id)
@@ -103,8 +103,10 @@ export class ListaEstudiantesComponent implements OnInit, OnDestroy {
                     this.suspendido[i] = response.exito;
                   });
               }
+
             });
-        }
+          }
+          this.isLoading = false;
       });
 
     if (!this.servicio.retornoDesdeAcciones) {
@@ -118,20 +120,21 @@ export class ListaEstudiantesComponent implements OnInit, OnDestroy {
         this.permisos = response.permisos;
         this.isLoading = false;
       });
-    this.rol = this.authService.getRol();
-    if (this.rol == "Docente") {
-      this.authService
-        .obtenerIdEmpleado(this.authService.getId())
-        .subscribe((response) => {
-          this.servicio
-            .obtenerCursosDeDocente(response.id)
-            .subscribe((response2) => {
-              response2.cursos.forEach((objetoCurso) => {
-                this.cursosDeDocente.push(objetoCurso.nombre);
-              });
-            });
-        });
-    }
+    // this.rol = this.authService.getRol();
+
+    // if (this.rol == "Docente") {
+    //   this.authService
+    //     .obtenerIdEmpleado(this.authService.getId())
+    //     .subscribe((response) => {
+    //       this.servicio
+    //         .obtenerCursosDeDocente(response.id)
+    //         .subscribe((response2) => {
+    //           response2.cursos.forEach((objetoCurso) => {
+    //             this.cursosDeDocente.push(objetoCurso.nombre);
+    //           });
+    //         });
+    //     });
+    // }
   }
 
   verificarEstadoCiclo() {
@@ -205,7 +208,7 @@ export class ListaEstudiantesComponent implements OnInit, OnDestroy {
       .subscribe((result) => {
         if (result) {
           this.router.navigate(["./altaAdultoResponsable"]);
-        } else {
+        } else if (result === false) {
           this.router.navigate(["./asociarAdultoResponsable"]);
         }
       });
@@ -295,11 +298,7 @@ export class ReincorporarPopupComponent {
   styleUrls: ["../buscar-estudiantes/buscar-estudiantes.component.css"],
 })
 export class AsociarAdultoResponsablePopupComponent {
-  constructor(
-    public dialogRef: MatDialogRef<ReincorporarPopupComponent>,
-    public router: Router,
-    public servicio: EstudiantesService
-  ) {}
+  constructor(public dialogRef: MatDialogRef<ReincorporarPopupComponent>) {}
 
   addNewOne(): void {
     this.dialogRef.close(true);
