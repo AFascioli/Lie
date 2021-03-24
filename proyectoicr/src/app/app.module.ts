@@ -136,7 +136,10 @@ import { SolicitudReunionComponent } from "./solicitud-reunion/solicitud-reunion
 import { SolicitudReunionAdultoResponsableComponent } from "./solicitud-reunion-adulto-responsable/solicitud-reunion-adulto-responsable.component";
 import { AsociarAdultoResponsableComponent } from "./adulto-responsable/asociar-adulto-responsable/asociar-adulto-responsable.component";
 import { ModificarAdultoResponsableComponent } from "./adulto-responsable/modificar-adulto-responsable/modificar-adulto-responsable.component";
-import { BuscarAdultoResponsableComponent } from "./adulto-responsable/buscar-adulto-responsable/buscar-adulto-responsable.component";
+import {
+  BorrarPersonaPopupComponent,
+  BuscarAdultoResponsableComponent,
+} from "./adulto-responsable/buscar-adulto-responsable/buscar-adulto-responsable.component";
 import { AccionesDirectorComponent } from "./acciones-director/acciones-director.component";
 import { ParametrizarReglasNegocioComponent } from "./acciones-director/parametrizar-reglas-negocio/parametrizar-reglas-negocio.component";
 import {
@@ -157,7 +160,7 @@ import {
   AbmMateriaComponent,
   AbmMateriaPopupComponent,
 } from "./materia/abm-materia/abm-materia.component";
-import { PromedioCursosComponent } from './reportes/promedio-cursos/promedio-cursos.component';
+import { PromedioCursosComponent } from "./reportes/promedio-cursos/promedio-cursos.component";
 
 @NgModule({
   declarations: [
@@ -190,6 +193,7 @@ import { PromedioCursosComponent } from './reportes/promedio-cursos/promedio-cur
     LlegadaTardeComponent,
     CambiarPassword,
     CambiarPasswordPopupComponent,
+    BorrarPersonaPopupComponent,
     CerrarSesionPopupComponent,
     PerfilEstudianteComponent,
     CalificacionesPerfilEstudianteComponent,
@@ -249,6 +253,7 @@ import { PromedioCursosComponent } from './reportes/promedio-cursos/promedio-cur
     MostrarPopupComponent,
     BorrarPopupComponent,
     AsistenciaPopupComponent,
+    BorrarPersonaPopupComponent,
     CalificacionesEstudiantePopupComponent,
     PerfilEstudiantePopupComponent,
     BuscarPopupComponent,

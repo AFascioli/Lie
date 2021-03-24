@@ -1,10 +1,10 @@
 import { EstudiantesService } from "src/app/estudiantes/estudiante.service";
 import { AdultoResponsableService } from "../adultoResponsable.service";
-import { Component, OnInit } from "@angular/core";
+import { Component, Inject, OnInit } from "@angular/core";
 import { takeUntil } from "rxjs/operators";
 import { NgForm } from "@angular/forms";
 import { Subject } from "rxjs";
-import { MatDialog, MatSnackBar } from "@angular/material";
+import { MatDialog, MatDialogRef, MatSnackBar, MAT_DIALOG_DATA } from "@angular/material";
 import { browserRefresh } from "src/app/app.component";
 import { Router } from "@angular/router";
 import { EmpleadoService } from "src/app/empleado/empleado.service";
@@ -250,26 +250,37 @@ export class BuscarAdultoResponsableComponent implements OnInit {
   }
 
   onDelete(row) {
-    this.servicioAdultoResponsable
-      .deletePersona(
-        this.buscarAdulto ? "AdultoResponsable" : "Empleado",
-        this.personasFiltradas[row]._id,
-        this.personasFiltradas[row].idUsuario
-      )
-      .subscribe((response) => {
-        if (response.exito) {
-          this.personasFiltradas.splice(row, 1);
-          this.snackBar.open(response.message, "", {
-            panelClass: ["snack-bar-exito"],
-            duration: 4000,
-          });
-        } else {
-          this.snackBar.open(response.message, "", {
-            panelClass: ["snack-bar-fracaso"],
-            duration: 4000,
-          });
-        }
-      });
+    let popup = this.dialog.open(BorrarPersonaPopupComponent, {
+      width: "250px",
+      data: {
+        rolPersona: this.buscarAdulto ? "Adulto responsable" : "Empleado"
+      },
+    });
+
+    popup.afterClosed().subscribe((borrar) => {
+      if(borrar){
+      this.servicioAdultoResponsable
+        .deletePersona(
+          this.buscarAdulto ? "adultoResponsable" : "empleado",
+          this.personasFiltradas[row]._id,
+          this.personasFiltradas[row].idUsuario
+        )
+        .subscribe((response) => {
+          if (response.exito) {
+            this.personasFiltradas.splice(row, 1);
+            this.snackBar.open(response.message, "", {
+              panelClass: ["snack-bar-exito"],
+              duration: 4000,
+            });
+          } else {
+            this.snackBar.open(response.message, "", {
+              panelClass: ["snack-bar-fracaso"],
+              duration: 4000,
+            });
+          }
+        });
+      }
+    })
   }
 
   ngOnDestroy() {
@@ -282,5 +293,28 @@ export class BuscarAdultoResponsableComponent implements OnInit {
     this.servicioAdultoResponsable.retornoDesdeAcciones = false;
     this.servicioAdultoResponsable.personaSeleccionada = null;
     this.router.navigate(["./home"]);
+  }
+}
+
+@Component({
+  selector: "app-borrar-persona-popup",
+  templateUrl: "./borrar-persona-popup.component.html",
+  styleUrls: ["../../estudiantes/mostrar-estudiantes/mostrar-estudiantes.component.css"],
+})
+export class BorrarPersonaPopupComponent {
+  rolPersona: string;
+  constructor(
+    public dialogRef: MatDialogRef<BorrarPersonaPopupComponent>,
+    @Inject(MAT_DIALOG_DATA) data
+  ) {
+    this.rolPersona = data.rolPersona;
+  }
+
+  onYesClick(): void {
+    this.dialogRef.close(true);
+  }
+
+  onNoClick(): void {
+    this.dialogRef.close(false);
   }
 }

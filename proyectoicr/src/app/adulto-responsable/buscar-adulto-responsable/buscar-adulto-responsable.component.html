@@ -149,7 +149,7 @@
             Teléfono
           </th>
           <td class="columnas-normales" mat-cell *matCellDef="let tutor">
-            {{ tutor.telefono }}
+            {{ tutor.telefono ? tutor.telefono : "-" }}
           </td>
         </ng-container>
         <ng-container matColumnDef="tipoDocumento">
@@ -170,7 +170,7 @@
         </ng-container>
         <ng-container matColumnDef="editar">
           <th class="columnas-normales" mat-header-cell *matHeaderCellDef>
-            Editar
+            Acciones
           </th>
           <td
             class="columnas-normales"

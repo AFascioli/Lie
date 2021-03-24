@@ -9,6 +9,7 @@ import { Router } from "@angular/router";
 import { Subject } from "rxjs";
 import { takeUntil } from "rxjs/operators";
 import { EmpleadoService } from "src/app/empleado/empleado.service";
+import { AutenticacionService } from "src/app/login/autenticacionService.service";
 
 @Component({
   selector: "app-modificar-adulto-responsable",
@@ -23,6 +24,8 @@ export class ModificarAdultoResponsableComponent implements OnInit {
   maxDate = new Date();
   private unsubscribe: Subject<void> = new Subject();
   esEmpleado=false;
+  esPreceptor: boolean;
+  isLoading=false;
 
   constructor(
     public servicioAR: AdultoResponsableService,
@@ -30,6 +33,7 @@ export class ModificarAdultoResponsableComponent implements OnInit {
     public media: MediaMatcher,
     public changeDetectorRef: ChangeDetectorRef,
     public servicioUbicacion: UbicacionService,
+    public servicioAuth: AutenticacionService,
     public snackBar: MatSnackBar,
     public router: Router
   ) {
@@ -41,12 +45,14 @@ export class ModificarAdultoResponsableComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.esPreceptor = this.servicioAuth.getRol() == "Preceptor"    
     this.esEmpleado= !this.servicioAR.buscoAR;
     this.persona = this.servicioAR.personaSeleccionada;    
     this.obtenerNacionalidades();
   }
 
   obtenerNacionalidades() {
+    this.isLoading=true;
     this.servicioUbicacion.getNacionalidades();
     this.servicioUbicacion
       .getNacionalidadesListener()
@@ -55,6 +61,7 @@ export class ModificarAdultoResponsableComponent implements OnInit {
         this.nacionalidades.sort((a, b) =>
           a.name > b.name ? 1 : b.name > a.name ? -1 : 0
         );
+        this.isLoading=false;
       });
   }
 
@@ -91,12 +98,14 @@ export class ModificarAdultoResponsableComponent implements OnInit {
 
   onGuardar(form: NgForm) {
     if (form.valid) {
+      this.isLoading=true;
       if(this.esEmpleado){
         this.servicioEmpleado
           .modificarEmpleado(this.persona)
           .pipe(takeUntil(this.unsubscribe))
           .subscribe(
             (response) => {
+              this.isLoading=false;
               if (response.exito) {
                 this.snackBar.open(response.message, "", {
                   panelClass: ["snack-bar-exito"],
@@ -116,6 +125,7 @@ export class ModificarAdultoResponsableComponent implements OnInit {
           .pipe(takeUntil(this.unsubscribe))
           .subscribe(
             (response) => {
+              this.isLoading=false;
               if (response.exito) {
                 this.snackBar.open(response.message, "", {
                   panelClass: ["snack-bar-exito"],
@@ -138,7 +148,7 @@ export class ModificarAdultoResponsableComponent implements OnInit {
     }
   }
 
-  onVolver(form: NgForm){
+  onVolver(){
     this.router.navigate(["./buscarPersona"]);
     this.servicioAR.retornoDesdeAcciones=true;
   }

@@ -160,7 +160,7 @@
       >
         Tutor
       </mat-checkbox>
-      <mat-form-field [class.mat-form-field-mobile]="mobileQuery.matches" *ngIf="esEmpleado">
+      <mat-form-field [class.mat-form-field-mobile]="mobileQuery.matches" *ngIf="esEmpleado && !esPreceptor">
         <mat-select
           placeholder="Seleccione tipo empleado"
           [(ngModel)]="persona.tipoEmpleado"
@@ -168,7 +168,6 @@
           ngModel
           #tipoEmpleado="ngModel"
           matNativeControl
-          
         >
         <mat-option value="Director">Director</mat-option>
         <mat-option value="Preceptor">Preceptor</mat-option>
@@ -184,9 +183,15 @@
       >
         Guardar
       </button>
-      <button mat-raised-button  (click)="onVolver(form)" class="button-warn">
+      <button mat-raised-button  (click)="onVolver()" class="button-warn">
         Volver
       </button>
     </div>
   </form>
 </mat-card>
+<div *ngIf="isLoading" class="loading-overlay">
+  <div class="loading-div">
+    <mat-spinner class="spinner" [diameter]="60"></mat-spinner>
+    <p class="loading-text">Cargando</p>
+  </div>
+</div>
