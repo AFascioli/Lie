@@ -2,10 +2,6 @@
   Registrar asistencia ciclo lectivo {{ aniosCiclos[0] }}
 </h1>
 <mat-card class="card-body-componente">
-  <div *ngIf="isLoading">
-    <mat-spinner class="spinner" [diameter]="60"></mat-spinner>
-  </div>
-  <div *ngIf="!isLoading">
     <div class="div-curso-fecha">
       <mat-form-field class="curso">
         <mat-select
@@ -44,14 +40,9 @@
       Atención, ya se ha tomado asistencia para este curso el día de hoy.
     </p>
     <br />
-    <mat-spinner
-      *ngIf="isLoadingStudents && !cursoNotSelected"
-      class="spinner"
-      [diameter]="60"
-    ></mat-spinner>
     <div
       class="contenedor-tabla"
-      *ngIf="!cursoNotSelected && !isLoadingStudents"
+      *ngIf="!cursoNotSelected"
     >
       <table
         mat-table
@@ -139,5 +130,10 @@
         Cancelar
       </button>
     </div>
-  </div>
 </mat-card>
+<div *ngIf="isLoading" class="loading-overlay">
+  <div class="loading-div">
+    <mat-spinner class="spinner" [diameter]="60"></mat-spinner>
+    <p class="loading-text">Cargando</p>
+  </div>
+</div>

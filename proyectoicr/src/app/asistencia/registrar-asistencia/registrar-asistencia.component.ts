@@ -25,7 +25,6 @@ export class RegistrarAsistenciaComponent implements OnInit, OnDestroy {
   fueraPeriodoCicloLectivo = false;
   isLoading = true;
   private unsubscribe: Subject<void> = new Subject();
-  isLoadingStudents: boolean = true;
   idSuspendido: string;
   aniosCiclos;
 
@@ -49,16 +48,16 @@ export class RegistrarAsistenciaComponent implements OnInit, OnDestroy {
           .subscribe((response) => {
             this.cursos = response.cursos;
             this.cursos.sort((a, b) =>
-            a.nombre.charAt(0) > b.nombre.charAt(0)
-              ? 1
-              : b.nombre.charAt(0) > a.nombre.charAt(0)
-              ? -1
-              : a.nombre.charAt(1) > b.nombre.charAt(1)
-              ? 1
-              : b.nombre.charAt(1) > a.nombre.charAt(1)
-              ? -1
-              : 0
-          );
+              a.nombre.charAt(0) > b.nombre.charAt(0)
+                ? 1
+                : b.nombre.charAt(0) > a.nombre.charAt(0)
+                ? -1
+                : a.nombre.charAt(1) > b.nombre.charAt(1)
+                ? 1
+                : b.nombre.charAt(1) > a.nombre.charAt(1)
+                ? -1
+                : 0
+            );
             this.isLoading = false;
           });
       });
@@ -82,6 +81,7 @@ export class RegistrarAsistenciaComponent implements OnInit, OnDestroy {
 
   //Busca los estudiantes segun el curso que se selecciono en pantalla. Los orden alfabeticamente
   onCursoSeleccionado(curso) {
+    this.isLoading = true;
     this.cursoNotSelected = false;
     this.servicioAsistencia
       .cargarAsistencia(curso.value)
@@ -99,7 +99,7 @@ export class RegistrarAsistenciaComponent implements OnInit, OnDestroy {
         } else {
           this.estudiantesXDivision = [];
         }
-        this.isLoadingStudents = false;
+        this.isLoading = false;
       });
   }
 
@@ -114,10 +114,12 @@ export class RegistrarAsistenciaComponent implements OnInit, OnDestroy {
 
   //Envia al servicioEstudiante el vector con los datos de los estudiantes y el presentismo
   onGuardar() {
+    this.isLoading = true;
     this.servicioAsistencia
       .registrarAsistencia(this.estudiantesXDivision, this.asistenciaNueva)
       .pipe(takeUntil(this.unsubscribe))
       .subscribe((response) => {
+        this.isLoading = false;
         this.snackBar.open(response.message, "", {
           panelClass: ["snack-bar-exito"],
           duration: 4500,

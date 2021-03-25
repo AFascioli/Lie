@@ -201,9 +201,10 @@ router.delete("/borrar", checkAuthMiddleware, async (req, res, next) => {
           { estado: idEstadoExamenesPendientes },
         ],
       }).then(async (inscripcion) => {
+        
         if (inscripcion && inscripcion.length > 0) {
           for (let index = 0; index < inscripcion.length; index++) {
-            inscripcion.estado = idEstadoInactiva;
+            inscripcion[index].estado = idEstadoInactiva;
             await inscripcion[index].save();
             let curso = await Curso.findById(inscripcion[index].idCurso);
             curso.capacidad += 1;
