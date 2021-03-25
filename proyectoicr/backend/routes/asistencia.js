@@ -369,18 +369,23 @@ router.post("", checkAuthMiddleware, async (req, res) => {
                   });
               } else {
                 // Si la ultima asistencia si es de hoy
-                //Si estaba presente en la bd y se cambio a ausente incrementa contador inasistencia
-                if (asistencia.presente && !estudiante.presente) {
+                // Si estaba presente en la bd y se cambio a ausente incrementa contador inasistencia
+                // Solo si no se retiro antes
+                if ( asistencia.presente && !estudiante.presente && !asistencia.retiroAnticipado) {
                   idsEstudiantes.push(estudiante._id);
                   AsistenciaDiaria.findByIdAndUpdate(asistencia._id, {
                     presente: estudiante.presente,
-                  }).then(() => {
+                  }).then((asistencia) => {
+                    let nuevoValorInasistencia = 1;
+                    if (asistencia.llegadaTarde) {
+                      nuevoValorInasistencia = 0.5
+                    } 
                     Inscripcion.findOneAndUpdate(
                       {
                         idEstudiante: estudiante._id,
                         estado: idEstadoActiva,
                       },
-                      { $inc: { contadorInasistenciasInjustificada: 1 } }
+                      { $inc: { contadorInasistenciasInjustificada: nuevoValorInasistencia } }
                     ).exec();
                   });
                   setTimeout(function () {
@@ -719,6 +724,7 @@ router.post("/llegadaTarde", checkAuthMiddleware, async (req, res) => {
                 //Estaba registrado como ausente
                 ultimaAD.presente = true;
                 estudianteAusente = true; //Si el estudiante estuvo ausente, no se le deberia sumar mas inasistencia
+                inscripcion.contadorInasistenciasInjustificada--; // El estudiante estuvo ausente pero pasa a presente, resta al contador.
               }
             } else {
               return res.status(200).json({
@@ -767,11 +773,8 @@ router.post("/llegadaTarde", checkAuthMiddleware, async (req, res) => {
                 });
               });
             } else {
-              if (!estudianteAusente) {
-                //Si el estudiante estuvo ausente, no se le deberia sumar mas inasistencia porque ya se le sumo cuando se le toma asistencia
-                inscripcion.contadorInasistenciasInjustificada =
-                  inscripcion.contadorInasistenciasInjustificada + 0.5;
-              }
+              inscripcion.contadorInasistenciasInjustificada =
+                inscripcion.contadorInasistenciasInjustificada + 0.5;
               if (ADcreada != null) {
                 inscripcion.asistenciaDiaria.push(ADcreada._id);
               }

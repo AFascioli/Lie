@@ -1,9 +1,6 @@
 <h1 class="componente-titulo">Justificar inasistencia</h1>
-<mat-card class="card-spinner" *ngIf="isLoading">
-  <mat-spinner class="spinner" [diameter]="60"></mat-spinner>
-</mat-card>
 
-<mat-card class="card-body-componente" *ngIf="!isLoading">
+<mat-card class="card-body-componente">
   <form #form="ngForm">
     <div class="contenido">
       <div *ngIf="ultimasInasistencias.length == 0">
@@ -44,3 +41,9 @@
     </div>
   </form>
 </mat-card>
+<div *ngIf="isLoading" class="loading-overlay">
+  <div class="loading-div">
+    <mat-spinner class="spinner" [diameter]="60"></mat-spinner>
+    <p class="loading-text">Cargando</p>
+  </div>
+</div>

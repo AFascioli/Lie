@@ -50,6 +50,7 @@ export class JustificacionInasistenciaComponent implements OnInit, OnDestroy {
 
   justificarInasistencia() {
     if (this.huboCambios()) {
+      this.isLoading = true;
       this.servicioAsistencia
         .justificarInasistencia(this.ultimasInasistencias)
         .pipe(takeUntil(this.unsubscribe))

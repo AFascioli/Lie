@@ -1,9 +1,5 @@
 <h1 class="componente-titulo">Registrar retiro anticipado</h1>
-<mat-card class="cardSpinner" *ngIf="isLoading">
-  <mat-spinner class="spinner" [diameter]="60"></mat-spinner>
-</mat-card>
-
-<mat-card class="card-body-componente" *ngIf="!isLoading">
+<mat-card class="card-body-componente">
   <p class="aviso" *ngIf="fueraPeriodoCicloLectivo">
     Atención, no se puede registrar el retiro anticipado debido a que estamos
     fuera del ciclo lectivo
@@ -138,3 +134,9 @@
     </button>
   </div>
 </mat-card>
+<div *ngIf="isLoading" class="loading-overlay">
+  <div class="loading-div">
+    <mat-spinner class="spinner" [diameter]="60"></mat-spinner>
+    <p class="loading-text">Cargando</p>
+  </div>
+</div>

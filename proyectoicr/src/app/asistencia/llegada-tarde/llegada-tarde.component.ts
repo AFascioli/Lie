@@ -23,6 +23,7 @@ export class LlegadaTardeComponent implements OnInit, OnDestroy {
   mobileQuery: MediaQueryList;
   horaLlegadaTarde;
   fueraPeriodoCicloLectivo: Boolean = false;
+  isLoading = true;
 
   constructor(
     public servicioEstudiante: EstudiantesService,
@@ -46,6 +47,7 @@ export class LlegadaTardeComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.unsubscribe))
       .subscribe((response) => {
         this.horaLlegadaTarde = response.hora;
+        this.isLoading = false;
       });
     if (this.fechaActual.getHours() < this.horaLlegadaTarde) {
       this.antesHorario = true;
@@ -88,6 +90,7 @@ export class LlegadaTardeComponent implements OnInit, OnDestroy {
   }
 
   onGuardar() {
+    this.isLoading = true;
     this.servicioAsistencia
       .registrarLlegadaTarde(this.antesHorario)
       .pipe(takeUntil(this.unsubscribe))
@@ -103,6 +106,7 @@ export class LlegadaTardeComponent implements OnInit, OnDestroy {
             duration: 4500,
           });
         }
+        this.isLoading = false;
       });
   }
 

@@ -120,6 +120,7 @@ export class RetiroAnticipadoComponent implements OnInit {
 
   onGuardar() {
     if (this.tutores.length == 0 || this.seleccion.selected.length > 0) {
+      this.isLoading = true;
       this.servicioAsistencia
         .registrarRetiroAnticipado(
           this._idEstudiante,
@@ -129,6 +130,7 @@ export class RetiroAnticipadoComponent implements OnInit {
         .pipe(takeUntil(this.unsubscribe))
         .subscribe((response) => {
           let resultadoOperacion = response.exito;
+          this.isLoading = false;
           if (resultadoOperacion == "exito") {
             this.snackBar.open(response.message, "", {
               panelClass: ["snack-bar-exito"],
