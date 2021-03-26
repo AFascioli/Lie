@@ -529,6 +529,7 @@ notificarPorEvento = async function (tags, titulo, cuerpo) {
 
 //Retorna los eventos en donde formaron parte el array de ids de estudiantes provisto
 router.post("/curso", checkAuthMiddleware, async (req, res) => {
+  const idCicloProximo= await ClaseCicloLectivo.obtenerIdCicloProximo()
   let idEstudiantes = req.body.idEstudiantes.map((idEstudiante) => {
     return mongoose.Types.ObjectId(idEstudiante);
   });
@@ -542,6 +543,7 @@ router.post("/curso", checkAuthMiddleware, async (req, res) => {
         idEstudiante: {
           $in: idEstudiantes,
         },
+        cicloLectivo: {$nin: [ idCicloProximo ]}
       },
     },
     {

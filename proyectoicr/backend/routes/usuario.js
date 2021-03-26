@@ -392,9 +392,8 @@ router.post(
         idUsuario: req.body.idUsuarioEmpleado,
       });
       if (!empleado) {
-        empleado = await Administrador.findOne({
-          idUsuario: req.body.idUsuarioEmpleado,
-        });
+        //Es user Admin
+        empleado = {apellido: "Admi", nombre: "Nistrador"}
       }
 
       Suscripcion.notificacionGrupal(

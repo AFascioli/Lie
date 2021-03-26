@@ -28,10 +28,11 @@ router.get("/documentos", checkAuthMiddleware, async (req, res) => {
     "Inscripcion",
     "Promovido"
   );
-  let idEstadoInactiva = await ClaseEstado.obtenerIdEstado(
+  let idEstadoLibre = await ClaseEstado.obtenerIdEstado(
     "Inscripcion",
-    "Inactiva"
+    "Libre"
   );
+
   Inscripcion.aggregate([
     {
       $match: {
@@ -43,7 +44,7 @@ router.get("/documentos", checkAuthMiddleware, async (req, res) => {
             mongoose.Types.ObjectId(idEstadoPromovidoConExPend),
             mongoose.Types.ObjectId(idEstadoExPendiente),
             mongoose.Types.ObjectId(idEstadoPromovido),
-            mongoose.Types.ObjectId(idEstadoInactiva),
+            mongoose.Types.ObjectId(idEstadoLibre),
           ],
         },
       },
@@ -136,9 +137,9 @@ router.get("/cuotas", checkAuthMiddleware, async (req, res) => {
     "Inscripcion",
     "Promovido"
   );
-  let idEstadoInactiva = await ClaseEstado.obtenerIdEstado(
+  let idEstadoLibre = await ClaseEstado.obtenerIdEstado(
     "Inscripcion",
-    "Inactiva"
+    "Libre"
   );
 
   Inscripcion.aggregate([
@@ -152,7 +153,7 @@ router.get("/cuotas", checkAuthMiddleware, async (req, res) => {
             mongoose.Types.ObjectId(idEstadoPromovidoConExPend),
             mongoose.Types.ObjectId(idEstadoExPendiente),
             mongoose.Types.ObjectId(idEstadoPromovido),
-            mongoose.Types.ObjectId(idEstadoInactiva),
+            mongoose.Types.ObjectId(idEstadoLibre),
           ],
         },
       },
@@ -225,10 +226,43 @@ router.get("/cuotas", checkAuthMiddleware, async (req, res) => {
 });
 
 router.get("/resumenAcademico", checkAuthMiddleware, async (req, res) => {
+  let idEstadoActiva = await ClaseEstado.obtenerIdEstado(
+    "Inscripcion",
+    "Activa"
+  );
+  let idEstadoSuspendido = await ClaseEstado.obtenerIdEstado(
+    "Inscripcion",
+    "Suspendido"
+  );
+  let idEstadoPromovidoConExPend = await ClaseEstado.obtenerIdEstado(
+    "Inscripcion",
+    "Promovido con examenes pendientes"
+  );
+  let idEstadoExPendiente = await ClaseEstado.obtenerIdEstado(
+    "Inscripcion",
+    "Examenes pendientes"
+  );
+  let idEstadoPromovido = await ClaseEstado.obtenerIdEstado(
+    "Inscripcion",
+    "Promovido"
+  );
+  let idEstadoLibre = await ClaseEstado.obtenerIdEstado("Inscripcion", "Libre");
+
   Inscripcion.aggregate([
     {
       $match: {
         idEstudiante: mongoose.Types.ObjectId(req.query.idEstudiante),
+        estado: {
+          $in: [
+            mongoose.Types.ObjectId(idEstadoActiva),
+            mongoose.Types.ObjectId(idEstadoSuspendido),
+            mongoose.Types.ObjectId(idEstadoPromovidoConExPend),
+            mongoose.Types.ObjectId(idEstadoPromovido),
+            mongoose.Types.ObjectId(idEstadoSuspendido),
+            mongoose.Types.ObjectId(idEstadoExPendiente),
+            mongoose.Types.ObjectId(idEstadoLibre),
+          ],
+        },
       },
     },
     {
@@ -420,6 +454,30 @@ router.get("/resumenAcademico", checkAuthMiddleware, async (req, res) => {
 //Retorna un array con cursos, donde cada uno tiene su promedio general, sus materias y sus respectivos promedios
 router.get("/cursos/promedios", async (req, res) => {
   try {
+    let idEstadoActiva = await ClaseEstado.obtenerIdEstado(
+      "Inscripcion",
+      "Activa"
+    );
+    let idEstadoSuspendido = await ClaseEstado.obtenerIdEstado(
+      "Inscripcion",
+      "Suspendido"
+    );
+    let idEstadoPromovidoConExPend = await ClaseEstado.obtenerIdEstado(
+      "Inscripcion",
+      "Promovido con examenes pendientes"
+    );
+    let idEstadoExPendiente = await ClaseEstado.obtenerIdEstado(
+      "Inscripcion",
+      "Examenes pendientes"
+    );
+    let idEstadoPromovido = await ClaseEstado.obtenerIdEstado(
+      "Inscripcion",
+      "Promovido"
+    );
+    let idEstadoLibre = await ClaseEstado.obtenerIdEstado(
+      "Inscripcion",
+      "Libre"
+    );
     let idCicloActual = await ClaseCicloLectivo.obtenerIdCicloActual();
     // let idCicloActual = "60206236bfaa2d1d007c9e92";//icr-test: Id de ciclo que tiene materias
 
@@ -427,6 +485,16 @@ router.get("/cursos/promedios", async (req, res) => {
       {
         $match: {
           cicloLectivo: mongoose.Types.ObjectId(idCicloActual),
+          estado: {
+            $in: [
+              mongoose.Types.ObjectId(idEstadoActiva),
+              mongoose.Types.ObjectId(idEstadoSuspendido),
+              mongoose.Types.ObjectId(idEstadoPromovidoConExPend),
+              mongoose.Types.ObjectId(idEstadoExPendiente),
+              mongoose.Types.ObjectId(idEstadoPromovido),
+              mongoose.Types.ObjectId(idEstadoLibre),
+            ],
+          },
         },
       },
       {
@@ -485,14 +553,26 @@ router.get("/cursos/promedios", async (req, res) => {
       }
       //Si ya esta en el array arrayCursos el curso de la inscripcion
       if (cursoPerteneciente) {
-        let promedioT1=ClaseCXM.obtenerPromedioDeTrimestre(inscripcion.datosCXT[0].calificaciones)
-        let promedioT2=ClaseCXM.obtenerPromedioDeTrimestre(inscripcion.datosCXT[1].calificaciones)
-        let promedioT3=ClaseCXM.obtenerPromedioDeTrimestre(inscripcion.datosCXT[2].calificaciones)
+        let promedioT1 = ClaseCXM.obtenerPromedioDeTrimestre(
+          inscripcion.datosCXT[0].calificaciones
+        );
+        let promedioT2 = ClaseCXM.obtenerPromedioDeTrimestre(
+          inscripcion.datosCXT[1].calificaciones
+        );
+        let promedioT3 = ClaseCXM.obtenerPromedioDeTrimestre(
+          inscripcion.datosCXT[2].calificaciones
+        );
         let total = 0;
         let cantPromedios = 0;
-        if(promedioT1!=0){total+=promedioT1, cantPromedios++}
-        if(promedioT2!=0){total+=promedioT2, cantPromedios++}
-        if(promedioT3!=0){total+=promedioT3, cantPromedios++}
+        if (promedioT1 != 0) {
+          (total += promedioT1), cantPromedios++;
+        }
+        if (promedioT2 != 0) {
+          (total += promedioT2), cantPromedios++;
+        }
+        if (promedioT3 != 0) {
+          (total += promedioT3), cantPromedios++;
+        }
         let seAgregoMateria = false;
         //Recorrer cada materia del curso
         for (const materia of cursoPerteneciente.materias) {
@@ -503,9 +583,7 @@ router.get("/cursos/promedios", async (req, res) => {
               .localeCompare(nombreMateriaInsc.toString()) == 0
           ) {
             seAgregoMateria = true;
-            materia.promedios.push(
-              total/cantPromedios
-            );
+            materia.promedios.push(total / cantPromedios);
           }
         }
         //Si no existe esa materia en ese curso, la materia con el primer promedio
@@ -513,30 +591,38 @@ router.get("/cursos/promedios", async (req, res) => {
           //Agregar al array
           cursoPerteneciente.materias.push({
             nombreMateria: nombreMateriaInsc,
-            promedios: [
-              total/cantPromedios
-            ],
+            promedios: [total / cantPromedios],
           });
         }
       } else {
         //Esto pasa si en el array arrayCursos no existe entrada para el curso
-        let promedioT1=ClaseCXM.obtenerPromedioDeTrimestre(inscripcion.datosCXT[0].calificaciones)
-        let promedioT2=ClaseCXM.obtenerPromedioDeTrimestre(inscripcion.datosCXT[1].calificaciones)
-        let promedioT3=ClaseCXM.obtenerPromedioDeTrimestre(inscripcion.datosCXT[2].calificaciones)
+        let promedioT1 = ClaseCXM.obtenerPromedioDeTrimestre(
+          inscripcion.datosCXT[0].calificaciones
+        );
+        let promedioT2 = ClaseCXM.obtenerPromedioDeTrimestre(
+          inscripcion.datosCXT[1].calificaciones
+        );
+        let promedioT3 = ClaseCXM.obtenerPromedioDeTrimestre(
+          inscripcion.datosCXT[2].calificaciones
+        );
         let total = 0;
         let cantPromedios = 0;
-        if(promedioT1!=0){total+=promedioT1, cantPromedios++}
-        if(promedioT2!=0){total+=promedioT2, cantPromedios++}
-        if(promedioT3!=0){total+=promedioT3, cantPromedios++}
+        if (promedioT1 != 0) {
+          (total += promedioT1), cantPromedios++;
+        }
+        if (promedioT2 != 0) {
+          (total += promedioT2), cantPromedios++;
+        }
+        if (promedioT3 != 0) {
+          (total += promedioT3), cantPromedios++;
+        }
 
         arrayCursos.push({
           nombreCurso: nombreCursoInsc,
           materias: [
             {
               nombreMateria: nombreMateriaInsc,
-              promedios: [
-                total/cantPromedios
-              ],
+              promedios: [total / cantPromedios],
             },
           ],
         });
@@ -550,7 +636,9 @@ router.get("/cursos/promedios", async (req, res) => {
         let total = materia.promedios.reduce((total, promedio) => {
           return total + promedio;
         }, 0);
-        materia.promedioMateria = parseFloat((total / materia.promedios.length).toFixed(2));
+        materia.promedioMateria = parseFloat(
+          (total / materia.promedios.length).toFixed(2)
+        );
         delete materia.promedios;
       }
 
@@ -558,7 +646,9 @@ router.get("/cursos/promedios", async (req, res) => {
       let totalCurso = curso.materias.reduce((total, materia) => {
         return total + materia.promedioMateria;
       }, 0);
-      curso.promedioGral = parseFloat((totalCurso / curso.materias.length).toFixed(2));
+      curso.promedioGral = parseFloat(
+        (totalCurso / curso.materias.length).toFixed(2)
+      );
     }
 
     res.status(200).json({

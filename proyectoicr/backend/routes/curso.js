@@ -168,7 +168,7 @@ router.post("/registrarSancion", checkAuthMiddleware, async (req, res) => {
             });
           });
         } else {
-          inscripcion.sanciones[indice].cantidad += req.body.cantidad;
+          inscripcion.sanciones[indice].cantidad += parseInt(req.body.cantidad, 10);
           inscripcion.save().then(() => {
             notificarSancion(
               req.body.idEstudiante,
@@ -2158,6 +2158,11 @@ router.get(
         "Pendiente"
       );
 
+      let idEstadoSuspendido = await ClaseEstado.obtenerIdEstado(
+        "Inscripcion",
+        "Suspendido"
+      );
+
       let idEstadoInscripcionExPend = await ClaseEstado.obtenerIdEstado(
         "Inscripcion",
         "Examenes pendientes"
@@ -2189,7 +2194,7 @@ router.get(
       });
 
       /* 2. Buscar los estudiantes del curso anterior que sean activo,
-      promovido, promovido con ex pendientes y tamb Examenes pendientes (con todos los datos)*/
+      promovido, promovido con ex pendientes, suspendido y tamb Examenes pendientes (con todos los datos)*/
       if (añoAnterior != 0) {
         let curso = await Curso.findOne({
           nombre: cursoAnterior,
@@ -2205,6 +2210,9 @@ router.get(
                   mongoose.Types.ObjectId(idEstadoInsPromovida),
                   mongoose.Types.ObjectId(
                     idEstadoInsPromovidaConExamPendientes
+                  ),
+                  mongoose.Types.ObjectId(
+                    idEstadoSuspendido
                   ),
                 ],
               },

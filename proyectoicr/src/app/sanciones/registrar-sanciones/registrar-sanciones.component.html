@@ -59,12 +59,10 @@
           #cantidad="ngModel"
           [disabled]="!tipoSancionSelected || suspensionSelected"
           matInput
-          type="number"
-          min="1"
-          max="99"
+          (keypress)="checkNumeros($event)"
+          maxlength="2"
           name="cantidadSancion"
           placeholder="Ingrese cantidad"
-          oninput="validity.valid||(value='')"
           required
         />
       </mat-form-field>
@@ -75,6 +73,7 @@
         mat-raised-button
         class="button-primary"
         (click)="guardar(form)"
+        [disabled]="!tipoSancionSelected"
         mat-raised-button
       >
         Guardar
@@ -89,3 +88,9 @@
     </div>
   </form>
 </mat-card>
+<div *ngIf="isLoading" class="loading-overlay">
+  <div class="loading-div">
+    <mat-spinner class="spinner" [diameter]="60"></mat-spinner>
+    <p class="loading-text">Cargando</p>
+  </div>
+</div>

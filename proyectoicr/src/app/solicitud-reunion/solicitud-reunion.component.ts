@@ -14,6 +14,8 @@ export class SolicitudReunionComponent implements OnInit {
   private unsubscribe: Subject<void> = new Subject();
   adultosResponsables = [];
   displayedColumns: string[] = ["apellido", "nombre", "notificar"];
+  isLoading= false;
+
   constructor(
     public servicio: EstudiantesService,
     public servicioAutenticacion: AutenticacionService,
@@ -21,6 +23,7 @@ export class SolicitudReunionComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.isLoading=true;
     this.servicio
       .getARDeEstudiante()
       .pipe(takeUntil(this.unsubscribe))
@@ -31,8 +34,13 @@ export class SolicitudReunionComponent implements OnInit {
             ? 1
             : b.nombre.charAt(0) > a.nombre.charAt(0)
             ? -1
+            : a.nombre.charAt(1) > b.nombre.charAt(1)
+            ? 1
+            : b.nombre.charAt(1) > a.nombre.charAt(1)
+            ? -1
             : 0;
         });
+        this.isLoading=false;
       });
   }
 
@@ -43,6 +51,7 @@ export class SolicitudReunionComponent implements OnInit {
 
   onEnviar(form) {    
     if (this.validarCampos(form.value.cuerpo)) {
+      this.isLoading=true;
       this.servicio
         .notificarReunionAR(
           this.adultosResponsables,
@@ -51,6 +60,7 @@ export class SolicitudReunionComponent implements OnInit {
         )
         .pipe(takeUntil(this.unsubscribe))
         .subscribe((respuesta) => {
+          this.isLoading=false;
           if (respuesta.exito) {
             this.snackBar.open(respuesta.message, "", {
               panelClass: ["snack-bar-exito"],

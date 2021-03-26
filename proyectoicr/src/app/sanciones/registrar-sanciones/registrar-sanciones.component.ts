@@ -31,6 +31,7 @@ export class RegistrarSancionesComponent implements OnInit, OnDestroy {
   _mobileQueryListener: () => void;
   mobileQuery: MediaQueryList;
   anios: any[];
+  isLoading=false;
 
   constructor(
     public servicioEstudiante: EstudiantesService,
@@ -53,6 +54,7 @@ export class RegistrarSancionesComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.isLoading=true;
     this.apellidoEstudiante = this.servicioEstudiante.estudianteSeleccionado.apellido;
     this.nombreEstudiante = this.servicioEstudiante.estudianteSeleccionado.nombre;
     this.idEstudiante = this.servicioEstudiante.estudianteSeleccionado._id;
@@ -61,6 +63,7 @@ export class RegistrarSancionesComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.unsubscribe))
       .subscribe((response) => {
         this.anios = response.añosCiclos;
+        this.isLoading=false;
       });
   }
 
@@ -86,6 +89,7 @@ export class RegistrarSancionesComponent implements OnInit, OnDestroy {
 
   guardar(form: NgForm) {
     if (form.valid) {
+      this.isLoading=true;
       let sancion = "";
       let cantidad = form.value.cantidadSancion;
       switch (form.value.sancion) {
@@ -112,11 +116,13 @@ export class RegistrarSancionesComponent implements OnInit, OnDestroy {
         )
         .pipe(takeUntil(this.unsubscribe))
         .subscribe((rtdo) => {
+          this.isLoading=false;
           if (rtdo.exito) {
             this.snackBar.open(rtdo.message, "", {
               panelClass: ["snack-bar-exito"],
               duration: 4000,
             });
+            this.tipoSancionSelected=false
             form.resetForm();
           }
         });
