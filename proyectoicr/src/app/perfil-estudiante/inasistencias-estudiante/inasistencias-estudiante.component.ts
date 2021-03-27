@@ -21,6 +21,7 @@ export class InasistenciasEstudianteComponent implements OnInit, OnDestroy {
   contadorInasistenciaInjustificada: number;
   barChartLabels: Label[] = [];
   cantidadFaltasParaSuspension: number;
+  isLoading=false;
 
   private unsubscribe: Subject<void> = new Subject();
   public barChartOptions: ChartOptions = {
@@ -57,6 +58,7 @@ export class InasistenciasEstudianteComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.isLoading=true;
     this.servicioCicloLectivo
       .obtenerFaltasSuspensionCicloLectivo()
       .pipe(takeUntil(this.unsubscribe))
@@ -87,6 +89,7 @@ export class InasistenciasEstudianteComponent implements OnInit, OnDestroy {
           "Inasistencias injustificadas",
           "Inasistencias justificadas",
         ];
+        this.isLoading=false;
       });
   }
 }

@@ -36,6 +36,7 @@ export class CalificacionesPerfilEstudianteComponent
   materiasPendientes = [];
   _mobileQueryListener: () => void;
   mobileQuery: MediaQueryList;
+  isLoading = false;
 
   constructor(
     public servicioEstudiante: EstudiantesService,
@@ -56,6 +57,7 @@ export class CalificacionesPerfilEstudianteComponent
   }
 
   ngOnInit() {
+    this.isLoading = true;
     this.apellidoEstudiante = this.servicioEstudiante.estudianteSeleccionado.apellido;
     this.nombreEstudiante = this.servicioEstudiante.estudianteSeleccionado.nombre;
 
@@ -77,10 +79,12 @@ export class CalificacionesPerfilEstudianteComponent
   }
 
   onChangeTrimestre() {
+    this.isLoading = true;
     this.servicioCalificaciones
       .obtenerCalificacionesXMateriaXEstudiante(this.trimestreActual)
       .pipe(takeUntil(this.unsubscribe))
       .subscribe((res) => {
+        this.isLoading = false;
         this.calificacionesXMateria = res.vectorCalXMat;
         this.calificacionesXMateria.sort((a, b) =>
           a.materia > b.materia ? 1 : b.materia > a.materia ? -1 : 0
@@ -102,6 +106,7 @@ export class CalificacionesPerfilEstudianteComponent
       .obtenerCalificacionesXMateriaXEstudiante(this.trimestreActual)
       .pipe(takeUntil(this.unsubscribe))
       .subscribe((res) => {
+        this.isLoading = false;
         this.calificacionesXMateria = res.vectorCalXMat;
         this.calificacionesXMateria.sort((a, b) =>
           a.materia > b.materia ? 1 : b.materia > a.materia ? -1 : 0
@@ -113,24 +118,24 @@ export class CalificacionesPerfilEstudianteComponent
     this.cicloLectivoService
       .obtenerEstadoCicloLectivo()
       .pipe(takeUntil(this.unsubscribe))
-      .subscribe(async (response) => {
-        let estado = await response.estadoCiclo;
-        switch (estado) {
-          case "En primer trimestre":
-            this.trimestreActual = "1";
-            break;
-          case "En segundo trimestre":
-            this.trimestreActual = "2";
-            break;
-          case "En tercer trimestre":
-            this.trimestreActual = "3";
-            break;
-          default:
-            this.trimestreActual = "3";
-            break;
-        }
-        this.obtenerCalificacionesEstudiante();
-      });
+      .subscribe((response) => {
+        let estado = response.estadoCiclo;
+          switch (estado) {
+            case "En primer trimestre":
+              this.trimestreActual = "1";
+              break;
+            case "En segundo trimestre":
+              this.trimestreActual = "2";
+              break;
+            case "En tercer trimestre":
+              this.trimestreActual = "3";
+              break;
+            default:
+              this.trimestreActual = "3";
+              break;
+          }
+          this.obtenerCalificacionesEstudiante();
+        });
   }
 
   //Dado el indice de la tabla que representa una materia, retorna cuantas

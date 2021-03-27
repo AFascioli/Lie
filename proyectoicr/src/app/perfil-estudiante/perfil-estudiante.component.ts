@@ -30,6 +30,7 @@ export class PerfilEstudianteComponent implements OnInit {
   _mobileQueryListener: () => void;
   mobileQuery: MediaQueryList;
   private unsubscribe: Subject<void> = new Subject();
+  isLoading=false;
 
   constructor(
     public servicio: EstudiantesService,
@@ -46,23 +47,25 @@ export class PerfilEstudianteComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.isLoading=true;
     this.servicioCicloLectivo
       .obtenerActualYSiguiente()
       .pipe(takeUntil(this.unsubscribe))
       .subscribe((response) => {
         this.aniosCiclos = response.añosCiclos;
+        this.apellidoEstudiante = this.servicio.estudianteSeleccionado.apellido;
+        this.nombreEstudiante = this.servicio.estudianteSeleccionado.nombre;
+        this._idEstudiante = this.servicio.estudianteSeleccionado._id;
+    
+        this.servicio
+          .esEstudianteSuspendido(this._idEstudiante)
+          .pipe(takeUntil(this.unsubscribe))
+          .subscribe((response) => {
+            this.suspendido = response.exito;
+            this.isLoading=false;
+          });
       });
 
-    this.apellidoEstudiante = this.servicio.estudianteSeleccionado.apellido;
-    this.nombreEstudiante = this.servicio.estudianteSeleccionado.nombre;
-    this._idEstudiante = this.servicio.estudianteSeleccionado._id;
-
-    this.servicio
-      .esEstudianteSuspendido(this._idEstudiante)
-      .pipe(takeUntil(this.unsubscribe))
-      .subscribe((response) => {
-        this.suspendido = response.exito;
-      });
   }
 
   ngOnDestroy() {

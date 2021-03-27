@@ -20,6 +20,7 @@ export class CuotasPerfilEstudianteComponent implements OnInit, OnDestroy {
   private unsubscribe: Subject<void> = new Subject();
   _mobileQueryListener: () => void;
   mobileQuery: MediaQueryList;
+  isLoading=false;
 
   constructor(
     public servicio: EstudiantesService,
@@ -32,10 +33,12 @@ export class CuotasPerfilEstudianteComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.isLoading=true;
     this.servicio
       .getCuotasDeEstudiante()
       .pipe(takeUntil(this.unsubscribe))
       .subscribe((respuesta) => {
+        this.isLoading=false;
         this.estadoCuotasXMes = respuesta.cuotas;
       });
     this.apellidoEstudiante = this.servicio.estudianteSeleccionado.apellido;

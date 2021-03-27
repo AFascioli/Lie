@@ -38,6 +38,7 @@ export class AgendaCursoPerfilEstudianteComponent implements OnInit, OnDestroy {
   nombreEstudiante: any;
   _idEstudiante: any;
   private unsubscribe: Subject<void> = new Subject();
+  isLoading=false;
 
   constructor(
     public servicio: EstudiantesService,
@@ -52,6 +53,7 @@ export class AgendaCursoPerfilEstudianteComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.isLoading=true;
     this.apellidoEstudiante = this.servicio.estudianteSeleccionado.apellido;
     this.nombreEstudiante = this.servicio.estudianteSeleccionado.nombre;
     this._idEstudiante = this.servicio.estudianteSeleccionado._id;
@@ -61,6 +63,7 @@ export class AgendaCursoPerfilEstudianteComponent implements OnInit, OnDestroy {
       .subscribe(result => {
         this.curso = result.curso;
         this.actualizarInterfaz(result.idCurso);
+        
       });
   }
 
@@ -88,6 +91,7 @@ export class AgendaCursoPerfilEstudianteComponent implements OnInit, OnDestroy {
           this.materias = agenda.agenda;
           this.getMateriasDistintas();
           this.getColorVector();
+          this.isLoading=false;
           resolve(agenda.agenda);
         });
     });
@@ -119,17 +123,17 @@ export class AgendaCursoPerfilEstudianteComponent implements OnInit, OnDestroy {
   }
 
   getColorVector() {
-    this.colores[0] = "#eb9788";
-    this.colores[1] = "#c05c7e";
-    this.colores[2] = "#f3826f";
-    this.colores[3] = "#ffb961";
-    this.colores[4] = "#899857";
-    this.colores[5] = "#ba6b57";
-    this.colores[6] = "#4e8d7c";
-    this.colores[7] = "#6e5773";
-    this.colores[8] = "#f1935c";
-    this.colores[9] = "#965d62";
-    this.colores[10] = "#ce0f3d";
+    this.colores[0] = "#0794DB"; // azul
+    this.colores[1] = "#08AF1C"; // verde
+    this.colores[2] = "#FF5733"; // naranja
+    this.colores[3] = "#DCA801"; // amarillo
+    this.colores[4] = "#900C3F"; // bordo
+    this.colores[5] = "#9003CD"; // morado
+    this.colores[6] = "#03B0A5"; // celeste
+    this.colores[7] = "#383838"; // negro
+    this.colores[8] = "#CE0090"; // rosa
+    this.colores[9] = "#81B002"; // verde mar
+    this.colores[10] = "#CD170B"; // rojo
     this.colores[11] = "#03506f";
     this.colores[12] = "#a6a9b6";
     this.colores[13] = "#c7956d";

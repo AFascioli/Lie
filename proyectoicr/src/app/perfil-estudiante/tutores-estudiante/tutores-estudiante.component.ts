@@ -15,6 +15,7 @@ export class TutoresEstudianteComponent implements OnInit, OnDestroy {
   displayedColumns: string[] = ["apellido", "nombre", "telefono", "email"];
   apellidoEstudiante: string;
   nombreEstudiante: string;
+  isLoading=false;
 
   constructor(public servicio: EstudiantesService) {}
 
@@ -24,12 +25,14 @@ export class TutoresEstudianteComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.isLoading=true;
     this.apellidoEstudiante = this.servicio.estudianteSeleccionado.apellido;
     this.nombreEstudiante = this.servicio.estudianteSeleccionado.nombre;
     this.servicio
       .getTutoresDeEstudiante()
       .pipe(takeUntil(this.unsubscribe))
       .subscribe((respuesta) => {
+        this.isLoading=false;
         this.tutores = respuesta.tutores;
       });
   }

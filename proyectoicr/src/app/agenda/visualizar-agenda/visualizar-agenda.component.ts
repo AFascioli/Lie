@@ -165,6 +165,11 @@ export class VisualizarAgendaComponent implements OnInit, OnDestroy {
     this.colores[8] = "#CE0090"; // rosa
     this.colores[9] = "#81B002"; // verde mar
     this.colores[10] = "#CD170B"; // rojo
+    this.colores[11] = "#03506f";
+    this.colores[12] = "#a6a9b6";
+    this.colores[13] = "#c7956d";
+    this.colores[14] = "#519872";
+    this.colores[15] = "#a35d6a";
   }
 
   getMateriasDistintas() {

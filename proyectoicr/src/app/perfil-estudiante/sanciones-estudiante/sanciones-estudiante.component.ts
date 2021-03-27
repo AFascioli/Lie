@@ -20,6 +20,7 @@ export class SancionesEstudianteComponent implements OnInit, OnDestroy {
   nombreEstudiante: string;
   _mobileQueryListener: () => void;
   mobileQuery: MediaQueryList;
+  isLoading=false;
 
   constructor(
     public servicio: EstudiantesService,
@@ -38,12 +39,14 @@ export class SancionesEstudianteComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.isLoading=true;
     this.apellidoEstudiante = this.servicio.estudianteSeleccionado.apellido;
     this.nombreEstudiante = this.servicio.estudianteSeleccionado.nombre;
     this.servicio
       .getSancionesDeEstudiante()
       .pipe(takeUntil(this.unsubscribe))
       .subscribe(respuesta => {
+        this.isLoading=false;
         if (respuesta.exito) {
           this.sanciones = respuesta.sanciones;
           if (this.sanciones.length != 0) {

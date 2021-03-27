@@ -159,14 +159,15 @@ hr {
 
 .horario-materia {
   font-size: 13px;
-  position: absolute;
   align-self: end;
+  font-weight: 600;
 }
 
 .nombre-materia {
   position: absolute;
   align-self: center;
   max-width: min-content;
+  font-weight: 600;
 }
 
 .div-button {
