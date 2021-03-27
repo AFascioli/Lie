@@ -201,6 +201,7 @@
               ngModel
               #calle="ngModel"
               matInput
+              (keypress)="checkLetrasNumeros($event)"
               placeholder="Ingrese calle"
               type="text"
               required
@@ -228,6 +229,7 @@
               name="piso"
               ngModel
               #piso="ngModel"
+              (keypress)="checkLetrasNumeros($event)"
               matInput
               placeholder="Ingrese piso"
               type="text"
@@ -237,6 +239,7 @@
           <mat-form-field [class.mat-form-field-mobile]="mobileQuery.matches">
             <input
               name="departamento"
+              (keypress)="checkLetrasNumeros($event)"
               ngModel
               #departamento="ngModel"
               matInput
@@ -319,3 +322,9 @@
     </div>
   </form>
 </mat-card>
+<div *ngIf="isLoading" class="loading-overlay">
+  <div class="loading-div">
+    <mat-spinner class="spinner" [diameter]="60"></mat-spinner>
+    <p class="loading-text">Cargando</p>
+  </div>
+</div>

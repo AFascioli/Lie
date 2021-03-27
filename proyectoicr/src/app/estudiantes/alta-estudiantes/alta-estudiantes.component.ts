@@ -27,6 +27,7 @@ export class AltaEstudiantesComponent implements OnInit, OnDestroy {
   _mobileQueryListener: () => void;
   mobileQuery: MediaQueryList;
   private unsubscribe: Subject<void> = new Subject();
+  isLoading = false;
 
   //para asignar valores por defecto
   nombreProvinciaSeleccionada: string;
@@ -55,6 +56,7 @@ export class AltaEstudiantesComponent implements OnInit, OnDestroy {
   }
 
   setearValoresPorDefecto() {
+    this.isLoading = true;
     this.defaultEstadoCivil = "soltero";
     this.codigoPostalEstudiante = "2421";
     this.nacionalidadEstudiante = "Argentina";
@@ -80,6 +82,7 @@ export class AltaEstudiantesComponent implements OnInit, OnDestroy {
       .getNacionalidadesListener()
       .pipe(takeUntil(this.unsubscribe))
       .subscribe((nacionalidadesActualizadas) => {
+        this.isLoading = false;
         this.nacionalidades = nacionalidadesActualizadas;
         this.nacionalidades.sort((a, b) =>
           a.name > b.name ? 1 : b.name > a.name ? -1 : 0
@@ -100,6 +103,7 @@ export class AltaEstudiantesComponent implements OnInit, OnDestroy {
         duration: 4000,
       });
     } else {
+      this.isLoading = true;
       this.servicioEstudiante
         .altaEstudiante(
           form.value.apellido,
@@ -166,6 +170,24 @@ export class AltaEstudiantesComponent implements OnInit, OnDestroy {
         inputValue == 209 ||
         inputValue == 241
       ) &&
+      inputValue != 32 &&
+      inputValue != 0
+    ) {
+      event.preventDefault();
+    }
+  }
+
+  checkLetrasNumeros(event) {
+    var inputValue = event.which;
+    if (
+      !(
+        (inputValue >= 65 && inputValue <= 122) ||
+        inputValue == 209 ||
+        inputValue == 241
+      ) &&
+      inputValue != 32 &&
+      inputValue != 0 &&
+      !(inputValue >= 48 && inputValue <= 57) &&
       inputValue != 32 &&
       inputValue != 0
     ) {
