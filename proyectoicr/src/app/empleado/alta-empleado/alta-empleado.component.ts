@@ -13,7 +13,7 @@ import { takeUntil } from "rxjs/operators";
 @Component({
   selector: "app-alta-empleado",
   templateUrl: "./alta-empleado.component.html",
-  styleUrls: ["./alta-empleado.component.css"]
+  styleUrls: ["./alta-empleado.component.css"],
 })
 export class AltaEmpleadoComponent implements OnInit, OnDestroy {
   maxDate = new Date();
@@ -40,12 +40,12 @@ export class AltaEmpleadoComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.nacionalidadEmpleado= "Argentina";
+    this.nacionalidadEmpleado = "Argentina";
     this.servicioUbicacion.getNacionalidades();
     this.suscripcion = this.servicioUbicacion
       .getNacionalidadesListener()
       .pipe(takeUntil(this.unsubscribe))
-      .subscribe(nacionalidadesActualizadas => {
+      .subscribe((nacionalidadesActualizadas) => {
         this.nacionalidades = nacionalidadesActualizadas;
         this.nacionalidades.sort((a, b) =>
           a.name > b.name ? 1 : b.name > a.name ? -1 : 0
@@ -75,31 +75,34 @@ export class AltaEmpleadoComponent implements OnInit, OnDestroy {
           form.value.tipoEmpleado
         )
         .pipe(takeUntil(this.unsubscribe))
-        .subscribe(response => {
+        .subscribe((response) => {
           if (response.exito) {
             this.snackBar.open(response.message, "", {
               panelClass: ["snack-bar-exito"],
-              duration: 4000
+              duration: 4000,
             });
             form.resetForm();
+            setTimeout(() => {
+              this.nacionalidadEmpleado = "Argentina";
+            }, 100);
           } else {
             this.snackBar.open(response.message, "", {
               panelClass: ["snack-bar-fracaso"],
-              duration: 4000
+              duration: 4000,
             });
           }
         });
     } else {
       this.snackBar.open("Faltan campos por completar", "", {
         panelClass: ["snack-bar-fracaso"],
-        duration: 4000
+        duration: 4000,
       });
     }
   }
 
   popUpCancelar() {
     this.dialog.open(AltaEmpleadoPopupComponent, {
-      width: "250px"
+      width: "250px",
     });
   }
 
@@ -111,6 +114,26 @@ export class AltaEmpleadoComponent implements OnInit, OnDestroy {
         inputValue == 209 ||
         inputValue == 241
       ) &&
+      inputValue != 32 &&
+      inputValue != 0
+    ) {
+      event.preventDefault();
+    }
+  }
+
+  checkLetrasNumerosEmail(event) {
+    var inputValue = event.which;
+
+    if (
+      !(
+        (inputValue >= 64 && inputValue <= 122) ||
+        inputValue == 209 ||
+        inputValue == 241 ||
+        inputValue == 46
+      ) &&
+      inputValue != 32 &&
+      inputValue != 0 &&
+      !(inputValue >= 48 && inputValue <= 57) &&
       inputValue != 32 &&
       inputValue != 0
     ) {
@@ -134,7 +157,7 @@ export class AltaEmpleadoComponent implements OnInit, OnDestroy {
 @Component({
   selector: "app-alta-empleado-popup",
   templateUrl: "./alta-empleado-popup.component.html",
-  styleUrls: ["./alta-empleado.component.css"]
+  styleUrls: ["./alta-empleado.component.css"],
 })
 export class AltaEmpleadoPopupComponent {
   constructor(

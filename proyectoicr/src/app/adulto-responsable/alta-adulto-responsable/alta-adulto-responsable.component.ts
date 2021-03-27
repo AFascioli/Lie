@@ -81,6 +81,26 @@ export class AltaAdultoResponsableComponent implements OnInit, OnDestroy {
       event.preventDefault();
     }
   }
+  
+  checkLetrasNumerosEmail(event) {
+    var inputValue = event.which;
+    
+    if (
+      !(
+        (inputValue >= 64 && inputValue <= 122) ||
+        inputValue == 209 ||
+        inputValue == 241 ||
+        inputValue == 46
+      ) &&
+      inputValue != 32 &&
+      inputValue != 0 &&
+      !(inputValue >= 48 && inputValue <= 57) &&
+      inputValue != 32 &&
+      inputValue != 0
+    ) {
+      event.preventDefault();
+    }
+  }
 
   checkIfIsANumber(event) {
     var inputValue = event.which;

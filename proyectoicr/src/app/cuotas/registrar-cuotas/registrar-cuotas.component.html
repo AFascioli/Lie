@@ -14,7 +14,7 @@
           [disabled]="fueraPeriodoCicloLectivo"
           matNativeControl
           required
-          (selectionChange)="onMesSeleccionado(mes)"
+          (selectionChange)="onMesSeleccionado(mes,curso)"
         >
           <mat-option *ngFor="let objMes of meses" [value]="objMes">
             {{ objMes }}
@@ -64,9 +64,7 @@
   </p>
   <br />
 
-  <mat-spinner *ngIf="isLoading" class="spinner" [diameter]="60"></mat-spinner>
-
-  <div *ngIf="!cursoNotSelected && !isLoading">
+  <div *ngIf="!cursoNotSelected">
     <table
       mat-table
       [dataSource]="cuotasXEstudiante"
@@ -115,7 +113,7 @@
       class="button-primary"
       (click)="onGuardar()"
       mat-raised-button
-      [disabled]="cursoNotSelected"
+      [disabled]="!huboCambios"
     >
       Guardar
     </button>
@@ -124,3 +122,9 @@
     </button>
   </div>
 </mat-card>
+<div *ngIf="isLoading" class="loading-overlay">
+  <div class="loading-div">
+    <mat-spinner class="spinner" [diameter]="60"></mat-spinner>
+    <p class="loading-text">Cargando</p>
+  </div>
+</div>

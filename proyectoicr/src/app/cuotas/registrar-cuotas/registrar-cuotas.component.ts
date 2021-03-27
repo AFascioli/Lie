@@ -7,6 +7,7 @@ import { CuotasService } from "../cuotas.service";
 import { CancelPopupComponent } from "src/app/popup-genericos/cancel-popup.component";
 import { takeUntil } from "rxjs/operators";
 import { Subject } from "rxjs";
+import { NgModel } from "@angular/forms";
 
 @Component({
   selector: "app-registrar-cuotas",
@@ -14,16 +15,6 @@ import { Subject } from "rxjs";
   styleUrls: ["./registrar-cuotas.component.css"],
 })
 export class RegistrarCuotasComponent implements OnInit, OnDestroy {
-  constructor(
-    public autenticacionService: AutenticacionService,
-    public servicioEstudiante: EstudiantesService,
-    public servicioCicloLectivo: CicloLectivoService,
-    public cuotasService: CuotasService,
-    public popup: MatDialog,
-    public snackBar: MatSnackBar,
-    public cicloLectivoService: CicloLectivoService
-  ) {}
-
   mesSeleccionado: any;
   fechaActual: Date;
   fueraPeriodoCicloLectivo: Boolean = false;
@@ -47,13 +38,26 @@ export class RegistrarCuotasComponent implements OnInit, OnDestroy {
   isLoading: Boolean = false;
   aniosCiclos;
   private unsubscribe: Subject<void> = new Subject();
+  huboCambios=false;
+
+  constructor(
+    public autenticacionService: AutenticacionService,
+    public servicioEstudiante: EstudiantesService,
+    public servicioCicloLectivo: CicloLectivoService,
+    public cuotasService: CuotasService,
+    public popup: MatDialog,
+    public snackBar: MatSnackBar,
+    public cicloLectivoService: CicloLectivoService
+  ) {}
 
   ngOnInit() {
+    this.isLoading=true;
     this.fechaActual = new Date();
     this.servicioCicloLectivo
       .obtenerActualYSiguiente()
       .pipe(takeUntil(this.unsubscribe))
-      .subscribe((response) => {
+      .subscribe((response) => {    
+        this.isLoading=false;
         this.aniosCiclos = response.añosCiclos;
       });
     if (
@@ -79,6 +83,7 @@ export class RegistrarCuotasComponent implements OnInit, OnDestroy {
   //Busca los estudiantes segun el curso que se selecciono en pantalla. Los orden alfabeticamente
   onCursoSeleccionado(curso, mes) {
     this.isLoading = true;
+    this.huboCambios=false;
     let nroMes: any = 0;
     for (let i = 0; i < this.meses.length; i++) {
       if (mes.value == this.meses[i]) {
@@ -108,6 +113,7 @@ export class RegistrarCuotasComponent implements OnInit, OnDestroy {
 
   //Cambia el atributo presente del estudiante cuando se cambia de valor el toggle
   onCambioEstadoCuota(row) {
+    this.huboCambios=true;
     const indexEstudiante = this.cuotasXEstudiante.findIndex(
       (objConIDEstudiante) => objConIDEstudiante._id == row._id
     );
@@ -118,32 +124,58 @@ export class RegistrarCuotasComponent implements OnInit, OnDestroy {
   }
 
   //Al seleccionar el mes obtiene todos los cursos y los ordena alfabeticamente
-  onMesSeleccionado(mes) {
-    this.cursoNotSelected = true;
+  onMesSeleccionado(mes,curso: NgModel) {
+    this.isLoading=true;
+    this.huboCambios=false;
     this.mesSeleccionado = mes.value;
-
-    this.servicioEstudiante
-      .obtenerCursos(this.aniosCiclos[0])
+    if(this.cursoNotSelected){
+      this.cursoNotSelected = true;
+      this.servicioEstudiante
+        .obtenerCursos(this.aniosCiclos[0])
+        .pipe(takeUntil(this.unsubscribe))
+        .subscribe((response) => {
+          this.isLoading=false;
+          this.cursos = response.cursos;
+          this.cursos.sort((a, b) =>
+          a.nombre.charAt(0) > b.nombre.charAt(0)
+            ? 1
+            : b.nombre.charAt(0) > a.nombre.charAt(0)
+            ? -1
+            : a.nombre.charAt(1) > b.nombre.charAt(1)
+            ? 1
+            : b.nombre.charAt(1) > a.nombre.charAt(1)
+            ? -1
+            : 0
+        );
+        });
+      this.cursoEstudiante = "";
+    }else{
+      let indexMes=(this.meses.indexOf(this.mesSeleccionado)+3).toString();
+      this.cuotasService
+      .obtenerEstadoCuotasDeCurso(curso.value, indexMes)
       .pipe(takeUntil(this.unsubscribe))
-      .subscribe((response) => {
-        this.cursos = response.cursos;
-        this.cursos.sort((a, b) =>
-        a.nombre.charAt(0) > b.nombre.charAt(0)
-          ? 1
-          : b.nombre.charAt(0) > a.nombre.charAt(0)
-          ? -1
-          : a.nombre.charAt(1) > b.nombre.charAt(1)
-          ? 1
-          : b.nombre.charAt(1) > a.nombre.charAt(1)
-          ? -1
-          : 0
-      );
+      .subscribe((rtdo) => {
+        if (rtdo.cuotasXEstudiante.length != 0) {
+          this.cuotasXEstudiante = rtdo.cuotasXEstudiante.sort((a, b) =>
+            a.apellido.toLowerCase() > b.apellido.toLowerCase()
+              ? 1
+              : b.apellido.toLowerCase() > a.apellido.toLowerCase()
+              ? -1
+              : 0
+          );
+        } else {
+          this.cuotasXEstudiante = [];
+        }
+        this.isLoading = false;
+        this.cursoNotSelected = false;
       });
-    this.cursoEstudiante = "";
+    }
   }
 
   onGuardar() {
-    let cuotasCambiadas = [];
+    this.isLoading=true;
+    let cuotasCambiadas = [];    
+    this.huboCambios=false;
     this.cuotasXEstudiante.forEach((cuota) => {
       if (cuota.changed == true) {
         cuotasCambiadas.push(cuota);
@@ -153,6 +185,7 @@ export class RegistrarCuotasComponent implements OnInit, OnDestroy {
       .publicarEstadoCuotasDeCurso(cuotasCambiadas)
       .pipe(takeUntil(this.unsubscribe))
       .subscribe((rtdo) => {
+        this.isLoading=false;
         if (cuotasCambiadas.length == 0) {
           this.snackBar.open(
             "No se ha realizado ninguna modificación en las cuotas",
@@ -174,4 +207,5 @@ export class RegistrarCuotasComponent implements OnInit, OnDestroy {
   onCancelar() {
     this.popup.open(CancelPopupComponent);
   }
+
 }

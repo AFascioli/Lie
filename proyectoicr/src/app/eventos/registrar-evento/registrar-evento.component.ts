@@ -62,6 +62,7 @@ export class RegistrarEventoComponent implements OnInit, OnDestroy {
   fechaActual: Date;
   imagesFile: any = [];
   imgURL: any[] = [];
+  isLoading=false;
 
   private unsubscribe: Subject<void> = new Subject();
   _mobileQueryListener: () => void;
@@ -83,10 +84,11 @@ export class RegistrarEventoComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.fechaActual = new Date();
-    this.horaMinimaEvento = `${this.fechaActual.getHours() + 2}:00`;
+    this.horaMinimaEvento = `07:00`;
   }
 
   registrarEvento(fechaEvento, form) {
+    this.isLoading=true;
     this.eventoService
       .registrarEvento(
         form.value.titulo,
@@ -99,6 +101,7 @@ export class RegistrarEventoComponent implements OnInit, OnDestroy {
       )
       .pipe(takeUntil(this.unsubscribe))
       .subscribe((rtdo) => {
+        this.isLoading=false;
         if (rtdo.exito) {
           this.snackBar.open(rtdo.message, "", {
             panelClass: ["snack-bar-exito"],
@@ -155,6 +158,12 @@ export class RegistrarEventoComponent implements OnInit, OnDestroy {
       this.horaMinimaEvento = `${this.fechaActual.getHours() + 2}:00`;
     else this.horaMinimaEvento = "07:00";
   }
+
+  resetearHoras(){
+    this.horaInicioEvento=""
+    this.horaFinEvento=""
+  }
+
   popUpCancelar() {
     this.dialog.open(CancelPopupComponent, {
       width: "250px",

@@ -10,8 +10,8 @@
         ngModel
         #titulo="ngModel"
         matInput
+        maxlength="90"
         placeholder="Ingrese título"
-        type="text"
         required
       />
     </mat-form-field>
@@ -40,6 +40,7 @@
         [matDatepicker]="picker"
         placeholder="Seleccione fecha de evento"
         (click)="picker.open()"
+        (focusout)="resetearHoras()"
         [(ngModel)]="fechaSeleccionada"
         (dateInput)="setearHoraMinima()"
         (dateChange)="setearHoraMinima()"
@@ -195,3 +196,9 @@
     </div>
   </form>
 </mat-card>
+<div *ngIf="isLoading" class="loading-overlay">
+  <div class="loading-div">
+    <mat-spinner class="spinner" [diameter]="60"></mat-spinner>
+    <p class="loading-text">Cargando</p>
+  </div>
+</div>

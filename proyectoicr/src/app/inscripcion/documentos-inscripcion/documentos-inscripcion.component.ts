@@ -28,7 +28,6 @@ export class DocumentosInscripcionComponent implements OnInit, OnDestroy {
   matConfig = new MatDialogConfig();
   documentosEntregadosOnChange = false;
   isLoading = true;
-  isLoading2 = false;
   aniosCiclos;
   private unsubscribe: Subject<void> = new Subject();
   _mobileQueryListener: () => void;
@@ -83,7 +82,7 @@ export class DocumentosInscripcionComponent implements OnInit, OnDestroy {
 
   //Cuando el usuario selecciona una division, se obtienen los datos del estudiantes necesarios
   onCursoSeleccionado(curso) {
-    this.isLoading2 = true;
+    this.isLoading = true;
     this.cursoSeleccionado = true;
     this.servicioInscripcion
       .obtenerDocumentosDeEstudiantesXCurso(curso.value)
@@ -102,7 +101,7 @@ export class DocumentosInscripcionComponent implements OnInit, OnDestroy {
                 : 0
           );
         }
-        this.isLoading2 = false;
+        this.isLoading = false;
       });
     this.documentosEntregadosOnChange = false;
   }
@@ -120,6 +119,7 @@ export class DocumentosInscripcionComponent implements OnInit, OnDestroy {
       .registrarDocumentosInscripcion(this.estudiantesConDocumentos)
       .pipe(takeUntil(this.unsubscribe))
       .subscribe((response) => {
+        this.documentosEntregadosOnChange = false;
         if (response.exito) {
           this.snackBar.open(
             "Se registró correctamente la documentación de los estudiantes",

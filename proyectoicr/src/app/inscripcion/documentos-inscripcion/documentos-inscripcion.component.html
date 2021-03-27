@@ -3,10 +3,7 @@
   {{ aniosCiclos[0] }}
 </h1>
 
-<mat-card class="card-spinner" *ngIf="isLoading">
-  <mat-spinner class="spinner" [diameter]="60"></mat-spinner>
-</mat-card>
-<mat-card class="card-body-componente" *ngIf="!isLoading">
+<mat-card class="card-body-componente">
   <div class="div-selects">
     <mat-form-field>
       <mat-select
@@ -25,8 +22,7 @@
     </mat-form-field>
   </div>
   <br />
-  <mat-spinner *ngIf="isLoading2" class="spinner" [diameter]="60"></mat-spinner>
-  <div *ngIf="estudiantesConDocumentos.length != 0 && !isLoading2">
+  <div *ngIf="estudiantesConDocumentos.length != 0">
     <table
       mat-table
       [class.table-mobile]="mobileQuery.matches"
@@ -94,9 +90,7 @@
     class="aviso"
     *ngIf="
       estudiantesConDocumentos.length == 0 &&
-      cursoSeleccionado &&
-      !isLoading &&
-      !isLoading2
+      cursoSeleccionado 
     "
   >
     No se encuentran estudiantes inscriptos en el curso seleccionado.
@@ -115,3 +109,9 @@
     </button>
   </div>
 </mat-card>
+<div *ngIf="isLoading" class="loading-overlay">
+  <div class="loading-div">
+    <mat-spinner class="spinner" [diameter]="60"></mat-spinner>
+    <p class="loading-text">Cargando</p>
+  </div>
+</div>
