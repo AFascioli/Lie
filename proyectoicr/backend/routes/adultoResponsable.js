@@ -136,17 +136,17 @@ router.post("/", checkAuthMiddleware, (req, res) => {
 });
 
 //Asocia un adulto responsable a un estudiante
-router.post("/estudiante", checkAuthMiddleware, (req, res) => {
+router.post("/estudiante", checkAuthMiddleware, async (req, res) => {
   try {
     for (const idAR of req.body.adultosResponsables) {
-      AdultoResponsable.findById(idAR._id).then(async (adultoResponsable) => {
-        await adultoResponsable.estudiantes.push(req.body.idEstudiante);
-        await adultoResponsable.save().then((ARGuardado) => {
-          Estudiante.findByIdAndUpdate(req.body.idEstudiante, {
-            $addToSet: { adultoResponsable: ARGuardado._id },
-          }).exec();
-        });
-      });
+      let arFind = await AdultoResponsable.findById(idAR._id);
+
+      arFind.estudiantes.push(req.body.idEstudiante);
+      await arFind.save();
+
+      await Estudiante.findByIdAndUpdate(req.body.idEstudiante, {
+        $addToSet: { adultoResponsable: arFind._id },
+      }).exec();
     }
     res.status(201).json({
       message: "El adulto responsable fue asociado exitosamente",

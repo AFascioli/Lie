@@ -28,6 +28,8 @@ export class AsociarAdultoResponsableComponent implements OnInit {
   ];
   busqueda: boolean = false;
   isLoading: boolean = false;
+  nombreEstudiante = "";
+  apellidoEstudiante = "";
 
   constructor(
     public dialog: MatDialog,
@@ -38,6 +40,8 @@ export class AsociarAdultoResponsableComponent implements OnInit {
   ) {}
 
   ngOnInit() {
+    this.nombreEstudiante = this.estudiantesService.estudianteSeleccionado.nombre
+    this.apellidoEstudiante = this.estudiantesService.estudianteSeleccionado.apellido
     this.obtenerARAsociados();
   }
 
@@ -62,13 +66,15 @@ export class AsociarAdultoResponsableComponent implements OnInit {
   }
 
   comparar(ARFiltrados) {
-    ARFiltrados.forEach((AR) => {
-      this.ARAsociados.forEach((ARAS) => {
-        if (ARAS._id == AR._id) {
-          AR["selected"] = true;
-        }
+
+    this.ARAsociados.forEach((ARAS) => {
+      let indice = -1;
+      ARFiltrados.forEach((ar, index) => {
+        if (ar._id == ARAS._id) indice = index; 
       });
+      if (indice != -1) ARFiltrados.splice(indice, 1);
     });
+
     this.ARFiltrados = ARFiltrados;
   }
 
@@ -120,6 +126,7 @@ export class AsociarAdultoResponsableComponent implements OnInit {
   onAsociar() {
     this.busqueda = false;
     if (this.checkbox) {
+      this.isLoading = true;
       this.checkbox = false;
       this.servicio
         .asociarAdultoResponsable(
@@ -136,6 +143,7 @@ export class AsociarAdultoResponsableComponent implements OnInit {
             duration: 4000,
           });
           this.obtenerARAsociados();
+          this.isLoading = false;
         });
     }
   }

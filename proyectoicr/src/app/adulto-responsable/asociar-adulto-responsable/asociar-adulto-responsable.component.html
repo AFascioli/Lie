@@ -1,4 +1,4 @@
-<h1 class="componente-titulo">Asociar adulto responsable</h1>
+<h1 class="componente-titulo">Asociar adulto responsable a {{apellidoEstudiante}} {{nombreEstudiante}}</h1>
 
 <mat-card class="card-body-componente">
   <form #form="ngForm">
@@ -93,37 +93,33 @@
       <button
         mat-raised-button
         [routerLink]="['/buscar/lista']"
-        class="button-primary"
+        class="button-warn"
       >
         Volver
       </button>
     </div>
   </form>
-  <mat-spinner *ngIf="isLoading" class="spinner" [diameter]="60"></mat-spinner>
-  <b class="aviso" *ngIf="ARFiltrados.length == 0 && busqueda  && !isLoading">
+  <b class="aviso" *ngIf="ARFiltrados.length == 0 && busqueda">
     No se encontró un adulto responsable que coincida con los datos ingresados.
   </b>
-  <div class="contenido" *ngIf="ARFiltrados.length != 0  && !isLoading">
-    <h3 class="titulo-tutores">
-      Adultos responsables filtrados
-    </h3>
+  <div class="contenido" *ngIf="ARFiltrados.length != 0">
+    <h3 class="titulo-tutores">Adultos responsables filtrados</h3>
 
     <div>
       <table
         mat-table
         [dataSource]="ARFiltrados"
-        *ngIf="ARFiltrados.length != 0  && !isLoading"
+        *ngIf="ARFiltrados.length != 0"
       >
         <ng-container matColumnDef="seleccion">
-          <th mat-header-cell *matHeaderCellDef></th>
-          <td mat-cell *matCellDef="let row">
+          <th mat-header-cell *matHeaderCellDef class="columnas-normales"></th>
+          <td mat-cell class="columnas-normales" *matCellDef="let row">
             <mat-checkbox
+            (click)="$event.stopPropagation()"
               class="columna-checkbox"
-              (click)="$event.stopPropagation()"
               (click)="onSelectionChage(seleccion.isSelected(row))"
               (change)="$event ? seleccion.toggle(row) : null"
               [checked]="seleccion.isSelected(row) || row.selected"
-              [disabled]="row.selected"
             >
             </mat-checkbox>
           </td>
@@ -172,22 +168,24 @@
         <tr
           mat-row
           *matRowDef="let row; columns: displayedColumns"
-          (click)="seleccion.toggle(row)"
         ></tr>
       </table>
     </div>
     <br />
     <div class="div-button">
-      <button class="button-primary" (click)="onAsociar()" [disabled]="!checkbox" mat-raised-button>
+      <button
+        class="button-primary"
+        (click)="onAsociar()"
+        [disabled]="!checkbox"
+        mat-raised-button
+      >
         Asociar
       </button>
     </div>
   </div>
 
   <div class="contenido">
-    <h3 class="titulo-tutores">
-      Adultos responsables ya asociados
-    </h3>
+    <h3 class="titulo-tutores">Adultos responsables ya asociados</h3>
     <p *ngIf="ARAsociados.length == 0">
       El estudiante seleccionado no tiene asociado ningún adulto responsable
     </p>
@@ -229,3 +227,9 @@
     </table>
   </div>
 </mat-card>
+<div *ngIf="isLoading" class="loading-overlay">
+  <div class="loading-div">
+    <mat-spinner class="spinner" [diameter]="60"></mat-spinner>
+    <p class="loading-text">Cargando</p>
+  </div>
+</div>
