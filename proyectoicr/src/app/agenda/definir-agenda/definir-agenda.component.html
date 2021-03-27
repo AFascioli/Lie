@@ -1,11 +1,6 @@
 <h1 class="componente-titulo">Definir agenda de curso</h1>
 <mat-card class="card-body-componente">
-  <mat-spinner
-    class="spinner"
-    [diameter]="60"
-    *ngIf="isLoading && !cursoSelected"
-  ></mat-spinner>
-  <form #form="ngForm" *ngIf="!isLoading">
+  <form #form="ngForm">
     <div class="div-select">
       <mat-form-field class="selectYear">
         <mat-select
@@ -34,6 +29,7 @@
           matNativeControl
           required
           class="curso"
+          [disabled]="cursos==undefined"
           (selectionChange)="obtenerAgenda(curso)"
         >
           <mat-option *ngFor="let curso of cursos" [value]="curso.id">
@@ -43,7 +39,7 @@
       </mat-form-field>
     </div>
 
-    <div class="contenedor-tabla" *ngIf="!isLoading || cursoSelected">
+    <div class="contenedor-tabla" *ngIf="cursoSelected">
       <table
         #tabla
         mat-table
@@ -111,7 +107,7 @@
                 ngModel
                 #docente+i="ngModel"
                 [disabled]="
-                  (!nextYearSelect || indice != i) &&
+                  (indice != i) &&
                   (!esNuevo(i) || this.indiceEditando != i)
                 "
                 [(ngModel)]="agendaCurso.idDocente"
@@ -252,7 +248,7 @@
               <button
                 id="editar{{ i }}"
                 [disabled]="
-                  indice == i || !cicloLectivoActualEnCreado || !nextYearSelect
+                  indice == i  
                 "
                 mat-icon-button
                 (click)="editarAgenda(i)"
@@ -264,7 +260,7 @@
                 id="reservar{{ i }}"
                 style="display: none"
                 [disabled]="
-                  indice != i || !cicloLectivoActualEnCreado || !nextYearSelect
+                  indice != i  
                 "
                 mat-icon-button
                 (click)="reservarAgenda(i, row)"
@@ -276,7 +272,7 @@
                 mat-icon-button
                 (click)="popupEliminar(i)"
                 matTooltip="Eliminar"
-                [disabled]="!cicloLectivoActualEnCreado || !nextYearSelect"
+                [disabled]="!nextYearSelect"
               >
                 <mat-icon>remove_circle_outline</mat-icon>
               </button>
@@ -293,7 +289,7 @@
   </form>
   <p
     class="aviso"
-    *ngIf="cursoSelected && !isLoading && dataSource.data.length == 0"
+    *ngIf="cursoSelected && dataSource.data.length == 0"
   >
     <b>El curso seleccionado no tiene horarios registrados</b>
   </p>
@@ -301,7 +297,7 @@
   <div
     class="div-agregar"
     [class.div-agregar-mobile]="mobileQuery.matches"
-    *ngIf="cursoSelected && cicloLectivoActualEnCreado"
+    *ngIf="nextYearSelect && cursoSelected"
   >
     <button
       mat-raised-button
@@ -329,7 +325,7 @@
     <button
       mat-raised-button
       class="button-primary"
-      (click)="onGuardar()"
+      (click)="onGuardar(curso)"
       *ngIf="cursoSelected && dataSource.data.length != 0"
       [disabled]="!huboCambios"
     >
@@ -340,3 +336,9 @@
     </button>
   </div>
 </mat-card>
+<div *ngIf="isLoading" class="loading-overlay">
+  <div class="loading-div">
+    <mat-spinner class="spinner" [diameter]="60"></mat-spinner>
+    <p class="loading-text">Cargando</p>
+  </div>
+</div>

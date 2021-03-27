@@ -168,7 +168,10 @@ router.post("/registrarSancion", checkAuthMiddleware, async (req, res) => {
             });
           });
         } else {
-          inscripcion.sanciones[indice].cantidad += parseInt(req.body.cantidad, 10);
+          inscripcion.sanciones[indice].cantidad += parseInt(
+            req.body.cantidad,
+            10
+          );
           inscripcion.save().then(() => {
             notificarSancion(
               req.body.idEstudiante,
@@ -688,7 +691,6 @@ router.get("/docente", checkAuthMiddleware, async (req, res) => {
     },
   ])
     .then((cursos) => {
-      console.log(JSON.stringify(cursos));
       let respuesta = [];
       let materiasYCursoDocente = [];
       cursos.forEach((curso) => {
@@ -1850,6 +1852,10 @@ router.post("/agenda", checkAuthMiddleware, async (req, res) => {
           });
         }
       } else if (materia.modificado) {
+        //Se actualiza el idDocente
+        await MateriaXCurso.findByIdAndUpdate(materia.idMXC, {
+          idDocente: materia.idDocente,
+        }).exec();
         //Se actualiza el nuevo horario para una mxc dada
         await Horario.findByIdAndUpdate(materia.idHorarios, {
           dia: materia.dia,
@@ -2211,9 +2217,7 @@ router.get(
                   mongoose.Types.ObjectId(
                     idEstadoInsPromovidaConExamPendientes
                   ),
-                  mongoose.Types.ObjectId(
-                    idEstadoSuspendido
-                  ),
+                  mongoose.Types.ObjectId(idEstadoSuspendido),
                 ],
               },
               idCurso: mongoose.Types.ObjectId(curso._id),

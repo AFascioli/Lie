@@ -285,10 +285,11 @@ router.get("/modificarAgenda", checkAuthMiddleware, async (req, res) => {
         });
       }
 
+        //Este caso nunca deberia pasar
       if (nombre === "Creado") {
         return res.status(200).json({
-          puedeModificar: true,
-          creado: true,
+          puedeModificar: false,
+          creado: false,
           message: "No esta habilitado el modificar la agenda actual",
         });
       }

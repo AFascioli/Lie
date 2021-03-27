@@ -40,7 +40,7 @@ export class DefinirAgendaComponent implements OnInit, OnDestroy {
   cursoSelected: Boolean = false;
   mensajeError: string;
   cursoSeleccionado: string;
-  yearSelected: any = false;
+  yearSelected: any = 0;
   nextYearSelect: boolean;
   agendaValida: Boolean = true;
   horariosReservados: any[] = [];
@@ -105,9 +105,17 @@ export class DefinirAgendaComponent implements OnInit, OnDestroy {
       .obtenerActualYSiguiente()
       .pipe(takeUntil(this.unsubscribe))
       .subscribe((response) => {
-        this.verificarEstadoCiclo();
-        this.aniosCiclos = response.añosCiclos;
-        this.isLoading = false;
+        this.cicloLectivoService
+          .obtenerEstadoCicloLectivo()
+          .pipe(takeUntil(this.unsubscribe))
+          .subscribe((response2) => {
+            this.aniosCiclos = response.añosCiclos;
+            this.enEstadoCLCursando =
+              response2.estadoCiclo == "En primer trimestre" ||
+              response2.estadoCiclo == "En segundo trimestre" ||
+              response2.estadoCiclo == "En tercer trimestre";
+            this.isLoading = false;
+          });
       });
 
     this.servicioAgenda
@@ -122,19 +130,6 @@ export class DefinirAgendaComponent implements OnInit, OnDestroy {
 
   ngAfterViewInit() {
     this.dataSource.sort = this.sort;
-  }
-
-  //Si el CL esta en "Cursando" se debe mostrar el año actual en el select.
-  verificarEstadoCiclo() {
-    this.cicloLectivoService
-      .obtenerEstadoCicloLectivo()
-      .pipe(takeUntil(this.unsubscribe))
-      .subscribe((response) => {
-        this.enEstadoCLCursando =
-          response.estadoCiclo == "En primer trimestre" ||
-          response.estadoCiclo == "En segundo trimestre" ||
-          response.estadoCiclo == "En tercer trimestre";
-      });
   }
 
   obtenerDocentes() {
@@ -160,6 +155,7 @@ export class DefinirAgendaComponent implements OnInit, OnDestroy {
 
   obtenerAgenda(idCurso: NgModel) {
     if (!this.isEditing) {
+      this.isLoading = true;
       this.cursoSelected = true;
       this.idCursoSeleccionado = idCurso.value;
       this.servicioAgenda
@@ -188,41 +184,45 @@ export class DefinirAgendaComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.unsubscribe))
       .subscribe((confirmacion) => {
         if (confirmacion) {
+          this.isLoading = true;
           this.servicioAgenda
             .obtenerAgendaAnterior(this.idCursoSeleccionado)
             .pipe(takeUntil(this.unsubscribe))
             .subscribe((rtdo) => {
+              this.isLoading = false;
               this.seClono = true;
               this.huboCambios = true;
-                  this.dataSource.data = rtdo.agenda;
-                  this.dataSource._updateChangeSubscription();
-                  if (rtdo.exito) {
-                    this.openSnackBar(rtdo.message, "snack-bar-exito");
-                  } else {
-                    this.openSnackBar(rtdo.message, "snack-bar-fracaso");
-                  }
+              this.dataSource.data = rtdo.agenda;
+              this.dataSource._updateChangeSubscription();
+              if (rtdo.exito) {
+                this.openSnackBar(rtdo.message, "snack-bar-exito");
+              } else {
+                this.openSnackBar(rtdo.message, "snack-bar-fracaso");
+              }
             });
         }
       });
   }
 
   obtenerCursos() {
+    this.isLoading = true;
     this.servicioEstudiante
       .obtenerCursos(this.yearSelected)
       .pipe(takeUntil(this.unsubscribe))
       .subscribe((response) => {
+        this.isLoading = false;
         this.cursos = response.cursos;
         this.cursos.sort((a, b) =>
-        a.nombre.charAt(0) > b.nombre.charAt(0)
-          ? 1
-          : b.nombre.charAt(0) > a.nombre.charAt(0)
-          ? -1
-          : a.nombre.charAt(1) > b.nombre.charAt(1)
-          ? 1
-          : b.nombre.charAt(1) > a.nombre.charAt(1)
-          ? -1
-          : 0
-      );
+          a.nombre.charAt(0) > b.nombre.charAt(0)
+            ? 1
+            : b.nombre.charAt(0) > a.nombre.charAt(0)
+            ? -1
+            : a.nombre.charAt(1) > b.nombre.charAt(1)
+            ? 1
+            : b.nombre.charAt(1) > a.nombre.charAt(1)
+            ? -1
+            : 0
+        );
       });
   }
 
@@ -243,11 +243,18 @@ export class DefinirAgendaComponent implements OnInit, OnDestroy {
     }
   }
 
-  onGuardar() {
+  onGuardar(curso: NgModel) {
     if (this.agendaValida) {
+      this.isLoading = true;
       this.servicioAgenda
-        .registrarAgenda(this.dataSource.data, this.idCursoSeleccionado, this.seClono)
+        .registrarAgenda(
+          this.dataSource.data,
+          this.idCursoSeleccionado,
+          this.seClono
+        )
         .subscribe((response) => {
+          this.obtenerAgenda(curso)
+          this.isLoading = false;
           this.isEditing = false;
           this.huboCambios = false;
           this.seClono = false;
@@ -417,17 +424,17 @@ export class DefinirAgendaComponent implements OnInit, OnDestroy {
     if (yearSelected.value == "actual") {
       this.yearSelected = this.aniosCiclos[0];
       this.nextYearSelect = false;
-      this.servicioCicloLectivo
-        .validarModificarAgenda()
-        .pipe(takeUntil(this.unsubscribe))
-        .subscribe((response) => {
-          this.permiteModificarAgenda = response.puedeModificar;
-          this.cicloLectivoActualEnCreado = response.creado;
-        });
+      // this.servicioCicloLectivo
+      //   .validarModificarAgenda()//Redundante
+      //   .pipe(takeUntil(this.unsubscribe))
+      //   .subscribe((response) => {
+      //     this.permiteModificarAgenda = response.puedeModificar;
+      //     this.cicloLectivoActualEnCreado = response.creado;
+      //   });
     } else {
       this.yearSelected = this.aniosCiclos[1];
       this.nextYearSelect = true;
-      this.cicloLectivoActualEnCreado = true;
+      // this.cicloLectivoActualEnCreado = true;
     }
     this.dataSource.data = [];
     this.obtenerCursos();
