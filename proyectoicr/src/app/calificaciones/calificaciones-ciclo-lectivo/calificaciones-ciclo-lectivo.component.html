@@ -57,6 +57,12 @@
     >
       No se encuentran calificaciones registradas para los valores seleccionados
     </p>
+    <p
+      class="aviso"
+      *ngIf="docenteNoTieneCursos"
+    >
+      No tiene cursos asignados para el año seleccionado
+    </p>
     <mat-form-field class="filtro" *ngIf="estudiantes.length != 0">
       <mat-label>Filtrar estudiante</mat-label>
       <input

@@ -59,6 +59,7 @@ export class CalificacionesCicloLectivoComponent implements OnInit, OnDestroy {
   isLoading = false;
   calificacionesChange = false;
   puedeEditarCalificaciones = false;
+  docenteNoTieneCursos = false;
   examen;
   promedio = 0;
   promedioT1 = 0;
@@ -132,19 +133,24 @@ export class CalificacionesCicloLectivoComponent implements OnInit, OnDestroy {
             .obtenerCursosDeDocentePorCiclo(this.docente, yearS)
             .pipe(takeUntil(this.unsubscribe))
             .subscribe((response) => {
-              this.isLoading = false;
-              this.cursos = response.cursos;
-              this.cursos.sort((a, b) =>
-              a.nombre.charAt(0) > b.nombre.charAt(0)
-                ? 1
-                : b.nombre.charAt(0) > a.nombre.charAt(0)
-                ? -1
-                : a.nombre.charAt(1) > b.nombre.charAt(1)
-                ? 1
-                : b.nombre.charAt(1) > a.nombre.charAt(1)
-                ? -1
-                : 0
-            );
+              this.isLoading = false;  
+                       
+              if( response.cursos.length==0){
+                this.docenteNoTieneCursos=true;
+              }else{
+                this.cursos = response.cursos;
+                this.cursos.sort((a, b) =>
+                a.nombre.charAt(0) > b.nombre.charAt(0)
+                  ? 1
+                  : b.nombre.charAt(0) > a.nombre.charAt(0)
+                  ? -1
+                  : a.nombre.charAt(1) > b.nombre.charAt(1)
+                  ? 1
+                  : b.nombre.charAt(1) > a.nombre.charAt(1)
+                  ? -1
+                  : 0
+              );
+              }
             });
         });
     } else {
@@ -169,6 +175,7 @@ export class CalificacionesCicloLectivoComponent implements OnInit, OnDestroy {
     }
   }
   onYearSelected(yearSelected) {
+    this.docenteNoTieneCursos=false
     this.materiaSelec = false;
     this.estudiantes = [];
     this.materias = [];
