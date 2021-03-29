@@ -25,7 +25,7 @@ import { MediaMatcher } from "@angular/cdk/layout";
   styleUrls: ["./calificaciones-estudiantes.component.css"],
 })
 export class CalificacionesEstudiantesComponent implements OnInit, OnDestroy {
-  cursos: any[]=[];
+  cursos: any[] = [];
   materias: any[];
   estudiantes: any[] = [];
   displayedColumns: string[] = [
@@ -81,6 +81,7 @@ export class CalificacionesEstudiantesComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.isLoading = true;
     this.servicioCicloLectivo
       .obtenerActualYSiguiente()
       .pipe(takeUntil(this.unsubscribe))
@@ -88,8 +89,8 @@ export class CalificacionesEstudiantesComponent implements OnInit, OnDestroy {
         this.aniosCiclos = response.añosCiclos;
       });
     this.obtenerTrimestreActual();
-    this.validarPermisos();
     this.obtenerCursos();
+    this.validarPermisos();
     this.servicioCalificaciones.auxCambios = false;
   }
 
@@ -105,8 +106,9 @@ export class CalificacionesEstudiantesComponent implements OnInit, OnDestroy {
       .obtenerEstadoMXC(idCurso, idMateria)
       .pipe(takeUntil(this.unsubscribe))
       .subscribe((response) => {
-        this.puedeEditarCalificaciones = this.validarEstadoMXC(response.estadoMXC);
-        
+        this.puedeEditarCalificaciones = this.validarEstadoMXC(
+          response.estadoMXC
+        );
       });
   }
 
@@ -118,7 +120,6 @@ export class CalificacionesEstudiantesComponent implements OnInit, OnDestroy {
         if (res.permisos.notas == 2) {
           this.rolConPermisosEdicion = true;
         }
-        this.isLoading = false;
       });
   }
 
@@ -144,6 +145,7 @@ export class CalificacionesEstudiantesComponent implements OnInit, OnDestroy {
                   ? -1
                   : 0
               );
+              this.isLoading = false;
             });
         });
     } else {
@@ -167,6 +169,7 @@ export class CalificacionesEstudiantesComponent implements OnInit, OnDestroy {
                   ? -1
                   : 0
               );
+              this.isLoading = false;
             });
         });
     }
@@ -179,22 +182,21 @@ export class CalificacionesEstudiantesComponent implements OnInit, OnDestroy {
       .subscribe(async (response) => {
         this.estadoCiclo = await response.estadoCiclo;
         this.puedeEditarCalificaciones = true;
-        if (this.servicioAutenticacion.getRol() != "Director") {
-          switch (this.estadoCiclo) {
-            case "En primer trimestre":
-              this.trimestreActual = "1";
-              break;
-            case "En segundo trimestre":
-              this.trimestreActual = "2";
-              break;
-            case "En tercer trimestre":
-              this.trimestreActual = "3";
-              break;
-            default:
-              this.trimestreSeleccionado = "3";
-              this.puedeEditarCalificaciones = false;
-              break;
-          }
+
+        switch (this.estadoCiclo) {
+          case "En primer trimestre":
+            this.trimestreActual = "1";
+            break;
+          case "En segundo trimestre":
+            this.trimestreActual = "2";
+            break;
+          case "En tercer trimestre":
+            this.trimestreActual = "3";
+            break;
+          default:
+            this.trimestreSeleccionado = "3";
+            this.puedeEditarCalificaciones = false;
+            break;
         }
 
         this.trimestreSeleccionado = this.trimestreActual;
@@ -205,8 +207,9 @@ export class CalificacionesEstudiantesComponent implements OnInit, OnDestroy {
     if (this.cursoSeleccionado && this.materiaSeleccionada)
       this.obtenerNotas(form);
     if (
-      this.trimestreSeleccionado == this.trimestreActual ||
-      this.servicioAutenticacion.getRol() == "Director"
+      this.trimestreActual != "fuera" &&
+      (this.trimestreSeleccionado == this.trimestreActual ||
+        this.servicioAutenticacion.getRol() == "Director")
     ) {
       this.puedeEditarCalificaciones = true;
     } else {
@@ -223,6 +226,8 @@ export class CalificacionesEstudiantesComponent implements OnInit, OnDestroy {
         this.trimestreSeleccionado
       )
       .subscribe((response) => {
+        this.isLoading = false;
+
         this.sePuedeCerrar = response.exito;
       });
   }
@@ -230,6 +235,7 @@ export class CalificacionesEstudiantesComponent implements OnInit, OnDestroy {
   //Cierra una materia (cambia estado de MXC, y si es tercer trimestre
   // se cambia estado de las CXM y se calcula promedio)
   onCerrarMateria(form: NgForm) {
+    this.isLoading = true;
     this.servicioCalificaciones
       .cerrarTrimestreMateria(
         form.value.materia,
@@ -237,6 +243,7 @@ export class CalificacionesEstudiantesComponent implements OnInit, OnDestroy {
         this.trimestreSeleccionado
       )
       .subscribe((response) => {
+        this.isLoading = false;
         if (response.exito) {
           this.snackBar.open(response.message, "", {
             panelClass: ["snack-bar-exito"],
@@ -257,6 +264,7 @@ export class CalificacionesEstudiantesComponent implements OnInit, OnDestroy {
   onCursoSeleccionado(curso, materia: NgModel) {
     this.cursoSeleccionado = true;
     this.materiaSeleccionada = false;
+    this.isLoading2 = true;
     this.estudiantes = [];
     this.materias = null;
     materia.reset();
@@ -268,6 +276,7 @@ export class CalificacionesEstudiantesComponent implements OnInit, OnDestroy {
         .obtenerMateriasXCursoXDocente(curso.value, this.idDocente)
         .pipe(takeUntil(this.unsubscribe))
         .subscribe((respuesta) => {
+          this.isLoading2 = false;
           this.materias = respuesta.materias;
           this.materias.sort((a, b) =>
             a.nombre > b.nombre ? 1 : b.nombre > a.nombre ? -1 : 0
@@ -278,6 +287,7 @@ export class CalificacionesEstudiantesComponent implements OnInit, OnDestroy {
         .obtenerMateriasDeCurso(curso.value)
         .pipe(takeUntil(this.unsubscribe))
         .subscribe((respuesta) => {
+          this.isLoading2 = false;
           this.materias = respuesta.materias;
           this.materias.sort((a, b) =>
             a.nombre > b.nombre ? 1 : b.nombre > a.nombre ? -1 : 0
@@ -291,7 +301,10 @@ export class CalificacionesEstudiantesComponent implements OnInit, OnDestroy {
       (this.servicioCalificaciones.auxCambios && this.comboCurso.panelOpen) ||
       (this.servicioCalificaciones.auxCambios && this.comboTrimestre.panelOpen)
     ) {
-      const dialogRef = this.popup.open(CalificacionesEstudiantePopupComponent);
+      const dialogRef = this.popup.open(
+        CalificacionesEstudiantePopupComponent,
+        { width: "250px" }
+      );
       dialogRef.afterClosed().subscribe(() => {
         if (this.servicioCalificaciones.avisoResult) {
           this.servicioCalificaciones.avisoResult = false;
@@ -305,17 +318,27 @@ export class CalificacionesEstudiantesComponent implements OnInit, OnDestroy {
 
   //Valida si el estado de la MXC es el mismo al trimestre actual
   validarEstadoMXC(estadoMXC) {
-    if(this.servicioAutenticacion.getRol() == "Director") return true;
-    if (estadoMXC == "En primer trimestre" && this.trimestreActual == "1") {
+    if (
+      this.servicioAutenticacion.getRol() == "Director" &&
+      this.trimestreActual != "fuera"
+    )
+      return true;
+    if (
+      estadoMXC == "En primer trimestre" &&
+      this.trimestreActual == "1" &&
+      this.trimestreSeleccionado == "1"
+    ) {
       return true;
     } else if (
       estadoMXC == "En segundo trimestre" &&
-      this.trimestreActual == "2"
+      this.trimestreActual == "2" &&
+      this.trimestreSeleccionado == "2"
     ) {
       return true;
     } else if (
       estadoMXC == "En tercer trimestre" &&
-      this.trimestreActual == "3"
+      this.trimestreActual == "3" &&
+      this.trimestreSeleccionado == "3"
     ) {
       return true;
     }
@@ -347,6 +370,7 @@ export class CalificacionesEstudiantesComponent implements OnInit, OnDestroy {
           this.dataSource.filter = this.filtroEstudiante;
           this.dataSource.paginator = this.paginator;
           this.dataSource.paginator.firstPage();
+          this.sePuedeCerrar = false;
           this.sePuedeCerrarTrimestre(form);
           this.obtenerEstadoMXC(form.value.curso, form.value.materia);
           this.isLoading2 = false;
@@ -380,40 +404,49 @@ export class CalificacionesEstudiantesComponent implements OnInit, OnDestroy {
   }
 
   onGuardar(form: NgForm) {
-    if (form.invalid) {
-      if (form.value.curso == "" || form.value.materia == "") {
-        this.snackBar.open("Faltan campos por seleccionar", "", {
-          panelClass: ["snack-bar-fracaso"],
-          duration: 3000,
-        });
-      } else {
-        this.snackBar.open(
-          "Las calificaciones sólo pueden ser números entre 1 y 10.",
-          "",
-          {
+    if (this.hayNotasVacias()) {
+      this.snackBar.open("Las calificaciones no pueden estar vacias", "", {
+        panelClass: ["snack-bar-fracaso"],
+        duration: 3000,
+      });
+    } else {
+      if (form.invalid) {
+        if (form.value.curso == "" || form.value.materia == "") {
+          this.snackBar.open("Faltan campos por seleccionar", "", {
             panelClass: ["snack-bar-fracaso"],
             duration: 3000,
-          }
-        );
-      }
-    } else if (form.valueChanges) {
-      this.servicioCalificaciones
-        .registrarCalificaciones(
-          this.estudiantes,
-          form.value.materia,
-          form.value.trimestre
-        )
-        .pipe(takeUntil(this.unsubscribe))
-        .subscribe((respuesta) => {
-          if (respuesta.exito) {
-            this.snackBar.open(respuesta.message, "", {
-              panelClass: ["snack-bar-exito"],
+          });
+        } else {
+          this.snackBar.open(
+            "Las calificaciones sólo pueden ser números entre 1 y 10",
+            "",
+            {
+              panelClass: ["snack-bar-fracaso"],
               duration: 3000,
-            });
-            this.sePuedeCerrarTrimestre(form);
-          }
-        });
-      this.servicioCalificaciones.auxCambios = false;
+            }
+          );
+        }
+      } else if (form.valueChanges) {
+        this.isLoading = true;
+        this.servicioCalificaciones
+          .registrarCalificaciones(
+            this.estudiantes,
+            form.value.materia,
+            form.value.trimestre
+          )
+          .pipe(takeUntil(this.unsubscribe))
+          .subscribe((respuesta) => {
+            this.calificacionesChange = false;
+            if (respuesta.exito) {
+              this.snackBar.open(respuesta.message, "", {
+                panelClass: ["snack-bar-exito"],
+                duration: 4500,
+              });
+              this.sePuedeCerrarTrimestre(form);
+            }
+          });
+        this.servicioCalificaciones.auxCambios = false;
+      }
     }
   }
 
@@ -456,6 +489,15 @@ export class CalificacionesEstudiantesComponent implements OnInit, OnDestroy {
       event.stopPropagation();
       event.preventDefault();
     }
+  }
+
+  hayNotasVacias() {
+    for (const estudiante of this.estudiantes) {
+      if (estudiante.calificaciones.includes(null)) {
+        return true;
+      }
+    }
+    return false;
   }
 }
 

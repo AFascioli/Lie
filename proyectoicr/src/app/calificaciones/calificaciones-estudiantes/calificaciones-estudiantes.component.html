@@ -4,9 +4,6 @@
 <h1 *ngIf="!rolConPermisosEdicion && aniosCiclos " class="componente-titulo">
   Visualizar calificaciones ciclo lectivo {{ aniosCiclos[0] }}
 </h1>
-<mat-card class="card-spinner" *ngIf="isLoading">
-  <mat-spinner class="spinner" [diameter]="60"></mat-spinner>
-</mat-card>
 <mat-card
   class="card-body-componente"
   *ngIf="this.estadoCiclo == 'Inactivo' || this.estadoCiclo == 'Creado'"
@@ -22,7 +19,7 @@
 <mat-card
   class="card-body-componente"
   *ngIf="
-    !isLoading && this.estadoCiclo != 'Inactivo' && this.estadoCiclo != 'Creado'
+    this.estadoCiclo != 'Inactivo' && this.estadoCiclo != 'Creado'
   "
 >
 <p
@@ -367,6 +364,7 @@
       <button
         mat-raised-button
         class="button-primary"
+        *ngIf="rolConPermisosEdicion"
         [disabled]="!sePuedeCerrar"
         (click)="onCerrarMateria(form)"
       >
@@ -379,6 +377,7 @@
           !puedeEditarCalificaciones
         "
         mat-raised-button
+        *ngIf="rolConPermisosEdicion"
         class="button"
         (click)="onGuardar(form)"
         class="button-primary"
@@ -391,3 +390,9 @@
     </div>
   </form>
 </mat-card>
+<div *ngIf="isLoading" class="loading-overlay">
+  <div class="loading-div">
+    <mat-spinner class="spinner" [diameter]="60"></mat-spinner>
+    <p class="loading-text">Cargando</p>
+  </div>
+</div>

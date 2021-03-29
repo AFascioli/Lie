@@ -72,8 +72,8 @@ exports.sePuedeCerrarMateria = (idMateria, idCurso, trimestre) => {
           return calificacion != 0;
         }
       );
-
-      if (!(arrayCantidadConNotas.length >= 3)) {
+      //Checkea la cantidad de notas que tienen los estudiantes para ver si se puede cerrar materia
+      if (!(arrayCantidadConNotas.length >= 2)) {
         resolve(false);
       }
     }
