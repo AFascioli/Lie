@@ -1,9 +1,5 @@
 <h1 class="componente-titulo">Calificaciones por ciclo lectivo</h1>
-<mat-card class="card-spinner" *ngIf="isLoading">
-  <mat-spinner class="spinner" [diameter]="60"></mat-spinner>
-</mat-card>
-
-<mat-card class="card-body-componente" *ngIf="!isLoading">
+<mat-card class="card-body-componente">
   <form #form="ngForm">
     <div class="div-selects">
       <mat-form-field class="selectYear">
@@ -57,15 +53,10 @@
     </div>
     <p
       class="aviso"
-      *ngIf="estudiantes.length == 0 && !isLoading2 && materiaSelec"
+      *ngIf="estudiantes.length == 0 && materiaSelec"
     >
       No se encuentran calificaciones registradas para los valores seleccionados
     </p>
-    <mat-spinner
-      *ngIf="isLoading2"
-      class="spinner"
-      [diameter]="60"
-    ></mat-spinner>
     <mat-form-field class="filtro" *ngIf="estudiantes.length != 0">
       <mat-label>Filtrar estudiante</mat-label>
       <input
@@ -633,8 +624,14 @@
 
     <div class="div-button">
       <button mat-raised-button class="button-warn" (click)="onCancelar()">
-        Cancelar
+        Volver
       </button>
     </div>
   </form>
 </mat-card>
+<div *ngIf="isLoading" class="loading-overlay">
+  <div class="loading-div">
+    <mat-spinner class="spinner" [diameter]="60"></mat-spinner>
+    <p class="loading-text">Cargando</p>
+  </div>
+</div>

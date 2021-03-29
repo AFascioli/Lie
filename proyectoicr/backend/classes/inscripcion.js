@@ -154,9 +154,9 @@ exports.inscribirEstudiante = async function (
       materiasPendientesNuevas.push(...inscripcion.materiasPendientes);
       cuotasAnteriores = inscripcion.cuotas;
 
-      inscripcion.estado = idInscripcionInactiva;
+      // inscripcion.estado = idInscripcionInactiva;
       let idCursoASubir = inscripcion.idCurso;
-      await inscripcion.save();
+      // await inscripcion.save();
 
       // Sumar capacidad al curso de donde salio el estudiante
       await Curso.findByIdAndUpdate(idCursoASubir, {
@@ -192,6 +192,8 @@ exports.inscribirEstudiante = async function (
     });
 
     await nuevaInscripcion.save();
+    //Se borra la inscripcion anterior para que salgan bien los reportes
+    if(inscripcion) await Inscripcion.findByIdAndDelete(inscripcion._id).exec();
     cursoSeleccionado.capacidad = cursoSeleccionado.capacidad - 1;
     await cursoSeleccionado.save();
     let idEstadoInscriptoEstudiante = await ClaseEstado.obtenerIdEstado(
