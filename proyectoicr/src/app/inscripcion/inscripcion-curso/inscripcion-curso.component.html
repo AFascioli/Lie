@@ -35,6 +35,9 @@
           </mat-option>
         </mat-select>
       </mat-form-field>
+      <label *ngIf="this.capacidadCurso != 0" class="capacidad-curso"
+        ><b>Cupos:</b> {{ this.capacidadCurso }}</label
+      >
     </div>
     <p
       class="aviso"
@@ -98,6 +101,7 @@
           <mat-checkbox
             [checked]="estudiante.seleccionado"
             (change)="estudiante.seleccionado = !estudiante.seleccionado"
+            (change)="hayCambios = true"
           >
           </mat-checkbox>
         </td>
@@ -113,6 +117,7 @@
         class="button-primary"
         mat-raised-button
         (click)="openDialogo()"
+        [disabled]="!hayCambios"
       >
         Inscribir
       </button>
@@ -122,3 +127,9 @@
     </div>
   </form>
 </mat-card>
+<div *ngIf="isLoading" class="loading-overlay">
+  <div class="loading-div">
+    <mat-spinner class="spinner" [diameter]="60"></mat-spinner>
+    <p class="loading-text">Cargando</p>
+  </div>
+</div>

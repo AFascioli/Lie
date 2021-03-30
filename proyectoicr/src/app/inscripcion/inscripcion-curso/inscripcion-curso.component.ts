@@ -9,6 +9,7 @@ import {
 } from "@angular/material";
 import { Subject } from "rxjs";
 import { takeUntil } from "rxjs/operators";
+import { ThrowStmt } from "@angular/compiler";
 
 @Component({
   selector: "app-inscripcion-curso",
@@ -35,6 +36,9 @@ export class InscripcionCursoComponent implements OnInit {
   cicloHabilitado: boolean;
   aniosCiclos: any[];
   estadoCiclo: string;
+  capacidadCurso: number = 0;
+  isLoading = true;
+  hayCambios = false;
 
   constructor(
     public servicioInscripcion: InscripcionService,
@@ -54,6 +58,10 @@ export class InscripcionCursoComponent implements OnInit {
   }
 
   onYearSelected(yearSelected) {
+    this.hayCambios = false;
+    this.loading = true;
+    this.seSeleccionoCurso = false;
+    this.estudiantes = [];
     if (yearSelected.value == "actual") {
       this.yearSelected = this.aniosCiclos[0];
       this.nextYearSelect = false;
@@ -62,12 +70,14 @@ export class InscripcionCursoComponent implements OnInit {
       this.nextYearSelect = true;
     }
     this.obtenerCursosEstudiantes();
+    this.capacidadCurso = 0;
   }
 
   obtenerCursosEstudiantes() {
     this.servicioInscripcion
       .obtenerCursos(this.yearSelected)
       .subscribe((response) => {
+        this.loading = false;
         this.cursos = response.cursos;
         this.cursos.sort((a, b) =>
           a.nombre.charAt(0) > b.nombre.charAt(0)
@@ -84,10 +94,12 @@ export class InscripcionCursoComponent implements OnInit {
   }
 
   cicloActualHabilitado() {
+    
     this.servicioCicloLectivo
-      .obtenerEstadoCicloLectivo()
-      .pipe(takeUntil(this.unsubscribe))
-      .subscribe((response) => {
+    .obtenerEstadoCicloLectivo()
+    .pipe(takeUntil(this.unsubscribe))
+    .subscribe((response) => {
+        this.isLoading = false;
         this.cicloHabilitado =
           response.estadoCiclo == "Creado" ||
           response.estadoCiclo == "En primer trimestre" ||
@@ -99,8 +111,10 @@ export class InscripcionCursoComponent implements OnInit {
   }
 
   onCursoSeleccionado(cursoSeleccionado) {
+    this.hayCambios = false;
     this.loading = true;
     this.cursoSeleccionado = cursoSeleccionado.value;
+    this.obtenerCapacidadCurso();
     if (this.yearSelected == this.aniosCiclos[0]) {
       if (this.estadoCiclo == "En tercer trimestre") {
         this.servicioCicloLectivo
@@ -126,6 +140,15 @@ export class InscripcionCursoComponent implements OnInit {
     } else {
       this.obtenerEstudiantesProximoAño();
     }
+  }
+
+  obtenerCapacidadCurso() {
+    this.servicioInscripcion
+      .obtenerCapacidadCurso(this.cursoSeleccionado)
+      .pipe(takeUntil(this.unsubscribe))
+      .subscribe((response) => {
+        this.capacidadCurso = response.capacidad;
+      });
   }
 
   obtenerEstudiantesAñoActual() {
@@ -157,6 +180,7 @@ export class InscripcionCursoComponent implements OnInit {
   }
 
   inscribirEstudiantes() {
+    this.hayCambios = false;
     if (this.yearSelected == this.aniosCiclos[0]) {
       this.inscribirEstudiantesAñoActual();
     } else {
@@ -165,10 +189,12 @@ export class InscripcionCursoComponent implements OnInit {
   }
 
   inscribirEstudiantesAñoActual() {
+    this.isLoading = true;
     this.servicioInscripcion
       .inscribirEstudiantesCurso(this.estudiantes, this.cursoSeleccionado)
       .subscribe((response) => {
         if (response.exito) {
+          this.isLoading = false;
           this.snackBar.open(response.message, "", {
             panelClass: ["snack-bar-exito"],
             duration: 4500,
@@ -195,12 +221,14 @@ export class InscripcionCursoComponent implements OnInit {
   }
 
   inscribirEstudiantesProximoAño() {
+    this.isLoading = true;
     this.servicioInscripcion
       .inscribirEstudiantesCursoProximoAño(
         this.estudiantes,
         this.cursoSeleccionado
       )
       .subscribe((response) => {
+        this.isLoading = false;
         if (response.exito) {
           this.snackBar.open(response.message, "", {
             panelClass: ["snack-bar-exito"],

@@ -2487,17 +2487,18 @@ router.post(
   async (req, res) => {
     try {
       for (const estudiante of req.body.estudiantes) {
-        if (
-          estudiante.seleccionado &&
-          !ClaseInscripcion.inscribirEstudianteProximoAnio(
+        if (estudiante.seleccionado) {
+          let inscripcion = await ClaseInscripcion.inscribirEstudianteProximoAnio(
             req.body.idCurso,
             estudiante.idEstudiante
-          )
-        ) {
-          return res.status(400).json({
-            exito: false,
-            message: "Ocurrió un error al querer escribir a los estudiantes",
-          });
+          );
+
+          if (!inscripcion) {
+            return res.status(400).json({
+              exito: false,
+              message: "Ocurrió un error al querer escribir a los estudiantes",
+            });
+          }
         }
       }
 
