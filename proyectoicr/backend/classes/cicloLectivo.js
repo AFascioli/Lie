@@ -350,7 +350,7 @@ exports.materiasSinCerrar = (trimestre) => {
     if (inscripcionesFiltradas.length == 0) {
       resolve([]);
     } else {
-      for (const inscripcion of inscripcionesFiltradas) {
+      for (const inscripcion of inscripcionesFiltradas) {        
         materiasNoCerrada.push({
           curso:
             trimestre == 3

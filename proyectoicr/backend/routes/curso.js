@@ -2830,4 +2830,34 @@ router.get("/dev/calificaciones", async (req, res) => {
   }
 });
 
+router.get("/dev/actualizar", async (req, res) => {
+  try {
+    let idInscripto = await ClaseEstado.obtenerIdEstado(
+      "Estudiante",
+      "Inscripto"
+    );
+    let idRegistrado = await ClaseEstado.obtenerIdEstado(
+      "Estudiante",
+      "Registrado"
+    );
+
+    for (let index = 0; index < 19; index++) {
+      
+      await Estudiante.findOneAndUpdate({estado: idInscripto}, {estado: idRegistrado}).exec()
+      
+    }
+
+    res.status(200).json({
+      message: "poggers",
+    });
+
+   } catch (error) {
+    res.status(500).json({
+      message: "Ocurrió un error al querer registrar las calificaciones",
+      error: error.message,
+    });
+  }
+});
+
+
 module.exports = router;
