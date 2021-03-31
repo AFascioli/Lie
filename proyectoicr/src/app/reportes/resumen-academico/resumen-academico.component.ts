@@ -205,9 +205,9 @@ export class ReporteResumenAcademicoComponent implements OnInit {
 
   calcularPromedio(index) {
     var notas: number = 0;
-    var cont: number = 0;
+    var cont: number = 0;    
 
-    if (this.resumen[index].promedio.length != 0) {
+    if (this.resumen[index].aprobadaConExamen) {
       this.examen = parseFloat(this.resumen[index].promedio[0]);
     } else {
       this.examen = 0;

@@ -355,7 +355,7 @@
               *matCellDef="let resumen; let i = index"
             >
               <b>
-                {{ examen.toFixed(2) }}
+                {{ examen==0 ? "-" : examen.toFixed(2) }}
               </b>
             </td>
             <ng-template #sinNotas>0</ng-template>
