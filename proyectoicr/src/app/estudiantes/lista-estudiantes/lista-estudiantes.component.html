@@ -157,7 +157,7 @@
     >
   </p>
 </mat-card>
-<div *ngIf="isLoading" class="loading-overlay">
+<div *ngIf="isLoading || contadorTerminoLoading!=0" class="loading-overlay">
   <div class="loading-div">
     <mat-spinner class="spinner" [diameter]="60"></mat-spinner>
     <p class="loading-text">Cargando</p>

@@ -6,6 +6,7 @@ const ClaseEstudiante = require("../classes/estudiante");
 const ClaseEstado = require("../classes/estado");
 const ClaseCicloLectivo = require("../classes/cicloLectivo");
 const Estudiante = require("../models/estudiante");
+const AdultoResponsable = require("../models/adultoResponsable");
 const Estado = require("../models/estado");
 const Inscripcion = require("../models/inscripcion");
 const Curso = require("../models/curso");
@@ -201,6 +202,14 @@ router.delete("/borrar", checkAuthMiddleware, async (req, res, next) => {
           { estado: idEstadoExamenesPendientes },
         ],
       }).then(async (inscripcion) => {
+        await AdultoResponsable.updateMany(
+          {
+            estudiantes: {
+              $in: [req.query._id],
+            },
+          },
+          { $pullAll: { estudiantes: [req.query._id] } }
+          ).exec();
         
         if (inscripcion && inscripcion.length > 0) {
           for (let index = 0; index < inscripcion.length; index++) {
