@@ -425,11 +425,22 @@ router.get("/resumenAcademico", checkAuthMiddleware, async (req, res) => {
         promedio: 1,
         contadorInasistenciasInjustificada: 1,
         contadorInasistenciasJustificada: 1,
+        "calificacionesXMateriaDif.estado": 1,
       },
     },
   ])
-    .then((resumen) => {
+    .then( async (resumen) => {
       if (!resumen) {
+        let aprobConExamen = await ClaseEstado.obtenerIdEstado("CalificacionesXMateria", "AprobadaConExamen");
+        
+        for (const materia of resumen) {
+          if (materia.calificacionesXMateriaDif.estado.toString().localeCompare(aprobConExamen.toString()) == 0) {
+            materia.aprobadaConExamen = true;
+          } else {
+            materia.aprobadaConExamen = false;
+          }
+        }
+        
         return res.status(200).json({
           exito: true,
           message: "No se obtuvieron resultados",

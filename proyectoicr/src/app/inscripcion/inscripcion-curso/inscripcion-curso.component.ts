@@ -95,11 +95,10 @@ export class InscripcionCursoComponent implements OnInit {
   }
 
   cicloActualHabilitado() {
-
     this.servicioCicloLectivo
-    .obtenerEstadoCicloLectivo()
-    .pipe(takeUntil(this.unsubscribe))
-    .subscribe((response) => {
+      .obtenerEstadoCicloLectivo()
+      .pipe(takeUntil(this.unsubscribe))
+      .subscribe((response) => {
         this.isLoading = false;
         this.cicloHabilitado =
           response.estadoCiclo == "Creado" ||
@@ -206,6 +205,10 @@ export class InscripcionCursoComponent implements OnInit {
               return !estudiante.seleccionado;
             })
           );
+          this.obtenerCapacidadCurso();
+          setTimeout(() => {
+            this.obtenerCapacidadCurso();
+          }, 2000);
           this.estudiantes = this.estudiantes.filter((estudiante) => {
             return !estudiante.seleccionado;
           });
@@ -236,6 +239,7 @@ export class InscripcionCursoComponent implements OnInit {
             panelClass: ["snack-bar-exito"],
             duration: 4500,
           });
+          this.obtenerCapacidadCurso();
           this.dataSource = new MatTableDataSource(
             this.estudiantes.filter((estudiante) => {
               return !estudiante.seleccionado;

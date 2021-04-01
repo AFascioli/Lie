@@ -340,7 +340,7 @@ router.post("/publicarEstadoCuotas", checkAuthMiddleware, async (req, res) => {
 
 // Obtiene la capacidad de un curso pasado por parámetro
 // @params: id del curso
-router.get("/capacidad", checkAuthMiddleware, (req, res) => {
+router.get("/capacidad", checkAuthMiddleware, async (req, res) => {
   Curso.findById(req.query.idCurso)
     .then((curso) => {
       res.status(200).json({
@@ -2450,18 +2450,18 @@ router.post(
       ];
 
       for (const estudiante of req.body.estudiantes) {
-        if (
-          estudiante.seleccionado &&
-          !ClaseInscripcion.inscribirEstudiante(
+        if (estudiante.seleccionado) {
+          let inscripcion = await ClaseInscripcion.inscribirEstudiante(
             req.body.idCurso,
             estudiante.idEstudiante,
             documentosEntregados
-          )
-        ) {
-          return res.status(400).json({
-            exito: false,
-            message: "Ocurrió un error al querer escribir a los estudiantes",
-          });
+          );
+          if (!inscripcion) {
+            return res.status(400).json({
+              exito: false,
+              message: "Ocurrió un error al querer escribir a los estudiantes",
+            });
+          }
         }
       }
 
@@ -2830,34 +2830,161 @@ router.get("/dev/calificaciones", async (req, res) => {
   }
 });
 
-router.get("/dev/actualizar", async (req, res) => {
+//Endpoint dev: Pone las 3 calificaciones a todos los estudiantes y cierra el trimestre de las materias.
+router.get("/dev/calificaciones/malas", async (req, res) => {
   try {
-    let idInscripto = await ClaseEstado.obtenerIdEstado(
-      "Estudiante",
-      "Inscripto"
-    );
-    let idRegistrado = await ClaseEstado.obtenerIdEstado(
-      "Estudiante",
-      "Registrado"
-    );
+    let idCicloActual = await ClaseCicloLectivo.obtenerIdCicloActual();
+    let estadoCiclo = await CicloLectivo.aggregate([
+      {
+        $match: {
+          _id: mongoose.Types.ObjectId(idCicloActual),
+        },
+      },
+      {
+        $lookup: {
+          from: "estado",
+          localField: "estado",
+          foreignField: "_id",
+          as: "datosEstado",
+        },
+      },
+    ]);
 
-    for (let index = 0; index < 19; index++) {
-      
-      await Estudiante.findOneAndUpdate({estado: idInscripto}, {estado: idRegistrado}).exec()
-      
+    let idsCursosDesaprobar = [
+      "60206ae199c4f216f098eab8", // 2A
+      // "60206ae199c4f216f098eabe", // 2B
+      "60206ae199c4f216f098eaba", // 4A
+      // "60206ae199c4f216f098eac0", // 4B
+      // "60206ae199c4f216f098eabc", // 6A
+      // "60206ae199c4f216f098eac2", // 6B
+    ];
+
+    estadoCiclo = estadoCiclo[0].datosEstado[0].nombre;
+
+    let inscripcionesCiclo = await Inscripcion.aggregate([
+      {
+        $match: {
+          cicloLectivo: mongoose.Types.ObjectId(idCicloActual),
+        },
+      },
+      {
+        $lookup: {
+          from: "calificacionesXMateria",
+          localField: "calificacionesXMateria",
+          foreignField: "_id",
+          as: "datosCXM",
+        },
+      },
+      {
+        $lookup: {
+          from: "calificacionesXTrimestre",
+          localField: "datosCXM.calificacionesXTrimestre",
+          foreignField: "_id",
+          as: "datosCXT",
+        },
+      },
+    ]);
+
+    let trimestre =
+      estadoCiclo == "En primer trimestre"
+        ? 0
+        : estadoCiclo == "En segundo trimestre"
+        ? 1
+        : 2;
+
+    for (const inscripcion of inscripcionesCiclo) {
+      for (const cxt of inscripcion.datosCXT) {
+        if (cxt.trimestre == trimestre + 1) {
+          let idCXT = cxt._id;
+
+          let calificaciones = cxt.calificaciones;
+          //Cambia el vector de calificaciones del trimestre correspondiente con notas random >=6
+          for (let index = 0; index < 3; index++) {
+            const calificacionesTrimestre = calificaciones[index];
+           
+            if (calificacionesTrimestre == 0) {
+              if (idsCursosDesaprobar.indexOf(inscripcion.idCurso.toString()) != -1) {
+                calificaciones[index] = Math.floor(Math.random() * 8) + 2;
+                console.count();
+
+              } else {
+                calificaciones[index] = Math.floor(Math.random() * 4) + 6;
+              }
+            }
+          }
+          //Se actualiza la CXT con las calificaciones nuevas
+          await CalificacionesXTrimestre.findByIdAndUpdate(idCXT, {
+            calificaciones: cxt.calificaciones,
+          }).exec();
+        }
+      }
     }
 
+    let cursosConMXC = await Curso.aggregate([
+      {
+        $match: {
+          cicloLectivo: idCicloActual,
+        },
+      },
+      {
+        $lookup: {
+          from: "materiasXCurso",
+          localField: "materias",
+          foreignField: "_id",
+          as: "datosMXC",
+        },
+      },
+    ]);
+
+    let estadoMXC =
+      trimestre + 1 == 1
+        ? "En segundo trimestre"
+        : trimestre + 1 == 2
+        ? "En tercer trimestre"
+        : "Cerrada";
+    let idEstadoMXC = await ClaseEstado.obtenerIdEstado(
+      "MateriasXCurso",
+      estadoMXC
+    );
+
+    for (const curso of cursosConMXC) {
+      for (const mxc of curso.datosMXC) {
+        if (trimestre + 1 == 3) {
+          //Cierra las CXM
+          await ClaseCalificacionXMateria.cerrarMateriaTercerTrimestre(
+            curso._id,
+            mxc.idMateria
+          );
+        }
+        //Actualiza el estado de las MXC
+        await MateriasXCurso.findByIdAndUpdate(mxc._id, {
+          estado: idEstadoMXC,
+        }).exec();
+      }
+    }
+    res.status(200).json({
+      message: "Calificaciones registradas exitosamente, algunas malas",
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: "Ocurrió un error al querer registrar las calificaciones malas",
+      error: error.message,
+    });
+  }
+});
+
+router.get("/dev/actualizar", async (req, res) => {
+  try {
+    await ClaseCicloLectivo.crearCursosParaCiclo("6063b3df45744a47f4bc1a22");
     res.status(200).json({
       message: "poggers",
     });
-
-   } catch (error) {
+  } catch (error) {
     res.status(500).json({
       message: "Ocurrió un error al querer registrar las calificaciones",
       error: error.message,
     });
   }
 });
-
 
 module.exports = router;
