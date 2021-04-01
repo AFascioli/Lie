@@ -92,6 +92,11 @@
       <ng-container matColumnDef="seleccionar">
         <th class="columnas-chicas" mat-header-cell *matHeaderCellDef>
           Seleccionar
+          <mat-checkbox
+          [checked]="this.selectAll"
+          (change)="seleccionarTodos()"
+        >
+        </mat-checkbox>
         </th>
         <td
           class="columnas-chicas"

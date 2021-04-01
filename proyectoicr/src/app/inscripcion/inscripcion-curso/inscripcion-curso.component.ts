@@ -39,6 +39,7 @@ export class InscripcionCursoComponent implements OnInit {
   capacidadCurso: number = 0;
   isLoading = true;
   hayCambios = false;
+  selectAll = false;
 
   constructor(
     public servicioInscripcion: InscripcionService,
@@ -94,7 +95,7 @@ export class InscripcionCursoComponent implements OnInit {
   }
 
   cicloActualHabilitado() {
-    
+
     this.servicioCicloLectivo
     .obtenerEstadoCicloLectivo()
     .pipe(takeUntil(this.unsubscribe))
@@ -111,6 +112,7 @@ export class InscripcionCursoComponent implements OnInit {
   }
 
   onCursoSeleccionado(cursoSeleccionado) {
+    this.selectAll=false;
     this.hayCambios = false;
     this.loading = true;
     this.cursoSeleccionado = cursoSeleccionado.value;
@@ -242,6 +244,7 @@ export class InscripcionCursoComponent implements OnInit {
           this.estudiantes = this.estudiantes.filter((estudiante) => {
             return !estudiante.seleccionado;
           });
+          this.obtenerCapacidadCurso();
         } else {
           this.snackBar.open(
             "Ocurrió un error al inscribir los estudiantes seleccionados",
@@ -253,6 +256,14 @@ export class InscripcionCursoComponent implements OnInit {
           );
         }
       });
+  }
+
+  seleccionarTodos() {
+    this.hayCambios=true;
+    this.selectAll = !this.selectAll;
+    for (let index = 0; index < this.estudiantes.length; index++) {
+      this.estudiantes[index].seleccionado = this.selectAll;
+    }
   }
 
   openDialogo() {
