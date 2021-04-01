@@ -31,9 +31,8 @@ export class ResumenAcademicoComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    if (!this.reportService.retornoDeResumenAcademico) this.obtenerCursos();
-    else {
-      this.obtenerCursos();
+    this.obtenerCursos();
+    if (this.reportService.retornoDeResumenAcademico) {
       this.cursoSeleccionado = this.reportService.cursoSeleccionado;
       this.obtenerEstudiantes(this.reportService.cursoSeleccionado);
     }
@@ -41,13 +40,14 @@ export class ResumenAcademicoComponent implements OnInit {
 
   obtenerEstudiantes(curso) {
     this.reportService.cursoSeleccionado = curso;
-    this.isLoading = true;
     this.cursoNotSelected = false;
     this.cursoSeleccionado = curso;
+    this.isLoading = true;
     this.servicioEstudiante
       .obtenerEstudiantesDeCurso(curso)
       .pipe(takeUntil(this.unsubscribe))
       .subscribe((response) => {
+        this.isLoading = false;
         this.estudiantes = response.estudiante;
         this.estudiantes.sort((a, b) =>
           a.apellido.toLowerCase().charAt(0) >
@@ -58,7 +58,6 @@ export class ResumenAcademicoComponent implements OnInit {
             ? -1
             : 0
         );
-        this.isLoading = false;
       });
   }
   obtenerNombreCurso(idCurso) {
@@ -69,6 +68,7 @@ export class ResumenAcademicoComponent implements OnInit {
     }
   }
   obtenerCursos() {
+    this.isLoading = true;
     this.servicioCicloLectivo
       .obtenerActualYSiguiente()
       .pipe(takeUntil(this.unsubscribe))
@@ -78,6 +78,7 @@ export class ResumenAcademicoComponent implements OnInit {
           .obtenerCursos(response.añosCiclos[0])
           .pipe(takeUntil(this.unsubscribe))
           .subscribe((response) => {
+            this.isLoading = false;
             this.cursos = response.cursos;
             this.cursos.sort((a, b) =>
               a.nombre.charAt(0) > b.nombre.charAt(0)
@@ -205,7 +206,7 @@ export class ReporteResumenAcademicoComponent implements OnInit {
 
   calcularPromedio(index) {
     var notas: number = 0;
-    var cont: number = 0;    
+    var cont: number = 0;
 
     if (this.resumen[index].aprobadaConExamen) {
       this.examen = parseFloat(this.resumen[index].promedio[0]);
@@ -317,10 +318,20 @@ export class ReporteResumenAcademicoComponent implements OnInit {
   obtenerPromedioGeneral() {
     let cont = 0;
     let sum = 0;
+
     for (let index = 0; index < this.promedioF.length; index++) {
-      if (this.promedioF[index] != 0) {
-        sum += this.promedioF[index];
+      //Si la nota fue aprobada con examen usa ese promedio
+      if (
+        this.promedioF.length == this.resumen.length &&
+        this.resumen[index].aprobadaConExamen
+      ) {
+        sum += parseFloat(this.resumen[index].promedio[0]);
         cont++;
+      } else {
+        if (this.promedioF[index] != 0) {
+          sum += this.promedioF[index];
+          cont++;
+        }
       }
     }
     if (cont != 0) this.promedioGeneral = sum / cont;

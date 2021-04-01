@@ -42,13 +42,13 @@
           class="select"
         >
           <mat-select
+          id="selectMateria"
             placeholder="Seleccione materia"
             name="materiaRendida"
             ngModel
             #materiaRendida="ngModel"
-            [(ngModel)]="idMateriaSeleccionada"
-            matNativeControl
             (selectionChange)="onMateriaChange(materiaRendida.value)"
+            matNativeControl
             required
           >
             <mat-option
@@ -115,3 +115,9 @@
     </div>
   </form>
 </mat-card>
+<div *ngIf="isLoading" class="loading-overlay">
+  <div class="loading-div">
+    <mat-spinner class="spinner" [diameter]="60"></mat-spinner>
+    <p class="loading-text">Cargando</p>
+  </div>
+</div>

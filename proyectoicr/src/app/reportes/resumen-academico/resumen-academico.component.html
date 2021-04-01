@@ -17,8 +17,8 @@
       </mat-option>
     </mat-select>
   </mat-form-field>
-  <div class="contenedor-tabla" *ngIf="!cursoNotSelected && !isLoading">
-    <table mat-table [dataSource]="estudiantes" *ngIf="estudiantes.length != 0">
+  <div class="contenedor-tabla" *ngIf="!cursoNotSelected">
+    <table mat-table [dataSource]="estudiantes">
       <ng-container matColumnDef="apellido">
         <th class="nombre-apellido" mat-header-cell *matHeaderCellDef>
           Apellido/s
@@ -55,3 +55,9 @@
     </button>
   </div>
 </mat-card>
+<div *ngIf="isLoading" class="loading-overlay">
+  <div class="loading-div">
+    <mat-spinner class="spinner" [diameter]="60"></mat-spinner>
+    <p class="loading-text">Cargando</p>
+  </div>
+</div>

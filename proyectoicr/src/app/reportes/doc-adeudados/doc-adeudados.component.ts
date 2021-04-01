@@ -17,6 +17,7 @@ export class DocAdeudadosComponent implements OnInit {
   valueCursoSelected;
   estudiantesXDocs = [];
   cursoSelected = false;
+  isLoading = false;
   private unsubscribe: Subject<void> = new Subject();
   displayedColumns: string[] = ["estudiante", "documentos"];
   anios: any[];
@@ -32,11 +33,13 @@ export class DocAdeudadosComponent implements OnInit {
   }
 
   obtenerDocsAdeudados(curso) {
+    this.isLoading = true;
     this.valueCursoSelected = this.obtenerNombreCurso(curso.value);
     this.reportService
       .obtenerDocsAdeudados(curso.value)
       .pipe(takeUntil(this.unsubscribe))
       .subscribe((response) => {
+        this.isLoading = false;
         this.estudiantesXDocs = response.estudiantesXDocs;
         this.estudiantesXDocs.sort((a, b) =>
           a.nombres.toLowerCase().charAt(0) > b.nombres.toLowerCase().charAt(0)
@@ -65,6 +68,7 @@ export class DocAdeudadosComponent implements OnInit {
   }
 
   obtenerCursos() {
+    this.isLoading = true;
     this.servicioCicloLectivo
       .obtenerActualYSiguiente()
       .pipe(takeUntil(this.unsubscribe))
@@ -74,6 +78,7 @@ export class DocAdeudadosComponent implements OnInit {
           .obtenerCursos(response.añosCiclos[0])
           .pipe(takeUntil(this.unsubscribe))
           .subscribe((response) => {
+            this.isLoading = false;
             this.cursos = response.cursos;
             this.cursos.sort((a, b) =>
               a.nombre.charAt(0) > b.nombre.charAt(0)

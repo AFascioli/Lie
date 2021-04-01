@@ -64,16 +64,15 @@
       </mat-form-field>
     </div>
     <div id="content" #content *ngIf="materiaSelec">
-      <h1 class="componente-titulo-pdf" *ngIf="materiaSelec">
+      <h1 class="componente-titulo-pdf">
         Rendimiento del curso {{ cursoSNombre }}: {{ materiaSNombre }}
       </h1>
-      <br *ngIf="materiaSelec" />
-      <br *ngIf="materiaSelec" />
+      <br />
+      <br />
       <div class="div-canvas">
-        <div class="canvas">
+        <div class="canvas" *ngIf="barDataSet.length!=0">
           <canvas
             class="cv"
-            *ngIf="!isLoading3"
             baseChart
             [datasets]="barDataSet"
             [labels]="barChartLabelsH"
@@ -83,10 +82,9 @@
             [chartType]="barChartType"
           ></canvas>
         </div>
-        <div class="canvas">
+        <div class="canvas" *ngIf="barDataSet1.length!=0">
           <canvas
             class="cv"
-            *ngIf="!isLoading3"
             baseChart
             [datasets]="barDataSet1"
             [labels]="barChartLabelsH"
@@ -96,10 +94,9 @@
             [chartType]="barChartType"
           ></canvas>
         </div>
-        <div class="canvas">
+        <div class="canvas" *ngIf="barDataSet2.length!=0">
           <canvas
             class="cv"
-            *ngIf="!isLoading3"
             baseChart
             [datasets]="barDataSet2"
             [labels]="barChartLabelsH"
@@ -113,7 +110,7 @@
       <br />
       <br />
       <canvas
-        *ngIf="!isLoading3"
+        *ngIf="barDataSet3.length!=0"
         baseChart
         [datasets]="barDataSet3"
         [labels]="barChartLabelsH"
@@ -138,3 +135,9 @@
     </button>
   </div>
 </mat-card>
+<div *ngIf="isLoading" class="loading-overlay">
+  <div class="loading-div">
+    <mat-spinner class="spinner" [diameter]="60"></mat-spinner>
+    <p class="loading-text">Cargando</p>
+  </div>
+</div>
