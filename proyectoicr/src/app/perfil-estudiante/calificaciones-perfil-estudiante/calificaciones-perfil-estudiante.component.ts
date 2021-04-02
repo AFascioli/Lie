@@ -37,6 +37,7 @@ export class CalificacionesPerfilEstudianteComponent
   _mobileQueryListener: () => void;
   mobileQuery: MediaQueryList;
   isLoading = false;
+  aprobadasConExamen=[];
 
   constructor(
     public servicioEstudiante: EstudiantesService,
@@ -108,6 +109,11 @@ export class CalificacionesPerfilEstudianteComponent
       .subscribe((res) => {
         this.isLoading = false;
         this.calificacionesXMateria = res.vectorCalXMat;
+        for (const materia of this.calificacionesXMateria) {
+          if(materia.notaExamen!=0){
+            this.aprobadasConExamen.push(materia)
+          }
+        }
         this.calificacionesXMateria.sort((a, b) =>
           a.materia > b.materia ? 1 : b.materia > a.materia ? -1 : 0
         );

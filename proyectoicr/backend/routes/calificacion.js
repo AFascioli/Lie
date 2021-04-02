@@ -28,6 +28,10 @@ router.get("/materiasDesaprobadas", checkAuthMiddleware, async (req, res) => {
       "Inscripcion",
       "Examenes pendientes"
     );
+    let idLibre = await ClaseEstado.obtenerIdEstado(
+      "Inscripcion",
+      "Libre"
+    );
 
     Inscripcion.findOne({
       idEstudiante: req.query.idEstudiante,
@@ -37,6 +41,7 @@ router.get("/materiasDesaprobadas", checkAuthMiddleware, async (req, res) => {
           mongoose.Types.ObjectId(idEstadoSuspendido),
           mongoose.Types.ObjectId(idEstadoPromovidoConExPend),
           mongoose.Types.ObjectId(idEstadoExPendiente),
+          mongoose.Types.ObjectId(idLibre),
         ],
       },
     }).then(async (inscripcion) => {
@@ -48,11 +53,16 @@ router.get("/materiasDesaprobadas", checkAuthMiddleware, async (req, res) => {
         });
       }
 
-      let idEstado = await ClaseEstado.obtenerIdEstado(
+      let idPendiente= await ClaseEstado.obtenerIdEstado(
         "CalificacionesXMateria",
         "Pendiente examen"
-      );
-
+        );
+      let idDesaprobada= await ClaseEstado.obtenerIdEstado(
+        "CalificacionesXMateria",
+        "Desaprobada"
+        );
+      let idEstado =[idPendiente,idDesaprobada]
+        
       let idsCXMDesaprobadas = await ClaseCXM.obtenerMateriasDesaprobadasv2(
         inscripcion.materiasPendientes,
         inscripcion.calificacionesXMateria,
@@ -171,15 +181,22 @@ router.get("/materia/calificaciones", checkAuthMiddleware, async (req, res) => {
       $project: {
         "cXT.calificaciones": 1,
         "materia.nombre": 1,
+        "cXM":1
       },
     },
   ])
-    .then((resultado) => {
+    .then(async(resultado) => {
+      let idAprobConEx = await ClaseEstado.obtenerIdEstado("CalificacionesXMateria","AprobadaConExamen")
       let vectorRespuesta = [];
       resultado.forEach((objEnResultado) => {
+        let notaExamen=0;
+        if(objEnResultado.cXM.estado.toString().localeCompare(idAprobConEx.toString())==0){
+          notaExamen=parseFloat(objEnResultado.cXM.promedio);
+        }
         vectorRespuesta.push({
           materia: objEnResultado.materia[0].nombre,
           calificaciones: objEnResultado.cXT.calificaciones,
+          notaExamen:notaExamen
         });
       });
       res.status(200).json({
