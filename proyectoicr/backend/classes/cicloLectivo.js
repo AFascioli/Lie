@@ -91,7 +91,7 @@ exports.pasarInscripcionesAActivas = () => {
             ? inscripcionAnterior.materiasPendientes
             : [];
           inscripcion.estado = idActiva;
-          inscripcion.save();
+          await inscripcion.save();
 
           //Pasar Estudiante de Registrado a Inscripto
           let idEstadoEstInscripto = await ClaseEstado.obtenerIdEstado(

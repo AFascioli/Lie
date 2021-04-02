@@ -17,7 +17,9 @@ exports.obtenerAñoHabilitado = function (inscripcion, idCicloSeleccionado) {
     //Si el estudiante esta libre el curso siguiente es igual al actual
     if (
       idCicloSeleccionado != idCicloActual &&
-      inscripcion[0].estadoInscripcion[0].nombre.toString().localeCompare("Libre") != 0
+      inscripcion[0].estadoInscripcion[0].nombre
+        .toString()
+        .localeCompare("Libre") != 0
     ) {
       siguiente = añoActual + 1;
     } else {
@@ -97,8 +99,17 @@ exports.inscribirEstudiante = async function (
         idEstudiante: idEstudiante,
         estado: idEstadoActiva,
       })
-        .then((inscripcion) => {
-          resolve(inscripcion);
+        .then(async (inscripcionActiva) => {
+          if (!!inscripcionActiva) {
+            resolve(inscripcionActiva);
+          } else {
+            let idCicloAnterior = await ClaseCicloLectivo.obtenerIdCicloAnterior();
+            let inscripcionAñoAnterior = await Inscripcion.findOne({
+              idEstudiante: idEstudiante,
+              cicloLectivo: idCicloAnterior,
+            });
+            resolve(inscripcionAñoAnterior);
+          }
         })
         .catch((err) => reject(err));
     });
@@ -144,27 +155,33 @@ exports.inscribirEstudiante = async function (
     var materiasPendientesNuevas = [];
 
     //Si es cambio de curso se deben copiar los siguientes datos de la inscripcion "vieja"
+    let idEstadoActiva = await ClaseEstado.obtenerIdEstado(
+      "Inscripcion",
+      "Activa"
+    );
     if (inscripcion != null) {
-      let idInscripcionInactiva = await ClaseEstado.obtenerIdEstado(
-        "Inscripcion",
-        "Inactiva"
-      );
-      contadorInasistenciasInjustificada =
-        inscripcion.contadorInasistenciasInjustificada;
-      contadorInasistenciasJustificada =
-        inscripcion.contadorInasistenciasJustificada;
-      contadorLlegadasTarde = inscripcion.contadorLlegadasTarde;
+      //Inscripcion es activa, se hace cambio de curso
+      if (
+        inscripcion.estado
+          .toString()
+          .localeCompare(idEstadoActiva.toString()) == 0
+      ) {
+        contadorInasistenciasInjustificada =
+          inscripcion.contadorInasistenciasInjustificada;
+        contadorInasistenciasJustificada =
+          inscripcion.contadorInasistenciasJustificada;
+        contadorLlegadasTarde = inscripcion.contadorLlegadasTarde;
+        cuotasAnteriores = inscripcion.cuotas;
+
+        let idCursoASubir = inscripcion.idCurso;
+
+        // Sumar capacidad al curso de donde salio el estudiante
+        await Curso.findByIdAndUpdate(idCursoASubir, {
+          $inc: { capacidad: 1 },
+        }).exec();
+      }
+
       materiasPendientesNuevas.push(...inscripcion.materiasPendientes);
-      cuotasAnteriores = inscripcion.cuotas;
-
-      // inscripcion.estado = idInscripcionInactiva;
-      let idCursoASubir = inscripcion.idCurso;
-      // await inscripcion.save();
-
-      // Sumar capacidad al curso de donde salio el estudiante
-      await Curso.findByIdAndUpdate(idCursoASubir, {
-        $inc: { capacidad: 1 },
-      }).exec();
     }
 
     var cuotas = [];
@@ -191,13 +208,24 @@ exports.inscribirEstudiante = async function (
       materiasPendientes: materiasPendientesNuevas,
       cicloLectivo: idCicloActual,
       cuotas: cuotas,
-      sanciones: inscripcion ? inscripcion.sanciones : [],
+      sanciones:
+        (inscripcion &&
+        inscripcion.estado
+          .toString()
+          .localeCompare(idEstadoActiva.toString()) == 0)
+          ? inscripcion.sanciones
+          : [],
     });
 
     await nuevaInscripcion.save();
-    //Se borra la inscripcion anterior para que salgan bien los reportes
-    if (inscripcion)
+    //Se borra la inscripcion anterior activa para que salgan bien los reportes
+    if (
+      inscripcion &&
+      inscripcion.estado.toString().localeCompare(idEstadoActiva.toString()) ==
+        0
+    ) {
       await Inscripcion.findByIdAndDelete(inscripcion._id).exec();
+    }
     cursoSeleccionado.capacidad = cursoSeleccionado.capacidad - 1;
     await cursoSeleccionado.save();
     let idEstadoInscriptoEstudiante = await ClaseEstado.obtenerIdEstado(
@@ -290,7 +318,6 @@ exports.inscribirEstudianteProximoAnio = async function (
 
     await nuevaInscripcion.save();
     cursoSeleccionado.capacidad = parseInt(cursoSeleccionado.capacidad, 10) - 1;
-    console.log(cursoSeleccionado.capacidad);
 
     await cursoSeleccionado.save();
 
@@ -414,7 +441,7 @@ exports.cambiarEstadoExamPendientes = (idCicloActual) => {
         }
         await Inscripcion.findByIdAndUpdate(inscripcion._id, {
           estado: idEstadoPromovidoExamPendientes,
-          materiasPendientes: idsCXMPendientes,
+          $push: { materiasPendientes: idsCXMPendientes },
         }).exec();
       } else {
         for (const idCxm of idsCXMPendientes) {

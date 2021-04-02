@@ -462,7 +462,10 @@ router.get("/cursosDeEstudiante", checkAuthMiddleware, async (req, res) => {
             //Se agregan todos los cursos disponibles para inscribirse excepto el curso actual
             cursos.forEach((curso) => {
               //Si el estudiante esta libre se deben devolver los 2 cursos del año en que quedo libre
-              let estadoLibre=inscripcion[0].estadoInscripcion[0].nombre.toString().localeCompare("Libre") == 0
+              let estadoLibre =
+                inscripcion[0].estadoInscripcion[0].nombre
+                  .toString()
+                  .localeCompare("Libre") == 0;
               if (
                 estadoLibre ||
                 !(curso.nombre == inscripcion[0].cursoActual[0].nombre)
@@ -595,7 +598,6 @@ router.get("/cursosDeEstudiante", checkAuthMiddleware, async (req, res) => {
                   cantidadDesaprobadas++;
                 }
               }
-
               // Si la condicion valua true, estaba promovido o promovido con examenes pendientes y se le ofrece los cursos
               // del año superior al anterior
               if (cantidadDesaprobadas <= 3) {
@@ -622,11 +624,10 @@ router.get("/cursosDeEstudiante", checkAuthMiddleware, async (req, res) => {
               } else {
                 // El estudiante esta libre, se le ofrece el mismo año que la inscripcion anterior
                 let respuesta = [];
-                let cursos = Curso.find({
+                let cursos = await Curso.find({
                   nombre: { $regex: añoCursoInscripcionAnterior },
                   cicloLectivo: idCicloActual,
                 });
-
                 cursos.forEach((curso) => {
                   var cursoConId = {
                     _id: curso._id,
