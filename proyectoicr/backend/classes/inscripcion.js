@@ -287,8 +287,8 @@ exports.inscribirEstudianteProximoAnio = async function (
     await nuevaInscripcion.save();
     cursoSeleccionado.capacidad = parseInt(cursoSeleccionado.capacidad, 10) - 1;
     console.log(cursoSeleccionado.capacidad);
-    
-    await cursoSeleccionado.save().exec();
+
+    await cursoSeleccionado.save();
 
     return true;
   } catch (error) {
