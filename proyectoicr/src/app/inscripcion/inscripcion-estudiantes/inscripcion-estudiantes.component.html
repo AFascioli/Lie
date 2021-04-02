@@ -25,20 +25,30 @@
           <b>Apellido/s: </b> {{ apellidoEstudiante }}
           <br />
           <b>Nombre/s: </b> {{ nombreEstudiante }}
-          <p class="mensaje-atencion" *ngIf="estudianteEstaInscripto && !nextYearSelect && aniosCiclos.length!=0">
+          <p
+            class="mensaje-atencion"
+            *ngIf="
+              estudianteEstaInscripto &&
+              !nextYearSelect &&
+              aniosCiclos.length != 0
+            "
+          >
             <b
               >Atención, el estudiante seleccionado ya esta inscripto en el
-              curso {{cursoActualYSiguiente[0] }}
+              curso {{ cursoActualYSiguiente[0] }}
             </b>
             <label class="mensaje-atencion-curso">
               para el año
               {{ aniosCiclos[0] }}
             </label>
           </p>
-          <p class="mensaje-atencion" *ngIf="tieneInscripcionPendiente && nextYearSelect">
+          <p
+            class="mensaje-atencion"
+            *ngIf="tieneInscripcionPendiente && nextYearSelect"
+          >
             <b
               >Atención, el estudiante seleccionado ya esta inscripto en el
-              curso {{cursoActualYSiguiente[1] }}
+              curso {{ cursoActualYSiguiente[1] }}
             </b>
             <label class="mensaje-atencion-curso">
               para el año
@@ -88,8 +98,7 @@
       <b>Cupos disponibles: </b>{{ capacidadCurso }}
     </p>
     <br />
-    <mat-accordion 
-    [hidden]="nextYearSelect">
+    <mat-accordion [hidden]="nextYearSelect || !cicloHabilitado">
       <mat-expansion-panel
         [class.mat-expansion-panel-mobile]="mobileQuery.matches"
         [expanded]="true"
@@ -112,7 +121,7 @@
         >
         <br />
         <mat-checkbox
-        [checked]="this.documentosEntregados[1].entregado"
+          [checked]="this.documentosEntregados[1].entregado"
           (change)="registrarDocumento(1)"
           [disabled]="nextYearSelect"
         >
@@ -120,7 +129,7 @@
         >
         <br />
         <mat-checkbox
-        [checked]="this.documentosEntregados[2].entregado"
+          [checked]="this.documentosEntregados[2].entregado"
           (change)="registrarDocumento(2)"
           [disabled]="nextYearSelect"
         >

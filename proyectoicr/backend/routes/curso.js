@@ -373,6 +373,7 @@ router.get("/cursosDeEstudiante", checkAuthMiddleware, async (req, res) => {
     "Inscripcion",
     "Suspendido"
   );
+  let idEstadoLibre = await ClaseEstado.obtenerIdEstado("Inscripcion", "Libre");
 
   Inscripcion.aggregate([
     {
@@ -382,6 +383,7 @@ router.get("/cursosDeEstudiante", checkAuthMiddleware, async (req, res) => {
           $in: [
             mongoose.Types.ObjectId(idEstadoActiva),
             mongoose.Types.ObjectId(idEstadoSuspendido),
+            mongoose.Types.ObjectId(idEstadoLibre),
           ],
         },
       },
@@ -459,7 +461,12 @@ router.get("/cursosDeEstudiante", checkAuthMiddleware, async (req, res) => {
           }).then((cursos) => {
             //Se agregan todos los cursos disponibles para inscribirse excepto el curso actual
             cursos.forEach((curso) => {
-              if (!(curso.nombre == inscripcion[0].cursoActual[0].nombre)) {
+              //Si el estudiante esta libre se deben devolver los 2 cursos del año en que quedo libre
+              let estadoLibre=inscripcion[0].estadoInscripcion[0].nombre.toString().localeCompare("Libre") == 0
+              if (
+                estadoLibre ||
+                !(curso.nombre == inscripcion[0].cursoActual[0].nombre)
+              ) {
                 cursosDisponibles.push(curso);
               }
             });
@@ -1024,6 +1031,10 @@ router.get(
       "Inscripcion",
       "Inactiva"
     );
+    let idEstadoLibre = await ClaseEstado.obtenerIdEstado(
+      "Inscripcion",
+      "Libre"
+    );
 
     Inscripcion.aggregate([
       {
@@ -1036,6 +1047,7 @@ router.get(
               mongoose.Types.ObjectId(idEstadoPromovidoConExPend),
               mongoose.Types.ObjectId(idEstadoExPendiente),
               mongoose.Types.ObjectId(idEstadoPromovido),
+              mongoose.Types.ObjectId(idEstadoLibre),
               mongoose.Types.ObjectId(idEstadoInactiva),
             ],
           },
@@ -1212,6 +1224,7 @@ router.get("/estudiante", checkAuthMiddleware, async (req, res) => {
     "Inscripcion",
     "Promovido"
   );
+  let idEstadoLibre = await ClaseEstado.obtenerIdEstado("Inscripcion", "Libre");
   Inscripcion.findOne({
     idEstudiante: mongoose.Types.ObjectId(req.query.idEstudiante),
     estado: {
@@ -1221,6 +1234,7 @@ router.get("/estudiante", checkAuthMiddleware, async (req, res) => {
         mongoose.Types.ObjectId(idEstadoPromovidoConExPend),
         mongoose.Types.ObjectId(idEstadoExPendiente),
         mongoose.Types.ObjectId(idEstadoPromovido),
+        mongoose.Types.ObjectId(idEstadoLibre),
       ],
     },
   })
@@ -2649,6 +2663,7 @@ router.get("/estudiantes", checkAuthMiddleware, async (req, res) => {
     "Inscripcion",
     "Promovido"
   );
+  let idEstadoLibre = await ClaseEstado.obtenerIdEstado("Inscripcion", "Libre");
   Inscripcion.aggregate([
     {
       $lookup: {
@@ -2668,6 +2683,7 @@ router.get("/estudiantes", checkAuthMiddleware, async (req, res) => {
             mongoose.Types.ObjectId(idEstadoPromovidoConExPend),
             mongoose.Types.ObjectId(idEstadoExPendiente),
             mongoose.Types.ObjectId(idEstadoPromovido),
+            mongoose.Types.ObjectId(idEstadoLibre),
           ],
         },
       },

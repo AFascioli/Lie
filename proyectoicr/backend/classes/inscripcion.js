@@ -14,8 +14,11 @@ exports.obtenerAñoHabilitado = function (inscripcion, idCicloSeleccionado) {
     let siguiente;
     let añoActual = parseInt(inscripcion[0].cursoActual[0].nombre, 10);
     let idCicloActual = await ClaseCicloLectivo.obtenerIdCicloActual();
-
-    if (idCicloSeleccionado != idCicloActual) {
+    //Si el estudiante esta libre el curso siguiente es igual al actual
+    if (
+      idCicloSeleccionado != idCicloActual &&
+      inscripcion[0].estadoInscripcion[0].nombre.toString().localeCompare("Libre") != 0
+    ) {
       siguiente = añoActual + 1;
     } else {
       siguiente = añoActual;
@@ -193,7 +196,8 @@ exports.inscribirEstudiante = async function (
 
     await nuevaInscripcion.save();
     //Se borra la inscripcion anterior para que salgan bien los reportes
-    if(inscripcion) await Inscripcion.findByIdAndDelete(inscripcion._id).exec();
+    if (inscripcion)
+      await Inscripcion.findByIdAndDelete(inscripcion._id).exec();
     cursoSeleccionado.capacidad = cursoSeleccionado.capacidad - 1;
     await cursoSeleccionado.save();
     let idEstadoInscriptoEstudiante = await ClaseEstado.obtenerIdEstado(

@@ -60,6 +60,7 @@ export class SolicitudReunionComponent implements OnInit {
         )
         .pipe(takeUntil(this.unsubscribe))
         .subscribe((respuesta) => {
+          form.reset()
           this.isLoading=false;
           if (respuesta.exito) {
             this.snackBar.open(respuesta.message, "", {

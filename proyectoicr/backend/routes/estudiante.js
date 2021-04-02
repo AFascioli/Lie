@@ -488,6 +488,10 @@ router.get("/cuotasEstudiante", checkAuthMiddleware, async (req, res) => {
       "Inscripcion",
       "Promovido"
     );
+    let idEstadoLibre = await ClaseEstado.obtenerIdEstado(
+      "Inscripcion",
+      "Libre"
+    );
 
     let inscripcion = await Inscripcion.findOne({
       idEstudiante: req.query.idEstudiante,
@@ -498,6 +502,7 @@ router.get("/cuotasEstudiante", checkAuthMiddleware, async (req, res) => {
           idEstadoPromovidoConExPend,
           idEstadoExPendiente,
           idEstadoPromovido,
+          idEstadoLibre,
         ],
       },
     });
@@ -549,6 +554,10 @@ router.get("/sancionesEstudiante", checkAuthMiddleware, async (req, res) => {
     "Inscripcion",
     "Promovido"
   );
+  let idEstadoLibre = await ClaseEstado.obtenerIdEstado(
+    "Inscripcion",
+    "Libre"
+  );
 
   Inscripcion.findOne({
     idEstudiante: req.query.idEstudiante,
@@ -560,6 +569,7 @@ router.get("/sancionesEstudiante", checkAuthMiddleware, async (req, res) => {
         mongoose.Types.ObjectId(idEstadoPromovidoConExPend),
         mongoose.Types.ObjectId(idEstadoExPendiente),
         mongoose.Types.ObjectId(idEstadoPromovido),
+        mongoose.Types.ObjectId(idEstadoLibre),
       ],
     },
   })

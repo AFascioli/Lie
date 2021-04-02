@@ -21,7 +21,8 @@ export class ErrorInterceptor implements HttpInterceptor {
   intercept(req: HttpRequest<any>, next: HttpHandler) {
     return next.handle(req).pipe(
       catchError((error: HttpErrorResponse) => {
-        let errorMessage = "Ocurrió un error inesperado";
+        let errorMessage = "Ocurrió un error inesperado por favor vuelva a la pantalla anterior";
+        console.log(error.error)
         if (error.error.message) {
           errorMessage = error.error.message;
         }

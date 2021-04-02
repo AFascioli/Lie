@@ -76,7 +76,7 @@ export class InscripcionEstudianteComponent implements OnInit, OnDestroy {
     this.apellidoEstudiante = this.servicioEstudiante.estudianteSeleccionado.apellido;
     this.nombreEstudiante = this.servicioEstudiante.estudianteSeleccionado.nombre;
     this._idEstudiante = this.servicioEstudiante.estudianteSeleccionado._id;
-    this.cicloActualHabilitado();
+
     this.servicioEstudiante
       .estudianteEstaInscripto(this._idEstudiante)
       .pipe(takeUntil(this.unsubscribe))
@@ -85,18 +85,35 @@ export class InscripcionEstudianteComponent implements OnInit, OnDestroy {
         if (response.exito) this.documentosEntregados = response.documentos;
       });
     this.servicioCicloLectivo
-      .obtenerActualYSiguiente()
+      .obtenerEstadoCicloLectivo()
       .pipe(takeUntil(this.unsubscribe))
       .subscribe((response) => {
-        this.aniosCiclos = response.añosCiclos;
-        this.servicioInscripcion
-          .obtenerCursosInscripcionEstudiante(this.aniosCiclos[0])
+        this.cicloHabilitado =
+          response.estadoCiclo == "Creado" ||
+          response.estadoCiclo == "En primer trimestre" ||
+          response.estadoCiclo == "En segundo trimestre" ||
+          response.estadoCiclo == "En tercer trimestre";
+        this.estadoCicloLectivo = response.estadoCiclo;
+        this.servicioCicloLectivo
+          .obtenerActualYSiguiente()
           .pipe(takeUntil(this.unsubscribe))
           .subscribe((response) => {
-            if (response.cursoActual != "") {
-              this.cursoActualYSiguiente.unshift(response.cursoActual.nombre);
-            }
-            this.isLoading = false;
+            this.aniosCiclos = response.añosCiclos;
+            // if (this.cicloHabilitado) {
+              this.servicioInscripcion
+                .obtenerCursosInscripcionEstudiante(this.aniosCiclos[0])
+                .pipe(takeUntil(this.unsubscribe))
+                .subscribe((response) => {
+                  if (response.cursoActual != "") {
+                    this.cursoActualYSiguiente.unshift(
+                      response.cursoActual.nombre
+                    );
+                  }
+                  this.isLoading = false;
+                });
+            // }else{
+            //   this.isLoading = false;
+            // }
           });
       });
 
@@ -226,7 +243,7 @@ export class InscripcionEstudianteComponent implements OnInit, OnDestroy {
             if (curso.nombre != this.cursoActualYSiguiente[1]) return curso;
           });
         }
-        
+
         this.cursos.sort((a, b) =>
           a.nombre.charAt(0) > b.nombre.charAt(0)
             ? 1

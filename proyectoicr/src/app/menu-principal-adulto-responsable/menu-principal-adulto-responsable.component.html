@@ -48,6 +48,11 @@
       <mat-chip>{{ curso }}</mat-chip>
     </mat-chip-list>
   </mat-card>
+  <mat-card class="card-body-componente" *ngIf="estudiantes.length == 0">
+    <h1 class="titulo-aviso">
+      En este momento no tienes ningún estudiante asignado
+    </h1>
+  </mat-card>
   <mat-card class="card-body-componente" *ngIf="eventosFiltrados.length == 0">
     <h1 class="titulo-aviso">
       No existen eventos publicados para el año seleccionado
