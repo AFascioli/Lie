@@ -441,7 +441,7 @@ exports.cambiarEstadoExamPendientes = (idCicloActual) => {
         }
         await Inscripcion.findByIdAndUpdate(inscripcion._id, {
           estado: idEstadoPromovidoExamPendientes,
-          $push: { materiasPendientes: idsCXMPendientes },
+          materiasPendientes: idsCXMPendientes ,
         }).exec();
       } else {
         for (const idCxm of idsCXMPendientes) {
