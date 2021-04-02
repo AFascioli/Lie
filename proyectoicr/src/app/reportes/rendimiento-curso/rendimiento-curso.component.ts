@@ -36,8 +36,7 @@ export class RendimientoCursoComponent implements OnInit {
 
   rolConPermisosEdicion = false;
 
-  isLoading2 = false;
-  isLoading3 = true;
+  isLoading = false;
 
   estudiantes: any = [];
 
@@ -155,6 +154,7 @@ export class RendimientoCursoComponent implements OnInit {
   }
 
   onCursoSeleccionado(curso, materia) {
+    this.isLoading=true;
     this.cursoS = curso;
     this.cursoSNombre = this.obtenerNombreCurso(curso.value);
     this.materiaS = materia;
@@ -167,6 +167,7 @@ export class RendimientoCursoComponent implements OnInit {
         .obtenerMateriasDeCurso(curso.value)
         .pipe(takeUntil(this.unsubscribe))
         .subscribe((respuesta) => {
+          this.isLoading=false;
           this.materias = respuesta.materias;
           this.materias.sort((a, b) =>
             a.nombre > b.nombre ? 1 : b.nombre > a.nombre ? -1 : 0
@@ -177,6 +178,7 @@ export class RendimientoCursoComponent implements OnInit {
         .obtenerMateriasXCursoXDocente(curso.value, this.idDocente)
         .pipe(takeUntil(this.unsubscribe))
         .subscribe((respuesta) => {
+          this.isLoading=false;
           this.materias = respuesta.materias;
           this.materias.sort((a, b) =>
             a.nombre > b.nombre ? 1 : b.nombre > a.nombre ? -1 : 0
@@ -187,7 +189,7 @@ export class RendimientoCursoComponent implements OnInit {
 
   obtenerNotas(materia) {
     this.materiaSNombre = this.obtenerNombreMateria(materia);
-    this.isLoading2 = true;
+    this.isLoading = true;
     if (this.cursoS.value != "" || materia != "") {
       this.servicioCalificaciones
         .obtenerCalificacionesEstudiantesXCursoXMateriaCicloLectivo(
@@ -203,7 +205,7 @@ export class RendimientoCursoComponent implements OnInit {
           this.reordenarCalificaciones();
           this.calcularPromedio();
           this.dataSource = new MatTableDataSource(this.estudiantes);
-          this.isLoading2 = false;
+          this.isLoading = false;
           this.diferenciarIntervalos();
         });
     }
@@ -317,7 +319,7 @@ export class RendimientoCursoComponent implements OnInit {
   }
 
   diferenciarIntervalos() {
-    this.isLoading3 = true;
+    this.isLoading = true;
     this.resetearContadoresIntervalo();
     for (let index = 0; index < this.promedioT1.length; index++) {
       switch (true) {
@@ -411,7 +413,7 @@ export class RendimientoCursoComponent implements OnInit {
   }
 
   onTipoGraficoChange(grafico) {
-    this.isLoading3 = true;
+    this.isLoading = true;
     switch (grafico) {
       case 0:
         grafico = "pie";
@@ -453,6 +455,7 @@ export class RendimientoCursoComponent implements OnInit {
         .obtenerActualYAnteriores()
         .pipe(takeUntil(this.unsubscribe))
         .subscribe((response) => {
+          this.isLoading=false;
           this.years = response.añosCiclos;
           this.years.sort(function (a, b) {
             return b - a;
@@ -481,7 +484,7 @@ export class RendimientoCursoComponent implements OnInit {
 
   configuracionGraficos() {
     this.barChartType = this.tipoGrafico;
-    this.isLoading3 = false;
+    this.isLoading = false;
     this.barDataSet = [
       {
         hoverBackgroundColor: ["#43586e", "#588a77", "#7dad83", "#b7bf91"],

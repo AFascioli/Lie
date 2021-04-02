@@ -29,6 +29,7 @@ export class CalificacionesExamenesComponent implements OnInit, OnDestroy {
   aniosCiclos;
   rol: string;
   cursosDeDocente = [];
+  isLoading = false;
 
   constructor(
     public estudianteService: EstudiantesService,
@@ -51,6 +52,7 @@ export class CalificacionesExamenesComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.isLoading = true;
     this.fechaActual = new Date();
     this.servicioCicloLectivo
       .obtenerActualYSiguiente()
@@ -85,18 +87,20 @@ export class CalificacionesExamenesComponent implements OnInit, OnDestroy {
                       }
                     }
                   }
+                  this.isLoading = false;
                 });
             });
-        }else if(this.rol == "Admin"){
-          this.materiasDesaprobadas=materias.materiasDesaprobadas;
+        } else if (this.rol == "Admin") {
+          this.materiasDesaprobadas = materias.materiasDesaprobadas;
+          this.isLoading = false;
         }
       });
     this.fechaActualFinDeSemana();
   }
 
   onMateriaChange(materia) {
-    this.idMateriaSeleccionada = materia._id;
     this.idCursoMateria = materia.cursoId;
+    this.idMateriaSeleccionada = materia._id;
   }
 
   onCondicionChage(condicion) {
@@ -133,6 +137,7 @@ export class CalificacionesExamenesComponent implements OnInit, OnDestroy {
   }
 
   guardar(form: NgForm) {
+    
     if (form.invalid) {
       this.snackBar.open("Faltan campos por completar", "", {
         panelClass: ["snack-bar-fracaso"],
@@ -140,6 +145,7 @@ export class CalificacionesExamenesComponent implements OnInit, OnDestroy {
       });
     } else {
       if (this.condicionExamen == "aprobado" && this.notaExamen > 5) {
+        this.isLoading = true;
         this.servicioCalificaciones
           .registrarCalificacionExamen(
             this.idMateriaSeleccionada,
@@ -154,15 +160,12 @@ export class CalificacionesExamenesComponent implements OnInit, OnDestroy {
                 panelClass: ["snack-bar-exito"],
                 duration: 3000,
               });
-              this.servicioCalificaciones
-                .obtenerMateriasDesaprobadasEstudiante(
-                  this.estudianteService.estudianteSeleccionado._id
-                )
-                .pipe(takeUntil(this.unsubscribe))
-                .subscribe((materias) => {
-                  this.materiasDesaprobadas = materias.materiasDesaprobadas;
-                });
+              let indexMateriaAprobada= this.materiasDesaprobadas.indexOf(this.idMateriaSeleccionada);
+              this.materiasDesaprobadas.splice(indexMateriaAprobada,1);
+                form.reset()
+                this.isLoading = false;
             } else {
+              this.isLoading = false;
               this.snackBar.open(rtdo.message, "", {
                 panelClass: ["snack-bar-fracaso"],
                 duration: 3000,

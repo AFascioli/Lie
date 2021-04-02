@@ -685,8 +685,20 @@ router.get("/docente", checkAuthMiddleware, async (req, res) => {
       },
     },
     {
+      $unwind: {
+        path: "$mxc",
+      },
+    },
+    {
       $match: {
         "mxc.idDocente": mongoose.Types.ObjectId(req.query.idDocente),
+      },
+    },
+    {
+      $project: {
+        _id: 1,
+        mxc: 1,
+        nombre: 1,
       },
     },
   ])
@@ -700,12 +712,10 @@ router.get("/docente", checkAuthMiddleware, async (req, res) => {
         };
         respuesta.push(cursoConId);
 
-        for (const mxc of curso.mxc) {
-          materiasYCursoDocente.push({
-            idMateria: mxc.idMateria,
-            nombreCurso: curso.nombre,
-          });
-        }
+        materiasYCursoDocente.push({
+          idMateria: curso.mxc.idMateria,
+          nombreCurso: curso.nombre,
+        });
       });
 
       res.status(200).json({
@@ -2901,12 +2911,14 @@ router.get("/dev/calificaciones/malas", async (req, res) => {
           //Cambia el vector de calificaciones del trimestre correspondiente con notas random >=6
           for (let index = 0; index < 3; index++) {
             const calificacionesTrimestre = calificaciones[index];
-           
+
             if (calificacionesTrimestre == 0) {
-              if (idsCursosDesaprobar.indexOf(inscripcion.idCurso.toString()) != -1) {
+              if (
+                idsCursosDesaprobar.indexOf(inscripcion.idCurso.toString()) !=
+                -1
+              ) {
                 calificaciones[index] = Math.floor(Math.random() * 8) + 2;
                 console.count();
-
               } else {
                 calificaciones[index] = Math.floor(Math.random() * 4) + 6;
               }

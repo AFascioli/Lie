@@ -43,6 +43,7 @@ export class ListaEstudiantesComponent implements OnInit, OnDestroy {
   estadoCiclo: string;
   enEstadoCLExamenes;
   enEstadoCLCursando;
+  contadorTerminoLoading = 0;
 
   constructor(
     public servicio: EstudiantesService,
@@ -78,6 +79,7 @@ export class ListaEstudiantesComponent implements OnInit, OnDestroy {
         this.estudiantes = estudiantesBuscados;
         this.isLoading = this.estudiantes.length > 0;
         for (let i = 0; i < estudiantesBuscados.length; i++) {
+          this.contadorTerminoLoading++;
           this.servicio
             .obtenerCursoDeEstudianteById(this.estudiantes[i]._id)
             .pipe(takeUntil(this.unsubscribe))
@@ -85,6 +87,7 @@ export class ListaEstudiantesComponent implements OnInit, OnDestroy {
               this.inscripto[i] = response.exito;
               this.cursos[i] = response.curso;
               if (this.inscripto[i]) {
+                this.contadorTerminoLoading++;
                 this.servicioCalificaciones
                   .obtenerMateriasDesaprobadasEstudiante(
                     this.estudiantes[i]._id
@@ -93,33 +96,43 @@ export class ListaEstudiantesComponent implements OnInit, OnDestroy {
                     this.materiasPendientes.push(
                       response.materiasDesaprobadas.length > 0
                     );
+                    this.contadorTerminoLoading--;
                   });
 
+                this.contadorTerminoLoading++;
                 // Validación por suspendido
                 this.servicio
                   .esEstudianteSuspendido(this.estudiantes[i]._id)
                   .pipe(takeUntil(this.unsubscribe))
                   .subscribe((response) => {
                     this.suspendido[i] = response.exito;
+                    this.contadorTerminoLoading--;
                   });
               }
 
+              this.contadorTerminoLoading--;
             });
-          }
-          this.isLoading = false;
+        }
+        this.isLoading = false;
       });
 
     if (!this.servicio.retornoDesdeAcciones) {
       this.servicio.retornoDesdeAcciones = false;
     }
 
+    this.contadorTerminoLoading++;
     this.authService
       .obtenerPermisosDeRol()
       .pipe(takeUntil(this.unsubscribe))
       .subscribe((response) => {
         this.permisos = response.permisos;
+        this.contadorTerminoLoading--;
         this.isLoading = false;
       });
+
+      setTimeout(()=>{
+        this.contadorTerminoLoading=0;
+      }, 15000)
     // this.rol = this.authService.getRol();
 
     // if (this.rol == "Docente") {
@@ -138,6 +151,7 @@ export class ListaEstudiantesComponent implements OnInit, OnDestroy {
   }
 
   verificarEstadoCiclo() {
+    this.contadorTerminoLoading++;
     this.servicioCicloLectivo
       .obtenerEstadoCicloLectivo()
       .pipe(takeUntil(this.unsubscribe))
@@ -147,6 +161,7 @@ export class ListaEstudiantesComponent implements OnInit, OnDestroy {
           response.estadoCiclo == "En segundo trimestre" ||
           response.estadoCiclo == "En tercer trimestre";
         this.enEstadoCLExamenes = response.estadoCiclo == "En examenes";
+        this.contadorTerminoLoading--;
       });
   }
 

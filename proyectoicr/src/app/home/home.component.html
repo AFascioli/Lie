@@ -157,6 +157,11 @@
     </h1>
   </mat-card>
 </ng-container>
+<mat-card class="card-body-componente" *ngIf="eventos.length == 0">
+  <h1 class="titulo-aviso">
+    No existen eventos publicados 
+  </h1>
+</mat-card>
 
 <div *ngIf="isLoading" class="loading-overlay">
   <div class="loading-div">

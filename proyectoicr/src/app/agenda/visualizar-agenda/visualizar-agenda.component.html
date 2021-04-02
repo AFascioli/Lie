@@ -1,10 +1,10 @@
-<h1 class="componente-titulo" *ngIf="aniosCiclos">
-  Visualizar agenda de curso ciclo lectivo {{ yearSelected }}
+<h1 class="componente-titulo">
+  Visualizar agenda de curso ciclo lectivo
+  {{
+    this.yearSelectedUser != 0 ? "ciclo lectivo " + this.yearSelectedUser : ""
+  }}
 </h1>
-<mat-card class="card-spinner" *ngIf="isLoading">
-  <mat-spinner class="spinner" [diameter]="60"></mat-spinner>
-</mat-card>
-<mat-card class="card-body-componente" *ngIf="!isLoading">
+<mat-card class="card-body-componente">
   <div class="div-select">
     <mat-form-field class="selectYear">
       <mat-select
@@ -147,3 +147,9 @@
     </button>
   </div>
 </mat-card>
+<div *ngIf="isLoading" class="loading-overlay">
+  <div class="loading-div">
+    <mat-spinner class="spinner" [diameter]="60"></mat-spinner>
+    <p class="loading-text">Cargando</p>
+  </div>
+</div>

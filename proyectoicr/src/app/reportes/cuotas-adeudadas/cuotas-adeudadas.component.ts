@@ -20,6 +20,7 @@ export class CuotasAdeudadasComponent implements OnInit {
   private unsubscribe: Subject<void> = new Subject();
   displayedColumns: string[] = ["estudiante", "cuotas"];
   anios;
+  isLoading;
 
   constructor(
     public servicioEstudiante: EstudiantesService,
@@ -32,11 +33,13 @@ export class CuotasAdeudadasComponent implements OnInit {
   }
 
   obtenerCuotasAdeudadas(curso) {
+    this.isLoading=true;
     this.valueCursoSelected = this.obtenerNombreCurso(curso.value);
     this.reportService
       .obtenerCuotasAdeudadas(curso.value)
       .pipe(takeUntil(this.unsubscribe))
       .subscribe((response) => {
+        this.isLoading=false;
         this.estudiantesXCuotas = response.estudiantesXCuotas;
         this.estudiantesXCuotas.sort((a, b) =>
           a.nombres.toLowerCase().charAt(0) > b.nombres.toLowerCase().charAt(0)
@@ -99,6 +102,7 @@ export class CuotasAdeudadasComponent implements OnInit {
   }
 
   obtenerCursos() {
+    this.isLoading=true;
     this.servicioCicloLectivo
       .obtenerActualYSiguiente()
       .pipe(takeUntil(this.unsubscribe))
@@ -108,6 +112,7 @@ export class CuotasAdeudadasComponent implements OnInit {
           .obtenerCursos(response.añosCiclos[0])
           .pipe(takeUntil(this.unsubscribe))
           .subscribe((response) => {
+            this.isLoading=false;
             this.cursos = response.cursos;
             this.cursos.sort((a, b) =>
               a.nombre.charAt(0) > b.nombre.charAt(0)

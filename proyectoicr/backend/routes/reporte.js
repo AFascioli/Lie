@@ -28,10 +28,7 @@ router.get("/documentos", checkAuthMiddleware, async (req, res) => {
     "Inscripcion",
     "Promovido"
   );
-  let idEstadoLibre = await ClaseEstado.obtenerIdEstado(
-    "Inscripcion",
-    "Libre"
-  );
+  let idEstadoLibre = await ClaseEstado.obtenerIdEstado("Inscripcion", "Libre");
 
   Inscripcion.aggregate([
     {
@@ -137,10 +134,7 @@ router.get("/cuotas", checkAuthMiddleware, async (req, res) => {
     "Inscripcion",
     "Promovido"
   );
-  let idEstadoLibre = await ClaseEstado.obtenerIdEstado(
-    "Inscripcion",
-    "Libre"
-  );
+  let idEstadoLibre = await ClaseEstado.obtenerIdEstado("Inscripcion", "Libre");
 
   Inscripcion.aggregate([
     {
@@ -310,6 +304,9 @@ router.get("/resumenAcademico", checkAuthMiddleware, async (req, res) => {
         promedio: {
           $first: "$calificacionesXMateriaDif.promedio",
         },
+        estadoMXC: {
+          $first: "$calificacionesXMateriaDif.estado",
+        },
       },
     },
     {
@@ -360,6 +357,9 @@ router.get("/resumenAcademico", checkAuthMiddleware, async (req, res) => {
         promedio: {
           $first: "$promedio",
         },
+        estadoMXC: {
+          $first: "$estadoMXC",
+        },
       },
     },
     {
@@ -388,6 +388,9 @@ router.get("/resumenAcademico", checkAuthMiddleware, async (req, res) => {
         },
         promedio: {
           $first: "$promedio",
+        },
+        estadoMXC: {
+          $first: "$estadoMXC",
         },
       },
     },
@@ -425,32 +428,40 @@ router.get("/resumenAcademico", checkAuthMiddleware, async (req, res) => {
         promedio: 1,
         contadorInasistenciasInjustificada: 1,
         contadorInasistenciasJustificada: 1,
-        "calificacionesXMateriaDif.estado": 1,
+        estadoMXC: 1,
       },
     },
   ])
-    .then( async (resumen) => {
-      if (!resumen) {
-        let aprobConExamen = await ClaseEstado.obtenerIdEstado("CalificacionesXMateria", "AprobadaConExamen");
-        
+    .then(async (resumen) => {
+      if (resumen) {
+        let aprobConExamen = await ClaseEstado.obtenerIdEstado(
+          "CalificacionesXMateria",
+          "AprobadaConExamen"
+        );
+
         for (const materia of resumen) {
-          if (materia.calificacionesXMateriaDif.estado.toString().localeCompare(aprobConExamen.toString()) == 0) {
+          if (
+            materia.estadoMXC[0]
+              .toString()
+              .localeCompare(aprobConExamen.toString()) == 0
+          ) {
             materia.aprobadaConExamen = true;
           } else {
             materia.aprobadaConExamen = false;
           }
         }
-        
+
         return res.status(200).json({
           exito: true,
-          message: "No se obtuvieron resultados",
-          resumen: [],
+          message:
+            "Se obtuvo correctamente el resumen académico del estudiante",
+          resumen: resumen,
         });
       }
-      res.status(200).json({
+      return res.status(200).json({
         exito: true,
-        message: "Se obtuvo correctamente el resumen académico del estudiante",
-        resumen: resumen,
+        message: "No se obtuvieron resultados",
+        resumen: [],
       });
     })
     .catch((error) => {

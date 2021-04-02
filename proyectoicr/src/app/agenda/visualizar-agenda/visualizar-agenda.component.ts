@@ -39,7 +39,7 @@ export class VisualizarAgendaComponent implements OnInit, OnDestroy {
   private unsubscribe: Subject<void> = new Subject();
   isLoading = true;
   agendaVacia: boolean = false;
-  yearSelected;
+  yearSelectedUser=0;
   nextYearSelect;
   aniosCiclos: any[];
 
@@ -63,12 +63,15 @@ export class VisualizarAgendaComponent implements OnInit, OnDestroy {
       .subscribe((response) => {
         this.aniosCiclos = response.añosCiclos;
         this.isLoading = false;
+        console.log(this.yearSelectedUser);
+        
       });
   }
 
   // Obtiene la agenda de un curso y le asigna a las materias un color distinto
   async obtenerAgenda(idCurso) {
     return new Promise((resolve, reject) => {
+      this.isLoading=true;
       this.servicioAgenda
         .obtenerAgendaDeCurso(idCurso)
         .pipe(takeUntil(this.unsubscribe))
@@ -77,6 +80,7 @@ export class VisualizarAgendaComponent implements OnInit, OnDestroy {
           this.materias = agenda.agenda;
           this.getMateriasDistintas();
           this.getColorVector();
+          this.isLoading=false;
           resolve(agenda.agenda);
         });
     });
@@ -100,18 +104,19 @@ export class VisualizarAgendaComponent implements OnInit, OnDestroy {
   onYearSelected(yearSelected) {
     this.cursoSelected = false;
     if (yearSelected.value == "actual") {
-      this.yearSelected = this.aniosCiclos[0];
+      this.yearSelectedUser = this.aniosCiclos[0];
       this.nextYearSelect = false;
     } else {
-      this.yearSelected = this.aniosCiclos[1];
+      this.yearSelectedUser = this.aniosCiclos[1];
       this.nextYearSelect = true;
     }
     this.obtenerCursos();
   }
 
   obtenerCursos() {
+    this.isLoading = true;
     this.servicioEstudiante
-      .obtenerCursos(this.yearSelected)
+      .obtenerCursos(this.yearSelectedUser)
       .pipe(takeUntil(this.unsubscribe))
       .subscribe((response) => {
         this.cursos = response.cursos;
