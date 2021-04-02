@@ -96,7 +96,6 @@ export class ListaEstudiantesComponent implements OnInit, OnDestroy {
                     this.materiasPendientes.push(
                       response.materiasDesaprobadas.length > 0
                     );
-                    console.log(this.materiasPendientes);
                     
                     this.contadorTerminoLoading--;
                   });
