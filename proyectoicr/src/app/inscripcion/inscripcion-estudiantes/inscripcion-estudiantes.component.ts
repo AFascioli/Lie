@@ -43,7 +43,6 @@ export class InscripcionEstudianteComponent implements OnInit, OnDestroy {
   cursoActualYSiguiente: any[] = [];
   yearSelected: any;
   nextYearSelect: boolean;
-  tieneInscripcionPendiente: boolean = false;
   cicloHabilitado: boolean;
   estadoCicloLectivo: string;
   aniosCiclos: any[] = [];
@@ -99,30 +98,14 @@ export class InscripcionEstudianteComponent implements OnInit, OnDestroy {
           .pipe(takeUntil(this.unsubscribe))
           .subscribe((response) => {
             this.aniosCiclos = response.añosCiclos;
-            // if (this.cicloHabilitado) {
-              this.servicioInscripcion
-                .obtenerCursosInscripcionEstudiante(this.aniosCiclos[0])
-                .pipe(takeUntil(this.unsubscribe))
-                .subscribe((response) => {
-                  if (response.cursoActual != "") {
-                    this.cursoActualYSiguiente.unshift(
-                      response.cursoActual.nombre
-                    );
-                  }
-                  this.isLoading = false;
-                });
-            // }else{
-            //   this.isLoading = false;
-            // }
+            this.servicioInscripcion
+              .validarInscripcionPendiente(this._idEstudiante)
+              .pipe(takeUntil(this.unsubscribe))
+              .subscribe((response) => {
+                this.cursoActualYSiguiente = response.curso;                
+                this.isLoading = false;
+              });
           });
-      });
-
-    this.servicioInscripcion
-      .validarInscripcionPendiente(this._idEstudiante)
-      .pipe(takeUntil(this.unsubscribe))
-      .subscribe((response) => {
-        this.tieneInscripcionPendiente = response.inscripcionPendiente;
-        this.cursoActualYSiguiente.push(response.curso);
       });
   }
 
@@ -236,25 +219,29 @@ export class InscripcionEstudianteComponent implements OnInit, OnDestroy {
       .obtenerCursosInscripcionEstudiante(this.yearSelected)
       .pipe(takeUntil(this.unsubscribe))
       .subscribe((response) => {
-        this.cursos = response.cursos;
-        //Si tiene inscripcion pendiente, sacamos el curso del select
-        if (this.cursoActualYSiguiente[1]) {
-          this.cursos = this.cursos.filter((curso) => {
-            if (curso.nombre != this.cursoActualYSiguiente[1]) return curso;
-          });
+        if( response.cursos.length==0){
+          this.cursos = response.cursos;
+        }else{
+          this.cursos = response.cursos;
+          //Si tiene inscripcion pendiente, sacamos el curso del select
+          if (this.cursoActualYSiguiente[1]) {
+            this.cursos = this.cursos.filter((curso) => {
+              if (curso.nombre != this.cursoActualYSiguiente[1]) return curso;
+            });
+          }
+  
+          this.cursos.sort((a, b) =>
+            a.nombre.charAt(0) > b.nombre.charAt(0)
+              ? 1
+              : b.nombre.charAt(0) > a.nombre.charAt(0)
+              ? -1
+              : a.nombre.charAt(1) > b.nombre.charAt(1)
+              ? 1
+              : b.nombre.charAt(1) > a.nombre.charAt(1)
+              ? -1
+              : 0
+          );
         }
-
-        this.cursos.sort((a, b) =>
-          a.nombre.charAt(0) > b.nombre.charAt(0)
-            ? 1
-            : b.nombre.charAt(0) > a.nombre.charAt(0)
-            ? -1
-            : a.nombre.charAt(1) > b.nombre.charAt(1)
-            ? 1
-            : b.nombre.charAt(1) > a.nombre.charAt(1)
-            ? -1
-            : 0
-        );
         this.isLoading = false;
       });
   }
