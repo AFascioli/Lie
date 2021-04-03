@@ -109,7 +109,15 @@ exports.obtenerMateriasDesaprobadasv2 = async function (
       });
 
       if (cxmEncontrada != null) {
-        idsCXMDesaprobadas.push(cxm);
+        let duplicado = false;
+        for (const idCXM of idsCXMDesaprobadas) {
+          if (idCXM.toString() == cxm.toString()) {
+            duplicado = true;
+            break;
+          }
+        }
+
+        if (!duplicado) idsCXMDesaprobadas.push(cxm);
       }
     }
     resolve(idsCXMDesaprobadas);
