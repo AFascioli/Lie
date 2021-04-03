@@ -793,22 +793,58 @@ router.get("/cursosDeEstudiante", checkAuthMiddleware, async (req, res) => {
             });
           });
         } else {
-          Curso.find({ cicloLectivo: idCicloSeleccionado }).then((cursos) => {
-            var respuesta = [];
-            cursos.forEach((curso) => {
-              var cursoConId = {
-                _id: curso._id,
-                nombre: curso.nombre,
-              };
-              respuesta.push(cursoConId);
+          let idCicloAnterior= await ClaseCicloLectivo.obtenerIdCicloAnterior();
+          let inscripcionAnterior = await Inscripcion.aggregate([
+            {
+              $match: {
+                idEstudiante: mongoose.Types.ObjectId(req.query.idEstudiante),
+                cicloLectivo: mongoose.Types.ObjectId(idCicloAnterior),
+              },
+            },
+            {
+              $lookup: {
+                from: "curso",
+                localField: "idCurso",
+                foreignField: "_id",
+                as: "cursoActual",
+              },
+            },
+          ]);
+          if(inscripcionAnterior.length!=0){
+            let añoCursoActual =
+            parseInt(inscripcionAnterior[0].cursoActual[0].nombre, 10) + 1;
+            Curso.find({
+              nombre: { $regex: añoCursoActual },
+              cicloLectivo: idCicloActual,
+            }).then((cursos) => {
+              cursos.forEach((curso) => {
+                cursosDisponibles.push(curso);
+              });
+              return res.status(200).json({
+                message: "Devolvio los cursos correctamente",
+                exito: true,
+                cursos: cursosDisponibles,
+                cursoActual: "",
+              });
             });
-            return res.status(200).json({
-              message: "Devolvio los cursos correctamente",
-              exito: true,
-              cursos: respuesta,
-              cursoActual: "",
+          }else{
+            Curso.find({ cicloLectivo: idCicloSeleccionado }).then((cursos) => {
+              var respuesta = [];
+              cursos.forEach((curso) => {
+                var cursoConId = {
+                  _id: curso._id,
+                  nombre: curso.nombre,
+                };
+                respuesta.push(cursoConId);
+              });
+              return res.status(200).json({
+                message: "Devolvio los cursos correctamente",
+                exito: true,
+                cursos: respuesta,
+                cursoActual: "",
+              });
             });
-          });
+          }
         }
       }
     } else {
@@ -2720,7 +2756,7 @@ router.get(
           });
         }
         res.status(200).json({
-          curso: [],
+          curso: ["",""],
           exito: true,
         });
       })

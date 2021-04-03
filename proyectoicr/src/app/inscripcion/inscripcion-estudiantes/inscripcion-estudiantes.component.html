@@ -55,6 +55,14 @@
               {{ aniosCiclos[1] }}
             </label>
           </p>
+          <p
+            class="mensaje-atencion"
+            *ngIf="nextYearSelect && (cursoActualYSiguiente[0]=='6A' || cursoActualYSiguiente[0]=='6B')  "
+          >
+            <b
+              >Atención, no puede inscribir al estudiante para ningún curso ya que se encuentra en sexto año
+            </b>
+          </p>
         </mat-card-subtitle>
       </mat-card>
     </div>
@@ -77,7 +85,7 @@
           >
         </mat-select>
       </mat-form-field>
-      <mat-form-field>
+      <mat-form-field *ngIf="!(nextYearSelect && (cursoActualYSiguiente[0]=='6A' || cursoActualYSiguiente[0]=='6B'))">
         <mat-select
           placeholder="Seleccione curso"
           name="curso"

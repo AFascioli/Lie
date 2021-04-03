@@ -23,16 +23,16 @@ exports.cursosTienenAgenda = async () => {
       });
 
       cursosSinAgenda.sort((a, b) =>
-      a.nombre.charAt(0) > b.nombre.charAt(0)
-        ? 1
-        : b.nombre.charAt(0) > a.nombre.charAt(0)
-        ? -1
-        : a.nombre.charAt(1) > b.nombre.charAt(1)
-        ? 1
-        : b.nombre.charAt(1) > a.nombre.charAt(1)
-        ? -1
-        : 0
-    );
+        a.nombre.charAt(0) > b.nombre.charAt(0)
+          ? 1
+          : b.nombre.charAt(0) > a.nombre.charAt(0)
+          ? -1
+          : a.nombre.charAt(1) > b.nombre.charAt(1)
+          ? 1
+          : b.nombre.charAt(1) > a.nombre.charAt(1)
+          ? -1
+          : 0
+      );
 
       resolve(cursosSinAgenda);
     });
@@ -127,6 +127,41 @@ exports.pasarInscripcionesAInactivas = () => {
       "Promovido con examenes pendientes"
     );
     let idLibre = await ClaseEstado.obtenerIdEstado("Inscripcion", "Libre");
+    let idDeBaja = await ClaseEstado.obtenerIdEstado("Estudiante", "De baja");
+    let idCicloActual = await ClaseCicloLectivo.obtenerIdCicloActual();
+
+    let inscripcionesEstudiantesSexto = await Inscripcion.aggregate([
+      {
+        $match: {
+          estado: {
+            $in: [idPromovido, idExamenesPendientes],
+          },
+          cicloLectivo: mongoose.Types.ObjectId(idCicloActual)
+        },
+      },
+      {
+        $lookup: {
+          from: "curso",
+          localField: "idCurso",
+          foreignField: "_id",
+          as: "datosCurso",
+        },
+      },
+      {
+        $match: {
+          "datosCurso.nombre": {
+            $in: ["6A", "6B"],
+          },
+        },
+      },
+    ]);
+    //Se pone como De baja a los estudiantes que terminaron el secundario
+    for (const inscEstudiante of inscripcionesEstudiantesSexto) {
+      await Estudiante.findByIdAndUpdate(inscEstudiante.idEstudiante, {
+        estado: idDeBaja,
+        activo:false
+      }).exec();
+    }
 
     Inscripcion.updateMany(
       {
@@ -229,8 +264,7 @@ exports.materiasSinCerrar = (trimestre) => {
           ],
         },
       });
-      if(inscripcion)
-      inscripciones.push(inscripcion._id);
+      if (inscripcion) inscripciones.push(inscripcion._id);
     }
     let materiasNoCerrada = [];
     let inscripcionesFiltradas = [];
@@ -350,7 +384,7 @@ exports.materiasSinCerrar = (trimestre) => {
     if (inscripcionesFiltradas.length == 0) {
       resolve([]);
     } else {
-      for (const inscripcion of inscripcionesFiltradas) {        
+      for (const inscripcion of inscripcionesFiltradas) {
         materiasNoCerrada.push({
           curso:
             trimestre == 3
@@ -361,16 +395,16 @@ exports.materiasSinCerrar = (trimestre) => {
       }
 
       materiasNoCerrada.sort((a, b) =>
-      a.curso.charAt(0) > b.curso.charAt(0)
-        ? 1
-        : b.curso.charAt(0) > a.curso.charAt(0)
-        ? -1
-        : a.curso.charAt(1) > b.curso.charAt(1)
-        ? 1
-        : b.curso.charAt(1) > a.curso.charAt(1)
-        ? -1
-        : 0
-    );
+        a.curso.charAt(0) > b.curso.charAt(0)
+          ? 1
+          : b.curso.charAt(0) > a.curso.charAt(0)
+          ? -1
+          : a.curso.charAt(1) > b.curso.charAt(1)
+          ? 1
+          : b.curso.charAt(1) > a.curso.charAt(1)
+          ? -1
+          : 0
+      );
 
       resolve(materiasNoCerrada);
     }
@@ -509,7 +543,7 @@ exports.pasarMXCAEnPrimerTrimestre = () => {
 
 exports.getIdCicloLectivo = (year) => {
   return new Promise(async (resolve, reject) => {
-    let cicloLectivo= await CicloLectivo.findOne({año: year}).exec();
+    let cicloLectivo = await CicloLectivo.findOne({ año: year }).exec();
     resolve(cicloLectivo ? cicloLectivo._id : null);
   });
 };
