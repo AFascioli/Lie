@@ -252,6 +252,7 @@ export class CalificacionesCicloLectivoComponent implements OnInit, OnDestroy {
 
   indexEstudiante() {
     this.indexEst = this.paginator.pageIndex * this.paginator.pageSize;
+    return this.pageEvent;
   }
 
   reordenarCalificaciones() {
