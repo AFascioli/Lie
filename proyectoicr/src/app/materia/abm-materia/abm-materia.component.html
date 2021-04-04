@@ -1,7 +1,7 @@
 <h1 class="componente-titulo">Gestión de materias</h1>
 <mat-card class="card-body-componente">
   <form #form="ngForm">
-    <div class="contenedor-tabla" *ngIf="materias.length != 0">
+    <div class="contenedor-tabla" *ngIf="materias.data.length != 0">
       <table
         #tabla
         mat-table

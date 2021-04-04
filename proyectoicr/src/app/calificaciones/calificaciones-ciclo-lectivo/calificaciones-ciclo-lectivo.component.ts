@@ -10,7 +10,7 @@ import {
 } from "@angular/core";
 import { MatDialog } from "@angular/material";
 import { NgForm, NgModel } from "@angular/forms";
-import { MatPaginator } from "@angular/material/paginator";
+import { MatPaginator, PageEvent } from "@angular/material/paginator";
 import { MatTableDataSource } from "@angular/material/table";
 import { CalificacionesService } from "../calificaciones.service";
 import { MatPaginatorIntl } from "@angular/material";
@@ -73,6 +73,7 @@ export class CalificacionesCicloLectivoComponent implements OnInit, OnDestroy {
   materiaSelec: boolean = false;
   docente: string;
   anosCiclos: any[];
+  pageEvent: PageEvent;
 
   @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
 
