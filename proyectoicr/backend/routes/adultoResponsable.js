@@ -190,9 +190,25 @@ router.get("/estudiantes", checkAuthMiddleware, async (req, res) => {
             "Inscripcion",
             "Activa"
           );
+          let idEstadoPExamPendientes = await ClaseEstado.obtenerIdEstado(
+            "Inscripcion",
+            "Promovido con examenes pendientes"
+          );
+          let idEstadoPromovido = await ClaseEstado.obtenerIdEstado(
+            "Inscripcion",
+            "Promovido"
+          );
+          let idEstadoExamPendientes = await ClaseEstado.obtenerIdEstado(
+            "Inscripcion",
+            "Examenes pendientes"
+          );
           let idEstadoSuspendido = await ClaseEstado.obtenerIdEstado(
             "Inscripcion",
             "Suspendido"
+          );
+          let idEstadoLibre = await ClaseEstado.obtenerIdEstado(
+            "Inscripcion",
+            "Libre"
           );
           Inscripcion.findOne({
             idEstudiante: idEstudiante,
@@ -200,6 +216,10 @@ router.get("/estudiantes", checkAuthMiddleware, async (req, res) => {
               $in: [
                 mongoose.Types.ObjectId(idEstadoActiva),
                 mongoose.Types.ObjectId(idEstadoSuspendido),
+                mongoose.Types.ObjectId(idEstadoLibre),
+                mongoose.Types.ObjectId(idEstadoPromovido),
+                mongoose.Types.ObjectId(idEstadoPExamPendientes),
+                mongoose.Types.ObjectId(idEstadoExamPendientes),
               ],
             },
           }).then((inscripcion) => {
