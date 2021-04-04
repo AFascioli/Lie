@@ -867,6 +867,7 @@ router.post("/retiro", checkAuthMiddleware, async (req, res) => {
                         idsUsuariosAR,
                         "Retiro Anticipado"
                       );
+                      let estudiante = await Estudiante.findById(req.body.idEstudiante).exec();
 
                       if (idsUsuarios.length > 0) {
                         var tutores = req.body.tutoresSeleccionados;
