@@ -207,8 +207,8 @@ export class MenuPrincipalAdultoResponsableComponent implements OnInit {
     return fecha.getDate();
   }
 
-  onEstudianteClick(idEstudiante: string) {
-    if (this.cursos[0]) {
+  onEstudianteClick(idEstudiante: string, index: number) {
+    if (this.cursos[index]) {
       this.servicioEstudiante
         .obtenerEstudiantePorId(idEstudiante)
         .pipe(takeUntil(this.unsubscribe))

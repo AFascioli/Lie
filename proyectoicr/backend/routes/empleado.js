@@ -102,10 +102,7 @@ router.get("/estudiante", checkAuthMiddleware, async (req, res) => {
     "Inscripcion",
     "Suspendido"
   );
-  let idEstadoLibre = await ClaseEstado.obtenerIdEstado(
-    "Inscripcion",
-    "Libre"
-  );
+  let idEstadoLibre = await ClaseEstado.obtenerIdEstado("Inscripcion", "Libre");
 
   Inscripcion.aggregate([
     {
@@ -155,35 +152,68 @@ router.get("/estudiante", checkAuthMiddleware, async (req, res) => {
         as: "datosMateria",
       },
     },
-    {
-      $lookup: {
-        from: "usuario",
-        localField: "datosDocente.idUsuario",
-        foreignField: "_id",
-        as: "datosUsuario",
-      },
-    },
+    // {
+    //   $lookup: {
+    //     from: "usuario",
+    //     localField: "datosDocente.idUsuario",
+    //     foreignField: "_id",
+    //     as: "datosUsuario",
+    //   },
+    // },
     {
       $project: {
         "datosDocente.nombre": 1,
         "datosDocente.apellido": 1,
+        "datosDocente._id": 1,
+        "datosDocente.idUsuario": 1,
         "datosMateria.nombre": 1,
-        "datosUsuario._id": 1,
+        "datosMateria._id": 1,
+        datosMXC: 1,
       },
     },
   ])
     .then((resultado) => {
+      console.log(JSON.stringify(resultado));
       let docentes = [];
-      for (let index = 0; index < resultado[0].datosDocente.length; index++) {
-        let docente = {
-          apellido: resultado[0].datosDocente[index].apellido,
-          nombre: resultado[0].datosDocente[index].nombre,
-          materia: resultado[0].datosMateria[index].nombre,
-          idUsuario: resultado[0].datosUsuario[index]._id,
+      // for (let index = 0; index < resultado[0].datosDocente.length; index++) {
+      //   let docente = {
+      //     apellido: resultado[0].datosDocente[index].apellido,
+      //     nombre: resultado[0].datosDocente[index].nombre,
+      //     materia: resultado[0].datosMateria[index].nombre,
+      //     idUsuario: resultado[0].datosUsuario[index]._id,
+      //     seleccionado: false,
+      //   };
+      //   docentes.push(docente);
+      // }
+
+      for (const mxc of resultado[0].datosMXC) {
+        let docente;
+        let materia;
+        for (let docenteFor of resultado[0].datosDocente) {
+          if (docenteFor._id.toString() == mxc.idDocente.toString()) {
+            docente = docenteFor;
+          }
+        }
+        for (let materiaFor of resultado[0].datosMateria) {
+          if (materiaFor._id.toString() == mxc.idMateria.toString()) {
+            materia = materiaFor;
+          }
+        }
+
+        if(!docente || !materia){
+          throw "Error al obtener los datos de docentes y materias"
+        }
+
+        let docentepush = {
+          apellido: docente.apellido,
+          nombre: docente.nombre,
+          materia: materia.nombre,
+          idUsuario: docente.idUsuario,
           seleccionado: false,
         };
-        docentes.push(docente);
-      }    
+        docentes.push(docentepush);
+      }
+
       res.status(200).json({
         message: "Docentes obtenidos correctamente",
         exito: true,
@@ -257,14 +287,14 @@ router.post("/modificar", checkAuthMiddleware, (req, res) => {
       let rolNuevo = await Rol.findOne({
         tipo: req.body.empleado.tipoEmpleado,
       }).exec();
-      Usuario.findByIdAndUpdate(req.body.empleado.idUsuario, { rol: rolNuevo._id }).then(
-        (user) => {
-          res.status(200).json({
-            message: "Empleado modificado correctamente",
-            exito: true,
-          });
-        }
-      );
+      Usuario.findByIdAndUpdate(req.body.empleado.idUsuario, {
+        rol: rolNuevo._id,
+      }).then((user) => {
+        res.status(200).json({
+          message: "Empleado modificado correctamente",
+          exito: true,
+        });
+      });
     })
     .catch((error) => {
       res.status(500).json({

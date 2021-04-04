@@ -1,8 +1,8 @@
 <div class="grid-layout" [class.grid-layout-mobile]="mobileQuery.matches">
   <mat-card
-    *ngFor="let estudiante of estudiantes"
+    *ngFor="let estudiante of estudiantes; let i=index"
     style="cursor: pointer;"
-    (click)="onEstudianteClick(estudiante.idEstudiante)"
+    (click)="onEstudianteClick(estudiante.idEstudiante, i)"
   >
     <div *ngIf="mostrarTooltip && cursos[0]" class="tooltip-lie">
       Hacé click para ver más detalles!
