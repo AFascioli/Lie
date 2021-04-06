@@ -3254,7 +3254,7 @@ router.get("/dev/calificaciones/malas", async (req, res) => {
                 -1
               ) {
                 calificaciones[index] = Math.floor(Math.random() * 8) + 2;
-                console.count();
+                // console.count();
               } else {
                 calificaciones[index] = Math.floor(Math.random() * 4) + 6;
               }

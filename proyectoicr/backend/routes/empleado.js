@@ -173,7 +173,7 @@ router.get("/estudiante", checkAuthMiddleware, async (req, res) => {
     },
   ])
     .then((resultado) => {
-      console.log(JSON.stringify(resultado));
+      // console.log(JSON.stringify(resultado));
       let docentes = [];
       // for (let index = 0; index < resultado[0].datosDocente.length; index++) {
       //   let docente = {
