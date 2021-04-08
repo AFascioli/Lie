@@ -4,6 +4,7 @@ import { Estudiante } from "../../estudiantes/estudiante.model";
 import { takeUntil } from "rxjs/operators";
 import { Subject } from "rxjs";
 import { MediaMatcher } from "@angular/cdk/layout";
+import { CicloLectivoService } from "src/app/cicloLectivo.service";
 
 @Component({
   selector: "app-datos-estudiante",
@@ -21,11 +22,13 @@ export class CuotasPerfilEstudianteComponent implements OnInit, OnDestroy {
   _mobileQueryListener: () => void;
   mobileQuery: MediaQueryList;
   isLoading=false;
+  esAnioActual= false;
 
   constructor(
     public servicio: EstudiantesService,
     public changeDetectorRef: ChangeDetectorRef,
-    public media: MediaMatcher
+    public media: MediaMatcher,
+    public servicioCicloLectivo: CicloLectivoService
   ) {
     this.mobileQuery = media.matchMedia("(max-width: 880px)");
     this._mobileQueryListener = () => changeDetectorRef.detectChanges();
@@ -38,8 +41,14 @@ export class CuotasPerfilEstudianteComponent implements OnInit, OnDestroy {
       .getCuotasDeEstudiante()
       .pipe(takeUntil(this.unsubscribe))
       .subscribe((respuesta) => {
-        this.isLoading=false;
         this.estadoCuotasXMes = respuesta.cuotas;
+        this.servicioCicloLectivo
+        .obtenerActualYSiguiente()
+        .pipe(takeUntil(this.unsubscribe))
+        .subscribe((response) => {
+          this.esAnioActual = response.añosCiclos[0] == (new Date()).getFullYear()
+          this.isLoading=false;
+        });
       });
     this.apellidoEstudiante = this.servicio.estudianteSeleccionado.apellido;
     this.nombreEstudiante = this.servicio.estudianteSeleccionado.nombre;
@@ -48,6 +57,16 @@ export class CuotasPerfilEstudianteComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.unsubscribe.next();
     this.unsubscribe.complete();
+  }
+
+  validarMesAnterior(mesCuota){
+    if (this.esAnioActual) {
+      let numeroMesActual = (new Date()).getMonth() + 1
+      return mesCuota < numeroMesActual
+    } else {
+      return false
+    }
+
   }
 
   getMes(i) {

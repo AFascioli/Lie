@@ -908,7 +908,7 @@ router.post("/retiro", checkAuthMiddleware, async (req, res) => {
                         ClaseSuscripcion.notificacionGrupal(
                           idsUsuarios,
                           "Retiro anticipado",
-                          this.cuerpo
+                          cuerpo
                         );
                       }
                       res.status(200).json({
