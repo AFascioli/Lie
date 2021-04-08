@@ -77,13 +77,14 @@ comparacionApropiado = function (a, b) {
     return false;
   }
 };
+
 module.exports = (req, res, next) => {
   Diccionario.findOne()
     .then((diccionario) => {
       if (!sonPalabrasApropiadas(req.body.comentario.cuerpo)) {
         return res.status(200).json({
           exito: false,
-          message: "El comentario no es considerado apropiado",
+          message: "El comentario contiene vocabulario inapropiado",
         });
       }
 
@@ -97,7 +98,7 @@ module.exports = (req, res, next) => {
       } else {
         return res.status(200).json({
           exito: false,
-          message: "El comentario no es considerado apropiado",
+          message: "El comentario contiene vocabulario inapropiado",
         });
       }
     })
