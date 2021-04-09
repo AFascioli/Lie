@@ -34,17 +34,9 @@ export class ReportesService {
     }>(environment.apiUrl + "/reporte/cuotas", { params: params });
   }
 
-  public obtenerEstudiantesDelCurso(idCurso) {
-    let params = new HttpParams().set("idCurso", idCurso);
-    return this.http.get<{
-      exito: boolean;
-      message: string;
-      estudiantes: any[];
-    }>(environment.apiUrl + "/curso/estudiantes", { params: params });
-  }
 
-  public obtenerResumenAcademico(idEstudiante) {
-    let params = new HttpParams().set("idEstudiante", idEstudiante);
+  public obtenerResumenAcademico(idEstudiante,cicloSeleccionado) {
+    let params = new HttpParams().set("idEstudiante", idEstudiante).set("cicloSeleccionado", cicloSeleccionado);
     return this.http.get<{
       exito: boolean;
       message: string;

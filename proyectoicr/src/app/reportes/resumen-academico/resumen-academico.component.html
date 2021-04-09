@@ -2,6 +2,23 @@
 <mat-card class="card-body-componente">
   <mat-form-field>
     <mat-select
+      placeholder="Seleccione año"
+      name="cicloLectivo"
+      ngModel
+      #cicloLectivo="ngModel"
+      [(ngModel)]="cicloSeleccionado"
+      matNativeControl
+      required
+      class="curso"
+      (selectionChange)="onCicloSeleccionado(cicloSeleccionado)"
+    >
+      <mat-option *ngFor="let anio of anios" [value]="anio">
+        {{ anio }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+  <mat-form-field>
+    <mat-select
       placeholder="Seleccione curso"
       name="curso"
       ngModel

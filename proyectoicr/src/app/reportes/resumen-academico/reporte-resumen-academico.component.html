@@ -7,6 +7,9 @@
     <h1 class="componente-titulo" *ngIf="!isLoading">
       Resumen académico de {{ estudiante }}
     </h1>
+    <h3 class="componente-subtitulo" *ngIf="!isLoading">
+      {{ tipoNroDoc }}
+    </h3>
     <br />
     <form #form="ngForm">
       <div *ngIf="!isLoading">

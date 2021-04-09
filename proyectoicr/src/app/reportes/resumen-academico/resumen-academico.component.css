@@ -148,3 +148,12 @@ td.mat-cell:last-of-type {
   /* text-shadow: 1px 1px 2px #c7c7c7; */
   font-size: 33px;
 }
+
+.componente-subtitulo {
+  text-align: center;
+  font-weight: 600;
+  color: #181a21;
+  margin: 0 0.5rem;
+  /* text-shadow: 1px 1px 2px #c7c7c7; */
+  font-size: 24px;
+}

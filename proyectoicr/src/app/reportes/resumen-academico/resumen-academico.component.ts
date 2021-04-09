@@ -21,6 +21,7 @@ export class ResumenAcademicoComponent implements OnInit {
   isLoading = false;
   private unsubscribe: Subject<void> = new Subject();
   cursoSeleccionado;
+  cicloSeleccionado;
   anios: any[];
 
   constructor(
@@ -31,11 +32,21 @@ export class ResumenAcademicoComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.obtenerCursos();
-    if (this.reportService.retornoDeResumenAcademico) {
-      this.cursoSeleccionado = this.reportService.cursoSeleccionado;
-      this.obtenerEstudiantes(this.reportService.cursoSeleccionado);
-    }
+    // this.obtenerCursos();
+    this.isLoading=true;
+    this.servicioCicloLectivo.obtenerActualYAnteriores()
+    .pipe(takeUntil(this.unsubscribe))
+    .subscribe((response) => {
+      this.anios= response.añosCiclos;
+      if (this.reportService.retornoDeResumenAcademico) {
+        this.cicloSeleccionado = this.reportService.aniosCL[0];
+        this.obtenerCursos();
+        this.obtenerEstudiantes(this.reportService.cursoSeleccionado);
+        this.cursoSeleccionado = this.reportService.cursoSeleccionado;
+      }else{
+        this.isLoading=false;
+      }
+    })
   }
 
   obtenerEstudiantes(curso) {
@@ -67,15 +78,21 @@ export class ResumenAcademicoComponent implements OnInit {
       }
     }
   }
+
+  onCicloSeleccionado(cicloSeleccionado){
+    this.cicloSeleccionado=cicloSeleccionado;
+    this.obtenerCursos();
+  }
+
   obtenerCursos() {
     this.isLoading = true;
-    this.servicioCicloLectivo
-      .obtenerActualYSiguiente()
-      .pipe(takeUntil(this.unsubscribe))
-      .subscribe((response) => {
-        this.anios = response.añosCiclos;
+    // this.servicioCicloLectivo
+    //   .obtenerActualYSiguiente()
+    //   .pipe(takeUntil(this.unsubscribe))
+    //   .subscribe((response) => {
+    //     this.anios = response.añosCiclos;
         this.servicioEstudiante
-          .obtenerCursos(response.añosCiclos[0])
+          .obtenerCursos(this.cicloSeleccionado)
           .pipe(takeUntil(this.unsubscribe))
           .subscribe((response) => {
             this.isLoading = false;
@@ -92,14 +109,14 @@ export class ResumenAcademicoComponent implements OnInit {
                 : 0
             );
           });
-      });
+      // });
   }
   verResumenAcademico(i) {
     this.reportService.nombreCurso = this.obtenerNombreCurso(
       this.reportService.cursoSeleccionado
     );
     this.reportService.idEstudianteSeleccionado = i._id;
-    this.reportService.aniosCL = this.anios;
+    this.reportService.aniosCL = [this.cicloSeleccionado];
     this.router.navigate(["reporteResumenAcademico"]);
   }
 
@@ -116,6 +133,7 @@ export class ResumenAcademicoComponent implements OnInit {
 export class ReporteResumenAcademicoComponent implements OnInit {
   private unsubscribe: Subject<void> = new Subject();
   public idEstudiante = this.reportService.idEstudianteSeleccionado;
+  public cicloSeleccionado = this.reportService.aniosCL[0];
   promedio;
   promedioT1;
   promedioT2;
@@ -157,6 +175,7 @@ export class ReporteResumenAcademicoComponent implements OnInit {
   ];
   anios: any;
   examen: number;
+  tipoNroDoc: string;
   constructor(
     public servicioEstudiante: EstudiantesService,
     public reportService: ReportesService
@@ -165,7 +184,7 @@ export class ReporteResumenAcademicoComponent implements OnInit {
   ngOnInit(): void {
     this.isLoading = true;
     this.reportService
-      .obtenerResumenAcademico(this.idEstudiante)
+      .obtenerResumenAcademico(this.idEstudiante, this.cicloSeleccionado)
       .pipe(takeUntil(this.unsubscribe))
       .subscribe((response) => {
         this.resumen = response.resumen.sort((a, b) =>
@@ -176,6 +195,8 @@ export class ReporteResumenAcademicoComponent implements OnInit {
           this.resumen[0].apellido.toUpperCase() +
           ", " +
           this.resumen[0].nombre;
+          this.tipoNroDoc=this.resumen[0].tipoDoc+
+          " " + this.resumen[0].nroDoc
         this.inasistenciasInjustificadas = this.resumen[0].contadorInasistenciasInjustificada;
         this.inasistenciasJustificadas = this.resumen[0].contadorInasistenciasJustificada;
         this.reordenarCalificaciones();

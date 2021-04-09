@@ -220,43 +220,13 @@ router.get("/cuotas", checkAuthMiddleware, async (req, res) => {
 });
 
 router.get("/resumenAcademico", checkAuthMiddleware, async (req, res) => {
-  let idEstadoActiva = await ClaseEstado.obtenerIdEstado(
-    "Inscripcion",
-    "Activa"
-  );
-  let idEstadoSuspendido = await ClaseEstado.obtenerIdEstado(
-    "Inscripcion",
-    "Suspendido"
-  );
-  let idEstadoPromovidoConExPend = await ClaseEstado.obtenerIdEstado(
-    "Inscripcion",
-    "Promovido con examenes pendientes"
-  );
-  let idEstadoExPendiente = await ClaseEstado.obtenerIdEstado(
-    "Inscripcion",
-    "Examenes pendientes"
-  );
-  let idEstadoPromovido = await ClaseEstado.obtenerIdEstado(
-    "Inscripcion",
-    "Promovido"
-  );
-  let idEstadoLibre = await ClaseEstado.obtenerIdEstado("Inscripcion", "Libre");
 
+  let idCicloSeleccionado = await ClaseCicloLectivo.getIdCicloLectivo(req.query.cicloSeleccionado)
   Inscripcion.aggregate([
     {
       $match: {
         idEstudiante: mongoose.Types.ObjectId(req.query.idEstudiante),
-        estado: {
-          $in: [
-            mongoose.Types.ObjectId(idEstadoActiva),
-            mongoose.Types.ObjectId(idEstadoSuspendido),
-            mongoose.Types.ObjectId(idEstadoPromovidoConExPend),
-            mongoose.Types.ObjectId(idEstadoPromovido),
-            mongoose.Types.ObjectId(idEstadoSuspendido),
-            mongoose.Types.ObjectId(idEstadoExPendiente),
-            mongoose.Types.ObjectId(idEstadoLibre),
-          ],
-        },
+        cicloLectivo: mongoose.Types.ObjectId(idCicloSeleccionado)
       },
     },
     {
@@ -420,6 +390,12 @@ router.get("/resumenAcademico", checkAuthMiddleware, async (req, res) => {
         },
         apellido: {
           $arrayElemAt: ["$Estudiante.apellido", 0],
+        },
+        tipoDoc: {
+          $arrayElemAt: ["$Estudiante.tipoDocumento", 0],
+        },
+        nroDoc: {
+          $arrayElemAt: ["$Estudiante.numeroDocumento", 0],
         },
         Materia: {
           $arrayElemAt: ["$materia.nombre", 0],

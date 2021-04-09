@@ -2983,16 +2983,12 @@ router.get("/estudiantes", checkAuthMiddleware, async (req, res) => {
     "Inscripcion",
     "Promovido"
   );
+  let idEstadoInactiva = await ClaseEstado.obtenerIdEstado(
+    "Inscripcion",
+    "Inactiva"
+  );
   let idEstadoLibre = await ClaseEstado.obtenerIdEstado("Inscripcion", "Libre");
   Inscripcion.aggregate([
-    {
-      $lookup: {
-        from: "curso",
-        localField: "idCurso",
-        foreignField: "_id",
-        as: "curso",
-      },
-    },
     {
       $match: {
         idCurso: mongoose.Types.ObjectId(req.query.curso),
@@ -3004,8 +3000,17 @@ router.get("/estudiantes", checkAuthMiddleware, async (req, res) => {
             mongoose.Types.ObjectId(idEstadoExPendiente),
             mongoose.Types.ObjectId(idEstadoPromovido),
             mongoose.Types.ObjectId(idEstadoLibre),
+            mongoose.Types.ObjectId(idEstadoInactiva),
           ],
         },
+      },
+    },
+    {
+      $lookup: {
+        from: "curso",
+        localField: "idCurso",
+        foreignField: "_id",
+        as: "curso",
       },
     },
     {
