@@ -45,11 +45,12 @@ export class ReportesService {
   }
 
   //Obtiene un array con los cursos, cada uno con su promedio gral y un array de cada materia con su promedio
-  public obtenerPromedioCursos() {
+  public obtenerPromedioCursos(cicloSeleccionado) {
+    let params = new HttpParams().set("cicloSeleccionado", cicloSeleccionado);
     return this.http.get<{
       exito: boolean;
       message: string;
       arrayCursos: any[];
-    }>(environment.apiUrl + "/reporte/cursos/promedios");
+    }>(environment.apiUrl + "/reporte/cursos/promedios", { params: params });
   }
 }

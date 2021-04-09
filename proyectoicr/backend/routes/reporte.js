@@ -452,47 +452,13 @@ router.get("/resumenAcademico", checkAuthMiddleware, async (req, res) => {
 //Retorna un array con cursos, donde cada uno tiene su promedio general, sus materias y sus respectivos promedios
 router.get("/cursos/promedios", async (req, res) => {
   try {
-    let idEstadoActiva = await ClaseEstado.obtenerIdEstado(
-      "Inscripcion",
-      "Activa"
-    );
-    let idEstadoSuspendido = await ClaseEstado.obtenerIdEstado(
-      "Inscripcion",
-      "Suspendido"
-    );
-    let idEstadoPromovidoConExPend = await ClaseEstado.obtenerIdEstado(
-      "Inscripcion",
-      "Promovido con examenes pendientes"
-    );
-    let idEstadoExPendiente = await ClaseEstado.obtenerIdEstado(
-      "Inscripcion",
-      "Examenes pendientes"
-    );
-    let idEstadoPromovido = await ClaseEstado.obtenerIdEstado(
-      "Inscripcion",
-      "Promovido"
-    );
-    let idEstadoLibre = await ClaseEstado.obtenerIdEstado(
-      "Inscripcion",
-      "Libre"
-    );
-    let idCicloActual = await ClaseCicloLectivo.obtenerIdCicloActual();
+    let idCicloSeleccionado = await ClaseCicloLectivo.getIdCicloLectivo(req.query.cicloSeleccionado);
     // let idCicloActual = "60206236bfaa2d1d007c9e92";//icr-test: Id de ciclo que tiene materias
 
     let inscripcionesTotales = await Inscripcion.aggregate([
       {
         $match: {
-          cicloLectivo: mongoose.Types.ObjectId(idCicloActual),
-          estado: {
-            $in: [
-              mongoose.Types.ObjectId(idEstadoActiva),
-              mongoose.Types.ObjectId(idEstadoSuspendido),
-              mongoose.Types.ObjectId(idEstadoPromovidoConExPend),
-              mongoose.Types.ObjectId(idEstadoExPendiente),
-              mongoose.Types.ObjectId(idEstadoPromovido),
-              mongoose.Types.ObjectId(idEstadoLibre),
-            ],
-          },
+          cicloLectivo: mongoose.Types.ObjectId(idCicloSeleccionado),
         },
       },
       {

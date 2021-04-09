@@ -2,6 +2,7 @@ import { Component, OnInit, ViewChild } from "@angular/core";
 import { MatAccordion } from "@angular/material";
 import { Subject } from "rxjs";
 import { takeUntil } from "rxjs/operators";
+import { CicloLectivoService } from "src/app/cicloLectivo.service";
 import { ReportesService } from "../reportes.service";
 
 @Component({
@@ -14,21 +15,32 @@ export class PromedioCursosComponent implements OnInit {
   private unsubscribe: Subject<void> = new Subject();
   isLoading = false;
   promediosAnios = [];
+  anios = [];
   displayedColumns: string[] = ["materia", "promedio"];
 
-  constructor(private serviceReporte: ReportesService) {}
+  constructor(
+    private serviceReporte: ReportesService,
+    private serviceCicloLectivo: CicloLectivoService
+  ) {}
 
   ngOnInit(): void {
     this.isLoading = true;
-    this.serviceReporte
-      .obtenerPromedioCursos()
+    this.serviceCicloLectivo
+      .obtenerActualYAnteriores()
       .pipe(takeUntil(this.unsubscribe))
       .subscribe((response) => {
-        if (response.exito) {
-          this.sacarPromedioAnio(response.arrayCursos);
-        } else {
-          //Ver que hacer
-        }
+        this.anios = response.añosCiclos;
+        this.isLoading = false;
+      });
+  }
+
+  onCicloSeleccionado(cicloLectivoSeleccionado) {
+    this.isLoading = true;
+    this.serviceReporte
+      .obtenerPromedioCursos(cicloLectivoSeleccionado)
+      .pipe(takeUntil(this.unsubscribe))
+      .subscribe((response) => {
+        this.sacarPromedioAnio(response.arrayCursos);
         this.isLoading = false;
       });
   }

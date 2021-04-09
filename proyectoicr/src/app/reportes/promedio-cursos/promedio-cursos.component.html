@@ -5,6 +5,24 @@
   </div>
 </div>
 <h1 class="componente-titulo">Promedios generales de los cursos</h1>
+<div class="div-select">
+  <mat-form-field>
+    <mat-select
+      placeholder="Seleccione año"
+      name="cicloLectivo"
+      ngModel
+      #cicloLectivo="ngModel"
+      matNativeControl
+      required
+      class="curso"
+      (selectionChange)="onCicloSeleccionado(cicloLectivo.value)"
+    >
+      <mat-option *ngFor="let anio of anios" [value]="anio">
+        {{ anio }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+</div>
 <mat-accordion class="example-headers-align" *ngIf="promediosAnios.length != 0">
   <mat-expansion-panel *ngFor="let anio of promediosAnios">
     <mat-expansion-panel-header>
@@ -41,13 +59,10 @@
             <b>Promedio</b>
           </th>
           <td mat-cell *matCellDef="let materiaConPromedio">
-            {{ materiaConPromedio.promedioMateria }}
-          </td>
-          <td mat-cell>
-            <b>{{ anio.divisiones[0].promedioGral }}</b>
+            {{ materiaConPromedio.promedioMateria ? materiaConPromedio.promedioMateria : 0}}
           </td>
           <td mat-footer-cell *matFooterCellDef>
-            <b>{{ anio.divisiones[0].promedioGral }}</b>
+            <b>{{ anio.divisiones[0].promedioGral ? anio.divisiones[0].promedioGral : 0}}</b>
           </td>
         </ng-container>
         <tr mat-header-row *matHeaderRowDef="['curso-A']"></tr>
@@ -83,10 +98,10 @@
             <b>Promedio</b>
           </th>
           <td mat-cell *matCellDef="let materiaConPromedio">
-            {{ materiaConPromedio.promedioMateria }}
+            {{ materiaConPromedio.promedioMateria ? materiaConPromedio.promedioMateria : 0}}
           </td>
           <td mat-footer-cell *matFooterCellDef>
-            <b>{{ anio.divisiones[1].promedioGral }}</b>
+            <b>{{ anio.divisiones[1].promedioGral ? anio.divisiones[1].promedioGral : 0}}</b>
           </td>
         </ng-container>
 
