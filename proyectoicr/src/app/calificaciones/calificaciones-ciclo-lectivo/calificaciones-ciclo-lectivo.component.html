@@ -51,26 +51,12 @@
         </mat-select>
       </mat-form-field>
     </div>
-    <p
-      class="aviso"
-      *ngIf="estudiantes.length == 0 && materiaSelec"
-    >
+    <p class="aviso" *ngIf="estudiantes.length == 0 && materiaSelec">
       No se encuentran calificaciones registradas para los valores seleccionados
     </p>
-    <p
-      class="aviso"
-      *ngIf="docenteNoTieneCursos"
-    >
+    <p class="aviso" *ngIf="docenteNoTieneCursos">
       No tiene cursos asignados para el año seleccionado
     </p>
-    <mat-form-field class="filtro" *ngIf="estudiantes.length != 0">
-      <mat-label>Filtrar estudiante</mat-label>
-      <input
-        matInput
-        (keyup)="aplicarFiltro($event.target.value)"
-        placeholder="Estudiante"
-      />
-    </mat-form-field>
     <div *ngIf="estudiantes.length != 0">
       <table
         id="content"
