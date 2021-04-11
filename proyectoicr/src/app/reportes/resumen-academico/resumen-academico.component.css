@@ -157,3 +157,8 @@ td.mat-cell:last-of-type {
   /* text-shadow: 1px 1px 2px #c7c7c7; */
   font-size: 24px;
 }
+
+.columnas-documento{
+  color: black;
+  width: 18% !important;
+}

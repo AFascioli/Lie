@@ -2840,7 +2840,7 @@ router.post(
           if (!inscripcion) {
             return res.status(400).json({
               exito: false,
-              message: "Ocurrió un error al querer escribir a los estudiantes",
+              message: "Ocurrió un error al querer reservar los cupos",
             });
           }
         }
@@ -2848,12 +2848,12 @@ router.post(
 
       res.status(200).json({
         exito: true,
-        message: "Estudiantes inscriptos correctamente",
+        message: "Cupos reservados correctamente",
       });
     } catch (error) {
       res.status(500).json({
         error: error.message,
-        message: "Ocurrió un error al querer escribir a los estudiantes",
+        message: "Ocurrió un error al querer reservar los cupos",
       });
     }
   }
@@ -3026,6 +3026,8 @@ router.get("/estudiantes", checkAuthMiddleware, async (req, res) => {
         "DatosEstudiantes._id": 1,
         "DatosEstudiantes.nombre": 1,
         "DatosEstudiantes.apellido": 1,
+        "DatosEstudiantes.tipoDocumento": 1,
+        "DatosEstudiantes.numeroDocumento": 1,
       },
     },
   ])
@@ -3036,6 +3038,8 @@ router.get("/estudiantes", checkAuthMiddleware, async (req, res) => {
           _id: estudiante.DatosEstudiantes[0]._id,
           nombre: estudiante.DatosEstudiantes[0].nombre,
           apellido: estudiante.DatosEstudiantes[0].apellido,
+          tipoDocumento: estudiante.DatosEstudiantes[0].tipoDocumento,
+          numeroDocumento: estudiante.DatosEstudiantes[0].numeroDocumento,
         };
         est.push(datos);
       });

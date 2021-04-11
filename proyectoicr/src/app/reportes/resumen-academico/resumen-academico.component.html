@@ -1,4 +1,4 @@
-<h1 class="componente-titulo">Resumen académico</h1>
+<h1 class="componente-titulo">Resumen académico por estudiante</h1>
 <mat-card class="card-body-componente">
   <mat-form-field>
     <mat-select
@@ -50,6 +50,22 @@
         </th>
         <td class="nombre-apellido" mat-cell *matCellDef="let estudiantes">
           {{ estudiantes.nombre }}
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="tipoDocumento">
+        <th class="columnas-documento" mat-header-cell *matHeaderCellDef>
+          Tipo doc.
+        </th>
+        <td class="columnas-documento" mat-cell *matCellDef="let estudiantes">
+          {{ estudiantes.tipoDocumento }}
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="numeroDocumento">
+        <th class="columnas-documento" mat-header-cell *matHeaderCellDef>
+          Número
+        </th>
+        <td class="columnas-documento" mat-cell *matCellDef="let estudiantes">
+          {{ estudiantes.numeroDocumento }}
         </td>
       </ng-container>
       <ng-container matColumnDef="accion">

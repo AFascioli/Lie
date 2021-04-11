@@ -4,120 +4,143 @@
     <p class="loading-text">Cargando</p>
   </div>
 </div>
-<h1 class="componente-titulo">Promedios generales de los cursos</h1>
-<div class="div-select">
-  <mat-form-field>
-    <mat-select
-      placeholder="Seleccione año"
-      name="cicloLectivo"
-      ngModel
-      #cicloLectivo="ngModel"
-      matNativeControl
-      required
-      class="curso"
-      (selectionChange)="onCicloSeleccionado(cicloLectivo.value)"
-    >
-      <mat-option *ngFor="let anio of anios" [value]="anio">
-        {{ anio }}
-      </mat-option>
-    </mat-select>
-  </mat-form-field>
-</div>
-<mat-accordion class="example-headers-align" *ngIf="promediosAnios.length != 0">
-  <mat-expansion-panel *ngFor="let anio of promediosAnios">
-    <mat-expansion-panel-header>
-      <mat-panel-title>
-        <b> {{ anio.anio }} año - Promedio general: {{ anio.promedioAnio }}</b>
-      </mat-panel-title>
-    </mat-expansion-panel-header>
-    <div class="content-expansion-panel centrar">
-      <table mat-table [dataSource]="anio.divisiones[0].materias">
-        <ng-container matColumnDef="curso-A">
-          <th
-            class="header-tabla-curso"
-            mat-header-cell
-            *matHeaderCellDef
-            [attr.colspan]="2"
+<h1 class="componente-titulo">Promedios generales por curso</h1>
+<mat-card class="card-body-componente">
+  <div class="div-select">
+    <mat-form-field>
+      <mat-select
+        placeholder="Seleccione año"
+        name="cicloLectivo"
+        ngModel
+        #cicloLectivo="ngModel"
+        matNativeControl
+        required
+        class="curso"
+        (selectionChange)="onCicloSeleccionado(cicloLectivo.value)"
+      >
+        <mat-option *ngFor="let anio of anios" [value]="anio">
+          {{ anio }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+  <mat-accordion
+    class="example-headers-align"
+    *ngIf="promediosAnios.length != 0"
+  >
+    <mat-expansion-panel *ngFor="let anio of promediosAnios">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          <b>
+            {{ anio.anio }} año - Promedio general: {{ anio.promedioAnio }}</b
           >
-            {{ anio.divisiones[0].nombreCurso }}
-          </th>
-        </ng-container>
-        <ng-container matColumnDef="materia">
-          <th class="centrar" mat-header-cell *matHeaderCellDef>
-            <b>Materia</b>
-          </th>
-          <td mat-cell *matCellDef="let materiaConPromedio">
-            {{ materiaConPromedio.nombreMateria }}
-          </td>
-          <td mat-cell>
-            <b>Promedio general</b>
-          </td>
-          <td mat-footer-cell *matFooterCellDef><b>Promedio general</b></td>
-        </ng-container>
-        <ng-container matColumnDef="promedio">
-          <th class="centrar" mat-header-cell *matHeaderCellDef>
-            <b>Promedio</b>
-          </th>
-          <td mat-cell *matCellDef="let materiaConPromedio">
-            {{ materiaConPromedio.promedioMateria ? materiaConPromedio.promedioMateria : 0}}
-          </td>
-          <td mat-footer-cell *matFooterCellDef>
-            <b>{{ anio.divisiones[0].promedioGral ? anio.divisiones[0].promedioGral : 0}}</b>
-          </td>
-        </ng-container>
-        <tr mat-header-row *matHeaderRowDef="['curso-A']"></tr>
-        <tr
-          mat-header-row
-          *matHeaderRowDef="displayedColumns; sticky: true"
-        ></tr>
-        <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
-        <tr mat-footer-row *matFooterRowDef="displayedColumns"></tr>
-      </table>
-      <table mat-table [dataSource]="anio.divisiones[1].materias">
-        <ng-container matColumnDef="curso-B">
-          <th
-            class="header-tabla-curso"
-            mat-header-cell
-            *matHeaderCellDef
-            [attr.colspan]="2"
-          >
-            {{ anio.divisiones[1].nombreCurso }}
-          </th>
-        </ng-container>
-        <ng-container matColumnDef="materia">
-          <th class="centrar" mat-header-cell *matHeaderCellDef>
-            <b>Materia</b>
-          </th>
-          <td mat-cell *matCellDef="let materiaConPromedio">
-            {{ materiaConPromedio.nombreMateria }}
-          </td>
-          <td mat-footer-cell *matFooterCellDef><b>Promedio general</b></td>
-        </ng-container>
-        <ng-container matColumnDef="promedio">
-          <th class="centrar" mat-header-cell *matHeaderCellDef>
-            <b>Promedio</b>
-          </th>
-          <td mat-cell *matCellDef="let materiaConPromedio">
-            {{ materiaConPromedio.promedioMateria ? materiaConPromedio.promedioMateria : 0}}
-          </td>
-          <td mat-footer-cell *matFooterCellDef>
-            <b>{{ anio.divisiones[1].promedioGral ? anio.divisiones[1].promedioGral : 0}}</b>
-          </td>
-        </ng-container>
+        </mat-panel-title>
+      </mat-expansion-panel-header>
+      <div class="content-expansion-panel centrar">
+        <table mat-table [dataSource]="anio.divisiones[0].materias">
+          <ng-container matColumnDef="curso-A">
+            <th
+              class="header-tabla-curso"
+              mat-header-cell
+              *matHeaderCellDef
+              [attr.colspan]="2"
+            >
+              {{ anio.divisiones[0].nombreCurso }}
+            </th>
+          </ng-container>
+          <ng-container matColumnDef="materia">
+            <th class="centrar" mat-header-cell *matHeaderCellDef>
+              <b>Materia</b>
+            </th>
+            <td mat-cell *matCellDef="let materiaConPromedio">
+              {{ materiaConPromedio.nombreMateria }}
+            </td>
+            <td mat-cell>
+              <b>Promedio general</b>
+            </td>
+            <td mat-footer-cell *matFooterCellDef><b>Promedio general</b></td>
+          </ng-container>
+          <ng-container matColumnDef="promedio">
+            <th class="centrar" mat-header-cell *matHeaderCellDef>
+              <b>Promedio</b>
+            </th>
+            <td mat-cell *matCellDef="let materiaConPromedio">
+              {{
+                materiaConPromedio.promedioMateria
+                  ? materiaConPromedio.promedioMateria
+                  : 0
+              }}
+            </td>
+            <td mat-footer-cell *matFooterCellDef>
+              <b>{{
+                anio.divisiones[0].promedioGral
+                  ? anio.divisiones[0].promedioGral
+                  : 0
+              }}</b>
+            </td>
+          </ng-container>
+          <tr mat-header-row *matHeaderRowDef="['curso-A']"></tr>
+          <tr
+            mat-header-row
+            *matHeaderRowDef="displayedColumns; sticky: true"
+          ></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+          <tr mat-footer-row *matFooterRowDef="displayedColumns"></tr>
+        </table>
+        <table mat-table [dataSource]="anio.divisiones[1].materias">
+          <ng-container matColumnDef="curso-B">
+            <th
+              class="header-tabla-curso"
+              mat-header-cell
+              *matHeaderCellDef
+              [attr.colspan]="2"
+            >
+              {{ anio.divisiones[1].nombreCurso }}
+            </th>
+          </ng-container>
+          <ng-container matColumnDef="materia">
+            <th class="centrar" mat-header-cell *matHeaderCellDef>
+              <b>Materia</b>
+            </th>
+            <td mat-cell *matCellDef="let materiaConPromedio">
+              {{ materiaConPromedio.nombreMateria }}
+            </td>
+            <td mat-footer-cell *matFooterCellDef><b>Promedio general</b></td>
+          </ng-container>
+          <ng-container matColumnDef="promedio">
+            <th class="centrar" mat-header-cell *matHeaderCellDef>
+              <b>Promedio</b>
+            </th>
+            <td mat-cell *matCellDef="let materiaConPromedio">
+              {{
+                materiaConPromedio.promedioMateria
+                  ? materiaConPromedio.promedioMateria
+                  : 0
+              }}
+            </td>
+            <td mat-footer-cell *matFooterCellDef>
+              <b>{{
+                anio.divisiones[1].promedioGral
+                  ? anio.divisiones[1].promedioGral
+                  : 0
+              }}</b>
+            </td>
+          </ng-container>
 
-        <tr mat-header-row *matHeaderRowDef="['curso-B']"></tr>
-        <tr
-          mat-header-row
-          *matHeaderRowDef="displayedColumns; sticky: true"
-        ></tr>
-        <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
-        <tr mat-footer-row *matFooterRowDef="displayedColumns"></tr>
-      </table>
-    </div>
-  </mat-expansion-panel>
-</mat-accordion>
-<div class="div-button">
-  <button mat-raised-button [routerLink]="['/reportes']" class="button-warn">
-    Volver
-  </button>
-</div>
+          <tr mat-header-row *matHeaderRowDef="['curso-B']"></tr>
+          <tr
+            mat-header-row
+            *matHeaderRowDef="displayedColumns; sticky: true"
+          ></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+          <tr mat-footer-row *matFooterRowDef="displayedColumns"></tr>
+        </table>
+      </div>
+    </mat-expansion-panel>
+  </mat-accordion>
+  <div class="div-button">
+    <button mat-raised-button [routerLink]="['/reportes']" class="button-warn">
+      Volver
+    </button>
+  </div>
+</mat-card>

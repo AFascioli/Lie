@@ -16,7 +16,7 @@ import { CicloLectivoService } from "src/app/cicloLectivo.service";
 export class ResumenAcademicoComponent implements OnInit {
   cursos;
   estudiantes: any;
-  displayedColumns: string[] = ["apellido", "nombre", "accion"];
+  displayedColumns: string[] = ["apellido", "nombre", "tipoDocumento", "numeroDocumento", "accion"];
   cursoNotSelected = true;
   isLoading = false;
   private unsubscribe: Subject<void> = new Subject();
