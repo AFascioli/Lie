@@ -3118,7 +3118,7 @@ router.get("/dev/calificaciones", async (req, res) => {
 
           let calificaciones = cxt.calificaciones;
           //Cambia el vector de calificaciones del trimestre correspondiente con notas random >=6
-          for (let index = 0; index < 3; index++) {
+          for (let index = 0; index < 2; index++) {
             const calificacionesTrimestre = calificaciones[index];
             if (calificacionesTrimestre == 0) {
               calificaciones[index] = Math.floor(Math.random() * 4) + 6;

@@ -12,7 +12,7 @@ import { takeUntil } from "rxjs/operators";
 export class TutoresEstudianteComponent implements OnInit, OnDestroy {
   tutores: any[] = [];
   private unsubscribe: Subject<void> = new Subject();
-  displayedColumns: string[] = ["apellido", "nombre", "telefono", "email"];
+  displayedColumns: string[] = ["apellido", "nombre", "numeroDocumento", "telefono", "email"];
   apellidoEstudiante: string;
   nombreEstudiante: string;
   isLoading=false;

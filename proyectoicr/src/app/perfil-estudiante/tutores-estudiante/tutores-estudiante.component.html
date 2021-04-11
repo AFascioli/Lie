@@ -17,6 +17,14 @@
         {{ tutor.nombre }}
       </td>
     </ng-container>
+    <ng-container matColumnDef="numeroDocumento">
+      <th class="columnas-normales" mat-header-cell *matHeaderCellDef>
+        Documento
+      </th>
+      <td class="columnas-normales" mat-cell *matCellDef="let tutor">
+        {{ tutor.tipoDocumento }} {{ tutor.numeroDocumento }}
+      </td>
+    </ng-container>
     <ng-container matColumnDef="telefono">
       <th class="columnas-normales" mat-header-cell *matHeaderCellDef>
         Teléfono
