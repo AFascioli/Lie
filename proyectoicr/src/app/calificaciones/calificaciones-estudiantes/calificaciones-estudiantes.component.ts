@@ -388,15 +388,17 @@ export class CalificacionesEstudiantesComponent implements OnInit, OnDestroy {
     this.indexEst = this.paginator.pageIndex * this.paginator.pageSize;
   }
 
-  calcularPromedio(index, cantidad) {
+  //Retorna boolean si el estudiante esta con promedio bajo
+  calcularPromedio(cantidad, calificaciones) {    
     if (cantidad != 0) {
-      var notas: number = 0;
-      this.dataSource.filteredData[index].calificaciones.forEach((nota) => {
-        if (nota != 0 && nota != null) notas = notas + nota;
+      let notas= 0;
+      calificaciones.forEach((calificacion) => {
+        if (calificacion != 0 && calificacion != null) notas = notas + calificacion;
       });
-      this.promedio = notas / cantidad;
-    } else this.promedio = 0;
-    return this.promedio;
+      let promedioEstudiante = notas / cantidad;
+      this.promedio = promedioEstudiante;
+      return promedioEstudiante < 6
+    } else this.promedio = 0; return false;
   }
 
   onCalificacionChange() {
@@ -450,9 +452,9 @@ export class CalificacionesEstudiantesComponent implements OnInit, OnDestroy {
     }
   }
 
-  contadorNotasValidas(index): number {
+  contadorNotasValidas(calificaciones): number {
     var cont = 0;
-    this.estudiantes[index].calificaciones.forEach((nota) => {
+    calificaciones.forEach((nota) => {
       if (nota != 0 && nota != null) cont++;
     });
     return cont;

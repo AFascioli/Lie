@@ -21,11 +21,11 @@
   <br />
   <div id="content" #content>
     <h1 class="componente-titulo-pdf" *ngIf="cursoSelected">
-      Listado de estudiantes morosos del curso {{ valueCursoSelected }}, ciclo lectivo {{ anios[0] }}
+      Listado de estudiantes con cuotas adeudadas del <br /> curso {{ valueCursoSelected }}, ciclo lectivo {{ anios[0] }}
     </h1>
     <br />
     <p class="aviso-cantidadMorosos" *ngIf="estudiantesXCuotas.length != 0 && cursoSelected">
-      El total de estudiantes morosos es de {{ estudiantesXCuotas.length }}
+      El total de estudiantes con cuotas adeudadas es de {{ estudiantesXCuotas.length }}
     </p>
 
     <p class="aviso" *ngIf="estudiantesXCuotas.length == 0 && cursoSelected">

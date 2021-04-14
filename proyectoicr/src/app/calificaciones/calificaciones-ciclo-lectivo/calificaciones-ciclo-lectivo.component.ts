@@ -175,6 +175,7 @@ export class CalificacionesCicloLectivoComponent implements OnInit, OnDestroy {
         });
     }
   }
+  
   onYearSelected(yearSelected) {
     this.docenteNoTieneCursos=false
     this.materiaSelec = false;

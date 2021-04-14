@@ -57,7 +57,10 @@ table {
 
   .div-select{
     display: flex;
-    flex-direction: column;
     align-items: center;
+  }
+
+  .componente-titulo-pdf{
+    margin-bottom: 1rem !important;
   }
   

@@ -69,6 +69,14 @@ export class InscripcionCursoComponent implements OnInit {
     } else {
       this.yearSelected = this.aniosCiclos[1];
       this.nextYearSelect = true;
+      this.snackBar.open(
+        "Atención, está por reservar cupos para el año próximo",
+        "",
+        {
+          panelClass: ["snack-bar-aviso"],
+          duration: 5000,
+        }
+      );
     }
     this.obtenerCursosEstudiantes();
     this.capacidadCurso = 0;
