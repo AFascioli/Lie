@@ -77,7 +77,6 @@ export class HomeComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    console.log("Version 04/04/2021");
     this.fechaActual = new Date();
 
     this.servicioEvento

@@ -24,6 +24,7 @@ export class LoginComponent implements OnDestroy {
 
   iniciarSesion() {
     if (this.password && this.email) {
+      console.log("Version 24/04/2021");
       this.authService
         .login(this.email, this.password)
         .subscribe((respuesta) => {
