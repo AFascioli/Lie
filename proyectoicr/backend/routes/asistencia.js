@@ -886,7 +886,7 @@ router.post("/retiro", checkAuthMiddleware, async (req, res) => {
                             " " +
                             tutores[0].nombre;
 
-                          for (let i = 0; i < tutores.length; i++) {
+                          for (let i = 1; i < tutores.length; i++) {
                             if (i == tutores.length - 1) {
                               cuerpo =
                                 cuerpo +
